@@ -83,6 +83,7 @@ public slots:
     virtual void sCCRefundCM();
     virtual void sDeleteCashrcpt();
     virtual void sEditAropen();
+    virtual void sNewAropenCM();
     virtual void sEditAropenCM();
     virtual void sEditAropenOnlyCM();
     virtual void sEditCashrcpt();

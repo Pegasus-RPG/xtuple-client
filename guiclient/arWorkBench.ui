@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>985</width>
     <height>600</height>
    </rect>
   </property>
@@ -15,22 +15,10 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
@@ -80,7 +68,7 @@
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -95,7 +83,7 @@
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>20</width>
                 <height>16</height>
@@ -140,7 +128,7 @@
                  <property name="orientation" >
                   <enum>Qt::Vertical</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>0</height>
@@ -180,7 +168,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>40</width>
                    <height>20</height>
@@ -195,7 +183,7 @@
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>0</height>
@@ -224,7 +212,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>40</width>
                    <height>20</height>
@@ -239,7 +227,7 @@
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>0</height>
@@ -308,7 +296,7 @@
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>132</width>
                 <height>22</height>
@@ -351,7 +339,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::MinimumExpanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>0</height>
@@ -399,7 +387,7 @@
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -458,7 +446,7 @@
                    <property name="orientation" >
                     <enum>Qt::Horizontal</enum>
                    </property>
-                   <property name="sizeHint" >
+                   <property name="sizeHint" stdset="0" >
                     <size>
                      <width>40</width>
                      <height>20</height>
@@ -494,7 +482,7 @@
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -519,22 +507,10 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" >
-            <property name="leftMargin" >
+            <property name="margin" >
              <number>0</number>
             </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>0</number>
-            </property>
-            <property name="verticalSpacing" >
+            <property name="spacing" >
              <number>0</number>
             </property>
             <item row="0" column="0" >
@@ -585,7 +561,7 @@
                   <property name="sizeType" >
                    <enum>QSizePolicy::Expanding</enum>
                   </property>
-                  <property name="sizeHint" >
+                  <property name="sizeHint" stdset="0" >
                    <size>
                     <width>20</width>
                     <height>21</height>
@@ -606,44 +582,52 @@
         <attribute name="title" >
          <string>Credits</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
+        <layout class="QHBoxLayout" name="horizontalLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_aropenCM" />
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
            <item>
-            <widget class="XTreeWidget" name="_aropenCM" />
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4" >
              <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3" >
                <item>
-                <widget class="QPushButton" name="_editAropenCM" >
-                 <property name="enabled" >
-                  <bool>false</bool>
+                <layout class="QVBoxLayout" name="verticalLayout" >
+                 <property name="spacing" >
+                  <number>0</number>
                  </property>
-                 <property name="text" >
-                  <string>Edit</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_viewAropenCM" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>View</string>
-                 </property>
-                </widget>
+                 <item>
+                  <widget class="QPushButton" name="_newAropenCM" >
+                   <property name="enabled" >
+                    <bool>true</bool>
+                   </property>
+                   <property name="text" >
+                    <string>New</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="_editAropenCM" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="text" >
+                    <string>Edit</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="_viewAropenCM" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="text" >
+                    <string>View</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
                 <spacer>
@@ -653,14 +637,21 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Preferred</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
-                   <width>20</width>
-                   <height>5</height>
+                   <width>71</width>
+                   <height>13</height>
                   </size>
                  </property>
                 </spacer>
                </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2" >
+               <property name="spacing" >
+                <number>0</number>
+               </property>
                <item>
                 <widget class="QPushButton" name="_applyAropenCM" >
                  <property name="enabled" >
@@ -683,23 +674,23 @@
                </item>
               </layout>
              </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>83</width>
+               <height>108</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -789,7 +780,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>82</width>
                  <height>41</height>
@@ -825,7 +816,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -852,7 +843,7 @@
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>281</width>
                <height>20</height>
@@ -880,7 +871,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>10</height>
@@ -949,7 +940,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>119</width>
              <height>201</height>
@@ -1021,7 +1012,6 @@
   <tabstop>_aropenCM</tabstop>
   <tabstop>_editAropenCM</tabstop>
   <tabstop>_viewAropenCM</tabstop>
-  <tabstop>_ccRefundCM</tabstop>
   <tabstop>_aropen</tabstop>
   <tabstop>_editAropen</tabstop>
   <tabstop>_viewAropen</tabstop>

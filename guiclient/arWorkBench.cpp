@@ -85,6 +85,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewAropen, SIGNAL(clicked()), this, SLOT(sViewAropen()));
   connect(_editAropen, SIGNAL(clicked()), this, SLOT(sEditAropen()));
   connect(_applyAropenCM, SIGNAL(clicked()), this, SLOT(sApplyAropenCM()));
+  connect(_newAropenCM, SIGNAL(clicked()), this, SLOT(sNewAropenCM()));
   connect(_editAropenCM, SIGNAL(clicked()), this, SLOT(sEditAropenCM()));
   connect(_viewAropenCM, SIGNAL(clicked()), this, SLOT(sViewAropenCM()));
   connect(_ccRefundCM,   SIGNAL(clicked()), this, SLOT(sCCRefundCM()));
@@ -175,6 +176,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   else
   {
+    _newAropenCM->setEnabled(FALSE);
     connect(_aropen, SIGNAL(itemSelected(int)), _viewAropen, SLOT(animateClick()));
     connect(_aropenCM, SIGNAL(itemSelected(int)), _viewAropenCM, SLOT(animateClick()));
   }
@@ -405,6 +407,20 @@ void arWorkBench::sViewAropenOnlyCM()
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void arWorkBench::sNewAropenCM()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("docType", "creditMemo");
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
+
+  arOpenItem newdlg(this, "", true);
+  newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
 void arWorkBench::sEditAropenCM()

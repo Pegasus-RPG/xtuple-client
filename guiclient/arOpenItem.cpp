@@ -197,6 +197,13 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       return UndefinedError;
   }
   
+  param = pParams.value("cust_id", &valid);
+  if (valid)
+  {
+    _cust->setId(param.toInt());
+    populate();
+  }
+
   param = pParams.value("aropen_id", &valid);
   if (valid)
   {
