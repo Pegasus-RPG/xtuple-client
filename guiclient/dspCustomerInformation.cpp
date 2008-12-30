@@ -183,6 +183,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   // setup Invoice list
   _invoice->addColumn(tr("Posted"),     _ynColumn,       Qt::AlignCenter, true,  "posted" );
   _invoice->addColumn(tr("Open"),       _ynColumn,       Qt::AlignCenter, true,  "open" );
+  _invoice->addColumn(tr("Recurring"),  _ynColumn,       Qt::AlignCenter, true,  "recurring" );
   _invoice->addColumn(tr("Invoice #"),  -1,              Qt::AlignLeft,   true,  "invcnumber"   );
   _invoice->addColumn(tr("S/O #"),      _orderColumn,    Qt::AlignLeft,   true,  "ordernumber"   );
   _invoice->addColumn(tr("Invc. Date"), _dateColumn,     Qt::AlignCenter, true,  "docdate"  );
@@ -649,6 +650,7 @@ void dspCustomerInformation::sFillInvoiceList()
 {
   QString sql("SELECT invchead_id AS id, -1 AS altId,"
             "       invchead_posted AS posted,"
+            "       invchead_recurring AS recurring,"
             "       COALESCE(aropen_open, FALSE) AS open,"
             "       text(invchead_invcnumber) AS invcnumber,"
             "       text(invchead_ordernumber) AS ordernumber,"
@@ -675,6 +677,7 @@ void dspCustomerInformation::sFillInvoiceList()
             "SELECT aropen_id AS id, -2 AS altId,"
             "       true AS posted,"
             "       aropen_open AS open,"
+            "       false AS recurring,"
             "       text(aropen_docnumber) AS invcnumber,"
             "       aropen_ordernumber AS ordernumber,"
             "       aropen_docdate AS docdate,"
@@ -715,11 +718,12 @@ void dspCustomerInformation::sEditInvoice()
 {
   int  invcId		= _invoice->id();
   bool invcPosted	= false;
+  XTreeWidgetItem *item = static_cast<XTreeWidgetItem*>(_invoice->currentItem());
 
   q.prepare("SELECT invchead_id AS id, invchead_posted AS posted "
             "FROM invchead "
             "WHERE (invchead_invcnumber=:docnum);");
-  q.bindValue(":docnum", _invoice->currentItem()->text(2));
+  q.bindValue(":docnum", item->rawValue("invcnumber"));
   q.exec();
   if (q.first())
   {
@@ -754,7 +758,7 @@ void dspCustomerInformation::sViewInvoice()
   XTreeWidgetItem *item = static_cast<XTreeWidgetItem*>(_invoice->currentItem());
   if(item)
   {
-    params.append("invoiceNumber", item->text(2));
+    params.append("invoiceNumber", item->rawValue("invcnumber"));
     dspInvoiceInformation* newdlg = new dspInvoiceInformation();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
@@ -1267,7 +1271,7 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
   }
   pMenu->insertSeparator();
 
-  if (selected->text(3).length() != 0)
+  if (item->rawValue("ordernumber").toString().length() != 0)
   {
     menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditInvOrder()), 0);
     if(!_privileges->check("MaintainSalesOrders"))
