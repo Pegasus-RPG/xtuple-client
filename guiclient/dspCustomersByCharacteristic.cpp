@@ -81,6 +81,7 @@ dspCustomersByCharacteristic::dspCustomersByCharacteristic(QWidget* parent, cons
                    "WHERE (char_customers) "
                    "ORDER BY char_name;" );
 
+  _cust->addColumn(tr("Active"),         _ynColumn,   Qt::AlignLeft,  true, "cust_active");
   _cust->addColumn(tr("Number"),         _itemColumn, Qt::AlignLeft,  true, "cust_number");
   _cust->addColumn(tr("Name"),           -1,          Qt::AlignLeft,  true, "cust_name");
   _cust->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter,true, "char_name");
@@ -175,7 +176,7 @@ void dspCustomersByCharacteristic::sFillList()
 
 void dspCustomersByCharacteristic::sFillList(int pCustid, bool pLocal)
 {
-  QString sql = "SELECT cust_id, cust_number, cust_name, char_name, "
+  QString sql = "SELECT cust_id, cust_active, cust_number, cust_name, char_name, "
 		"<? if exists(\"hasCharacteristic\") ?>"
 		"       charass_value "
 		"FROM cust, charass, char "

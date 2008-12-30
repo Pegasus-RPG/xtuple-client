@@ -78,6 +78,7 @@ dspCustomersByCustomerType::dspCustomersByCustomerType(QWidget* parent, const ch
   _customerType->setType(ParameterGroup::CustomerType);
 
   _cust->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "custtype_code");
+  _cust->addColumn(tr("Active"),  _ynColumn,   Qt::AlignLeft,  true, "cust_active");
   _cust->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "cust_number");
   _cust->addColumn(tr("Name"),    200,         Qt::AlignLeft, true, "cust_name");
   _cust->addColumn(tr("Address"), -1,          Qt::AlignLeft, true, "cust_address1");
@@ -173,7 +174,7 @@ void dspCustomersByCustomerType::sReassignCustomerType()
 void dspCustomersByCustomerType::sFillList()
 {
   QString sql( "SELECT cust_id, cust_custtype_id,"
-               "       custtype_code, cust_number, cust_name, cust_address1 "
+               "       custtype_code, cust_active, cust_number, cust_name, cust_address1 "
                "FROM cust, custtype "
                "WHERE ( (cust_custtype_id=custtype_id)" );
     
