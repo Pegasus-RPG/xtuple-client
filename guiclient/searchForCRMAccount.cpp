@@ -71,6 +71,7 @@
 #include "prospect.h"
 #include "taxAuthority.h"
 #include "vendor.h"
+#include "dspCustomerInformation.h"
 
 searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -78,6 +79,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   setupUi(this);
 
   connect(_edit,	 SIGNAL(clicked()),	this, SLOT(sEdit()));
+  connect(_workbench,	 SIGNAL(clicked()),	this, SLOT(sDspCustomerInformation()));
   connect(_search,	 SIGNAL(lostFocus()),	this, SLOT(sFillList()));
   connect(_searchStreet, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchCity,   SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
@@ -111,6 +113,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   if (_editpriv)
   {
     connect(_crmacct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_crmacct, SIGNAL(valid(bool)), _workbench, SLOT(setEnabled(bool)));
     connect(_crmacct, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
   else if (_viewpriv)
@@ -119,6 +122,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   _subtype = CRMAcctLineEdit::Crmacct;
   _searchCombo->setVisible(FALSE);
   _comboCombo->setVisible(FALSE);
+	_workbench->setVisible(FALSE);
 }
 
 searchForCRMAccount::~searchForCRMAccount()
@@ -173,6 +177,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 	_searchPhone->setText(tr("Billing Contact Phone #"));
 	_addressLit->setText(tr("Billing Contact Address:"));
 	_showInactive->setText(tr("Show Inactive Customers"));
+	_workbench->setVisible(true);
 	updateSignal = SIGNAL(customersUpdated(int, bool));
       }
       else if (param == "prospect")
@@ -318,6 +323,18 @@ void searchForCRMAccount::sView()
 {
   openSubwindow("view");
 }
+
+void searchForCRMAccount::sDspCustomerInformation()
+{
+  ParameterList params;
+  params.append("cust_id", _crmacct->id());
+
+  // see notes on Mantis bug 4024 for explanation of why this is a modal dialog
+  dspCustomerInformation *newdlg = new dspCustomerInformation();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 
 void searchForCRMAccount::sFillList()
 {

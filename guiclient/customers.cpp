@@ -62,6 +62,7 @@
 #include <QVariant>
 
 #include "customer.h"
+#include "dspCustomerInformation.h"
 #include "customerTypeList.h"
 #include "storedProcErrorLookup.h"
 
@@ -72,6 +73,7 @@ customers::customers(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_workbench, SIGNAL(clicked()), this, SLOT(sDspCustomerInformation()));
   connect(_cust, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -81,6 +83,7 @@ customers::customers(QWidget* parent, const char* name, Qt::WFlags fl)
   {
     connect(_cust, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_cust, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_cust, SIGNAL(valid(bool)), _workbench, SLOT(setEnabled(bool)));
     connect(_cust, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
   else
@@ -146,6 +149,17 @@ void customers::sView()
   params.append("mode", "view");
 
   customer *newdlg = new customer();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void customers::sDspCustomerInformation()
+{
+  ParameterList params;
+  params.append("cust_id", _cust->id());
+
+  // see notes on Mantis bug 4024 for explanation of why this is a modal dialog
+  dspCustomerInformation *newdlg = new dspCustomerInformation();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
