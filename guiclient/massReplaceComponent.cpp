@@ -76,7 +76,7 @@ massReplaceComponent::massReplaceComponent(QWidget* parent, const char* name, Qt
   _replacement->setType(ItemLineEdit::cGeneralComponents);
 
   _effective->setNullString(tr("Immediate"));
-  _effective->setNullDate(omfgThis->startOfTime());
+//  _effective->setNullDate(omfgThis->startOfTime());
   _effective->setAllowNullDate(TRUE);
   _effective->setNull();
 
