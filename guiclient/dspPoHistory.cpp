@@ -79,6 +79,7 @@ dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter, true, "poitem_linenumber");
   _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft,   true, "itemnumber");
+  _poitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true, "itemdescription");
   _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true, "uomname");
   _poitem->addColumn(tr("Due/Recvd."),   _dateColumn, Qt::AlignCenter, true, "poitem_duedate");
   _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft,   true, "poitem_vend_item_number");
@@ -105,6 +106,10 @@ void dspPoHistory::sFillList()
     q.prepare( "SELECT poitem_id, poitem.*,"
                "       COALESCE(item_number, :nonInventory) AS itemnumber,"
                "       COALESCE(uom_name, :na) AS uomname,"
+               "       CASE WHEN (LENGTH(TRIM(BOTH '    ' FROM poitem_vend_item_descrip)) <= 0) THEN "
+               "                 (item_descrip1 || ' ' || item_descrip2) "
+               "            ELSE poitem_vend_item_descrip "
+               "       END AS itemdescription, "
                "      'qty' AS poitem_qty_ordered_xtnumericrole,"
                "      'qty' AS poitem_qty_received_xtnumericrole,"
                "      'qty' AS poitem_qty_returned_xtnumericrole "
