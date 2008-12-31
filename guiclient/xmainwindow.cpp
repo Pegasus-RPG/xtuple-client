@@ -105,6 +105,13 @@ XMainWindow::XMainWindow(QWidget * parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
   _private = new XMainWindowPrivate();
+
+  _private->_action = new QAction(this);
+  _private->_action->setShortcutContext(Qt::ApplicationShortcut);
+  _private->_action->setText(windowTitle());
+  _private->_action->setCheckable(true);
+  connect(_private->_action, SIGNAL(triggered(bool)), this, SLOT(showMe(bool)));
+
   ScriptToolbox::setLastWindow(this);
 }
 
