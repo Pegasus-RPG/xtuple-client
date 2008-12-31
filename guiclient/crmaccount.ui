@@ -892,9 +892,73 @@
         <attribute name="title" >
          <string>Opportunities</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_10" >
-         <item row="0" column="0" >
+        <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <item>
           <widget class="XTreeWidget" name="_oplist" />
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2" >
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_newOpportunity" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editOpportunity" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewOpportunity" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deleteOpportunity" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -1283,6 +1347,54 @@
     <hint type="destinationlabel" >
      <x>699</x>
      <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_oplist</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_deleteOpportunity</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>352</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>710</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_oplist</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_editOpportunity</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>352</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>710</x>
+     <y>353</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_oplist</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_viewOpportunity</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>352</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>710</x>
+     <y>377</y>
     </hint>
    </hints>
   </connection>

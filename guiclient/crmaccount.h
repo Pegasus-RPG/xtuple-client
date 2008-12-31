@@ -125,6 +125,8 @@ protected slots:
     virtual void sCustomerInfo();
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
+    virtual void sOplistNew();
+    virtual void sOplistDelete();
     virtual void sOplistView();
     virtual void sOplistEdit();
     virtual void sCheckNumber();

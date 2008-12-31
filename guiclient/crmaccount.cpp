@@ -114,6 +114,9 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     todoMenu->setItemEnabled(menuItem, FALSE);
   _newTodo->setMenu(todoMenu);
 
+  if (_privileges->check("MaintainOpportunities"))
+    _newOpportunity->setEnabled(TRUE);
+    
   connect(_activeTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_attach,		SIGNAL(clicked()), this, SLOT(sAttach()));
   connect(_autoUpdateTodo,  SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate()));
@@ -122,15 +125,18 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_completedTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
+  connect(_deleteOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistDelete()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_deleteTodoIncdt,	SIGNAL(clicked()), this, SLOT(sDeleteTodoIncdt()));
   connect(_detach,		SIGNAL(clicked()), this, SLOT(sDetach()));
   connect(_edit,		SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_editCharacteristic,	SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
+  connect(_editOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistEdit()));
   connect(_editReg,		SIGNAL(clicked()), this, SLOT(sEditReg()));
   connect(_editTodoIncdt,	SIGNAL(clicked()), this, SLOT(sEditTodoIncdt()));
   connect(_new,			SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newCharacteristic,	SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
+  connect(_newOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistNew()));
   connect(_newReg,		SIGNAL(clicked()), this, SLOT(sNewReg()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,	SIGNAL(clicked()), this, SLOT(sProspect()));
@@ -140,6 +146,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauthButton,	SIGNAL(clicked()), this, SLOT(sTaxAuth()));
   connect(_todo, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleTodoPrivs()));
   connect(_todo, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateTodoMenu(QMenu*)));
+  connect(_viewOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistView()));
   connect(_viewTodoIncdt,	SIGNAL(clicked()), this, SLOT(sViewTodoIncdt()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
@@ -352,6 +359,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _editCharacteristic->setEnabled(FALSE);
       _new->setEnabled(FALSE);
       //_newIncdt->setEnabled(FALSE);
+      _newOpportunity->setEnabled(FALSE);
       _newTodo->setEnabled(FALSE);
       _deleteTodoIncdt->setEnabled(FALSE);
       _editTodoIncdt->setEnabled(FALSE);
@@ -1714,10 +1722,10 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
   int menuItem;
 
   bool editPriv = _privileges->check("MaintainOpportunities");
-  bool viewPriv = _privileges->check("VeiwOpportunities") || editPriv;
+  bool viewPriv = _privileges->check("ViewOpportunities") || editPriv;
 
-  //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
-  //pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sOplistEdit()), 0);
   pMenu->setItemEnabled(menuItem, editPriv);
@@ -1725,8 +1733,8 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sOplistView()), 0);
   pMenu->setItemEnabled(menuItem, viewPriv);
 
-  //menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
-  //pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 }
 
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
@@ -1784,6 +1792,43 @@ void crmaccount::sProspectToggled()
 {
   if (_prospect->isChecked())
     _customer->setChecked(FALSE);
+}
+
+void crmaccount::sOplistNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("crmacct_id", _crmacctId);
+
+  opportunity newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sPopulateOplist();
+}
+
+void crmaccount::sOplistDelete()
+{
+  q.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
+  q.bindValue(":ophead_id", _oplist->id());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteOpportunity", result));
+      return;
+    }
+    else
+      sPopulateOplist();
+    }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
 }
 
 void crmaccount::sOplistView()
