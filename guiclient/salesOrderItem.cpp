@@ -2931,7 +2931,7 @@ void salesOrderItem::sPriceUOMChanged()
   item.exec();
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
-  sDeterminePrice();
+  sDeterminePrice(TRUE);
 }
 
 void salesOrderItem::sCalcWoUnitCost()
