@@ -139,7 +139,7 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
 
   _toolActions = new QActionGroup(parent);
   _toolActions->setObjectName("_toolActions");
-  _toolActions->setExclusive(false);
+  _toolActions->setExclusive(true);
 
   QAction *m_editWidgetsAction = new QAction(tr("Edit Widgets"),   this);
   m_editWidgetsAction->setCheckable(true);

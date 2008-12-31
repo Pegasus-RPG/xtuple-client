@@ -206,6 +206,11 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   foreach (QAction *a, _actions->editActions()->actions())
     _editmenu->addAction(a);
 
+  _editmenu->addSeparator();
+
+  foreach (QAction *action, _actions->toolActions()->actions())
+    _editmenu->addAction(action);
+
   _formmenu = _menubar->addMenu(tr("&Form"));
   foreach (QAction *a, _actions->formActions()->actions())
     _formmenu->addAction(a);
@@ -218,13 +223,10 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _propinspwindow = new PropertyEditorWindow(this);
   _slotedwindow   = new SignalSlotEditorWindow(this);
 
-  _actions->toolActions()->addAction(_widgetwindow->action());
-  _actions->toolActions()->addAction(_objinspwindow->action());
-  _actions->toolActions()->addAction(_propinspwindow->action());
-  _actions->toolActions()->addAction(_slotedwindow->action());
-
-  foreach (QAction *a, _actions->toolActions()->actions())
-    _toolmenu->addAction(a);
+  _toolmenu->addAction(_widgetwindow->action());
+  _toolmenu->addAction(_objinspwindow->action());
+  _toolmenu->addAction(_propinspwindow->action());
+  _toolmenu->addAction(_slotedwindow->action());
 
   _formeditor->setTopLevel(_widgetwindow);
 #ifndef Q_WS_MAC
