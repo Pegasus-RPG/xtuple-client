@@ -296,6 +296,7 @@ void CLineEdit::setId(int pId)
   emit valid(_valid);
 }
 
+
 void CLineEdit::setNumber(const QString& pNumber)
 {
     _parsed = false;
@@ -315,9 +316,9 @@ void CLineEdit::sParse()
   {
     _parsed = TRUE;
 
-    if (text().length() == 0)
+    QString stripped = text().trimmed().toUpper();
+    if (stripped.length() == 0)
       setId(-1);
-
     QString sql("<? if exists(\"customer\") ?>"
                 "  SELECT cust_number, cust_id"
                 "  FROM custinfo "
@@ -343,7 +344,7 @@ void CLineEdit::sParse()
                 ";");
 
     ParameterList params;
-    params.append("number", text().trimmed());
+    params.append("number", stripped);
     switch (_type)
     {
       case ActiveCustomers:
@@ -371,7 +372,6 @@ void CLineEdit::sParse()
 
     MetaSQLQuery mql(sql);
     XSqlQuery cust = mql.toQuery(params);
-
     if (cust.first())
     {
       setText(cust.value("cust_number").toString());
@@ -435,7 +435,6 @@ void CLineEdit::dropEvent(QDropEvent *pEvent)
 
       if (target.contains(","))
         target = target.left(target.find(","));
-
       setId(target.toInt());
     }
   }
@@ -545,10 +544,12 @@ void CustInfo::setReadOnly(bool pReadOnly)
   }
 }
 
+
 void CustInfo::setId(int pId)
 {
   _customerNumber->setId(pId);
 }
+
 
 void CustInfo::setSilentId(int pId)
 {
@@ -583,14 +584,6 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
       _info->setPaletteForegroundColor(QColor("red"));
   }
 }
-
-/*
-void CustCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _custInfo->setMapper(m);
-}
-*/
 
 CustCluster::CustCluster(QWidget *parent, const char *name) :
   QWidget(parent, name)
