@@ -81,6 +81,7 @@ public:
     XCheckBox* _searchNumber;
     XCheckBox* _searchDescrip1;
     XCheckBox* _searchDescrip2;
+    XCheckBox* _searchUpc;
     XCheckBox* _showInactive;
     QPushButton* _close;
     QPushButton* _select;

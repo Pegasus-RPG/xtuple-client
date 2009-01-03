@@ -70,7 +70,6 @@
 #include <QApplication>
 
 #include <xsqlquery.h>
-#include <parameter.h>
 
 #include "itemcluster.h"
 #include "itemList.h"
@@ -99,8 +98,6 @@ ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pPare
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));
   connect(this, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   connect(this, SIGNAL(requestAlias()), this, SLOT(sAlias()));
-  
-  _mapper = new XDataWidgetMapper(this);
 }
 
 void ItemLineEdit::setItemNumber(QString pNumber)
@@ -127,17 +124,27 @@ void ItemLineEdit::setItemNumber(QString pNumber)
   else if (pNumber != QString::Null())
   {
     QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
-                 "                uom_name, item_type, item_config");
+                 "                uom_name, item_type, item_config, item_upccode");
 
     QStringList clauses;
     clauses = _extraClauses;
-    clauses << "(item_number=:item_number)";
+    clauses << "(item_number=:item_number OR item_upccode=:item_number)";
 
     item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
     item.bindValue(":item_number", pNumber);
     item.exec();
-
-    found = item.first();
+    
+    if (item.size() > 1)
+    { 
+      ParameterList params;
+      params.append("search", pNumber);
+      params.append("searchNumber");
+      params.append("searchUpc");
+      sSearch(params);
+      return;
+    }
+    else
+      found = item.first();
   }
 
   if (found)
@@ -147,6 +154,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
     _id         = item.value("item_id").toInt();
+    _upc        = item.value("upc_code").toInt();
     _valid      = TRUE;
 
     setText(item.value("item_number").toString());
@@ -157,6 +165,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
     emit descrip2Changed(item.value("item_descrip2").toString());
     emit uomChanged(item.value("uom_name").toString());
     emit configured(item.value("item_config").toBool());
+    emit upcChanged(item.value("item_upccode").toString());
     
     emit valid(TRUE);
   }
@@ -167,6 +176,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
     _itemType   = "";
     _id         = -1;
     _valid      = FALSE;
+    _upc        = "";
 
     setText("");
 
@@ -176,6 +186,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
     emit descrip2Changed("");
     emit uomChanged("");
     emit configured(FALSE);
+    emit upcChanged("");
 
     emit valid(FALSE);
   }
@@ -205,7 +216,7 @@ void ItemLineEdit::silentSetId(int pId)
   else if (pId != -1)
   {
     QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
-                 "                uom_name, item_type, item_config");
+                 "                uom_name, item_type, item_config, item_upccode");
 
     QStringList clauses;
     clauses = _extraClauses;
@@ -224,21 +235,18 @@ void ItemLineEdit::silentSetId(int pId)
     _uom        = item.value("uom_name").toString();
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
+    _upc        = item.value("item_upc").toString();
     _id         = pId;
     _valid      = TRUE;
 
     setText(item.value("item_number").toString());
-
-    if (_mapper->model() &&
-        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
-
     emit aliasChanged("");
     emit typeChanged(_itemType);
     emit descrip1Changed(item.value("item_descrip1").toString());
     emit descrip2Changed(item.value("item_descrip2").toString());
     emit uomChanged(item.value("uom_name").toString());
     emit configured(item.value("item_config").toBool());
+    emit upcChanged(item.value("item_upccode").toString());
     
     emit valid(TRUE);
   }
@@ -248,6 +256,7 @@ void ItemLineEdit::silentSetId(int pId)
     _uom        = "";
     _itemType   = "";
     _id         = -1;
+    _upc        = "";
     _valid      = FALSE;
 
     setText("");
@@ -258,6 +267,7 @@ void ItemLineEdit::silentSetId(int pId)
     emit descrip2Changed("");
     emit uomChanged("");
     emit configured(FALSE);
+    emit upcChanged("");
 
     emit valid(FALSE);
   }
@@ -341,6 +351,11 @@ void ItemLineEdit::sList()
 void ItemLineEdit::sSearch()
 {
   ParameterList params;
+  sSearch(params);
+}
+
+void ItemLineEdit::sSearch(ParameterList params)
+{
   params.append("item_id", _id);
 
   if (queryUsed())
@@ -407,6 +422,12 @@ QString ItemLineEdit::uom()
 {
   sParse();
   return _uom;
+}
+
+QString ItemLineEdit::upc()
+{
+  sParse();
+  return _upc;
 }
 
 QString ItemLineEdit::itemType()
@@ -506,7 +527,7 @@ void ItemLineEdit::sParse()
     else if (_useValidationQuery)
     {
       XSqlQuery item;
-      item.prepare("SELECT item_id FROM item WHERE (item_number = :searchString);");
+      item.prepare("SELECT item_id FROM item WHERE (item_number = :searchString OR item_upccode = :searchString);");
       item.bindValue(":searchString", text().trimmed().toUpper());
       item.exec();
       if (item.first())
@@ -515,7 +536,16 @@ void ItemLineEdit::sParse()
         item.prepare(_validationSql);
         item.bindValue(":item_id", itemid);
         item.exec();
-        if (item.first())
+        if (item.size() > 1)
+        { 
+          ParameterList params;
+          params.append("search", text().trimmed().toUpper());
+          params.append("searchNumber");
+          params.append("searchUpc");
+          sSearch(params);
+          return;
+        }
+        else if (item.first())
         {
           setId(itemid);
           return;
@@ -542,12 +572,21 @@ void ItemLineEdit::sParse()
 
       QStringList clauses;
       clauses = _extraClauses;
-      clauses << "(item_number=:searchString)";
+      clauses << "(item_number=:searchString OR item_upccode=:searchString)";
 
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
       item.bindValue(":searchString", text().trimmed().toUpper());
       item.exec();
-      if (item.first())
+      if (item.size() > 1)
+      { 
+        ParameterList params;
+        params.append("search", text().trimmed().toUpper());
+        params.append("searchNumber");
+        params.append("searchUpc");
+        sSearch(params);
+        return;
+      }
+      else if (item.first())
       {
         setId(item.value("item_id").toInt());
         return;
@@ -627,6 +666,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   connect(_itemNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
   connect(_itemNumber, SIGNAL(warehouseIdChanged(int)), this, SIGNAL(warehouseIdChanged(int)));
   connect(_itemNumber, SIGNAL(typeChanged(const QString &)), this, SIGNAL(typeChanged(const QString &)));
+  connect(_itemNumber, SIGNAL(upcChanged(const QString &)), this, SIGNAL(upcChanged(const QString &)));  
   connect(_itemNumber, SIGNAL(configured(bool)), this, SIGNAL(configured(bool)));
 
   connect(_itemNumber, SIGNAL(uomChanged(const QString &)), _uom, SLOT(setText(const QString &)));
@@ -636,12 +676,16 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   connect(_itemList, SIGNAL(clicked()), _itemNumber, SLOT(sEllipses()));
 
   setFocusProxy(_itemNumber);
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
+  disconnect(_itemNumber, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
   m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _itemNumber->_mapper=m;
+  _mapper=m;
+  connect(_itemNumber, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
 }
 
 void ItemCluster::setReadOnly(bool pReadOnly)
@@ -688,6 +732,13 @@ void ItemCluster::setItemsiteid(int intPItemsiteid)
   _itemNumber->setItemsiteid(intPItemsiteid);
 }
 
+void ItemCluster::updateMapperData()
+{
+qDebug("updating");
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != itemNumber())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), itemNumber()); 
+}
 
 QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, const QString pPost, const unsigned int pType)
 {

@@ -155,6 +155,7 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
 
   _item->addColumn(tr("Item Number"), 100, Qt::AlignLeft, true, "item_number");
   _item->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "itemdescrip");
+  _item->addColumn(tr("UPC Code"),    100, Qt::AlignLeft, true, "item_upccode");
 }
 
 void itemList::set(ParameterList &pParams)
@@ -227,7 +228,9 @@ void itemList::sSearch(const QString &pTarget)
 
   int i;
   for (i = 0; i < _item->topLevelItemCount(); i++)
-    if (_item->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+    if (_item->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive) ||
+        _item->topLevelItem(i)->text(1).startsWith(pTarget, Qt::CaseInsensitive) ||
+        _item->topLevelItem(i)->text(2).startsWith(pTarget, Qt::CaseInsensitive))
       break;
 
   if (i < _item->topLevelItemCount())
@@ -250,13 +253,13 @@ void itemList::sFillList()
       if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
       {
         pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number,"
-               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip ";
-        post = "ORDER BY toNumeric(item_number, 999999999999999), item_number";
+               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
+        post = "ORDER BY toNumeric(item_number, 999999999999999), item_number, item_upccode ";
       }
       else
       {
         pre =  "SELECT DISTINCT item_id, item_number,"
-               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip ";
+               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
         post = "ORDER BY item_number";
       }
 

@@ -66,6 +66,8 @@
 
 #include "qstringlist.h"
 
+#include <parameter.h>
+
 class QPushButton;
 class QLabel;
 class QDragEnterEvent;
@@ -146,6 +148,7 @@ friend class ItemCluster;
 
     QString itemNumber();
     QString uom();
+    QString upc();
     QString itemType();
     bool    isConfigured();
 
@@ -153,6 +156,7 @@ friend class ItemCluster;
     void sEllipses();
     void sList();
     void sSearch();
+    void sSearch(ParameterList params);
     void sAlias();
 
     void silentSetId(int);
@@ -169,6 +173,7 @@ friend class ItemCluster;
     void descrip1Changed(const QString &);
     void descrip2Changed(const QString &);
     void typeChanged(const QString &);
+    void upcChanged(const QString &);
     void configured(bool);
     void warehouseIdChanged(int);
     void valid(bool);
@@ -180,7 +185,6 @@ friend class ItemCluster;
     void dropEvent(QDropEvent *);
 
     QPoint dragStartPosition;
-    XDataWidgetMapper *_mapper;
   private:
     void constructor();
 
@@ -188,6 +192,7 @@ friend class ItemCluster;
     QString _validationSql;
     QString _itemNumber;
     QString _uom;
+    QString _upc;
     QString _itemType;
     QStringList _extraClauses;
     unsigned int _type;
@@ -223,6 +228,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     Q_INVOKABLE inline int id() const                      { return _itemNumber->id();                   }
     Q_INVOKABLE inline int isValid() const                 { return _itemNumber->isValid();              }
     Q_INVOKABLE inline QString  uom() const                { return _itemNumber->uom();                  }
+    Q_INVOKABLE inline QString  upc() const                { return _itemNumber->upc();                  }
     inline QString  defaultNumber()  const                 { return _default; };
     inline QString  fieldName()      const                 { return _fieldName;                          }
 
@@ -238,6 +244,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void setItemNumber(QString);
     void setItemsiteid(int);
     void silentSetId(int);
+    void updateMapperData();
 
   signals:
     void privateIdChanged(int);
@@ -245,6 +252,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void aliasChanged(const QString &);
     void warehouseIdChanged(int);
     void typeChanged(const QString &);
+    void upcChanged(const QString &);
     void configured(bool);
     void valid(bool);
 
@@ -256,6 +264,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     QLabel       *_descrip2;
     QString       _default;
     QString       _fieldName;
+    XDataWidgetMapper *_mapper;
 };
 
 #endif

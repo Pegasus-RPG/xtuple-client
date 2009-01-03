@@ -121,6 +121,11 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
     _searchDescrip2->setChecked( TRUE );
     _searchDescrip2->setObjectName("_searchDescrip2");
     Layout64->addWidget( _searchDescrip2 );
+    
+    _searchUpc = new XCheckBox(tr("Search through UPC Code"));
+    _searchUpc->setChecked( TRUE );
+    _searchUpc->setObjectName("_searchUpc");
+    Layout64->addWidget( _searchUpc );
     Layout66->addLayout( Layout64 );
 
     _showInactive = new XCheckBox(tr("Show &Inactive Items"));
@@ -168,11 +173,13 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
     connect( _searchNumber, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
     connect( _searchDescrip1, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
     connect( _searchDescrip2, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
+    connect( _searchUpc, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
     connect( _search, SIGNAL( lostFocus() ), this, SLOT( sFillList() ) );
     connect( _item, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
 
   _item->addColumn(tr("Item Number"), 100,  Qt::AlignLeft );
   _item->addColumn(tr("Description"), -1,   Qt::AlignLeft );
+  _item->addColumn(tr("UPC Code"),    100,  Qt::AlignLeft );
 }
 
 void itemSearch::set(ParameterList &pParams)
@@ -214,6 +221,18 @@ void itemSearch::set(ParameterList &pParams)
   param = pParams.value("caption", &valid);
   if (valid)
     setWindowTitle(param.toString());
+    
+  param = pParams.value("search", &valid);
+  if (valid)
+    _search->setText(param.toString());
+    
+  param = pParams.value("searchNumber", &valid);
+  if (valid)
+    _searchNumber->setChecked(true);
+    
+  param = pParams.value("searchUpc", &valid);
+  if (valid)
+    _searchUpc->setChecked(true);
 
   sFillList();
 }
@@ -251,6 +270,9 @@ void itemSearch::sFillList()
 
     if (_searchDescrip2->isChecked())
       subClauses << "(item_descrip2 ~* :searchString)";
+      
+    if (_searchUpc->isChecked())
+      subClauses << "(item_upccode ~* :searchString)";
 
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
@@ -262,7 +284,8 @@ void itemSearch::sFillList()
   { 
     if ( (!_searchNumber->isChecked()) &&
          (!_searchDescrip1->isChecked()) &&
-         (!_searchDescrip2->isChecked()) )
+         (!_searchDescrip2->isChecked()) &&
+         (!_searchUpc->isChecked()) )
     {
       _item->clear();
       return;
@@ -272,12 +295,12 @@ void itemSearch::sFillList()
     QString post;
     if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
     {
-      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number, (item_descrip1 || ' ' || item_descrip2)";
+      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number, (item_descrip1 || ' ' || item_descrip2), item_upccode ";
       post = "ORDER BY toNumeric(item_number, 999999999999999), item_number";
     }
     else
     {
-      pre =  "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2)";
+      pre =  "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2), item_upccode ";
       post = "ORDER BY item_number";
     }
 
@@ -295,6 +318,9 @@ void itemSearch::sFillList()
 
     if (_searchDescrip2->isChecked())
       subClauses << "(item_descrip2 ~* :searchString)";
+      
+    if (_searchUpc->isChecked())
+      subClauses << "(item_upccode ~* :searchString)";
 
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
