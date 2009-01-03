@@ -80,6 +80,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       int          primaryKeyColumns()       const            { return _keyColumns;         };
       QString      schemaName()              const            { return _schemaName;         };
       QString      tableName()               const            { return _tableName;          };
+      void         setTable();
       
     public slots:
       virtual int  size();
@@ -91,9 +92,10 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       virtual void removeSelected();
       virtual void revertAll();
       virtual void save();
+      virtual void select();
       virtual void selectRow(int index);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
-      virtual void setModel(XSqlTableModel* model);
+      virtual void setModel(XSqlTableModel* model=0);
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
       virtual void setSchemaName(QString p)                   { _schemaName = p;            };
       virtual void setTableName(QString p)                    { _tableName = p;             };

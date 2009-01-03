@@ -97,6 +97,12 @@ QVariant XTreeView::selectedValue(int column)
   return value(selected.first().row(),column);
 }
 
+void XTreeView::select()
+{
+  setTable();
+  _model.select();
+}
+
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
   if (!selected.indexes().isEmpty())
@@ -176,6 +182,15 @@ void XTreeView::selectRow(int index)
 
 void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
 {  
+  setTable();
+  _mapper=mapper; 
+}
+
+void XTreeView::setTable()
+{
+  if (_model.tableName() == _tableName)
+    return;
+      
   if (!_tableName.isEmpty())
   {
     QString tablename=_tableName;
@@ -184,7 +199,6 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
     _model.setTable(tablename,_keyColumns);
     
     setModel(&_model);
-    _mapper=mapper; 
   }
 }
 
