@@ -203,7 +203,6 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 { 
-  qDebug("saving");
   disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
   _mapper->submit();
@@ -218,12 +217,11 @@ void Screen::save()
   }
   else
   {
-    emit saved(true);
+    emit saved();
     if (_mode==New)
       insert();
   }
   connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
-    qDebug("saved");
 }
 
 void Screen::search(QString criteria)

@@ -130,7 +130,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void currentIndexChanged(int index);
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
-		void saved(bool);
+		void saved();
                 void revertedAll();
                 void reverted(int index);
 
