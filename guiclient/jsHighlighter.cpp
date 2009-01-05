@@ -100,11 +100,11 @@ void JSHighlighter::highlightBlock(const QString &text)
 
   for (int i = 0; i < text.length(); i++)
   {
-    QRegExp kwtest("^(" + _keyword.join("|") + ")(?=\\W)");
-    QRegExp extest("^(" + _extension.join("|") + ")(?=\\W)");
+    QRegExp kwtest("^(" + _keyword.join("|") + ")((?=\\W)|$)");
+    QRegExp extest("^(" + _extension.join("|") + ")((?=\\W)|$)");
     QRegExp numerictest("^(0[xX][0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
     QRegExp wordtest("^\\w+");
-    QRegExp quotetest("^\"[^\"]*\"");
+    QRegExp quotetest("^\"[^\"]*\"|'[^']*'");
     QRegExp regexptest("/[^/]*/[igm]?");
 
     if (state == InsideCStyleComment)
