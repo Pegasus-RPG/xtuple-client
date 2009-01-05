@@ -734,7 +734,6 @@ void ItemCluster::setItemsiteid(int intPItemsiteid)
 
 void ItemCluster::updateMapperData()
 {
-qDebug("updating");
   if (_mapper->model() &&
       _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != itemNumber())
     _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), itemNumber()); 

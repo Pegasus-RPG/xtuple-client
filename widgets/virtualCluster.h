@@ -253,7 +253,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool    _hasName;
         bool    _strict;
         virtual void silentSetId(const int);
-        XDataWidgetMapper *_mapper;
 };
 
 /*
@@ -327,6 +326,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void setStrict(const bool b);
         virtual void setReadOnly(const bool b);
         virtual void sRefresh();
+        virtual void updateMapperData();
 
     signals:
         void newId(int);
@@ -345,6 +345,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         bool                    _readOnly;
 	QString                 _fieldName;
         QString                 _default;
+        XDataWidgetMapper       *_mapper;
 
     private:
         virtual void init();

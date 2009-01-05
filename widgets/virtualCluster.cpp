@@ -120,6 +120,8 @@ void VirtualCluster::init()
     _grid->setRowMinimumHeight(0, 0);
     _grid->setRowMinimumHeight(1, 0);
     _grid->setRowMinimumHeight(2, 0);
+    
+    _mapper = new XDataWidgetMapper(this);
 }
 
 VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
@@ -160,8 +162,10 @@ void VirtualCluster::setLabel(const QString& p)
 
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
+  disconnect(_number, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
   m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _number->_mapper=m;
+  _mapper=m;
+  connect(_number, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
 }
 
 void VirtualCluster::setEnabled(const bool p)
@@ -223,6 +227,13 @@ void VirtualCluster::setReadOnly(const bool b)
   }
 }
 
+void VirtualCluster::updateMapperData()
+{
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != number())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), number());
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
@@ -266,8 +277,6 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     clear();
     _titleSingular = tr("Object");
     _titlePlural = tr("Objects");
-    
-    _mapper = new XDataWidgetMapper(this);
 }
 
 void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
@@ -375,9 +384,6 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 	      _name = (idQ.value("name").toString());
 	    if (_hasDescription)
 	      _description = idQ.value("description").toString();
-            if (_mapper->model() &&
-                _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 	}
 	else if (idQ.lastError().type() != QSqlError::NoError)
 	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
