@@ -575,6 +575,11 @@ int XTreeWidget::column(const QString pName) const
   return colIdx;
 }
 
+XTreeWidgetItem *XTreeWidget::currentItem() const
+{
+  return (XTreeWidgetItem*)QTreeWidget::currentItem();
+}
+
 void XTreeWidget::hideColumn(const QString &pColumn)
 {
   int colnum = column(pColumn);
@@ -589,6 +594,11 @@ void XTreeWidget::showColumn(const QString &pColumn)
 
   if (colnum >= 0)
     QTreeWidget::showColumn(colnum);
+}
+
+XTreeWidgetItem *XTreeWidget::topLevelItem(int idx) const
+{
+  return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
 }
 
 bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)

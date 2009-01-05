@@ -198,44 +198,36 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 
-
     QString dragString() const;
     void setDragString(QString);
     QString altDragString() const;
     void setAltDragString(QString);
 
-    void clear();
-
-    int  id() const;
     int  altId() const;
-    void setId(int);
-    int  column(const QString) const;
+    int  id()    const;
     int  id(const QString)     const;
+    void setId(int);
 
-    inline XTreeWidgetItem * topLevelItem(int idx) const
-    {
-      return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
-    }
-    inline XTreeWidgetItem *currentItem() const
-    {
-      return (XTreeWidgetItem*)QTreeWidget::currentItem();
-    }
+    Q_INVOKABLE virtual int              column(const QString) const;
+    Q_INVOKABLE virtual XTreeWidgetItem *currentItem()         const;
+    Q_INVOKABLE virtual void             setColumnCount(int);
+    Q_INVOKABLE virtual void             setColumnLocked(int, bool);
+    Q_INVOKABLE virtual void             setColumnVisible(int, bool);
+    Q_INVOKABLE virtual void             sortItems(int, Qt::SortOrder);
+    Q_INVOKABLE virtual XTreeWidgetItem *topLevelItem(int idx) const;
 
-    Q_INVOKABLE void setColumnVisible(int, bool);
-    Q_INVOKABLE void setColumnLocked(int, bool);
-    Q_INVOKABLE virtual void setColumnCount(int);
-    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
-    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
+    Q_INVOKABLE XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
+    Q_INVOKABLE XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 
-    virtual void sortItems(int, Qt::SortOrder);
     static  bool itemAsc(const QVariant &, const QVariant &);
     static  bool itemDesc(const QVariant &, const QVariant &);
 
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
-    inline void hideColumn(int colnum) { QTreeWidget::hideColumn(colnum); };
+    void clear();
+    void hideColumn(int colnum) { QTreeWidget::hideColumn(colnum); };
     void hideColumn(const QString &);
-    inline void showColumn(int colnum) { QTreeWidget::showColumn(colnum); };
+    void showColumn(int colnum) { QTreeWidget::showColumn(colnum); };
     void showColumn(const QString &);
 
   signals:
