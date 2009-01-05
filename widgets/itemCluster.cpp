@@ -123,7 +123,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
   }
   else if (pNumber != QString::Null())
   {
-    QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
+    QString pre( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                  "                uom_name, item_type, item_config, item_upccode");
 
     QStringList clauses;

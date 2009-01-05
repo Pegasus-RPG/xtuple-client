@@ -209,6 +209,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
   Q_PROPERTY(QString number         READ itemNumber     WRITE setItemNumber      DESIGNABLE false)
   Q_PROPERTY(unsigned int type      READ type           WRITE setType            DESIGNABLE false)
+  Q_PROPERTY(int     id             READ id             WRITE setId              DESIGNABLE false)
   
   public:
     ItemCluster(QWidget *, const char * = 0);
@@ -222,13 +223,13 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     inline void    setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
     inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
     inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
-    Q_INVOKABLE inline QString itemNumber() const          { return _itemNumber->itemNumber();           }
-    Q_INVOKABLE inline QString itemType() const            { return _itemNumber->itemType();             }
-    Q_INVOKABLE inline bool isConfigured() const           { return _itemNumber->isConfigured();         }
-    Q_INVOKABLE inline int id() const                      { return _itemNumber->id();                   }
-    Q_INVOKABLE inline int isValid() const                 { return _itemNumber->isValid();              }
-    Q_INVOKABLE inline QString  uom() const                { return _itemNumber->uom();                  }
-    Q_INVOKABLE inline QString  upc() const                { return _itemNumber->upc();                  }
+    Q_INVOKABLE QString itemNumber() const                 { return _itemNumber->itemNumber();           }
+    Q_INVOKABLE QString itemType() const                   { return _itemNumber->itemType();             }
+    Q_INVOKABLE bool isConfigured() const                  { return _itemNumber->isConfigured();         }
+    Q_INVOKABLE int id() const                             { return _itemNumber->id();                   }
+    Q_INVOKABLE int isValid() const                        { return _itemNumber->isValid();              }
+    Q_INVOKABLE QString  uom() const                       { return _itemNumber->uom();                  }
+    Q_INVOKABLE QString  upc() const                       { return _itemNumber->upc();                  }
     inline QString  defaultNumber()  const                 { return _default; };
     inline QString  fieldName()      const                 { return _fieldName;                          }
 

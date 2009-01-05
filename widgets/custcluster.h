@@ -157,6 +157,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
   Q_PROPERTY(QString                    defaultNumber  READ defaultNumber WRITE setDefaultNumber DESIGNABLE false)
   Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
   Q_PROPERTY(QString                    number         READ number        WRITE setNumber        DESIGNABLE false)
+  Q_PROPERTY(int                        id             READ id            WRITE setId            DESIGNABLE false)
 
   public:
     CustInfo(QWidget *parent, const char *name = 0);
