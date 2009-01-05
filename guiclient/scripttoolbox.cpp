@@ -119,6 +119,110 @@ QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & n
   return sq;
 }
 
+QObject * ScriptToolbox::executeBegin()
+{
+  ParameterList params;
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql("BEGIN;");
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
+QObject * ScriptToolbox::executeCommit()
+{
+  ParameterList params;
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql("COMMIT;");
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
+QObject * ScriptToolbox::executeRollback()
+{
+  ParameterList params;
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql("ROLLBACK;");
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
+QObject * ScriptToolbox::qtyVal()
+{
+  QValidator * val = omfgThis->qtyVal();
+  return val;
+}
+
+QObject * ScriptToolbox::TransQtyVal()
+{
+  QValidator * val = omfgThis->transQtyVal();
+  return val;
+}
+
+QObject * ScriptToolbox::qtyPerVal()
+{
+  QValidator * val = omfgThis->qtyPerVal();
+  return val;
+}
+
+QObject * ScriptToolbox::percentVal()
+{
+  QValidator * val = omfgThis->percentVal();
+  return val;
+}
+
+QObject * ScriptToolbox::moneyVal()
+{
+  QValidator * val = omfgThis->moneyVal();
+  return val;
+}
+
+QObject * ScriptToolbox::negMoneyVal()
+{
+  QValidator * val = omfgThis->negMoneyVal();
+  return val;
+}
+
+QObject * ScriptToolbox::priceVal()
+{
+  QValidator * val = omfgThis->priceVal();
+  return val;
+}
+QObject * ScriptToolbox::costVal()
+{
+  QValidator * val = omfgThis->costVal();
+  return val;
+}
+
+QObject * ScriptToolbox::ratioVal()
+{
+  QValidator * val = omfgThis->ratioVal();
+  return val;
+}
+
+QObject * ScriptToolbox::weightVal()
+{
+  QValidator * val = omfgThis->weightVal();
+  return val;
+}
+
+QObject * ScriptToolbox::runTimeVal()
+{
+  QValidator * val = omfgThis->runTimeVal();
+  return val;
+}
+
+QObject * ScriptToolbox::orderVal()
+{
+  QValidator * val = omfgThis->orderVal();
+  return val;
+}
+
+QObject * ScriptToolbox::dayVal()
+{
+  QValidator * val = omfgThis->dayVal();
+  return val;
+}
+
 QObject * ScriptToolbox::createGridLayout()
 {
   QGridLayout * layout = new QGridLayout;

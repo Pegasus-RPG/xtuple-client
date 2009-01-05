@@ -133,6 +133,23 @@ class ScriptToolbox : public QObject
 
     QObject * executeQuery(const QString & query, const ParameterList & params);
     QObject * executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
+    QObject * executeBegin();
+    QObject * executeCommit();
+    QObject * executeRollback();
+    
+    QObject * qtyVal();
+    QObject * TransQtyVal();
+    QObject * qtyPerVal();
+    QObject * percentVal();
+    QObject * moneyVal();
+    QObject * negMoneyVal();
+    QObject * priceVal();
+    QObject * costVal();
+    QObject * ratioVal();
+    QObject * weightVal();
+    QObject * runTimeVal();
+    QObject * orderVal();
+    QObject * dayVal();
 
     QObject * widgetGetLayout(QWidget * w);
 
