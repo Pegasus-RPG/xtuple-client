@@ -172,6 +172,11 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _notes       = QString();
   _order       = 0;
   _source      = 0;
+  _formwindow = 0;
+  _widgetwindow = 0;
+  _objinspwindow = 0;
+  _propinspwindow = 0;
+  _slotedwindow = 0;
 
   _formeditor = QDesignerComponents::createFormEditor(this);
   if (! _formeditor)
