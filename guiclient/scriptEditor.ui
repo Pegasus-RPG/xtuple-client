@@ -65,9 +65,6 @@
          <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <item>
           <widget class="XLineEdit" name="_name" />
          </item>
@@ -130,16 +127,10 @@
        <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <item>
         <layout class="QVBoxLayout" >
          <property name="spacing" >
           <number>5</number>
-         </property>
-         <property name="margin" >
-          <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
@@ -208,9 +199,38 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>40</width>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="_findText" />
+     </item>
+     <item>
+      <widget class="QPushButton" name="_find" >
+       <property name="text" >
+        <string>Find</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
          <height>20</height>
         </size>
        </property>
@@ -248,11 +268,14 @@
   <tabstop>_notes</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_enabled</tabstop>
+  <tabstop>_source</tabstop>
+  <tabstop>_line</tabstop>
+  <tabstop>_findText</tabstop>
+  <tabstop>_find</tabstop>
   <tabstop>_import</tabstop>
   <tabstop>_export</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_source</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -263,8 +286,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>495</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>

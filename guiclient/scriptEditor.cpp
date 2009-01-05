@@ -76,6 +76,7 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_export,       SIGNAL(clicked()), this, SLOT(sExport()));
+  connect(_find,         SIGNAL(clicked()), this, SLOT(sFind()));
   connect(_import,       SIGNAL(clicked()), this, SLOT(sImport()));
   connect(_line, SIGNAL(editingFinished()), this, SLOT(sGoto()));
   connect(_save,         SIGNAL(clicked()), this, SLOT(sSave()));
@@ -336,6 +337,37 @@ void scriptEditor::sGoto()
   _source->setTextCursor(cursor);
   _source->ensureCursorVisible();
   _source->setFocus();
+}
+
+void scriptEditor::sFind()
+{
+  QTextCursor oldposition = _source->textCursor();
+  bool found = _source->find(_findText->text());
+  if (!found && ! oldposition.atStart())
+  {
+    int answer = QMessageBox::question(this, tr("Continue Search?"),
+                                       tr("<p>'%1' was not found. "
+                                          "Start search from the beginning?")
+                                         .arg(_findText->text()),
+                                       QMessageBox::Yes | QMessageBox::No,
+                                       QMessageBox::Yes);
+    if (answer == QMessageBox::Yes)
+    {
+      QTextCursor newposition = oldposition;
+      newposition.movePosition(QTextCursor::Start);
+      _source->setTextCursor(newposition);
+      found = _source->find(_findText->text());
+    }
+    else
+      found = true;     // a lie to prevent a useless message
+  }
+  if (!found)
+  {
+    QMessageBox::information(this, tr("Not Found"),
+                             tr("<p>'%1' was not found.")
+                               .arg(_findText->text()));
+    _source->setTextCursor(oldposition);
+  }
 }
 
 void scriptEditor::sBlockCountChanged(const int p)

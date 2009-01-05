@@ -78,6 +78,7 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void populate();
     virtual void sExport();
+    virtual void sFind();
     virtual void sGoto();
     virtual void sImport();
     virtual bool sSave();
