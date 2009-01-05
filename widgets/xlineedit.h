@@ -81,6 +81,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 
     Q_INVOKABLE bool isValid();
     Q_INVOKABLE int  id();
+    Q_INVOKABLE void setValidator(const QValidator * v) { QLineEdit::setValidator(v); };
 
     double toDouble(bool * = 0);
     virtual QString defaultText() const { return _default; };

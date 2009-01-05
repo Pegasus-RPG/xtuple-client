@@ -250,6 +250,9 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void privateIdChanged(int);
     void newId(int);
     void aliasChanged(const QString &);
+    void uomChanged(const QString &);
+    void descrip1Changed(const QString &);
+    void descrip2Changed(const QString &);
     void warehouseIdChanged(int);
     void typeChanged(const QString &);
     void upcChanged(const QString &);

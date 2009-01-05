@@ -663,6 +663,9 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   connect(_itemNumber, SIGNAL(aliasChanged(const QString &)), this, SIGNAL(aliasChanged(const QString &)));
   connect(_itemNumber, SIGNAL(privateIdChanged(int)), this, SIGNAL(privateIdChanged(int)));
   connect(_itemNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
+  connect(_itemNumber, SIGNAL(uomChanged(const QString &)), this, SIGNAL(uomChanged(const QString &)));  
+  connect(_itemNumber, SIGNAL(descrip1Changed(const QString &)), this, SIGNAL(descrip1Changed(const QString &)));  
+  connect(_itemNumber, SIGNAL(descrip2Changed(const QString &)), this, SIGNAL(descrip2Changed(const QString &)));  
   connect(_itemNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
   connect(_itemNumber, SIGNAL(warehouseIdChanged(int)), this, SIGNAL(warehouseIdChanged(int)));
   connect(_itemNumber, SIGNAL(typeChanged(const QString &)), this, SIGNAL(typeChanged(const QString &)));

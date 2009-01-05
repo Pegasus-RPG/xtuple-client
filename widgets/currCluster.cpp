@@ -764,10 +764,6 @@ void CurrDisplay::setLocalValue(double newValue)
 	sValueLocalChanged(_valueLocal);
 	sReformat();
     }
-    
-    if (_mapper->model() &&
-        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toDouble() != _valueLocal)
-      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _valueLocal);
 }
 
 void CurrDisplay::sValueBaseChanged()
@@ -837,6 +833,10 @@ void CurrDisplay::sValueLocalChanged()
 
 void CurrDisplay::sValueLocalChanged(double newValue)
 {
+    if (_mapper->model() &&
+        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toDouble() != newValue)
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), newValue);
+
     double oldBase = _valueBase;
     if (ABS(newValue) < EPSILON(_localScale) || _effective.isNull())
     {
@@ -876,6 +876,7 @@ void CurrDisplay::sValueLocalChanged(double newValue)
 	    _baseKnown = false;
 	}
     }
+    
     if (ABS(oldBase - _valueBase) > EPSILON(_baseScale))
 	emit valueBaseChanged(_valueBase);
 }
