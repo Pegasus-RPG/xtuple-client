@@ -223,20 +223,23 @@ void configureGL::sSave()
       QString msg;
       QWidget *widget;
     } error[] = {
-      { _companyId->text().isEmpty(),
+      { _achGroup->isChecked() && _companyId->text().isEmpty(),
         tr("Please enter a default Company Id if you are going to create "
            "ACH files."),
         _companyId },
-      { (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked()) && 
+      { _achGroup->isChecked() &&
+        (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked()) && 
         tmpCompanyId.remove("-").size() != 9,
         tr("EIN, TIN, and DUNS numbers are all 9 digit numbers. Other "
            "characters (except dashes for readability) are not allowed."),
         _companyId },
-      { _companyIdIsOther->isChecked() && _companyId->text().size() > 10,
+      { _achGroup->isChecked() &&
+        _companyIdIsOther->isChecked() && _companyId->text().size() > 10,
         tr("Company Ids must be 10 characters or shorter (not counting dashes "
            "in EIN's, TIN's, and DUNS numbers)."),
         _companyId },
-      { ! (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked() ||
+      { _achGroup->isChecked() &&
+        ! (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked() ||
            _companyIdIsOther->isChecked()),
         tr("Please mark whether the Company Id is an EIN, TIN, DUNS number, "
            "or Other."),
