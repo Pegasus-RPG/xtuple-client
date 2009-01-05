@@ -98,18 +98,11 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *name) :
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
   connect(this, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));
-  
-  _mapper = new XDataWidgetMapper(this);
 }
 
 void CLineEdit::setAutoFocus(bool yes)
 {
   _autoFocus = yes;
-}
-
-void CLineEdit::setMapper(XDataWidgetMapper *mapper)
-{
-  _mapper=mapper;
 }
 
 void CLineEdit::sEllipses()
@@ -236,10 +229,6 @@ void CLineEdit::setSilentId(int pId)
       _id = pId;
 
       setText(cust.value("cust_number").toString());
-      
-      if (_mapper->model() &&
-          _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
       emit custNumberChanged(cust.value("cust_number").toString());
       emit custNameChanged(cust.value("cust_name").toString());
@@ -447,6 +436,8 @@ void CLineEdit::keyPressEvent(QKeyEvent * pEvent)
   XLineEdit::keyPressEvent(pEvent);
 }
 
+/////////////////////////////////////////////////////////
+
 CustInfoAction* CustInfo::_custInfoAction = 0;
 CustInfo::CustInfo(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
@@ -517,6 +508,8 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   }
 
   setFocusProxy(_customerNumber);
+
+  _mapper = new XDataWidgetMapper(this);
 }
   
 void CustInfo::setAutoFocus(bool yes)
@@ -526,8 +519,10 @@ void CustInfo::setAutoFocus(bool yes)
 
 void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
+  disconnect(_customerNumber, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
   m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _customerNumber->setMapper(m);
+  _mapper=m;
+  connect(_customerNumber, SIGNAL(newId(int)), this, SLOT(updateMapperData()));
 }
 
 void CustInfo::setReadOnly(bool pReadOnly)
@@ -584,6 +579,15 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
       _info->setPaletteForegroundColor(QColor("red"));
   }
 }
+
+void CustInfo::updateMapperData()
+{
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != number())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), number());
+}
+
+//////////////////////////////////////////////////////////////
 
 CustCluster::CustCluster(QWidget *parent, const char *name) :
   QWidget(parent, name)

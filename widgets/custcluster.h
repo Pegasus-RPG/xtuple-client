@@ -107,7 +107,6 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     void sList();
     void setSilentId(int);
     void setId(int);
-    void setMapper(XDataWidgetMapper *mapper);
     void setNumber(const QString& pNumber);
     void setType(CLineEditTypes);
     void sParse();
@@ -135,7 +134,6 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     void dragEnterEvent(QDragEnterEvent *);
     void dropEvent(QDropEvent *);
     void keyPressEvent(QKeyEvent *);
-    XDataWidgetMapper *_mapper;
 
   private:
     bool		_autoFocus;
@@ -188,6 +186,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
   private slots:
     void sInfo();
     void sHandleCreditStatus(const QString &);
+    void updateMapperData();
 
   signals:
     void newId(int);
@@ -209,6 +208,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
     QPushButton *_info;
     QString     _default;
     QString     _fieldName;
+    XDataWidgetMapper *_mapper;
     
   protected:
     CLineEdit   *_customerNumber;
