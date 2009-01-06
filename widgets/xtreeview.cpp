@@ -83,6 +83,11 @@ XTreeView::XTreeView(QWidget *parent) :
   _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
+bool XTreeView::isRowHidden(int row)
+{
+  return QTreeView::isRowHidden(row,model()->parent(model()->index(row,0)));
+}
+
 bool XTreeView::throwScriptException(const QString &message)
 {
    QObject *ancestor = this;
@@ -104,7 +109,7 @@ bool XTreeView::throwScriptException(const QString &message)
 
 int XTreeView::size()
 {
-  return _model.query().size();
+  return model()->rowCount(model()->parent(model()->index(0,0)));
 }
 
 QVariant XTreeView::value(int row, int column)
@@ -247,5 +252,10 @@ void XTreeView::setModel(XSqlTableModel * model)
       QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);
   }
   emit newModel(model);
+}
+
+void XTreeView::setValue(int row, int column, QVariant value)
+{
+  _model.setData(_model.index(row,column), value);
 }
 

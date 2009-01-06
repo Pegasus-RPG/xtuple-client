@@ -107,44 +107,47 @@ void ItemLineEdit::setItemNumber(QString pNumber)
 
   _parsed = TRUE;
 
-  if (_useValidationQuery)
+  if (!pNumber.isEmpty())
   {
-    item.prepare(_validationSql);
-    item.bindValue(":item_number", pNumber);
-    item.exec();
-    if (item.first())
-      found = TRUE;
-  }
-  else if (_useQuery)
-  {
-    item.prepare(_sql);
-    item.exec();
-    found = (item.findFirst("item_number", pNumber) != -1);
-  }
-  else if (pNumber != QString::Null())
-  {
-    QString pre( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                 "                uom_name, item_type, item_config, item_upccode");
-
-    QStringList clauses;
-    clauses = _extraClauses;
-    clauses << "(item_number=:item_number OR item_upccode=:item_number)";
-
-    item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
-    item.bindValue(":item_number", pNumber);
-    item.exec();
-    
-    if (item.size() > 1)
-    { 
-      ParameterList params;
-      params.append("search", pNumber);
-      params.append("searchNumber");
-      params.append("searchUpc");
-      sSearch(params);
-      return;
+    if (_useValidationQuery)
+    {
+      item.prepare(_validationSql);
+      item.bindValue(":item_number", pNumber);
+      item.exec();
+      if (item.first())
+        found = TRUE;
     }
-    else
-      found = item.first();
+    else if (_useQuery)
+    {
+      item.prepare(_sql);
+      item.exec();
+      found = (item.findFirst("item_number", pNumber) != -1);
+    }
+    else if (pNumber != QString::Null())
+    {
+      QString pre( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                   "                uom_name, item_type, item_config, item_upccode");
+
+      QStringList clauses;
+      clauses = _extraClauses;
+      clauses << "(item_number=:item_number OR item_upccode=:item_number)";
+
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
+      item.bindValue(":item_number", pNumber);
+      item.exec();
+      
+      if (item.size() > 1)
+      { 
+        ParameterList params;
+        params.append("search", pNumber);
+        params.append("searchNumber");
+        params.append("searchUpc");
+        sSearch(params);
+        return;
+      }
+      else
+        found = item.first();
+    }
   }
 
   if (found)

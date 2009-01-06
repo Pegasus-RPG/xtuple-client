@@ -77,6 +77,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     public:
       XTreeView(QWidget *parent = 0);
 
+      Q_INVOKABLE bool isRowHidden(int row);
       bool         throwScriptException(const QString &message);
       int          primaryKeyColumns()       const            { return _keyColumns;         };
       QString      schemaName()              const            { return _schemaName;         };
@@ -100,6 +101,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
       virtual void setSchemaName(QString p)                   { _schemaName = p;            };
       virtual void setTableName(QString p)                    { _tableName = p;             };
+      virtual void setValue(int row, int column, QVariant value);
 
     signals:
       void  newModel(XSqlTableModel *model);
