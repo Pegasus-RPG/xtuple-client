@@ -57,6 +57,7 @@
 
 #include "reassignClassCodeByClassCode.h"
 
+#include <QMessageBox>
 #include <qvariant.h>
 
 /*
@@ -106,6 +107,14 @@ void reassignClassCodeByClassCode::init()
 
 void reassignClassCodeByClassCode::sReassign()
 {
+  if ( (_classCodePattern->isChecked()) && (_classCode->text().length() == 0) )
+  {
+    QMessageBox::warning(this, tr("Missing Class Code Pattern"),
+                      tr("<p>You must enter a Class Code Pattern."));
+    _classCode->setFocus();
+    return;
+  }
+  
   QString sql( "UPDATE item "
                "SET item_classcode_id=:new_classcode_id ");
 
