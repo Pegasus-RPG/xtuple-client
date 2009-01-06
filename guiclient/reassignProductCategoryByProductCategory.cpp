@@ -57,6 +57,7 @@
 
 #include "reassignProductCategoryByProductCategory.h"
 
+#include <QMessageBox>
 #include <qvariant.h>
 
 /*
@@ -106,6 +107,14 @@ void reassignProductCategoryByProductCategory::init()
 
 void reassignProductCategoryByProductCategory::sReassign()
 {
+  if ( (_productCategoryPattern->isChecked()) && (_productCategory->text().length() == 0) )
+  {
+    QMessageBox::warning(this, tr("Missing Product Category Pattern"),
+                      tr("<p>You must enter a Product Category Pattern."));
+    _productCategory->setFocus();
+    return;
+  }
+  
   QString sql( "UPDATE item "
                "SET item_prodcat_id=:new_prodcat_id " );
 
