@@ -63,12 +63,14 @@
 
 #include <QSqlDatabase>
 #include <QSqlDriver>
+#include <QSqlError>
 #include <QSqlIndex>
 #include <QBuffer>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
 #include <QStack>
 #include <QModelIndex>
+#include <QScriptEngine>
 
 XTreeView::XTreeView(QWidget *parent) : 
   QTreeView(parent)
@@ -79,6 +81,25 @@ XTreeView::XTreeView(QWidget *parent) :
 
   _mapper = new XDataWidgetMapper(this);
   _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
+}
+
+bool XTreeView::throwScriptException(const QString &message)
+{
+   QObject *ancestor = this;
+   QScriptEngine *engine = 0;
+   for ( ; ancestor; ancestor = ancestor->parent())
+   {
+     engine = ancestor->findChild<QScriptEngine*>();
+     if (engine)
+       break;
+   } 
+   if (engine)
+   {
+      QScriptContext *ctx = engine->currentContext();
+      ctx->throwError(message);
+      return true;
+   }
+   return false;
 }
 
 int XTreeView::size()
@@ -118,7 +139,6 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
 void XTreeView::insert()
 { 
   int row=_model.rowCount();
-  
   _model.insertRows(row,1);
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
@@ -169,8 +189,17 @@ void XTreeView::revertAll()
 }
 
 void XTreeView::save()
-{
-  _model.submitAll();
+{ 
+  if(!_model.submitAll())
+  {
+    if(!throwScriptException(_model.lastError().databaseText()))
+          QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
+                            tr("Error saving %1 at %2::%3\n\n%4")
+                            .arg(_tableName).arg(__FILE__).arg(__LINE__)
+                            .arg(_model.lastError().databaseText()));
+  }
+  else
+    emit saved();
 }
 
 void XTreeView::selectRow(int index)

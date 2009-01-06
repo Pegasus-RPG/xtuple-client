@@ -60,8 +60,11 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlField>
+#include <QScriptContext>
+#include <QScriptEngine>
 
 #include <openreports.h>
+
 
 Screen::Screen(QWidget *parent) : 
   QWidget(parent)
@@ -151,6 +154,25 @@ bool Screen::isDirty()
   return false;
 }
 
+bool Screen::throwScriptException(const QString &message)
+{ 
+   QObject *ancestor = this;
+   QScriptEngine *engine = 0;
+   for ( ; ancestor; ancestor = ancestor->parent())
+   {
+     engine = ancestor->findChild<QScriptEngine*>();
+     if (engine)
+       break;
+   } 
+   if (engine)
+   {
+      QScriptContext *ctx = engine->currentContext();
+      ctx->throwError(message);
+      return true;
+   }
+   return false;
+}
+
 int Screen::currentIndex()
 {
   return _mapper->currentIndex();
@@ -160,6 +182,11 @@ void Screen::deleteCurrent()
 {
   removeCurrent();
   save();
+}
+
+void Screen::clear()
+{
+  _mapper->clear();
 }
 
 void Screen::insert()
@@ -203,14 +230,16 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 { 
+  bool isSaved;
   disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
   _mapper->submit();
-  _model->submitAll();
+  isSaved=_model->submitAll();
   _mapper->setCurrentIndex(i);
-  if (_model->lastError().type() != QSqlError::NoError)
+  if (!isSaved)
   {
-    QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
+    if(!throwScriptException(_model->lastError().databaseText()))
+        QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                           tr("Error saving %1 at %2::%3\n\n%4")
                           .arg(_tableName).arg(__FILE__).arg(__LINE__)
                           .arg(_model->lastError().databaseText()));
@@ -221,6 +250,7 @@ void Screen::save()
     if (_mode==New)
       insert();
   }
+  
   connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
 }
 

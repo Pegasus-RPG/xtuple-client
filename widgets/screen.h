@@ -84,6 +84,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		Screen(QWidget * = 0);
                 ~Screen();
 		
+                bool throwScriptException(const QString &message);
 		enum Modes { New, Edit, View };
                 enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
@@ -101,6 +102,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };
+                void clear();
                 void deleteCurrent();
                 void insert();
                 void newMappedWidget(QWidget *widget);

@@ -77,6 +77,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     public:
       XTreeView(QWidget *parent = 0);
 
+      bool         throwScriptException(const QString &message);
       int          primaryKeyColumns()       const            { return _keyColumns;         };
       QString      schemaName()              const            { return _schemaName;         };
       QString      tableName()               const            { return _tableName;          };
@@ -104,6 +105,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       void  newModel(XSqlTableModel *model);
       void  rowSelected(int);
       void  valid(bool);
+      void  saved();
       
     protected:
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
