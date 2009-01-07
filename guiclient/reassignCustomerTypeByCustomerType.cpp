@@ -57,6 +57,7 @@
 
 #include "reassignCustomerTypeByCustomerType.h"
 
+#include <QMessageBox>
 #include <qvariant.h>
 
 /*
@@ -106,6 +107,14 @@ void reassignCustomerTypeByCustomerType::init()
 
 void reassignCustomerTypeByCustomerType::sReassign()
 {
+  if ( (_customerTypePattern->isChecked()) && (_customerType->text().length() == 0) )
+  {
+    QMessageBox::warning(this, tr("Missing Customer Type Pattern"),
+                      tr("<p>You must enter a Customer Type Pattern."));
+    _customerType->setFocus();
+    return;
+  }
+  
   QString sql( "UPDATE custinfo "
                "SET cust_custtype_id=:new_custtype_id " );
 
