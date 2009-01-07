@@ -109,7 +109,7 @@ bool XTreeView::throwScriptException(const QString &message)
 
 int XTreeView::size()
 {
-  return model()->rowCount(model()->parent(model()->index(0,0)));
+  return _model.rowCount();
 }
 
 QVariant XTreeView::value(int row, int column)
@@ -179,6 +179,7 @@ void XTreeView::removeRows(int row, int count)
 void XTreeView::removeSelected()
 {
   QModelIndexList selected=selectedIndexes();
+  qDebug("count %d", selected.count()); 
   for (int i = 0; i < selected.count(); i++)
   {
     _model.removeRows(selected.value(i).row(), 1);
