@@ -107,7 +107,7 @@ bool XTreeView::throwScriptException(const QString &message)
    return false;
 }
 
-int XTreeView::size()
+int XTreeView::rowCount()
 {
   return _model.rowCount();
 }
@@ -171,19 +171,17 @@ void XTreeView::populate(int p)
   }
 }
 
-void XTreeView::removeRows(int row, int count)
-{
-  _model.removeRows(row, count);
-}
-
 void XTreeView::removeSelected()
 {
   QModelIndexList selected=selectedIndexes();
-  qDebug("count %d", selected.count()); 
-  for (int i = 0; i < selected.count(); i++)
+
+  for (int i = selected.count() -1 ; i > -1; i--)
   {
-    _model.removeRows(selected.value(i).row(), 1);
-    setRowHidden(selected.value(i).row(),selected.value(i).parent(),true);
+    if (selected.value(i).column() == 1) // Only once per row
+    {
+      setRowHidden(selected.value(i).row(),selected.value(i).parent(),true);
+      _model.removeRow(selected.value(i).row());
+    }
   }
 }
 
