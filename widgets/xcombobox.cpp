@@ -190,6 +190,17 @@ void XComboBox::setType(XComboBoxTypes pType)
 
   if (_x_metrics == 0)
     return;
+    
+  // If we're in Designer, don't populate
+  QObject *ancestor = this;
+  bool designMode;
+  for ( ; ancestor; ancestor = ancestor->parent())
+  {
+    qDebug("ancestor=" + ancestor->objectName());
+    designMode = ancestor->inherits("xTupleDesigner");
+    if (designMode)
+      return;
+  } 
 
   XSqlQuery query;
 
