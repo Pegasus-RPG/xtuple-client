@@ -83,7 +83,9 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   setAllowNull(false);
   _nullStr  = "";
   _label    = 0;
-
+  
+  _mapper = new XDataWidgetMapper(this);
+  
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
 #ifdef Q_WS_MAC
@@ -101,6 +103,8 @@ XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
   _lastId = -1;
   setAllowNull(false);
   _label = 0;
+  
+  _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
@@ -134,6 +138,9 @@ QString XComboBox::currentDefault()
 
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
+  disconnect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
+  disconnect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
+  
   if (!_listTableName.isEmpty())
   {
     QString tableName="";
@@ -149,11 +156,16 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
   
     m->setItemDelegate(new QSqlRelationalDelegate(this));
     m->addMapping(this, _fieldName);
+    return;
   }
   else if (_codes.count())
     m->addMapping(this, _fieldName, "code", "currentDefault");
   else
-    m->addMapping(this, _fieldName, "currentText", "currentText");
+    m->addMapping(this, _fieldName, "text", "text");
+    
+  _mapper=m;
+  connect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
+  connect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
 }
 
 void XComboBox::setListSchemaName(QString p)
@@ -1088,4 +1100,17 @@ QSize XComboBox::sizeHint() const
   return s;
 }
 
+void XComboBox::updateMapperData()
+{
+qDebug("updating map");
+  QString val;
+  if (_codes.count())
+    val = code();
+  else
+    val = currentText();
+    
+  if (_mapper->model() &&
+    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != val)
+  _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), val);
+}
 

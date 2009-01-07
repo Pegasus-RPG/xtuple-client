@@ -89,6 +89,17 @@ void WComboBox::setType(WComboBoxTypes pType)
 {
   _type = pType;
   
+  // If we're in Designer, don't populate
+  QObject *ancestor = this;
+  bool designMode;
+  for ( ; ancestor; ancestor = ancestor->parent())
+  {
+    qDebug("ancestor=" + ancestor->objectName());
+    designMode = ancestor->inherits("xTupleDesigner");
+    if (designMode)
+      return;
+  } 
+  
   int warehousid = ((_x_preferences) ? _x_preferences->value("PreferredWarehouse").toInt() : -1);
 
   QString whss("SELECT warehous_id, warehous_code, warehous_code "

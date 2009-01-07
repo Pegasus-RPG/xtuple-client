@@ -177,6 +177,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void setText(QVariant &);
     void setText(const QString &);
     void setText(const QVariant &);
+    void updateMapperData();
 
   private slots:
     void sHandleNewIndex(int);
