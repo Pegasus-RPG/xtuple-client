@@ -278,6 +278,9 @@ void CLineEdit::setSilentId(int pId)
 
 void CLineEdit::setId(int pId)
 {
+  if (_id == pId)
+    return;
+    
   setSilentId(pId);
 
 //  Emit the item information signals

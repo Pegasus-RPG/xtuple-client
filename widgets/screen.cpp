@@ -191,9 +191,10 @@ void Screen::clear()
 
 void Screen::insert()
 {
-  _model->insertRows(_model->rowCount(),1);
+  _mapper->model()->insertRows(_model->rowCount(),1);
   _mapper->toLast();
   _mapper->clear();
+  emit currentIndexChanged(_mapper->currentIndex());
 }
 
 void Screen::newMappedWidget(QWidget *widget)
@@ -233,8 +234,8 @@ void Screen::save()
   bool isSaved;
   disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
-  _mapper->submit();
-  isSaved=_model->submitAll();
+  _mapper->submit();  // Make sure changes committed even if user hasn't tabbed off widget
+  isSaved=_model->submitAll(); // Apply to the database
   _mapper->setCurrentIndex(i);
   if (!isSaved)
   {
@@ -277,10 +278,7 @@ void Screen::select()
 {
   _model->select();
   if (_model->rowCount())
-  {
     _mapper->toFirst();
-    emit newModel(_model);
-  }
 }
 
 void Screen::setMode(Modes p)

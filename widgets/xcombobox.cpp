@@ -208,7 +208,6 @@ void XComboBox::setType(XComboBoxTypes pType)
   bool designMode;
   for ( ; ancestor; ancestor = ancestor->parent())
   {
-    qDebug("ancestor=" + ancestor->objectName());
     designMode = ancestor->inherits("xTupleDesigner");
     if (designMode)
       return;
@@ -1102,7 +1101,6 @@ QSize XComboBox::sizeHint() const
 
 void XComboBox::updateMapperData()
 {
-qDebug("updating map");
   QString val;
   if (_codes.count())
     val = code();

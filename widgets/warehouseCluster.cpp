@@ -94,7 +94,6 @@ void WComboBox::setType(WComboBoxTypes pType)
   bool designMode;
   for ( ; ancestor; ancestor = ancestor->parent())
   {
-    qDebug("ancestor=" + ancestor->objectName());
     designMode = ancestor->inherits("xTupleDesigner");
     if (designMode)
       return;
