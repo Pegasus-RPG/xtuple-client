@@ -283,6 +283,13 @@ void employee::sSave(const bool pClose)
       return;
   }
   
+  if (_code->text() == _mgr->number())
+  {
+      QMessageBox::warning( this, tr("Cannot Save Employee"),
+                            tr("An Employee cannot be his or her own Manager.") );
+      return;
+  }
+  
   if (_mode == cNew)
   {
     q.prepare("SELECT emp_id"
