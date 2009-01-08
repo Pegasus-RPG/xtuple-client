@@ -141,13 +141,21 @@ void dspBacklogBySalesOrder::sSalesOrderList()
 
 void dspBacklogBySalesOrder::sRunningAvailability()
 {
-  ParameterList params;
-  params.append("itemsite_id", _soitem->altId());
-  params.append("run");
+  q.prepare( "SELECT coitem_itemsite_id "
+             "FROM coitem "
+             "WHERE (coitem_id=:coitem_id);" );
+  q.bindValue(":coitem_id", _soitem->altId());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("itemsite_id", q.value("coitem_itemsite_id").toInt());
+    params.append("run");
 
-  dspRunningAvailability *newdlg = new dspRunningAvailability();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    dspRunningAvailability *newdlg = new dspRunningAvailability();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void dspBacklogBySalesOrder::sFillList()
