@@ -70,6 +70,7 @@
 #include <QMouseEvent>
 #include <QSettings>
 #include <QSqlError>
+#include <QSqlField>
 #include <QSqlRecord>
 
 #include "xsqlquery.h"
@@ -320,13 +321,19 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	    if (role->contains("qtdisplayrole") &&
 		! pQuery.value(role->value("qtdisplayrole").toString()).isNull())
             {
-              bool valid = false;
-              double doubleval = QLocale(QLocale::C).toDouble(pQuery.value(role->value("qtdisplayrole").toString()).toString(), &valid);
-              if (valid)
-                last->setData(col, Qt::DisplayRole, QLocale().toString(doubleval, 'f', scale));
+              /* this might not handle PostgreSQL NUMEICs properly
+                 but at least it will try to handle INTEGERs and DOUBLEs
+                 and it will avoid formatting sales order numbers with decimal
+                 and group separators
+              */
+              QSqlRecord rec = pQuery.record();
+              QSqlField field = rec.field(role->value("qtdisplayrole").toString());
+              if (field.type() == QVariant::Int)
+                last->setData(col, Qt::DisplayRole, QLocale().toString(field.value().toInt()));
+              else if (field.type() == QVariant::Double)
+                last->setData(col, Qt::DisplayRole, QLocale().toString(field.value().toDouble(), 'f', scale));
               else
-                last->setData(col, Qt::DisplayRole,
-                          pQuery.value(role->value("qtdisplayrole").toString()));
+                last->setData(col, Qt::DisplayRole, field.value().toString());
             }
             else if (role->contains("xtnumericrole") &&
                      ((pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent") ||
