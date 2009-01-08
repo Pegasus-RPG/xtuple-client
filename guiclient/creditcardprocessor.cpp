@@ -73,7 +73,7 @@
 #include "verisignprocessor.h"
 #include "yourpayprocessor.h"
 
-#define DEBUG true
+#define DEBUG false
 
 /* NOTE TO SUBCLASSERS:
   It is your job to make sure that all of the configuration options available
