@@ -168,6 +168,36 @@ void honorific::sSave()
       return;
   }
   
+  if (_mode == cEdit)
+  {
+    q.prepare( "SELECT hnfc_id "
+               "FROM hnfc "
+               "WHERE ( (hnfc_id<>:hnfc_id)"
+               " AND (UPPER(hnfc_code)=UPPER(:hnfc_code)) );");
+    q.bindValue(":hnfc_id", _honorificid);
+  }
+  else
+  {
+    q.prepare( "SELECT hnfc_id "
+               "FROM hnfc "
+               "WHERE (hnfc_code=:hnfc_code);");
+  }
+  q.bindValue(":hnfc_code", _code->text().trimmed());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Create Title"),
+			   tr( "A Title with the entered code already exists."
+			       "You may not create a Title with this code." ) );
+    _code->setFocus();
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('hnfc_hnfc_id_seq') AS _hnfc_id");
