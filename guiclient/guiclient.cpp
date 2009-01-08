@@ -127,6 +127,11 @@
 #include "splashconst.h"
 
 #include "scripttoolbox.h"
+#include "qnetworkreplyproto.h"
+#include "qnetworkrequestproto.h"
+#include "qurlproto.h"
+#include "xnetworkaccessmanager.h"
+#include "xtreewidgetitemproto.h"
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
@@ -1434,4 +1439,11 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
+
+  // NEW the prototypes because they need to be on the heap, not the stack
+  setupXTreeWidgetItemProto(engine);
+  setupQUrlProto(engine);
+  setupQNetworkAccessManagerProto(engine);
+  setupQNetworkRequestProto(engine);
+  setupQNetworkReplyProto(engine);
 }

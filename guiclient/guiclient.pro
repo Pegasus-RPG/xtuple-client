@@ -4,9 +4,17 @@ TARGET   = xtuple
 CONFIG   += qt warn_on assistant uitools designer
 TEMPLATE = app
 
-INCLUDEPATH += ../common ../widgets ../widgets/tmp/lib .
-DEPENDPATH  += ../common ../widgets ../widgets/tmp/lib
-LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer -lQtDesignerComponents
+INCLUDEPATH += scriptapi \
+               ../common \
+               ../widgets ../widgets/scriptapi ../widgets/tmp/lib .
+
+DEPENDPATH  += scriptapi \
+               ../common \
+               ../widgets ../widgets/scriptapi ../widgets/tmp/lib
+
+LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
+               -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
+               -lQtDesignerComponents
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
 win32 {
@@ -674,7 +682,11 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xsltMap.h                                            \
-               xTupleDesigner.h xTupleDesignerActions.h
+               xTupleDesigner.h xTupleDesignerActions.h                                               \
+               scriptapi/xnetworkaccessmanager.h                                                      \
+               scriptapi/qnetworkreplyproto.h                                                         \
+               scriptapi/qnetworkrequestproto.h                                                       \
+               scriptapi/qurlproto.h
 
 
 SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp                             \
@@ -1004,8 +1016,12 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
                jsHighlighter.cpp                                                                      \
-               idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                            \
-               xTupleDesigner.cpp xTupleDesignerActions.cpp
+               idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
+               xTupleDesigner.cpp xTupleDesignerActions.cpp                                           \
+               scriptapi/xnetworkaccessmanager.cpp                                                    \
+               scriptapi/qnetworkreplyproto.cpp                                                       \
+               scriptapi/qnetworkrequestproto.cpp                                                     \
+               scriptapi/qurlproto.cpp
 
 QT += xml sql script network
 QT += webkit

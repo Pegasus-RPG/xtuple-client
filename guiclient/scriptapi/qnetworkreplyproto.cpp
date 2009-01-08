@@ -196,5 +196,254 @@ QUrl QNetworkReplyProto::url() const
 
 QString QNetworkReplyProto::toString() const
 {
-  return QString("QNetworkReply(url=%1)").arg(url());
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return QString("QNetworkReply(url=%1)").arg(url());
+  return QString("QNetworkReply(unknown)").arg(url());
+}
+
+qint64 QNetworkReplyProto::bytesAvailable() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->bytesAvailable();
+  return 0;
+}
+
+qint64 QNetworkReplyProto::bytesToWrite() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->bytesToWrite();
+  return 0;
+}
+
+bool QNetworkReplyProto::canReadLine() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->canReadLine();
+  return false;
+}
+
+QString QNetworkReplyProto::errorString() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->errorString();
+  return QString();
+}
+
+bool QNetworkReplyProto::getChar(char * c)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->getChar(c);
+  return false;
+}
+
+bool QNetworkReplyProto::isOpen() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isOpen();
+  return false;
+}
+
+bool QNetworkReplyProto::isReadable() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isReadable();
+  return false;
+}
+
+bool QNetworkReplyProto::isSequential() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isSequential();
+  return false;
+}
+
+bool QNetworkReplyProto::isTextModeEnabled() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isTextModeEnabled();
+  return false;
+}
+
+bool QNetworkReplyProto::isWritable() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isWritable();
+  return false;
+}
+
+bool QNetworkReplyProto::open(int mode)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->open((QIODevice::OpenMode)mode);
+  return false;
+}
+
+int QNetworkReplyProto::openMode() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->openMode();
+  return 0;
+}
+
+qint64 QNetworkReplyProto::peek(char * data, qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->peek(data, maxSize);
+  return 0;
+}
+
+QByteArray QNetworkReplyProto::peek(qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->peek(maxSize);
+  return QByteArray();
+}
+
+qint64 QNetworkReplyProto::pos() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->pos();
+  return 0;
+}
+
+bool QNetworkReplyProto::putChar(char c)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->putChar(c);
+  return false;
+}
+
+qint64 QNetworkReplyProto::read(char * data, qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->read(data, maxSize);
+  return 0;
+}
+
+QByteArray QNetworkReplyProto::read(qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->read(maxSize);
+  return QByteArray();
+}
+
+QByteArray QNetworkReplyProto::readAll()
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->readAll();
+  return QByteArray();
+}
+
+qint64 QNetworkReplyProto::readLine(char * data, qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->readLine(data, maxSize);
+  return 0;
+}
+
+QByteArray QNetworkReplyProto::readLine(qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->readLine(maxSize);
+  return QByteArray();
+}
+
+bool QNetworkReplyProto::reset()
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->reset();
+  return false;
+}
+
+bool QNetworkReplyProto::seek(qint64 pos)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->seek(pos);
+  return false;
+}
+
+void QNetworkReplyProto::setTextModeEnabled(bool enabled)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    item->setTextModeEnabled(enabled);
+}
+
+qint64 QNetworkReplyProto::size() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->size();
+  return 0;
+}
+
+void QNetworkReplyProto::ungetChar(char c)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    item->ungetChar(c);
+}
+
+bool QNetworkReplyProto::waitForBytesWritten(int msecs)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->waitForBytesWritten(msecs);
+  return false;
+}
+
+bool QNetworkReplyProto::waitForReadyRead(int msecs)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->waitForReadyRead(msecs);
+  return false;
+}
+
+qint64 QNetworkReplyProto::write(const char * data, qint64 maxSize)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->write(data, maxSize);
+  return 0;
+}
+
+qint64 QNetworkReplyProto::write(const QByteArray &byteArray)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->write(byteArray);
+  return 0;
+}
+
+qint64 QNetworkReplyProto::write(const QString &string)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->write(string.toAscii());
+  return 0;
 }

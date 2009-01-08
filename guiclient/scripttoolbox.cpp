@@ -57,41 +57,41 @@
 
 #include "scripttoolbox.h"
 
-#include <QWidget>
-#include <QLayout>
-#include <QGridLayout>
 #include <QBoxLayout>
-#include <QStackedLayout>
+#include <QDateTime>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QGridLayout>
+#include <QIODevice>
+#include <QLayout>
+#include <QList>
+#include <QMenu>
 #include <QMessageBox>
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 #include <QSqlError>
-#include <QDateTime>
-#include <QList>
-#include <QMenu>
+#include <QStackedLayout>
 #include <QTabWidget>
-#include <QFileDialog>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QFile>
-#include <QDir>
-#include <QIODevice>
 #include <QTextStream>
+#include <QUrl>
+#include <QWidget>
 #include <qwebview.h>
 
 #include <parameter.h>
 #include <metasql.h>
 #include <openreports.h>
 
-#include "xuiloader.h"
-#include "scriptquery.h"
-#include "mqlutil.h"
-#include "xtreewidget.h"
-#include "xmainwindow.h"
-#include "xdialog.h"
 #include "creditcardprocessor.h"
+#include "mqlutil.h"
+#include "scriptquery.h"
+#include "xdialog.h"
+#include "xmainwindow.h"
+#include "xtreewidget.h"
+#include "xuiloader.h"
 
-QWidget * ScriptToolbox::_lastWindow = 0;
+QWidget *ScriptToolbox::_lastWindow = 0;
 
 ScriptToolbox::ScriptToolbox(QScriptEngine * engine)
   : QObject(engine)
@@ -560,6 +560,25 @@ bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
    return dir.rmpath(rmPath);
 }
 
+void ScriptToolbox::listProperties(const QScriptValue &obj) const
+{
+  qWarning("Properties of %s:", qPrintable(obj.toString()));
+  QScriptValue tmp = obj;
+  while (tmp.isObject())
+  {
+    QScriptValueIterator prop(tmp);
+    if (prop.hasNext())
+      for (prop.next(); prop.hasNext(); prop.next())
+        qWarning("  %s\t= %s",
+                 qPrintable(prop.name()), qPrintable(prop.value().toString()));
+    tmp = tmp.prototype();
+    if (! (tmp.isNull() || tmp.isUndefined()))
+      qWarning(" Prototype %s of %s:",
+               qPrintable(tmp.toString()), qPrintable(obj.toString()));
+  }
+  qWarning("End of %s", qPrintable(obj.toString()));
+}
+
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
 {
   int btn;
@@ -683,7 +702,7 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
         engine(window)->globalObject().setProperty("mydialog", mydialog);
       }
       else
-        qDebug("Could not find the script engine to embed a dialog inside "
+        qWarning("Could not find the script engine to embed a dialog inside "
                "a placeholder window");
 
       omfgThis->handleNewWindow(window);
@@ -827,16 +846,15 @@ void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
     else if (obj.toString() == "CHANGEALL")
       en = CHANGEALL;
     else
-      qDebug("string %s could not be converted to SaveFlags",
-             qPrintable(obj.toString()));
+      qWarning("string %s could not be converted to SaveFlags",
+               qPrintable(obj.toString()));
   }
   else
-    qDebug("object %s could not be converted to SaveFlags",
-           qPrintable(obj.toString()));
+    qWarning("object %s could not be converted to SaveFlags",
+             qPrintable(obj.toString()));
 }
 
 QObject *ScriptToolbox::getCreditCardProcessor()
 {
   return CreditCardProcessor::getProcessor();
 }
-

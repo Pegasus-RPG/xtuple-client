@@ -60,7 +60,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include <QScriptValue>
+#include <QtScript>
 
 #include <parametergroup.h>
 
@@ -86,14 +86,12 @@ enum SaveFlags
 };
 
 Q_DECLARE_METATYPE(ParameterList)
-Q_DECLARE_METATYPE(QUrl);
 Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes);
 Q_DECLARE_METATYPE(enum Qt::WindowModality);
 Q_DECLARE_METATYPE(enum SaveFlags);
-//Q_DECLARE_METATYPE(enum AddressCluster::SaveFlags);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
@@ -115,8 +113,6 @@ void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowMod
 
 QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en);
 void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en);
-// QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum AddressCluster::SaveFlags &en);
-// void SaveFlagsfromScriptValue(const QScriptValue &obj, enum AddressCluster::SaveFlags &en);
 
 class ScriptToolbox : public QObject
 {
@@ -194,15 +190,15 @@ class ScriptToolbox : public QObject
     bool renameFile(const QString & oldName, const QString & newName);
     bool removeFile(const QString & name);
     bool fileExists(const QString & name);
-    QString textStreamRead(const QString & name);
-    bool textStreamWrite(const QString & name, const QString & WriteText);
-    QString getHomeDir();
     QString getCurrentDir();
+    QString getHomeDir();
+    void    listProperties(const QScriptValue &obj) const;
+    bool    makePath(const QString & mkPath, const QString & rootPath);
+    int     messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
+    bool    removePath(const QString & rmPath, const QString & rootPath);
     QString rootPath();
-    bool makePath(const QString & mkPath, const QString & rootPath);
-    bool removePath(const QString & rmPath, const QString & rootPath);
-
-    int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
+    QString textStreamRead(const QString & name);
+    bool    textStreamWrite(const QString & name, const QString & WriteText);
 
     QObject *getCreditCardProcessor();
 

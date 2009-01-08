@@ -95,6 +95,39 @@ class QNetworkReplyProto : public QObject, public QScriptable
     Q_INVOKABLE QSslConfiguration sslConfiguration() const;
     Q_INVOKABLE QString           toString()         const;
     Q_INVOKABLE QUrl              url()              const;
+
+    // now for the QIODevice API
+    Q_INVOKABLE virtual qint64      bytesAvailable()        const;
+    Q_INVOKABLE virtual qint64      bytesToWrite()          const;
+    Q_INVOKABLE virtual bool        canReadLine()           const;
+    Q_INVOKABLE QString             errorString()           const;
+    Q_INVOKABLE bool                getChar(char * c);
+    Q_INVOKABLE bool                isOpen()                const;
+    Q_INVOKABLE bool                isReadable()            const;
+    Q_INVOKABLE virtual bool        isSequential()          const;
+    Q_INVOKABLE bool                isTextModeEnabled()     const;
+    Q_INVOKABLE bool                isWritable()            const;
+    Q_INVOKABLE virtual bool        open(int mode);
+    Q_INVOKABLE int                 openMode()              const;
+    Q_INVOKABLE qint64              peek(char * data, qint64 maxSize);
+    Q_INVOKABLE QByteArray          peek(qint64 maxSize);
+    Q_INVOKABLE virtual qint64      pos()                   const;
+    Q_INVOKABLE bool                putChar(char c);
+    Q_INVOKABLE qint64              read(char * data, qint64 maxSize);
+    Q_INVOKABLE QByteArray          read(qint64 maxSize);
+    Q_INVOKABLE QByteArray          readAll();
+    Q_INVOKABLE qint64              readLine(char * data, qint64 maxSize);
+    Q_INVOKABLE QByteArray          readLine(qint64 maxSize = 0);
+    Q_INVOKABLE virtual bool        reset();
+    Q_INVOKABLE virtual bool        seek(qint64 pos);
+    Q_INVOKABLE void                setTextModeEnabled(bool enabled);
+    Q_INVOKABLE virtual qint64      size()                  const;
+    Q_INVOKABLE void                ungetChar(char c);
+    Q_INVOKABLE virtual bool        waitForBytesWritten(int msecs);
+    Q_INVOKABLE virtual bool        waitForReadyRead(int msecs);
+    Q_INVOKABLE qint64              write(const char * data, qint64 maxSize);
+    Q_INVOKABLE qint64              write(const QByteArray &byteArray);
+    Q_INVOKABLE qint64              write(const QString &string);
 };
 
 #endif
