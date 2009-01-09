@@ -103,10 +103,28 @@ ScriptToolbox::~ScriptToolbox()
 {
 }
 
+QObject * ScriptToolbox::executeQuery(const QString & query)
+{
+  ParameterList params;
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql(query);
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
 QObject * ScriptToolbox::executeQuery(const QString & query, const ParameterList & params)
 {
   ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql(query);
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
+QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
+{
+  ParameterList params;
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql = mqlLoad(group, name);
   sq->setQuery(mql.toQuery(params));
   return sq;
 }

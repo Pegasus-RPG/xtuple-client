@@ -127,7 +127,9 @@ class ScriptToolbox : public QObject
 
   public slots:
 
+    QObject * executeQuery(const QString & query);
     QObject * executeQuery(const QString & query, const ParameterList & params);
+    QObject * executeDbQuery(const QString & group, const QString & name);
     QObject * executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
     QObject * executeBegin();
     QObject * executeCommit();
