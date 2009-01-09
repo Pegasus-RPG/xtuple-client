@@ -91,8 +91,10 @@ class QNetworkReplyProto : public QObject, public QScriptable
     Q_INVOKABLE qint64            readBufferSize()   const;
     Q_INVOKABLE QNetworkRequest   request()          const;
     Q_INVOKABLE void              setReadBufferSize(qint64 size);
+#ifndef QT_NO_OPENSSL
     Q_INVOKABLE void              setSslConfiguration(const QSslConfiguration &config);
     Q_INVOKABLE QSslConfiguration sslConfiguration() const;
+#endif
     Q_INVOKABLE QString           toString()         const;
     Q_INVOKABLE QUrl              url()              const;
 

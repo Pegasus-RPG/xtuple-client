@@ -158,18 +158,12 @@ void QNetworkRequestProto::setRawHeader(const QByteArray &headerName, const QByt
     item->setRawHeader(headerName, headerValue);
 }
 
+#ifndef QT_NO_OPENSSL
 void QNetworkRequestProto::setSslConfiguration(const QSslConfiguration &config)
 {
   QNetworkRequest *item = qscriptvalue_cast<QNetworkRequest*>(thisObject());
   if (item)
     item->setSslConfiguration(config);
-}
-
-void QNetworkRequestProto::setUrl(const QUrl &url)
-{
-  QNetworkRequest *item = qscriptvalue_cast<QNetworkRequest*>(thisObject());
-  if (item)
-    item->setUrl(url);
 }
 
 QSslConfiguration QNetworkRequestProto::sslConfiguration() const
@@ -178,6 +172,14 @@ QSslConfiguration QNetworkRequestProto::sslConfiguration() const
   if (item)
     return item->sslConfiguration();
   return QSslConfiguration();
+}
+#endif
+
+void QNetworkRequestProto::setUrl(const QUrl &url)
+{
+  QNetworkRequest *item = qscriptvalue_cast<QNetworkRequest*>(thisObject());
+  if (item)
+    item->setUrl(url);
 }
 
 QUrl QNetworkRequestProto::url() const

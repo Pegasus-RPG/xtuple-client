@@ -171,6 +171,7 @@ void QNetworkReplyProto::setReadBufferSize(qint64 size)
     item->setReadBufferSize(size);
 }
 
+#ifndef QT_NO_OPENSSL
 void QNetworkReplyProto::setSslConfiguration(const QSslConfiguration &config)
 {
   QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
@@ -185,6 +186,7 @@ QSslConfiguration QNetworkReplyProto::sslConfiguration() const
     return item->sslConfiguration();
   return QSslConfiguration();
 }
+#endif 
 
 QUrl QNetworkReplyProto::url() const
 {

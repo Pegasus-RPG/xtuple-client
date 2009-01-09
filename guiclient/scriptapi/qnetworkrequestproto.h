@@ -90,9 +90,11 @@ class QNetworkRequestProto : public QObject, public QScriptable
                                             const QVariant &value);
     Q_INVOKABLE void              setRawHeader(const QByteArray &headerName,
                                                const QByteArray &headerValue);
+#ifndef QT_NO_OPENSSL
     Q_INVOKABLE void              setSslConfiguration(const QSslConfiguration &config);
-    Q_INVOKABLE void              setUrl(const QUrl &url);
     Q_INVOKABLE QSslConfiguration sslConfiguration() const;
+#endif
+    Q_INVOKABLE void              setUrl(const QUrl &url);
     Q_INVOKABLE QString           toString()         const;
     Q_INVOKABLE QUrl              url()              const;
 };
