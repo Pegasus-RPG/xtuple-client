@@ -194,7 +194,6 @@ void Screen::insert()
   _mapper->model()->insertRows(_model->rowCount(),1);
   _mapper->toLast();
   _mapper->clear();
-  emit currentIndexChanged(_mapper->currentIndex());
 }
 
 void Screen::newMappedWidget(QWidget *widget)

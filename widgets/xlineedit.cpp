@@ -208,10 +208,9 @@ void XLineEdit::focusInEvent(QFocusEvent *pEvent)
   QLineEdit::focusInEvent(pEvent);
 }
 
-void XLineEdit::setData(const QString &/*pString*/)
+void XLineEdit::setData(const QString &text)
 {
-  if (_mapper->model() &&
-      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
+  if (_mapper->model())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text);
 }
 

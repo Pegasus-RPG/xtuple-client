@@ -245,23 +245,14 @@ void AddressCluster::silentSetId(const int pId)
 
             if (_mapper->model())
             {
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active))).toBool() != _active->isChecked())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1))).toString() != _addr1->text())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1)), _addr1->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2))).toString() != _addr2->text())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2)), _addr2->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3))).toString() != _addr3->text())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3)), _addr3->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city))).toString() != _city->text())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city)), _city->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state))).toString() != _state->currentText())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state)), _state->currentText());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode))).toString() != _postalcode->text())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode)), _postalcode->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country))).toString() != _country->currentText())
                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country)), _country->currentText());    
             }
 

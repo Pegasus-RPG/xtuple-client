@@ -91,7 +91,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 
   public slots:
     virtual void sParse();
-    virtual void setData(const QString &);
+    virtual void setData(const QString &text);
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDefaultText(QString p)  { _default = p; };
     virtual void setFieldName(QString p)    { _fieldName = p; };
