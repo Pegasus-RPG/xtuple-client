@@ -136,6 +136,7 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE void       setPort(int port);
     Q_INVOKABLE void       setQueryDelimiters(char valueDelimiter, char pairDelimiter);
     Q_INVOKABLE void       setQueryItems(const QList<QPair<QString, QString> > &query);
+    Q_INVOKABLE void       setQueryItems(const QVariantMap &map);
     Q_INVOKABLE void       setScheme(const QString &scheme);
     Q_INVOKABLE void       setUrl(const QString &url);
     Q_INVOKABLE void       setUrl(const QString &url, QUrl::ParsingMode parsingMode);

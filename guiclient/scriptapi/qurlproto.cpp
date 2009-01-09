@@ -540,6 +540,24 @@ void QUrlProto::setQueryItems(const QList<QPair<QString, QString> > &query)
     item->setQueryItems(query);
 }
 
+void QUrlProto::setQueryItems(const QVariantMap &map)
+{
+  if (DEBUG) qDebug("setQueryItems(const QVariantMap &map) entered");
+  QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+  if (item)
+  {
+    QList<QPair<QString, QString> > query;
+    QMapIterator<QString, QVariant> i(map);
+    while (i.hasNext())
+    {
+      i.next();
+      query.append(qMakePair(i.key(), i.value().toString()));
+    }
+
+    item->setQueryItems(query);
+  }
+}
+
 void QUrlProto::setScheme(const QString &scheme)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
