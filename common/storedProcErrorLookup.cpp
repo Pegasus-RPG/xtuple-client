@@ -609,33 +609,39 @@ void initErrorLookupHash()
 			       "for this Shipto. You may Edit the "
 			       "selected Shipto and set its status to "
 			       "inactive."),			 0, "" },
-  { "deleteSO",  -1, TR("This Sales Order cannot be deleted as some of its "
-			"line items have already been shipped."),	0, "" },
-  { "deleteSO",  -2, TR("This Sales Order cannot be deleted as some of its "
-			"line items have already been issued to shipping.  "
-			"You must return this stock before "
-		        "you may delete this Sales Order."),		0, "" },
 
+  { "deleteSO",	 -1, TR("This Sales Order cannot be deleted because a Credit "
+			"Card has been charged for it."),		0, "" },
+  { "deleteSO",	 -2, TR("This Sales Order cannot be deleted because there is "
+			"Credit Card transaction history for it."),	0, "" },
   /* uncomment this when releaseSoNumber returns INTEGER instead of BOOLEAN
   { "deleteSO",  -3, TR("This Sales Order cannot be deleted because there was "
 			"an internal error releasing the Sales Order Number."),
 									0, "" },
   */
-
-  { "deleteSO",	 -4, TR("This Sales Order cannot be deleted because a Credit "
-			"Card has been charged for it."),		0, "" },
-  { "deleteSO",	 -5, TR("This Sales Order cannot be deleted because there is "
-			"Credit Card transaction history for it."),	0, "" },
-  { "deleteSO",  -6, TR("This Sales Order cannot be deleted as some of its "
+  { "deleteSO",  -101, TR("This Sales Order cannot be deleted as some of its "
+			"line items have already been shipped."),	0, "" },
+  { "deleteSO",  -102, TR("This Sales Order cannot be deleted as some of its "
+			"line items have already been issued to shipping.  "
+			"You must return this stock before "
+		        "you may delete this Sales Order."),		0, "" },
+  { "deleteSO",  -103, TR("This Sales Order cannot be deleted as some of its "
 			"line items are linked to a Return Authorization.  "
 			"You must resolve this conflict before "
 		        "you may delete this Sales Order."),		0, "" },
+  { "deleteSO",  -104, TR("This Sales Order cannot be deleted as some of its "
+			"line items are linked to an In Process Work Order.  "
+			"You must resolve this conflict before "
+		        "you may delete this Sales Order."),		0, "" },
 
-  { "deleteSOItem",  -1, TR("This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
-  { "deleteSOItem",  -2, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping.  "
+  { "deleteSOItem",  -101, TR("This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
+  { "deleteSOItem",  -102, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping.  "
 			"You must return this stock before "
 		        "you may delete this Sales Order Item."),		0, "" },
-  { "deleteSOItem",  -6, TR("This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  "
+  { "deleteSOItem",  -103, TR("This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  "
+			"You must resolve this conflict before "
+		        "you may delete this Sales Order Item."),		0, "" },
+  { "deleteSOItem",  -104, TR("This Sales Order Item cannot be deleted as it is linked to an In Process Work Order.  "
 			"You must resolve this conflict before "
 		        "you may delete this Sales Order Item."),		0, "" },
 
