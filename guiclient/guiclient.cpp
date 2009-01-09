@@ -130,6 +130,7 @@
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qurlproto.h"
+#include "xdatawidgetmapperproto.h"
 #include "xnetworkaccessmanager.h"
 #include "xtreewidgetitemproto.h"
 
@@ -1446,4 +1447,5 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkRequestProto(engine);
   setupQNetworkReplyProto(engine);
+  setupXDataWidgetMapperProto(engine);
 }
