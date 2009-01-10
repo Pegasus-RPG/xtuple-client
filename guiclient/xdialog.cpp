@@ -63,7 +63,6 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QShowEvent>
-#include <QtScript>
 #include <QDebug>
 
 #include "guiclient.h"
@@ -202,6 +201,8 @@ void XDialog::showEvent(QShowEvent *event)
           omfgThis->loadScriptGlobals(_private->_engine);
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
+          _private->_engine->globalObject().setProperty(oName.remove(" "), mywindow);
+          setScriptableWidget(this,_private->_engine);
         }
   
         QScriptValue result = _private->_engine->evaluate(script);
@@ -230,4 +231,26 @@ void XDialog::setRememberSize(bool b)
   settings.setValue(objectName() + "/geometry/rememberSize", b);
   if(_private && _private->_rememberSize)
     _private->_rememberSize->setChecked(b);
+}
+
+void XDialog::setScriptableWidget(QWidget *widget, QScriptEngine *engine)
+{
+  QObjectList chldrn = widget->children();
+  QObject *chld;
+  QScriptValue winObj;
+  while (chldrn.count())
+  {
+    chld = chldrn.first();
+    if (chld->inherits("QWidget"))
+    {
+      if (!chld->objectName().isEmpty())
+      {
+        winObj = engine->newQObject(chld);
+        engine->globalObject().setProperty(chld->objectName(), winObj);
+      }    
+      if (chld->children().count())
+        setScriptableWidget(static_cast<QWidget*>(chld),engine);
+    }
+    chldrn.takeFirst(); 
+  }
 }

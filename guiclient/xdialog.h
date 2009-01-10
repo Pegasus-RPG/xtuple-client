@@ -58,6 +58,7 @@
 #define __XDIALOG_H__
 
 #include <QDialog>
+#include <QtScript>
 
 class XDialogPrivate;
 
@@ -77,6 +78,7 @@ class XDialog : public QDialog
 
   protected:
     virtual void showEvent ( QShowEvent * event );
+    virtual void setScriptableWidget(QWidget *widget, QScriptEngine *engine);
 
   private:
     friend class XDialogPrivate;

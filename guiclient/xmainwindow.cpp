@@ -180,7 +180,7 @@ void XMainWindow::showEvent(QShowEvent *event)
   if(!_private->_shown)
   {
     _private->_shown = true;
-qDebug("isModal() %s", isModal()?"true":"false");
+//qDebug("isModal() %s", isModal()?"true":"false");
 
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
     if(!omfgThis->showTopLevel() && !isModal())
@@ -240,6 +240,8 @@ qDebug("isModal() %s", isModal()?"true":"false");
           omfgThis->loadScriptGlobals(_private->_engine);
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
+          _private->_engine->globalObject().setProperty(objectName(), mywindow);
+          setScriptableWidget(centralWidget(), _private->_engine);
         }
   
         QScriptValue result = _private->_engine->evaluate(script);
@@ -299,7 +301,6 @@ void XMainWindow::showMe(bool v)
   target->setVisible(v);
 }
 
-
 QScriptEngine *engine(XMainWindow *win)
 {
   // copied from showEvent - why is it hidden there and not in the constructor?
@@ -309,7 +310,31 @@ QScriptEngine *engine(XMainWindow *win)
     omfgThis->loadScriptGlobals(win->_private->_engine);
     QScriptValue mywindow = win->_private->_engine->newQObject(win);
     win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
+    win->_private->_engine->globalObject().setProperty(win->objectName(), mywindow);
+    setScriptableWidget(win->centralWidget(), win->_private->_engine);
   }
 
   return win->_private->_engine;
+}
+
+void setScriptableWidget(QWidget *widget, QScriptEngine *engine)
+{
+  QObjectList chldrn = widget->children();
+  QObject *chld;
+  QScriptValue winObj;
+  while (chldrn.count())
+  {
+    chld = chldrn.first();
+    if (chld->inherits("QWidget"))
+    {
+      if (!chld->objectName().isEmpty())
+      {
+        winObj = engine->newQObject(chld);
+        engine->globalObject().setProperty(chld->objectName(), winObj);
+      }    
+      if (chld->children().count())
+        setScriptableWidget(static_cast<QWidget*>(chld),engine);
+    }
+    chldrn.takeFirst(); 
+  }
 }

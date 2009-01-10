@@ -94,6 +94,7 @@ class XMainWindow : public QMainWindow
     friend class ScriptToolbox;
     XMainWindowPrivate *_private;
     friend QScriptEngine *engine(XMainWindow*);
+    friend void setScriptableWidget(QWidget *widget, QScriptEngine *engine);
 
     ParameterList _params;
 

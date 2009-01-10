@@ -63,7 +63,6 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QShowEvent>
-#include <QtScript>
 #include <QDebug>
 
 #include "guiclient.h"
@@ -211,6 +210,9 @@ void XWidget::showEvent(QShowEvent *event)
           omfgThis->loadScriptGlobals(_private->_engine);
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
+          _private->_engine->globalObject().setProperty(oName.remove(" "), mywindow);
+       //   if(findChild<QWidget*>(oName))
+            setScriptableWidget(this,_private->_engine);
         }
   
         QScriptValue result = _private->_engine->evaluate(script);
@@ -223,4 +225,26 @@ void XWidget::showEvent(QShowEvent *event)
     }
   }
   QWidget::showEvent(event);
+}
+
+void XWidget::setScriptableWidget(QWidget *widget, QScriptEngine *engine)
+{
+  QObjectList chldrn = widget->children();
+  QObject *chld;
+  QScriptValue winObj;
+  while (chldrn.count())
+  {
+    chld = chldrn.first();
+    if (chld->inherits("QWidget"))
+    {
+      if (!chld->objectName().isEmpty())
+      {
+        winObj = engine->newQObject(chld);
+        engine->globalObject().setProperty(chld->objectName(), winObj);
+      }    
+      if (chld->children().count())
+        setScriptableWidget(static_cast<QWidget*>(chld),engine);
+    }
+    chldrn.takeFirst(); 
+  }
 }
