@@ -276,6 +276,7 @@ class GUIClient : public QMainWindow
     QWidget * myActiveWindow();
 
     void loadScriptGlobals(QScriptEngine * engine);
+    void widgetScriptGlobals(QWidget *widget, const QString &name, QScriptEngine *engine);
 
   public slots:
     void sReportError(const QString &);

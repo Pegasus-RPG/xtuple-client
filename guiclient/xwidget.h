@@ -74,7 +74,6 @@ class XWidget : public QWidget
   protected:
     void closeEvent(QCloseEvent * event);
     void showEvent(QShowEvent * event);
-    void setScriptableWidget(QWidget *widget, QScriptEngine *engine);
 
   private:
     friend class XWidgetPrivate;

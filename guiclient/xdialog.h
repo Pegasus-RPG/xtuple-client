@@ -78,7 +78,6 @@ class XDialog : public QDialog
 
   protected:
     virtual void showEvent ( QShowEvent * event );
-    virtual void setScriptableWidget(QWidget *widget, QScriptEngine *engine);
 
   private:
     friend class XDialogPrivate;

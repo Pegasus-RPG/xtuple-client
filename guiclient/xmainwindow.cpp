@@ -238,10 +238,11 @@ void XMainWindow::showEvent(QShowEvent *event)
         {
           _private->_engine = new QScriptEngine(this);
           omfgThis->loadScriptGlobals(_private->_engine);
+          omfgThis->widgetScriptGlobals(centralWidget(), objectName(), _private->_engine);
+          
+          //This is legacy support now
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
-          _private->_engine->globalObject().setProperty(objectName(), mywindow);
-          setScriptableWidget(centralWidget(), _private->_engine);
         }
   
         QScriptValue result = _private->_engine->evaluate(script);
@@ -308,33 +309,12 @@ QScriptEngine *engine(XMainWindow *win)
   {
     win->_private->_engine = new QScriptEngine(win);
     omfgThis->loadScriptGlobals(win->_private->_engine);
+    omfgThis->widgetScriptGlobals(win->centralWidget(), win->objectName(), win->_private->_engine);
+    
+    // This is legacy support now
     QScriptValue mywindow = win->_private->_engine->newQObject(win);
     win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
-    win->_private->_engine->globalObject().setProperty(win->objectName(), mywindow);
-    setScriptableWidget(win->centralWidget(), win->_private->_engine);
   }
 
   return win->_private->_engine;
-}
-
-void setScriptableWidget(QWidget *widget, QScriptEngine *engine)
-{
-  QObjectList chldrn = widget->children();
-  QObject *chld;
-  QScriptValue winObj;
-  while (chldrn.count())
-  {
-    chld = chldrn.first();
-    if (chld->inherits("QWidget"))
-    {
-      if (!chld->objectName().isEmpty())
-      {
-        winObj = engine->newQObject(chld);
-        engine->globalObject().setProperty(chld->objectName(), winObj);
-      }    
-      if (chld->children().count())
-        setScriptableWidget(static_cast<QWidget*>(chld),engine);
-    }
-    chldrn.takeFirst(); 
-  }
 }
