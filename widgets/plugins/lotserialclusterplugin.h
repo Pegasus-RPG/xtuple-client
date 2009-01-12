@@ -79,7 +79,7 @@ class LotserialClusterPlugin : public QObject, public QDesignerCustomWidgetInter
       return "<widget class=\"LotserialCluster\" name=\"lotserialcluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "lotserialcluster.h"; }
     QString name() const { return "LotserialCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class CommentsPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"Comments\" name=\"comments\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "comments.h"; }
     QString name() const { return "Comments"; }
     QString toolTip() const { return ""; }

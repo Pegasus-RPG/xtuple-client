@@ -79,7 +79,7 @@ class OrderClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"OrderCluster\" name=\"OrderCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "ordercluster.h"; }
     QString name() const { return "OrderCluster"; }
     QString toolTip() const { return ""; }

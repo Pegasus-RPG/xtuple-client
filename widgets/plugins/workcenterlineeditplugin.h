@@ -79,7 +79,7 @@ class WorkCenterLineEditPlugin : public QObject, public QDesignerCustomWidgetInt
       return "<widget class=\"WorkCenterLineEdit\" name=\"workCenterLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "workcentercluster.h"; }
     QString name() const { return "WorkCenterLineEdit"; }
     QString toolTip() const { return ""; }

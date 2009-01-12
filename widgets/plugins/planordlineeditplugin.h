@@ -79,7 +79,7 @@ class PlanOrdLineEditPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"PlanOrdLineEdit\" name=\"planordLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "plCluster.h"; }
     QString name() const { return "PlanOrdLineEdit"; }
     QString toolTip() const { return ""; }

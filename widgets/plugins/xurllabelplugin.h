@@ -79,7 +79,7 @@ class XURLLabelPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XURLLabel\" name=\"xurlLabel\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xurllabel.h"; }
     QString name() const { return "XURLLabel"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class PeriodsListViewPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"PeriodsListView\" name=\"periodslistView\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "calendarTools.h"; }
     QString name() const { return "PeriodsListView"; }
     QString toolTip() const { return ""; }

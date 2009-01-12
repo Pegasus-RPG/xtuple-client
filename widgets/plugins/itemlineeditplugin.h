@@ -79,7 +79,7 @@ class ItemLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ItemLineEdit\" name=\"itemLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "itemlineedit.h"; }
     QString name() const { return "ItemLineEdit"; }
     QString toolTip() const { return ""; }

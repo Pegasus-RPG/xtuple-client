@@ -79,7 +79,7 @@ class XTextEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XTextEdit\" name=\"xTextEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xtextedit.h"; }
     QString name() const { return "XTextEdit"; }
     QString toolTip() const { return ""; }

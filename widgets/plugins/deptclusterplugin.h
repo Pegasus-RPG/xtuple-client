@@ -79,7 +79,7 @@ class DeptClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"DeptCluster\" name=\"deptcluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "deptcluster.h"; }
     QString name() const { return "DeptCluster"; }
     QString toolTip() const { return ""; }

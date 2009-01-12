@@ -79,7 +79,7 @@ class OpportunityClusterPlugin : public QObject, public QDesignerCustomWidgetInt
       return "<widget class=\"OpportunityCluster\" name=\"opportunityCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "opportunitycluster.h"; }
     QString name() const { return "OpportunityCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class XComboBoxPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XComboBox\" name=\"xcomboBox\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xcombobox.h"; }
     QString name() const { return "XComboBox"; }
     QString toolTip() const { return ""; }

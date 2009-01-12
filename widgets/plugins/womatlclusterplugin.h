@@ -79,7 +79,7 @@ class WomatlClusterPlugin : public QObject, public QDesignerCustomWidgetInterfac
       return "<widget class=\"WomatlCluster\" name=\"womatlCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "womatlcluster.h"; }
     QString name() const { return "WomatlCluster"; }
     QString toolTip() const { return ""; }

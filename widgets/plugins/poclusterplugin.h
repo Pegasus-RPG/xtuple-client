@@ -79,7 +79,7 @@ class PoClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"PoCluster\" name=\"poCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "pocluster.h"; }
     QString name() const { return "PoCluster"; }
     QString toolTip() const { return ""; }

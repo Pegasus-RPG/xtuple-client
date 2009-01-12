@@ -79,7 +79,7 @@ class IncidentClusterPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"IncidentCluster\" name=\"incidentCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "incidentcluster.h"; }
     QString name() const { return "IncidentCluster"; }
     QString toolTip() const { return ""; }

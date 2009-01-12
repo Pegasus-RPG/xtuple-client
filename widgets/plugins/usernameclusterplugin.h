@@ -79,7 +79,7 @@ class UsernameClusterPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"UsernameCluster\" name=\"usernameCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "usernamecluster.h"; }
     QString name() const { return "UsernameCluster"; }
     QString toolTip() const { return ""; }

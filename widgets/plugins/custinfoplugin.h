@@ -79,7 +79,7 @@ class CustInfoPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"CustInfo\" name=\"custInfo\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "custcluster.h"; }
     QString name() const { return "CustInfo"; }
     QString toolTip() const { return ""; }

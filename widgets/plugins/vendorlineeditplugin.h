@@ -79,7 +79,7 @@ class VendorLineEditPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"VendorLineEdit\" name=\"vendorLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "vendorlineedit.h"; }
     QString name() const { return "VendorLineEdit"; }
     QString toolTip() const { return ""; }

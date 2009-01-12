@@ -79,7 +79,7 @@ class ProjectLineEditPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"ProjectLineEdit\" name=\"projectLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "projectcluster.h"; }
     QString name() const { return "ProjectLineEdit"; }
     QString toolTip() const { return ""; }

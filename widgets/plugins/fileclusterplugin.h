@@ -79,7 +79,7 @@ class FileClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"FileCluster\" name=\"fileCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "filecluster.h"; }
     QString name() const { return "FileCluster"; }
     QString toolTip() const { return ""; }

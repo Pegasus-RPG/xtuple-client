@@ -79,7 +79,7 @@ class DateClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"DateCluster\" name=\"datecluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "datecluster.h"; }
     QString name() const { return "DateCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class ToClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ToCluster\" name=\"toCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "tocluster.h"; }
     QString name() const { return "ToCluster"; }
     QString toolTip() const { return ""; }

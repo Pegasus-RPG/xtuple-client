@@ -79,7 +79,7 @@ class WoLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"WoLineEdit\" name=\"woLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "wocluster.h"; }
     QString name() const { return "WoLineEdit"; }
     QString toolTip() const { return ""; }

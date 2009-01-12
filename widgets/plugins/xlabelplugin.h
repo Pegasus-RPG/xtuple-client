@@ -79,7 +79,7 @@ class XLabelPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XLabel\" name=\"xlabel\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xlabel.h"; }
     QString name() const { return "XLabel"; }
     QString toolTip() const { return ""; }

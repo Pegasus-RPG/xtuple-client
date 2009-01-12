@@ -79,7 +79,7 @@ class UsernameLineEditPlugin : public QObject, public QDesignerCustomWidgetInter
       return "<widget class=\"UsernameLineEdit\" name=\"usernameLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "usernamecluster.h"; }
     QString name() const { return "UsernameLineEdit"; }
     QString toolTip() const { return ""; }

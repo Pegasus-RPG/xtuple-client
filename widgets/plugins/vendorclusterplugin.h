@@ -79,7 +79,7 @@ class VendorClusterPlugin : public QObject, public QDesignerCustomWidgetInterfac
       return "<widget class=\"VendorCluster\" name=\"vendorCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "vendorcluster.h"; }
     QString name() const { return "VendorCluster"; }
     QString toolTip() const { return ""; }

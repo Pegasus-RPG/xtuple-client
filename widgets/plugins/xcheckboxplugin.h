@@ -79,7 +79,7 @@ class XCheckBoxPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XCheckBox\" name=\"xCheckBox\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xcheckbox.h"; }
     QString name() const { return "XCheckBox"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class ShiftClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ShiftCluster\" name=\"shiftCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "shiftcluster.h"; }
     QString name() const { return "ShiftCluster"; }
     QString toolTip() const { return ""; }

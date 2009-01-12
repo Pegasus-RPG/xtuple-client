@@ -79,7 +79,7 @@ class ShiptoClusterPlugin : public QObject, public QDesignerCustomWidgetInterfac
       return "<widget class=\"ShiptoCluster\" name=\"shiptoCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "shiptocluster.h"; }
     QString name() const { return "ShiptoCluster"; }
     QString toolTip() const { return ""; }

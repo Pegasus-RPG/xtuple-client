@@ -79,7 +79,7 @@ class WoClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"WoCluster\" name=\"woCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "wocluster.h"; }
     QString name() const { return "WoCluster"; }
     QString toolTip() const { return ""; }

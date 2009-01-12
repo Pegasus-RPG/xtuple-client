@@ -79,7 +79,7 @@ class RaClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"RaCluster\" name=\"raCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "racluster.h"; }
     QString name() const { return "RaCluster"; }
     QString toolTip() const { return ""; }

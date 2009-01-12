@@ -79,7 +79,7 @@ class RevisionClusterPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"RevisionCluster\" name=\"revisionCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "revisioncluster.h"; }
     QString name() const { return "RevisionCluster"; }
     QString toolTip() const { return ""; }

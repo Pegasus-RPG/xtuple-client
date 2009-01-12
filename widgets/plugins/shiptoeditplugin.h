@@ -79,7 +79,7 @@ class ShiptoEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ShiptoEdit\" name=\"shiptoEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "shittocluster.h"; }
     QString name() const { return "ShiptoEdit"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class InvoiceClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"InvoiceCluster\" name=\"invoicecluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "invoiceCluster.h"; }
     QString name() const { return "InvoiceCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class ExpenseLineEditPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"ExpenseLineEdit\" name=\"expenseLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "expensecluster.h"; }
     QString name() const { return "ExpenseLineEdit"; }
     QString toolTip() const { return ""; }

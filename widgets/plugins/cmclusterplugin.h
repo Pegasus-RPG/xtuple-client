@@ -79,7 +79,7 @@ class CmClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"CmCluster\" name=\"cmCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "cmcluster.h"; }
     QString name() const { return "CmCluster"; }
     QString toolTip() const { return ""; }

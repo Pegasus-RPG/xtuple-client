@@ -79,7 +79,7 @@ class SoClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"SoCluster\" name=\"soCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "socluster.h"; }
     QString name() const { return "SoCluster"; }
     QString toolTip() const { return ""; }

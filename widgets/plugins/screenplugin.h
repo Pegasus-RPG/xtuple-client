@@ -79,7 +79,7 @@ class ScreenPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"Screen\" name=\"Screen\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "screen.h"; }
     QString name() const { return "Screen"; }
     QString toolTip() const { return ""; }

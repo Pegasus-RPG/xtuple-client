@@ -79,7 +79,7 @@ class XListViewPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XListView\" name=\"xlistView\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xlistview.h"; }
     QString name() const { return "XListView"; }
     QString toolTip() const { return ""; }

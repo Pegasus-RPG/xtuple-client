@@ -79,7 +79,7 @@ class InvoiceLineEditPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"InvoiceLineEdit\" name=\"invoiceLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "invoicelineedit.h"; }
     QString name() const { return "InvoiceLineEdit"; }
     QString toolTip() const { return ""; }

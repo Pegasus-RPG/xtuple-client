@@ -79,7 +79,7 @@ class ContactClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"ContactCluster\" name=\"contactCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "contactcluster.h"; }
     QString name() const { return "ContactCluster"; }
     QString toolTip() const { return ""; }

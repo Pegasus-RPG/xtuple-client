@@ -79,7 +79,7 @@ class CurrClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"CurrCluster\" name=\"currcluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "currcluster.h"; }
     QString name() const { return "CurrCluster"; }
     QString toolTip() const { return ""; }

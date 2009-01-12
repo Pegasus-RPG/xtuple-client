@@ -79,7 +79,7 @@ class XTreeViewPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XTreeView\" name=\"xtreeview\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xtreeview.h"; }
     QString name() const { return "XTreeView"; }
     QString toolTip() const { return ""; }

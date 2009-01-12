@@ -79,7 +79,7 @@ class ExpenseClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"ExpenseCluster\" name=\"expenseCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "expensecluster.h"; }
     QString name() const { return "ExpenseCluster"; }
     QString toolTip() const { return ""; }

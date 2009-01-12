@@ -79,7 +79,7 @@ class AddressClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"AddressCluster\" name=\"addressCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "addresscluster.h"; }
     QString name() const { return "AddressCluster"; }
     QString toolTip() const { return ""; }

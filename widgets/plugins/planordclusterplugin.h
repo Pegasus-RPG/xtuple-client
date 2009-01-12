@@ -79,7 +79,7 @@ class PlanOrdClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"PlanOrdCluster\" name=\"planordCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "plCluster.h"; }
     QString name() const { return "PlanOrdCluster"; }
     QString toolTip() const { return ""; }

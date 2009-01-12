@@ -79,7 +79,7 @@ class CurrDisplayPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"CurrDisplay\" name=\"currDisplay\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "currcluster.h"; }
     QString name() const { return "CurrDisplay"; }
     QString toolTip() const { return ""; }

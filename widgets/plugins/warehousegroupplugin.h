@@ -79,7 +79,7 @@ class WarehouseGroupPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"WarehouseGroup\" name=\"warehouseGroup\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "warehousegroup.h"; }
     QString name() const { return "WarehouseGroup"; }
     QString toolTip() const { return ""; }

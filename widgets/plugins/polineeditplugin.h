@@ -79,7 +79,7 @@ class PoLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"PoLineEdit\" name=\"poLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "pocluster.h"; }
     QString name() const { return "PoLineEdit"; }
     QString toolTip() const { return ""; }

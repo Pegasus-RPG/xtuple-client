@@ -79,7 +79,7 @@ class EmpGroupClusterPlugin : public QObject, public QDesignerCustomWidgetInterf
       return "<widget class=\"EmpGroupCluster\" name=\"empGroupCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "empgroupcluster.h"; }
     QString name() const { return "EmpGroupCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class DLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"DLineEdit\" name=\"dLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "datecluster.h"; }
     QString name() const { return "DLineEdit"; }
     QString toolTip() const { return ""; }

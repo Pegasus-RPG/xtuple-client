@@ -79,7 +79,7 @@ class WorkCenterClusterPlugin : public QObject, public QDesignerCustomWidgetInte
       return "<widget class=\"WorkCenterCluster\" name=\"workCenterCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "workcentercluster.h"; }
     QString name() const { return "WorkCenterCluster"; }
     QString toolTip() const { return ""; }

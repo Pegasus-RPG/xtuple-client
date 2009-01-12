@@ -79,7 +79,7 @@ class GLClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"GLCluster\" name=\"glCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "glcluster.h"; }
     QString name() const { return "GLCluster"; }
     QString toolTip() const { return ""; }

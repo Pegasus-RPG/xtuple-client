@@ -79,7 +79,7 @@ class ImageClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ImageCluster\" name=\"ImageCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "imagecluster.h"; }
     QString name() const { return "ImageCluster"; }
     QString toolTip() const { return ""; }

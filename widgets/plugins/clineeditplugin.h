@@ -79,7 +79,7 @@ class CLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"CLineEdit\" name=\"cLineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "custcluster.h"; }
     QString name() const { return "CLineEdit"; }
     QString toolTip() const { return ""; }

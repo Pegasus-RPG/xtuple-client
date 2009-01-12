@@ -79,7 +79,7 @@ class CalendarComboBoxPlugin : public QObject, public QDesignerCustomWidgetInter
       return "<widget class=\"CalendarComboBox\" name=\"calendarcomboBox\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "calendarTools.h"; }
     QString name() const { return "CalendarComboBox"; }
     QString toolTip() const { return ""; }

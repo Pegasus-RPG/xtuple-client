@@ -79,7 +79,7 @@ class XLineEditPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"XLineEdit\" name=\"xlineEdit\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "xlineedit.h"; }
     QString name() const { return "XLineEdit"; }
     QString toolTip() const { return ""; }

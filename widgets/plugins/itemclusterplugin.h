@@ -79,7 +79,7 @@ class ItemClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
       return "<widget class=\"ItemCluster\" name=\"itemCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "itemcluster.h"; }
     QString name() const { return "ItemCluster"; }
     QString toolTip() const { return ""; }

@@ -79,7 +79,7 @@ class ProjectClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
       return "<widget class=\"ProjectCluster\" name=\"projectCluster\">\n"
              "</widget>\n";
     }
-    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString group() const { return "xTuple Custom Widgets"; }
     QString includeFile() const { return "projectcluster.h"; }
     QString name() const { return "ProjectCluster"; }
     QString toolTip() const { return ""; }
