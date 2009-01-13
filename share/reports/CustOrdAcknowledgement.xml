@@ -15,7 +15,7 @@
 --Run query if no cosmisc_id passed - No Shipment Pack List
 SELECT cust_number,
        formatsobarcode(cohead_id) AS order_barcode,
-
+       formataddr(cust_address1, cust_address2, cust_address3, (cust_city || '  ' ||  cust_state || '  ' || cust_zipcode), cust_country) AS corr_address, 
        formataddr(cohead_billtoaddress1, cohead_billtoaddress2, cohead_billtoaddress3, (cohead_billtocity || '  ' ||   cohead_billtostate || '  ' || cohead_billtozipcode), cohead_billtocountry) AS billing_address, 
 
   formataddr(cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3, (cohead_shiptocity || '  ' ||   cohead_shiptostate || '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
@@ -40,7 +40,7 @@ SELECT cust_number,
        formatDate(cohead_orderdate) AS orderdate,
        cohead_shipcomments, 
        terms_descrip
-  FROM cohead, cust, terms
+  FROM cohead, cust, terms 
  WHERE ((cohead_cust_id=cust_id)
    AND (cohead_terms_id=terms_id)
    AND (cohead_id=&lt;? value("sohead_id") ?>)
@@ -263,8 +263,8 @@ GROUP BY cohead_freight,cohead_misc
   </field>
   <field>
    <rect>
-    <x>480</x>
-    <y>60</y>
+    <x>539</x>
+    <y>39</y>
     <width>250</width>
     <height>25</height>
    </rect>
@@ -282,9 +282,9 @@ GROUP BY cohead_freight,cohead_misc
   </field>
   <label>
    <rect>
-    <x>395</x>
-    <y>10</y>
-    <width>390</width>
+    <x>436</x>
+    <y>8</y>
+    <width>361</width>
     <height>30</height>
    </rect>
    <font>
@@ -373,24 +373,8 @@ GROUP BY cohead_freight,cohead_misc
   </label>
   <label>
    <rect>
-    <x>170</x>
-    <y>25</y>
-    <width>150</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Name</string>
-  </label>
-  <label>
-   <rect>
-    <x>465</x>
-    <y>165</y>
+    <x>535.987</x>
+    <y>140.037</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -460,8 +444,8 @@ GROUP BY cohead_freight,cohead_misc
   </line>
   <field>
    <rect>
-    <x>545</x>
-    <y>102</y>
+    <x>622</x>
+    <y>70</y>
     <width>110</width>
     <height>20</height>
    </rect>
@@ -493,27 +477,11 @@ GROUP BY cohead_freight,cohead_misc
    <vcenter/>
    <string>Ship Date</string>
   </label>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>90</y>
-    <width>127</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>9</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Website URL</string>
-  </label>
   <line>
-   <xstart>65</xstart>
-   <ystart>185</ystart>
-   <xend>277</xend>
-   <yend>185</yend>
+   <xstart>269.976</xstart>
+   <ystart>160.037</ystart>
+   <xend>491.976</xend>
+   <yend>160.037</yend>
    <weight>0</weight>
   </line>
   <label>
@@ -534,9 +502,9 @@ GROUP BY cohead_freight,cohead_misc
   </label>
   <field>
    <rect>
-    <x>465</x>
-    <y>195</y>
-    <width>260</width>
+    <x>535.987</x>
+    <y>170.037</y>
+    <width>254.338</width>
     <height>20</height>
    </rect>
    <font>
@@ -551,22 +519,6 @@ GROUP BY cohead_freight,cohead_misc
     <column>cohead_shiptoname</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>60</y>
-    <width>145</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>9</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Street Address 2</string>
-  </label>
   <field>
    <rect>
     <x>455</x>
@@ -623,10 +575,10 @@ GROUP BY cohead_freight,cohead_misc
   </field>
   <text>
    <rect>
-    <x>65</x>
-    <y>215</y>
-    <width>316</width>
-    <height>15</height>
+    <x>270.976</x>
+    <y>191.037</y>
+    <width>256</width>
+    <height>22.2821</height>
    </rect>
    <bottompad>10</bottompad>
    <font>
@@ -659,10 +611,10 @@ GROUP BY cohead_freight,cohead_misc
   </label>
   <text>
    <rect>
-    <x>465</x>
-    <y>215</y>
-    <width>267</width>
-    <height>15</height>
+    <x>535.987</x>
+    <y>190.037</y>
+    <width>253.562</width>
+    <height>20.2425</height>
    </rect>
    <bottompad>10</bottompad>
    <font>
@@ -679,8 +631,8 @@ GROUP BY cohead_freight,cohead_misc
   </text>
   <label>
    <rect>
-    <x>65</x>
-    <y>165</y>
+    <x>271.529</x>
+    <y>140.037</y>
     <width>50</width>
     <height>20</height>
    </rect>
@@ -700,22 +652,6 @@ GROUP BY cohead_freight,cohead_misc
    <yend>330</yend>
    <weight>0</weight>
   </line>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>45</y>
-    <width>155</width>
-    <height>12</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>9</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Street Address</string>
-  </label>
   <label>
    <rect>
     <x>435</x>
@@ -764,28 +700,12 @@ GROUP BY cohead_freight,cohead_misc
    <vcenter/>
    <string>UOM</string>
   </label>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>75</y>
-    <width>140</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>9</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>City, State, Zip</string>
-  </label>
   <field>
    <rect>
-    <x>65</x>
-    <y>195</y>
-    <width>300</width>
-    <height>17</height>
+    <x>271.976</x>
+    <y>170.037</y>
+    <width>256</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -800,22 +720,87 @@ GROUP BY cohead_freight,cohead_misc
    </data>
   </field>
   <line>
-   <xstart>465</xstart>
-   <ystart>185</ystart>
-   <xend>696</xend>
-   <yend>185</yend>
+   <xstart>535.987</xstart>
+   <ystart>160.037</ystart>
+   <xend>766.987</xend>
+   <yend>160.037</yend>
    <weight>0</weight>
   </line>
   <image>
    <rect>
-    <x>22</x>
-    <y>21</y>
-    <width>100</width>
-    <height>110</height>
+    <x>6</x>
+    <y>7</y>
+    <width>426</width>
+    <height>115</height>
    </rect>
-   <mode>clip</mode>
-   <map format="" ></map>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
   </image>
+  <text>
+   <rect>
+    <x>17.6809</x>
+    <y>192.59</y>
+    <width>222</width>
+    <height>21.011</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>head</query>
+    <column>billing_address</column>
+   </data>
+  </text>
+  <field>
+   <rect>
+    <x>17.6809</x>
+    <y>171.59</y>
+    <width>213</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_billtoname</column>
+   </data>
+  </field>
+  <line>
+   <xstart>15.8119</xstart>
+   <ystart>162.124</ystart>
+   <xend>224.257</xend>
+   <yend>162.137</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>14.7743</x>
+    <y>144.768</y>
+    <width>165.637</width>
+    <height>16.0854</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>9</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>CUSTOMER ADDRESS:</string>
+  </label>
  </rpthead>
  <section>
   <name>detail</name>
