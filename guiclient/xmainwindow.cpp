@@ -238,9 +238,6 @@ void XMainWindow::showEvent(QShowEvent *event)
         {
           _private->_engine = new QScriptEngine(this);
           omfgThis->loadScriptGlobals(_private->_engine);
-          omfgThis->widgetScriptGlobals(centralWidget(), objectName(), _private->_engine);
-          
-          //This is legacy support now
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
         }
@@ -309,9 +306,6 @@ QScriptEngine *engine(XMainWindow *win)
   {
     win->_private->_engine = new QScriptEngine(win);
     omfgThis->loadScriptGlobals(win->_private->_engine);
-    omfgThis->widgetScriptGlobals(win->centralWidget(), win->objectName(), win->_private->_engine);
-    
-    // This is legacy support now
     QScriptValue mywindow = win->_private->_engine->newQObject(win);
     win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
   }

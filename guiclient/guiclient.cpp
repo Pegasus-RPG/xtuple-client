@@ -1449,20 +1449,3 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   setupQNetworkReplyProto(engine);
   setupXDataWidgetMapperProto(engine);
 }
-
-void GUIClient::widgetScriptGlobals(QWidget *widget, const QString &name, QScriptEngine *engine)
-{
-  QScriptValue scrWidget = engine->newQObject(widget);
-  engine->globalObject().setProperty(name, scrWidget);
-          
-  QObjectList chldrn = widget->children();
-  QObject *chld;
-  while (chldrn.count())
-  {
-    chld = chldrn.first();
-    if (chld->inherits("QWidget") &&
-       !chld->objectName().isEmpty())
-      widgetScriptGlobals(static_cast<QWidget*>(chld), chld->objectName(), engine);
-    chldrn.takeFirst(); 
-  }
-}

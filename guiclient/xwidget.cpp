@@ -208,9 +208,6 @@ void XWidget::showEvent(QShowEvent *event)
         {
           _private->_engine = new QScriptEngine();
           omfgThis->loadScriptGlobals(_private->_engine);
-          omfgThis->widgetScriptGlobals(this, oName.remove(" "), _private->_engine);
-          
-          // This is legacy support now
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
         }
