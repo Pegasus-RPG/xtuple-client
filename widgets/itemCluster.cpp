@@ -157,7 +157,7 @@ void ItemLineEdit::setItemNumber(QString pNumber)
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
     _id         = item.value("item_id").toInt();
-    _upc        = item.value("upc_code").toInt();
+    _upc        = item.value("item_upccode").toInt();
     _valid      = TRUE;
 
     setText(item.value("item_number").toString());
@@ -238,7 +238,7 @@ void ItemLineEdit::silentSetId(int pId)
     _uom        = item.value("uom_name").toString();
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
-    _upc        = item.value("item_upc").toString();
+    _upc        = item.value("item_upccode").toString();
     _id         = pId;
     _valid      = TRUE;
 
