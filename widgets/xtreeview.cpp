@@ -127,6 +127,7 @@ void XTreeView::select()
 {
   setTable();
   _model.select();
+  emit valid(FALSE);
 }
 
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -152,7 +153,7 @@ void XTreeView::insert()
 }
 
 void XTreeView::populate(int p)
-{ 
+{   
   XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
   if (t)
   {

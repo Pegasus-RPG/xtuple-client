@@ -107,6 +107,9 @@ void ItemLineEdit::setItemNumber(QString pNumber)
 
   _parsed = TRUE;
 
+  if (pNumber == text())
+    return;
+
   if (!pNumber.isEmpty())
   {
     if (_useValidationQuery)
@@ -149,7 +152,6 @@ void ItemLineEdit::setItemNumber(QString pNumber)
         found = item.first();
     }
   }
-
   if (found)
   {
     _itemNumber = pNumber;
