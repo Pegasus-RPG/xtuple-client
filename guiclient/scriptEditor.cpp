@@ -74,6 +74,7 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+  setWindowModality(Qt::WindowModal);
 
   connect(_export,          SIGNAL(clicked()), this, SLOT(sExport()));
   connect(_find,            SIGNAL(clicked()), this, SLOT(sFind()));
