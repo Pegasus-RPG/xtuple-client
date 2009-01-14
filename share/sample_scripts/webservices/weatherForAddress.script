@@ -1,0 +1,81 @@
+var _addr       = mywindow.findChild("_addr");
+var _conditions = mywindow.findChild("_conditions");
+var _datetime   = mywindow.findChild("_datetime");
+var _err        = mywindow.findChild("_err");
+var _netmgr     = new QNetworkAccessManager(mywindow);
+var _output     = mywindow.findChild("_output");
+var _temp       = mywindow.findChild("_temp");
+
+_addr.newId.connect(sSendQuery);
+_netmgr.finished.connect(sGetResponse);
+
+function sSendQuery()
+{
+  try
+  {
+    _output.setPlainText("Searching...");
+    var query = new Object;
+    query.p = _addr.postalCode();
+    query.u = 'f';
+
+    var url = new QUrl('http://weather.yahooapis.com/forecastrss');
+    url.setQueryItems(query);
+
+    var netrequest = new QNetworkRequest();
+    netrequest.setUrl(url);
+
+    _netmgr.get(netrequest);
+  }
+  catch (e) {
+    print("sSendQuery - exception at line " + e.lineNumber + ": " + e);
+  }
+}
+
+function sGetResponse(netreply)
+{
+  try
+  {
+    if (netreply.error())
+    {
+      toolbox.messageBox("warning", mywindow, "Network Error",
+                         "<p>The request for weather information "
+                       + "returned error "
+                       + netreply.error()
+                       + ".<p>" + netreply.errorString());
+      return;
+    }
+
+    var doc = new QDomDocument();
+    var domError = new Object();
+    var errLine = 0;
+    var errCol = 0;
+    if (! doc.setContent(netreply.readAll(), false, domError, errLine, errCol))
+      throw "error reading XML response at line " + errLine + ", column " + errCol + ": " + domError;
+    _output.setPlainText(doc.toString(2)); // for comparison
+
+    var itemNode = doc.documentElement().firstChildElement("channel").firstChildElement("item");
+    if (itemNode.isNull()) throw "channelNode doesn't seem to have an item child";
+
+    var conditionNode = itemNode.firstChildElement("yweather:condition");
+    if (conditionNode.isNull())
+    {
+      _conditions.text = "N/A";
+      _temp.text       = "N/A";
+      _datetime.text   = "N/A";
+      _err.text        = itemNode.firstChildElement("title").text() + " " +
+                         itemNode.firstChildElement("description").text();
+    }
+    else
+    {
+      _conditions.text = conditionNode.attributeNode("text").value();
+      _temp.text       = conditionNode.attributeNode("temp").value();
+      _datetime.text   = conditionNode.attributeNode("date").value();
+      _err.text = "";      
+    }
+  }
+  catch (e)
+  {
+    print("sGetResponse - exception at line " + e.lineNumber + ": "
+        + e);
+  }
+}

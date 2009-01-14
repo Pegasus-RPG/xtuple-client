@@ -686,7 +686,24 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                scriptapi/xnetworkaccessmanager.h                                                      \
                scriptapi/qnetworkreplyproto.h                                                         \
                scriptapi/qnetworkrequestproto.h                                                       \
-               scriptapi/qurlproto.h
+               scriptapi/qurlproto.h                                                                  \
+               scriptapi/qdomattrproto.h                                       \
+               scriptapi/qdomcdatasectionproto.h                               \
+               scriptapi/qdomcharacterdataproto.h                              \
+               scriptapi/qdomcommentproto.h                                    \
+               scriptapi/qdomdocumentfragmentproto.h                           \
+               scriptapi/qdomdocumentproto.h                                   \
+               scriptapi/qdomdocumenttypeproto.h                               \
+               scriptapi/qdomelementproto.h                                    \
+               scriptapi/qdomentityproto.h                                     \
+               scriptapi/qdomentityreferenceproto.h                            \
+               scriptapi/qdomimplementationproto.h                             \
+               scriptapi/qdomnamednodemapproto.h                               \
+               scriptapi/qdomnodelistproto.h                                   \
+               scriptapi/qdomnodeproto.h                                       \
+               scriptapi/qdomnotationproto.h                                   \
+               scriptapi/qdomprocessinginstructionproto.h                      \
+               scriptapi/qdomtextproto.h                                       \
 
 
 SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp                             \
@@ -1021,7 +1038,24 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                scriptapi/xnetworkaccessmanager.cpp                                                    \
                scriptapi/qnetworkreplyproto.cpp                                                       \
                scriptapi/qnetworkrequestproto.cpp                                                     \
-               scriptapi/qurlproto.cpp
+               scriptapi/qurlproto.cpp                                         \
+               scriptapi/qdomattrproto.cpp                                     \
+               scriptapi/qdomcdatasectionproto.cpp                             \
+               scriptapi/qdomcharacterdataproto.cpp                            \
+               scriptapi/qdomcommentproto.cpp                                  \
+               scriptapi/qdomdocumentfragmentproto.cpp                         \
+               scriptapi/qdomdocumentproto.cpp                                 \
+               scriptapi/qdomdocumenttypeproto.cpp                             \
+               scriptapi/qdomelementproto.cpp                                  \
+               scriptapi/qdomentityproto.cpp                                   \
+               scriptapi/qdomentityreferenceproto.cpp                          \
+               scriptapi/qdomimplementationproto.cpp                           \
+               scriptapi/qdomnamednodemapproto.cpp                             \
+               scriptapi/qdomnodelistproto.cpp                                 \
+               scriptapi/qdomnodeproto.cpp                                     \
+               scriptapi/qdomnotationproto.cpp                                 \
+               scriptapi/qdomprocessinginstructionproto.cpp                    \
+               scriptapi/qdomtextproto.cpp                                     \
 
 QT += xml sql script network
 QT += webkit

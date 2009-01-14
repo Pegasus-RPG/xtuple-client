@@ -125,8 +125,25 @@
 #include "dspCustomerInformation.h"
 
 #include "splashconst.h"
-
 #include "scripttoolbox.h"
+
+#include "qdomattrproto.h"
+#include "qdomcdatasectionproto.h"
+#include "qdomcharacterdataproto.h"
+#include "qdomcommentproto.h"
+#include "qdomdocumentfragmentproto.h"
+#include "qdomdocumentproto.h"
+#include "qdomdocumenttypeproto.h"
+#include "qdomelementproto.h"
+#include "qdomentityproto.h"
+#include "qdomentityreferenceproto.h"
+#include "qdomimplementationproto.h"
+#include "qdomnamednodemapproto.h"
+#include "qdomnodelistproto.h"
+#include "qdomnodeproto.h"
+#include "qdomnotationproto.h"
+#include "qdomprocessinginstructionproto.h"
+#include "qdomtextproto.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qurlproto.h"
@@ -1441,11 +1458,28 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
 
-  // NEW the prototypes because they need to be on the heap, not the stack
-  setupXTreeWidgetItemProto(engine);
-  setupQUrlProto(engine);
+  // set up classes we've had to expose to scripting explicitly
+  setupQDomAttrProto(engine);
+  setupQDomCDATASectionProto(engine);
+  setupQDomCharacterDataProto(engine);
+  setupQDomCommentProto(engine);
+  setupQDomDocumentFragmentProto(engine);
+  setupQDomDocumentProto(engine);
+  setupQDomDocumentTypeProto(engine);
+  setupQDomElementProto(engine);
+  setupQDomEntityProto(engine);
+  setupQDomEntityReferenceProto(engine);
+  setupQDomImplementationProto(engine);
+  setupQDomNamedNodeMapProto(engine);
+  setupQDomNodeListProto(engine);
+  setupQDomNodeProto(engine);
+  setupQDomNotationProto(engine);
+  setupQDomProcessingInstructionProto(engine);
+  setupQDomTextProto(engine);
   setupQNetworkAccessManagerProto(engine);
-  setupQNetworkRequestProto(engine);
   setupQNetworkReplyProto(engine);
+  setupQNetworkRequestProto(engine);
+  setupQUrlProto(engine);
   setupXDataWidgetMapperProto(engine);
+  setupXTreeWidgetItemProto(engine);
 }
