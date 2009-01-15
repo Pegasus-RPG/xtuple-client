@@ -4,16 +4,17 @@ TARGET   = xtuple
 CONFIG   += qt warn_on assistant uitools designer
 TEMPLATE = app
 
-INCLUDEPATH += scriptapi \
+INCLUDEPATH += ../scriptapi \
                ../common \
-               ../widgets ../widgets/scriptapi ../widgets/tmp/lib .
+               ../widgets ../widgets/tmp/lib .
 
-DEPENDPATH  += scriptapi \
+DEPENDPATH  += ../scriptapi \
                ../common \
-               ../widgets ../widgets/scriptapi ../widgets/tmp/lib
+               ../widgets ../widgets/tmp/lib
 
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
                -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
+               -lxtuplescriptapi \
                -lQtDesignerComponents
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
@@ -683,27 +684,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xsltMap.h                                            \
                xTupleDesigner.h xTupleDesignerActions.h                                               \
-               scriptapi/xnetworkaccessmanager.h                                                      \
-               scriptapi/qnetworkreplyproto.h                                                         \
-               scriptapi/qnetworkrequestproto.h                                                       \
-               scriptapi/qurlproto.h                                                                  \
-               scriptapi/qdomattrproto.h                                       \
-               scriptapi/qdomcdatasectionproto.h                               \
-               scriptapi/qdomcharacterdataproto.h                              \
-               scriptapi/qdomcommentproto.h                                    \
-               scriptapi/qdomdocumentfragmentproto.h                           \
-               scriptapi/qdomdocumentproto.h                                   \
-               scriptapi/qdomdocumenttypeproto.h                               \
-               scriptapi/qdomelementproto.h                                    \
-               scriptapi/qdomentityproto.h                                     \
-               scriptapi/qdomentityreferenceproto.h                            \
-               scriptapi/qdomimplementationproto.h                             \
-               scriptapi/qdomnamednodemapproto.h                               \
-               scriptapi/qdomnodelistproto.h                                   \
-               scriptapi/qdomnodeproto.h                                       \
-               scriptapi/qdomnotationproto.h                                   \
-               scriptapi/qdomprocessinginstructionproto.h                      \
-               scriptapi/qdomtextproto.h                                       \
 
 
 SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp                             \
@@ -1035,27 +1015,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                jsHighlighter.cpp                                                                      \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
                xTupleDesigner.cpp xTupleDesignerActions.cpp                                           \
-               scriptapi/xnetworkaccessmanager.cpp                                                    \
-               scriptapi/qnetworkreplyproto.cpp                                                       \
-               scriptapi/qnetworkrequestproto.cpp                                                     \
-               scriptapi/qurlproto.cpp                                         \
-               scriptapi/qdomattrproto.cpp                                     \
-               scriptapi/qdomcdatasectionproto.cpp                             \
-               scriptapi/qdomcharacterdataproto.cpp                            \
-               scriptapi/qdomcommentproto.cpp                                  \
-               scriptapi/qdomdocumentfragmentproto.cpp                         \
-               scriptapi/qdomdocumentproto.cpp                                 \
-               scriptapi/qdomdocumenttypeproto.cpp                             \
-               scriptapi/qdomelementproto.cpp                                  \
-               scriptapi/qdomentityproto.cpp                                   \
-               scriptapi/qdomentityreferenceproto.cpp                          \
-               scriptapi/qdomimplementationproto.cpp                           \
-               scriptapi/qdomnamednodemapproto.cpp                             \
-               scriptapi/qdomnodelistproto.cpp                                 \
-               scriptapi/qdomnodeproto.cpp                                     \
-               scriptapi/qdomnotationproto.cpp                                 \
-               scriptapi/qdomprocessinginstructionproto.cpp                    \
-               scriptapi/qdomtextproto.cpp                                     \
 
 QT += xml sql script network
 QT += webkit

@@ -2,7 +2,9 @@ TEMPLATE = subdirs
 SUBDIRS = common \
           widgets/dll.pro \
           widgets \
+          scriptapi \
           guiclient
+
 CONFIG += ordered
 
 exists(../../../openrpt) {

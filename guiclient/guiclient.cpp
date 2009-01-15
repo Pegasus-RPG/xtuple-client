@@ -127,29 +127,7 @@
 #include "splashconst.h"
 #include "scripttoolbox.h"
 
-#include "qdomattrproto.h"
-#include "qdomcdatasectionproto.h"
-#include "qdomcharacterdataproto.h"
-#include "qdomcommentproto.h"
-#include "qdomdocumentfragmentproto.h"
-#include "qdomdocumentproto.h"
-#include "qdomdocumenttypeproto.h"
-#include "qdomelementproto.h"
-#include "qdomentityproto.h"
-#include "qdomentityreferenceproto.h"
-#include "qdomimplementationproto.h"
-#include "qdomnamednodemapproto.h"
-#include "qdomnodelistproto.h"
-#include "qdomnodeproto.h"
-#include "qdomnotationproto.h"
-#include "qdomprocessinginstructionproto.h"
-#include "qdomtextproto.h"
-#include "qnetworkreplyproto.h"
-#include "qnetworkrequestproto.h"
-#include "qurlproto.h"
-#include "xdatawidgetmapperproto.h"
-#include "xnetworkaccessmanager.h"
-#include "xtreewidgetitemproto.h"
+#include "setupscriptapi.h"
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
@@ -1458,28 +1436,5 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
 
-  // set up classes we've had to expose to scripting explicitly
-  setupQDomAttrProto(engine);
-  setupQDomCDATASectionProto(engine);
-  setupQDomCharacterDataProto(engine);
-  setupQDomCommentProto(engine);
-  setupQDomDocumentFragmentProto(engine);
-  setupQDomDocumentProto(engine);
-  setupQDomDocumentTypeProto(engine);
-  setupQDomElementProto(engine);
-  setupQDomEntityProto(engine);
-  setupQDomEntityReferenceProto(engine);
-  setupQDomImplementationProto(engine);
-  setupQDomNamedNodeMapProto(engine);
-  setupQDomNodeListProto(engine);
-  setupQDomNodeProto(engine);
-  setupQDomNotationProto(engine);
-  setupQDomProcessingInstructionProto(engine);
-  setupQDomTextProto(engine);
-  setupQNetworkAccessManagerProto(engine);
-  setupQNetworkReplyProto(engine);
-  setupQNetworkRequestProto(engine);
-  setupQUrlProto(engine);
-  setupXDataWidgetMapperProto(engine);
-  setupXTreeWidgetItemProto(engine);
+  setupScriptApi(engine);
 }

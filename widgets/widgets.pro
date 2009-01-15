@@ -102,13 +102,6 @@ HEADERS += \
            plugins/xtreeviewplugin.h \
            plugins/xspinboxplugin.h \
 
-SOURCES += scriptapi/xdatawidgetmapperproto.cpp \
-           scriptapi/xtreewidgetitemproto.cpp \
-
-HEADERS += scriptapi/xtuplewidgetsprototypes.h \
-           scriptapi/xdatawidgetmapperproto.h \
-           scriptapi/xtreewidgetitemproto.h \
-
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
               xlabel.cpp xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
