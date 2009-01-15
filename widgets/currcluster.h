@@ -86,7 +86,6 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
   Q_PROPERTY(bool    enabled           READ isEnabled         WRITE setEnabled)
   Q_PROPERTY(QString fieldNameValue    READ fieldNameValue    WRITE setFieldNameValue)
   Q_PROPERTY(CurrDisplayFormats format READ format            WRITE setFormat)
-  Q_PROPERTY(int     id                READ id                WRITE setId)
   Q_PROPERTY(bool    localControl      READ localControl      WRITE setLocalControl)
   Q_PROPERTY(double  localValue        READ localValue        WRITE setLocalValue)
 
@@ -108,7 +107,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	virtual QString		currAbbr()	const;
 	static  QString		currSymbol(const int);
 
-	virtual inline int	id()		const { return _localId; };
+	Q_INVOKABLE virtual inline int	id()		const { return _localId; };
 	static int		baseId();
 	virtual inline double	baseValue()	const { return _valueBase; };
 	virtual inline double	localValue()	const { return _valueLocal; };

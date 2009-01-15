@@ -79,7 +79,6 @@ class OPENMFGWIDGETS_EXPORT ParameterGroup : public QGroupBox
   Q_PROPERTY(QString pattern READ pattern WRITE setPattern)
   Q_PROPERTY(enum ParameterGroupTypes type READ type WRITE setType)
   Q_PROPERTY(enum ParameterGroupStates state READ state WRITE setState)
-  Q_PROPERTY(int id READ id WRITE setId DESIGNABLE false)
 
   public:
     ParameterGroup(QWidget * = 0, const char * = 0);
@@ -96,7 +95,7 @@ class OPENMFGWIDGETS_EXPORT ParameterGroup : public QGroupBox
     };
 
     enum ParameterGroupStates state();
-    int                       id();
+    Q_INVOKABLE int                       id();
     QString                   pattern();
     void                      appendValue(ParameterList &);
     void                      bindValue(XSqlQuery &);

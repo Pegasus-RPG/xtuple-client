@@ -90,7 +90,6 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(QString        listTableName         READ listTableName        WRITE setListTableName                        )
   Q_PROPERTY(QString        listIdFieldName       READ listIdFieldName      WRITE setListIdFieldName                      )
   Q_PROPERTY(QString        listDisplayFieldName  READ listDisplayFieldName WRITE setListDisplayFieldName                 )
-  Q_PROPERTY(int            id                    READ id                   WRITE setId                   DESIGNABLE false)
   Q_PROPERTY(QString        currentDefault        READ currentDefault                                     DESIGNABLE false)
   Q_PROPERTY(QString        text                  READ currentText          WRITE setText                 DESIGNABLE false)
 
@@ -149,7 +148,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
 
     bool              isValid()              const;
     int               id(int)                const;
-    int               id()                   const;
+    Q_INVOKABLE int               id()                   const;
     QString           code()                 const;
     QString           fieldName()            const  { return _fieldName;            };
     QString           listDisplayFieldName() const  { return _listDisplayFieldName; };

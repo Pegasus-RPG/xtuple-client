@@ -134,10 +134,10 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     SoCluster(QWidget *, const char * = 0);
     SoCluster(int, QWidget *);
       
-    inline bool sitePrivsEnforced() const { return _soNumber->_sitePrivs;};
-    inline int  id()                      { return _soNumber->_id;      };
-    inline int  custid()                  { return _soNumber->_custid;  };
-    inline bool isValid()                 { return _soNumber->_valid;   };
+    Q_INVOKABLE bool sitePrivsEnforced() const { return _soNumber->_sitePrivs;};
+    Q_INVOKABLE int  id()                      { return _soNumber->_id;      };
+    Q_INVOKABLE int  custid()                  { return _soNumber->_custid;  };
+    Q_INVOKABLE bool isValid()                 { return _soNumber->_valid;   };
     inline QString  defaultNumber()       { return _soNumber->defaultNumber();};
     inline QString  number()              { return _soNumber->text();   };
     inline virtual QString label()  const { return _label;              };

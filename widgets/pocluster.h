@@ -132,14 +132,13 @@ class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
   Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false)
   Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false)
-  Q_PROPERTY(int     id             READ id             WRITE setId           DESIGNABLE false)
   Q_PROPERTY(int     type           READ type           WRITE setType         DESIGNABLE false)
 
   public:
     PoCluster(QWidget *, const char * = 0);
 
-    inline void     setId(int pId)     { _poNumber->setId(pId);     }
-    inline int      id()               { return _poNumber->_id;     }
+    Q_INVOKABLE inline void     setId(int pId)     { _poNumber->setId(pId);     }
+    Q_INVOKABLE inline int      id()               { return _poNumber->_id;     }
     Q_INVOKABLE inline int  vendid()   { return _poNumber->_vendid; }
     Q_INVOKABLE inline bool isValid()  { return _poNumber->_valid;  }
     inline QString  defaultNumber()    { return QString();          }

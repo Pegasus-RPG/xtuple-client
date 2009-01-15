@@ -112,7 +112,7 @@ class OPENMFGWIDGETS_EXPORT ShiptoCluster : public QWidget
 
     void setReadOnly(bool);
 
-    inline int id()       { return _shiptoNumber->_id;     }
+    Q_INVOKABLE inline int id()       { return _shiptoNumber->_id;     }
     inline int custid()   { return _shiptoNumber->_custid; }
     inline bool isValid() { return _shiptoNumber->_valid;  }
 

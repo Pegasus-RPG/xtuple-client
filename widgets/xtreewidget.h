@@ -155,13 +155,13 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     inline void setTextColor(int column, const QColor & color) { QTreeWidgetItem::setTextColor(column, color); }
     void setTextColor(const QColor &);
 
-    inline int id() const         { return _id;    }
-    inline int altId() const      { return _altId; }
-    inline void setId(int pId)    { _id = pId;     }
-    inline void setAltId(int pId) { _altId = pId;  }
+    Q_INVOKABLE inline int id() const         { return _id;    }
+    Q_INVOKABLE inline int altId() const      { return _altId; }
+    Q_INVOKABLE inline void setId(int pId)    { _id = pId;     }
+    Q_INVOKABLE inline void setAltId(int pId) { _altId = pId;  }
 
     virtual QVariant rawValue(const QString);
-    virtual int id(const QString);
+    Q_INVOKABLE virtual int id(const QString);
 
     inline XTreeWidgetItem *child(int idx) const
     {
@@ -186,8 +186,6 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_OBJECT
   Q_PROPERTY(QString dragString READ dragString WRITE setDragString)
   Q_PROPERTY(QString altDragString READ altDragString WRITE setAltDragString)
-  Q_PROPERTY(int id READ id WRITE setId DESIGNABLE false)
-  Q_PROPERTY(int altId READ altId DESIGNABLE false)
 
   public:
     XTreeWidget(QWidget *);
@@ -204,9 +202,9 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void setAltDragString(QString);
 
     int  altId() const;
-    int  id()    const;
-    int  id(const QString)     const;
-    void setId(int);
+    Q_INVOKABLE int  id()    const;
+    Q_INVOKABLE int  id(const QString)     const;
+    Q_INVOKABLE void setId(int);
 
     Q_INVOKABLE virtual int              column(const QString) const;
     Q_INVOKABLE virtual XTreeWidgetItem *currentItem()         const;

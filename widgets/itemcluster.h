@@ -209,7 +209,6 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
   Q_PROPERTY(QString number         READ itemNumber     WRITE setItemNumber      DESIGNABLE false)
   Q_PROPERTY(unsigned int type      READ type           WRITE setType            DESIGNABLE false)
-  Q_PROPERTY(int     id             READ id             WRITE setId              DESIGNABLE false)
   
   public:
     ItemCluster(QWidget *, const char * = 0);

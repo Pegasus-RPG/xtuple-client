@@ -281,7 +281,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
     Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false)
     Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false)
-    Q_PROPERTY(int     id             READ id             WRITE setId             DESIGNABLE false)
 
     friend class VirtualClusterLineEdit;
 
@@ -289,15 +288,15 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualCluster(QWidget*, const char* = 0);
         VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
-        inline virtual int     id()             const { return _number->id(); };
+        Q_INVOKABLE inline virtual int     id()             const { return _number->id(); };
         inline virtual bool    infoVisible()    const { return _info->isVisible(); };
         inline virtual bool    listVisible()    const { return _list->isVisible(); };
         inline virtual QString label()          const { return _label->text(); };
         inline virtual bool    nameVisible()    const { return _name->isVisible(); };
-               virtual QString number()         const { return _number->text(); };
+        inline virtual QString number()         const { return _number->text(); };
         inline virtual QString description()    const { return _description->text(); };
         inline virtual bool    isValid()        const { return _number->isValid(); };
-        inline virtual QString name()           const { return _name->text(); };
+        Q_INVOKABLE virtual QString name()           const { return _name->text(); };
         inline virtual bool    isStrict()       const { return _number->isStrict(); };
         inline virtual bool    readOnly()       const { return _readOnly; };
                virtual QString defaultNumber()  const { return _default; };

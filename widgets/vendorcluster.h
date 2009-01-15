@@ -128,7 +128,7 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
   public:
     VendorInfo(QWidget *parent, const char *name = 0);
 
-    inline int id()          const { return _vendorNumber->_id;         };
+    Q_INVOKABLE inline int id()          const { return _vendorNumber->_id;         };
     inline bool isValid()    const { return _vendorNumber->_valid;      };
     inline bool isReadOnly() const { return _vendorNumber->isEnabled(); };
 

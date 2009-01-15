@@ -225,11 +225,11 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlClu
 
     void setReadOnly(bool);
 
-    inline int id()             { return _id;       }
-    inline int woid()           { return _woid;     }
-    inline bool isValid()       { return _valid;    }
-    inline double qtyRequired() { return _required; }
-    inline double qtyIssued()   { return _issued;   }
+    Q_INVOKABLE int id()             { return _id;       }
+    Q_INVOKABLE int woid()           { return _woid;     }
+    Q_INVOKABLE bool isValid()       { return _valid;    }
+    Q_INVOKABLE double qtyRequired() { return _required; }
+    Q_INVOKABLE double qtyIssued()   { return _issued;   }
     inline QString fieldName()  { return _fieldName;}
 
   signals:

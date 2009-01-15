@@ -491,14 +491,26 @@ void ContactCluster::clear()
 
 QString ContactCluster::name() const
 {
-  if (_first->text().isEmpty() && _last->text().isEmpty())
-    return "";
-  else if (_first->text().isEmpty())
-    return _last->text();
-  else if (_last->text().isEmpty())
-    return _first->text();
+  QString name;
+  
+  if (!_first->text().isEmpty())
+    name = _first->text();
+    
+  if (!_middle->text().isEmpty())
+  {
+    if (!name.isEmpty())
+      name += " ";
+    name += _middle->text();
+  }
+  
+  if (!_last->text().isEmpty())
+  {
+    if (!name.isEmpty())
+      name += " ";
+    name += _last->text();
+  }
 
-  return _first->text() + " " + _last->text();
+  return name;
 }
 
 void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)

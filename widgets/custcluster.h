@@ -157,7 +157,6 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
   Q_PROPERTY(QString                    defaultNumber  READ defaultNumber WRITE setDefaultNumber DESIGNABLE false)
   Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
   Q_PROPERTY(QString                    number         READ number        WRITE setNumber        DESIGNABLE false)
-  Q_PROPERTY(int                        id             READ id            WRITE setId            DESIGNABLE false)
 
   public:
     CustInfo(QWidget *parent, const char *name = 0);
@@ -229,7 +228,7 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
     void setReadOnly(bool);
 
     inline bool                      autoFocus()     const { return _custInfo->autoFocus();     };
-    inline int                       id()                  { return _custInfo->id();            };
+    Q_INVOKABLE inline int           id()                  { return _custInfo->id();            };
     inline bool                      isValid()             { return _custInfo->isValid();       };
     inline CLineEdit::CLineEditTypes type()          const { return _custInfo->type();          };
     inline QString                   number()        const { return _custInfo->number();        };

@@ -157,7 +157,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	Q_INVOKABLE virtual QString line3()   const { return _addr3->text(); }
 	Q_INVOKABLE virtual int     id()      const { return _id; }
 	inline virtual QString notes()	      const { return _notes; };
-               virtual QString number()       const { return QString(); };
+        Q_INVOKABLE virtual QString number()       const { return QString(); };
 	Q_INVOKABLE virtual QString postalCode()  const { return _postalcode->text(); }
 	Q_INVOKABLE virtual QString state()   const { return _state->currentText(); }
 	
@@ -187,7 +187,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual void setLine3(const QString& p)	{ _addr3->setText(p); };
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	virtual void setNumber(QString p);
-	inline virtual void setNumber(const int)	{ };
+        virtual void setNumber(int p)     {};
 	inline virtual void setPostalCode(const QString& p) { _postalcode->setText(p); };
 	inline virtual void setState(const QString& p)	{ _state->setEditText(p); };
 	virtual void	clear();
