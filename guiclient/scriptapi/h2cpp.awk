@@ -29,12 +29,16 @@
   print "{";
   print "  QScriptValue proto = engine->newQObject(new " protoclass "(engine));";
   print "  engine->setDefaultPrototype(qMetaTypeId<" baseclass "*>(), proto);";
+  print "  engine->setDefaultPrototype(qMetaTypeId<" baseclass ">(),  proto);";
   print "";
   print "  QScriptValue constructor = engine->newFunction(construct" baseclass ",";
   print "                                                 proto);";
   print "  engine->globalObject().setProperty(\"" baseclass "\",  constructor);";
   print "}";
   print "";
+}
+
+/^QScriptValue construct/ {
   print "QScriptValue construct" baseclass "(QScriptContext * /*context*/,";
   print "                                    QScriptEngine  *engine)";
   print "{";
@@ -61,8 +65,10 @@ $1 ~ protoclass ".QObject" {
   sub(/;/,   "");
   type    = $1;
   functn  = substr($2, 1, index($2, "(") - 1);
-  arglist = substr($0, index($0, "("), index($0, ")") - index($0, "(") + 1);
-  print $1, protoclass "::" substr($0, length($1) + 1, length);
+  arglist = substr($0, index($0, "("), length - index($0, "(") + 1);
+  gsub(/ = [^,]*(\(\))?\)/, ")", arglist);
+  gsub(/ = [^,]*(\(\))?,/, ",", arglist);
+  print $1, protoclass "::" functn arglist
   print "{";
   print "  " baseclass " *item = qscriptvalue_cast<" baseclass "*>(thisObject());";
   print "  if (item)";
