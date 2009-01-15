@@ -73,6 +73,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     Q_PROPERTY(QString         tableName             READ tableName            WRITE setTableName        )
     Q_PROPERTY(int             primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
     Q_PROPERTY(int             rowCount              READ rowCount                                             DESIGNABLE false)
+    Q_PROPERTY(int             rowCountVisible       READ rowCountVisible                                      DESIGNABLE false)
     
     public:
       XTreeView(QWidget *parent = 0);
@@ -86,6 +87,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       
     public slots:
       virtual int  rowCount();
+      virtual int  rowCountVisible();
       virtual QVariant value(int row, int column);
       virtual QVariant selectedValue(int column);
       virtual void insert();

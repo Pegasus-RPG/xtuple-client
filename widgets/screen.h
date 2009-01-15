@@ -84,13 +84,15 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		Screen(QWidget * = 0);
                 ~Screen();
 		
+                Q_INVOKABLE bool submit();
                 bool throwScriptException(const QString &message);
 		enum Modes { New, Edit, View };
                 enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
                 Disposition check();
 	
-                XSqlTableModel *model();
+                Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
+                Q_INVOKABLE XSqlTableModel    *model()   {return static_cast<XSqlTableModel*>(_mapper->model());};
                 
                 void showEvent ( QShowEvent * event );
        	
@@ -98,7 +100,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 bool cancel();
                 bool isDirty();
                 int  currentIndex();
-                int  primaryKeyColumns() const { return _keyColumns;       };
+                int  primaryKeyColumns()    const { return _keyColumns;       };
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };

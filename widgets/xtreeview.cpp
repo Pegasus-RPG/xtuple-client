@@ -112,6 +112,17 @@ int XTreeView::rowCount()
   return _model.rowCount();
 }
 
+int XTreeView::rowCountVisible()
+{
+  int counter = 0;
+  for (int i = 0; i < _model.rowCount(); i++)
+  {
+    if (!isRowHidden(i))
+      counter++;
+  }
+  return counter;
+}
+
 QVariant XTreeView::value(int row, int column)
 {
   return model()->data(model()->index(row,column));

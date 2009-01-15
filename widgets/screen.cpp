@@ -173,6 +173,25 @@ bool Screen::throwScriptException(const QString &message)
    return false;
 }
 
+bool Screen::submit()
+{
+  bool isSaved;
+  disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+  int i=_mapper->currentIndex();
+  _mapper->submit();  // Make sure changes committed even if user hasn't tabbed off widget
+  isSaved=_model->submitAll(); // Apply to the database
+  _mapper->setCurrentIndex(i);
+  if (!isSaved)
+  {
+    if(!throwScriptException(_model->lastError().databaseText()))
+        QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
+                          tr("Error saving %1 at %2::%3\n\n%4")
+                          .arg(_tableName).arg(__FILE__).arg(__LINE__)
+                          .arg(_model->lastError().databaseText()));
+  }
+  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+}
+
 int Screen::currentIndex()
 {
   return _mapper->currentIndex();
@@ -230,28 +249,12 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 { 
-  bool isSaved;
-  disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
-  int i=_mapper->currentIndex();
-  _mapper->submit();  // Make sure changes committed even if user hasn't tabbed off widget
-  isSaved=_model->submitAll(); // Apply to the database
-  _mapper->setCurrentIndex(i);
-  if (!isSaved)
-  {
-    if(!throwScriptException(_model->lastError().databaseText()))
-        QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
-                          tr("Error saving %1 at %2::%3\n\n%4")
-                          .arg(_tableName).arg(__FILE__).arg(__LINE__)
-                          .arg(_model->lastError().databaseText()));
-  }
-  else
+  if (submit())
   {
     emit saved();
     if (_mode==New)
       insert();
   }
-  
-  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
 }
 
 void Screen::search(QString criteria)
@@ -366,9 +369,4 @@ void Screen::setDataWidgetMapper(XSqlTableModel *model)
 {
   _mapper->setModel(model);
   emit newDataWidgetMapper(_mapper);
-}
-
-XSqlTableModel *Screen::model()
-{
-  return static_cast<XSqlTableModel*>(_mapper->model());
 }
