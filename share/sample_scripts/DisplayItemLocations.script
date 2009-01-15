@@ -33,9 +33,10 @@ function getParams()
   */
   if(mywindow.findChild("_group").isSelected())
   {
-    // create a parameter named "warehous_id" and give it
-    // the value of _group's id Q_PROPERTY - see widgets/warehousgroup.h
-    params.warehous_id = mywindow.findChild("_group").id;
+    // create a parameter named "warehous_id" and give it the "id()"
+    // this is another Q_INVOKABLE method of the WarehouseGroup 
+    //- see widgets/warehousgroup.h
+    params.warehous_id = mywindow.findChild("_group").id();
   }
 
   // hand the parameter list back to the caller

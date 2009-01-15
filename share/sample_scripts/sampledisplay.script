@@ -17,7 +17,7 @@ function getParams()
   // check to see if our ParameterGroup object is all (0), group (1), or pattern (2)
   if(mywindow.findChild("_group").state == 1)
   {
-    params.id = mywindow.findChild("_group").id;
+    params.id = mywindow.findChild("_group").id();
   }
   else if(mywindow.findChild("_group").state == 2)
   {

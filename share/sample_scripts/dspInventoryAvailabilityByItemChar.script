@@ -33,7 +33,7 @@ function getParams()
   if(mywindow.findChild("_showShortages").checked)
     params.showShortages = true;
 
-  params.char_id = mywindow.findChild("_char").id;
+  params.char_id = mywindow.findChild("_char").id();
   params.value = mywindow.findChild("_value").text;
   if(mywindow.findChild("_emptyValue").checked)
     params.emptyValue = true;
@@ -42,7 +42,7 @@ function getParams()
 
   if(mywindow.findChild("groupBox_2").checked)
     params.char2 = true;
-  params.char_id2 = mywindow.findChild("_char_2").id;
+  params.char_id2 = mywindow.findChild("_char_2").id();
   params.value2 = mywindow.findChild("_value_2").text;
   if(mywindow.findChild("_emptyValue_2").checked)
     params.emptyValue2 = true;

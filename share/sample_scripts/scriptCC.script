@@ -92,10 +92,10 @@ function populatePrior()
 function authorize()
 {
   var params = new Object;
-  params.ccard_id = _card.id;
+  params.ccard_id = _card.id();
   params.cvv      = _cvv.text;
   params.amount   = _amount.localValue;
-  params.curr_id  = _amount.id;
+  params.curr_id  = _amount.id();
   params.neworder = _order.text;
 
   var results     = _ccp.authorize(params);
@@ -108,10 +108,10 @@ function authorize()
 function charge()
 {
   var params = new Object;
-  params.ccard_id = _card.id;
+  params.ccard_id = _card.id();
   params.cvv      = _cvv.text;
   params.amount   = _amount.localValue;
-  params.curr_id  = _amount.id;
+  params.curr_id  = _amount.id();
   params.neworder = _order.text;
 
   var results     = _ccp.charge(params);
@@ -124,10 +124,10 @@ function charge()
 function credit()
 {
   var params = new Object;
-  params.ccard_id = _card.id;
+  params.ccard_id = _card.id();
   params.cvv      = _cvv.text;
   params.amount   = _amount.localValue;
-  params.curr_id  = _amount.id;
+  params.curr_id  = _amount.id();
   params.neworder = _order.text;
 
   var results     = _ccp.charge(params);
@@ -142,8 +142,8 @@ function chargePreauth()
 {
   var params = new Object;
   params.amount   = _amount.localValue;
-  params.curr_id  = _amount.id;
-  params.ccpay_id = _prior.id;
+  params.curr_id  = _amount.id();
+  params.ccpay_id = _prior.id();
 
   var results     = _ccp.chargePreauthorized(params);
   if (results.returnVal + 0 < 0)
@@ -155,7 +155,7 @@ function chargePreauth()
 function voidPrevious()
 {
   var params = new Object;
-  params.ccpay_id = _prior.id;
+  params.ccpay_id = _prior.id();
 
   var results     = _ccp.voidPrevious(params);
   if (results.returnVal < 0)
