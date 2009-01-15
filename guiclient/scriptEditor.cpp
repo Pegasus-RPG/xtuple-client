@@ -373,6 +373,7 @@ void scriptEditor::sFind()
                                .arg(_findText->text()));
     _source->setTextCursor(oldposition);
   }
+  _source->setFocus();
 }
 
 void scriptEditor::sBlockCountChanged(const int p)
