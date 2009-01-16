@@ -77,13 +77,18 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     
     public:
       XTreeView(QWidget *parent = 0);
+      ~XTreeView();
 
-      Q_INVOKABLE bool isRowHidden(int row);
-      bool         throwScriptException(const QString &message);
-      int          primaryKeyColumns()       const            { return _keyColumns;         };
-      QString      schemaName()              const            { return _schemaName;         };
-      QString      tableName()               const            { return _tableName;          };
-      void         setTable();
+      Q_INVOKABLE bool    isRowHidden(int row);
+                  int     primaryKeyColumns() const { return _keyColumns; };
+                  QString schemaName()        const { return _schemaName; };
+                  QString tableName()         const { return _tableName;  };
+                  bool    throwScriptException(const QString &message);
+
+      Q_INVOKABLE virtual void setColumnLocked(int, bool);
+      Q_INVOKABLE virtual void setColumnVisible(int, bool);
+      Q_INVOKABLE         void setObjectName(const QString &name);
+      Q_INVOKABLE         void setTable();
       
     public slots:
       virtual int  rowCount();
@@ -111,17 +116,37 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       void  saved();
       
     protected:
+      virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+
+    private slots:
+      void popupMenuActionTriggered(QAction*);
+      void sColumnSizeChanged(int, int, int);
+      void sResetAllWidths();
+      void sResetWidth();
+      void sShowHeaderMenu(const QPoint &);
+      void sToggleForgetfulness();
       
     private:
-      int               _keyColumns;
-      QString           _schemaName;
-      QString           _tableName;
-      QSqlDatabase      *_db;
-      QSqlRecord        _idx;
-      XDataWidgetMapper *_mapper;
-      XSqlTableModel    _model;
+      QSqlDatabase        *_db;
+      QMap<int, int>       _defaultColumnWidths;
+      bool                 _forgetful;
+      QSqlRecord           _idx;
+      int                  _keyColumns;
+      QList<int>           _lockedColumns;
+      XDataWidgetMapper   *_mapper;
+      QMenu               *_menu;
+      XSqlTableModel       _model;
+      int                  _resetWhichWidth;
+      bool                 _resizingInProcess;
+      QMap<int, int>       _savedColumnWidths;
+      QMap<int, bool>      _savedVisibleColumns;
+      QString              _schemaName;
       QItemSelectionModel *_selectModel;
+      bool                 _settingsLoaded;
+      QString              _settingsName;
+      QVector<int>         _stretch;
+      QString              _tableName;
  
 };
 

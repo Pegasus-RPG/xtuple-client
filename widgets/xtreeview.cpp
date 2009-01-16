@@ -61,26 +61,119 @@
 #include "xsqltablemodel.h"
 //#include "xuiloader.h"
 
+#include <QBuffer>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QModelIndex>
+#include <QScriptEngine>
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlIndex>
-#include <QBuffer>
-#include <QMessageBox>
-#include <QTreeWidgetItem>
 #include <QStack>
-#include <QModelIndex>
-#include <QScriptEngine>
+#include <QTreeWidgetItem>
 
 XTreeView::XTreeView(QWidget *parent) : 
   QTreeView(parent)
 {
-  _keyColumns=1;
+  _keyColumns        = 1;
+  _resizingInProcess = false;
+  _settingsLoaded    = false;
+  _forgetful         = false;
+
+  _menu = new QMenu(this);
+  _menu->setObjectName("_menu");
+
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  header()->setStretchLastSection(false);
+  header()->setClickable(true);
+  header()->setContextMenuPolicy(Qt::CustomContextMenu);
   
   setAlternatingRowColors(true);
 
+  connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)),
+                    SLOT(sShowHeaderMenu(const QPoint &)));
+  connect(header(), SIGNAL(sectionResized(int, int, int)),
+          this,     SLOT(sColumnSizeChanged(int, int, int)));
+
   _mapper = new XDataWidgetMapper(this);
   _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
+}
+
+XTreeView::~XTreeView()
+{
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  settings.setValue(_settingsName + "/isForgetful", _forgetful);
+  QString savedString;
+  if(!_forgetful)
+  {
+    savedString = "";
+    for(int i = 0; i < header()->count(); i++)
+    {
+      int w = -1;
+      if(_defaultColumnWidths.contains(i))
+        w = _defaultColumnWidths.value(i);
+      if(!_stretch.contains(i) && header()->sectionSize(i) != w && !header()->isSectionHidden(i))
+        savedString.append(QString::number(i) + "," + QString::number(header()->sectionSize(i)) + "|");
+    }
+    settings.setValue(_settingsName + "/columnWidths", savedString);
+    // qDebug("widths savedString = %s", qPrintable(savedString));
+  }
+  if(_x_preferences)
+  {
+    savedString = "";
+    for(int i = 0; i < header()->count(); i++)
+    {
+      savedString.append(QString::number(i) + "," + (header()->isSectionHidden(i)?"off":"on") + "|");
+    }
+    if(!savedString.isEmpty())
+      _x_preferences->set(_settingsName + "/columnsShown", savedString);
+    else
+      _x_preferences->remove(_settingsName + "/columnsShown");
+    // qDebug("shown savedString = %s", qPrintable(savedString));
+  }
+}
+
+void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
+{
+  _menu->clear();
+
+  int logicalIndex = header()->logicalIndexAt(pntThis);
+  int currentSize = header()->sectionSize(logicalIndex);
+// If we have a default value and the current size is not equal to that default value
+// then we want to show the menu items for resetting those values back to default
+  if(_defaultColumnWidths.contains(logicalIndex)
+     && (!_stretch.contains(logicalIndex))
+     && (_defaultColumnWidths.value(logicalIndex) != currentSize) )
+  {
+    _resetWhichWidth = logicalIndex;
+    _menu->insertItem(tr("Reset this Width"), this, SLOT(sResetWidth()));
+  }
+
+  _menu->insertItem(tr("Reset all Widths"), this, SLOT(sResetAllWidths()));
+  _menu->insertSeparator();
+  if(_forgetful)
+    _menu->insertItem(tr("Remember Widths"), this, SLOT(sToggleForgetfulness()));
+  else
+    _menu->insertItem(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
+
+  _menu->insertSeparator();
+
+  for(int i = 0; i < header()->count(); i++)
+  {
+    QAction *act = _menu->addAction(QTreeView::model()->headerData(i, Qt::Horizontal).toString());
+    act->setCheckable(true);
+    act->setChecked(!header()->isSectionHidden(i));
+    act->setEnabled(!_lockedColumns.contains(i));
+    QMap<QString,QVariant> m;
+    m.insert("command", QVariant("toggleColumnHidden"));
+    m.insert("column", QVariant(i));
+    act->setData(m);
+    connect(_menu, SIGNAL(triggered(QAction*)), this, SLOT(popupMenuActionTriggered(QAction*)));
+  }
+
+  if(_menu->count())
+    _menu->popup(mapToGlobal(pntThis));
 }
 
 bool XTreeView::isRowHidden(int row)
@@ -231,6 +324,12 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
   _mapper=mapper; 
 }
 
+void XTreeView::setObjectName(const QString &name)
+{
+  _settingsName = window()->objectName() + "/" + name;
+  QObject::setObjectName(name);
+}
+
 void XTreeView::setTable()
 {
   if (_model.tableName() == _tableName)
@@ -250,6 +349,7 @@ void XTreeView::setTable()
 void XTreeView::setModel(XSqlTableModel * model)
 {
   QTreeView::setModel(model);
+
   //Set headers case proper 
   for (int i = 0; i < QTreeView::model()->columnCount(); ++i)
   {
@@ -262,6 +362,61 @@ void XTreeView::setModel(XSqlTableModel * model)
       }
       QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);
   }
+
+  if (! _settingsLoaded)
+  {
+    _settingsLoaded = true;
+
+    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    _forgetful = settings.value(_settingsName + "/isForgetful").toBool();
+    QString savedString;
+    QStringList savedParts;
+    QString part, key, val;
+    bool b1 = false, b2 = false;
+    if(!_forgetful)
+    {
+      savedString = settings.value(_settingsName + "/columnWidths").toString();
+      // qDebug("restoring widths = %s", qPrintable(savedString));
+      savedParts = savedString.split("|", QString::SkipEmptyParts);
+      for(int i = 0; i < savedParts.size(); i++)
+      {
+        part = savedParts.at(i);
+        key = part.left(part.indexOf(","));
+        val = part.right(part.length() - part.indexOf(",") - 1);
+        b1 = false;
+        b2 = false;
+        int k = key.toInt(&b1);
+        int v = val.toInt(&b2);
+        if(b1 && b2)
+        {
+          _savedColumnWidths.insert(k, v);
+          header()->resizeSection(k, v);
+        }
+      }
+    }
+
+    // Load any previously saved column hidden/visible information
+    if(_x_preferences)
+    {
+      savedString = _x_preferences->value(_settingsName + "/columnsShown");
+      // qDebug("restoring shown = %s", qPrintable(savedString));
+      savedParts = savedString.split("|", QString::SkipEmptyParts);
+      for(int i = 0; i < savedParts.size(); i++)
+      {
+        part = savedParts.at(i);
+        key = part.left(part.indexOf(","));
+        val = part.right(part.length() - part.indexOf(",") - 1);
+        int c = key.toInt(&b1);
+        // qDebug("b1 = %d, val = %s", b1, qPrintable(val));
+        if(b1 && (val == "on" || val == "off"))
+        {
+          _savedVisibleColumns.insert(c, (val == "on" ? true : false));
+          header()->setSectionHidden(c, ! (val == "on" ? true : false));
+        }
+      }
+    }
+  }
+
   emit newModel(model);
 }
 
@@ -270,3 +425,113 @@ void XTreeView::setValue(int row, int column, QVariant value)
   _model.setData(_model.index(row,column), value);
 }
 
+void XTreeView::resizeEvent(QResizeEvent * e)
+{
+  QTreeView::resizeEvent(e);
+
+  sColumnSizeChanged(-1, 0, 0);
+}
+
+void XTreeView::sResetWidth()
+{
+  int w = _defaultColumnWidths.value(_resetWhichWidth);
+  if(w >= 0)
+    header()->resizeSection(_resetWhichWidth, w);
+  else
+  {
+    if(!_stretch.contains(_resetWhichWidth))
+      _stretch.append(_resetWhichWidth);
+    sColumnSizeChanged(-1, 0, 0);
+  }
+}
+
+void XTreeView::sResetAllWidths()
+{
+  bool autoSections = false;
+  for (int i = 0; i < header()->length(); i++)
+  {
+    int width = _defaultColumnWidths.value(i, -1);
+    if (width >= 0)
+      header()->resizeSection(i, width);
+    else if (!_stretch.contains(i))
+    {
+      _stretch.append(i);
+      autoSections = true;
+    }
+  }
+  if(autoSections)
+    sColumnSizeChanged(-1, 0, 0);
+}
+
+void XTreeView::sToggleForgetfulness()
+{
+  _forgetful = !_forgetful;
+}
+
+
+void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int /*newSize*/)
+{
+  if(_resizingInProcess || _stretch.count() < 1)
+    return;
+
+  if(_stretch.contains(logicalIndex))
+    _stretch.remove(_stretch.indexOf(logicalIndex));
+
+  _resizingInProcess = true;
+
+  int usedSpace = 0;
+  int stretchCount = 0;
+
+  for(int i = 0; i < header()->count(); i++)
+  {
+    if(logicalIndex == i || !_stretch.contains(i))
+      usedSpace += header()->sectionSize(i);
+    else if (!header()->isSectionHidden(i))
+      stretchCount++;
+  }
+
+  int w = viewport()->width();
+  if(stretchCount > 0)
+  {
+    int leftover = (w - usedSpace) / stretchCount;
+
+    if(leftover < 50)
+      leftover = 50;
+
+    for(int n = 0; n < _stretch.count(); n++)
+      if(_stretch.at(n) != logicalIndex)
+        header()->resizeSection(_stretch.at(n), leftover);
+  }
+
+  _resizingInProcess = false;
+}
+
+void XTreeView::setColumnLocked(int pColumn, bool pLocked)
+{
+  if(pLocked)
+  {
+    if(!_lockedColumns.contains(pColumn))
+      _lockedColumns.append(pColumn);
+  }
+  else
+    _lockedColumns.removeAll(pColumn);
+}
+
+void XTreeView::popupMenuActionTriggered(QAction * pAction)
+{
+  QMap<QString, QVariant> m = pAction->data().toMap();
+  QString command = m.value("command").toString();
+  if("toggleColumnHidden" == command)
+  {
+    setColumnVisible(m.value("column").toInt(), pAction->isChecked());
+  }
+  //else if (some other command to handle)
+}
+
+void XTreeView::setColumnVisible(int pColumn, bool pVisible)
+{
+  if(pVisible)
+    header()->showSection(pColumn);
+  else
+    header()->hideSection(pColumn);
+}
