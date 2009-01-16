@@ -73,6 +73,21 @@ public:
     ~creditCard();
 
     virtual SetResponse set(const ParameterList & pParams );
+    static int saveCreditCard(QWidget *parent,
+                              const int &custId,
+                              QString &ccName, 
+                              QString &ccAddress1, 
+                              QString &ccAddress2,
+                              QString &ccCity, 
+                              QString &ccState, 
+                              QString &ccZip, 
+                              QString &ccCountry,
+                              QString &ccNumber,
+                              QString &ccType,
+                              QString &ccExpireMonth,
+                              QString &ccExpireYear,
+                              int &ccId = 0,
+                              bool &ccActive = true );
 
 public slots:
     virtual void sSave();
@@ -85,7 +100,6 @@ private:
     int _ccardid;
     int _custid;
     int _mode;
-    int _seq;
 };
 
 #endif // CREDITCARD_H

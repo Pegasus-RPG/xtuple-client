@@ -83,6 +83,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "creditcard.h"
 #include "creditcardprocessor.h"
 #include "mqlutil.h"
 #include "scriptquery.h"
@@ -870,6 +871,39 @@ void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
   else
     qWarning("object %s could not be converted to SaveFlags",
              qPrintable(obj.toString()));
+}
+
+int ScriptToolbox::saveCreditCard(QWidget *parent,
+                                  const int custId,
+                                  QString ccName, 
+                                  QString ccAddress1, 
+                                  QString ccAddress2,
+                                  QString ccCity, 
+                                  QString ccState, 
+                                  QString ccZip, 
+                                  QString ccCountry,
+                                  QString ccNumber,
+                                  QString ccType,
+                                  QString ccExpireMonth,
+                                  QString ccExpireYear,
+                                  int ccId,
+                                  bool ccActive )
+{
+  return creditCard::saveCreditCard(parent,
+                                    custId,
+                                    ccName,
+                                    ccAddress1,
+                                    ccAddress2,
+                                    ccCity,
+                                    ccState,
+                                    ccZip,
+                                    ccCountry,
+                                    ccNumber,
+                                    ccType,
+                                    ccExpireMonth,
+                                    ccExpireYear,
+                                    ccId,
+                                    ccActive);
 }
 
 QObject *ScriptToolbox::getCreditCardProcessor()

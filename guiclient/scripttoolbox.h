@@ -202,7 +202,23 @@ class ScriptToolbox : public QObject
     QString textStreamRead(const QString & name);
     bool    textStreamWrite(const QString & name, const QString & WriteText);
 
+    int     saveCreditCard(QWidget *parent,
+                              const int custId,
+                              QString ccName, 
+                              QString ccAddress1, 
+                              QString ccAddress2,
+                              QString ccCity, 
+                              QString ccState, 
+                              QString ccZip, 
+                              QString ccCountry,
+                              QString ccNumber,
+                              QString ccType,
+                              QString ccExpireMonth,
+                              QString ccExpireYear,
+                              int ccId = 0,
+                              bool ccActive = true );
     QObject *getCreditCardProcessor();
+    
 
   private:
     QScriptEngine * _engine;
