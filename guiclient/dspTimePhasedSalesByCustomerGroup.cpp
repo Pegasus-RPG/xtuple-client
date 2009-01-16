@@ -121,21 +121,7 @@ void dspTimePhasedSalesByCustomerGroup::languageChange()
 
 void dspTimePhasedSalesByCustomerGroup::sPrint()
 {
-  ParameterList params;
-
-  _customerGroup->appendValue(params);
-  _productCategory->appendValue(params);
-
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
-  QList<QVariant> periodList;
-  for (int i = 0; i < selected.size(); i++)
-    periodList.append(((XTreeWidgetItem*)selected[i])->id());
-  params.append("period_id_list", periodList);
-
-  if (_byCustomer->isChecked())
-    params.append("orderByCustomer");
-  else if (_bySales->isChecked())
-    params.append("orderBySales");
+  ParameterList params(buildParameters());
 
   orReport report("TimePhasedSalesHistoryByCustomerGroup", params);
   if (report.isValid())
@@ -275,15 +261,14 @@ ParameterList dspTimePhasedSalesByCustomerGroup::buildParameters()
 
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  for (int i = 0; i < 0; i++)
+  for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());
-
   params.append("period_id_list", periodList);
 
-  if (_bySales->isChecked())
-    params.append("orderBySales");
-  else /*if(_byCustomer->isChecked())*/
+  if (_byCustomer->isChecked())
     params.append("orderByCustomer");
+  else if (_bySales->isChecked())
+    params.append("orderBySales");
 
   return params;
 }
