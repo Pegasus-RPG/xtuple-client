@@ -187,7 +187,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual void setLine3(const QString& p)	{ _addr3->setText(p); };
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	virtual void setNumber(QString p);
-        virtual void setNumber(int p)     {};
+        virtual void setNumber(const int)     {};
 	inline virtual void setPostalCode(const QString& p) { _postalcode->setText(p); };
 	inline virtual void setState(const QString& p)	{ _state->setEditText(p); };
 	virtual void	clear();
