@@ -88,9 +88,9 @@ bool package::userHasPriv(const int pMode)
       retval = _privileges->check("ViewPackages") || canmaintain;
       break;
     case cNew:
+    case cEdit:
       retval = canmaintain;
       break;
-    case cEdit: // spec says that nobody has permission to edit packages
     default:
       retval = false;
       break;
@@ -120,17 +120,19 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _rec->addColumn(tr("Type"),        -1, Qt::AlignLeft, true, "type");
-  _rec->addColumn(tr("Name"),        -1, Qt::AlignLeft, true, "pkgitem_name");
-  _rec->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "pkgitem_descrip");
+  _rec->addColumn(tr("Type"),       -1, Qt::AlignLeft, true, "type");
+  _rec->addColumn(tr("Name"),       -1, Qt::AlignLeft, true, "pkgitem_name");
+  _rec->addColumn(tr("Description"),-1, Qt::AlignLeft, true, "pkgitem_descrip");
 
-  _req->addColumn(tr("Package"),     -1, Qt::AlignLeft,  true, "pkghead_name");
-  _req->addColumn(tr("Description"), -1, Qt::AlignLeft,  true, "pkghead_descrip");
-  _req->addColumn(tr("Version"),     -1, Qt::AlignRight, true, "pkghead_version");
+  _req->addColumn(tr("Package"),    -1, Qt::AlignLeft, true, "pkghead_name");
+  _req->addColumn(tr("Description"),-1, Qt::AlignLeft, true, "pkghead_descrip");
+  _req->addColumn(tr("Version"),    -1, Qt::AlignRight,true, "pkghead_version");
 
-  _dep->addColumn(tr("Package"),     -1, Qt::AlignLeft,  true, "pkghead_name");
-  _dep->addColumn(tr("Description"), -1, Qt::AlignLeft,  true, "pkghead_descrip");
-  _dep->addColumn(tr("Version"),     -1, Qt::AlignRight, true, "pkghead_version");
+  _dep->addColumn(tr("Package"),    -1, Qt::AlignLeft, true, "pkghead_name");
+  _dep->addColumn(tr("Description"),-1, Qt::AlignLeft, true, "pkghead_descrip");
+  _dep->addColumn(tr("Version"),    -1, Qt::AlignRight,true, "pkghead_version");
+
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
 }
 
@@ -167,7 +169,9 @@ enum SetResponse package::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _version->setFocus();
+      _name->setEnabled(false);
+      _version->setEnabled(false);
+      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -179,6 +183,7 @@ enum SetResponse package::set(const ParameterList &pParams)
       _developer->setEnabled(false);
       _notes->setEnabled(false);
       _enabled->setEnabled(false);
+      _indev->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Close"));
@@ -202,8 +207,7 @@ void package::sCheck()
     if (q.first())
     {
       _pkgheadid = q.value("pkghead_id").toInt();
-      // _mode = cEdit;    // initial spec says that nobody has permission to edit packages
-      _mode = cView;
+      _mode = cEdit;
       populate();
     }
   }
@@ -224,10 +228,12 @@ void package::sSave()
 
     q.prepare( "INSERT INTO pkghead ("
                "  pkghead_id, pkghead_name, pkghead_descrip,"
-               "  pkghead_version, pkghead_developer, pkghead_notes "
+               "  pkghead_version, pkghead_developer, pkghead_notes,"
+               "  pkghead_indev"
                ") VALUES ("
                "  :pkghead_id, :pkghead_name, :pkghead_descrip, "
-               "  :pkghead_version, :pkghead_developer, :pkghead_notes );");
+               "  :pkghead_version, :pkghead_developer, :pkghead_notes,"
+               "  :pkghead_indev);");
   }
   else if (_mode == cEdit)
   {
@@ -247,10 +253,12 @@ void package::sSave()
     }
 
     q.prepare( "UPDATE pkghead "
-               "SET pkghead_name=:pkghead_name, pkghead_descrip=:pkghead_descrip,"
+               "SET pkghead_name=:pkghead_name,"
+               "    pkghead_descrip=:pkghead_descrip,"
                "    pkghead_version=:pkghead_version,"
                "    pkghead_developer=:pkghead_developer,"
-               "    pkghead_notes=:pkghead_notes "
+               "    pkghead_notes=:pkghead_notes,"
+               "    pkghead_indev=:pkghead_indev "
                "WHERE (pkghead_id=:pkghead_id);" );
   }
 
@@ -260,6 +268,7 @@ void package::sSave()
   q.bindValue(":pkghead_version",  _version->text());
   q.bindValue(":pkghead_developer",_developer->text());
   q.bindValue(":pkghead_notes",    _notes->text());
+  q.bindValue(":pkghead_indev",    _indev->isChecked());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -288,6 +297,7 @@ void package::populate()
     _developer->setText(q.value("pkghead_developer").toString());
     _notes->setText(q.value("pkghead_notes").toString());
     _enabled->setChecked(q.value("enabled").toBool());
+    _indev->setChecked(q.value("pkghead_indev").toBool());
     if (DEBUG)    qDebug("package::populate() select pkghead complete");
   }
   else if (q.lastError().type() != QSqlError::NoError)

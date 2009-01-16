@@ -91,12 +91,10 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
   _package->addColumn(tr("Enabled"),   _ynColumn, Qt::AlignCenter,true, "enabled");
 
   _load->setEnabled(package::userHasPriv(cNew));
-  // TODO: spec says no editing of packages, only loading
-  // It would be nice to be able to create new packages, fix 'em, and export 'em
+  // It would be nice if we could create (8225) and export (8224) packages
   //_new->setEnabled(package::userHasPriv(cNew));
-  //_edit->setEnabled(package::userHasPriv(cEdit));
   _new->setVisible(false);
-  _edit->setVisible(false);
+  _edit->setEnabled(package::userHasPriv(cEdit));
 
   if (package::userHasPriv(cEdit))
   {

@@ -60,7 +60,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -70,7 +70,7 @@
      </item>
     </layout>
    </item>
-   <item rowspan="4" row="0" column="3" >
+   <item rowspan="5" row="0" column="3" >
     <layout class="QVBoxLayout" >
      <item>
       <layout class="QVBoxLayout" >
@@ -98,7 +98,7 @@
        <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>40</height>
@@ -141,7 +141,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="3" >
+   <item row="4" column="0" colspan="3" >
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
       <number>0</number>
@@ -209,6 +209,13 @@
      </property>
     </widget>
    </item>
+   <item row="3" column="2" >
+    <widget class="QCheckBox" name="_indev" >
+     <property name="text" >
+      <string>Modifications Allowed</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -234,13 +241,14 @@
   <tabstop>_description</tabstop>
   <tabstop>_developer</tabstop>
   <tabstop>_enabled</tabstop>
+  <tabstop>_indev</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_notes</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_rec</tabstop>
   <tabstop>_req</tabstop>
   <tabstop>_dep</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
  <connections>
