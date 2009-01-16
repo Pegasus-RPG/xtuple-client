@@ -228,11 +228,13 @@ void dspQOHByLocation::sFillList()
                  "SELECT itemloc_id, 0 AS level, item_number AS sortkey, warehous_code, item_number,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
                  "       formatlotserialnumber(itemloc_ls_id) AS f_lotserial, uom_name,"
-                 "       itemloc_qty AS qty,"
-                 "       CASE WHEN (:reservations) THEN qtyReservedLocation(itemloc_id)"
-                 "            ELSE 0"
-                 "       END AS reservedqty "
-                 "FROM itemloc, itemsite, warehous, item, uom "
+                 "       itemloc_qty AS qty," );
+
+    if(_metrics->boolean("EnableSOReservationsByLocation"))
+      sql +=     "       qtyReservedLocation(itemloc_id) AS reservedqty ";
+    else
+      sql +=     "       0 AS reservedqty ";
+    sql +=       "FROM itemloc, itemsite, warehous, item, uom "
                  "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
@@ -249,7 +251,7 @@ void dspQOHByLocation::sFillList()
                  " AND (item_inv_uom_id=uom_id)"
                  " AND (itemsite_warehous_id=warehous_id)"
                  " AND (NOT itemsite_loccntrl)"
-                 " AND (itemsite_location_id=:location_id)) " );
+                 " AND (itemsite_location_id=:location_id)) ";
 
     if(_metrics->boolean("EnableSOReservationsByLocation"))
       sql +=     "UNION "
@@ -270,10 +272,6 @@ void dspQOHByLocation::sFillList()
     q.prepare(sql);
     q.bindValue(":location_id", _location->id());
     q.bindValue(":na", tr("N/A"));
-    if(_metrics->boolean("EnableSOReservationsByLocation"))
-      q.bindValue(":reservations", true);
-    else
-      q.bindValue(":reservations", false);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
