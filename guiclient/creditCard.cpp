@@ -68,7 +68,7 @@
 #define DEBUG false
 
 int creditCard::saveCreditCard(QWidget *parent,
-                              const int &custId, 
+                              int &custId, 
                               QString &ccName, 
                               QString &ccAddress1, 
                               QString &ccAddress2,
@@ -86,7 +86,7 @@ int creditCard::saveCreditCard(QWidget *parent,
   bool everythingOK;
   everythingOK = true;
   int mode = cNew;
-  int seq;
+  int seq = 0;
   
   if (ccId)
     mode = cEdit;

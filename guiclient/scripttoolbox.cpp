@@ -874,7 +874,7 @@ void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
 }
 
 int ScriptToolbox::saveCreditCard(QWidget *parent,
-                                  const int custId,
+                                  int custId,
                                   QString ccName, 
                                   QString ccAddress1, 
                                   QString ccAddress2,
