@@ -15,14 +15,14 @@
        uom_name,
        item_descrip1,
        item_descrip2,
-       &lt;? if exists(&quot;effective&quot;) ?>
-         formatDate(&lt;? value(&quot;effective&quot;) ?>)
+       &lt;? if exists("effective") ?>
+         formatDate(&lt;? value("effective") ?>)
        &lt;? else ?>
          text('Now')
        &lt;? endif ?>
        AS effective
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+ WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>
  <querysource>
@@ -43,9 +43,9 @@
   FROM bomitem, item, uom
  WHERE ((bomitem_parent_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
-   AND (bomitem_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-&lt;? if exists(&quot;effective&quot;) ?>
-   AND (&lt;? value(&quot;effective&quot;) ?> BETWEEN bomitem_effective and (bomitem_expires-1))
+   AND (bomitem_item_id=&lt;? value("item_id") ?>)
+&lt;? if exists("effective") ?>
+   AND (&lt;? value("effective") ?> BETWEEN bomitem_effective and (bomitem_expires-1))
 &lt;? else ?>
    AND (CURRENT_DATE BETWEEN bomitem_effective and (bomitem_expires-1))
 &lt;? endif ?>
@@ -360,6 +360,41 @@ ORDER BY item_number;</sql>
    <right/>
    <vcenter/>
    <string>Effective:</string>
+  </label>
+  <field>
+   <rect>
+    <x>450</x>
+    <y>138</y>
+    <width>185</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>uom_name</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>138</y>
+    <width>108</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>UOM:</string>
   </label>
  </rpthead>
  <pghead>
