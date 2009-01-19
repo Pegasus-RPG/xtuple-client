@@ -83,7 +83,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "creditcard.h"
+#include "creditCard.h"
 #include "creditcardprocessor.h"
 #include "mqlutil.h"
 #include "scriptquery.h"

@@ -86,8 +86,8 @@ public:
                               QString &ccType,
                               QString &ccExpireMonth,
                               QString &ccExpireYear,
-                              int &ccId = 0,
-                              bool &ccActive = true );
+                              int &ccId,
+                              bool ccActive = true );
 
 public slots:
     virtual void sSave();

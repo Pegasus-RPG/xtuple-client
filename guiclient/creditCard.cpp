@@ -81,14 +81,14 @@ int creditCard::saveCreditCard(QWidget *parent,
                               QString &ccExpireMonth,
                               QString &ccExpireYear,
                               int &ccId,
-                              bool &ccActive)
+                              bool ccActive)
 {
   bool everythingOK;
   everythingOK = true;
   int mode = cNew;
   int seq = 0;
   
-  if (ccId)
+  if (ccId > 0)
     mode = cEdit;
 
   ccName	= ccName.trimmed();
