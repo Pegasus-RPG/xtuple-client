@@ -313,9 +313,11 @@ void customCommand::sDelete()
 
 void customCommand::populate()
 {
-  q.prepare("SELECT cmd.*, relname ~* 'pkgcmd' AS inPackage"
-            "  FROM cmd, pg_class"
+  q.prepare("SELECT cmd.*, COALESCE(pkghead_indev,true) AS editable "
+            "  FROM cmd, pg_class, pg_namespace "
+            "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
             " WHERE ((cmd.tableoid=pg_class.oid)"
+            "   AND (relnamespace=pg_namespace.oid) "
             "   AND  (cmd_id=:cmd_id));");
   q.bindValue(":cmd_id", _cmdid);
   q.exec();
@@ -328,7 +330,7 @@ void customCommand::populate()
     _name->setText(q.value("cmd_name").toString());
     _executable->setText(q.value("cmd_executable").toString());
     _description->setText(q.value("cmd_descrip").toString());
-    if (q.value("inPackage").toBool())
+    if (!q.value("editable").toBool())
       setMode(cView);
 
     sFillList();

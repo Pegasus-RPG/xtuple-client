@@ -255,9 +255,11 @@ void uiform::sSave()
 
 void uiform::populate()
 {
-  q.prepare( "SELECT uiform.*, relname ~* 'pkguiform' AS inPackage "
-      	     "  FROM uiform, pg_class "
+  q.prepare( "SELECT uiform.*, COALESCE(pkghead_indev,true) AS editable "
+      	     "  FROM uiform, pg_class, pg_namespace "
+             "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((uiform.tableoid=pg_class.oid)"
+             "   AND (relnamespace=pg_namespace.oid) "
              "   AND  (uiform_id=:uiform_id));" );
   q.bindValue(":uiform_id", _uiformid);
   q.exec();
@@ -268,7 +270,7 @@ void uiform::populate()
     _enabled->setChecked(q.value("uiform_enabled").toBool());
     _source = q.value("uiform_source").toString();
     _notes->setText(q.value("uiform_notes").toString());
-    if (q.value("inPackage").toBool())
+    if (!q.value("editable").toBool())
       setMode(cView);
 
     sFillList();

@@ -259,9 +259,11 @@ bool scriptEditor::sSave()
 
 void scriptEditor::populate()
 {
-  q.prepare( "SELECT script.*, relname ~* 'pkgscript' AS inPackage "
-      	     "  FROM script, pg_class"
+  q.prepare( "SELECT script.*, COALESCE(pkghead_indev,true) AS editable "
+      	     "  FROM script, pg_class, pg_namespace "
+             "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((script.tableoid=pg_class.oid)"
+             "    AND (relnamespace=pg_namespace.oid) "
              "    AND (script_id=:script_id));" );
   q.bindValue(":script_id", _scriptid);
   q.exec();
@@ -274,9 +276,9 @@ void scriptEditor::populate()
     _notes->setText(q.value("script_notes").toString());
     setWindowTitle("[*]" + tr("Script Editor - %1").arg(_name->text()));
     if (DEBUG)
-      qDebug("scriptEditor::populate() inPackage = %d",
-             q.value("inPackage").toBool());
-    if (q.value("inPackage").toBool())
+      qDebug("scriptEditor::populate() editable = %d",
+             q.value("editable").toBool());
+    if (!q.value("editable").toBool())
       setMode(cView);
   }
   else if (q.lastError().type() != QSqlError::NoError)
