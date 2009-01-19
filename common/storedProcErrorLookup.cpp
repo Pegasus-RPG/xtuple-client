@@ -535,6 +535,8 @@ void initErrorLookupHash()
   { "deleteItemSite",  -5, TR("The selected Item Site cannot be deleted as "
 			      "there is Planning History posted against it. "
 			      "You may edit the Item Site and deactivate it."),	0, "" },
+  { "deleteItemSite",  -6, TR("The selected Item Site cannot be deleted as "
+			      "there are Production Plans associated with it."),	0, "" },
   { "deleteItemSite",  -9, TR("The selected Item Site cannot be deleted as "
 			      "there is a non-zero Inventory Quantity posted "
 			      "against it."),	0, "" },
