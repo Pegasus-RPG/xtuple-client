@@ -85,7 +85,9 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
                   QString tableName()         const { return _tableName;  };
                   bool    throwScriptException(const QString &message);
 
-      Q_INVOKABLE virtual void setColumnLocked(int, bool);
+      Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
+      Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
+      Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
       Q_INVOKABLE         void setObjectName(const QString &name);
       Q_INVOKABLE         void setTable();
@@ -129,24 +131,32 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       
     private:
       QSqlDatabase        *_db;
-      QMap<int, int>       _defaultColumnWidths;
       bool                 _forgetful;
       QSqlRecord           _idx;
       int                  _keyColumns;
-      QList<int>           _lockedColumns;
       XDataWidgetMapper   *_mapper;
       QMenu               *_menu;
       XSqlTableModel       _model;
       int                  _resetWhichWidth;
       bool                 _resizingInProcess;
-      QMap<int, int>       _savedColumnWidths;
-      QMap<int, bool>      _savedVisibleColumns;
       QString              _schemaName;
       QItemSelectionModel *_selectModel;
       bool                 _settingsLoaded;
       QString              _settingsName;
-      QVector<int>         _stretch;
       QString              _tableName;
+
+      struct ColumnProps
+      { QString columnName;
+        int     defaultWidth;
+        int     savedWidth;
+        bool    locked;
+        bool    visible;
+        QString label;
+        int     alignment;
+      };
+      QMap<QString, ColumnProps*> _columnByName;
+      QMap<int,     ColumnProps*> _columnByNumber;
+
  
 };
 
