@@ -7,8 +7,8 @@ CONFIG      += qt warn_on staticlib
 DBFILE      =  scriptapi.db
 LANGUAGE    =  C++
 
-DEPENDPATH  += . ../common ../widgets
-INCLUDEPATH += . ../common ../widgets .
+DEPENDPATH  += . ../common ../widgets ../widgets/tmp/lib
+INCLUDEPATH += . ../common ../widgets ../widgets/tmp/lib .
 
 DESTDIR = ../lib
 
@@ -42,6 +42,33 @@ HEADERS +=  setupscriptapi.h                    \
             xnetworkaccessmanager.h             \
             xsqltablemodelproto.h               \
             xtreewidgetitemproto.h              \
+            addressclustersetup.h		\
+            alarmssetup.h			\
+            clineeditsetup.h			\
+            commentssetup.h			\
+            contactclustersetup.h		\
+            crmacctlineeditsetup.h		\
+            currdisplaysetup.h			\
+            documentssetup.h			\
+            glclustersetup.h			\
+            itemlineeditsetup.h			\
+            orderlineeditsetup.h		\
+            parametergroupsetup.h		\
+            polineeditsetup.h			\
+            projectlineeditsetup.h		\
+            ralineeditsetup.h			\
+            revisionlineeditsetup.h		\
+            screensetup.h			\
+            shipmentclusterlineeditsetup.h	\
+            solineeditsetup.h			\
+            tolineeditsetup.h			\
+            usernamelineeditsetup.h		\
+            vendorgroupsetup.h			\
+            wcomboboxsetup.h			\
+            wolineeditsetup.h			\
+            womatlclustersetup.h		\
+            xcomboboxsetup.h			\
+            xdateeditsetup.h			\
 
 SOURCES +=  setupscriptapi.cpp                  \
             qdomattrproto.cpp                   \
@@ -69,5 +96,32 @@ SOURCES +=  setupscriptapi.cpp                  \
             xnetworkaccessmanager.cpp           \
             xsqltablemodelproto.cpp             \
             xtreewidgetitemproto.cpp            \
+            addressclustersetup.cpp		\
+            alarmssetup.cpp			\
+            clineeditsetup.cpp			\
+            commentssetup.cpp			\
+            contactclustersetup.cpp		\
+            crmacctlineeditsetup.cpp		\
+            currdisplaysetup.cpp		\
+            documentssetup.cpp			\
+            glclustersetup.cpp			\
+            itemlineeditsetup.cpp		\
+            orderlineeditsetup.cpp		\
+            parametergroupsetup.cpp		\
+            polineeditsetup.cpp			\
+            projectlineeditsetup.cpp		\
+            ralineeditsetup.cpp			\
+            revisionlineeditsetup.cpp		\
+            screensetup.cpp			\
+            shipmentclusterlineeditsetup.cpp	\
+            solineeditsetup.cpp			\
+            tolineeditsetup.cpp			\
+            usernamelineeditsetup.cpp		\
+            vendorgroupsetup.cpp		\
+            wcomboboxsetup.cpp			\
+            wolineeditsetup.cpp			\
+            womatlclustersetup.cpp		\
+            xcomboboxsetup.cpp			\
+            xdateeditsetup.cpp			\
 
 QT +=  sql xml script network

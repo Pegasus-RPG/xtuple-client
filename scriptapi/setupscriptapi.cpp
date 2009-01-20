@@ -55,6 +55,20 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#include "addressclustersetup.h"
+#include "alarmssetup.h"
+#include "clineeditsetup.h"
+#include "commentssetup.h"
+#include "contactclustersetup.h"
+#include "crmacctlineeditsetup.h"
+#include "currdisplaysetup.h"
+#include "documentssetup.h"
+#include "glclustersetup.h"
+#include "itemlineeditsetup.h"
+#include "orderlineeditsetup.h"
+#include "parametergroupsetup.h"
+#include "polineeditsetup.h"
+#include "projectlineeditsetup.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
 #include "qdomcharacterdataproto.h"
@@ -76,14 +90,42 @@
 #include "qnetworkrequestproto.h"
 #include "qsqldatabaseproto.h"
 #include "qurlproto.h"
+#include "ralineeditsetup.h"
+#include "revisionlineeditsetup.h"
+#include "screensetup.h"
 #include "setupscriptapi.h"
+#include "shipmentclusterlineeditsetup.h"
+#include "solineeditsetup.h"
+#include "tolineeditsetup.h"
+#include "usernamelineeditsetup.h"
+#include "vendorgroupsetup.h"
+#include "wcomboboxsetup.h"
+#include "wolineeditsetup.h"
+#include "womatlclustersetup.h"
+#include "xcomboboxsetup.h"
 #include "xdatawidgetmapperproto.h"
+#include "xdateeditsetup.h"
 #include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
 #include "xtreewidgetitemproto.h"
 
 void setupScriptApi(QScriptEngine *engine)
 {
+
+  setupAddressCluster(engine);
+  setupAlarms(engine);
+  setupCLineEdit(engine);
+  setupCRMAcctLineEdit(engine);
+  setupComments(engine);
+  setupContactCluster(engine);
+  setupCurrDisplay(engine);
+  setupDocuments(engine);
+  setupGLCluster(engine);
+  setupItemLineEdit(engine);
+  setupOrderLineEdit(engine);
+  setupParameterGroup(engine);
+  setupPoLineEdit(engine);
+  setupProjectLineEdit(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
   setupQDomCharacterDataProto(engine);
@@ -101,12 +143,26 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomNotationProto(engine);
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
-  setupQSqlDatabaseProto(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
+  setupQSqlDatabaseProto(engine);
   setupQUrlProto(engine);
+  setupRaLineEdit(engine);
+  setupRevisionLineEdit(engine);
+  setupScreen(engine);
+  setupShipmentClusterLineEdit(engine);
+  setupSoLineEdit(engine);
+  setupToLineEdit(engine);
+  setupUsernameLineEdit(engine);
+  setupVendorGroup(engine);
+  setupWComboBox(engine);
+  setupWoLineEdit(engine);
+  setupWomatlCluster(engine);
+  setupXComboBox(engine);
   setupXDataWidgetMapperProto(engine);
+  setupXDateEdit(engine);
   setupXSqlTableModelProto(engine);
   setupXTreeWidgetItemProto(engine);
+
 }
