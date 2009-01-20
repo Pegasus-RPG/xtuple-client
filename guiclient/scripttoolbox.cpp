@@ -595,10 +595,12 @@ void ScriptToolbox::listProperties(const QScriptValue &obj) const
   while (tmp.isObject())
   {
     QScriptValueIterator prop(tmp);
-    if (prop.hasNext())
-      for (prop.next(); prop.hasNext(); prop.next())
-        qWarning("  %s\t= %s",
-                 qPrintable(prop.name()), qPrintable(prop.value().toString()));
+    while (prop.hasNext())
+    {
+      prop.next();
+      qWarning("  %s\t= %s",
+               qPrintable(prop.name()), qPrintable(prop.value().toString()));
+    }
     tmp = tmp.prototype();
     if (! (tmp.isNull() || tmp.isUndefined()))
       qWarning(" Prototype %s of %s:",
