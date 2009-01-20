@@ -736,6 +736,10 @@ void initErrorLookupHash()
 			       "clock entries exist for it. Please Close it "
 			       "instead of trying to Delete it."),
 								 0, "" },
+  { "deleteWo",		-2, TR("The Work Order cannot be deleted for Job Item Types. "
+			       "Please maintain the associated Sales Order "
+			       "instead of trying to Delete it."),
+								 0, "" },
 
   { "deleteWorkCenter",  -1, TR("The selected Work Center cannot be deleted "
 				"because there has been history posted against "
