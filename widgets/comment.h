@@ -63,7 +63,7 @@
 
 #include <xsqlquery.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "comments.h"
 
 class XComboBox;
@@ -71,7 +71,7 @@ class QTextEdit;
 class QPushButton;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT comment : public QDialog
+class XTUPLEWIDGETS_EXPORT comment : public QDialog
 {
     Q_OBJECT
 

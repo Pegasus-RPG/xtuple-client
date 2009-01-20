@@ -62,7 +62,7 @@
 #include <xsqlquery.h>
 
 #include "documents.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "ui_imageAssignment.h"
 
 class imageAssignment : public QDialog, public Ui::imageAssignment

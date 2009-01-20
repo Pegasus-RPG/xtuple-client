@@ -62,7 +62,7 @@
 #include <QVariant>
 #include <QDialog>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "itemcluster.h"
 
 class QLineEdit;
@@ -71,7 +71,7 @@ class QPushButton;
 class XTreeWidget;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT itemAliasList : public QDialog
+class XTUPLEWIDGETS_EXPORT itemAliasList : public QDialog
 {
     Q_OBJECT
 

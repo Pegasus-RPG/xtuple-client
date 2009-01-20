@@ -254,7 +254,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   else
     _costsGroup->setChecked(true);
     
-  //If not OpenMFG, hide show planned option
+  //If not Manufacturing, hide show planned option
   if (_metrics->value("Application") != "OpenMFG")
     _showPlanned->hide();
     

@@ -55,18 +55,14 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  invoicelineedit.h
-//  Created 02/28/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef invoiceLineEdit_h
 #define invoiceLineEdit_h
 
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
-class OPENMFGWIDGETS_EXPORT InvoiceLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT InvoiceLineEdit : public XLineEdit
 {
   Q_OBJECT
 

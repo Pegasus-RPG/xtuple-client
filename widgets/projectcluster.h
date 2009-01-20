@@ -61,7 +61,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT ProjectLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -90,7 +90,7 @@ class OPENMFGWIDGETS_EXPORT ProjectLineEdit : public VirtualClusterLineEdit
 
 };
 
-class OPENMFGWIDGETS_EXPORT ProjectCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 {
     Q_OBJECT
 

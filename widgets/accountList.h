@@ -60,14 +60,14 @@
 
 #include <QDialog>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 #include "xtreewidget.h"
 
 class QPushButton;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT accountList : public QDialog
+class XTUPLEWIDGETS_EXPORT accountList : public QDialog
 {
     Q_OBJECT
 

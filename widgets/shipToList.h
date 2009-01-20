@@ -64,7 +64,7 @@
 //Added by qt3to4:
 #include <QLabel>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QLineEdit;
@@ -72,7 +72,7 @@ class QPushButton;
 class XTreeWidget;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT shipToList : public QDialog
+class XTUPLEWIDGETS_EXPORT shipToList : public QDialog
 {
   Q_OBJECT
 

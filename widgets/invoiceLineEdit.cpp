@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  invoiceLineEdit.cpp
-//  Created 02/28/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <xsqlquery.h>
 
 #include "invoicelineedit.h"

@@ -55,16 +55,12 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  glcluster.h
-//  Created 03/01/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef glCluster_h
 #define glCluster_h
 
 #include <QWidget>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 class QLineEdit;
@@ -72,7 +68,7 @@ class QPushButton;
 class QKeyEvent;
 class QFocusEvent;
 
-class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT GLCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)

@@ -63,13 +63,13 @@
 #include <QLabel>
 #include <QRadioButton>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class WComboBox;
 class ParameterList;
 class XSqlQuery;
 
-class OPENMFGWIDGETS_EXPORT WarehouseGroup : public QGroupBox
+class XTUPLEWIDGETS_EXPORT WarehouseGroup : public QGroupBox
 {
   Q_OBJECT
 

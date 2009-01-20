@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  custCluster.cpp
-//  Created 02/27/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <Q3DragObject>
 #include <QHBoxLayout>
 #include <QDragEnterEvent>

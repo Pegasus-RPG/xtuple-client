@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xcombobox.cpp
-//  Created 03/16/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #include <QApplication>
 #include <QComboBox>
 #include <QCursor>

@@ -55,17 +55,13 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  warehouseCluster.h
-//  Created 03/12/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef warehouseCluster_h
 #define warehouseCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xcombobox.h"
 
-class OPENMFGWIDGETS_EXPORT WComboBox : public XComboBox
+class XTUPLEWIDGETS_EXPORT WComboBox : public XComboBox
 {
   Q_OBJECT
 

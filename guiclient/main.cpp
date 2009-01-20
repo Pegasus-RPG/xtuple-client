@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  main.cpp
-//  Created 12/07/1999 JSL
-//  Copyright (c) 1999-2008, OpenMFG, LLC
-
 #include <stdlib.h>
 
 #include <QApplication>
@@ -84,7 +80,7 @@
 
 #include <dbtools.h>
 #include <parameter.h>
-#include <OpenMFGWidgets.h>
+#include <widgets.h>
 
 #include "login2.h"
 
@@ -99,7 +95,7 @@
 #include "splashconst.h"
 
 #include <QtPlugin>
-Q_IMPORT_PLUGIN(OpenMFGPlugin)
+Q_IMPORT_PLUGIN(xTuplePlugin)
 
 int main(int argc, char *argv[])
 {
@@ -291,7 +287,7 @@ int main(int argc, char *argv[])
   if(!metric.first() || (metric.value("metric_value").toString() == "OpenMFG"))
   {
     _splash->setPixmap(QPixmap(":/images/splashOpenMFG.png"));
-    _Name = _Name.arg("OpenMFG");
+    _Name = _Name.arg("Manufacturing");
   }
   else if(!metric.first() || (metric.value("metric_value").toString() == "xTupleERP"))
   {

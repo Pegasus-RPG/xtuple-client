@@ -36,7 +36,7 @@
             <string/>
            </property>
            <property name="pixmap" >
-            <pixmap resource="OpenMFGCommon.qrc" >:/login/images/splashXTuple.png</pixmap>
+            <pixmap resource="xTupleCommon.qrc" >:/login/images/splashXTuple.png</pixmap>
            </property>
            <property name="scaledContents" >
             <bool>true</bool>
@@ -2830,7 +2830,7 @@
   <tabstop>_close</tabstop>
  </tabstops>
  <resources>
-  <include location="OpenMFGCommon.qrc" />
+  <include location="xTupleCommon.qrc" />
  </resources>
  <connections>
   <connection>

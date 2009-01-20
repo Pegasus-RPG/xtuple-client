@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// crmacctCluster.cpp
-// Created 09/11/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include <QMessageBox>
 #include <QSqlError>
 

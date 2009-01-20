@@ -63,7 +63,7 @@
 #include <QVariant>
 #include <QVector>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 
 //  Table Column Widths
@@ -95,7 +95,7 @@ class XTreeWidget;
 class QMenu;
 class QAction;
 
-class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
+class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
 {
   friend class XTreeWidget;
 
@@ -181,7 +181,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     int                _altId;
 };
 
-class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
+class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString dragString READ dragString WRITE setDragString)

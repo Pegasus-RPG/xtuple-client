@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  itemcluster.h
-//  Created 03/07/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef itemCluster_h
 #define itemCluster_h
 
@@ -74,7 +70,7 @@ class QDragEnterEvent;
 class QDropEvent;
 class QMouseEvent;
 
-class OPENMFGWIDGETS_EXPORT ItemLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT ItemLineEdit : public XLineEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString     number          READ text          WRITE setItemNumber)
@@ -202,7 +198,7 @@ friend class ItemCluster;
     bool    _useValidationQuery;
 };
 
-class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber   DESIGNABLE false)

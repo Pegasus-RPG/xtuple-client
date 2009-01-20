@@ -55,14 +55,10 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  wocluster.h
-//  Created 03/08/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef woCluster_h
 #define woCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include <QDate>
 #include <xsqlquery.h>
 #include "xlineedit.h"
@@ -81,7 +77,7 @@ class XComboBox;
 #define cWoClosed   0x10
 
 
-class OPENMFGWIDGETS_EXPORT WoLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT WoLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -132,7 +128,7 @@ friend class WoCluster;
     void valid(bool);
 };
 
-class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
@@ -200,7 +196,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     void valid(bool);
 };
 
-class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlCluster
+class XTUPLEWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlCluster
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)

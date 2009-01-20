@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  shiptoCluster.cpp
-//  Created 03/07/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>

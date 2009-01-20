@@ -55,14 +55,10 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  vendorcluster.h
-//  Created 02/26/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef vendorcluster_h
 #define vendorcluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 #define __allVendors    0x01
@@ -73,7 +69,7 @@ class QLabel;
 
 class VendorCluster;
 
-class OPENMFGWIDGETS_EXPORT VendorLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT VendorLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -116,7 +112,7 @@ friend class VendorCluster;
     int  _type;
 };
 
-class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
+class XTUPLEWIDGETS_EXPORT VendorInfo : public QWidget
 {
   Q_OBJECT
 
@@ -166,7 +162,7 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
 };
 
 
-class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT VendorCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false)

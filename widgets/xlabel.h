@@ -55,23 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlabel.h
-//  Created 08/05/2008 GJM from xlineedit.h
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef xlabel_h
 #define xlabel_h
 
 #include <QLabel>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
 class QDoubleValidator;
 class QIntValidator;
 class QVariant;
 
-class OPENMFGWIDGETS_EXPORT XLabel : public QLabel
+class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)

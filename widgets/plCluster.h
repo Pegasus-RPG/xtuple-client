@@ -55,23 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  plCluster.h
-//  Created 04/15/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef plCluster_h
 #define plCluster_h
 
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QPushButton;
 
 class PlanOrdCluster;
 
-class OPENMFGWIDGETS_EXPORT PlanOrdLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT PlanOrdLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -102,7 +98,7 @@ friend class PlanOrdCluster;
     void valid(bool);
 };
 
-class OPENMFGWIDGETS_EXPORT PlanOrdCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT PlanOrdCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString  fieldName      READ fieldName      WRITE setFieldName)

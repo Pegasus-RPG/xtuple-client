@@ -58,7 +58,7 @@
 #ifndef __EXPENSECLUSTER_H__
 #define __EXPENSECLUSTER_H__
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 #include <QLabel>
@@ -67,7 +67,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT ExpenseLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT ExpenseLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -76,7 +76,7 @@ class OPENMFGWIDGETS_EXPORT ExpenseLineEdit : public VirtualClusterLineEdit
 
 };
 
-class OPENMFGWIDGETS_EXPORT ExpenseCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ExpenseCluster : public VirtualCluster
 {
   Q_OBJECT
 

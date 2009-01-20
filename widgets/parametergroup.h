@@ -62,14 +62,14 @@
 #include <QGroupBox>
 #include <QRadioButton>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class XComboBox;
 class QLineEdit;
 class ParameterList;
 class XSqlQuery;
 
-class OPENMFGWIDGETS_EXPORT ParameterGroup : public QGroupBox
+class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
 {
   Q_OBJECT
 

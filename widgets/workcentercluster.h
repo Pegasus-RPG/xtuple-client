@@ -60,7 +60,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT WorkCenterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT WorkCenterLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -70,7 +70,7 @@ class OPENMFGWIDGETS_EXPORT WorkCenterLineEdit : public VirtualClusterLineEdit
     void setWorkCenter(const QString &);
 };
 
-class OPENMFGWIDGETS_EXPORT WorkCenterCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT WorkCenterCluster : public VirtualCluster
 {
   Q_OBJECT
 

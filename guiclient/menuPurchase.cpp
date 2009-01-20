@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuPurchase.cpp
-//  Created 01/01/2001 JSL
-//  Copyright (c) 2001-2008, OpenMFG, LLC
-
 #include <QAction>
 #include <QMenuBar>
 #include <QStatusBar>

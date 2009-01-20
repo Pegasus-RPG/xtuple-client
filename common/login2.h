@@ -100,7 +100,7 @@ class login2 : public QDialog, public Ui::login2
   private:
     bool _captive;
     bool _evaluation;
-    bool _nonOpenMFGDB;
+    bool _nonxTupleDB;
     bool _enhancedAuth;
     bool _requireSSL;
     bool _multipleConnections;

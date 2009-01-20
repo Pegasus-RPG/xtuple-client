@@ -58,7 +58,7 @@
 #ifndef addressCluster_h
 #define addressCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "virtualCluster.h"
 #include "xcheckbox.h"
 #include "xcombobox.h"
@@ -72,7 +72,7 @@
 class QGridLayout;
 class AddressCluster;
 
-class OPENMFGWIDGETS_EXPORT AddressList : public VirtualList
+class XTUPLEWIDGETS_EXPORT AddressList : public VirtualList
 {
     Q_OBJECT
 
@@ -99,7 +99,7 @@ class OPENMFGWIDGETS_EXPORT AddressList : public VirtualList
     private:
 };
 
-class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
+class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
 {
     Q_OBJECT
 
@@ -121,7 +121,7 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 	XCheckBox*	_searchInactive;
 };
 
-class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
     Q_PROPERTY(bool     activeVisible 	      READ activeVisible            WRITE setActiveVisible)

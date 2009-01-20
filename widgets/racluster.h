@@ -61,7 +61,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -91,7 +91,7 @@ class OPENMFGWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
     RaStatuses	_statuses;
 };
 
-class OPENMFGWIDGETS_EXPORT RaCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT RaCluster : public VirtualCluster
 {
   Q_OBJECT
 
@@ -109,7 +109,7 @@ class OPENMFGWIDGETS_EXPORT RaCluster : public VirtualCluster
 
 };
 
-class OPENMFGWIDGETS_EXPORT RaList : public VirtualList
+class XTUPLEWIDGETS_EXPORT RaList : public VirtualList
 {
   Q_OBJECT
 

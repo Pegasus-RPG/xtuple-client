@@ -60,7 +60,7 @@
 
 #include <parameter.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "ui_imageview.h"
 
 class imageview : public QDialog, public Ui::imageview

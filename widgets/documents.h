@@ -64,7 +64,7 @@
 
 #include "ui_documents.h"
 
-class OPENMFGWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
+class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 {
   Q_OBJECT
 

@@ -168,7 +168,7 @@ void XDateEdit::parseDate()
            qPrintable(dateString),
            qPrintable(_currentDate.toString()), _allowNull);
 
-#ifdef OpenMFGGUIClient_h
+#ifdef GUIClient_h
   QDate today = ofmgThis->dbDate();
 #else
   QDate today = QDate::currentDate();

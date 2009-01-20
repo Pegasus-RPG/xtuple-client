@@ -62,7 +62,7 @@
 #include <xsqlquery.h>
 
 #include "alarms.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "ui_alarmMaint.h"
 
 class alarmMaint : public QDialog, public Ui::alarmMaint

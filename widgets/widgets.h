@@ -55,8 +55,8 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef openmfgplugin_h
-#define openmfgplugin_h
+#ifndef xtupleplugin_h
+#define xtupleplugin_h
 
 #define cNew                  1
 #define cEdit                 2
@@ -70,12 +70,12 @@
 
 #ifdef Q_WS_WIN
   #ifdef MAKEDLL
-    #define OPENMFGWIDGETS_EXPORT __declspec(dllexport)
+    #define XTUPLEWIDGETS_EXPORT __declspec(dllexport)
   #else
-    #define OPENMFGWIDGETS_EXPORT
+    #define XTUPLEWIDGETS_EXPORT
   #endif
 #else
-  #define OPENMFGWIDGETS_EXPORT
+  #define XTUPLEWIDGETS_EXPORT
 #endif
 
 class Preferences;
@@ -89,13 +89,13 @@ extern Metrics     *_x_metrics;
 extern QWorkspace  *_x_workspace;
 extern Privileges  *_x_privileges;
 
-class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class xTuplePlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
 
   public:
-    OpenMFGPlugin(QObject *parent = 0);
+    xTuplePlugin(QObject *parent = 0);
 
     virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
 
@@ -103,7 +103,7 @@ class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInte
     QList<QDesignerCustomWidgetInterface*> m_plugins;
 };
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
+void XTUPLEWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
 
 #endif
 

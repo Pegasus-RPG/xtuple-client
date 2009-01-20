@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  guiclient.h
-//  Created 03/22/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-//
 #ifndef GUICLIENT_H
 #define GUICLIENT_H
 

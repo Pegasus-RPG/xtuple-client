@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// xdatawidgetmapper.cpp
-// Created 04/12/2008 JDR
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include "xdatawidgetmapper.h"
 
 XDataWidgetMapper::XDataWidgetMapper(QObject *parent) : 

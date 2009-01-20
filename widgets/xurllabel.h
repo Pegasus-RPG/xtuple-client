@@ -55,18 +55,15 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// xurllabel.h
-// Copyright (c) 2005-2008, OpenMFG, LLC
-
 #ifndef xurllabel_h
 #define xurllabel_h
 
 #include <QLabel>
 #include <QMouseEvent>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
-class OPENMFGWIDGETS_EXPORT XURLLabel : public QLabel
+class XTUPLEWIDGETS_EXPORT XURLLabel : public QLabel
 {
   Q_OBJECT
   Q_PROPERTY (QString url READ url WRITE setURL)

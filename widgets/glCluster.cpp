@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  glCluster.cpp
-//  Created 03/01/2003 JSL
-//  Copyright (c) 2000-2008, OpenMFG, LLC
-
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
@@ -70,7 +66,7 @@
 #include <xsqlquery.h>
 #include <parameter.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "glcluster.h"
 #include "accountList.h"
 #include "accountSearch.h"

@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// crmaccttcluster.h
-// Created 01/31/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef _crmaccttCluster_h
 #define _crmaccttCluster_h
 
@@ -67,14 +63,14 @@
 
 class XComboBox;
 
-class OPENMFGWIDGETS_EXPORT CRMAcctInfoAction
+class XTUPLEWIDGETS_EXPORT CRMAcctInfoAction
 {
   public:
     virtual ~CRMAcctInfoAction() {};
     virtual void crmacctInformation(QWidget* parent, int pCustid) = 0;
 };
 
-class OPENMFGWIDGETS_EXPORT CRMAcctLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -99,7 +95,7 @@ class OPENMFGWIDGETS_EXPORT CRMAcctLineEdit : public VirtualClusterLineEdit
 	CRMAcctSubtype _subtype;
 };
 
-class OPENMFGWIDGETS_EXPORT CRMAcctList : public VirtualList
+class XTUPLEWIDGETS_EXPORT CRMAcctList : public VirtualList
 {
     Q_OBJECT
 
@@ -123,7 +119,7 @@ class OPENMFGWIDGETS_EXPORT CRMAcctList : public VirtualList
 	enum CRMAcctLineEdit::CRMAcctSubtype _subtype;
 };
 
-class OPENMFGWIDGETS_EXPORT CRMAcctSearch : public VirtualSearch
+class XTUPLEWIDGETS_EXPORT CRMAcctSearch : public VirtualSearch
 {
     Q_OBJECT
 
@@ -158,7 +154,7 @@ class OPENMFGWIDGETS_EXPORT CRMAcctSearch : public VirtualSearch
     private:
 };
 
-class OPENMFGWIDGETS_EXPORT CRMAcctCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT CRMAcctCluster : public VirtualCluster
 {
     Q_OBJECT
 

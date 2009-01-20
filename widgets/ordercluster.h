@@ -61,7 +61,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -149,7 +149,7 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderStatuses)
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderTypes)
 
-class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
 {
   Q_OBJECT
 
@@ -196,7 +196,7 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     
 };
 
-class OPENMFGWIDGETS_EXPORT OrderList : public VirtualList
+class XTUPLEWIDGETS_EXPORT OrderList : public VirtualList
 {
   Q_OBJECT
 
@@ -212,7 +212,7 @@ class OPENMFGWIDGETS_EXPORT OrderList : public VirtualList
     virtual void	  done(int);
 };
 
-class OPENMFGWIDGETS_EXPORT OrderSearch : public VirtualSearch
+class XTUPLEWIDGETS_EXPORT OrderSearch : public VirtualSearch
 {
   Q_OBJECT
 

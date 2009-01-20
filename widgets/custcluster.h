@@ -55,14 +55,10 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  custcluster.h
-//  Created 02/27/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef custCluster_h
 #define custCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 class QLabel;
@@ -76,7 +72,7 @@ class CustInfo;
 #define __allCustomers    0x01
 #define __activeCustomers 0x02
 
-class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -141,14 +137,14 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     CLineEditTypes	_type;
 };
 
-class OPENMFGWIDGETS_EXPORT CustInfoAction
+class XTUPLEWIDGETS_EXPORT CustInfoAction
 {
   public:
     virtual ~CustInfoAction() {};
     virtual void customerInformation(QWidget* parent, int pCustid) = 0;
 };
 
-class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
+class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
 {
   Q_OBJECT
 
@@ -215,7 +211,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
 };
 
 
-class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT CustCluster : public QWidget
 {
   Q_OBJECT
 

@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  calendarTools.h
-//  Created 03/04/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef calendarTools_h
 #define calendarTools_h
 
@@ -66,13 +62,13 @@
 
 #include <parameter.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xcombobox.h"
 #include "xtreewidget.h"
 
 class QString;
 
-class OPENMFGWIDGETS_EXPORT Numeric
+class XTUPLEWIDGETS_EXPORT Numeric
 {
   public:
     Numeric()
@@ -86,7 +82,7 @@ class OPENMFGWIDGETS_EXPORT Numeric
     double value;
 };
 
-class OPENMFGWIDGETS_EXPORT DatePair
+class XTUPLEWIDGETS_EXPORT DatePair
 {
   public:
     DatePair()
@@ -104,7 +100,7 @@ class OPENMFGWIDGETS_EXPORT DatePair
 };
 
 
-class OPENMFGWIDGETS_EXPORT CalendarComboBox : public XComboBox
+class XTUPLEWIDGETS_EXPORT CalendarComboBox : public XComboBox
 {
   Q_OBJECT
 
@@ -121,7 +117,7 @@ class OPENMFGWIDGETS_EXPORT CalendarComboBox : public XComboBox
 
 class PeriodListViewItem;
 
-class OPENMFGWIDGETS_EXPORT PeriodsListView : public XTreeWidget
+class XTUPLEWIDGETS_EXPORT PeriodsListView : public XTreeWidget
 {
   Q_OBJECT
 
@@ -142,7 +138,7 @@ class OPENMFGWIDGETS_EXPORT PeriodsListView : public XTreeWidget
     int _calheadid;
 };
 
-class OPENMFGWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
+class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
 {
   public:
     PeriodListViewItem( PeriodsListView *, XTreeWidgetItem *, int,

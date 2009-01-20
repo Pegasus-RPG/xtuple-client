@@ -62,7 +62,7 @@
 #include <xsqlquery.h>
 
 #include "documents.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "ui_file.h"
 
 class file : public QDialog, public Ui::file

@@ -61,9 +61,9 @@
 
 #include <QSqlTableModel>
 #include <QDataWidgetMapper>
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
-class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
+class XTUPLEWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
 {
     Q_OBJECT
 

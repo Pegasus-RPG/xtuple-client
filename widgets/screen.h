@@ -58,7 +58,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
 
@@ -66,7 +66,7 @@
 #include <QSqlIndex>
 #include <QList>
 
-class OPENMFGWIDGETS_EXPORT Screen : public QWidget
+class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 {
 	Q_OBJECT
 		

@@ -61,7 +61,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT OpportunityClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT OpportunityClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -69,7 +69,7 @@ class OPENMFGWIDGETS_EXPORT OpportunityClusterLineEdit : public VirtualClusterLi
       OpportunityClusterLineEdit(QWidget*, const char* = 0);
 };
 
-class OPENMFGWIDGETS_EXPORT OpportunityCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT OpportunityCluster : public VirtualCluster
 {
     Q_OBJECT
 

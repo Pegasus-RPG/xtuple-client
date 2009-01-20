@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuCRM.cpp
-//  Created 09/05/2006 GJM
-//  Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef menuCRM_h
 #define menuCRM_h
 

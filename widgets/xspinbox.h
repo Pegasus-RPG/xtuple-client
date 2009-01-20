@@ -60,10 +60,10 @@
 
 #include <QSpinBox>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XSpinBox : public QSpinBox
+class XTUPLEWIDGETS_EXPORT XSpinBox : public QSpinBox
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)

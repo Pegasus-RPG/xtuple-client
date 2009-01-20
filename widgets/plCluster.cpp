@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  PlCluster.cpp
-//  Created 04/15/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>

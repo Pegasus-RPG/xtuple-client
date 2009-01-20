@@ -88,7 +88,7 @@ class ImageSearch : public VirtualSearch
 };
 
 
-class OPENMFGWIDGETS_EXPORT ImageClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT ImageClusterLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -101,7 +101,7 @@ class OPENMFGWIDGETS_EXPORT ImageClusterLineEdit : public VirtualClusterLineEdit
     virtual VirtualSearch *searchFactory();
 };
 
-class OPENMFGWIDGETS_EXPORT ImageCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ImageCluster : public VirtualCluster
 {
   Q_OBJECT
 

@@ -55,12 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// shipmentcluster.h
-// Created 12/19/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef _shipmentCluster_h
-
 #define _shipmentCluster_h
 
 #include "virtualCluster.h"
@@ -81,7 +76,7 @@ class ShipmentSearch : public VirtualSearch
         ShipmentSearch(QWidget*, Qt::WindowFlags = 0);
 };
 
-class OPENMFGWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -108,7 +103,7 @@ class OPENMFGWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineE
         ShipmentType _type;
 };
 
-class OPENMFGWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
 {
     Q_OBJECT
 

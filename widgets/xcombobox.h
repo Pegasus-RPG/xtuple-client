@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xcombobox.h
-//  Created 03/16/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef xcombobox_h
 #define xcombobox_h
 
@@ -68,12 +64,12 @@
 #include <QList>
 #include <QSqlTableModel>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
 class XSqlQuery;
 
-class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
+class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 {
   Q_OBJECT
 

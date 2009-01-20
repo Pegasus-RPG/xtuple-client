@@ -94,7 +94,7 @@ int XMessageBox::message( QWidget * parent, QMessageBox::Icon severity,
 
   QMessageBox *mb = new QMessageBox( caption, text, severity,
                                      b[0], b[1], b[2],
-                                     parent, "openmfg_msgbox_snooze", TRUE);
+                                     parent, "xtuple_msgbox_snooze", TRUE);
   Q_CHECK_PTR( mb );
   if ( !button0Text.isEmpty() )
     mb->setButtonText( 1, button0Text );

@@ -55,23 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  shiptocluster.h
-//  Created 03/07/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef shiptoCluster_h
 #define shiptoCluster_h
 
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QPushButton;
 
 class ShiptoCluster;
 
-class OPENMFGWIDGETS_EXPORT ShiptoEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT ShiptoEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -103,7 +99,7 @@ class OPENMFGWIDGETS_EXPORT ShiptoEdit : public XLineEdit
 };
 
 
-class OPENMFGWIDGETS_EXPORT ShiptoCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT ShiptoCluster : public QWidget
 {
   Q_OBJECT
 

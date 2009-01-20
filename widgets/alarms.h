@@ -65,7 +65,7 @@
 
 #include "ui_alarms.h"
 
-class OPENMFGWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
+class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
 {
   Q_OBJECT
 

@@ -102,7 +102,7 @@ HEADERS += \
            plugins/xtreeviewplugin.h \
            plugins/xspinboxplugin.h \
 
-SOURCES    += OpenMFGWidgets.cpp \
+SOURCES    += widgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
               xlabel.cpp xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
@@ -153,7 +153,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               invoiceCluster.cpp \
               xspinbox.cpp \
 
-HEADERS    += OpenMFGWidgets.h \
+HEADERS    += widgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
               xlabel.h xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \

@@ -55,16 +55,12 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  socluster.h
-//  Created 03/04/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef soCluster_h
 #define soCluster_h
 
 #include "xlineedit.h"
 #include "xdatawidgetmapper.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include <QLabel>
 
 class QLabel;
@@ -79,7 +75,7 @@ class SoCluster;
 #define cSoReleased           0x08
 #define cSoCustomer           0x16
 
-class OPENMFGWIDGETS_EXPORT SoLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT SoLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -121,7 +117,7 @@ friend class SoCluster;
 };
 
 
-class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT SoCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString label          READ label          WRITE setLabel                          )

@@ -596,7 +596,7 @@ void user::sCheck()
       {
         QMessageBox::warning( this, tr("Cannot Create System User"),
                               tr( "A User with the entered username does not exist in the system and you do not have privilege to create a new system User.\n"
-                                  "You may create the OpenMFG User but the new User will not be able to log into OpenMFG." ) );
+                                  "You may create the User but the new User will not be able to log into the database." ) );
       }
     }
   }

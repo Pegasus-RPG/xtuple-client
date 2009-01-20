@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// lotserialCluster.cpp
-// Created 11/04/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include "lotserialcluster.h"
 
 #include <QMessageBox>

@@ -55,8 +55,8 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef __OPENMFG_VERSION_H__
-#define __OPENMFG_VERSION_H__
+#ifndef __XTUPLE_VERSION_H__
+#define __XTUPLE_VERSION_H__
 
 #include <QString>
 
@@ -65,4 +65,4 @@ extern QString _Version;
 extern QString _dbVersion;
 extern QString _Copyright;
 
-#endif // __OPENMFG_VERSION_H__
+#endif // __XTUPLE_VERSION_H__

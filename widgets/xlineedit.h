@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef xlineedit_h
 #define xlineedit_h
 
@@ -67,10 +63,10 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)

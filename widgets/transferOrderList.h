@@ -60,7 +60,7 @@
 
 #include <QDialog>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class WarehouseGroup;
 class QPushButton;
@@ -72,7 +72,7 @@ class ParameterList;
 #define cToClosed             0x02
 #define cToAtShipping         0x04
 
-class OPENMFGWIDGETS_EXPORT transferOrderList : public QDialog
+class XTUPLEWIDGETS_EXPORT transferOrderList : public QDialog
 {
     Q_OBJECT
 

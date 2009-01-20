@@ -56,7 +56,6 @@
  */
 
 #ifndef XTREEVIEW_H
-
 #define XTREEVIEW_H
 
 #include <QTreeView>
@@ -64,9 +63,9 @@
 
 #include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
-class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
+class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 {
     Q_OBJECT
     Q_PROPERTY(QString         schemaName            READ schemaName           WRITE setSchemaName       )

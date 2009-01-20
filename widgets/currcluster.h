@@ -65,7 +65,7 @@ class QLabel;
 class QGridLayout;
 class QDoubleValidator;
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xcombobox.h"
 #include "xlineedit.h"
 
@@ -75,7 +75,7 @@ class QDoubleValidator;
  converted to local.  To do so it must respond to signals that the currency
  to display in or the exchange rate has changed.
  */
-class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
+class XTUPLEWIDGETS_EXPORT CurrDisplay : public QWidget
 {
   Q_OBJECT
 
@@ -206,7 +206,7 @@ Property descriptions:
 
 */
 
-class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
+class XTUPLEWIDGETS_EXPORT CurrCluster : public CurrDisplay
 {
     Q_OBJECT
     Q_PROPERTY(bool allowNegative  READ allowNegative WRITE setAllowNegative)

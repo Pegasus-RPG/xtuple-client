@@ -55,8 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include "xtreeview.h"
 #include "xsqltablemodel.h"
 

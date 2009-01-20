@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  calendarTools.cpp
-//  Created 03/04/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <xsqlquery.h>
 
 #include "calendarTools.h"

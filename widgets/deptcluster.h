@@ -55,17 +55,13 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// deptcluster.h
-// Created 01/31/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef _deptCluster_h
 
 #define _deptCluster_h
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT DeptClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT DeptClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -73,7 +69,7 @@ class OPENMFGWIDGETS_EXPORT DeptClusterLineEdit : public VirtualClusterLineEdit
       DeptClusterLineEdit(QWidget*, const char* = 0);
 };
 
-class OPENMFGWIDGETS_EXPORT DeptCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT DeptCluster : public VirtualCluster
 {
     Q_OBJECT
 

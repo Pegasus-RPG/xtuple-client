@@ -55,12 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// empgroupcluster.h
-// Created 05/21/2008 GJM
-// Copyright (c) 2008, OpenMFG, LLC
-
 #ifndef _empGroupCluster_h
-
 #define _empGroupCluster_h
 
 #include "virtualCluster.h"
@@ -90,7 +85,7 @@ class EmpGroupSearch : public VirtualSearch
 };
 
 
-class OPENMFGWIDGETS_EXPORT EmpGroupClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT EmpGroupClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -105,7 +100,7 @@ class OPENMFGWIDGETS_EXPORT EmpGroupClusterLineEdit : public VirtualClusterLineE
         virtual VirtualSearch *searchFactory();
 };
 
-class OPENMFGWIDGETS_EXPORT EmpGroupCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT EmpGroupCluster : public VirtualCluster
 {
     Q_OBJECT
 

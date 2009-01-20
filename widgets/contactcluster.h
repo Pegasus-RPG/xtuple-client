@@ -58,7 +58,7 @@
 #ifndef contactCluster_h
 #define contactCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "virtualCluster.h"
 #include "xcombobox.h"
 #include "addresscluster.h"
@@ -77,7 +77,7 @@
 class QGridLayout;
 class ContactCluster;
 
-class OPENMFGWIDGETS_EXPORT ContactList : public VirtualList
+class XTUPLEWIDGETS_EXPORT ContactList : public VirtualList
 {
     Q_OBJECT
 
@@ -97,7 +97,7 @@ class OPENMFGWIDGETS_EXPORT ContactList : public VirtualList
       QCheckBox*      _searchAcct;    
 };
 
-class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
+class XTUPLEWIDGETS_EXPORT ContactSearch : public VirtualSearch
 {
     Q_OBJECT
 
@@ -124,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
 
 };
 
-class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 {
     Q_OBJECT
     

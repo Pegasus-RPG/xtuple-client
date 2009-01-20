@@ -55,7 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 #include "plugins/addressclusterplugin.h"
 #include "plugins/alarmsplugin.h"
@@ -128,7 +128,7 @@
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
 
-OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
+xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
 {
   m_plugins.append(new AddressClusterPlugin(this));
   m_plugins.append(new AlarmsPlugin(this));
@@ -202,15 +202,15 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XTextEditPlugin(this));
 }
 
-QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const
+QList<QDesignerCustomWidgetInterface*> xTuplePlugin::customWidgets() const
 {
   return m_plugins;
 }
 
 #ifndef QT_STATICPLUGIN
-Q_EXPORT_PLUGIN(OpenMFGPlugin)
+Q_EXPORT_PLUGIN(xTuplePlugin)
 #else
-Q_EXPORT_STATIC_PLUGIN(OpenMFGPlugin)
+Q_EXPORT_STATIC_PLUGIN(xTuplePlugin)
 #endif
 
 Preferences *_x_preferences = 0;

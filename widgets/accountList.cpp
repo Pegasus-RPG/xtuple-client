@@ -67,7 +67,7 @@
 
 #include "xtreewidget.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 #include "glcluster.h"
 

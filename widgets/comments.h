@@ -65,7 +65,7 @@
 class QPushButton;
 class XTreeWidget;
 
-class OPENMFGWIDGETS_EXPORT Comments : public QWidget
+class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 {
   Q_OBJECT
 

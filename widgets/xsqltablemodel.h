@@ -60,9 +60,9 @@
 #define XSQLTABLEMODEL_H
 
 #include <QSqlRelationalTableModel>
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
-class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
+class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
 {
     Q_OBJECT
 

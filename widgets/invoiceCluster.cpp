@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// invoiceCluster.cpp
-// Created 01/31/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include "invoiceCluster.h"
 
 InvoiceCluster::InvoiceCluster(QWidget* pParent, const char* pName) :

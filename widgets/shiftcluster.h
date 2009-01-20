@@ -55,17 +55,12 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// shiftcluster.h
-// Created 01/31/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef _shiftCluster_h
-
 #define _shiftCluster_h
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT ShiftClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT ShiftClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -73,7 +68,7 @@ class OPENMFGWIDGETS_EXPORT ShiftClusterLineEdit : public VirtualClusterLineEdit
         ShiftClusterLineEdit(QWidget*, const char* = 0);
 };
 
-class OPENMFGWIDGETS_EXPORT ShiftCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT ShiftCluster : public VirtualCluster
 {
     Q_OBJECT
 

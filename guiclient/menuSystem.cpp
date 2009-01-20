@@ -138,7 +138,6 @@ extern QString __path;
 menuSystem::menuSystem(GUIClient *Pparent) :
  QObject(Pparent, "sysModule")
 {
-  QString _appname = _metrics->value("Application");
   parent = Pparent;
 
   errorLogListener::initialize();
@@ -272,7 +271,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	TRUE,	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
-    { "sys.exitOpenMFG",	tr("E&xit " + _appname + "..."), SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	},
+    { "sys.exit",	tr("E&xit xTuple ERP..."), SLOT(sExit()),				systemMenu,	true,	NULL,	NULL,	true	},
 
   };
 

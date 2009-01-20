@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// ContactCluster.cpp
-// Created 8/08/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>

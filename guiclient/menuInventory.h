@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuInventory.h
-//  Created 08/22/2000 JSL
-//  Copyright (c) 2000-2008, OpenMFG, LLC
-
 #ifndef menuInventory_h
 #define menuInventory_h
 

@@ -131,7 +131,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   }
   
   
-  //If not OpenMFG, hide inapplicable controls
+  //If not Manufacturing, hide inapplicable controls
   if (_metrics->value("Application") != "OpenMFG")
   {
     _orderGroupLit->hide();

@@ -38,4 +38,4 @@ FORMS = login2.ui login2Options.ui
 #The following line was inserted by qt3to4
 QT +=  sql
 
-RESOURCES += OpenMFGCommon.qrc
+RESOURCES += xTupleCommon.qrc

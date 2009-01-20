@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  guiclient.cpp
-//  Created 12/07/1999 JSL
-//  Copyright (c) 1999-2008, OpenMFG, LLC
-
 #include <QTimer>
 #include <QAction>
 #include <QVBoxLayout>
@@ -251,7 +247,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   setToolTip(_toolTip);
 }
 
-class OpenMFGCustInfoAction : public CustInfoAction
+class xTupleCustInfoAction : public CustInfoAction
 {
   public:
     void customerInformation(QWidget* parent, int pCustid)
@@ -278,7 +274,7 @@ class OpenMFGCustInfoAction : public CustInfoAction
     }
 };
 
-class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
+class xTupleCRMAcctInfoAction : public CRMAcctInfoAction
 {
   public:
     void crmacctInformation(QWidget* parent, int pid)
@@ -460,10 +456,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _timeoutHandler->setIdleMinutes(_preferences->value("IdleTimeout").toInt());
   _reportHandler = 0;
 
-  OpenMFGCustInfoAction* ciAction = new OpenMFGCustInfoAction();
+  xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;
 
-  CRMAcctLineEdit::_crmacctInfoAction = new OpenMFGCRMAcctInfoAction();
+  CRMAcctLineEdit::_crmacctInfoAction = new xTupleCRMAcctInfoAction();
 
   _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();

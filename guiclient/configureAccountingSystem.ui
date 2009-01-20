@@ -56,7 +56,7 @@
           <item>
            <widget class="QRadioButton" name="_native" >
             <property name="text" >
-             <string>Native OpenMFG Financials</string>
+             <string>Native xTuple ERP Financials</string>
             </property>
             <property name="checked" >
              <bool>true</bool>

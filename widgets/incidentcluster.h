@@ -61,7 +61,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT IncidentClusterLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT IncidentClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -69,7 +69,7 @@ class OPENMFGWIDGETS_EXPORT IncidentClusterLineEdit : public VirtualClusterLineE
       IncidentClusterLineEdit(QWidget*, const char* = 0);
 };
 
-class OPENMFGWIDGETS_EXPORT IncidentCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT IncidentCluster : public VirtualCluster
 {
     Q_OBJECT
 

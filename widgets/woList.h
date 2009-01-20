@@ -61,7 +61,7 @@
 
 #include <qdialog.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class XTreeWidget;
 class WarehouseGroup;
@@ -69,7 +69,7 @@ class QRadioButton;
 class QPushButton;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT woList : public QDialog
+class XTUPLEWIDGETS_EXPORT woList : public QDialog
 {
     Q_OBJECT
 

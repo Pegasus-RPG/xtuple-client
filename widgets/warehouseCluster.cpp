@@ -55,15 +55,11 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  warehouseCluster.cpp
-//  Created 03/12/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #include <metasql.h>
 #include <parameter.h>
 #include <xsqlquery.h>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "warehouseCluster.h"
 
 WComboBox::WComboBox(QWidget *parent, const char *name) : XComboBox(parent, name)

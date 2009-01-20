@@ -58,14 +58,14 @@
 #ifndef ACCOUNTSEARCH_H
 #define ACCOUNTSEARCH_H
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include <QDialog>
 
 #include "ui_accountSearch.h"
 
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT accountSearch : public QDialog, public Ui::accountSearch
+class XTUPLEWIDGETS_EXPORT accountSearch : public QDialog, public Ui::accountSearch
 {
     Q_OBJECT
 

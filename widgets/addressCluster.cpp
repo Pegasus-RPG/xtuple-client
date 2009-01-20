@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// AddressCluster.cpp
-// Created 8/05/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include <QMessageBox>
 #include <QGridLayout>
 #include <QSqlError>

@@ -58,7 +58,7 @@
 #ifndef FILECLUSTER_H
 #define FILECLUSTER_H
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "parameter.h"
 #include "xtreewidget.h"
 
@@ -90,7 +90,7 @@ class FileLineEdit : public QLineEdit
   QFileDialog.
  */
 
-class OPENMFGWIDGETS_EXPORT FileCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT FileCluster : public QWidget
 {
   Q_OBJECT
 

@@ -60,10 +60,10 @@
 
 #include <QTextEdit>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XTextEdit : public QTextEdit
+class XTUPLEWIDGETS_EXPORT XTextEdit : public QTextEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)

@@ -61,7 +61,7 @@
 #include "wcombobox.h"
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QPushButton;
@@ -73,7 +73,7 @@ class ToCluster;
 #define cToClosed             0x02
 #define cToAtShipping         0x04
 
-class OPENMFGWIDGETS_EXPORT ToLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT ToLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -104,7 +104,7 @@ friend class ToCluster;
 };
 
 
-class OPENMFGWIDGETS_EXPORT ToCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT ToCluster : public QWidget
 {
   Q_OBJECT
 

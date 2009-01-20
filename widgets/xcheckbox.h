@@ -61,10 +61,10 @@
 #include <QCheckBox>
 #include <QPixmap>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
+class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
   Q_OBJECT
   Q_PROPERTY(bool    defaultChecked   READ defaultChecked   WRITE setDefaultChecked)

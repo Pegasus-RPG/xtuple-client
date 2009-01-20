@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuSales.h
-//  Created 01/01/2001 JSL
-//  Copyright (c) 2001-2008, OpenMFG, LLC
-
 #ifndef menuSales_h
 #define menuSales_h
 

@@ -56,7 +56,7 @@
  */
 
 #include "imageview.h"
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 #include <xsqlquery.h>
 

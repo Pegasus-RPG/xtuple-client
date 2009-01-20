@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// empgroupcluster.cpp
-// Created 05/21/2008 GJM
-// Copyright (c) 2008, OpenMFG, LLC
-
 #include "empgroupcluster.h"
 
 EmpGroupCluster::EmpGroupCluster(QWidget* pParent, const char* pName) :

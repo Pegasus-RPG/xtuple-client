@@ -55,9 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// usernameCluster.cpp
-// Copyright (c) 2002-2008, OpenMFG, LLC
-
 #include <QPushButton>
 #include <QLabel>
 #include <QValidator>

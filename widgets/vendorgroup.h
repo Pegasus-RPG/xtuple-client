@@ -59,12 +59,12 @@
 #ifndef VENDORGROUP_H
 #define VENDORGROUP_H
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "ui_vendorgroup.h"
 
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
+class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 {
   Q_OBJECT
 

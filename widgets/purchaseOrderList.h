@@ -61,14 +61,14 @@
 
 #include <QDialog>
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "vendorcluster.h"
 
 class XTreeWidget;
 class QPushButton;
 class ParameterList;
 
-class OPENMFGWIDGETS_EXPORT purchaseOrderList : public QDialog
+class XTUPLEWIDGETS_EXPORT purchaseOrderList : public QDialog
 {
     Q_OBJECT
 

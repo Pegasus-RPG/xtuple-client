@@ -55,22 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// usernamecluster.h
-// Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef __USERNAMECLUSTER_H__
 #define __USERNAMECLUSTER_H__
 
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QPushButton;
 
 class UsernameCluster;
 
-class OPENMFGWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -107,7 +104,7 @@ class OPENMFGWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
     QString _username;
 };
 
-class OPENMFGWIDGETS_EXPORT UsernameCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
 {
   Q_OBJECT
 

@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// shipmentCluster.cpp
-// Created 12/19/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include "shipmentcluster.h"
 
 #include <QMessageBox>

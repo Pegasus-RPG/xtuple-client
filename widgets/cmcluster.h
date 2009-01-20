@@ -58,7 +58,7 @@
 #ifndef __CMCLUSTER_H__
 #define __CMCLUSTER_H__
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 #include <QLabel>
@@ -67,7 +67,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT CmLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT CmLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -82,7 +82,7 @@ class OPENMFGWIDGETS_EXPORT CmLineEdit : public VirtualClusterLineEdit
 
 };
 
-class OPENMFGWIDGETS_EXPORT CmCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT CmCluster : public VirtualCluster
 {
   Q_OBJECT
 

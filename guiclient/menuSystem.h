@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuSystem.h
-//  Created 12/11/2000 JSL
-//  Copyright (c) 2000-2008, OpenMFG, LLC
-
 #ifndef menuSystem_h
 #define menuSystem_h
 

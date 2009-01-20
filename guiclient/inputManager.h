@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  inputManager.h
-//  Created 05/13/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #ifndef inputManager_h
 #define inputManager_h
 

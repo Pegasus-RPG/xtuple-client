@@ -122,7 +122,7 @@ class XDateEdit : public XLineEdit
 
 };
 
-class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
+class XTUPLEWIDGETS_EXPORT DLineEdit : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(XDateEdit::Defaults)
@@ -163,7 +163,7 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
 };
 
 
-class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT DateCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QDate startDate READ startDate WRITE setStartDate)

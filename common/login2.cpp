@@ -79,7 +79,7 @@
 login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-  Q_INIT_RESOURCE(OpenMFGCommon);
+  Q_INIT_RESOURCE(xTupleCommon);
   setupUi(this);
 
   connect(_login, SIGNAL(clicked()), this, SLOT(sLogin()));
@@ -87,9 +87,9 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _splash = 0;
 
-  _captive = false; _nonOpenMFGDB = false;
+  _captive = false; _nonxTupleDB = false;
   _multipleConnections = false;
-  _evalDatabaseURL = "pgsql://demo.openmfg.com:5434/%1";
+  _evalDatabaseURL = "pgsql://demo.xtuple.com:5434/%1";
 
   _userid = -1;
 
@@ -170,9 +170,9 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
 
   populateDatabaseInfo();
 
-  param = pParams.value("nonOpenMFGDB", &valid);
+  param = pParams.value("nonxTupleDB", &valid);
   if (valid)
-    _nonOpenMFGDB = true;
+    _nonxTupleDB = true;
 
   param = pParams.value("multipleConnections", &valid);
   if (valid)
@@ -316,7 +316,7 @@ void login2::sLogin()
     qApp->processEvents();
   }
   
-  if(!_nonOpenMFGDB)
+  if(!_nonxTupleDB)
   {
     XSqlQuery login( "SELECT login() AS usr_id,"
                      "       CURRENT_USER AS user;" );

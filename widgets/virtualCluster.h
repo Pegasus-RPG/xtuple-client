@@ -58,7 +58,7 @@
 #ifndef virtCluster_h
 #define virtCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "parameter.h"
 #include "xlineedit.h"
 #include "xtreewidget.h"
@@ -76,7 +76,7 @@
 class QGridLayout;
 class VirtualClusterLineEdit;
 
-class OPENMFGWIDGETS_EXPORT VirtualList : public QDialog
+class XTUPLEWIDGETS_EXPORT VirtualList : public QDialog
 {
     Q_OBJECT
 
@@ -106,7 +106,7 @@ class OPENMFGWIDGETS_EXPORT VirtualList : public QDialog
         int          _id;
 };
 
-class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
+class XTUPLEWIDGETS_EXPORT VirtualSearch : public QDialog
 {
     Q_OBJECT
 
@@ -141,7 +141,7 @@ class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
         QLayout*     buttonsLyt;
 };
 
-class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
+class XTUPLEWIDGETS_EXPORT VirtualInfo : public QDialog
 {
     Q_OBJECT
 
@@ -185,7 +185,7 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
     value for the widget.
 */
 
-class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 {
     Q_OBJECT
     
@@ -269,7 +269,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
 */
 
-class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
 {
     Q_OBJECT
 

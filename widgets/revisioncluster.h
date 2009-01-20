@@ -58,7 +58,7 @@
 #ifndef __REVISIONCLUSTER_H__
 #define __REVISIONCLUSTER_H__
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 #include "xlineedit.h"
 
 #include <QLabel>
@@ -67,7 +67,7 @@
 
 #include "virtualCluster.h"
 
-class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -113,7 +113,7 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 
 };
 
-class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 {
   Q_OBJECT
 

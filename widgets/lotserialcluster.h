@@ -55,19 +55,14 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// lotserialcluster.h
-// Created 11/04/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #ifndef _lotserialCluster_h
-
 #define _lotserialCluster_h
 
 #include "virtualCluster.h"
 
 class LotserialCluster;
 
-class OPENMFGWIDGETS_EXPORT  LotserialList : public VirtualList
+class XTUPLEWIDGETS_EXPORT  LotserialList : public VirtualList
 {
   Q_OBJECT
 
@@ -80,7 +75,7 @@ class OPENMFGWIDGETS_EXPORT  LotserialList : public VirtualList
     LotserialCluster* _parent;
 };
 
-class OPENMFGWIDGETS_EXPORT  LotserialSearch : public VirtualSearch
+class XTUPLEWIDGETS_EXPORT  LotserialSearch : public VirtualSearch
 {
   Q_OBJECT
 
@@ -93,7 +88,7 @@ class OPENMFGWIDGETS_EXPORT  LotserialSearch : public VirtualSearch
     LotserialCluster* _parent;
 };
 
-class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
@@ -127,7 +122,7 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 	bool	_strict;
 };
 
-class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
+class XTUPLEWIDGETS_EXPORT LotserialCluster : public VirtualCluster
 {
     Q_OBJECT
 

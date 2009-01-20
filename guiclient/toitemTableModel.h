@@ -71,7 +71,7 @@
  a single POHEAD_ID, or a single TOITEM row.
 
  This should probably be written as a an XAbstractTableModel that includes
- OpenMFG-generic concepts and PoitemTableModel as a subclass of that abstract
+ xTuple-generic concepts and PoitemTableModel as a subclass of that abstract
  class but we don't yet know what all of those abstractions should be.
 
  */

@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlabel.cpp
-//  Created 08/05/2008 GJM from xlineedit.cpp
-//  Copyright (c) 2003-2008, OpenMFG, LLC
-
 #include "xlabel.h"
 
 #include <QLocale>

@@ -55,16 +55,12 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  Pocluster.h
-//  Created 02/27/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
 #ifndef __POCLUSTER_H__
 #define __POCLUSTER_H__
 
 #include "xlineedit.h"
 
-#include "OpenMFGWidgets.h"
+#include "widgets.h"
 
 class QLabel;
 class QPushButton;
@@ -79,7 +75,7 @@ class PoCluster;
 #define cPOItem     0x01
 #define cPOItemsrc  0x02
 
-class OPENMFGWIDGETS_EXPORT PoLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT PoLineEdit : public XLineEdit
 {
   Q_OBJECT
 
@@ -126,7 +122,7 @@ friend class PoCluster;
     
 };
 
-class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT PoCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)

@@ -55,9 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  vendorcluster.cpp Created 02/26/2002 JSL Copyright (c) 2002-2008, OpenMFG,
-//  LLC
-
 #include <QPushButton>
 #include <QValidator>
 #include <QLabel>
