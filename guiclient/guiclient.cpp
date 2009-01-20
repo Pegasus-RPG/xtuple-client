@@ -470,6 +470,35 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->finish(this);
 
   connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*)));
+
+  //Restore Window Size Saved on Close                                                                       
+  QRect availableGeometry = QApplication::desktop()->availableGeometry();                                    
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");                                        
+  QPoint pos = settings.value("GUIClient/geometry/pos", QPoint()).toPoint();                           
+  QSize size = settings.value("GUIClient/geometry/size", QSize()).toSize();                          
+  int mainXMax = availableGeometry.bottomRight().x();                                                        
+  int mainYMax = availableGeometry.bottomRight().y();                                                        
+                                                                                                             
+  //if the window size is bigger than the                                                                    
+  //screen make it the screen size                                                                           
+  if(size.isValid())
+  {
+    if(size.width() > mainXMax)                                                                                
+       size.setWidth(mainXMax);                                                                                
+    if(size.height() > mainYMax)                                                                               
+      size.setHeight(mainYMax);                                                                                
+    resize(size);                                                                                              
+  }
+  //put the main window back on screen at top                                                                
+  //left if it is off screen in part or full                                                                 
+  if(!pos.isNull())
+  {
+    if(pos.x() < 0 || (pos.x() + size.width()) > mainXMax)                                                     
+      pos.setX(0);                                                                                             
+    if(pos.y() < 0 || (pos.y() + size.height()) > mainYMax)                                                    
+      pos.setY(0);                                                                                             
+    move(pos);                                                                                                 
+  }
 }
 
 bool GUIClient::singleCurrency()
@@ -621,7 +650,12 @@ void GUIClient::closeEvent(QCloseEvent *event)
 {
   saveToolbarPositions();
 
-//  Close the database connection
+  // save main window size for next login
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  settings.setValue("GUIClient/geometry/pos", pos());
+  settings.setValue("GUIClient/geometry/size", size());
+
+  // Close the database connection
   QSqlDatabase::database().close();
 
   event->accept();
