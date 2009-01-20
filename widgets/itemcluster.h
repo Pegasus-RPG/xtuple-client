@@ -217,11 +217,11 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void setEnabled(bool);
     void setDisabled(bool);
 
-    inline void    setType(unsigned int pType)             { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
-    inline unsigned int type() const                       { return _itemNumber->type();                 }
-    inline void    setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
-    inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
-    inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
+    Q_INVOKABLE inline void    setType(unsigned int pType)             { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
+    Q_INVOKABLE inline unsigned int type() const                       { return _itemNumber->type();                 }
+    inline void setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
+    Q_INVOKABLE inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
+    Q_INVOKABLE inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
     Q_INVOKABLE QString itemNumber() const                 { return _itemNumber->itemNumber();           }
     Q_INVOKABLE QString itemType() const                   { return _itemNumber->itemType();             }
     Q_INVOKABLE bool isConfigured() const                  { return _itemNumber->isConfigured();         }
