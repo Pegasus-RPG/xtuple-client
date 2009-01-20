@@ -85,6 +85,7 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter , true, "poitem_linenumber");
   _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   , true, "warehous_code");
   _poitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   , true, "item_number");
+  _poitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft   , true, "itemdescription");
   _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter , true, "inv_uom");
   _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   , true, "poitem_vend_item_number");
   _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter , true, "poitem_vend_uom");
@@ -309,6 +310,10 @@ void enterPoReturn::sFillList()
     QString sql( "SELECT poitem_id, poitem_linenumber,"
                "       warehous_code, "
                "       COALESCE(item_number, <? value(\"nonInventory\") ?>) AS item_number,"
+               "       CASE WHEN (LENGTH(TRIM(BOTH '    ' FROM poitem_vend_item_descrip)) <= 0) THEN "
+               "                 (item_descrip1 || ' ' || item_descrip2) "
+               "            ELSE poitem_vend_item_descrip "
+               "       END AS itemdescription, "
                "       COALESCE(uom_name, <? value(\"na\") ?>) AS inv_uom,"
                "       poitem_vend_item_number, poitem_vend_uom,"
                "       poitem_qty_ordered,"
