@@ -1,5 +1,5 @@
 /* XPM */
-static const char * OpenMFGIcon[] = {
+static const char * xTupleIcon[] = {
 "32 32 257 2",
 "  	c None",
 ". 	c #A6CAF0",
