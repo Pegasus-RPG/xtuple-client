@@ -181,7 +181,7 @@ class ScriptToolbox : public QObject
     
     void loadQWebView(QWidget * webView, const QString & url);
 
-    bool printReport(const QString & name, const ParameterList & params);
+    bool printReport(const QString & name, const ParameterList & params, const QString & pdfFilename = QString::null);
 
     bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);
 

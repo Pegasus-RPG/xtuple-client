@@ -417,11 +417,20 @@ QWidget * ScriptToolbox::lastWindow() const
   return _lastWindow;
 }
 
-bool ScriptToolbox::printReport(const QString & name, const ParameterList & params)
+bool ScriptToolbox::printReport(const QString & name, const ParameterList & params, const QString & pdfFilename)
 {
   orReport report(name, params);
   if(report.isValid())
-    report.print();
+  {
+      if(!pdfFilename.isEmpty()) 
+      {
+          report.exportToPDF(pdfFilename);
+      }
+      else
+      {
+          report.print();
+      }
+  }
   else
   {
     report.reportError(NULL);
