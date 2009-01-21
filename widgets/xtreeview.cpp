@@ -113,7 +113,8 @@ XTreeView::~XTreeView()
       ColumnProps *cp = _columnByNumber.value(i, 0);
       if (cp)
       {
-        w = cp->savedWidth;
+        if (!cp->stretchy)
+          w = cp->savedWidth;
         _columnByNumber.remove(i);
         _columnByName.remove(_columnByName.key(cp, 0));
         delete cp;
@@ -122,6 +123,7 @@ XTreeView::~XTreeView()
         savedString.append(QString::number(i) + "," +
                            QString::number(header()->sectionSize(i)) + "|");
     }
+    if (DEBUG) qDebug("saving %s", qPrintable(savedString));
     settings.setValue(_settingsName + "/columnWidths", savedString);
   }
   if(_x_preferences)
@@ -372,6 +374,7 @@ void XTreeView::setModel(XSqlTableModel * model)
       cp->columnName   = h;
       cp->defaultWidth = -1;
       cp->savedWidth   = -1;
+      cp->stretchy     = true;
       cp->locked       = false;
       cp->visible      = true;
       cp->label        = h;
@@ -426,6 +429,7 @@ void XTreeView::setModel(XSqlTableModel * model)
           if (cp)
           {
             cp->savedWidth = v;
+            cp->stretchy   = false;
             if (! _columnByName.key(cp, 0).isEmpty())
               _columnByName.insert(cp->columnName, cp);
           }
@@ -496,7 +500,11 @@ void XTreeView::sResetAllWidths()
     if (width >= 0)
       header()->resizeSection(i, width);
     else
+    {
+    if (_columnByNumber.value(i))
+        _columnByNumber.value(i)->stretchy = true;
       autoSections = true;
+    }
   }
   if(autoSections)
     sColumnSizeChanged(-1, 0, 0);
@@ -510,8 +518,14 @@ void XTreeView::sToggleForgetfulness()
 
 void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSize)
 {
+  if (DEBUG) qDebug("sColumnSizeChanged(%d, 1000, %d)", logicalIndex, /*oldSize,*/ newSize);
+
   if (_columnByNumber.value(logicalIndex))
+  {
     _columnByNumber.value(logicalIndex)->savedWidth = newSize;
+    if (! _resizingInProcess && _columnByNumber.value(logicalIndex)->stretchy)
+      _columnByNumber.value(logicalIndex)->stretchy = false;
+  }
 
   if (_resizingInProcess)
     return;
@@ -523,10 +537,15 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
 
   for(int i = 0; i < header()->count(); i++)
   {
-    if (logicalIndex == i ||
-        (_columnByNumber.value(i) && _columnByNumber.value(i)->savedWidth > 0))
+    if (header()->isSectionHidden(i))
+      continue;
+    else if (logicalIndex == i)
+      usedSpace += newSize;
+    else if (_columnByNumber.value(i) && _columnByNumber.value(i)->stretchy)
+      stretch.append(i);
+    else if (_columnByNumber.value(i) && _columnByNumber.value(i)->savedWidth > 0)
       usedSpace += header()->sectionSize(i);
-    else if (! header()->isSectionHidden(i))
+    else
       stretch.append(i);
   }
 
@@ -537,8 +556,21 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
     if(leftover < 50)
       leftover = 50;
 
+    if (DEBUG) qDebug("%d stretchy columns out of %d total, to squeeze into %d left from %d, %d each",
+                      stretch.size(), header()->count(), usedSpace, viewport()->width(), leftover);
+
     for (int n = 0; n < stretch.size(); n++)
+    {
+      if (DEBUG)
+      {
+        if (ColumnProps *tmpcol = _columnByNumber.value(stretch.at(n)))
+          qDebug("restretching %s, default %d and saved %d",
+                 qPrintable(tmpcol->columnName), tmpcol->defaultWidth, tmpcol->savedWidth);
+        else
+          qDebug("restretching %d", n);
+      }
       header()->resizeSection(stretch.at(n), leftover);
+    }
   }
 
   _resizingInProcess = false;
@@ -567,7 +599,10 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
   cp->columnName   = colname;
   cp->defaultWidth = width;
   if (! prefab)
+  {
     cp->savedWidth = -1;
+    cp->stretchy   = (width == -1);
+  }
   cp->locked       = false;
   cp->visible      = visible;
   cp->label        = label;
@@ -598,11 +633,8 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
                                           Qt::TextAlignmentRole);
         /* setData below always returns false => failure. why?
         for (int i = 0; i < QTreeView::model()->rowCount(); i++)
-        {
           bool test = QTreeView::model()->setData(QTreeView::model()->index(i, colnum),
                                       alignment, Qt::TextAlignmentRole);
-          if (DEBUG) qDebug("changing alignment for row %d: %d", i, test);
-        }
         */
       }
 

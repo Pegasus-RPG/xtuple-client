@@ -148,6 +148,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       { QString columnName;
         int     defaultWidth;
         int     savedWidth;
+        bool    stretchy;
         bool    locked;
         bool    visible;
         QString label;
