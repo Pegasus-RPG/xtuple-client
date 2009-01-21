@@ -95,7 +95,7 @@ dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget
 
   _womatl->addColumn("itemType",                 0, Qt::AlignCenter,false,"type");
   _womatl->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
-  _womatl->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
+  _womatl->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "item_description");
   _womatl->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
   _womatl->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
   _womatl->addColumn(tr("This Alloc."), _qtyColumn, Qt::AlignRight, true, "wobalance");
