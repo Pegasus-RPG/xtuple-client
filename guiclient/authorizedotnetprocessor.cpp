@@ -412,7 +412,7 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const
   if (returnValue !=  0)
     return returnValue;
 
-  APPENDFIELD(request, "x_trans_id", );
+  APPENDFIELD(request, "x_trans_id",   preforder);
   APPENDFIELD(request, "x_tax",        QString::number(tax));
   APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
   APPENDFIELD(request, "x_freight",    QString::number(freight));
