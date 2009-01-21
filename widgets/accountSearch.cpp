@@ -103,6 +103,12 @@ accountSearch::accountSearch(QWidget* parent, const char* name, bool modal, Qt::
 
   _accnt->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "accnt_descrip");
 
+  _accnt->addColumn(tr("Type"),            75, Qt::AlignLeft ,  true, "accnt_type");
+
+  _accnt->addColumn(tr("Sub. Type Code"),  75, Qt::AlignLeft,  false, "subaccnttype_code");
+
+  _accnt->addColumn(tr("Sub. Type"),      100, Qt::AlignLeft,  false, "subaccnttype_descrip");
+
   _showExternal = false;
 }
 
@@ -166,8 +172,17 @@ void accountSearch::sClear()
 
 void accountSearch::sFillList()
 {
-  QString sql("SELECT * "
-              "FROM accnt LEFT OUTER JOIN company ON (accnt_company=company_number) ");
+  QString sql("SELECT accnt_id, *,"
+              "       CASE WHEN(accnt_type='A') THEN 'Asset'"
+              "            WHEN(accnt_type='E') THEN 'Expense'"
+              "            WHEN(accnt_type='L') THEN 'Liability'"
+              "            WHEN(accnt_type='Q') THEN 'Equity'"
+              "            WHEN(accnt_type='R') THEN 'Revenue'"
+              "            ELSE accnt_type"
+              "       END AS accnt_type_qtdisplayrole "
+              "FROM (accnt LEFT OUTER JOIN"
+              "     company ON (accnt_company=company_number)) "
+              "     LEFT OUTER JOIN subaccnttype ON (accnt_type=subaccnttype_accnt_type AND accnt_subaccnttype_code=subaccnttype_code) ");
 
   QStringList types;
   QStringList where;
