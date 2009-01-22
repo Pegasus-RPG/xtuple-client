@@ -63,13 +63,12 @@ XTreeView::~XTreeView()
     for(int i = 0; i < header()->count(); i++)
     {
       int w = -1;
-      ColumnProps *cp = _columnByNumber.value(i, 0);
+      ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
       if (cp)
       {
         if (!cp->stretchy)
           w = cp->savedWidth;
-        _columnByNumber.remove(i);
-        _columnByName.remove(_columnByName.key(cp, 0));
+        _columnByName.remove(cp->columnName);
         delete cp;
       }
       if (w >= 0 && ! header()->isSectionHidden(i))
@@ -93,6 +92,17 @@ XTreeView::~XTreeView()
   }
 }
 
+QString XTreeView::columnNameFromLogicalIndex(const int logicalIndex) const
+{
+  for (QMap<QString, ColumnProps*>::const_iterator it = _columnByName.constBegin();
+       it != _columnByName.constEnd(); it++)
+  {
+    if (it.value()->logicalIndex == logicalIndex)
+      return it.value()->columnName;
+  }
+  return QString();
+}
+
 void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 {
   _menu->clear();
@@ -101,9 +111,8 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
   int currentSize = header()->sectionSize(logicalIndex);
 // If we have a default value and the current size is not equal to that default value
 // then we want to show the menu items for resetting those values back to default
-  if (_columnByNumber.value(logicalIndex)
-      && (_columnByNumber.value(logicalIndex)->defaultWidth > 0)
-      && (_columnByNumber.value(logicalIndex)->defaultWidth != currentSize) )
+  ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(logicalIndex), 0);
+  if (cp && (cp->defaultWidth > 0) && (cp->defaultWidth != currentSize) )
   {
     _resetWhichWidth = logicalIndex;
     _menu->insertItem(tr("Reset this Width"), this, SLOT(sResetWidth()));
@@ -123,8 +132,10 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
     QAction *act = _menu->addAction(QTreeView::model()->headerData(i, Qt::Horizontal).toString());
     act->setCheckable(true);
     act->setChecked(! header()->isSectionHidden(i));
-    act->setEnabled(_columnByNumber.value(i) ?
-                    ! _columnByNumber.value(i)->locked : true);
+
+    ColumnProps *tmp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
+    act->setEnabled(tmp ?  ! tmp->locked : true);
+
     QMap<QString,QVariant> m;
     m.insert("command", QVariant("toggleColumnHidden"));
     m.insert("column", QVariant(i));
@@ -318,19 +329,18 @@ void XTreeView::setModel(XSqlTableModel * model)
 
     ColumnProps *cp = _columnByName.value(h, 0);
 
-    if (cp)
-      QTreeView::model()->setHeaderData(i, Qt::Horizontal,
-                                        cp->label, Qt::DisplayRole);
-    else
+    if (! cp)
     {
       cp = new ColumnProps;
       cp->columnName   = h;
+      cp->logicalIndex = i;
       cp->defaultWidth = -1;
       cp->savedWidth   = -1;
       cp->stretchy     = true;
       cp->locked       = false;
       cp->visible      = true;
       cp->label        = h;
+      cp->fromSettings = false;
       cp->alignment    = QTreeView::model()->headerData(i, Qt::Horizontal,
                                                 Qt::TextAlignmentRole).toInt();
 
@@ -340,15 +350,14 @@ void XTreeView::setModel(XSqlTableModel * model)
         cp->label.replace(j,     1, " ");
         cp->label.replace(j + 1, 1, cp->label.mid(j + 1, 1).toUpper());
       }
-      QTreeView::model()->setHeaderData(i, Qt::Horizontal,
-                                        cp->label, Qt::DisplayRole);
+
+      _columnByName.insert(cp->columnName, cp);
     }
 
-    if (_columnByNumber.value(i, 0) != cp)
-    {
-      _columnByNumber.take(i);
-      _columnByNumber.insert(i, cp);
-    }
+    QTreeView::model()->setHeaderData(i, Qt::Horizontal, cp->label,
+                                      Qt::DisplayRole);
+    QTreeView::model()->setHeaderData(i, Qt::Horizontal, cp->alignment,
+                                      Qt::TextAlignmentRole);
   }
 
   if (! _settingsLoaded)
@@ -376,16 +385,15 @@ void XTreeView::setModel(XSqlTableModel * model)
         int v = val.toInt(&b2);
         if(b1 && b2)
         {
-          header()->resizeSection(k, v);
-
-          ColumnProps *cp = _columnByNumber.value(k, 0);
+          if (DEBUG) qDebug("width of %d from settings = %d", k, v);
+          ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(k), 0);
           if (cp)
           {
             cp->savedWidth = v;
             cp->stretchy   = false;
-            if (! _columnByName.key(cp, 0).isEmpty())
-              _columnByName.insert(cp->columnName, cp);
+            cp->fromSettings = true;
           }
+          header()->resizeSection(k, v);
         }
       }
     }
@@ -403,15 +411,15 @@ void XTreeView::setModel(XSqlTableModel * model)
         int c = key.toInt(&b1);
         if(b1 && (val == "on" || val == "off"))
         {
-          header()->setSectionHidden(c, (val != "on"));
-
-          ColumnProps *cp = _columnByNumber.value(c, 0);
+          if (DEBUG) qDebug("visibility of %d from settings = %s",
+                            c, qPrintable(val));
+          ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(c), 0);
           if (cp)
           {
             cp->visible = (val == "on");
-            if (_columnByName.key(cp, 0).isEmpty())
-              _columnByName.insert(cp->columnName, cp);
+            cp->fromSettings = true;
           }
+          header()->setSectionHidden(c, (val != "on"));
         }
       }
     }
@@ -434,8 +442,9 @@ void XTreeView::resizeEvent(QResizeEvent * e)
 
 void XTreeView::sResetWidth()
 {
-  int w = _columnByNumber.value(_resetWhichWidth) ? 
-          _columnByNumber.value(_resetWhichWidth)->defaultWidth : -1;
+  ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(_resetWhichWidth), 0);
+
+  int w = cp ? cp->defaultWidth : -1;
 
   if(w >= 0)
     header()->resizeSection(_resetWhichWidth, w);
@@ -448,14 +457,14 @@ void XTreeView::sResetAllWidths()
   bool autoSections = false;
   for (int i = 0; i < header()->length(); i++)
   {
-    int width = _columnByNumber.value(i) ?
-                _columnByNumber.value(i)->defaultWidth : -1;
+    ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
+    int width = cp ? cp->defaultWidth : -1;
     if (width >= 0)
       header()->resizeSection(i, width);
     else
     {
-    if (_columnByNumber.value(i))
-        _columnByNumber.value(i)->stretchy = true;
+    if (cp)
+        cp->stretchy = true;
       autoSections = true;
     }
   }
@@ -469,15 +478,19 @@ void XTreeView::sToggleForgetfulness()
 }
 
 
-void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSize)
+void XTreeView::sColumnSizeChanged(int logicalIndex, int oldSize, int newSize)
 {
-  if (DEBUG) qDebug("sColumnSizeChanged(%d, 1000, %d)", logicalIndex, /*oldSize,*/ newSize);
+  if (DEBUG) qDebug("sColumnSizeChanged(%d, %d, %d)",
+                    logicalIndex, oldSize, newSize);
 
-  if (_columnByNumber.value(logicalIndex))
+  ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(logicalIndex), 0);
+  if (cp)
   {
-    _columnByNumber.value(logicalIndex)->savedWidth = newSize;
-    if (! _resizingInProcess && _columnByNumber.value(logicalIndex)->stretchy)
-      _columnByNumber.value(logicalIndex)->stretchy = false;
+    cp->savedWidth = newSize;
+    if (newSize < 0)
+      cp->stretchy = true;
+    else if (! _resizingInProcess && cp->stretchy)
+      cp->stretchy = false;
   }
 
   if (_resizingInProcess)
@@ -490,17 +503,21 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
 
   for(int i = 0; i < header()->count(); i++)
   {
+    ColumnProps *tmpcp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
+
     if (header()->isSectionHidden(i))
       continue;
+    else if (logicalIndex == i && newSize < 0)
+      stretch.append(i);
     else if (logicalIndex == i)
       usedSpace += newSize;
-    else if (_columnByNumber.value(i) && _columnByNumber.value(i)->stretchy)
-      stretch.append(i);
-    else if (_columnByNumber.value(i) && _columnByNumber.value(i)->savedWidth > 0)
+    else if (tmpcp && ! tmpcp->stretchy)
       usedSpace += header()->sectionSize(i);
     else
       stretch.append(i);
   }
+  if (DEBUG) qDebug("used space = %d, stretch %d cols in the rest",
+                    usedSpace, stretch.size());
 
   if(stretch.size() > 0)
   {
@@ -509,21 +526,8 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
     if(leftover < 50)
       leftover = 50;
 
-    if (DEBUG) qDebug("%d stretchy columns out of %d total, to squeeze into %d left from %d, %d each",
-                      stretch.size(), header()->count(), usedSpace, viewport()->width(), leftover);
-
     for (int n = 0; n < stretch.size(); n++)
-    {
-      if (DEBUG)
-      {
-        if (ColumnProps *tmpcol = _columnByNumber.value(stretch.at(n)))
-          qDebug("restretching %s, default %d and saved %d",
-                 qPrintable(tmpcol->columnName), tmpcol->defaultWidth, tmpcol->savedWidth);
-        else
-          qDebug("restretching %d", n);
-      }
       header()->resizeSection(stretch.at(n), leftover);
-    }
   }
 
   _resizingInProcess = false;
@@ -531,75 +535,74 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
 
 /* this is intended to be similar to XTreeWidget::addColumn(...)
    but differs in several important ways:
-   - this doesn't actually add columns to the tree view, it only defines how they
-     should appear by default if the model contains columns with the given colname.
-   - as a result it has the opposite effect on visibility - any column not explicitly
-     mentioned in a setColumn call /is visible/ in an XTreeView
+   - this doesn't actually add columns to the tree view, it only defines how
+     they should appear by default if the model contains columns with the given
+     colname.
+   - as a result it has the opposite effect on visibility - any column not
+     explicitly mentioned in a setColumn call /is visible/ in an XTreeView
    - the alignment parameter only affects the header
 TODO: figure out how to set the alignment of individual elements
  */
 void XTreeView::setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname)
 {
+  if (DEBUG)
+    qDebug("setColumn(%s, %d, %d, %d, %s)",
+           qPrintable(label), width, alignment, visible, qPrintable(colname));
+
   ColumnProps *cp = _columnByName.value(colname, 0);
-  bool prefab = (cp != 0);
 
   if (! cp)
   {
     cp = new ColumnProps();
-    _columnByName.insert(colname, cp);
+    cp->columnName = colname;
+    cp->fromSettings = false;
+    _columnByName.insert(cp->columnName, cp);
   }
 
-  cp->columnName   = colname;
   cp->defaultWidth = width;
-  if (! prefab)
-  {
-    cp->savedWidth = -1;
-    cp->stretchy   = (width == -1);
-  }
   cp->locked       = false;
   cp->visible      = visible;
   cp->label        = label;
   cp->alignment    = alignment;
 
-  int colnum = 0;
-  for (colnum = 0; colnum < QTreeView::model()->columnCount(); colnum++)
+  if (cp->fromSettings)
+    cp->stretchy   = (width == -1 && cp->savedWidth == -1);
+  else
   {
-    if (colname == QTreeView::model()->headerData(colnum, Qt::Horizontal, Qt::UserRole).toString())
-    {
-      header()->setResizeMode(colnum, QHeaderView::Interactive);
-      if (_forgetful || ! prefab)
-      {
-        header()->resizeSection(colnum, width);
-        setColumnVisible(colnum, visible);
-        sColumnSizeChanged(colnum, 0, width);
-      }
+    cp->savedWidth = -1;
+    cp->stretchy   = (width == -1);
+  }
 
+  cp->logicalIndex = -1;
+  int colnum = -1;
+  for (colnum = 0; colnum < header()->count(); colnum++)
+  {
+    if (colname == QTreeView::model()->headerData(colnum, Qt::Horizontal,
+                                                  Qt::UserRole).toString())
+    {
+      cp->logicalIndex = colnum;
       QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, colname,
                                         Qt::UserRole);
       QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, label,
                                         Qt::DisplayRole);
-
-      if (alignment != QTreeView::model()->headerData(colnum, Qt::Horizontal,
-                                                      Qt::TextAlignmentRole).toInt())
-      {
-        QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, alignment,
-                                          Qt::TextAlignmentRole);
-        /* setData below always returns false => failure. why?
-        for (int i = 0; i < QTreeView::model()->rowCount(); i++)
-          bool test = QTreeView::model()->setData(QTreeView::model()->index(i, colnum),
-                                      alignment, Qt::TextAlignmentRole);
-        */
-      }
-
-      if (! _columnByNumber.key(cp, 0))
-        _columnByNumber.insert(colnum, cp);
+      QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, alignment,
+                                        Qt::TextAlignmentRole);
+      /* setData below always returns false => failure. why?
+      for (int i = 0; i < QTreeView::model()->rowCount(); i++)
+        bool test = QTreeView::model()->setData(QTreeView::model()->index(i, colnum),
+                                                alignment, Qt::TextAlignmentRole);
+      */
       break;
     }
   }
 
-  if (colnum >= QTreeView::model()->columnCount() &&
-      ! _columnByNumber.key(cp, 0))
-    _columnByNumber.insert(_columnByNumber.size(), cp);
+  header()->setResizeMode(colnum, QHeaderView::Interactive);
+
+  if (! cp->fromSettings)
+    setColumnVisible(colnum, visible);
+
+  if (_forgetful || ! cp->fromSettings)
+    header()->resizeSection(colnum, width);
 }
 
 void XTreeView::setColumnLocked(const QString &pColname, bool pLocked)
@@ -610,8 +613,9 @@ void XTreeView::setColumnLocked(const QString &pColname, bool pLocked)
 
 void XTreeView::setColumnLocked(int pColumn, bool pLocked)
 {
-  if (_columnByNumber.value(pColumn))
-    _columnByNumber.value(pColumn)->locked = pLocked;
+  ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(pColumn), 0);
+  if (cp)
+    cp->locked = pLocked;
 }
 
 void XTreeView::popupMenuActionTriggered(QAction * pAction)
@@ -630,6 +634,7 @@ void XTreeView::setColumnVisible(int pColumn, bool pVisible)
   else
     header()->hideSection(pColumn);
 
-  if (_columnByNumber.value(pColumn))
-    _columnByNumber.value(pColumn)->visible = pVisible;
+  ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(pColumn), 0);
+  if (cp)
+    cp->visible = pVisible;
 }

@@ -37,6 +37,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
                   QString tableName()         const { return _tableName;  };
                   bool    throwScriptException(const QString &message);
 
+      Q_INVOKABLE      QString columnNameFromLogicalIndex(const int logicalIndex) const;
       Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
@@ -99,6 +100,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 
       struct ColumnProps
       { QString columnName;
+        int     logicalIndex;
         int     defaultWidth;
         int     savedWidth;
         bool    stretchy;
@@ -106,9 +108,9 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
         bool    visible;
         QString label;
         int     alignment;
+        bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-      QMap<int,     ColumnProps*> _columnByNumber;
 
  
 };
