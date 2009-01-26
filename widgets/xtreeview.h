@@ -73,6 +73,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
     protected:
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+      virtual void setRelations();
 
     private slots:
       void popupMenuActionTriggered(QAction*);
@@ -85,6 +86,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
     private:
       QSqlDatabase        *_db;
       bool                 _forgetful;
+      QMultiMap<QString,QString> _idMap;
       QSqlRecord           _idx;
       int                  _keyColumns;
       XDataWidgetMapper   *_mapper;
@@ -112,7 +114,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       };
       QMap<QString, ColumnProps*> _columnByName;
 
- 
+      QMap<QString, QString>    _fkeymap;
 };
 
 #endif

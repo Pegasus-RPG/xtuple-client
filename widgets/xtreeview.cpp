@@ -19,7 +19,10 @@
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QSqlError>
+#include <QSqlField>
 #include <QSqlIndex>
+#include <QSqlRelationalDelegate>
+#include <QSqlRelationalTableModel>
 #include <QStack>
 #include <QTreeWidgetItem>
 
@@ -75,7 +78,6 @@ XTreeView::~XTreeView()
         savedString.append(QString::number(i) + "," +
                            QString::number(header()->sectionSize(i)) + "|");
     }
-    if (DEBUG) qDebug("saving %s", qPrintable(savedString));
     settings.setValue(_settingsName + "/columnWidths", savedString);
   }
   if(_x_preferences)
@@ -314,6 +316,8 @@ void XTreeView::setTable()
     _model.setTable(tablename,_keyColumns);
     
     setModel(&_model);
+    setItemDelegate(new QSqlRelationalDelegate(this));
+    setRelations();
   }
 }
 
@@ -385,7 +389,6 @@ void XTreeView::setModel(XSqlTableModel * model)
         int v = val.toInt(&b2);
         if(b1 && b2)
         {
-          if (DEBUG) qDebug("width of %d from settings = %d", k, v);
           ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(k), 0);
           if (cp)
           {
@@ -411,8 +414,6 @@ void XTreeView::setModel(XSqlTableModel * model)
         int c = key.toInt(&b1);
         if(b1 && (val == "on" || val == "off"))
         {
-          if (DEBUG) qDebug("visibility of %d from settings = %s",
-                            c, qPrintable(val));
           ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(c), 0);
           if (cp)
           {
@@ -478,11 +479,8 @@ void XTreeView::sToggleForgetfulness()
 }
 
 
-void XTreeView::sColumnSizeChanged(int logicalIndex, int oldSize, int newSize)
+void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSize)
 {
-  if (DEBUG) qDebug("sColumnSizeChanged(%d, %d, %d)",
-                    logicalIndex, oldSize, newSize);
-
   ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(logicalIndex), 0);
   if (cp)
   {
@@ -516,8 +514,6 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int oldSize, int newSize)
     else
       stretch.append(i);
   }
-  if (DEBUG) qDebug("used space = %d, stretch %d cols in the rest",
-                    usedSpace, stretch.size());
 
   if(stretch.size() > 0)
   {
@@ -545,10 +541,6 @@ TODO: figure out how to set the alignment of individual elements
  */
 void XTreeView::setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname)
 {
-  if (DEBUG)
-    qDebug("setColumn(%s, %d, %d, %d, %s)",
-           qPrintable(label), width, alignment, visible, qPrintable(colname));
-
   ColumnProps *cp = _columnByName.value(colname, 0);
 
   if (! cp)
@@ -637,4 +629,175 @@ void XTreeView::setColumnVisible(int pColumn, bool pVisible)
   ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(pColumn), 0);
   if (cp)
     cp->visible = pVisible;
+}
+
+void XTreeView::setRelations()
+{
+  if (DEBUG) qDebug("setRelations() entered with table  %s.%s",
+                    qPrintable(_schemaName), qPrintable(_tableName));
+  QSqlRelationalTableModel *model = qobject_cast<QSqlRelationalTableModel*>(&_model);
+  if (! model)
+    return;
+
+  // _fkeymap is for cases where there's strict adherence to naming conventions:
+  //    othertable[_qualifier]_basetable_id -> basetable_id
+  // special cases are handled individually below
+  // TODO: make _fkeymap static so it can be shared
+  if (_fkeymap.size() == 0)
+  {
+    _fkeymap.insert("acalitem",    "acalitem_name");
+    _fkeymap.insert("accnt",       "accnt_number");
+    _fkeymap.insert("alarm",       "alarm_number");
+    _fkeymap.insert("bankaccnt",   "bankaccnt_name");
+    _fkeymap.insert("bankadjtype", "bankadjtype_name");
+    _fkeymap.insert("budghead",    "budghead_name");
+    _fkeymap.insert("calhead",     "calhead_name");
+    _fkeymap.insert("carrier",     "carrier_name");
+    _fkeymap.insert("char",        "char_name");
+    _fkeymap.insert("checkhead",   "checkhead_number");
+    _fkeymap.insert("classcode",   "classcode_code");
+    _fkeymap.insert("cmd",         "cmd_title");
+    _fkeymap.insert("cmdarg",      "cmdarg_arg");
+    _fkeymap.insert("cmhead",      "cmhead_number");
+    _fkeymap.insert("cmnttype",    "cmnttype_name");
+    _fkeymap.insert("cntslip",     "cntslip_number");
+    _fkeymap.insert("cohead",      "cohead_number");
+    _fkeymap.insert("company",     "company_number");
+    _fkeymap.insert("costcat",     "costcat_code");
+    _fkeymap.insert("costelem",    "costelem_type");
+    _fkeymap.insert("country",     "country_abbr");
+    _fkeymap.insert("crmacct",     "crmacct_number");
+    _fkeymap.insert("curr",        "curr_symbol");
+    _fkeymap.insert("curr_symbol", "curr_abbr");
+    _fkeymap.insert("custgrp",     "custgrp_name");
+    _fkeymap.insert("custinfo",    "cust_number");
+    _fkeymap.insert("custtype",    "custtype_code");
+    _fkeymap.insert("dept",        "dept_number");
+    _fkeymap.insert("destination", "destination_name");
+    _fkeymap.insert("ediform",     "ediform_file");
+    _fkeymap.insert("ediprofile",  "ediprofile_name");
+    _fkeymap.insert("emp",         "emp_code");
+    _fkeymap.insert("empgrp",      "empgrp_name");
+    _fkeymap.insert("evnttype",    "evnttype_name");
+    _fkeymap.insert("expcat",      "expcat_code");
+    _fkeymap.insert("flhead",      "flhead_name");
+    _fkeymap.insert("form",        "form_name");
+    _fkeymap.insert("freightclass","freightclass_code");
+    _fkeymap.insert("grp",         "grp_name");
+    _fkeymap.insert("hnfc",        "hnfc_code");
+    _fkeymap.insert("image",       "image_name");
+    _fkeymap.insert("incdt",       "incdt_number");
+    _fkeymap.insert("incdtcat",    "incdtcat_name");
+    _fkeymap.insert("incdtpriority",  "incdtpriority_name");
+    _fkeymap.insert("incdtresolution","incdtresolution_name");
+    _fkeymap.insert("incdtseverity",  "incdtseverity_name");
+    _fkeymap.insert("ipshead",     "ipshead_name");
+    _fkeymap.insert("item",        "item_number");
+    _fkeymap.insert("itemalias",   "itemalias_number");
+    _fkeymap.insert("itemgrp",     "itemgrp_name");
+    _fkeymap.insert("jrnluse",     "jrnluse_number");
+    _fkeymap.insert("labelform",   "labelform_name");
+    _fkeymap.insert("lang",        "lang_name");
+    _fkeymap.insert("lbrrate",     "lbrrate_code");
+    _fkeymap.insert("locale",      "locale_code");
+    _fkeymap.insert("location",    "location_name");
+    _fkeymap.insert("ls",          "ls_number");
+    _fkeymap.insert("lsreg",       "lsreg_number");
+    _fkeymap.insert("metric",      "metric_name");
+    _fkeymap.insert("metricenc",   "metricenc_name");
+    _fkeymap.insert("ophead",      "ophead_name");
+    _fkeymap.insert("opsource",    "opsource_name");
+    _fkeymap.insert("opstage",     "opstage_name");
+    _fkeymap.insert("optype",      "optype_name");
+    _fkeymap.insert("orderseq",    "orderseq_name");
+    _fkeymap.insert("period",      "period_name");
+    _fkeymap.insert("pkghead",     "pkghead_name");
+    _fkeymap.insert("plancode",    "plancode_code");
+    _fkeymap.insert("planord",     "planord_number");
+    _fkeymap.insert("pohead",      "pohead_number");
+    _fkeymap.insert("potype",      "potype_name");
+    _fkeymap.insert("pr",          "pr_number");
+    _fkeymap.insert("prftcntr",    "prftcntr_number");
+    _fkeymap.insert("prj",         "prj_number");
+    _fkeymap.insert("prjtask",     "prjtask_number");
+    _fkeymap.insert("prodcat",     "prodcat_code");
+    _fkeymap.insert("prospect",    "prospect_number");
+    _fkeymap.insert("pschhead",    "pschhead_number");
+    _fkeymap.insert("quhead",      "quhead_number");
+    _fkeymap.insert("rahead",      "rahead_number");
+    _fkeymap.insert("regtype",     "regtype_code");
+    _fkeymap.insert("rev",         "rev_number");
+    _fkeymap.insert("rjctcode",    "rjctcode_code");
+    _fkeymap.insert("rsncode",     "rsncode_code");
+    _fkeymap.insert("sale",        "sale_name");
+    _fkeymap.insert("salehead",    "salehead_number");
+    _fkeymap.insert("salescat",    "salescat_name");
+    _fkeymap.insert("salesrep",    "salesrep_number");
+    _fkeymap.insert("script",      "script_name");
+    _fkeymap.insert("shift",       "shift_number");
+    _fkeymap.insert("shipchrg",    "shipchrg_name");
+    _fkeymap.insert("shipform",    "shipform_name");
+    _fkeymap.insert("shiphead",    "shiphead_number");
+    _fkeymap.insert("shiptoinfo",  "shipto_name");
+    _fkeymap.insert("shipvia",     "shipvia_code");
+    _fkeymap.insert("shipzone",    "shipzone_name");
+    _fkeymap.insert("sitetype",    "sitetype_name");
+    _fkeymap.insert("stdjrnl",     "stdjrnl_name");
+    _fkeymap.insert("stdjrnlgrp",  "stdjrnlgrp_name");
+    _fkeymap.insert("stdopn",      "stdopn_number");
+    _fkeymap.insert("subaccnt",    "subaccnt_number");
+    _fkeymap.insert("subaccnttype","subaccnttype_code");
+    _fkeymap.insert("tax",         "tax_code");
+    _fkeymap.insert("taxauth",     "taxauth_code");
+    _fkeymap.insert("taxreg",      "taxreg_number");
+    _fkeymap.insert("taxtype",     "taxtype_name");
+    _fkeymap.insert("terminal",    "terminal_number");
+    _fkeymap.insert("terms",       "terms_code");
+    _fkeymap.insert("todoitem",    "todoitem_name");
+    _fkeymap.insert("tohead",      "tohead_number");
+    _fkeymap.insert("uiform",      "uiform_name");
+    _fkeymap.insert("uom",         "uom_name");
+    _fkeymap.insert("uomtype",     "uomtype_name");
+    _fkeymap.insert("url",         "url_url");
+    _fkeymap.insert("usr",         "usr_username");
+    _fkeymap.insert("vendaddrinfo","vendaddr_code");
+    _fkeymap.insert("vendinfo",    "vend_number");
+    _fkeymap.insert("vendtype",    "vendtype_code");
+    _fkeymap.insert("vohead",      "vohead_number");
+    _fkeymap.insert("whsezone",    "whsezone_name");
+    _fkeymap.insert("whsinfo",     "warehous_code");
+    _fkeymap.insert("wo",          "wo_number");
+    _fkeymap.insert("wrkcnt",      "wrkcnt_code");
+    _fkeymap.insert("xsltmap",     "xsltmap_name");
+    _fkeymap.insert("yearperiod",  "yearperiod_start");
+  }
+
+  for (int i = 0; i < model->record().count(); i++)
+  {
+    QString colname = model->record().field(i).name();
+    if (DEBUG) qDebug("looking for fkey to %s", qPrintable(colname));
+
+    if (colname.endsWith("curr_id"))
+      model->setRelation(i, QSqlRelation("curr_symbol", "curr_id", "curr_abbr"));
+    else if (colname.endsWith("cust_id"))
+      model->setRelation(i, QSqlRelation("custinfo", "cust_id", "cust_number"));
+    else if (colname.endsWith("vend_id"))
+      model->setRelation(i, QSqlRelation("vendinfo", "vend_id", "vend_number"));
+    else if (colname.endsWith("warehous_id"))
+      model->setRelation(i, QSqlRelation("whsinfo", "warehous_id", "warehous_code"));
+    else if (colname.endsWith("_id"))
+    {
+      colname.replace(QRegExp(".*_([^_]+)_id$"), "\\1");
+
+      if (DEBUG) qDebug("%s is an id", qPrintable(colname));
+      if (! _fkeymap.value(colname, QString()).isEmpty())
+      {
+        if (DEBUG) qDebug("setting relation(%s, %s, %s)",
+                          qPrintable(colname), qPrintable(colname + "_id"),
+                          qPrintable(_fkeymap.value(colname)));
+        model->setRelation(i, QSqlRelation(colname, colname + "_id",
+                                           _fkeymap.value(colname)));
+      }
+    }
+  }
 }
