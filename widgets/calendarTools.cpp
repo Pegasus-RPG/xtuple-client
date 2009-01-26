@@ -19,11 +19,14 @@ CalendarComboBox::CalendarComboBox(QWidget *pParent, const char *pName) :
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   setAllowNull(TRUE);
 
-  XSqlQuery q;
-  q.exec( "SELECT calhead_id, calhead_name, calhead_name "
-          "FROM calhead "
-          "ORDER BY calhead_name;" );
-  populate(q);
+  if(_x_metrics)
+  {
+    XSqlQuery q;
+    q.exec( "SELECT calhead_id, calhead_name, calhead_name "
+            "FROM calhead "
+            "ORDER BY calhead_name;" );
+    populate(q);
+  }
 
   connect(this, SIGNAL(newID(int)), this, SIGNAL(newCalendarId(int)));
 }

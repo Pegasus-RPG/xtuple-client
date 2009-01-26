@@ -70,11 +70,14 @@ Alarms::Alarms(QWidget *pParent) :
   _cntctId2 = -1;
   _cntctId3 = -1;
   XSqlQuery tickle;
-  tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
-  if (tickle.first())
+  if(_x_metrics)
   {
-    _dueDate = tickle.value("dbdate").toDate();
-    _dueTime = tickle.value("dbdate").toTime();
+    tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
+    if (tickle.first())
+    {
+      _dueDate = tickle.value("dbdate").toDate();
+      _dueTime = tickle.value("dbdate").toTime();
+    }
   }
 
 

@@ -120,6 +120,9 @@ AddressCluster::AddressCluster(QWidget* pParent, const char* pName) :
 
 void AddressCluster::populateStateComboBox()
 {
+  if(_x_metrics == 0)
+    return;
+
   _state->clear();
   XSqlQuery state;
   state.prepare("SELECT DISTINCT -1, addr_state, addr_state AS state "
@@ -130,6 +133,9 @@ void AddressCluster::populateStateComboBox()
 
 void AddressCluster::populateCountryComboBox()
 {
+  if(_x_metrics == 0)
+    return;
+
   _country->clear();
   XSqlQuery country;
   country.prepare("SELECT -1, '','' AS country_name " 
