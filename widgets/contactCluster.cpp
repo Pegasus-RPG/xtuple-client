@@ -436,6 +436,7 @@ void ContactCluster::clear()
   _address->clear();
   _active->setChecked(true);
   _notes = "";
+  _number->clear();
 }
 
 QString ContactCluster::name() const
