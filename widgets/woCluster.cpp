@@ -551,10 +551,13 @@ void WomatlCluster::constructor()
 
   connect(_itemNumber, SIGNAL(newID(int)), SLOT(sPopulateInfo(int)));
 
-  _qtyIssued->setPrecision(decimalPlaces("qty"));
-  _qtyPer->setPrecision(decimalPlaces("qtyper"));
-  _qtyRequired->setPrecision(decimalPlaces("qty"));
-  _scrap->setPrecision(decimalPlaces("percent"));
+  if(_x_metrics)
+  {
+    _qtyIssued->setPrecision(decimalPlaces("qty"));
+    _qtyPer->setPrecision(decimalPlaces("qtyper"));
+    _qtyRequired->setPrecision(decimalPlaces("qty"));
+    _scrap->setPrecision(decimalPlaces("percent"));
+  }
 
   setFocusProxy(_itemNumber);
 }

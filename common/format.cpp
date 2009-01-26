@@ -96,7 +96,7 @@ static bool loadLocale()
     {
       QMessageBox::critical(0,
                             QObject::tr("A System Error Occurred at %1::%2.")
-                              .arg(__FILE__, __LINE__),
+                              .arg(__FILE__).arg(__LINE__),
                             localeq.lastError().databaseText());
       return false;
     }
