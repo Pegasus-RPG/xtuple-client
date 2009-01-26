@@ -42,7 +42,6 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
-      Q_INVOKABLE         void setObjectName(const QString &name);
       Q_INVOKABLE         void setTable();
       
     public slots:
@@ -97,8 +96,8 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       QString              _schemaName;
       QItemSelectionModel *_selectModel;
       bool                 _settingsLoaded;
-      QString              _settingsName;
       QString              _tableName;
+      QString              _windowName;
 
       struct ColumnProps
       { QString columnName;
