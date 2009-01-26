@@ -1546,54 +1546,6 @@ to be bound by its terms.</comment>
  <resources/>
  <connections>
   <connection>
-   <sender>_quote</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_printQuote</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>335</x>
-     <y>764</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>434</x>
-     <y>764</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_order</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_printOrder</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>335</x>
-     <y>764</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>434</x>
-     <y>764</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_invoice</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_printInvoice</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>335</x>
-     <y>764</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>434</x>
-     <y>764</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_orderShowclosed</sender>
    <signal>clicked()</signal>
    <receiver>_refresh</receiver>

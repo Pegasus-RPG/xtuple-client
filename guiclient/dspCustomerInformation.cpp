@@ -64,9 +64,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_newInvoice, SIGNAL(clicked()), this, SLOT(sNewInvoice()));
   connect(_newOrder, SIGNAL(clicked()), this, SLOT(sNewOrder()));
   connect(_newQuote, SIGNAL(clicked()), this, SLOT(sNewQuote()));
-  connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
   connect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
-  connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
   connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuQuote(QMenu*)));
   connect(_viewCreditMemo, SIGNAL(clicked()), this, SLOT(sViewCreditMemo()));
   connect(_viewInvoice, SIGNAL(clicked()), this, SLOT(sViewInvoice()));
@@ -105,13 +103,23 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _quote->addColumn(tr("Quote Date"),    _dateColumn,     Qt::AlignCenter, true,  "quhead_quotedate" );
   if(_privileges->check("MaintainQuotes"))
   {
+    _newQuote->setEnabled(true);
+    connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
+    connect(_quote, SIGNAL(valid(bool)), _printQuote, SLOT(setEnabled(bool)));
     connect(_quote, SIGNAL(valid(bool)), _editQuote, SLOT(setEnabled(bool)));
     connect(_quote, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
+  }
+  else if (_privileges->check("ViewQuotes"))
+  {
+    connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
+    connect(_quote, SIGNAL(valid(bool)), _printQuote, SLOT(setEnabled(bool)));
   }
   else
   {
     _newQuote->setEnabled(false);
-    connect(_quote, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
+    _editQuote->setEnabled(false);
+    _viewQuote->setEnabled(false);
+    _printQuote->setEnabled(false);
   }
   if (_privileges->check("ConvertQuotes"))
     connect(_quote, SIGNAL(valid(bool)), _convertQuote, SLOT(setEnabled(bool)));
@@ -124,13 +132,23 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _order->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter, true,  "scheduled" );
   if(_privileges->check("MaintainSalesOrders"))
   {
+    _newOrder->setEnabled(true);
+    connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
+    connect(_order, SIGNAL(valid(bool)), _printOrder, SLOT(setEnabled(bool)));
     connect(_order, SIGNAL(valid(bool)), _editOrder, SLOT(setEnabled(bool)));
     connect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
+  }
+  else if (_privileges->check("ViewSalesOrders"))
+  {
+    connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
+    connect(_order, SIGNAL(valid(bool)), _printOrder, SLOT(setEnabled(bool)));
   }
   else
   {
     _newOrder->setEnabled(false);
-    connect(_order, SIGNAL(itemSelected(int)), _viewOrder, SLOT(animateClick()));
+    _editOrder->setEnabled(false);
+    _viewOrder->setEnabled(false);
+    _printOrder->setEnabled(false);
   }
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillOrderList()));
 
@@ -171,7 +189,10 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   if(!_privileges->check("MaintainCreditMemos"))
     _newCreditMemo->setEnabled(false);
   connect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sCreditMemoSelected(bool)));
-  connect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
+  if (_privileges->check("MaintainCreditMemos") || _privileges->check("ViewCreditMemos"))
+    connect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
+  else
+    _viewCreditMemo->setEnabled(false);
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillCreditMemoList()));
 
   _payments->addColumn(tr("Type"),         _whsColumn,      Qt::AlignLeft,   true,  "type"  );
@@ -1295,6 +1316,8 @@ void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Quote..."), this, SLOT(sViewQuote()), 0);
+  if (!_privileges->check("ViewQuotes"))
+    pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
@@ -1317,7 +1340,9 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
   if(!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
+  menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
+  if (!_privileges->check("ViewSalesOrders"))
+    pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
@@ -1337,7 +1362,9 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
   menuItem = pMenu->insertItem(tr("Edit Invoice..."), this, SLOT(sEditInvoice()), 0);
   if(!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
-  pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+  menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+  if(!_privileges->check("ViewMiscInvoices"))
+    pMenu->setItemEnabled(menuItem, FALSE);
   if(item->rawValue("posted").toBool() == FALSE)
   {
     menuItem = pMenu->insertItem(tr("Post Invoice..."), this, SLOT(sPostInvoice()), 0);
@@ -1351,7 +1378,7 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
     menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditInvOrder()), 0);
     if(!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
+    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
     if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
@@ -1378,7 +1405,9 @@ void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu, QTreeWidget
   if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && !_privileges->check("MaintainCreditMemos"))
    ||(_creditMemo->altId() == -3 && !_privileges->check("EditAROpenItem")))
     pMenu->setItemEnabled(menuItem, FALSE);
-  pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+  menuItem = pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+  if(!_privileges->check("ViewCreditMemos"))
+    pMenu->setItemEnabled(menuItem, FALSE);
 
   if(item->rawValue("posted").toBool() == FALSE)
   {
@@ -1397,7 +1426,9 @@ void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu,  QTreeWidgetIte
     menuItem = pMenu->insertItem(tr("Edit A/R Open Item..."), this, SLOT(sEditAropen()), 0);
     if(!_privileges->check("EditAROpenItem"))
       pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View A/R Open Item..."), this, SLOT(sViewAropen()), 0);
+    menuItem = pMenu->insertItem(tr("View A/R Open Item..."), this, SLOT(sViewAropen()), 0);
+    if(!_privileges->check("ViewAROpenItems"))
+      pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
 
