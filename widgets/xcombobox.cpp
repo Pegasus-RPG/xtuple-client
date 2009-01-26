@@ -771,13 +771,17 @@ void XComboBox::setText(QVariant &pVariant)
 
 void XComboBox::setText(const QString &pString)
 {
+  if (pString == currentText())
+    return;
+    
   if (count())
   {
     for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
-  {
+    {
       if (text(counter) == pString)
       {
         setCurrentIndex(counter);
+        emit newID(id());
         return;
       }
     }
