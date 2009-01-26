@@ -115,6 +115,7 @@ void returnWoMaterialBatch::sReturn()
                              .arg(__LINE__)
                              .arg(_wo->id())
                              .arg(q.value("result").toInt()) );
+          return;
         }
         else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
         {
