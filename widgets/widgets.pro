@@ -152,6 +152,7 @@ SOURCES    += widgets.cpp \
               alarms.cpp alarmMaint.cpp \
               invoiceCluster.cpp \
               xspinbox.cpp \
+              xsqlrelationaldelegate.cpp \
 
 HEADERS    += widgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -204,6 +205,7 @@ HEADERS    += widgets.h \
               alarms.h alarmMaint.h \
               invoicecluster.h \
               xspinbox.h \
+              xsqlrelationaldelegate.h \
 
 FORMS += accountSearch.ui \
          documents.ui \
@@ -217,6 +219,5 @@ FORMS += accountSearch.ui \
 
 RESOURCES += widgets.qrc
 
-#The following line was inserted by qt3to4
 QT +=  sql
 #QT += qt3support 

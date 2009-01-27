@@ -21,12 +21,13 @@
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlIndex>
-#include <QSqlRelationalDelegate>
 #include <QSqlRelationalTableModel>
 #include <QStack>
 #include <QTreeWidgetItem>
 
-#define DEBUG false
+#include "xsqlrelationaldelegate.h"
+
+#define DEBUG true
 
 XTreeView::XTreeView(QWidget *parent) : 
   QTreeView(parent)
@@ -53,7 +54,7 @@ XTreeView::XTreeView(QWidget *parent) :
 
   _mapper = new XDataWidgetMapper(this);
   _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
-  
+
   _windowName = window()->objectName();
 }
 
@@ -315,7 +316,7 @@ void XTreeView::setTable()
     _model.setTable(tablename,_keyColumns);
     
     setModel(&_model);
-    setItemDelegate(new QSqlRelationalDelegate(this));
+    setItemDelegate(new XSqlRelationalDelegate(this));
     setRelations();
   }
 }
@@ -647,6 +648,7 @@ void XTreeView::setRelations()
   {
     _fkeymap.insert("acalitem",    "acalitem_name");
     _fkeymap.insert("accnt",       "accnt_number");
+    _fkeymap.insert("addr",        "addr_number");
     _fkeymap.insert("alarm",       "alarm_number");
     _fkeymap.insert("bankaccnt",   "bankaccnt_name");
     _fkeymap.insert("bankadjtype", "bankadjtype_name");
@@ -660,6 +662,7 @@ void XTreeView::setRelations()
     _fkeymap.insert("cmdarg",      "cmdarg_arg");
     _fkeymap.insert("cmhead",      "cmhead_number");
     _fkeymap.insert("cmnttype",    "cmnttype_name");
+    _fkeymap.insert("cntct",       "cntct_number");
     _fkeymap.insert("cntslip",     "cntslip_number");
     _fkeymap.insert("cohead",      "cohead_number");
     _fkeymap.insert("company",     "company_number");
