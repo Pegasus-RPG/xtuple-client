@@ -355,6 +355,9 @@ bool returnAuthorization::sSave(bool partial)
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   const char *creditMethods[] = { "N", "M", "K", "C" };
 
+  QString disposition = QString(dispositionTypes[_disposition->currentIndex()]);
+  QString creditBy = QString(creditMethods[_creditBy->currentIndex()]);
+  
   if (_authNumber->text().isEmpty())
   {
     if(partial && !isVisible())
@@ -365,6 +368,15 @@ bool returnAuthorization::sSave(bool partial)
     return false;
   }
 
+  if ( !partial && (disposition == "C") && (creditBy == "N") )
+  {
+    QMessageBox::warning( this, tr("Invalid Credit Method"),
+                         tr("<p>You may not enter a Disposition of Credit "
+                            "and a Credit By of None." ) );
+    _creditBy->setFocus();
+    return false;
+  }
+  
   if ( ! _miscCharge->isZero() && (!_miscChargeAccount->isValid()) )
   {
     QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
@@ -435,12 +447,12 @@ bool returnAuthorization::sSave(bool partial)
     q.bindValue(":rahead_taxauth_id", _taxauth->id());
   if (_rsnCode->id() > 0)
     q.bindValue(":rahead_rsncode_id", _rsnCode->id());
-  q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentIndex()]));
+  q.bindValue(":rahead_disposition", disposition);
   if (_timing->currentIndex() == 0)
     q.bindValue(":rahead_timing", "I");
   else
     q.bindValue(":rahead_timing", "R");
-  q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentIndex()]));
+  q.bindValue(":rahead_creditmethod", creditBy);
   if (_origso->isValid())
     q.bindValue(":rahead_orig_cohead_id", _origso->id());
   if (_newso->isValid())
@@ -1487,13 +1499,6 @@ void returnAuthorization::sShipWhsChanged()
 
 void returnAuthorization::sDispositionChanged()
 {
-  if (!_ignoreSoSignals) 
-  {
-// Save the change so that disposition of raitems is changed
-    sSave(true);
-    sFillList();
-  }
-
   _new->setEnabled(_cust->isValid() || 
               (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
@@ -1514,6 +1519,13 @@ void returnAuthorization::sDispositionChanged()
     _timing->setEnabled(TRUE);
 
   _refund->setEnabled(_creditBy->currentIndex() == 3);
+
+  if (!_ignoreSoSignals) 
+  {
+// Save the change so that disposition of raitems is changed
+    sSave(true);
+    sFillList();
+  }
 }
 
 void returnAuthorization::sCreditByChanged()
