@@ -134,6 +134,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
     }
   }
 
+  _kitInheritCOS->setChecked(_metrics->boolean("KitComponentInheritCOS"));
   _disallowReceiptExcess->setChecked(_metrics->boolean("DisallowReceiptExcessQty"));
   _warnIfReceiptDiffers->setChecked(_metrics->boolean("WarnIfReceiptQtyDiffers"));
 
@@ -264,6 +265,7 @@ void configureIM::sSave()
     }
   }
 
+  _metrics->set("KitComponentInheritCOS", _kitInheritCOS->isChecked());
   _metrics->set("DisallowReceiptExcessQty", _disallowReceiptExcess->isChecked());
   _metrics->set("WarnIfReceiptQtyDiffers", _warnIfReceiptDiffers->isChecked());
   _metrics->set("ReceiptQtyTolerancePct", _tolerance->text());
