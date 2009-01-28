@@ -65,7 +65,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
                characteristicPrice.ui check.ui checkFormat.ui checkFormats.ui                         \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
-               commentType.ui commentTypes.ui company.ui companies.ui configureAccountingSystem.ui    \
+               commentType.ui commentTypes.ui company.ui companies.ui				      \
                configureCC.ui configureSO.ui configureIM.ui                                           \
                configureGL.ui configureMS.ui configurePD.ui configurePO.ui                            \
                configureWO.ui configureBackup.ui configureCRM.ui                                      \
@@ -386,7 +386,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                characteristic.h characteristics.h characteristicAssignment.h                          \
                characteristicPrice.h check.h checkFormat.h checkFormats.h                             \
                classCodes.h classCode.h closePurchaseOrder.h closeWo.h                                \
-               commentType.h commentTypes.h company.h companies.h configureAccountingSystem.h         \
+               commentType.h commentTypes.h company.h companies.h                                     \
                configureCC.h configureSO.h configureIM.h                                              \
                configureGL.h configureMS.h configurePD.h configurePO.h                                \
                configureWO.h configureBackup.h configureCRM.h                                         \
@@ -715,7 +715,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \
                characteristicPrice.cpp check.cpp checkFormat.cpp checkFormats.cpp                     \
                classCodes.cpp classCode.cpp closePurchaseOrder.cpp closeWo.cpp                        \
-               commentType.cpp commentTypes.cpp company.cpp companies.cpp configureAccountingSystem.cpp \
+               commentType.cpp commentTypes.cpp company.cpp companies.cpp                             \
                configureCC.cpp configureSO.cpp configureIM.cpp                                        \
                configureGL.cpp configureMS.cpp configurePD.cpp configurePO.cpp                        \
                configureWO.cpp configureBackup.cpp configureCRM.cpp                                   \
