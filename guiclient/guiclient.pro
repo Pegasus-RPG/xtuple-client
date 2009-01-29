@@ -12,6 +12,16 @@ DEPENDPATH  += ../scriptapi \
                ../common \
                ../widgets ../widgets/tmp/lib
 
+win32-msvc {
+#PRE_TARGETDEPS += ../lib/xtuplecommon.obj    \
+#                    ../lib/xtuplescriptapi.obj \
+#                    ../lib/xtuplewidgets.obj
+} else {
+  PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
+                    ../lib/libxtuplescriptapi.a \
+                    ../lib/libxtuplewidgets.a
+}
+
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
                -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
                -lxtuplescriptapi \
