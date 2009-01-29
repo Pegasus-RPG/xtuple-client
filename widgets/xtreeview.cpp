@@ -559,7 +559,7 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
   cp->alignment    = alignment;
 
   if (cp->fromSettings)
-    cp->stretchy   = (width == -1 && cp->savedWidth == -1);
+    cp->stretchy   = (width == -1 || cp->savedWidth == -1);
   else
   {
     cp->savedWidth = -1;
