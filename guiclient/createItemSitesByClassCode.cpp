@@ -178,7 +178,7 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
                "  itemsite_location_comments, itemsite_notes,"
                "  itemsite_abcclass, itemsite_freeze, itemsite_datelastused,"
-               "  itemsite_ordergroup, itemsite_mps_timefence, "
+               "  itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence, "
                "  itemsite_autoabcclass, itemsite_costmethod ) "
                "SELECT item_id,"
                "       :warehous_id, 0.0, 0.0,"
@@ -194,7 +194,7 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
                "       :itemsite_location_comments, '',"
                "       :itemsite_abcclass, FALSE, startOfTime(),"
-               "       :itemsite_ordergroup, :itemsite_mps_timefence, "
+               "       :itemsite_ordergroup, :itemsite_ordergroup_first, :itemsite_mps_timefence, "
                "       FALSE, CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END "
                "FROM item "
                "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
@@ -234,6 +234,7 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_abcclass", _abcClass->currentText());
 
   q.bindValue(":itemsite_ordergroup", _orderGroup->value());
+  q.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
   q.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
 
   if (_useDefaultLocation->isChecked())
@@ -380,6 +381,7 @@ void createItemSitesByClassCode::clear()
   _safetyStock->setDouble(0.0);
 
   _orderGroup->setValue(1);
+  _orderGroupFirst->setChecked(FALSE);
 
   _cycleCountFreq->setValue(0);
   _leadTime->setValue(0);
