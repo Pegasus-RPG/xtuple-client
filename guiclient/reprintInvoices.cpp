@@ -36,6 +36,7 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   _invoice->addColumn( tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter,true, "invchead_invcdate");
   _invoice->addColumn( tr("Customer"),     -1,              Qt::AlignLeft,  true, "customer");
   _invoice->addColumn( tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
+  _invoice->addColumn( tr("Balance"),      _bigMoneyColumn, Qt::AlignRight, true, "balance" );
   _invoice->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
@@ -69,6 +70,8 @@ void reprintInvoices::sQuery()
   ParameterList params;
   params.append("invc_pattern", _invoicePattern->text().trimmed());
   _dates->appendValue(params);
+  if (_balanceOnly->isChecked())
+    params.append("balanceOnly");
   q = mql.toQuery(params);
   _invoice->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
