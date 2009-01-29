@@ -32,7 +32,6 @@ class login2 : public QDialog, public Ui::login2
 
     QString _databaseURL;
     QString _user;
-    int _userid;
 
     virtual int set( ParameterList & pParams, QSplashScreen * pSplash );
     virtual void populateDatabaseInfo();

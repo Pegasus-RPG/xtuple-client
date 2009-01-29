@@ -44,8 +44,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _multipleConnections = false;
   _evalDatabaseURL = "pgsql://demo.xtuple.com:5434/%1";
 
-  _userid = -1;
-
   _password->setEchoMode(QLineEdit::Password);
 
   QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
@@ -271,12 +269,12 @@ void login2::sLogin()
   
   if(!_nonxTupleDB)
   {
-    XSqlQuery login( "SELECT login() AS usr_id,"
+    XSqlQuery login( "SELECT login() AS result,"
                      "       CURRENT_USER AS user;" );
     setCursor(QCursor(Qt::arrowCursor));
     if (login.first())
     {
-      int result = login.value("usr_id").toInt();
+      int result = login.value("result").toInt();
       if (result < 0)
       {
         if (_splash)
@@ -286,7 +284,6 @@ void login2::sLogin()
         return;
       }
       _user = login.value("user").toString();
-      _userid = login.value("usr_id").toInt();
       _databaseURL = databaseURL;
       accept();
     }
