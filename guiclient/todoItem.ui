@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -21,36 +20,15 @@ to be bound by its terms.</comment>
    <string>To-Do List Item</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>12</number>
    </property>
-   <property name="topMargin" >
-    <number>12</number>
-   </property>
-   <property name="rightMargin" >
-    <number>12</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>12</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>12</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>12</number>
    </property>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item row="0" column="0" >
@@ -97,7 +75,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -147,7 +125,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>61</width>
                <height>22</height>
@@ -183,7 +161,7 @@ to be bound by its terms.</comment>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>0</height>
@@ -220,7 +198,7 @@ to be bound by its terms.</comment>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>111</width>
             <height>28</height>
@@ -317,7 +295,7 @@ to be bound by its terms.</comment>
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -330,7 +308,7 @@ to be bound by its terms.</comment>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>20</width>
                 <height>40</height>
@@ -385,7 +363,7 @@ to be bound by its terms.</comment>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>20</width>
                 <height>40</height>
@@ -442,7 +420,7 @@ to be bound by its terms.</comment>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>40</height>
@@ -498,7 +476,7 @@ to be bound by its terms.</comment>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>40</height>
@@ -538,7 +516,7 @@ to be bound by its terms.</comment>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>40</height>
@@ -615,6 +593,7 @@ to be bound by its terms.</comment>
   <tabstop>_active</tabstop>
   <tabstop>_description</tabstop>
   <tabstop>_priority</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_due</tabstop>
   <tabstop>_assigned</tabstop>
   <tabstop>_started</tabstop>
@@ -626,9 +605,8 @@ to be bound by its terms.</comment>
   <tabstop>_crmacct</tabstop>
   <tabstop>_ophead</tabstop>
   <tabstop>_incident</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
  <connections>
