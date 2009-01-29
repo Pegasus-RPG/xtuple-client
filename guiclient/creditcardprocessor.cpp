@@ -869,9 +869,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 
   ParameterList dbupdateinfo;
   returnVal = doCredit(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -73)
-    return -73;
-  else if (returnVal < 0)
+  if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
