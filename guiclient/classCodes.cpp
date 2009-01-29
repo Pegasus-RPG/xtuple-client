@@ -120,6 +120,7 @@ void classCodes::sDelete()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  sFillList(-1);
 }
 
 void classCodes::sPrint()
