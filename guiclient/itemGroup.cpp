@@ -202,7 +202,7 @@ void itemGroup::sNew()
   newdlg.set(params);
 
   int itemid = newdlg.exec();
-  if (itemid != QDialog::Rejected)
+  if (itemid != -1)
   {
     q.prepare( "SELECT itemgrpitem_id "
                "FROM itemgrpitem "
