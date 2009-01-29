@@ -40,7 +40,6 @@
 
 #include "databaseInformation.h"
 #include "configureBackup.h"
-#include "configureAccountingSystem.h"
 
 #include "accountNumbers.h"
 #include "calendars.h"
@@ -184,7 +183,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "menu",				tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.databaseInformation",	tr("&Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	_privileges->check("ConfigDatabaseInfo"),	NULL,	NULL,	true	},
     { "sys.configureBackup",		tr("Configure &Backup..."),	SLOT(sConfigureBackup()),	masterInfoMenu,	_privileges->check("ConfigureBackupServer"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
-    { "sys.configureAccountingSystemInterface",tr("Configure Accounting System Interface..."), SLOT(sConfigureAccountingSystemInterface()), masterInfoMenu, _privileges->check("ConfigAccountingInterface"),	NULL,	NULL, _metrics->boolean("EnableExternalAccountingInterface") },
     { "separator",		NULL,			NULL,			masterInfoMenu,	true,					NULL,	NULL,	true	},
     { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	_privileges->check("MaintainImages"),	NULL,	NULL,	true	},
     { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
