@@ -135,7 +135,7 @@ void siteTypes::sDelete()
                                  tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0 )
   {
     q.prepare( "SELECT warehous_id "
-               "FROM whseinfo "
+               "FROM whsinfo "
                "WHERE (warehous_sitetype_id=:sitetype_id) "
                "LIMIT 1;" );
     q.bindValue(":sitetype_id", _sitetype->id());
