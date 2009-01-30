@@ -121,6 +121,15 @@ void siteType::sCheck()
 
 void siteType::sSave()
 {
+  if (_code->text().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Save Site Type"),
+                           tr( "You must uniquely name this Site Type\n"
+                               "before you may save it." ) );
+    _code->setFocus();
+    return;
+  }
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('sitetype_sitetype_id_seq') AS _sitetype_id;");
