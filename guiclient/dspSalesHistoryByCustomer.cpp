@@ -214,8 +214,12 @@ void dspSalesHistoryByCustomer::sView()
 
 void dspSalesHistoryByCustomer::sInvoiceInformation()
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_sohist->currentItem();
+  if(0 == item)
+    return;
+
   ParameterList params;
-  params.append("invoiceNumber", _sohist->altId());
+  params.append("invoiceNumber", item->rawValue("invoicenumber").toString());
 
   dspInvoiceInformation *newdlg = new dspInvoiceInformation();
   newdlg->set(params);
