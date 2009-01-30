@@ -24,8 +24,6 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
     Q_PROPERTY(QString         schemaName            READ schemaName           WRITE setSchemaName       )
     Q_PROPERTY(QString         tableName             READ tableName            WRITE setTableName        )
     Q_PROPERTY(int             primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
-    Q_PROPERTY(int             rowCount              READ rowCount                                             DESIGNABLE false)
-    Q_PROPERTY(int             rowCountVisible       READ rowCountVisible                                      DESIGNABLE false)
     
     public:
       XTreeView(QWidget *parent = 0);
