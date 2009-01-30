@@ -90,12 +90,12 @@ class XTUPLEWIDGETS_EXPORT DLineEdit : public QWidget
     inline void                 setNullString(const QString &p)     { _lineedit.setNullString(p); };
     inline void                 setNullDate(const QDate &p)         { _lineedit.setNullDate(p); };
 
-    virtual bool                isNull()                            { return _lineedit.isNull(); };
-    virtual bool                isValid()                           { return _lineedit.isValid(); };
+    Q_INVOKABLE virtual bool                isNull()                { return _lineedit.isNull(); };
+    Q_INVOKABLE virtual bool                isValid()               { return _lineedit.isValid(); };
     virtual XDateEdit::Defaults defaultDate()                       { return _lineedit.defaultDate(); };
     virtual QDate               date()                              { return _lineedit.date(); };
     virtual QString             fieldName() const                   { return _lineedit.fieldName(); };
-    virtual void                clear()                             { _lineedit.clear(); };
+    Q_INVOKABLE virtual void                clear()                 { _lineedit.clear(); };
       
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m)             { _lineedit.setDataWidgetMap(m); };
@@ -125,10 +125,10 @@ class XTUPLEWIDGETS_EXPORT DateCluster : public QWidget
   public:
     DateCluster(QWidget *, const char * = 0);
 
-    void setStartNull(const QString &, const QDate &, bool);
-    void setEndNull(const QString &, const QDate &, bool);
+    Q_INVOKABLE void setStartNull(const QString &, const QDate &, bool);
+    Q_INVOKABLE void setEndNull(const QString &, const QDate &, bool);
 
-    void appendValue(ParameterList &);
+    Q_INVOKABLE void appendValue(ParameterList &);
     void bindValue(XSqlQuery &);
     
     inline QDate startDate() { return _startDate->date(); };
@@ -137,10 +137,10 @@ class XTUPLEWIDGETS_EXPORT DateCluster : public QWidget
     inline void  setStartDate(const QDate &pDate) { _startDate->setDate(pDate); };
     inline void  setEndDate(const QDate &pDate)   { _endDate->setDate(pDate);   };
 
-    inline bool  allValid() { return ((_startDate->isValid()) && (_endDate->isValid())); };
+    Q_INVOKABLE inline bool  allValid() { return ((_startDate->isValid()) && (_endDate->isValid())); };
 
-    void setStartCaption(const QString &);
-    void setEndCaption(const QString &);
+    Q_INVOKABLE void setStartCaption(const QString &);
+    Q_INVOKABLE void setEndCaption(const QString &);
 
   signals:
     void updated();
