@@ -110,10 +110,10 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
   public:
     CustInfo(QWidget *parent, const char *name = 0);
 
-    void setReadOnly(bool);
+    Q_INVOKABLE void setReadOnly(bool);
 
-    inline bool                      autoFocus()     const  { return _customerNumber->autoFocus(); }
-    inline bool                      isValid()              { return _customerNumber->_valid;      }
+    Q_INVOKABLE inline bool          autoFocus()     const  { return _customerNumber->autoFocus(); }
+    Q_INVOKABLE inline bool          isValid()              { return _customerNumber->_valid;      }
     inline QString                   defaultNumber() const  { return _default;                     }
     inline QString                   fieldName()     const  { return _fieldName;                   }
     inline QString                   number()        const  { return _customerNumber->text();      }
@@ -176,11 +176,11 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public QWidget
 
     void setReadOnly(bool);
 
-    inline bool                      autoFocus()     const { return _custInfo->autoFocus();     };
+    Q_INVOKABLE inline bool          autoFocus()     const { return _custInfo->autoFocus();     };
     Q_INVOKABLE inline int           id()                  { return _custInfo->id();            };
-    inline bool                      isValid()             { return _custInfo->isValid();       };
+    Q_INVOKABLE inline bool          isValid()             { return _custInfo->isValid();       };
     inline CLineEdit::CLineEditTypes type()          const { return _custInfo->type();          };
-    inline QString                   number()        const { return _custInfo->number();        };
+    Q_INVOKABLE inline QString       number()        const { return _custInfo->number();        };
 
     void   setType(CLineEdit::CLineEditTypes);
     
