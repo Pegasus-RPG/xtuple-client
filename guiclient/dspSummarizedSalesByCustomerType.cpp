@@ -35,13 +35,14 @@ dspSummarizedSalesByCustomerType::dspSummarizedSalesByCustomerType(QWidget* pare
 
   _customerType->setType(ParameterGroup::CustomerType);
 
-  _sohist->addColumn(tr("Customer Type"), -1,              Qt::AlignLeft,   true,  "custtype_code"   );
-  _sohist->addColumn(tr("Site"),          _whsColumn,      Qt::AlignCenter, true,  "warehous_code" );
-  _sohist->addColumn(tr("Min. Price"),    _priceColumn,    Qt::AlignRight,  true,  "minprice"  );
-  _sohist->addColumn(tr("Max. Price"),    _priceColumn,    Qt::AlignRight,  true,  "maxprice"  );
-  _sohist->addColumn(tr("Avg. Price"),    _priceColumn,    Qt::AlignRight,  true,  "avgprice"  );
-  _sohist->addColumn(tr("Total Units"),   _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
-  _sohist->addColumn(tr("Total Sales"),   _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
+  _sohist->addColumn(tr("Customer Type"),    -1,              Qt::AlignLeft,   true,  "custtype_code"   );
+  _sohist->addColumn(tr("Site"),             _whsColumn,      Qt::AlignCenter, true,  "warehous_code" );
+  _sohist->addColumn(tr("Min. Price"),       _priceColumn,    Qt::AlignRight,  true,  "minprice"  );
+  _sohist->addColumn(tr("Max. Price"),       _priceColumn,    Qt::AlignRight,  true,  "maxprice"  );
+  _sohist->addColumn(tr("Avg. Price"),       _priceColumn,    Qt::AlignRight,  true,  "avgprice"  );
+  _sohist->addColumn(tr("Wt. Avg. Price"),   _priceColumn,    Qt::AlignRight,  true,  "wtavgprice"  );
+  _sohist->addColumn(tr("Total Units"),      _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
+  _sohist->addColumn(tr("Total Sales"),      _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
   _sohist->setDragString("custtypeid=");
 }
 
@@ -100,10 +101,11 @@ void dspSummarizedSalesByCustomerType::sFillList()
     return;
 
   QString sql( "SELECT cust_custtype_id, custtype_code, warehous_code,"
-               "       minprice, maxprice, avgprice, totalunits, totalsales,"
+               "       minprice, maxprice, avgprice, wtavgprice, totalunits, totalsales,"
                "       'salesprice' AS minprice_xtnumericrole,"
                "       'salesprice' AS maxprice_xtnumericrole,"
                "       'salesprice' AS avgprice_xtnumericrole,"
+               "       'salesprice' AS wtavgprice_xtnumericrole,"
                "       'qty' AS totalunits_xtnumericrole,"
                "       'curr' AS totalsales_xtnumericrole,"
                "       0 AS totalunits_xttotalrole,"
@@ -111,7 +113,10 @@ void dspSummarizedSalesByCustomerType::sFillList()
                "FROM ( SELECT cust_custtype_id, custtype_code, warehous_code,"
                "              MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
                "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(baseextprice) AS totalsales "
+               "              SUM(baseextprice) AS totalsales,"
+               "              CASE WHEN (SUM(cohist_qtyshipped) = 0) THEN 0"
+               "                   ELSE SUM(baseextprice) / SUM(cohist_qtyshipped)"
+               "              END AS wtavgprice"
                "       FROM saleshistory "
                "       WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 

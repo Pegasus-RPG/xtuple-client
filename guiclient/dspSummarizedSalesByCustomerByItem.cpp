@@ -33,14 +33,15 @@ dspSummarizedSalesByCustomerByItem::dspSummarizedSalesByCustomerByItem(QWidget* 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
-  _sohist->addColumn(tr("Description"), -1 ,             Qt::AlignLeft,   true,  "itemdescription"   );
-  _sohist->addColumn(tr("Site"),        _whsColumn,      Qt::AlignCenter, true,  "warehous_code" );
-  _sohist->addColumn(tr("Min. Price"),  _priceColumn,    Qt::AlignRight,  true,  "minprice"  );
-  _sohist->addColumn(tr("Max. Price"),  _priceColumn,    Qt::AlignRight,  true,  "maxprice"  );
-  _sohist->addColumn(tr("Avg. Price"),  _priceColumn,    Qt::AlignRight,  true,  "avgprice"  );
-  _sohist->addColumn(tr("Total Units"), _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
-  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
+  _sohist->addColumn(tr("Item Number"),     _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _sohist->addColumn(tr("Description"),     -1 ,             Qt::AlignLeft,   true,  "itemdescription"   );
+  _sohist->addColumn(tr("Site"),            _whsColumn,      Qt::AlignCenter, true,  "warehous_code" );
+  _sohist->addColumn(tr("Min. Price"),      _priceColumn,    Qt::AlignRight,  true,  "minprice"  );
+  _sohist->addColumn(tr("Max. Price"),      _priceColumn,    Qt::AlignRight,  true,  "maxprice"  );
+  _sohist->addColumn(tr("Avg. Price"),      _priceColumn,    Qt::AlignRight,  true,  "avgprice"  );
+  _sohist->addColumn(tr("Wt. Avg. Price"),  _priceColumn,    Qt::AlignRight,  true,  "wtavgprice"  );
+  _sohist->addColumn(tr("Total Units"),     _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
+  _sohist->addColumn(tr("Total Sales"),     _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
   _sohist->setDragString("itemsiteid=");
   _sohist->setAltDragString("itemid=");
 
@@ -109,10 +110,11 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
   _sohist->clear();
 
   QString sql( "SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code,"
-               "       minprice, maxprice, avgprice, totalunits, totalsales,"
+               "       minprice, maxprice, avgprice, wtavgprice, totalunits, totalsales,"
                "       'salesprice' AS minprice_xtnumericrole,"
                "       'salesprice' AS maxprice_xtnumericrole,"
                "       'salesprice' AS avgprice_xtnumericrole,"
+               "       'salesprice' AS wtavgprice_xtnumericrole,"
                "       'qty' AS totalunits_xtnumericrole,"
                "       'curr' AS totalsales_xtnumericrole,"
                "       0 AS totalunits_xttotalrole,"
@@ -120,7 +122,10 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
                "FROM ( SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription,"
                "              warehous_code, MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
                "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(baseextprice) AS totalsales "
+               "              SUM(baseextprice) AS totalsales,"
+               "              CASE WHEN (SUM(cohist_qtyshipped) = 0) THEN 0"
+               "                   ELSE SUM(baseextprice) / SUM(cohist_qtyshipped)"
+               "              END AS wtavgprice"
                "       FROM saleshistory "
                "       WHERE ( (cohist_cust_id=:cust_id)"
                "        AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
