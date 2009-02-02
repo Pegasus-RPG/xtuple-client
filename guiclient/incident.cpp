@@ -704,13 +704,19 @@ void incident::sHandleTodoPrivs()
       (_privileges->check("MaintainPersonalTodoList") ||
        _privileges->check("MaintainOtherTodoLists") );
 
-  bool editPriv = (cNew == _mode || cEdit == _mode) && (
+  bool editPriv = false;
+  bool viewPriv = false;
+
+  if(_todoList->currentItem())
+  {
+    editPriv = (cNew == _mode || cEdit == _mode) && (
       (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists")) );
 
-  bool viewPriv =
+    viewPriv =
       (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
+  }
 
   _newTodoItem->setEnabled(newPriv);
   _editTodoItem->setEnabled(editPriv && _todoList->id() > 0);

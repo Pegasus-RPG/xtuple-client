@@ -1021,19 +1021,19 @@ void crmaccount::sHandleTodoPrivs()
 		      (_privileges->check("MaintainPersonalTodoList") ||
 		       _privileges->check("MaintainOtherTodoLists")) );
 
-  bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-    (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
-    (_privileges->check("MaintainOtherTodoLists")) );
-
-  bool viewTodoPriv =
-    (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
-    (_privileges->check("ViewOtherTodoLists"));
-
   _newTodo->setEnabled((cEdit == _mode || cNew == _mode) &&
 			(_privileges->check("MaintainIncidents") || newTodoPriv));
 
   if (_todo->currentItem())
   {
+    bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
+      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
+      (_privileges->check("MaintainOtherTodoLists")) );
+
+    bool viewTodoPriv =
+      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
+      (_privileges->check("ViewOtherTodoLists"));
+
     if (_todo->currentItem()->text(0) == "T")
       _editTodoIncdt->setEnabled(editTodoPriv);
     else
@@ -1305,9 +1305,9 @@ void crmaccount::sNew()
     return;
   }
 
-  contact *newdlg = new contact();
-  newdlg->set(params);
-  if (newdlg->exec() != XDialog::Rejected)
+  contact newdlg(this);
+  newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulate();
 }
 

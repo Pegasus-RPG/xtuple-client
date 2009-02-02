@@ -302,7 +302,7 @@ void dspIncidentsByCRMAccount::sFillList()
 		"	incdt_number, todoitem_name,"
 		"	todoitem_assigned_date,"
                 "       todoitem_status, "
-		"	todoitem_usrname, "
+		"	todoitem_username, "
                 "	todoitem_due_date,"
                 "       incdt_timestamp,"
                 "       2 AS xtindentrole,"
