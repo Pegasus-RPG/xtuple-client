@@ -560,7 +560,7 @@ void user::populate()
   q.prepare( "SELECT *, userCanCreateUsers(usr_username) AS createusers,"
              "       userCanCreateUsers(CURRENT_USER) AS enablecreateusers,"
              "       emp_id "
-             "FROM usr LEFT OUTER JOIN emp ON (usr_id=emp_usr_id) "
+             "FROM usr LEFT OUTER JOIN emp ON (usr_username=emp_username) "
              "WHERE (usr_username=:usr_username);" );
   q.bindValue(":usr_username", _cUsername);
   q.exec();

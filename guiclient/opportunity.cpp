@@ -50,7 +50,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _opheadid = -1;
 
   _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
-  _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "usr_username" );
+  _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
   _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
   _todoList->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "todoitem_description" );
   _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
@@ -60,20 +60,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value" );
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter,true, "charass_default" );
 
-  q.prepare("SELECT usr_id "
-     "FROM usr "
-     "WHERE (usr_username=CURRENT_USER);");
-  q.exec();
-  if (q.first())
-  {
-    _myUsrId = q.value("usr_id").toInt();
-    _owner->setId(_myUsrId);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    close();
-  }
+  _owner->setUsername(omfgThis->username());
 
   _saved = false;
 }
@@ -439,8 +426,8 @@ void opportunity::sDeleteTodoItem()
 
 void opportunity::sFillTodoList()
 {
-  q.prepare("SELECT todoitem_id, todoitem_usr_id, incdtpriority_name, incdtpriority_order, "
-	    "       usr_username, todoitem_name, "
+  q.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
+	    "       todoitem_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
 	    "       todoitem_status, todoitem_due_date, "
             "       CASE "
@@ -449,12 +436,11 @@ void opportunity::sFillTodoList()
             "         WHEN (todoitem_status != 'C' AND todoitem_due_date > current_date) THEN "
             "           'altemphasis' "
             "       END AS qtforegroundrole "
-	    "FROM usr, todoitem "
-            "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+	    "  FROM todoitem "
+            "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 	    "WHERE ( (todoitem_ophead_id=:ophead_id) "
-	    "  AND   (todoitem_usr_id=usr_id)"
 	    "  AND   (todoitem_active) ) "
-	    "ORDER BY incdtpriority_order, usr_username;");
+	    "ORDER BY incdtpriority_order, todoitem_username;");
 
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
@@ -463,7 +449,7 @@ void opportunity::sFillTodoList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _todoList->populate(q,TRUE);
+  _todoList->populate(q);
 }
 
 void opportunity::sPopulateTodoMenu(QMenu *pMenu)
@@ -475,12 +461,12 @@ void opportunity::sPopulateTodoMenu(QMenu *pMenu)
        _privileges->check("MaintainOtherTodoLists") );
 
   bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists")) );
+      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists")) );
 
   bool viewPriv =
-      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
+      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
 
   menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNewTodoItem()), 0);
   pMenu->setItemEnabled(menuItem, newPriv);
@@ -502,12 +488,12 @@ void opportunity::sHandleTodoPrivs()
        _privileges->check("MaintainOtherTodoLists") );
 
   bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists")) );
+      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists")) );
 
   bool viewPriv =
-      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
+      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
 
   _newTodoItem->setEnabled(newPriv);
   _editTodoItem->setEnabled(editPriv && _todoList->id() > 0);

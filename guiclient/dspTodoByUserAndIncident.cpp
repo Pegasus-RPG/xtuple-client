@@ -38,7 +38,7 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* 
   _startDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _todoitem->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "usr_username");
+  _todoitem->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "todoitem_username");
   _todoitem->addColumn(tr("Priority"),    _prcntColumn, Qt::AlignCenter,true, "incdtpriority_name");
   _todoitem->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft,  true, "incdt_id", "incdt_number");
   _todoitem->addColumn(tr("Task Name"),            100, Qt::AlignLeft,  true, "todoitem_name");
@@ -83,10 +83,7 @@ void dspTodoByUserAndIncident::sPopulateMenu(QMenu *pMenu)
 
 void dspTodoByUserAndIncident::setParams(ParameterList& params)
 {
-  if (_usr->isSelected())
-    params.append("usr_id", _usr->id());
-  else if (_usr->isPattern())
-    params.append("usr_pattern", _usr->pattern());
+  _usr->appendValue(params);
   if (_selectedIncident->isChecked())
     params.append("incdt_id", _incident->id());
   if (_showInactive->isChecked())
@@ -122,20 +119,20 @@ void dspTodoByUserAndIncident::sFillList()
                 "  CASE WHEN (todoitem_status != 'C' AND todoitem_due_date < CURRENT_DATE) THEN 'expired'"
                 "       WHEN (todoitem_status != 'C' AND todoitem_due_date > CURRENT_DATE) THEN 'future'"
                 "  END AS todoitem_due_date_qtforegroundrole "
-	        "FROM usr, todoitem LEFT OUTER JOIN"
+	        "FROM todoitem LEFT OUTER JOIN"
 	        "     incdt ON (todoitem_incdt_id = incdt_id) "
-          "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-	        "WHERE ((usr_id=todoitem_usr_id)"
+                "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+	        "WHERE ((true) "
 		"<? if not exists(\"showInactive\") ?>"
 		"  AND todoitem_active "
 		"<? endif ?>"
 		"<? if not exists(\"showCompleted\") ?>"
 		"  AND todoitem_status != 'C' "
 		"<? endif ?>"
-		"<? if exists(\"usr_id\") ?>"
-		"  AND (usr_id=<? value(\"usr_id\") ?>)"
+		"<? if exists(\"username\") ?>"
+		"  AND (todoitem_username=<? value(\"username\") ?>)"
 		"<? elseif exists(\"usr_pattern\") ?>"
-		"  AND (usr_username ~* <? value(\"usr_pattern\") ?>)"
+		"  AND (todoitem_username ~* <? value(\"usr_pattern\") ?>)"
 		"<? endif ?>"
 		"<? if exists(\"incdt_id\") ?>"
 		"  AND (todoitem_incdt_id=<? value(\"incdt_id\") ?>)"
@@ -153,7 +150,7 @@ void dspTodoByUserAndIncident::sFillList()
 		"  AND (todoitem_due_date<=<? value(\"due_date_end\") ?>)"
 		"<? endif ?>"
 		") "
-	        "ORDER BY usr_username, incdtpriority_order;" ;
+	        "ORDER BY todoitem_username, incdtpriority_order;" ;
   ParameterList params;
   setParams(params);
 

@@ -37,13 +37,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(ParameterGroup::User);
-  q.prepare("SELECT usr_id, current_user "
+  q.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");
   q.exec();
   if (q.first())
   {
-    _myUsername = q.value("current_user").toInt();
     _usr->setId(q.value("usr_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -106,12 +105,12 @@ void todoList::sPopulateMenu(QMenu *pMenu)
   if (_todoList->currentItem()->altId() == 1)
   {
     bool editPriv =
-	(_myUsername == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
-	(_myUsername != _todoList->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
+	(omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
+	(omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
 
     bool viewPriv =
-	(_myUsername == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
-	(_myUsername != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
+	(omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
+	(omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
 
     menuItem = pMenu->insertItem(tr("New To-do..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
@@ -194,11 +193,11 @@ void todoList::handlePrivs()
   else if (_todoList->altId() == 1)
   {
     editTodoPriv =
-      (_myUsername == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
       (_privileges->check("MaintainOtherTodoLists"));
 
     viewTodoPriv =
-      (_myUsername == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
       (_privileges->check("ViewOtherTodoLists"));
   }
   else if (_todoList->altId() == 2)
@@ -244,7 +243,7 @@ void todoList::sNew()
   ParameterList params;
   params.append("mode", "new");
   if (_usr->isSelected())
-    params.append("usr_username", _myUsername);
+    _usr->appendValue(params);
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -376,134 +375,133 @@ void todoList::sFillList()
 		"       <? value(\"todo\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
-    "       todoitem_status AS status, todoitem_start_date as start, "
+                "       todoitem_status AS status, todoitem_start_date as start, "
 		"       todoitem_due_date AS due, formatDate(todoitem_due_date) AS f_due, "
-		"       usr_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
-    "       CASE WHEN (todoitem_status != 'C'AND "
-    "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
-    "            WHEN (todoitem_status != 'C'AND "
-    "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
-    "       END AS due_qtforegroundrole "
-		"FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
-		"                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-		"                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-    "                   LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-		"WHERE ( (todoitem_usr_id=usr_id)"
-    "  <? if exists(\"startStartDate\") ?> "
-    "  AND (todoitem_start_date BETWEEN <? value(\"startStartDate\") ?>"
+		"       todoitem_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
+                "       CASE WHEN (todoitem_status != 'C'AND "
+                "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
+                "            WHEN (todoitem_status != 'C'AND "
+                "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
+                "       END AS due_qtforegroundrole "
+		"  FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
+		"                LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
+		"                LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+		" WHERE((true)"
+                "  <? if exists(\"startStartDate\") ?> "
+                "  AND (todoitem_start_date BETWEEN <? value(\"startStartDate\") ?>"
 		"                             AND <? value(\"startEndDate\") ?>)"
-    "  <? endif ?>"
-    "  <? if exists(\"dueStartDate\") ?> "
+                "  <? endif ?>"
+                "  <? if exists(\"dueStartDate\") ?> "
 		"  AND   (todoitem_due_date BETWEEN <? value(\"dueStartDate\") ?> "
 		"                               AND <? value(\"dueEndDate\") ?>) "
-  	"  <? endif ?>"
+  	        "  <? endif ?>"
 		"  <? if not exists(\"completed\") ?>"
 		"  AND   (todoitem_status != 'C')"
 		"  <? endif ?>"
-		"  <? if exists(\"usr_id\") ?> "
-		"  AND (usr_id=<? value(\"usr_id\") ?>) "
+		"  <? if exists(\"username\") ?> "
+		"  AND (todoitem_username=<? value(\"username\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
+		"  AND (todoitem_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"  <? if not exists(\"completed\") ?>AND (todoitem_active) <? endif ?>"
 		"       ) "
 		"<? if exists(\"incidents\")?>"
-    "<? if not exists(\"dueStartDate\") ?> "
-		"UNION "
+                "<? if not exists(\"dueStartDate\") ?> "
+		" UNION "
 		"SELECT incdt_id AS id, 2 AS altId, incdt_owner_username AS owner, "
 		"       <? value(\"incident\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
-    "       incdt_status AS status, CAST(incdt_timestamp AS date) AS start, "
+                "       incdt_status AS status, CAST(incdt_timestamp AS date) AS start, "
 		"       null AS due, null AS f_due, "
 		"       incdt_assigned_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
                 "       NULL AS due_qtforegroundrole "
-		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
-		"           LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
-		"           LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-    "           LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
-		"WHERE ((true) "
-    "  <? if exists(\"startStartDate\") ?> "
-    "  AND (incdt_timestamp BETWEEN <? value(\"startStartDate\") ?>"
+		"  FROM incdt LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
+		"             LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "             LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
+		" WHERE((true) "
+                "  <? if exists(\"startStartDate\") ?> "
+                "  AND (incdt_timestamp BETWEEN <? value(\"startStartDate\") ?>"
 		"                            AND <? value(\"startEndDate\") ?>)"
-    "  <? endif ?>"
+                "  <? endif ?>"
 		"  <? if not exists(\"completed\") ?> "
 		"  AND (incdt_status != 'L')"
 		"  <? endif ?>"
-		"  <? if exists(\"usr_id\") ?> "
-		"  AND (usr_id=<? value(\"usr_id\") ?>) "
+		"  <? if exists(\"username\") ?> "
+		"  AND (incdt_assigned_username=<? value(\"username\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
+		"  AND (incdt_assigned_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"       ) "
 		"<? endif ?>"
-    "<? endif ?>"
+                "<? endif ?>"
 		"<? if exists(\"projects\")?>"
-		"UNION "
+		" UNION "
 		"SELECT prjtask_id AS id, 3 AS altId, prjtask_owner_username AS owner, "
 		"       <? value(\"task\") ?> AS type, NULL AS seq, NULL AS priority, "
 		"       prjtask_number || '-' || prjtask_name AS name, "
 		"       firstLine(prjtask_descrip) AS descrip, "
 		"       prjtask_status AS status,  prjtask_start_date AS start, "
-    "       prjtask_due_date AS due, formatDate(prjtask_due_date) AS f_due, "
-		"       usr_username AS usr, prj_number, '' AS cust, "
-    "       CASE WHEN (prjtask_status != 'C'AND "
-    "                  prjtask_due_date < CURRENT_DATE) THEN 'expired'"
-    "            WHEN (prjtask_status != 'C'AND "
-    "                  prjtask_due_date > CURRENT_DATE) THEN 'future'"
-    "       END AS due_qtforegroundrole "
-		"FROM prj, prjtask LEFT OUTER JOIN usr ON (usr_id=prjtask_usr_id)"
-		"WHERE ((prj_id=prjtask_prj_id) "
-    "  <? if exists(\"startStartDate\") ?> "
-    "  AND (prjtask_start_date BETWEEN <? value(\"startStartDate\") ?>"
+                "       prjtask_due_date AS due, formatDate(prjtask_due_date) AS f_due, "
+		"       prjtask_username AS usr, prj_number, '' AS cust, "
+                "       CASE WHEN (prjtask_status != 'C'AND "
+                "                  prjtask_due_date < CURRENT_DATE) THEN 'expired'"
+                "            WHEN (prjtask_status != 'C'AND "
+                "                  prjtask_due_date > CURRENT_DATE) THEN 'future'"
+                "       END AS due_qtforegroundrole "
+		"  FROM prj, prjtask "
+		" WHERE((prj_id=prjtask_prj_id) "
+                "  <? if exists(\"startStartDate\") ?> "
+                "  AND (prjtask_start_date BETWEEN <? value(\"startStartDate\") ?>"
 		"                             AND <? value(\"startEndDate\") ?>)"
-    "  <? endif ?>"
-    "  <? if exists(\"dueStartDate\") ?> "
-    "  AND (prjtask_due_date BETWEEN <? value(\"dueStartDate\") ?>"
+                "  <? endif ?>"
+                "  <? if exists(\"dueStartDate\") ?> "
+                "  AND (prjtask_due_date BETWEEN <? value(\"dueStartDate\") ?>"
 		"                             AND <? value(\"dueEndDate\") ?>)"
-    "  <? endif ?>"
+                "  <? endif ?>"
 		"  <? if not exists(\"completed\") ?> "
 		"  AND (prjtask_status != 'C')"
 		"  <? endif ?>"
-		"  <? if exists(\"usr_id\") ?> "
-		"  AND (usr_id=<? value(\"usr_id\") ?>) "
+		"  <? if exists(\"username\") ?> "
+		"  AND (prjtask_username=<? value(\"username\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
+		"  AND (prjtask_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"       ) "
-  	"UNION "
+  	        " UNION "
 		"SELECT prj_id AS id, 4 AS altId, prj_owner_username AS owner, "
 		"       <? value(\"project\") ?> AS type, NULL AS seq, NULL AS priority, "
 		"       prj_number || '-' || prj_name AS name, "
 		"       firstLine(prj_descrip) AS descrip, "
 		"       prj_status AS status,  prj_start_date AS start, "
-    "       prj_due_date AS due, formatDate(prj_due_date) AS f_due, "
-		"       usr_username AS usr, NULL AS number, '' AS cust, "
-    "       CASE WHEN (prj_status != 'C'AND "
-    "                  prj_due_date < CURRENT_DATE) THEN 'expired'"
-    "            WHEN (prj_status != 'C'AND "
-    "                  prj_due_date > CURRENT_DATE) THEN 'future'"
-    "       END AS due_qtforegroundrole "
-		"FROM prj LEFT OUTER JOIN usr ON (usr_id=prj_usr_id)"
-		"WHERE ((true) "
-    "  <? if exists(\"startStartDate\") ?> "
-    "  AND (prj_start_date BETWEEN <? value(\"startStartDate\") ?>"
+                "       prj_due_date AS due, formatDate(prj_due_date) AS f_due, "
+		"       prj_username AS usr, NULL AS number, '' AS cust, "
+                "       CASE WHEN (prj_status != 'C'AND "
+                "                  prj_due_date < CURRENT_DATE) THEN 'expired'"
+                "            WHEN (prj_status != 'C'AND "
+                "                  prj_due_date > CURRENT_DATE) THEN 'future'"
+                "       END AS due_qtforegroundrole "
+		"  FROM prj "
+		" WHERE((true) "
+                "  <? if exists(\"startStartDate\") ?> "
+                "  AND (prj_start_date BETWEEN <? value(\"startStartDate\") ?>"
 		"                             AND <? value(\"startEndDate\") ?>)"
-    "  <? endif ?>"
-    "  <? if exists(\"dueStartDate\") ?> "
-    "  AND (prj_due_date BETWEEN <? value(\"dueStartDate\") ?>"
+                "  <? endif ?>"
+                "  <? if exists(\"dueStartDate\") ?> "
+                "  AND (prj_due_date BETWEEN <? value(\"dueStartDate\") ?>"
 		"                             AND <? value(\"dueEndDate\") ?>)"
-    "  <? endif ?>"
+                "  <? endif ?>"
 		"  <? if not exists(\"completed\") ?> "
 		"  AND (prj_status != 'C')"
 		"  <? endif ?>"
-		"  <? if exists(\"usr_id\") ?> "
-		"  AND (usr_id=<? value(\"usr_id\") ?>) "
+		"  <? if exists(\"username\") ?> "
+		"  AND (prj_username=<? value(\"username\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
+		"  AND (prj_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"       ) "
-		"<? endif ?>"
+		"<? endif ?> "
 		"ORDER BY due, seq, usr;";
 
   ParameterList params;

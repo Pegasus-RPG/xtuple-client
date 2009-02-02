@@ -63,7 +63,6 @@ private:
     int		_cntctid;
     int		_incdtid;
     int		_mode;
-    int		_myUsrId;
     int         _aropenid;
     int         _ediprofileid;
     bool	_saved;

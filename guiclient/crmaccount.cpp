@@ -47,8 +47,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   q.exec();
   if (q.first())
   {
-    _myUsrId = q.value("usr_id").toInt();
-    _owner->setId(_myUsrId);
+    _owner->setId(q.value("usr_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -948,23 +947,22 @@ void crmaccount::sPopulateTodo()
                 "       END AS due_qtforegroundrole "
                 "FROM ("
                 "<? if exists(\"showTodo\") ?>"
-		"SELECT todoitem_id AS id, todoitem_usr_id AS altId, "
+		"SELECT todoitem_id AS id, "
 		"       'T' AS type, incdtpriority_name AS priority, incdtpriority_order, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
-		"       usr_username AS usr, incdt_number AS incdt "
-		"FROM usr, todoitem LEFT OUTER JOIN "
+		"       todoitem_username AS usr, incdt_number AS incdt "
+		"FROM todoitem LEFT OUTER JOIN "
 		"     incdt ON (incdt_id=todoitem_incdt_id) "
-    "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-		"WHERE ( (todoitem_usr_id=usr_id)"
-		"  AND   (todoitem_crmacct_id=<? value(\"crmacct_id\") ?>)"
+                "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+		"WHERE ( (todoitem_crmacct_id=<? value(\"crmacct_id\") ?>)"
 		"  <? if not exists(\"completed\") ?>"
 		"    AND   (todoitem_status != 'C')"
 		"  <? endif ?>"
 		"  <? if exists(\"active\") ?>AND (todoitem_active) <? endif ?>"
-		"  <? if exists(\"usr_id\") ?>"
-		"    AND (todoitem_usr_id=<? value(\"usr_id\") ?>)"
+		"  <? if exists(\"username\") ?>"
+		"    AND (todoitem_username=<? value(\"username\") ?>)"
 		"  <? endif ?>"
 		"       ) "
 		"  <? if exists(\"showIncidents\")?>"
@@ -972,15 +970,14 @@ void crmaccount::sPopulateTodo()
 		"  <? endif ?>"
 		"<? endif ?>"
 		"<? if exists(\"showIncidents\")?>"
-		"SELECT incdt_id AS id, usr_id AS altId, "
+		"SELECT incdt_id AS id, "
 		"       'I' AS type, incdtpriority_name AS priority, incdtpriority_order, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
 		"       incdt_status AS status, CAST(NULL AS DATE) AS due, "
 		"       incdt_assigned_username AS usr, incdt_number AS incdt "
-		"FROM incdt LEFT OUTER JOIN"
-                "     usr ON (usr_username=incdt_assigned_username)"
-                "LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
+		"  FROM incdt "
+                "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
 		"WHERE ((incdt_crmacct_id=<? value(\"crmacct_id\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (incdt_status != 'L')"
@@ -1004,11 +1001,11 @@ void crmaccount::sPopulateTodo()
        _privileges->check("ViewPersonalTodoList")) &&
       ! (_privileges->check("MaintainOtherTodoLists") ||
 	 _privileges->check("ViewOtherTodoLists")) )
-    params.append("usr_id", _myUsrId);
+    params.append("username", omfgThis->username());
 
   MetaSQLQuery mql(sql);
   XSqlQuery itemQ = mql.toQuery(params);
-  _todo->populate(itemQ, true);
+  _todo->populate(itemQ);
   if (itemQ.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
@@ -1025,11 +1022,11 @@ void crmaccount::sHandleTodoPrivs()
 		       _privileges->check("MaintainOtherTodoLists")) );
 
   bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-    (_myUsrId == _todo->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+    (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
     (_privileges->check("MaintainOtherTodoLists")) );
 
   bool viewTodoPriv =
-    (_myUsrId == _todo->altId() && _privileges->check("ViewPersonalTodoList")) ||
+    (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
     (_privileges->check("ViewOtherTodoLists"));
 
   _newTodo->setEnabled((cEdit == _mode || cNew == _mode) &&
@@ -1071,11 +1068,11 @@ void crmaccount::sPopulateTodoMenu(QMenu *pMenu)
 		       _privileges->check("MaintainOtherTodoLists")) );
 
   bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-      (_myUsrId == _todo->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
       _privileges->check("MaintainOtherTodoLists"));
 
   bool viewTodoPriv =
-      (_myUsrId == _todo->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
       _privileges->check("ViewOtherTodoLists");
 
   menuItem = pMenu->insertItem(tr("New To-Do Item..."), this, SLOT(sNewTodo()));

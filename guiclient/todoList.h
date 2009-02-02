@@ -52,7 +52,6 @@ class todoList : public XWidget, public Ui::todoList
     int		    _mode;
     int		    getIncidentId();
     int		    getProjectId();
-    QString		_myUsername;
 };
 
 #endif // TODOLIST_H

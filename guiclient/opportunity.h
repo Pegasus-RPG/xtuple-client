@@ -49,7 +49,6 @@ protected slots:
 private:
     int		_opheadid;
     int		_mode;
-    int		_myUsrId;
     bool	_saved;
 };
 

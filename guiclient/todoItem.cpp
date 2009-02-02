@@ -33,20 +33,8 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _assigned->setAllowNullDate(true);
   _completed->setAllowNullDate(true);
 
-  q.prepare("SELECT usr_id "
-	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
-  q.exec();
-  if (q.first())
-  {
-    _assignedTo->setId(q.value("usr_id").toInt());
-    _owner->setId(q.value("usr_id").toInt());
-  }  
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    reject();
-  }
+  _assignedTo->setUsername(omfgThis->username());
+  _owner->setUsername(omfgThis->username());
 }
 
 void todoItem::languageChange()
@@ -59,9 +47,9 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("usr_id", &valid);
+  param = pParams.value("username", &valid);
   if (valid)
-    _assignedTo->setId(param.toInt());
+    _assignedTo->setUsername(param.toString());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -162,7 +150,7 @@ void todoItem::sSave()
   QString storedProc;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT createTodoItem(:todoitem_id, :usr_id, :name, :description, "
+    q.prepare( "SELECT createTodoItem(:todoitem_id, :username, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
 	       "  :assigned, :completed, :priority, :notes, :owner) AS result;");
     storedProc = "createTodoItem";
@@ -170,7 +158,7 @@ void todoItem::sSave()
   else if (_mode == cEdit)
   {
     q.prepare( "SELECT updateTodoItem(:todoitem_id, "
-	       "  :usr_id, :name, :description, "
+	       "  :username, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
 	       "  :assigned, :completed, :priority, :notes, :active, :owner) AS result;");
     storedProc = "updateTodoItem";
@@ -178,7 +166,7 @@ void todoItem::sSave()
   q.bindValue(":todoitem_id", _todoitemid);
   if(_owner->isValid())
     q.bindValue(":owner", _owner->username());
-  q.bindValue(":usr_id",   _assignedTo->id());
+  q.bindValue(":username",   _assignedTo->username());
   if(_assigned->date().isValid())
     q.bindValue(":assigned", _assigned->date());
   q.bindValue(":name",		_name->text());
@@ -240,7 +228,7 @@ void todoItem::sPopulate()
   if (q.first())
   {
     _owner->setUsername(q.value("todoitem_owner_username").toString());
-    _assignedTo->setId(q.value("todoitem_usr_id").toInt());
+    _assignedTo->setUsername(q.value("todoitem_username").toString());
     _name->setText(q.value("todoitem_name").toString());
     _priority->setNull();
     if(!q.value("todoitem_priority_id").toString().isEmpty())

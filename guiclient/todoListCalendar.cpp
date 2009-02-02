@@ -45,7 +45,6 @@ todoListCalendar::todoListCalendar(QWidget* parent, Qt::WindowFlags f)
   q.exec();
   if (q.first())
   {
-    _myUsrId = q.value("usr_id").toInt();
     _usr->setId(_myUsrId);
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -65,7 +64,7 @@ todoListCalendar::todoListCalendar(QWidget* parent, Qt::WindowFlags f)
   _list->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
   _list->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  true, "seq");
   _list->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
-  _list->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "usr");
+  _list->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "todoitem_username");
   _list->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _list->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _list->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
@@ -114,11 +113,11 @@ void todoListCalendar::handlePrivs()
   else if (_list->currentItem()->text(0) == "T")
   {
     editTodoPriv =
-      (_myUsrId == _list->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
       (_privileges->check("MaintainOtherTodoLists"));
 
     viewTodoPriv =
-      (_myUsrId == _list->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
       (_privileges->check("ViewOtherTodoLists"));
   }
   else if (_list->currentItem()->text(0) == "I")
@@ -151,12 +150,12 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
   if (_list->currentItem()->text(0) == "T")
   {
     bool editPriv =
-        (_myUsrId == _list->altId() && _privileges->check("MaintainPersonalTodoList")) ||
-        (_myUsrId != _list->altId() && _privileges->check("MaintainOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
+        (omfgThis->username() != _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists"));
 
     bool viewPriv =
-        (_myUsrId == _list->altId() && _privileges->check("ViewPersonalTodoList")) ||
-        (_myUsrId != _list->altId() && _privileges->check("ViewOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
+        (omfgThis->username() != _list->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
 
     menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
@@ -194,7 +193,7 @@ void todoListCalendar::sNew()
   ParameterList params;
   params.append("mode", "new");
   if (_usr->isSelected())
-    params.append("usr_id", _usr->id());
+    _usr->appendValue(params);
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -292,36 +291,33 @@ void todoListCalendar::sFillList(const QDate & date)
   dontBotherMe = true;
   _lastDate = date;
   calendar->setSelectedDay(_lastDate);
-  QString sql = "SELECT todoitem_id AS id, todoitem_usr_id AS altId, todoitem_owner_username AS owner, "
+  QString sql = "SELECT todoitem_id AS id, todoitem_owner_username AS owner, "
                 "       'T' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
                 "       todoitem_name AS name, "
                 "       firstLine(todoitem_description) AS descrip, "
                 "       todoitem_status AS status, todoitem_due_date AS due, "
-                "       usr_username AS usr, incdt_number AS incdt, cust_number AS cust, "
+                "       todoitem_username, incdt_number AS incdt, cust_number AS cust, "
                 "       CASE WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
                 "            WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
                 "       END AS due_qtforegroundrole "
-                "FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
-                "                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-                "                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-                "                   LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-                "WHERE ( (todoitem_usr_id=usr_id)"
-                "  AND   (todoitem_due_date = <? value(\"date\") ?>)"
+                "  FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
+                "                LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
+                "                LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+                " WHERE( (todoitem_due_date = <? value(\"date\") ?>)"
                 "  <? if not exists(\"completed\") ?>"
                 "  AND   (todoitem_status != 'C')"
                 "  <? endif ?>"
-                "  <? if exists(\"usr_id\") ?> "
-                "  AND (todoitem_usr_id=<? value(\"usr_id\") ?>) "
-                "  <? elseif exists(\"usr_pattern\" ?>"
-                "  AND (todoitem_usr_id IN (SELECT usr_id "
-                "        FROM usr "
-                "        WHERE (usr_username ~ <? value(\"usr_pattern\") ?>))) "
+                "  <? if exists(\"username\") ?> "
+                "  AND (todoitem_username=<? value(\"username\") ?>) "
+                "  <? elseif exists(\"usr_pattern\") ?>"
+                "  AND (todoitem_username ~ <? value(\"usr_pattern\") ?>) "
                 "  <? endif ?>"
                 "  <? if exists(\"active\") ?>AND (todoitem_active) <? endif ?>"
                 "       ) "
-                "ORDER BY due, seq, usr;";
+                "ORDER BY due, seq, todoitem_username;";
 
   ParameterList params;
   params.append("date", date);
@@ -330,7 +326,7 @@ void todoListCalendar::sFillList(const QDate & date)
   MetaSQLQuery mql(sql);
   XSqlQuery itemQ = mql.toQuery(params);
 
-  _list->populate(itemQ, true);
+  _list->populate(itemQ);
 
   if (itemQ.lastError().type() != QSqlError::NoError)
   {

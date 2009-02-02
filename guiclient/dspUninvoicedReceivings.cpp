@@ -193,7 +193,7 @@ void dspUninvoicedReceivings::sFillList()
                "SELECT poreject_id AS id,"
                "       3 AS doctype,"
                "       poreject_date AS thedate,"
-               "       getUsername(poreject_trans_usr_id) AS f_user,"
+               "       poreject_trans_username AS f_user,"
                "       poreject_ponumber AS ponumber, poitem_linenumber,"
                "       vend_name,"
                "       COALESCE(item_number,"

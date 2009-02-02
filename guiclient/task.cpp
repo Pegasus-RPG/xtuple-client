@@ -66,9 +66,9 @@ enum SetResponse task::set(const ParameterList &pParams)
   if (valid)
     _owner->setUsername(param.toString());
 
-  param = pParams.value("prj_usr_id", &valid);
+  param = pParams.value("prj_username", &valid);
   if (valid)
-    _assignedTo->setId(param.toInt());
+    _assignedTo->setUsername(param.toString());
 
   param = pParams.value("prj_start_date", &valid);
   if (valid)
@@ -157,7 +157,7 @@ void task::populate()
     _name->setText(q.value("prjtask_name"));
     _descrip->setText(q.value("prjtask_descrip").toString());
     _owner->setUsername(q.value("prjtask_owner_username").toString());
-    _assignedTo->setId(q.value("prjtask_usr_id").toInt());
+    _assignedTo->setUsername(q.value("prjtask_username").toString());
     _started->setDate(q.value("prjtask_start_date").toDate());
     _assigned->setDate(q.value("prjtask_assigned_date").toDate());
     _due->setDate(q.value("prjtask_due_date").toDate());
@@ -221,7 +221,7 @@ void task::sSave()
                "  prjtask_exp_budget, prjtask_exp_actual,"
                "  prjtask_start_date, prjtask_due_date,"
                "  prjtask_assigned_date, prjtask_completed_date,"
-               "  prjtask_owner_username, prjtask_usr_id ) "
+               "  prjtask_owner_username, prjtask_username ) "
                "VALUES "
                "( :prjtask_id, :prjtask_prj_id, :prjtask_number,"
                "  :prjtask_name, :prjtask_descrip, :prjtask_status,"
@@ -229,7 +229,7 @@ void task::sSave()
                "  :prjtask_exp_budget, :prjtask_exp_actual,"
                "  :prjtask_start_date, :prjtask_due_date,"
                "  :prjtask_assigned_date, :prjtask_completed_date,"
-               "  :prjtask_owner_username, :prjtask_usr_id );" );
+               "  :prjtask_owner_username, :username );" );
     q.bindValue(":prjtask_prj_id", _prjid);
   }
   else if (_mode == cEdit)
@@ -241,7 +241,7 @@ void task::sSave()
                "    prjtask_exp_budget=:prjtask_exp_budget,"
                "    prjtask_exp_actual=:prjtask_exp_actual,"
                "    prjtask_owner_username=:prjtask_owner_username,"
-               "    prjtask_usr_id=:prjtask_usr_id,"
+               "    prjtask_username=:username,"
                "    prjtask_start_date=:prjtask_start_date,"
                "    prjtask_due_date=:prjtask_due_date,"
                "    prjtask_assigned_date=:prjtask_assigned_date,"
@@ -253,7 +253,7 @@ void task::sSave()
   q.bindValue(":prjtask_name", _name->text());
   q.bindValue(":prjtask_descrip", _descrip->toPlainText());
   q.bindValue(":prjtask_owner_username", _owner->username());
-  q.bindValue(":prjtask_usr_id",   _assignedTo->id());
+  q.bindValue(":username",   _assignedTo->username());
   q.bindValue(":prjtask_start_date",	_started->date());
   q.bindValue(":prjtask_due_date",	_due->date());
   q.bindValue(":prjtask_assigned_date",	_assigned->date());

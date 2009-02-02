@@ -101,7 +101,6 @@ private:
     int		_vendId;
     int		_cntct1Id;
     int		_cntct2Id;
-    int		_myUsrId;
     int         _NumberGen;
 
     int	saveNoErrorCheck();
