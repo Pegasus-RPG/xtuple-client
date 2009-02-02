@@ -385,6 +385,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _qesave->setEnabled(FALSE);
       _qedelete->setEnabled(FALSE);
       _qecurrency->setEnabled(FALSE);
+      _comments->setReadOnly(TRUE);
 
       _delete->hide();
       _edit->setText(tr("&View"));
