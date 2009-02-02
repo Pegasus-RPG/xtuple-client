@@ -38,9 +38,25 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   if(val < 1) val = 1;
   _interval->setValue(val);
 
-  _defaultFromAddress->setText(_metrics->value("DefaultBatchFromEmailAddress"));
-  _enableBatchManager->setChecked(_metrics->boolean("EnableBatchManager"));
-  _purgeDays->setValue(_metrics->value("BatchManagerPurgeDays").toInt());
+   //Disable batch manager if PostBooks 	 
+  if ( (_metrics->value("Application") != "OpenMFG") 	 
+    && (_metrics->value("Application") != "xTupleERP") ) 	 
+  { 	 
+    _enableBatchManager->setChecked(FALSE); 	 
+    _enableBatchManager->hide(); 	 
+    _defaultFromAddress->setText(""); 	 
+    _defaultFromAddress->hide(); 	 
+    _defaultFromAddressLit->hide(); 	 
+    _purgeDaysLit->hide(); 	 
+    _purgeDays->hide(); 	 
+    _purgeDaysDaysLit->hide(); 	 
+  } 	 
+  else 	 
+  {
+    _defaultFromAddress->setText(_metrics->value("DefaultBatchFromEmailAddress"));
+    _enableBatchManager->setChecked(_metrics->boolean("EnableBatchManager"));
+    _purgeDays->setValue(_metrics->value("BatchManagerPurgeDays").toInt());
+  }
 
   QString protocol;
   parseDatabaseURL(omfgThis->databaseURL(), protocol, server, database, port);
