@@ -24,7 +24,7 @@
        END AS incdt_status,
        incdt_assigned_username, incdt_summary,
        todoitem_due_date, todoitem_name,
-       COALESCE(usr_username, '') AS todoitem_usrname,
+       todoitem_username AS todoitem_usrname,
        todoitem_assigned_date, todoitem_status,
        incdtseverity_name,
        incdtpriority_name
@@ -39,7 +39,6 @@ FROM crmacct
                        AND (incdt_status != 'L')
                      &lt;? endif ?>)
       LEFT OUTER JOIN todoitem ON (todoitem_incdt_id=incdt_id)
-      LEFT OUTER JOIN usr ON (usr_id = todoitem_usr_id)
       LEFT OUTER JOIN incdtseverity ON (incdt_incdtseverity_id = incdtseverity_id)
       LEFT OUTER JOIN incdtpriority ON (incdt_incdtpriority_id = incdtpriority_id)
 WHERE ((todoitem_status IS NULL OR todoitem_status != 'C')

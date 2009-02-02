@@ -58,7 +58,7 @@
 UNION
 SELECT poreject_id,
        formatDate(poreject_date) as f_date,
-       getUsername(poreject_trans_usr_id) as f_user,
+       poreject_trans_username as f_user,
        poreject_ponumber AS f_ponumber, poitem_linenumber,
        vend_name, 
        COALESCE(item_number, ('Misc. - ' || poreject_vend_item_number)) AS item_number,

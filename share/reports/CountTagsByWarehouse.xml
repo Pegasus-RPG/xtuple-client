@@ -30,18 +30,18 @@
        warehous_code,
        item_number, item_descrip1, item_descrip2,
        formatDate(invcnt_tagdate) AS createddate,
-       getUsername(invcnt_tag_usr_id) AS createdby,
+       invcnt_tag_username AS createdby,
        CASE WHEN (invcnt_cntdate IS NULL) THEN ''
             ELSE formatDate(invcnt_cntdate)
        END AS entereddate,
        CASE WHEN (invcnt_cntdate IS NULL) THEN ''
-            ELSE getUsername(invcnt_cnt_usr_id)
+            ELSE invcnt_cnt_username
        END AS enteredby,
        CASE WHEN (NOT invcnt_posted) THEN ''
             ELSE formatDate(invcnt_postdate)
        END AS posteddate,
        CASE WHEN (NOT invcnt_posted) THEN ''
-            ELSE getUsername(invcnt_post_usr_id)
+            ELSE invcnt_post_username
        END AS postedby,
        CASE WHEN (NOT invcnt_posted) THEN ''
             ELSE formatQty(invcnt_qoh_before)

@@ -27,7 +27,7 @@
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'E')
   and ((workglitem_subaccnttype_code != 'COGS')
       or (workglitem_subaccnttype_code IS NULL)) )
@@ -38,7 +38,7 @@ order by workglitem_account</sql>
   <sql>select formatDate(workglhead_cyp_startdate) as start_date,
        formatDate(workglhead_cyp_enddate) as end_date
  from workglhead
-where ( workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER) )</sql>
+where ( workglhead_username = CURRENT_USER )</sql>
  </querysource>
  <querysource>
   <name>COGS</name>
@@ -57,7 +57,7 @@ where ( workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_U
             ELSE formatPrcnt(((workglitem_cy_balance - workglitem_py_balance) / workglitem_cy_balance))
        END AS prior_year_percent from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'E')
   and (workglitem_subaccnttype_code = 'COGS'))
 order by workglitem_account</sql>
@@ -80,7 +80,7 @@ order by workglitem_account</sql>
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'R')
   and (workglitem_subaccnttype_code = 'SI'))
 order by workglitem_account</sql>
@@ -101,7 +101,7 @@ order by workglitem_account</sql>
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'R')
   and (workglitem_subaccnttype_code = 'SI'))</sql>
  </querysource>
@@ -121,7 +121,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'E')
   and ((workglitem_subaccnttype_code != 'COGS')
       or (workglitem_subaccnttype_code IS NULL)) )</sql>
@@ -142,7 +142,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and ((workglitem_accnt_type = 'R')
    or (workglitem_accnt_type = 'E')) )</sql>
  </querysource>
@@ -162,7 +162,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (((workglitem_accnt_type = 'R')
   and (workglitem_subaccnttype_code = 'SI'))
   or ((workglitem_accnt_type = 'E')
@@ -187,7 +187,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'R')
   and (workglitem_subaccnttype_code != 'SI'))
 order by workglitem_account</sql>
@@ -208,7 +208,7 @@ order by workglitem_account</sql>
        END AS prior_year_percent
  from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and ((workglitem_accnt_type = 'R')
   or (workglitem_accnt_type = 'E')
   and (workglitem_subaccnttype_code = 'COGS')))
@@ -229,7 +229,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
             ELSE formatPrcnt(((SUM(workglitem_cy_balance) - SUM(workglitem_py_balance)) / SUM(workglitem_cy_balance)))
        END AS prior_year_percent from workglitem, workglhead
 where ( (workglitem_workglhead_id = workglhead_id)
-  and (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+  and (workglhead_username = CURRENT_USER)
   and (workglitem_accnt_type = 'E')
   and (workglitem_subaccnttype_code = 'COGS'))</sql>
  </querysource>
@@ -249,7 +249,7 @@ where ( (workglitem_workglhead_id = workglhead_id)
        END AS prior_year_percent
   FROM workglitem, workglhead
  WHERE ( (workglitem_workglhead_id = workglhead_id)
-   AND   (workglhead_usr_id = (select usr_id from usr where usr_username=CURRENT_USER))
+   AND   (workglhead_username = CURRENT_USER)
    AND   (workglitem_accnt_type = 'R')
    AND   (workglitem_subaccnttype_code != 'SI'))</sql>
  </querysource>

@@ -12,23 +12,23 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT todoitem_id, incdt_id, incdtpriority_name, incdt_number,
-       usr_username, todoitem_name, todoitem_due_date, 
+       todoitem_username, todoitem_name, todoitem_due_date, 
        todoitem_start_date, todoitem_status,
        todoitem_description
-FROM usr, todoitem LEFT OUTER JOIN
+FROM todoitem LEFT OUTER JOIN
      incdt ON (todoitem_incdt_id = incdt_id)
      LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id)
-WHERE ((usr_id=todoitem_usr_id)
+WHERE ((true)
 &lt;? if not exists("showInactive") ?>
   AND todoitem_active 
 &lt;? endif ?>
 &lt;? if not exists("showCompleted") ?>
   AND todoitem_status != 'C' 
 &lt;? endif ?>
-&lt;? if exists("usr_id") ?>
-  AND (usr_id=&lt;? value("usr_id") ?>)
+&lt;? if exists("username") ?>
+  AND (todoitem_username=&lt;? value("username") ?>)
 &lt;? elseif exists("usr_pattern") ?>
-  AND (usr_username ~* &lt;? value("usr_pattern") ?>)
+  AND (todoitem_username ~* &lt;? value("usr_pattern") ?>)
 &lt;? endif ?>
 &lt;? if exists("incdt_id") ?>
   AND (todoitem_incdt_id=&lt;? value("incdt_id") ?>)
@@ -41,15 +41,13 @@ WHERE ((usr_id=todoitem_usr_id)
 &lt;? endif ?>&lt;? if exists("due_date_end") ?>
   AND (todoitem_due_date&lt;=&lt;? value("due_date_end") ?>)
 &lt;? endif ?>
-) ORDER BY usr_username, incdtpriority_order;</sql>
+) ORDER BY todoitem_username, incdtpriority_order;</sql>
  </querysource>
  <querysource>
   <name>username</name>
   <sql>SELECT
-  &lt;? if exists("usr_id") ?>
-    usr_username AS usr
-    FROM usr
-    WHERE (usr_id=&lt;? value("usr_id") ?>)
+  &lt;? if exists("username") ?>
+    &lt;? value("username") ?> AS usr
   &lt;? elseif exists("usr_pattern") ?>
     &lt;? value("usr_pattern") ?>
   &lt;? else ?>
@@ -547,7 +545,7 @@ WHERE ((usr_id=todoitem_usr_id)
   <name>detail</name>
   <group>
    <name>ByUser</name>
-   <column>usr_username</column>
+   <column>todoitem_username</column>
   </group>
   <detail>
    <key>
@@ -704,7 +702,7 @@ WHERE ((usr_id=todoitem_usr_id)
     <top/>
     <data>
      <query>detail</query>
-     <column>usr_username</column>
+     <column>todoitem_username</column>
     </data>
    </field>
   </detail>

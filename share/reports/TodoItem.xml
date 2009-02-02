@@ -11,14 +11,13 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT todoitem_id AS id, todoitem_usr_id AS altId, 
+  <sql>SELECT todoitem_id AS id,
        'T' AS type, todoitem_seq AS seq, 
        todoitem_name AS name, 
        firstLine(todoitem_description) AS descrip, 
        todoitem_status AS status, todoitem_due_date AS due, 
-       usr_username AS usr, incdt_number AS incdt 
-FROM todoitem JOIN usr ON (usr_id=todoitem_usr_id)
-              LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) 
+       todoitem_username AS usr, incdt_number AS incdt 
+FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) 
 WHERE (todoitem_id=&lt;? value("todoitem_id") ?>)
 ORDER BY seq, usr;</sql>
  </querysource>

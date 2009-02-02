@@ -209,7 +209,10 @@ void ParameterGroup::appendValue(ParameterList &pParams)
     else if (_type == WorkCenter)
       pParams.append("wrkcnt_id", _items->id());
     else if (_type == User)
+    {
       pParams.append("usr_id", _items->id());
+      pParams.append("username", _items->itemText(_items->currentItem()));
+    }
   }
   else if (_usePattern->isChecked())
   {

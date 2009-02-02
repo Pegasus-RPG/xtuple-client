@@ -17,17 +17,17 @@
 		       firstLine(todoitem_description) AS descrip, 
            todoitem_status AS status, todoitem_start_date as start, 
 		       todoitem_due_date AS due, formatDate(todoitem_due_date) AS f_due, 
-		       usr_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, 
+		       todoitem_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, 
            CASE WHEN (todoitem_status != 'C'AND 
                       todoitem_due_date &lt; CURRENT_DATE) THEN 'expired'
                 WHEN (todoitem_status != 'C'AND 
                       todoitem_due_date > CURRENT_DATE) THEN 'future'
            END AS due_qtforegroundrole 
-		FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) 
+		FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) 
 		                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) 
 		                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) 
                        LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) 
-		WHERE ( (todoitem_usr_id=usr_id)
+		WHERE ( (true)
       &lt;? if exists("startStartDate") ?> 
       AND (todoitem_start_date BETWEEN &lt;? value("startStartDate") ?>
 		                             AND &lt;? value("startEndDate") ?>)
@@ -39,10 +39,10 @@
 		  &lt;? if not exists("completed") ?>
 		  AND   (todoitem_status != 'C')
 		  &lt;? endif ?>
-		  &lt;? if exists("usr_id") ?> 
-		  AND (usr_id=&lt;? value("usr_id") ?>) 
+		  &lt;? if exists("username") ?> 
+		  AND (todoitem_username=&lt;? value("username") ?>) 
 		  &lt;? elseif exists("usr_pattern" ?>
-		  AND (usr_username ~ &lt;? value("usr_pattern") ?>) 
+		  AND (todoitem_username ~ &lt;? value("usr_pattern") ?>) 
 		  &lt;? endif ?>
 		  &lt;? if not exists("completed") ?>AND (todoitem_active) &lt;? endif ?>
 		       ) 
@@ -57,8 +57,7 @@
 		       null AS due, null AS f_due, 
 		       incdt_assigned_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, 
                        NULL AS due_qtforegroundrole 
-		FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)
-		           LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) 
+		FROM incdt LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) 
 		           LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) 
                LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) 
 		WHERE ((true) 
@@ -69,10 +68,10 @@
 		  &lt;? if not exists("completed") ?> 
 		  AND (incdt_status != 'L')
 		  &lt;? endif ?>
-		  &lt;? if exists("usr_id") ?> 
-		  AND (usr_id=&lt;? value("usr_id") ?>) 
+		  &lt;? if exists("username") ?> 
+		  AND (incdt_assigned_username=&lt;? value("username") ?>) 
 		  &lt;? elseif exists("usr_pattern" ?>
-		  AND (usr_username ~ &lt;? value("usr_pattern") ?>) 
+		  AND (ncdt_assigned_username ~ &lt;? value("usr_pattern") ?>) 
 		  &lt;? endif ?>
 		       ) 
 		&lt;? endif ?>
@@ -85,13 +84,13 @@
 		       firstLine(prjtask_descrip) AS descrip, 
 		       prjtask_status AS status,  prjtask_start_date AS start, 
            prjtask_due_date AS due, formatDate(prjtask_due_date) AS f_due, 
-		       usr_username AS usr, prj_number, '' AS cust, 
+		       prjtask_username AS usr, prj_number, '' AS cust, 
            CASE WHEN (prjtask_status != 'C'AND 
                       prjtask_due_date &lt; CURRENT_DATE) THEN 'expired'
                 WHEN (prjtask_status != 'C'AND 
                       prjtask_due_date > CURRENT_DATE) THEN 'future'
            END AS due_qtforegroundrole 
-		FROM prj, prjtask LEFT OUTER JOIN usr ON (usr_id=prjtask_usr_id)
+		FROM prj, prjtask
 		WHERE ((prj_id=prjtask_prj_id) 
       &lt;? if exists("startStartDate") ?> 
       AND (prjtask_start_date BETWEEN &lt;? value("startStartDate") ?>
@@ -104,10 +103,10 @@
 		  &lt;? if not exists("completed") ?> 
 		  AND (prjtask_status != 'L')
 		  &lt;? endif ?>
-		  &lt;? if exists("usr_id") ?> 
-		  AND (usr_id=&lt;? value("usr_id") ?>) 
+		  &lt;? if exists("username") ?> 
+		  AND (prjtask_username=&lt;? value("username") ?>) 
 		  &lt;? elseif exists("usr_pattern" ?>
-		  AND (usr_username ~ &lt;? value("usr_pattern") ?>) 
+		  AND (prjtask_username ~ &lt;? value("usr_pattern") ?>) 
 		  &lt;? endif ?>
 		       ) 
   	UNION 
@@ -117,13 +116,13 @@
 		       firstLine(prj_descrip) AS descrip, 
 		       prj_status AS status,  prj_start_date AS start, 
            prj_due_date AS due, formatDate(prj_due_date) AS f_due, 
-		       usr_username AS usr, NULL AS number, '' AS cust, 
+		       prj_username AS usr, NULL AS number, '' AS cust, 
            CASE WHEN (prj_status != 'C'AND 
                       prj_due_date &lt; CURRENT_DATE) THEN 'expired'
                 WHEN (prj_status != 'C'AND 
                       prj_due_date > CURRENT_DATE) THEN 'future'
            END AS due_qtforegroundrole 
-		FROM prj LEFT OUTER JOIN usr ON (usr_id=prj_usr_id)
+		FROM prj
 		WHERE ((true) 
       &lt;? if exists("startStartDate") ?> 
       AND (prj_start_date BETWEEN &lt;? value("startStartDate") ?>
@@ -136,10 +135,10 @@
 		  &lt;? if not exists("completed") ?> 
 		  AND (prj_status != 'L')
 		  &lt;? endif ?>
-		  &lt;? if exists("usr_id") ?> 
-		  AND (usr_id=&lt;? value("usr_id") ?>) 
+		  &lt;? if exists("username") ?> 
+		  AND (prj_username=&lt;? value("username") ?>) 
 		  &lt;? elseif exists("usr_pattern" ?>
-		  AND (usr_username ~ &lt;? value("usr_pattern") ?>) 
+		  AND (prj_username ~ &lt;? value("usr_pattern") ?>) 
 		  &lt;? endif ?>
 		       ) 
 		&lt;? endif ?>
