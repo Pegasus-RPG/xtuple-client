@@ -646,7 +646,7 @@ void dspCustomerInformation::sFillInvoiceList()
             " WHERE (invchead_cust_id=:cust_id)");
 
   if (!_invoiceShowclosed->isChecked())
-    sql +=  "   AND (COALESCE(aropen_open,FALSE)) ";
+    sql +=  "   AND ( (COALESCE(aropen_open,FALSE)) OR (NOT invchead_posted) ) ";
 
   sql +=    " UNION "
             "SELECT aropen_id AS id, -2 AS altId,"
