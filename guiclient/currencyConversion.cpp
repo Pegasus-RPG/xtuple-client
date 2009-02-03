@@ -173,6 +173,32 @@ void currencyConversion::_sSave()
       _dateCluster->setFocus();
       return;
   }
+  
+  q.prepare( "SELECT count(*) AS numberOfOverlaps "
+             "FROM curr_rate "
+             "WHERE curr_id = :curr_id"
+             "  AND curr_rate_id != :curr_rate_id"
+             "  AND ( (curr_effective BETWEEN :curr_effective AND :curr_expires OR"
+             "         curr_expires BETWEEN :curr_effective AND :curr_expires)"
+             "   OR   (curr_effective <= :curr_effective AND"
+             "         curr_expires   >= :curr_expires) );" );
+  q.bindValue(":curr_rate_id", _curr_rate_id);
+  q.bindValue(":curr_id", _currency->id());
+  q.bindValue(":curr_effective", _dateCluster->startDate());
+  q.bindValue(":curr_expires", _dateCluster->endDate());
+  q.exec();
+  if (q.first())
+  {
+    if (q.value("numberOfOverlaps").toInt() > 0)
+    {
+      QMessageBox::warning(this, tr("Invalid Date Range"),
+                          tr("The date range overlaps with  "
+                             "another date range.\n"
+                             "Please check the values of these dates."));
+      _dateCluster->setFocus();
+      return;
+    }
+  }
 
   QString inverter("");
   if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
