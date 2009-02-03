@@ -108,6 +108,10 @@ enum SetResponse group::set(const ParameterList &pParams)
       _mode = cView;
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
+      _addAll->setEnabled(FALSE);
+      _revokeAll->setEnabled(FALSE);
+      disconnect(_available, SIGNAL(valid(bool)), _add, SLOT(setEnabled(bool)));
+      disconnect(_granted, SIGNAL(valid(bool)), _revoke, SLOT(setEnabled(bool)));
       _save->hide();
       _close->setText(tr("&Close"));
       _close->setFocus();
