@@ -69,7 +69,8 @@ void reprintInvoices::sQuery()
   MetaSQLQuery mql = mqlLoad("invoices", "detail");
   ParameterList params;
   params.append("invc_pattern", _invoicePattern->text().trimmed());
-  _dates->appendValue(params);
+  if (_dates->allValid())
+    _dates->appendValue(params);
   if (_balanceOnly->isChecked())
     params.append("balanceOnly");
   q = mql.toQuery(params);
