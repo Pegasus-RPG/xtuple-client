@@ -41,19 +41,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  q.prepare("SELECT usr_id "
-	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
-  q.exec();
-  if (q.first())
-  {
-    _owner->setId(q.value("usr_id").toInt());
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    close();
-  }
+  _owner->setUsername(omfgThis->username());
   
   int menuItem;
   QMenu * todoMenu = new QMenu;

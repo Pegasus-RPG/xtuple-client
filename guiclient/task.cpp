@@ -302,23 +302,24 @@ void task::sNewUser()
 {
 /*
   userList newdlg(this, "", TRUE);
-  int usrid = newdlg.exec();
-  if (usrid != XDialog::Rejected)
+  int result = newdlg.exec();
+  if (result != XDialog::Rejected)
   {
+    QString username = newdlg.username();
     q.prepare( "SELECT prjtaskuser_id "
                "FROM prjtaskuser "
-               "WHERE ( (prjtaskuser_usr_id=:usr_id)"
+               "WHERE ( (prjtaskuser_username=:username)"
                " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-    q.bindValue(":usr_id", usrid);
+    q.bindValue(":username", username);
     q.bindValue(":prjtask_id", _prjtaskid);
     q.exec();
     if (!q.first())
     {
       q.prepare( "INSERT INTO prjtaskuser "
-                 "( prjtaskuser_prjtask_id, prjtaskuser_usr_id ) "
+                 "( prjtaskuser_prjtask_id, prjtaskuser_username ) "
                  "VALUES "
-                 "( :prjtaskuser_prjtask_id, :prjtaskuser_usr_id );" );
-      q.bindValue(":prjtaskuser_usr_id", usrid);
+                 "( :prjtaskuser_prjtask_id, :prjtaskuser_username );" );
+      q.bindValue(":prjtaskuser_username", username);
       q.bindValue(":prjtaskuser_prjtask_id", _prjtaskid);
       q.exec();
       sFillUserList();
@@ -336,9 +337,9 @@ void task::sDeleteUser()
 {
 /*
   q.prepare( "DELETE FROM prjtaskuser "
-             "WHERE ( (prjtaskuser_usr_id=:usr_id)"
+             "WHERE ( (prjtaskuser_username=:username)"
              " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-  q.bindValue(":usr_id", _usr->id());
+  q.bindValue(":username", _usr->username());
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -354,9 +355,9 @@ void task::sDeleteUser()
 void task::sFillUserList()
 {
 /*
-  q.prepare( "SELECT usr_id, usr_username, usr_propername "
+  q.prepare( "SELECT prjtaskuser_id, usr_username, usr_propername "
              "FROM prjtaskuser, usr "
-             "WHERE ( (prjtaskuser_usr_id=usr_id)"
+             "WHERE ( (prjtaskuser_username=usr_username)"
              " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();

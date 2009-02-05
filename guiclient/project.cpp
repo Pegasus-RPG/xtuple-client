@@ -37,20 +37,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjtask->addColumn( tr("Name"),        _itemColumn, Qt::AlignLeft,  true, "prjtask_name"  );
   _prjtask->addColumn( tr("Description"), -1,          Qt::AlignLeft,  true, "prjtask_descrip" ); 
 
-  q.prepare("SELECT usr_id "
-	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
-  q.exec();
-  if (q.first())
-  {
-    _owner->setId(q.value("usr_id").toInt());
-    _assignedTo->setId(q.value("usr_id").toInt());
-  }  
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    reject();
-  }
+  _owner->setUsername(omfgThis->username());
+  _assignedTo->setUsername(omfgThis->username());
 
   populate();
 }
@@ -77,9 +65,9 @@ enum SetResponse project::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("usr_id", &valid);
+  param = pParams.value("username", &valid);
   if (valid)
-    _assignedTo->setId(param.toInt());
+    _assignedTo->setUsername(param.toString());
 
   param = pParams.value("prj_id", &valid);
   if (valid)

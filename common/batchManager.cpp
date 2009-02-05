@@ -73,15 +73,15 @@ void batchManager::sFillList()
                "            ELSE <? value(\"completed\") ?>"
                "       END AS runstatus,"
                "       firstLine(batch_exitstatus) AS exitstatus "
-               "FROM batch, usr "
-               "WHERE ( (batch_user=usr_username)"
+               "  FROM batch "
+               " WHERE((true) "
                "<? if not exists(\"showCompleted\") ?>"
-               "    AND (batch_completed IS NULL)"
+               "   AND (batch_completed IS NULL)"
                "<? endif ?>"
-               "<? if exists(\"userid\") ?>"
-               "    AND (usr_id=<? value(\"userid\") ?>)"
+               "<? if exists(\"username\") ?>"
+               "   AND (batch_user=<? value(\"username\") ?>)"
                "<? elseif exists(\"current_user\") ?>"
-               "    AND (usr_username=CURRENT_USER)"
+               "   AND (batch_user=CURRENT_USER)"
                "<? endif ?>"
                ") "
                "ORDER BY batch_scheduled, batch_completed;" );
@@ -93,7 +93,7 @@ void batchManager::sFillList()
   if (_showCompleted->isChecked())
     params.append("showCompleted");
   if (_selectedUser->isChecked())
-    params.append("userid", _usr->id());
+    params.append("username", _usr->currentText());
   else if(_currentUser->isChecked())
     params.append("current_user");
 

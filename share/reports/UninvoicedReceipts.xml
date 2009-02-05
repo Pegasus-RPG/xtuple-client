@@ -29,30 +29,31 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT porecv_id,
-       formatDate(porecv_date) as f_date,
-       getUsername(porecv_trans_usr_id) as f_user,
-       porecv_ponumber AS f_ponumber, poitem_linenumber,
+  <sql>SELECT recv_id,
+       formatDate(recv_date) as f_date,
+       recv_trans_usr_name as f_user,
+       recv_order_number AS f_ponumber, poitem_linenumber,
        vend_name, 
-       COALESCE(item_number, ('Misc. - ' || porecv_vend_item_number)) AS item_number,
-       formatQty(porecv_qty) as f_qty,
+       COALESCE(item_number, ('Misc. - ' || recv_vend_item_number)) AS item_number,
+       formatQty(recv_qty) as f_qty,
        'Receipt' AS f_type,
-       porecv_value AS value,
-       formatMoney(porecv_value) AS f_value
-  FROM porecv
-    LEFT OUTER JOIN itemsite ON (porecv_itemsite_id=itemsite_id)
+       recv_value AS value,
+       formatMoney(recv_value) AS f_value
+  FROM recv
+    LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id)
     LEFT OUTER JOIN item ON (itemsite_item_id=item_id),
     poitem, vend
- WHERE ((porecv_poitem_id=poitem_id)
-   AND  (porecv_vend_id=vend_id)
-   AND  (porecv_posted)
-   AND  (porecv_vohead_id IS NULL)
-   AND  (NOT porecv_invoiced)
+ WHERE ((recv_orderitem_id=poitem_id)
+   AND  (recv_order_type='PO')
+   AND  (recv_vend_id=vend_id)
+   AND  (recv_posted)
+   AND  (recv_vohead_id IS NULL)
+   AND  (NOT recv_invoiced)
 &lt;? if exists("warehous_id") ?>
    AND  (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("agentUsername") ?>
-   AND  (porecv_agent_username=&lt;? value("agentUsername") ?>)
+   AND  (recv_agent_username=&lt;? value("agentUsername") ?>)
 &lt;? endif ?>
 )
 UNION

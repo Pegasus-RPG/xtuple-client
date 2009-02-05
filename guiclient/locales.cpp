@@ -12,61 +12,39 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-//#include <qstatusbar.h>
 #include <parameter.h>
 #include "sysLocale.h"
 
-/*
- *  Constructs a locales as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 locales::locales(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  // signals and slots connections
+  connect(_locale, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_locale, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  connect(_locale, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_locale, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
 
-    // signals and slots connections
-    connect(_locale, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_locale, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_locale, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_locale, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-locales::~locales()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void locales::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void locales::init()
-{
-//  statusBar()->hide();
-  
   _locale->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft, true, "locale_code" );
   _locale->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "locale_descrip" );
   
   sFillList();
+}
+
+locales::~locales()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void locales::languageChange()
+{
+  retranslateUi(this);
 }
 
 void locales::sNew()
@@ -120,7 +98,7 @@ void locales::sView()
 
 void locales::sDelete()
 {
-  q.prepare( "SELECT usr_id "
+  q.prepare( "SELECT usr_username "
              "FROM usr "
              "WHERE (usr_locale_id=:locale_id) "
              "LIMIT 1;" );
