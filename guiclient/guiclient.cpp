@@ -349,7 +349,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   qApp->installEventFilter(_inputManager);
 
 #ifndef Q_WS_MACX
-  setIcon(QPixmap(":/images/icon.xpm"));
+  setIcon(QPixmap(":/images/icon32x32.png"));
 #endif
   setWindowTitle();
 
