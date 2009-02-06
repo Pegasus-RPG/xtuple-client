@@ -1,0 +1,114 @@
+function identifierToTag(identifier, namespace)
+{
+  try {
+    if (namespace instanceof Array)
+    {
+      for (var i in namespace)
+      {
+        var nsidx = identifier.indexOf(namespace[i].ns + "_");
+        if (nsidx == 0)
+          return namespace[i].ns + ":" +
+                 identifier.substring(namespace[i].ns.length + 1);
+      }
+      return null;
+    }
+    else if (namespace instanceof Object)
+    {
+      var nsidx = identifier.indexOf(namespace.ns + "_");
+        if (nsidx == 0)
+          return namespace.ns + ":" +
+                 identifier.substring(namespace.ns.length + 1);
+      return null;
+    }
+    else if (namespace != null)
+    {
+      var nsidx = identifier.indexOf(namespace + "_");
+      if (nsidx == 0)
+        return namespace + ":" + identifier.substring(namespace.length + 1);
+      return null;
+    }
+    else
+      return identifier;
+  }
+  catch(e) {
+    print("identifierToTag exception at line " + e.lineNumber + ": " + e);
+  }
+}
+
+function js2xml(input, inputname, namespace, level)
+{
+  try {
+  if (input == null)
+    return "";
+
+  if (level == null)
+    level = 0;
+
+  var tag = identifierToTag(input.xmltag == null ? inputname : input.xmltag,
+                            namespace);
+  if (tag == null || tag.length == 0)
+    return "";
+
+  var indent = "";
+  for (var i = 0; i < level; i++)
+    indent += "  ";
+
+  var output = "";
+
+  output += indent + "<" + tag + ">";
+  if (input instanceof Array)
+  {
+    output += "\n";
+    for (var i = 0; i < input.length; i++)
+      output += js2xml(input[i], input.xmltag, namespace, level + 1);
+    output += indent;
+  }
+  else if (typeof input == "object")
+  {
+    output += "\n";
+    for (var j in input)
+      output += js2xml(input[j], j, namespace, level + 1);
+    output += indent;
+  }
+  else
+    output += input;
+
+  output += "</" + tag + ">\n";
+
+  return output;
+  }
+  catch(e) {
+    print("js2xml exception at line " + e.lineNumber + ": " + e);
+  }
+}
+
+function js2soap(input, namespace) {
+  try {
+  var output = "";
+  var nsprefix = '                   xmlns:';
+  output += '<?xml version="1.0" encoding="UTF-8"?>\n';
+  output += '<SOAP-ENV:Envelope\n';
+  output += nsprefix + 'SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"\n';
+  output += nsprefix + 'SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"\n';
+  output += nsprefix + 'xsi="http://www.w3.org/2001/XMLSchema-instance"\n';
+  output += nsprefix + 'xsd="http://www.w3.org/2001/XMLSchema"\n';
+  if (namespace instanceof Array)
+    for (var i in namespace)
+      output += nsprefix + namespace[i].ns + '="' + namespace[i].url + '"\n';
+  else if (namespace instanceof Object)
+    output += nsprefix + namespace.ns + '="' + namespace.url + '"\n';
+
+  output += '>\n';
+  output += "  <SOAP-ENV:Body>\n";
+
+  output += js2xml(input, input.xmltag, namespace, 2);
+
+  output += "  </SOAP-ENV:Body>\n";
+  output += "</SOAP-ENV:Envelope>";
+  
+  return output;
+  }
+  catch (e) {
+    print("js2soap exception at line " + e.lineNumber + ": " + e);
+  }
+}

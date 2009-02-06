@@ -1,0 +1,92 @@
+function tagToIdentifier(tag)
+{
+  var nsidx = tag.indexOf(":");
+  if (nsidx > 0)
+    return tag.substring(0, nsidx) + "_" + tag.substring(nsidx + 1);
+  else
+    return tag;
+}
+
+function xml2js(input)
+{
+  try {
+    var output = new Object();
+    var nodename = tagToIdentifier(input.nodeName());
+
+    output.xmltag = nodename;
+
+    var child = input.childNodes();
+    if (child.size() < 1)
+      return null;
+    else if (child.size() == 1 && child.at(0).isText())
+      output = child.at(0).nodeValue().split(/\s+/).join(" ");
+    else if (child.size() == 1)
+      output = xml2js(child.at(0));
+    else
+    {
+      for (var i = 1; i < child.size(); i++)
+      {
+        var xmltag = tagToIdentifier(child.at(i).nodeName());
+        if (i >= 1 &&
+            child.at(i).nodeName() == child.at(i - 1).nodeName())
+        {
+          output[xmltag + i] = xml2js(child.at(i));
+          output[xmltag + i].xmltag = xmltag;
+        }
+        else
+        {
+          output[xmltag] = xml2js(child.at(i));
+          output[xmltag].xmltag = xmltag;
+        }
+      }
+    }
+
+    return output;
+  }
+  catch (e) {
+    print("xml2js - exception at line " + e.lineNumber + ": " + e);
+  }
+}
+
+/* take a SOAP document in the form of a string and return a javascript
+   object with the contents of the SOAP document as its properties.
+   if the SOAP-ENV:Body contains multiple elements, the object returned
+   will be an array of JS objects
+*/
+function soap2js(input)
+{
+ try {
+    var doc  = new QDomDocument();
+    var err  = new Object();
+    var line = 0;
+    var col  = 0;
+    if (! doc.setContent(input, false, err, line, col))
+      throw "error reading XML at " + line + ":" + col + "\n" + err;
+
+    var envelope = doc.documentElement();
+    if (envelope.tagName() != "SOAP-ENV:Envelope")
+      throw "error: expected SOAP-ENV:Envelope but found "
+          + envelope.tagName();
+
+    var body = envelope.firstChildElement();
+    if (body.tagName() != "SOAP-ENV:Body")
+      throw "error: expected SOAP-ENV:Body but found " + body.tagName();
+
+    var child = body.childNodes();
+    if (child.size() < 1)
+      return null;
+    else if (child.size() == 1)
+      output = xml2js(child.at(0));
+    else
+    {
+      output = new Array();
+      for (var i = 0; i < child.size(); i++)
+        output[i] = xml2js(child.at(i));
+    }
+
+    return output;
+  }
+  catch (e) {
+     print("soap2js - exception at line " + e.lineNumber + ": " + e);
+  }
+}
