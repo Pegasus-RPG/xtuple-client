@@ -85,7 +85,7 @@ int creditCard::saveCreditCard(QWidget *parent,
       tr("Valid Expiration Years are CCYY in format"), -5 },
     { myyear < 1970 || myyear > 2100,
       tr("Valid Expiration Years are 1970 through 2100"), -6 },
-    { true, "", NULL }
+    { true, "", -1 }
   };
 
   int errIndex;
