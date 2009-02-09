@@ -143,6 +143,8 @@ bool Screen::submit()
                           .arg(_model->lastError().databaseText()));
   }
   connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+  
+  return isSaved;
 }
 
 int Screen::currentIndex()
