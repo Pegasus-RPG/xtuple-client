@@ -35,7 +35,6 @@ public:
 
 public slots:
     virtual void set( ParameterList & pParams );
-    virtual void sClose();
     virtual void sSelect();
     virtual void sFillList();
 

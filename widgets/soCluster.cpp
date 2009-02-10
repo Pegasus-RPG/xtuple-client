@@ -287,7 +287,7 @@ void SoCluster::sList()
   newdlg.set(params);
 
   int id;
-  if ((id = newdlg.exec()) != -1)
+  if ((id = newdlg.exec()) != QDialog::Rejected)
     _soNumber->setId(id);
 }
 

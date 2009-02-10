@@ -89,7 +89,9 @@ void dspBacklogBySalesOrder::sSalesOrderList()
   salesOrderList newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  _salesOrder->setId(newdlg.exec());
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+    _salesOrder->setId(id);
 }
 
 void dspBacklogBySalesOrder::sRunningAvailability()

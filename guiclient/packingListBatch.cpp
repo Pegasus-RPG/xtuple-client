@@ -252,7 +252,7 @@ void packingListBatch::sAddSO()
   newdlg.set(params);
 
   int soid;
-  if ((soid = newdlg.exec()) != -1)
+  if ((soid = newdlg.exec()) != QDialog::Rejected)
   {
     q.prepare("SELECT addToPackingListBatch('SO', :sohead_id) AS result;");
     q.bindValue(":sohead_id", soid);

@@ -70,7 +70,7 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
 
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
 
-  connect( _close, SIGNAL( clicked() ), this, SLOT( sClose() ) );
+  connect( _close, SIGNAL( clicked() ), this, SLOT( reject() ) );
   connect( _select, SIGNAL( clicked() ), this, SLOT( sSelect() ) );
   connect( _so, SIGNAL( itemSelected(int) ), _select, SLOT( animateClick() ) );
   connect( _so, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
@@ -107,11 +107,6 @@ void salesOrderList::set(ParameterList &pParams)
     _custid = param.toInt();
  
   sFillList();
-}
-
-void salesOrderList::sClose()
-{
-  done(_soheadid);
 }
 
 void salesOrderList::sSelect()

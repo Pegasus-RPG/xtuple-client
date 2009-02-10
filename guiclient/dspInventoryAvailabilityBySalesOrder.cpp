@@ -116,7 +116,9 @@ void dspInventoryAvailabilityBySalesOrder::sSoList()
   salesOrderList newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  _so->setId(newdlg.exec());
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+    _so->setId(id);
 }
 
 bool dspInventoryAvailabilityBySalesOrder::setParams(ParameterList &params)
