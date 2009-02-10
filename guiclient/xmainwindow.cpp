@@ -186,7 +186,7 @@ void XMainWindow::showEvent(QShowEvent *event)
       q.exec();
       while(q.next())
       {
-        QString script = q.value("script_source").toString();
+        QString script = scriptHandleIncludes(q.value("script_source").toString());
         if(!_private->_engine)
         {
           _private->_engine = new QScriptEngine(this);

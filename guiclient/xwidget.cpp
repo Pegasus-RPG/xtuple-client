@@ -146,7 +146,7 @@ void XWidget::showEvent(QShowEvent *event)
       search_parts.append(parts.takeFirst());
       oName = search_parts.join(" ");
       // load and run an QtScript that applies to this window
-      qDebug() << "Looking for a script on window " << oName;
+      qDebug() << "Looking for a script on widget " << oName;
       q.prepare("SELECT script_source, script_order"
                 "  FROM script"
                 " WHERE((script_name=:script_name)"
@@ -156,7 +156,7 @@ void XWidget::showEvent(QShowEvent *event)
       q.exec();
       while(q.next())
       {
-        QString script = q.value("script_source").toString();
+        QString script = scriptHandleIncludes(q.value("script_source").toString());
         if(!_private->_engine)
         {
           _private->_engine = new QScriptEngine();

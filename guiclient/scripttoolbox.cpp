@@ -980,3 +980,55 @@ QObject *ScriptToolbox::getCreditCardProcessor()
 {
   return CreditCardProcessor::getProcessor();
 }
+
+QString scriptHandleIncludes(QString source)
+{
+  QString returnVal = source;
+  if (returnVal.contains(QRegExp("#include")))
+  {
+    QStringList line = returnVal.split(QRegExp("\n\r?|\r\n?"));
+    for (int i = 0; i < line.size(); i++)
+    {
+      if (line.at(i).startsWith("#include"))
+      {
+        QStringList words = line.at(i).split(QRegExp("\\s+"));
+        if (words.size() <= 1)
+          qWarning("scriptByName(%s): found #include with no script name",
+                   qPrintable(line.at(i)));
+
+        int order = -1;
+        if (words.size() > 2)
+          order = words.at(2).toInt();
+
+        QString name;
+        if (words.size() > 1)
+          name = words.at(1);
+
+        line.replace(i, "// " + line.at(i));
+        XSqlQuery inclq;
+        inclq.prepare("SELECT script_source "
+                      "FROM script "
+                      "WHERE ((script_name=:name)"
+                      "  AND  ((script_order=:order) OR (:order = -1))"
+                      "  AND  script_enabled) "
+                      "ORDER BY script_order;");
+        inclq.bindValue(":name",  name);
+        inclq.bindValue(":order", order);
+        inclq.exec();
+        bool found = false;
+        while (inclq.next())
+        {
+          found = true;
+          line.replace(i,
+                       line.at(i) + "\n" + scriptHandleIncludes(inclq.value("script_source").toString()));
+        }
+        if (found)
+          line.replace(i,
+                       line.at(i) + "\n// end include of " + name);
+      }
+    }
+    returnVal = line.join("\n");
+  }
+
+  return returnVal;
+}

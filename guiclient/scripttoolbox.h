@@ -67,6 +67,8 @@ void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowMod
 QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en);
 void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en);
 
+QString scriptHandleIncludes(QString source);
+
 class ScriptToolbox : public QObject
 {
   Q_OBJECT
