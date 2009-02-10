@@ -55,30 +55,94 @@ function js2xml(input, inputname, namespace, level)
 
   var output = "";
 
-  output += indent + "<" + tag + ">";
-  if (input instanceof Array)
-  {
-    output += "\n";
-    for (var i = 0; i < input.length; i++)
-      output += js2xml(input[i], input.xmltag, namespace, level + 1);
-    output += indent;
-  }
-  else if (typeof input == "object")
-  {
-    output += "\n";
-    for (var j in input)
-      output += js2xml(input[j], j, namespace, level + 1);
-    output += indent;
-  }
-  else
-    output += input;
+  output += indent + "<" + tag;
 
-  output += "</" + tag + ">\n";
+  if (input.xmlattribute != null)
+    for (var i in input.xmlattribute)
+      output += ' ' + i + '="' + input.xmlattribute[i] + '"';
+
+  if (! hasXMLChildren(input, namespace))
+    output += "/>\n"
+  else
+  {
+    output += ">";
+
+    if (input instanceof Array)
+    {
+      output += "\n";
+      for (var i = 0; i < input.length; i++)
+        output += js2xml(input[i], input.xmltag, namespace, level + 1);
+      output += indent;
+    }
+    else if (typeof input == "object")
+    {
+      output += "\n";
+      for (var j in input)
+        output += js2xml(input[j], j, namespace, level + 1);
+      if (input.xmltext != null)
+        output += indent + "  " + input.xmltext + "\n";
+      output += indent;
+    }
+
+    output += "</" + tag + ">\n";
+  }
 
   return output;
   }
   catch(e) {
     print("js2xml exception at line " + e.lineNumber + ": " + e);
+  }
+}
+
+function hasXMLChildren(object, namespace)
+{
+  try {
+    if (object.xmltext != null)
+      return true;
+
+    else if (namespace instanceof Array)
+    {
+      for (var i in namespace)
+        if (hasXMLChildren(object, namespace[i]))
+          return true;
+    }
+
+    else if (namespace instanceof Object)
+    { 
+      return hasXMLChildren(object, namespace.ns);
+    }
+    else if (namespace != null)
+    {
+
+      if (object instanceof Array)
+      { 
+        if (object["xmltag"].indexOf(namespace + "_") == 0)
+          return true;
+      }
+      else if (object instanceof Object)
+      { 
+        for (var j in object)
+        { 
+          if (j.indexOf(namespace + "_") == 0 /*||
+              j[xmltag].indexOf(namespace + "_") == 0*/)
+            return true;
+        }
+      }
+    }
+    else
+    {
+      print("hasXMLChildren: namespace is empty!")
+      if (object instanceof Array)
+        return true;
+      else if (object instanceof Object)
+        return true;
+    }
+
+print("hasXMLChildren returning false");
+    return false;
+  }
+  catch(e) {
+    print("hasXMLChildren exception at line " + e.lineNumber + ": " + e);
   }
 }
 
@@ -89,7 +153,7 @@ function js2soap(input, namespace) {
   output += '<?xml version="1.0" encoding="UTF-8"?>\n';
   output += '<SOAP-ENV:Envelope\n';
   output += nsprefix + 'SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"\n';
-  output += nsprefix + 'SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"\n';
+  output += nsprefix + 'SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"\n';
   output += nsprefix + 'xsi="http://www.w3.org/2001/XMLSchema-instance"\n';
   output += nsprefix + 'xsd="http://www.w3.org/2001/XMLSchema"\n';
   if (namespace instanceof Array)

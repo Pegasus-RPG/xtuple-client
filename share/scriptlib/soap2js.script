@@ -1,5 +1,8 @@
 function tagToIdentifier(tag)
 {
+  if (tag == "#text")
+    return "xmltext";
+
   var nsidx = tag.indexOf(":");
   if (nsidx > 0)
     return tag.substring(0, nsidx) + "_" + tag.substring(nsidx + 1);
@@ -14,29 +17,52 @@ function xml2js(input)
     var nodename = tagToIdentifier(input.nodeName());
 
     output.xmltag = nodename;
+    var attribute = input.attributes();
+
+    if (attribute.size() > 0)
+    {
+      output.xmlattribute = new Object();
+      for (var attr = 0; attr < attribute.size(); attr++)
+        output.xmlattribute[tagToIdentifier(attribute.item(attr).toAttr().name())] =
+                                    attribute.item(attr).toAttr().value();
+    }
 
     var child = input.childNodes();
-    if (child.size() < 1)
+    if (input.isText())
+      output = input.nodeValue().split(/\s+/).join(" ");
+    else if (child.size() < 1)
       return null;
-    else if (child.size() == 1 && child.at(0).isText())
-      output = child.at(0).nodeValue().split(/\s+/).join(" ");
-    else if (child.size() == 1)
-      output = xml2js(child.at(0));
     else
     {
-      for (var i = 1; i < child.size(); i++)
+      var seq = 0;
+      for (var i = 0; i < child.size(); i++)
       {
         var xmltag = tagToIdentifier(child.at(i).nodeName());
-        if (i >= 1 &&
-            child.at(i).nodeName() == child.at(i - 1).nodeName())
+        if (child.size() > i + 1 &&
+            child.at(i).nodeName() == child.at(i + 1).nodeName())
         {
-          output[xmltag + i] = xml2js(child.at(i));
-          output[xmltag + i].xmltag = xmltag;
+          if (output[xmltag] == null)
+          {
+            output[xmltag] = new Array();
+            output[xmltag].xmltag = xmltag;
+          }
+          output[xmltag][seq] = xml2js(child.at(i));
+          output[xmltag][seq].xmltag = xmltag;
+          seq++;
+        }
+        else if (child.size() > 1 &&
+                 i > 0 &&
+                 child.at(i).nodeName() == child.at(i - 1).nodeName())
+        {
+          output[xmltag][seq] = xml2js(child.at(i));
+          output[xmltag][seq].xmltag = xmltag;
+          seq++;
         }
         else
         {
           output[xmltag] = xml2js(child.at(i));
           output[xmltag].xmltag = xmltag;
+          seq = 0;
         }
       }
     }
