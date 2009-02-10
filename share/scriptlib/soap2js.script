@@ -13,6 +13,17 @@ function tagToIdentifier(tag)
 function xml2js(input)
 {
   try {
+    if ((input + "").indexOf("QDom") != 0)
+    {
+      var doc  = new QDomDocument();
+      var err  = new Object();
+      var line = 0;
+      var col  = 0;
+      if (! doc.setContent(input, false, err, line, col))
+        throw "error reading XML at " + line + ":" + col + "\n" + err;
+      input = doc;
+    }
+
     var output = new Object();
     var nodename = tagToIdentifier(input.nodeName());
 

@@ -1,3 +1,5 @@
+#include soap2js
+
 var _addr       = mywindow.findChild("_addr");
 var _conditions = mywindow.findChild("_conditions");
 var _datetime   = mywindow.findChild("_datetime");
@@ -44,33 +46,24 @@ function sGetResponse(netreply)
                        + ".<p>" + netreply.errorString());
       return;
     }
-
-    var doc = new QDomDocument();
-    var domError = new Object();
-    var errLine = 0;
-    var errCol = 0;
-    if (! doc.setContent(netreply.readAll(), false, domError, errLine, errCol))
-      throw "error reading XML response at line " + errLine + ", column " + errCol + ": " + domError;
-    _output.setPlainText(doc.toString(2)); // for comparison
-
-    var itemNode = doc.documentElement().firstChildElement("channel").firstChildElement("item");
-    if (itemNode.isNull()) throw "channelNode doesn't seem to have an item child";
-
-    var conditionNode = itemNode.firstChildElement("yweather:condition");
-    if (conditionNode.isNull())
+    var xmlstring = netreply.readAll();
+    _output.setPlainText(xmlstring);
+    var weather = xml2js(xmlstring);
+    var condition = weather.rss.channel.item.yweather_condition;
+    if (condition == null)
     {
       _conditions.text = "N/A";
       _temp.text       = "N/A";
       _datetime.text   = "N/A";
-      _err.text        = itemNode.firstChildElement("title").text() + " " +
-                         itemNode.firstChildElement("description").text();
+      _err.text        = weather.rss.channel.item.title.xmltext + " " +
+                         weather.rss.channel.item.description.xmltext;
     }
     else
     {
-      _conditions.text = conditionNode.attributeNode("text").value();
-      _temp.text       = conditionNode.attributeNode("temp").value();
-      _datetime.text   = conditionNode.attributeNode("date").value();
-      _err.text = "";      
+      _conditions.text = condition.xmlattribute.text;
+      _temp.text       = condition.xmlattribute.temp;
+      _datetime.text   = condition.xmlattribute.date;
+      _err.text        = "";
     }
   }
   catch (e)
