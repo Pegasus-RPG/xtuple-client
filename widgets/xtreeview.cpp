@@ -25,6 +25,7 @@
 #include <QStack>
 #include <QTreeWidgetItem>
 
+#include "xtsettings.h"
 #include "xsqlrelationaldelegate.h"
 
 #define DEBUG true
@@ -63,8 +64,7 @@ XTreeView::~XTreeView()
   // window()->objectName() isn't available here, at least for scripted windows!
   QString settingsPrefix = _windowName + "/" + objectName();
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(settingsPrefix + "/isForgetful", _forgetful);
+  xtsettingsSetValue(settingsPrefix + "/isForgetful", _forgetful);
   QString savedString;
   if(!_forgetful)
   {
@@ -84,7 +84,7 @@ XTreeView::~XTreeView()
         savedString.append(QString::number(i) + "," +
                            QString::number(header()->sectionSize(i)) + "|");
     }
-    settings.setValue(settingsPrefix + "/columnWidths", savedString);
+    xtsettingsSetValue(settingsPrefix + "/columnWidths", savedString);
   }
   if(_x_preferences)
   {
@@ -369,15 +369,14 @@ void XTreeView::setModel(XSqlTableModel * model)
     QString settingsPrefix = _windowName + "/" + objectName();
     _settingsLoaded = true;
 
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    _forgetful = settings.value(settingsPrefix + "/isForgetful").toBool();
+    _forgetful = xtsettingsValue(settingsPrefix + "/isForgetful").toBool();
     QString savedString;
     QStringList savedParts;
     QString part, key, val;
     bool b1 = false, b2 = false;
     if(!_forgetful)
     {
-      savedString = settings.value(settingsPrefix + "/columnWidths").toString();
+      savedString = xtsettingsValue(settingsPrefix + "/columnWidths").toString();
       savedParts = savedString.split("|", QString::SkipEmptyParts);
       for(int i = 0; i < savedParts.size(); i++)
       {

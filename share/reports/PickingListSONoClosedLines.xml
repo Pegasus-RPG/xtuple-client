@@ -2,7 +2,7 @@
 <report>
  <title>Picking List</title>
  <name>PickingListSONoClosedLines</name>
- <description>Omits Closed Lines -- With OpenMFG Barcodes formatitemsitebarcode(itemsite_id) -- SO # barcoded formatsobarcode(cohead_id) -- With Logo, place logo graphic in images DB with name "logo"</description>
+ <description>Omits Closed Lines -- With Barcodes formatitemsitebarcode(itemsite_id) -- SO # barcoded formatsobarcode(cohead_id) -- With Logo, place logo graphic in images DB with name "logo"</description>
  <size>Letter</size>
  <portrait/>
  <topmargin>25</topmargin>

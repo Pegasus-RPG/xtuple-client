@@ -21,11 +21,11 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QMouseEvent>
-#include <QSettings>
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlRecord>
 
+#include "xtsettings.h"
 #include "xsqlquery.h"
 #include "format.h"
 
@@ -68,8 +68,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 
 XTreeWidget::~XTreeWidget()
 {
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(_settingsName + "/isForgetful", _forgetful);
+  xtsettingsSetValue(_settingsName + "/isForgetful", _forgetful);
   QString savedString;
   if(!_forgetful)
   {
@@ -82,7 +81,7 @@ XTreeWidget::~XTreeWidget()
       if(!_stretch.contains(i) && header()->sectionSize(i) != w && !header()->isSectionHidden(i))
         savedString.append(QString::number(i) + "," + QString::number(header()->sectionSize(i)) + "|");
     }
-    settings.setValue(_settingsName + "/columnWidths", savedString);
+    xtsettingsSetValue(_settingsName + "/columnWidths", savedString);
   }
   if(_x_preferences)
   {
@@ -443,8 +442,7 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     _settingsName = pname + objectName();
 
     // Load any previously saved information about column widths
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    _forgetful = settings.value(_settingsName + "/isForgetful").toBool();
+    _forgetful = xtsettingsValue(_settingsName + "/isForgetful").toBool();
 
     QString savedString;
     QStringList savedParts;
@@ -452,7 +450,7 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     bool b1 = false, b2 = false;
     if(!_forgetful)
     {
-      savedString = settings.value(_settingsName + "/columnWidths").toString();
+      savedString = xtsettingsValue(_settingsName + "/columnWidths").toString();
       savedParts = savedString.split("|", QString::SkipEmptyParts);
       for(int i = 0; i < savedParts.size(); i++)
       {

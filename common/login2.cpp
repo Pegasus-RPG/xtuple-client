@@ -15,11 +15,11 @@
 #include <QCursor>
 #include <QSqlDatabase>
 #include <QSqlError>
-#include <QSettings>
 #include <QApplication>
 #include <QSplashScreen>
 #include <QCheckBox>
 
+#include "xtsettings.h"
 #include "dbtools.h"
 #include "xsqlquery.h"
 #include "login2Options.h"
@@ -46,11 +46,10 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _password->setEchoMode(QLineEdit::Password);
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  _databaseURL = settings.readEntry("/OpenMFG/_databaseURL", "pgsql://:5432/");
-  _enhancedAuth = settings.readBoolEntry("/OpenMFG/_enhancedAuthentication", false);
-  _requireSSL = settings.readBoolEntry("/OpenMFG/_requireSSL", false);
-  if(settings.readBoolEntry("/OpenMFG/_demoOption", false))
+  _databaseURL = xtsettingsValue("/xTuple/_databaseURL", "pgsql://:5432/").toString();
+  _enhancedAuth = xtsettingsValue("/xTuple/_enhancedAuthentication", false).toBool();
+  _requireSSL = xtsettingsValue("/xTuple/_requireSSL", false).toBool();
+  if(xtsettingsValue("/xTuple/_demoOption", false).toBool())
     _demoOption->setChecked(true);
 }
 
@@ -258,8 +257,7 @@ void login2::sLogin()
     return;
   }
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.writeEntry("/OpenMFG/_demoOption", (bool)_demoOption->isChecked());
+  xtsettingsSetValue("/xTuple/_demoOption", (bool)_demoOption->isChecked());
 
   if (_splash)
   {

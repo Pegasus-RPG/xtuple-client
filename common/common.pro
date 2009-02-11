@@ -10,28 +10,30 @@ OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 UI_DIR      = tmp
 
-SOURCES = metrics.cpp \
-          qbase64encode.cpp \
-          qmd5.cpp \
-          metricsenc.cpp \
+SOURCES = calendarcontrol.cpp \
+          calendargraphicsitem.cpp \
           format.cpp \
+          graphicstextbuttonitem.cpp \
           login2.cpp \
           login2Options.cpp \
+          metrics.cpp \
+          metricsenc.cpp \
+          qbase64encode.cpp \
+          qmd5.cpp \
           storedProcErrorLookup.cpp \
-          calendarcontrol.cpp \
-          calendargraphicsitem.cpp \
-          graphicstextbuttonitem.cpp
-HEADERS = metrics.h \
-          qbase64encode.h \
-          qmd5.h \
-          metricsenc.h \
+          xtsettings.cpp
+HEADERS = calendarcontrol.h \
+          calendargraphicsitem.h \
           format.h \
+          graphicstextbuttonitem.h \
           login2.h \
           login2Options.h \
+          metrics.h \
+          metricsenc.h \
+          qbase64encode.h \
+          qmd5.h \
           storedProcErrorLookup.h \
-          calendarcontrol.h \
-          calendargraphicsitem.h \
-          graphicstextbuttonitem.h
+          xtsettings.h
 FORMS = login2.ui login2Options.ui
 
 

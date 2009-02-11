@@ -21,7 +21,7 @@ usage() {
   echo "$PROG -b -d [ -x ]"
   echo
   fmt <<EOF
-$PROG bundles the OpenMFG and PostBooks applications for release on the current platform
+$PROG bundles the xTuple applications for release on the current platform
 (currently only Mac OS X is supported).
 $PROG reads $VERFILE to get release information used to
 name the release package.

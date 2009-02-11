@@ -11,8 +11,8 @@
 #include "login2Options.h"
 
 #include <QVariant>
-#include <QSettings>
 
+#include "xtsettings.h"
 #include "dbtools.h"
 
 login2Options::login2Options(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -71,10 +71,9 @@ void login2Options::sSave()
   
   if (_saveSettings)
   {
-    QSettings setting(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    setting.writeEntry("/OpenMFG/_databaseURL", _databaseURL);
-    setting.writeEntry("/OpenMFG/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
-    setting.writeEntry("/OpenMFG/_requireSSL", (bool)_requireSSL->isChecked());
+    xtsettingsSetValue("/xTuple/_databaseURL", _databaseURL);
+    xtsettingsSetValue("/xTuple/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
+    xtsettingsSetValue("/xTuple/_requireSSL", (bool)_requireSSL->isChecked());
   }
 
   accept();
