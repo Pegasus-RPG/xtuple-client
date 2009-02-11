@@ -55,36 +55,36 @@ function js2xml(input, inputname, namespace, level)
 
   var output = "";
 
-  output += indent + "<" + tag;
-
+  
+  var xmlattribute = "";
   if (input.xmlattribute != null)
     for (var i in input.xmlattribute)
-      output += ' ' + i + '="' + input.xmlattribute[i] + '"';
+      xmlattribute += ' ' + i + '="' + input.xmlattribute[i] + '"';
 
   if (! hasXMLChildren(input, namespace))
-    output += "/>\n"
+  {
+    output += indent + "<" + tag + xmlattribute;
+    if ((input + "").indexOf("[") != 0)
+      output += ">" + input + "</" + tag + ">\n";
+    else
+      output += "/>\n"
+  }
   else
   {
-    output += ">";
-
     if (input instanceof Array)
     {
-      output += "\n";
       for (var i = 0; i < input.length; i++)
-        output += js2xml(input[i], input.xmltag, namespace, level + 1);
-      output += indent;
+        output += js2xml(input[i], input[i].xmltag, namespace, level + 1);
     }
     else if (typeof input == "object")
     {
-      output += "\n";
+      output += indent + "<" + tag + xmlattribute + ">\n";
       for (var j in input)
         output += js2xml(input[j], j, namespace, level + 1);
       if (input.xmltext != null)
         output += indent + "  " + input.xmltext + "\n";
-      output += indent;
+      output += indent + "</" + tag + ">\n";
     }
-
-    output += "</" + tag + ">\n";
   }
 
   return output;
@@ -106,14 +106,10 @@ function hasXMLChildren(object, namespace)
         if (hasXMLChildren(object, namespace[i]))
           return true;
     }
-
     else if (namespace instanceof Object)
-    { 
       return hasXMLChildren(object, namespace.ns);
-    }
     else if (namespace != null)
     {
-
       if (object instanceof Array)
       { 
         if (object["xmltag"].indexOf(namespace + "_") == 0)
@@ -123,22 +119,20 @@ function hasXMLChildren(object, namespace)
       { 
         for (var j in object)
         { 
-          if (j.indexOf(namespace + "_") == 0 /*||
-              j[xmltag].indexOf(namespace + "_") == 0*/)
+          if ((j + "").indexOf(namespace + "_") == 0)
             return true;
         }
       }
     }
     else
     {
-      print("hasXMLChildren: namespace is empty!")
+      print("hasXMLChildren: namespace is empty!");
       if (object instanceof Array)
         return true;
       else if (object instanceof Object)
         return true;
     }
 
-print("hasXMLChildren returning false");
     return false;
   }
   catch(e) {
