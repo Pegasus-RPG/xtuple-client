@@ -472,7 +472,7 @@ QString XSqlTableModelProto::toString() const
 {
   XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
   if (item)
-    return QString("XSqlTableModelProto(table %1, query %2)")
+    return QString("[XSqlTableModelProto(table %1, query %2)]")
                       .arg(item->tableName())
                       .arg(item->query().lastQuery().left(80));
   return QString();

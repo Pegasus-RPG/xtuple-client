@@ -201,6 +201,6 @@ QString XDataWidgetMapperProto::toString() const
 {
   XDataWidgetMapper *item = qscriptvalue_cast<XDataWidgetMapper*>(thisObject());
   if (item)
-    return QString("XDataWidgetMapper(%1)").arg(item->objectName());
-  return QString("XDataWidgetMapper(unknown)");
+    return QString("[XDataWidgetMapper(%1)]").arg(item->objectName());
+  return QString("[XDataWidgetMapper(unknown)]");
 }

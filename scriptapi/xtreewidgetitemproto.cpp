@@ -128,5 +128,5 @@ QString XTreeWidgetItemProto::toString() const
   else
     returnVal += "(unknown)";
 
-  return returnVal;
+  return "[" + returnVal + "]";
 }

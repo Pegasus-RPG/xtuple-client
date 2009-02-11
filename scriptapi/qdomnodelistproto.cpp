@@ -90,6 +90,6 @@ QString QDomNodeListProto::toString() const
 {
   QDomNodeList *item = qscriptvalue_cast<QDomNodeList*>(thisObject());
   if (item)
-    return QString("QDomNodeList(size=%1)").arg(item->size());
-  return QString("QDomNodeList(unknown)");
+    return QString("[QDomNodeList(size=%1)]").arg(item->size());
+  return QString("[QDomNodeList(unknown)]");
 }

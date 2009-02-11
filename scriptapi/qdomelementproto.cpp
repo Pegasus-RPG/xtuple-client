@@ -279,8 +279,8 @@ QString QDomElementProto::toString() const
 {
   QDomElement *item = qscriptvalue_cast<QDomElement*>(thisObject());
   if (item)
-    return QString("QDomElement(tagname %1)").arg(item->tagName());
-  return QString("QDomElement(unknown)");
+    return QString("[QDomElement(tagname %1)]").arg(item->tagName());
+  return QString("[QDomElement(unknown)]");
 }
 
 

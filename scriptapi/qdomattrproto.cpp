@@ -91,7 +91,7 @@ QString QDomAttrProto:: toString()     const
 {
   QDomAttr *item = qscriptvalue_cast<QDomAttr*>(thisObject());
   if (item)
-    return QString("QDomAttr(%1=%2)").arg(item->name()).arg(item->value());
+    return QString("[QDomAttr %1='%2']").arg(item->name()).arg(item->value());
   return QString();
 }
 

@@ -50,6 +50,6 @@ QString QDomCDATASectionProto::toString() const
 {
   QDomCDATASection *item = qscriptvalue_cast<QDomCDATASection*>(thisObject());
   if (item)
-    return QString("QDomCDATASection()");
-  return QString("QDomCDATASection(unknown)");
+    return QString("[QDomCDATASection(length=%1]").arg(item->length());
+  return QString("[QDomCDATASection(unknown)]");
 }

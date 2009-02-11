@@ -50,6 +50,6 @@ QString QDomDocumentFragmentProto::toString() const
 {
   QDomDocumentFragment *item = qscriptvalue_cast<QDomDocumentFragment*>(thisObject());
   if (item)
-    return QString("QDomDocumentFragment()");
-  return QString("QDomDocumentFragment(unknown)");
+    return QString("[QDomDocumentFragment(nodeType=%1)]").arg(item->nodeType());
+  return QString("[QDomDocumentFragment(unknown)]");
 }

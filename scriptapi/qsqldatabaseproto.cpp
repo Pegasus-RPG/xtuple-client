@@ -266,9 +266,9 @@ QString QSqlDatabaseProto::toString() const
 {
   QSqlDatabase *item = qscriptvalue_cast<QSqlDatabase*>(thisObject());
   if (item)
-    return QString("QSqlDatabase(driver=%1, database=%2, "
-                   "host=%3, port=%4, user=%5)")
+    return QString("[QSqlDatabase(driver=%1, database=%2, "
+                   "host=%3, port=%4, user=%5)]")
                 .arg(item->driverName()).arg(item->databaseName())
                 .arg(item->hostName()).arg(item->port()).arg(item->userName());
-  return QString("QSqlDatabase(unknown)");
+  return QString("[QSqlDatabase(unknown)]");
 }

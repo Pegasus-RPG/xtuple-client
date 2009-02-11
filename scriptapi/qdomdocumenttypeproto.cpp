@@ -100,6 +100,9 @@ QString QDomDocumentTypeProto::toString() const
 {
   QDomDocumentType *item = qscriptvalue_cast<QDomDocumentType*>(thisObject());
   if (item)
-    return QString("QDomDocumentType()");
-  return QString("QDomDocumentType(unknown)");
+    return QString("[QDomDocumentType(type = %1, public = %2, system = %3)]")
+                   .arg(item->name())
+                   .arg(item->publicId())
+                   .arg(item->systemId());
+  return QString("[QDomDocumentType(unknown)]");
 }

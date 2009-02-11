@@ -58,6 +58,7 @@ QString QDomTextProto::toString() const
 {
   QDomText *item = qscriptvalue_cast<QDomText*>(thisObject());
   if (item)
-    return QString("QDomText()");
-  return QString("QDomText(unknown)");
+    return QString("[QDomText(%1=%2)]")
+                   .arg(item->nodeName()).arg(item->nodeValue());
+  return QString("[QDomText(unknown)]");
 }

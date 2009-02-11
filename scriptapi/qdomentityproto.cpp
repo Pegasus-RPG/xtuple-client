@@ -75,6 +75,7 @@ QString QDomEntityProto::toString() const
 {
   QDomEntity *item = qscriptvalue_cast<QDomEntity*>(thisObject());
   if (item)
-    return QString("QDomEntity()");
-  return QString("QDomEntity(unknown)");
+    return QString("[QDomEntity(%1=%2)]")
+                   .arg(item->nodeName()).arg(item->nodeValue());
+  return QString("[QDomEntity(unknown)]");
 }

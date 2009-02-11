@@ -556,9 +556,10 @@ QString QDomNodeProto::toString() const
 {
   QDomNode *item = qscriptvalue_cast<QDomNode*>(thisObject());
   if (item)
-    return QString("QDomNode(name %1, type %2, %3)")
+    return QString("[QDomNode(%1=%2, %3, %4)]")
                     .arg(item->nodeName())
+                    .arg(item->nodeValue())
                     .arg(item->nodeType())
                     .arg(item->hasChildNodes() ? "has children" : "leaf node");
-  return QString("QDomNode(unknown)");
+  return QString("[QDomNode(unknown)]");
 }

@@ -567,7 +567,7 @@ QString QUrlProto::toString(QUrl::FormattingOptions options) const
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item)
     return item->toString(options);
-  return QString("QUrl(no data available)");
+  return QString("[QUrl(no data available)]");
 }
 
 QString QUrlProto::userInfo() const

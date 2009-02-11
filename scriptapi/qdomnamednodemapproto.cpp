@@ -139,6 +139,6 @@ QString QDomNamedNodeMapProto::toString() const
 {
   QDomNamedNodeMap *item = qscriptvalue_cast<QDomNamedNodeMap*>(thisObject());
   if (item)
-    return QString("QDomNamedNodeMap(size = %1)").arg(item->size());
-  return QString("QDomNamedNodeMap(unknown)");
+    return QString("[QDomNamedNodeMap(size = %1)]").arg(item->size());
+  return QString("[QDomNamedNodeMap(unknown)]");
 }

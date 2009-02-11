@@ -50,6 +50,7 @@ QString QDomEntityReferenceProto::toString() const
 {
   QDomEntityReference *item = qscriptvalue_cast<QDomEntityReference*>(thisObject());
   if (item)
-    return QString("QDomEntityReference()");
-  return QString("QDomEntityReference(unknown)");
+    return QString("[QDomEntityReference(%1=%2)]")
+                   .arg(item->nodeName()).arg(item->nodeValue());
+  return QString("[QDomEntityReference(unknown)]");
 }

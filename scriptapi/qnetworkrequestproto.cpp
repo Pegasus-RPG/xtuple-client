@@ -145,5 +145,5 @@ QUrl QNetworkRequestProto::url() const
 
 QString QNetworkRequestProto::toString() const
 {
-  return QString("QNetworkRequest(url=%1)").arg(url());
+  return QString("[QNetworkRequest(url=%1)]").arg(url());
 }

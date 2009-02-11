@@ -110,6 +110,6 @@ QString QDomCharacterDataProto::toString() const
 {
   QDomCharacterData *item = qscriptvalue_cast<QDomCharacterData*>(thisObject());
   if (item)
-    return QString("QDomCharacterData()");
-  return QString("QDomCharacterData(unknown)");
+    return QString("[QDomCharacterData(length=%1)]").arg(item->length());
+  return QString("[QDomCharacterData(unknown)]");
 }

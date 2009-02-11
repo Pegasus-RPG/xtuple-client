@@ -121,6 +121,6 @@ void XNetworkAccessManager::setProxy(const QNetworkProxy &proxy)
 
 QString XNetworkAccessManager::toString() const
 {
-  return QString("QNetworkAccessManager(%1)")
-      .arg(parent() ? parent()->objectName() : QString(""));
+  return QString("[QNetworkAccessManager(%1)]")
+      .arg(parent() ? parent()->objectName() : QString("unparented"));
 }

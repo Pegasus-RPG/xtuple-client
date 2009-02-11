@@ -74,6 +74,6 @@ QString QDomProcessingInstructionProto::toString() const
 {
   QDomProcessingInstruction *item = qscriptvalue_cast<QDomProcessingInstruction*>(thisObject());
   if (item)
-    return QString("QDomProcessingInstruction(%1)").arg(item->data());
-  return QString("QDomProcessingInstruction(unknown)");
+    return QString("[QDomProcessingInstruction(%1)]").arg(item->data());
+  return QString("[QDomProcessingInstruction(unknown)]");
 }

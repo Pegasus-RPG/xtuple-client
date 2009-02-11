@@ -67,7 +67,7 @@ QString QDomNotationProto::toString() const
 {
   QDomNotation *item = qscriptvalue_cast<QDomNotation*>(thisObject());
   if (item)
-    return QString("QDomNotation(system id = %1, public id = %2)")
+    return QString("[QDomNotation(system id = %1, public id = %2)]")
                 .arg(item->systemId()).arg(item->publicId());
-  return QString("QDomNotation(unknown)");
+  return QString("[QDomNotation(unknown)]");
 }

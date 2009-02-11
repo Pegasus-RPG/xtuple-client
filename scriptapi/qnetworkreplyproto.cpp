@@ -153,8 +153,8 @@ QString QNetworkReplyProto::toString() const
 {
   QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
   if (item)
-    return QString("QNetworkReply(url=%1)").arg(url());
-  return QString("QNetworkReply(unknown)").arg(url());
+    return QString("[QNetworkReply(url=%1)]").arg(url());
+  return QString("[QNetworkReply(unknown)]").arg(url());
 }
 
 qint64 QNetworkReplyProto::bytesAvailable() const

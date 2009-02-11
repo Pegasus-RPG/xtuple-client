@@ -92,6 +92,6 @@ QString QDomImplementationProto::toString() const
 {
   QDomImplementation *item = qscriptvalue_cast<QDomImplementation*>(thisObject());
   if (item)
-    return QString("QDomImplementation()");
-  return QString("QDomImplementation(unknown)");
+    return QString("[QDomImplementation()]");
+  return QString("[QDomImplementation(unknown)]");
 }

@@ -66,6 +66,6 @@ QString QDomCommentProto::toString() const
 {
   QDomComment *item = qscriptvalue_cast<QDomComment*>(thisObject());
   if (item)
-    return QString("QDomComment()");
-  return QString("QDomComment(unknown)");
+    return QString("[QDomComment(%1)").arg(item->data().left(25));
+  return QString("[QDomComment(unknown)]");
 }
