@@ -206,7 +206,7 @@ void userPreferences::sPopulate()
     _ellipsesAction->setId(1);
     
   //Hide for PostBooks 
-  if (_metrics->value("Application") != "OpenMFG")
+  if (_metrics->value("Application") != "Manufacturing")
   {
     _scheduleMenu->hide();
     _scheduleToolbar->hide();

@@ -35,7 +35,6 @@
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QMainWindow>
-#include <QSettings>
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QScriptEngine>
@@ -47,6 +46,7 @@
 #include <quuencode.h>
 #include <xvariant.h>
 
+#include "xtsettings.h"
 #include "xuiloader.h"
 #include "guiclient.h"
 #include "version.h"
@@ -422,9 +422,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   //Restore Window Size Saved on Close                                                                       
   QRect availableGeometry = QApplication::desktop()->availableGeometry();                                    
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");                                        
-  QPoint pos = settings.value("GUIClient/geometry/pos", QPoint()).toPoint();                           
-  QSize size = settings.value("GUIClient/geometry/size", QSize()).toSize();                          
+  QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();                           
+  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();                          
   int mainXMax = availableGeometry.bottomRight().x();                                                        
   int mainYMax = availableGeometry.bottomRight().y();                                                        
                                                                                                              
@@ -528,7 +527,7 @@ void GUIClient::initMenuBar()
     inventoryMenu = new menuInventory(this);
   }
       
-  if (_metrics->value("Application") == "OpenMFG")
+  if (_metrics->value("Application") == "Manufacturing")
   {
     if (_preferences->boolean("ShowMSMenu"))
     {
@@ -577,8 +576,7 @@ void GUIClient::initMenuBar()
   qApp->processEvents();
   systemMenu = new menuSystem(this);
 
-  QSettings config("OpenMFG", "OpenMFG");
-  restoreState(config.value("MainWindowState", QByteArray()).toByteArray(), 1);
+  restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
 
   toolbars = qFindChildren<QToolBar *>(this);
   for (int i = 0; i < toolbars.size(); ++i)
@@ -591,8 +589,7 @@ void GUIClient::initMenuBar()
 
 void GUIClient::saveToolbarPositions()
 {
-  QSettings config("OpenMFG", "OpenMFG");
-  config.setValue("MainWindowState", saveState(1));
+  xtsettingsSetValue("MainWindowState", saveState(1));
 }
 
 void GUIClient::closeEvent(QCloseEvent *event)
@@ -600,9 +597,8 @@ void GUIClient::closeEvent(QCloseEvent *event)
   saveToolbarPositions();
 
   // save main window size for next login
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue("GUIClient/geometry/pos", pos());
-  settings.setValue("GUIClient/geometry/size", size());
+  xtsettingsSetValue("GUIClient/geometry/pos", pos());
+  xtsettingsSetValue("GUIClient/geometry/size", size());
 
   // Close the database connection
   QSqlDatabase::database().close();
@@ -719,7 +715,7 @@ void GUIClient::sTick()
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
 
-      if ( (_metrics->value("Application") != "OpenMFG")
+      if ( (_metrics->value("Application") != "Manufacturing")
         && (_metrics->value("Application") != "xTupleERP") )
       {
         if(_metrics->value("Registered") != "Yes")
@@ -1295,12 +1291,11 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
     if(w)
     {
       QString objName = w->objectName();
-      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-      settings.setValue(objName + "/geometry/size", w->size());
+      xtsettingsSetValue(objName + "/geometry/size", w->size());
       if(omfgThis->showTopLevel())
-        settings.setValue(objName + "/geometry/pos", w->pos());
+        xtsettingsSetValue(objName + "/geometry/pos", w->pos());
       else
-        settings.setValue(objName + "/geometry/pos", w->parentWidget()->pos());
+        xtsettingsSetValue(objName + "/geometry/pos", w->parentWidget()->pos());
     }
   }
   return QObject::eventFilter(obj, event);
@@ -1327,12 +1322,11 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   if(!_showTopLevel && !w->isModal())
     availableGeometry = _workspace->geometry();
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
   QString objName = w->objectName();
-  QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
-  QSize size = settings.value(objName + "/geometry/size").toSize();
+  QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+  QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
 
-  if(size.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
+  if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
     w->resize(size);
 
   bool wIsModal = w->isModal();
@@ -1344,7 +1338,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     if (mw)
       mw->statusBar()->show();
 	QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
     w->show();
   }
@@ -1354,7 +1348,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     w->setAttribute(Qt::WA_DeleteOnClose);
     _workspace->addWindow(w);
     QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
     w->show();
     if(fw)

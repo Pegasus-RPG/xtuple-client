@@ -210,7 +210,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     _itemtype->removeItem(10);
   }
     
-  if (_metrics->value("Application") != "OpenMFG")
+  if (_metrics->value("Application") != "Manufacturing")
   {
     _planningType->setCurrentIndex(2);
     _planningType->hide();

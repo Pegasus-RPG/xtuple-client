@@ -2,7 +2,7 @@
 <report>
  <title>Sales Order Acknowledgement</title>
  <name>SalesOrderAcknowledgement</name>
- <description>Sales Order Acknowledgement Omits Closed Lines -- With OpenMFG Barcodes formatitemsitebarcode(itemsite_id) -- SO # barcoded formatsobarcode(cohead_id) -- With Logo, place logo graphic in images DB with name "logo"</description>
+ <description>Sales Order Acknowledgement Omits Closed Lines -- With Barcodes formatitemsitebarcode(itemsite_id) -- SO # barcoded formatsobarcode(cohead_id) -- With Logo, place logo graphic in images DB with name "logo"</description>
  <size>Letter</size>
  <portrait/>
  <topmargin>25</topmargin>

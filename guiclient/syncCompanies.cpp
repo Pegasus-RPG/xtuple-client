@@ -225,11 +225,11 @@ void syncCompanies::sSync()
         continue;
       }
 
-      rmq.prepare("SELECT fetchMetricText('OpenMFGServerVersion') AS result;");
+      rmq.prepare("SELECT fetchMetricText('ServerVersion') AS result;");
       rmq.exec();
       if (rmq.first())
       {
-        if (rmq.value("result").toString() != _metrics->value("OpenMFGServerVersion"))
+        if (rmq.value("result").toString() != _metrics->value("ServerVersion"))
         {
           QMessageBox::warning(this, tr("Versions Incompatible"),
                                tr("<p>The version of the child database is not "
@@ -237,7 +237,7 @@ void syncCompanies::sSync()
                                   "database (%1 vs. %2). The data cannot safely "
                                   "be synchronized.")
                                .arg(rmq.value("result").toString())
-                               .arg(_metrics->value("OpenMFGServerVersion")));
+                               .arg(_metrics->value("ServerVersion")));
           errorCount++;
           continue;
         }

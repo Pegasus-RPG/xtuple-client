@@ -204,7 +204,7 @@ void accountNumbers::sBuildList()
   _externalCol++;
 
   if (_metrics->value("Application") == "xTuple" ||
-      _metrics->value("Application") == "OpenMFG")
+      _metrics->value("Application") == "Manufacturing")
   {
     _account->addColumn(tr("External"), _ynColumn, Qt::AlignCenter, false, "company_external");
     _externalCol++;

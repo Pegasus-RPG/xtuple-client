@@ -16,13 +16,13 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPrintDialog>
-#include <QSettings>
 #include <QSqlError>
 
 #include <orprerender.h>
 #include <orprintrender.h>
 #include <renderobjects.h>
 
+#include "xtsettings.h"
 #include "confirmAchOK.h"
 #include "storedProcErrorLookup.h"
 
@@ -391,8 +391,7 @@ void printCheck::sCreateACH()
     releasenum.bindValue(":batch", batch);
     if (achFileDir.isEmpty())
     {
-      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-      achFileDir = settings.value("ACHOutputDirectory").toString();
+      achFileDir = xtsettingsValue("ACHOutputDirectory").toString();
     }
     QString suffixes = "*.ach *.dat *.txt";
     if (! suffixes.contains(_metrics->value("ACHDefaultSuffix")))
@@ -492,8 +491,7 @@ void printCheck::storeAchFileDir()
 {
   if (_metrics->boolean("ACHEnabled") && !achFileDir.isEmpty())
   {
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    settings.setValue("ACHOutputDirectory", achFileDir);
+    xtsettingsSetValue("ACHOutputDirectory", achFileDir);
   }
 }
 

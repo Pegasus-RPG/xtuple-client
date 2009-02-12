@@ -18,8 +18,8 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QWorkspace>
-#include <QSettings>
 
+#include "xtsettings.h"
 #include "guiclient.h"
 
 #include <parameter.h>
@@ -173,7 +173,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configurePD",	tr("&Products..."),	SLOT(sConfigurePD()),	configModulesMenu,	_privileges->check("ConfigurePD"),	NULL,	NULL,	true	},
     { "sys.configureIM",	tr("&Inventory..."),	SLOT(sConfigureIM()),	configModulesMenu,	_privileges->check("ConfigureIM"),	NULL,	NULL,	true	},
     { "sys.configurePO",	tr("P&urchase..."),	SLOT(sConfigurePO()),	configModulesMenu,	_privileges->check("ConfigurePO"),	NULL,	NULL,	true	},
-    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privileges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->value("Application") == "OpenMFG")	},
+    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privileges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->value("Application") == "Manufacturing")	},
     { "sys.configureWO",	tr("&Manufacture..."),	SLOT(sConfigureWO()),	configModulesMenu,	_privileges->check("ConfigureWO"),	NULL,	NULL,	true	},
     { "sys.configureCRM",	tr("&CRM..."),	SLOT(sConfigureCRM()),	configModulesMenu,	_privileges->check("ConfigureCRM"),	NULL,	NULL,	true	},
     { "sys.configureSO",	tr("&Sales..."),	SLOT(sConfigureSO()),	configModulesMenu,	_privileges->check("ConfigureSO"),	NULL,	NULL,	true	},
@@ -235,7 +235,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),          SLOT(sCommunityHome()),        communityMenu, true, NULL, NULL, true },
     { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
-    { "community.register",    tr("&Register"),      SLOT(sRegister()),             communityMenu, true, new QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "OpenMFG" },
+    { "community.register",    tr("&Register"),      SLOT(sRegister()),             communityMenu, true, new QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "Manufacturing" },
     { "community.newAccount",  tr("&New Account"),   SLOT(sCommunityNewAccount()),  communityMenu, true, NULL, NULL, true },
     { "community.editAccount", tr("&Edit Account"),  SLOT(sCommunityEditAccount()), communityMenu, true, NULL, NULL, true },
     { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
@@ -342,12 +342,11 @@ void menuSystem::sPrepareWindowMenu()
     geometryMenu->clear();
     geometryMenu->setTitle(activeWindow->caption());
 
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
     QString objName = activeWindow->objectName();
     
-    _rememberPos->setChecked(settings.value(objName + "/geometry/rememberPos", true).toBool());
+    _rememberPos->setChecked(xtsettingsValue(objName + "/geometry/rememberPos", true).toBool());
     _rememberPos->addTo(geometryMenu);
-    _rememberSize->setChecked(settings.value(objName + "/geometry/rememberSize", true).toBool());
+    _rememberSize->setChecked(xtsettingsValue(objName + "/geometry/rememberSize", true).toBool());
     _rememberSize->addTo(geometryMenu);
 
     windowMenu->addMenu(geometryMenu);
@@ -390,9 +389,8 @@ void menuSystem::sRememberPositionToggle()
   if(!_lastActive)
     return;
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
   QString objName = _lastActive->objectName();
-  settings.setValue(objName + "/geometry/rememberPos", _rememberPos->isChecked());
+  xtsettingsSetValue(objName + "/geometry/rememberPos", _rememberPos->isChecked());
 }
 
 void menuSystem::sRememberSizeToggle()
@@ -400,9 +398,8 @@ void menuSystem::sRememberSizeToggle()
   if(!_lastActive)
     return;
 
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
   QString objName = _lastActive->objectName();
-  settings.setValue(objName + "/geometry/rememberSize", _rememberSize->isChecked());
+  xtsettingsSetValue(objName + "/geometry/rememberSize", _rememberSize->isChecked());
 }
 
 void menuSystem::sCloseAll()

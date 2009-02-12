@@ -51,7 +51,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
     _issueMethod->setCurrentIndex(2);
     
   
-  if (_metrics->value("Application") != "OpenMFG")
+  if (_metrics->value("Application") != "Manufacturing")
   {
     _routings->hide();
     _routings->setChecked(FALSE);
@@ -84,7 +84,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
   
   
-  if ( (_metrics->value("Application") != "OpenMFG")
+  if ( (_metrics->value("Application") != "Manufacturing")
     && (_metrics->value("Application") != "xTupleERP") )
   {
     _revControl->hide();
@@ -150,7 +150,7 @@ void configurePD::sSave()
                      "  FROM bomhead "
                      " WHERE((COALESCE(bomhead_revision,'') <> '') "
                      "   AND (bomhead_rev_id=-1))";
-      if (_metrics->value("Application") == "OpenMFG")
+      if (_metrics->value("Application") == "Manufacturing")
         rsql += " UNION "
                 "SELECT createboorev(boohead_item_id,boohead_revision) "
                 "  FROM boohead "

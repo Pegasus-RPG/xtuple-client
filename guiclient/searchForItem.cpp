@@ -93,7 +93,7 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     hasBOM = q.value("hasBOM").toBool();
 
   bool hasBOO = false;
-  if (_metrics->value("Application") == "OpenMFG")
+  if (_metrics->value("Application") == "Manufacturing")
   {
     q.prepare("SELECT (count(*) != 0) AS hasBOO"
               "  FROM boohead"

@@ -30,7 +30,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
 
   _description->setText(_metrics->value("DatabaseName"));
   _comments->setText(_metrics->value("DatabaseComments"));
-  _version->setText(_metrics->value("OpenMFGServerVersion"));
+  _version->setText(_metrics->value("ServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
 
@@ -39,7 +39,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _interval->setValue(val);
 
    //Disable batch manager if PostBooks 	 
-  if ( (_metrics->value("Application") != "OpenMFG") 	 
+  if ( (_metrics->value("Application") != "Manufacturing") 	 
     && (_metrics->value("Application") != "xTupleERP") ) 	 
   { 	 
     _enableBatchManager->setChecked(FALSE); 	 

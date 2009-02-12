@@ -14,12 +14,12 @@
 #include <QDesktopWidget>
 #include <QWorkspace>
 #include <QStatusBar>
-#include <QSettings>
 #include <QCloseEvent>
 #include <QShowEvent>
 #include <QtScript>
 #include <QDebug>
 
+#include "xtsettings.h"
 #include "guiclient.h"
 #include "scripttoolbox.h"
 
@@ -118,12 +118,11 @@ ParameterList XMainWindow::get() const
 void XMainWindow::closeEvent(QCloseEvent *event)
 {
   QString objName = objectName();
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(objName + "/geometry/size", size());
+  xtsettingsSetValue(objName + "/geometry/size", size());
   if(omfgThis->showTopLevel() || isModal())
-    settings.setValue(objName + "/geometry/pos", pos());
+    xtsettingsSetValue(objName + "/geometry/pos", pos());
   else
-    settings.setValue(objName + "/geometry/pos", parentWidget()->pos());
+    xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
 
   QMainWindow::closeEvent(event);
 }
@@ -139,12 +138,11 @@ void XMainWindow::showEvent(QShowEvent *event)
     if(!omfgThis->showTopLevel() && !isModal())
       availableGeometry = omfgThis->workspace()->geometry();
 
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
     QString objName = objectName();
-    QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
-    QSize lsize = settings.value(objName + "/geometry/size").toSize();
+    QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+    QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
 
-    if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
+    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
       resize(lsize);
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -153,7 +151,7 @@ void XMainWindow::showEvent(QShowEvent *event)
       omfgThis->_windowList.append(this);
       statusBar()->show();
       QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
         move(pos);
     }
     else
@@ -161,7 +159,7 @@ void XMainWindow::showEvent(QShowEvent *event)
       QWidget * fw = focusWidget();
       omfgThis->workspace()->addWindow(this);
       QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
         move(pos);
       // This originally had to be after the show? Will it work here?
       if(fw)

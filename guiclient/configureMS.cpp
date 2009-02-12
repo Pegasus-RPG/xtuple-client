@@ -40,7 +40,7 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
   if(cid > 0)
     _calendar->setId(cid);
     
-  if (_metrics->value("Application") == "OpenMFG")  
+  if (_metrics->value("Application") == "Manufacturing")  
     _bufferMgt->setChecked(_metrics->boolean("BufferMgt"));
   else
     _bufferMgt->hide();

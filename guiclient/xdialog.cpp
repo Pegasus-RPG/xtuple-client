@@ -13,11 +13,11 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QWorkspace>
-#include <QSettings>
 #include <QCloseEvent>
 #include <QShowEvent>
 #include <QDebug>
 
+#include "xtsettings.h"
 #include "guiclient.h"
 #include "scripttoolbox.h"
 
@@ -86,9 +86,8 @@ XDialog::~XDialog()
 
 void XDialog::done(int r)
 {
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(objectName() + "/geometry/size", size());
-  settings.setValue(objectName() + "/geometry/pos", pos());
+  xtsettingsSetValue(objectName() + "/geometry/size", size());
+  xtsettingsSetValue(objectName() + "/geometry/pos", pos());
 
   QDialog::done(r);
 }
@@ -101,27 +100,26 @@ void XDialog::showEvent(QShowEvent *event)
 
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
     QString objName = objectName();
-    QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
-    QSize lsize = settings.value(objName + "/geometry/size").toSize();
+    QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+    QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
 
-    if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
+    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
       resize(lsize);
 
     // do I want to do this for a dialog?
     //_windowList.append(w);
     QRect r(pos, size());
-    if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       move(pos);
 
     _private->_rememberPos = new QAction(tr("Remember Posisition"), this);
     _private->_rememberPos->setCheckable(true);
-    _private->_rememberPos->setChecked(settings.value(objectName() + "/geometry/rememberPos", true).toBool());
+    _private->_rememberPos->setChecked(xtsettingsValue(objectName() + "/geometry/rememberPos", true).toBool());
     connect(_private->_rememberPos, SIGNAL(triggered(bool)), this, SLOT(setRememberPos(bool)));
     _private->_rememberSize = new QAction(tr("Remember Size"), this);
     _private->_rememberSize->setCheckable(true);
-    _private->_rememberSize->setChecked(settings.value(objectName() + "/geometry/rememberSize", true).toBool());
+    _private->_rememberSize->setChecked(xtsettingsValue(objectName() + "/geometry/rememberSize", true).toBool());
     connect(_private->_rememberSize, SIGNAL(triggered(bool)), this, SLOT(setRememberSize(bool)));
 
     addAction(_private->_rememberPos);
@@ -170,16 +168,14 @@ void XDialog::showEvent(QShowEvent *event)
 
 void XDialog::setRememberPos(bool b)
 {
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(objectName() + "/geometry/rememberPos", b);
+  xtsettingsSetValue(objectName() + "/geometry/rememberPos", b);
   if(_private && _private->_rememberPos)
     _private->_rememberPos->setChecked(b);
 }
 
 void XDialog::setRememberSize(bool b)
 {
-  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(objectName() + "/geometry/rememberSize", b);
+  xtsettingsSetValue(objectName() + "/geometry/rememberSize", b);
   if(_private && _private->_rememberSize)
     _private->_rememberSize->setChecked(b);
 }

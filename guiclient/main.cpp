@@ -237,9 +237,9 @@ int main(int argc, char *argv[])
   metric.exec("SELECT metric_value"
            "  FROM metric"
            " WHERE (metric_name = 'Application')" );
-  if(!metric.first() || (metric.value("metric_value").toString() == "OpenMFG"))
+  if(!metric.first() || (metric.value("metric_value").toString() == "Manufacturing"))
   {
-    _splash->setPixmap(QPixmap(":/images/splashOpenMFG.png"));
+    _splash->setPixmap(QPixmap(":/images/splashManufacturing.png"));
     _Name = _Name.arg("Manufacturing");
   }
   else if(!metric.first() || (metric.value("metric_value").toString() == "xTupleERP"))
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
 
   metric.exec("SELECT metric_value"
            "  FROM metric"
-           " WHERE (metric_name = 'OpenMFGServerVersion')" );
+           " WHERE (metric_name = 'ServerVersion')" );
   if(!metric.first() || (metric.value("metric_value").toString() != _dbVersion))
   {
     bool disallowMismatch = false;

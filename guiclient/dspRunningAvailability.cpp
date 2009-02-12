@@ -112,7 +112,7 @@ void dspRunningAvailability::setParams(ParameterList & params)
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  if (_metrics->value("Application") == "OpenMFG")
+  if (_metrics->value("Application") == "Manufacturing")
     params.append("showMRPplan");
 }
 

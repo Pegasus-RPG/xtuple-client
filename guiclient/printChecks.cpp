@@ -14,7 +14,6 @@
 #include <QList>
 #include <QMessageBox>
 #include <QPrintDialog>
-#include <QSettings>
 #include <QSqlError>
 #include <QVariant>
 
@@ -23,6 +22,7 @@
 #include <renderobjects.h>
 #include "mqlutil.h"
 
+#include "xtsettings.h"
 #include "confirmAchOK.h"
 #include "printCheck.h"
 #include "printChecksReview.h"
@@ -383,8 +383,7 @@ void printChecks::sCreateACH()
     releasenum.bindValue(":batch", batch);
     if (printCheck::achFileDir.isEmpty())
     {
-      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-      printCheck::achFileDir = settings.value("ACHOutputDirectory").toString();
+      printCheck::achFileDir = xtsettingsValue("ACHOutputDirectory").toString();
     }
     QString suffixes = "*.ach *.dat *.txt";
     if (! suffixes.contains(_metrics->value("ACHDefaultSuffix")))
