@@ -206,7 +206,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     //  Production | Reports | Schedule
     { "menu",				tr("Work Order &Schedule"),	(char*)reportsScheduleMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), new QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, "Work Order Schedule by Planner Code" },
+    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), new QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
     { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
     { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },

@@ -239,7 +239,7 @@ menuSales::menuSales(GUIClient *pParent) :
     // Sales | Sales Order
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, _privileges->check("MaintainSalesOrders"), NULL, NULL,	 true, NULL },
-    { "so.listOpenSalesOrders",      tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, (_privileges->check("MaintainSalesOrders") || _privileges->check("ViewSalesOrders")),	new QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, "List Open Sales Orders" },
+    { "so.listOpenSalesOrders",      tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, (_privileges->check("MaintainSalesOrders") || _privileges->check("ViewSalesOrders")),	new QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
     { "separator",	NULL,	NULL,	ordersMenu,	true,		NULL, NULL, true, NULL },
     { "so.rescheduleAllSoLineItems", tr("&Reschedule..."),	SLOT(sRescheduleSoLineItems()),  ordersMenu, _privileges->check("MaintainSalesOrders"),	 NULL, NULL, true, NULL },
    
@@ -437,7 +437,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.customers", tr("&List..."),	SLOT(sCustomers()), customerMenu, (_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters")),	NULL, NULL, true, NULL },
     { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, (_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters")),	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	customerMenu,	true,		NULL, NULL, true, NULL },
-    { "so.dspCustomerInformation",   tr("&Workbench..."),	SLOT(sDspCustomerInformation()), customerMenu, (_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters")), new QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, "Customer Information Workbench" },
+    { "so.dspCustomerInformation",   tr("&Workbench..."),	SLOT(sDspCustomerInformation()), customerMenu, (_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters")), new QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Information Workbench") },
     { "separator",	NULL,	NULL,	customerMenu,	true,		NULL, NULL, true, NULL },
     { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, (_privileges->check("MaintainCustomerTypes") || _privileges->check("ViewCustomerTypes")),	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, (_privileges->check("MaintainCustomerGroups") || _privileges->check("ViewCustomerGroups")),	NULL, NULL, true, NULL },

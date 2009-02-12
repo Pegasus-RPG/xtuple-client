@@ -97,18 +97,18 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	true, NULL, NULL, true	, NULL },
     { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	_privileges->check("AddIncidents") || _privileges->check("MaintainIncidents"), NULL, NULL, true , NULL },
     { "separator",		NULL,				NULL,			incidentMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	_privileges->check("ViewIncidents") || _privileges->check("MaintainIncidents"), new QPixmap(":/images/incidents.png"), toolBar, true , "Incident Workbench" },
+    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	_privileges->check("ViewIncidents") || _privileges->check("MaintainIncidents"), new QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
 
     // CRM / To Do
     { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	true, NULL, NULL, true	, NULL },
     { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	_privileges->check("MaintainPersonalTodoList"), NULL, NULL, true	, NULL },
-    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"),new QPixmap(":/images/toDoList.png"), toolBar, true	, "To-Do List"},
+    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"),new QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
     { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"), NULL, NULL, true, NULL},
 
     //  Project
     { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu,true, NULL, NULL, true	, NULL },
     { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, _privileges->check("MaintainProjects"), NULL, NULL, true , NULL },
-    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, _privileges->check("ViewProjects"), new QPixmap(":/images/projects.png"), toolBar, true , "List Projects" },
+    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, _privileges->check("ViewProjects"), new QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
     
     // Opportunity
     { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
@@ -129,13 +129,13 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     // CRM | Account
     { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
     { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	_privileges->check("MaintainCRMAccounts"), NULL, NULL, true , NULL },
-    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"),new QPixmap(":/images/accounts.png"), toolBar, true , "List Accounts" },
+    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"),new QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
     { "crm.crmaccountsearch",	tr("&Search..."),SLOT(sSearchForCRMAccount()),accountsMenu,	_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"), NULL, NULL, true , NULL },
       
     // CRM | Contact
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
     { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	_privileges->check("MaintainContacts"), NULL, NULL, true	, NULL },
-    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	_privileges->check("MaintainContacts") || _privileges->check("ViewContacts"),new QPixmap(":/images/contacts.png"), toolBar, true , "List Contacts" },
+    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	_privileges->check("MaintainContacts") || _privileges->check("ViewContacts"),new QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
     { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	_privileges->check("MaintainContacts") || _privileges->check("ViewContacts"), NULL, NULL, true	, NULL },
     
     // CRM | Address

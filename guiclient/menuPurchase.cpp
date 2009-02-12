@@ -137,13 +137,13 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   actionProperties acts[] = {
     //  Purchase | Requisitions
     { "menu", tr("Purchase &Requests"), (char*)requestMenu, mainMenu, true, NULL, NULL, true , NULL },
-    { "po.dspPurchaseRequestsByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPurchaseReqsByPlannerCode()), requestMenu, _privileges->check("ViewPurchaseRequests"), new QPixmap(":/images/dspPurchaseReqByPlannerCode.png"), toolBar, true , "Purchase Requests by Planner Code" },
+    { "po.dspPurchaseRequestsByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPurchaseReqsByPlannerCode()), requestMenu, _privileges->check("ViewPurchaseRequests"), new QPixmap(":/images/dspPurchaseReqByPlannerCode.png"), toolBar, true , tr("Purchase Requests by Planner Code") },
     { "po.dspPurchaseRequestsByItem", tr("by &Item..."), SLOT(sDspPurchaseReqsByItem()), requestMenu, _privileges->check("ViewPurchaseRequests"), NULL, NULL, true , NULL },
 
     //  Purchase | Purchase Order
     { "menu", tr("&Purchase Order"), (char*)ordersMenu, mainMenu, true, NULL, NULL, true , NULL },
     { "po.newPurchaseOrder", tr("&New..."), SLOT(sNewPurchaseOrder()), ordersMenu, _privileges->check("MaintainPurchaseOrders"), NULL, NULL, true , NULL },
-    { "po.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sPurchaseOrderEditList()), ordersMenu, (_privileges->check("MaintainPurchaseOrders")) || (_privileges->check("ViewPurchaseOrders")), new QPixmap(":/images/listUnpostedPo.png"), toolBar, true , "List Unposted Purchase Orders" },
+    { "po.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sPurchaseOrderEditList()), ordersMenu, (_privileges->check("MaintainPurchaseOrders")) || (_privileges->check("ViewPurchaseOrders")), new QPixmap(":/images/listUnpostedPo.png"), toolBar, true , tr("List Unposted Purchase Orders") },
     { "separator", NULL, NULL, ordersMenu, true, NULL, NULL, true , NULL },
     { "po.postPurchaseOrder", tr("&Post..."), SLOT(sPostPurchaseOrder()), ordersMenu, _privileges->check("PostPurchaseOrders"), NULL, NULL, true , NULL },
     { "po.postPurchaseOrdersByAgent", tr("Post by A&gent..."), SLOT(sPostPurchaseOrdersByAgent()), ordersMenu, _privileges->check("PostPurchaseOrders"), NULL, NULL, true , NULL },

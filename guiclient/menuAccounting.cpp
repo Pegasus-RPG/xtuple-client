@@ -232,7 +232,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "menu", tr("&Voucher"), (char*)apVoucherMenu, apMenu, true, NULL, NULL, true, NULL },
     { "ar.enterNewVoucher", tr("&New..."), SLOT(sEnterVoucher()), apVoucherMenu, _privileges->check("MaintainVouchers"), NULL, NULL, true , NULL },
     { "ar.enterNewMiscVoucher", tr("New &Miscellaneous..."), SLOT(sEnterMiscVoucher()), apVoucherMenu, _privileges->check("MaintainVouchers"), NULL, NULL, true , NULL },
-    { "ar.listUnpostedVouchers", tr("&List Unposted..."), SLOT(sUnpostedVouchers()), apVoucherMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), new QPixmap(":/images/listUnpostedVouchers.png"), toolBar, true , "List Unposted Vouchers" },
+    { "ar.listUnpostedVouchers", tr("&List Unposted..."), SLOT(sUnpostedVouchers()), apVoucherMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), new QPixmap(":/images/listUnpostedVouchers.png"), toolBar, true , tr("List Unposted Vouchers") },
     { "separator", NULL, NULL, apVoucherMenu, true, NULL, NULL, true, NULL },
     { "ar.postVouchers", tr("&Post..."), SLOT(sPostVouchers()), apVoucherMenu, _privileges->check("PostVouchers"), NULL, NULL, true , NULL },
 
@@ -245,7 +245,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
 
     // Accounting | Accaunts Payable |  Payments
     { "menu", tr("&Payments"), (char*)apPaymentsMenu, apMenu, true, NULL, NULL, true, NULL },
-    { "ap.selectPayments", tr("&Select..."), SLOT(sSelectPayments()), apPaymentsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , "Select Payments" },
+    { "ap.selectPayments", tr("&Select..."), SLOT(sSelectPayments()), apPaymentsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , tr("Select Payments") },
     { "ap.listSelectPayments", tr("&List Selected..."), SLOT(sSelectedPayments()), apPaymentsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apPaymentsMenu, true, NULL, NULL, true, NULL },
     { "ap.prepareCheckRun", tr("&Prepare Check Run..."), SLOT(sPrepareCheckRun()), apPaymentsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , NULL },
@@ -258,7 +258,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.postChecks", tr("P&ost Checks..."), SLOT(sPostChecks()), apPaymentsMenu, _privileges->check("PostPayments"), NULL, NULL, true , NULL },
                        
     { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
-    { "ap.workbench", tr("&Workbench..."), SLOT(sApWorkBench()), apMenu, _privileges->check("MaintainPayments") || _privileges->check("MaintainAPMemos"), new QPixmap(":/images/viewCheckRun.png"), toolBar, true, "Payables Workbench" },
+    { "ap.workbench", tr("&Workbench..."), SLOT(sApWorkBench()), apMenu, _privileges->check("MaintainPayments") || _privileges->check("MaintainAPMemos"), new QPixmap(":/images/viewCheckRun.png"), toolBar, true, tr("Payables Workbench") },
     { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
     
     // Accounting | Accaunts Payable | Forms
@@ -274,7 +274,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.voucheringEditList", tr("Vouchering &Edit List..."), SLOT(sVoucheringEditList()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspOpenAPItemsByVendor", tr("Open &Items by Vendor..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, _privileges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
-    { "ap.dspAPAging", tr("&Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, _privileges->check("ViewAPOpenItems"), new QPixmap(":/images/apAging.png"), toolBar, true , "Payables Aging" },
+    { "ap.dspAPAging", tr("&Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, _privileges->check("ViewAPOpenItems"), new QPixmap(":/images/apAging.png"), toolBar, true , tr("Payables Aging") },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspCheckRegister", tr("&Check Register..."), SLOT(sDspCheckRegister()), apReportsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "ap.dspVoucherRegister", tr("&Voucher Register..."), SLOT(sDspVoucherRegister()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
@@ -295,7 +295,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accounts Receivable | Invoices
     { "menu", tr("&Invoice"), (char*)arInvoicesMenu,	arMenu, true,	 NULL, NULL, true, NULL },
     { "ar.createInvoice", tr("&New..."), SLOT(sCreateInvoice()), arInvoicesMenu, _privileges->check("MaintainMiscInvoices"), NULL, NULL, true , NULL },
-    { "ar.listUnpostedInvoices", tr("&List Unposted..."), SLOT(sUnpostedInvoices()), arInvoicesMenu, _privileges->check("SelectBilling"), new QPixmap(":/images/unpostedInvoices.png"), toolBar, true , "List Unposted Invoices" },
+    { "ar.listUnpostedInvoices", tr("&List Unposted..."), SLOT(sUnpostedInvoices()), arInvoicesMenu, _privileges->check("SelectBilling"), new QPixmap(":/images/unpostedInvoices.png"), toolBar, true , tr("List Unposted Invoices") },
     { "separator", NULL, NULL, arInvoicesMenu, true, NULL, NULL, true, NULL },
     { "ar.postInvoices", tr("&Post..."), SLOT(sPostInvoices()), arInvoicesMenu, _privileges->check("PostMiscInvoices"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, arInvoicesMenu, true, NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL },
@@ -311,11 +311,11 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accounts Receivable | Cash Receipts
     { "menu", tr("C&ash Receipt"), (char*)arCashReceiptsMenu,	arMenu, true,	 NULL, NULL, true, NULL },
     { "ar.enterCashReceipt", tr("&New..."), SLOT(sEnterCashReceipt()), arCashReceiptsMenu, _privileges->check("MaintainCashReceipts"), NULL, NULL, true , NULL },
-    { "ar.cashReceiptEditList", tr("&Edit List..."), SLOT(sCashReceiptEditList()), arCashReceiptsMenu, (_privileges->check("MaintainCashReceipts") || _privileges->check("ViewCashReceipt")), new QPixmap(":/images/editCashReceipts.png"), toolBar, true , "Cash Receipt Edit List" },
+    { "ar.cashReceiptEditList", tr("&Edit List..."), SLOT(sCashReceiptEditList()), arCashReceiptsMenu, (_privileges->check("MaintainCashReceipts") || _privileges->check("ViewCashReceipt")), new QPixmap(":/images/editCashReceipts.png"), toolBar, true , tr("Cash Receipt Edit List") },
     { "ar.postCashReceipts", tr("&Post..."), SLOT(sPostCashReceipts()), arCashReceiptsMenu, _privileges->check("PostCashReceipts"), NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, arMenu, true, NULL, NULL, true, NULL },
-    { "ar.arWorkBench", tr("&Workbench..."), SLOT(sArWorkBench()), arMenu, _privileges->check("ViewAROpenItems") , new QPixmap(":/images/arWorkbench.png"), toolBar, true , "Receivables Workbench" },
+    { "ar.arWorkBench", tr("&Workbench..."), SLOT(sArWorkBench()), arMenu, _privileges->check("ViewAROpenItems") , new QPixmap(":/images/arWorkbench.png"), toolBar, true , tr("Receivables Workbench") },
 
     { "separator", NULL, NULL, arMenu, true, NULL, NULL, true, NULL },
     // Accounting | Accounts Receivable | Forms
@@ -332,7 +332,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL },
     { "ar.dspOpenItems", tr("&Open Items..."), SLOT(sDspAROpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "ar.dspOpenItemsByCustomer", tr("Open Items by &Customer..."), SLOT(sDspAROpenItemsByCustomer()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
-    { "ar.dspARAging", tr("A&ging..."), SLOT(sDspTimePhasedOpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), new QPixmap(":/images/arAging.png"), toolBar, true , "Receivables Aging" },
+    { "ar.dspARAging", tr("A&ging..."), SLOT(sDspTimePhasedOpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), new QPixmap(":/images/arAging.png"), toolBar, true , tr("Receivables Aging") },
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL }, 
     { "ar.dspInvoiceRegister", tr("In&voice Register..."), SLOT(sDspInvoiceRegister()), arReportsMenu, _privileges->check("ViewInvoiceRegister"), NULL, NULL, true , NULL },
     { "ar.dspCashReceipts", tr("Cash &Receipts..."), SLOT(sDspCashReceipts()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
@@ -355,7 +355,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.simpleEntry",	    tr("S&imple..."),	SLOT(sSimpleEntry()),		glEnterTransactionMenu,	_privileges->check("PostJournalEntries"),NULL, NULL, true, NULL },
     { "gl.seriesEntry",     tr("&Series..."),	SLOT(sSeriesEntry()),		glEnterTransactionMenu,	_privileges->check("PostJournalEntries"),NULL, NULL, true, NULL },
     { "separator",	    NULL,				NULL,			        glEnterTransactionMenu,   true,					NULL, NULL, true, NULL },
-    { "gl.unpostedEntries", tr("&List Unposted..."), SLOT(sUnpostedEntries()),	glEnterTransactionMenu,	_privileges->check("PostJournalEntries"), new QPixmap(":/images/journalEntries.png"), toolBar,  true, "List Unposted Journal Entries" },
+    { "gl.unpostedEntries", tr("&List Unposted..."), SLOT(sUnpostedEntries()),	glEnterTransactionMenu,	_privileges->check("PostJournalEntries"), new QPixmap(":/images/journalEntries.png"), toolBar,  true, tr("List Unposted Journal Entries") },
 
     // Accounting | G/L | Standard Journals
     { "menu",			     tr("&Standard Journals"),		   (char*)glStandardJournalsMenu,	     glMenu,		   true,					      NULL, NULL, true, NULL },
@@ -367,7 +367,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.postStandardJournalGroup", tr("Post G&roup..."), SLOT(sPostStandardJournalGroup()),glStandardJournalsMenu, _privileges->check("PostStandardJournalGroups"),    NULL, NULL, true, NULL },
 
     { "menu",			tr("&Bank Reconciliation"), 	(char*)bankrecMenu,		mainMenu,    true,						NULL, NULL, true, NULL },
-    { "gl.reconcileBankaccnt",	tr("&Reconcile..."),SLOT(sReconcileBankaccount()),	bankrecMenu, _privileges->check("MaintainBankRec"), new QPixmap(":/images/bankReconciliation.png"), toolBar,  true, "Reconcile Bank Account" },
+    { "gl.reconcileBankaccnt",	tr("&Reconcile..."),SLOT(sReconcileBankaccount()),	bankrecMenu, _privileges->check("MaintainBankRec"), new QPixmap(":/images/bankReconciliation.png"), toolBar,  true, tr("Reconcile Bank Account") },
     { "separator",		NULL,				NULL,				bankrecMenu, true,						NULL, NULL, true, NULL },
     { "gl.enterAdjustment",	tr("&New Adjustment..."),	SLOT(sEnterAdjustment()),	bankrecMenu, _privileges->check("MaintainBankAdjustments"),	NULL, NULL, true, NULL },
     { "gl.adjustmentEditList",	tr("Adjustment Edit &List..."),	SLOT(sAdjustmentEditList()),	bankrecMenu, (_privileges->check("MaintainBankAdjustments") || _privileges->check("ViewBankAdjustments")),NULL, NULL, true, NULL },

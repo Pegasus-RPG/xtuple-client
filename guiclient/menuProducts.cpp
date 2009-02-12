@@ -180,7 +180,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Items
   { "menu",	tr("&Item"), (char*)itemsMenu,	mainMenu, true, NULL, NULL, true , NULL },
   { "pd.enterNewItem", tr("&New..."), SLOT(sNewItem()), itemsMenu, _privileges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
-  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), new QPixmap(":/images/items.png"), toolBar, true , "List Items" },
+  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), new QPixmap(":/images/items.png"), toolBar, true , tr("List Items") },
   { "pd.searchForItems", tr("&Search..."),SLOT(sSearchForItems()), itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")), NULL, NULL, true , NULL },
   { "pd.copyItem", tr("&Copy..."), SLOT(sCopyItem()), itemsMenu, _privileges->check("MaintainItemMasters") , NULL, NULL, true, NULL },
   { "separator", NULL, NULL, itemsMenu,	true, NULL, NULL, true , NULL },
@@ -192,7 +192,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Bill of Materials
   { "menu",	tr("Bill Of Ma&terials"), (char*)bomMenu,	mainMenu, true, NULL, NULL, true , NULL },
   { "pd.enterNewBOM", tr("&New..."), SLOT(sNewBOM()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
-  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, _privileges->check("MaintainBOMs") || _privileges->check("ViewBOMs"), new QPixmap(":/images/boms.png"), toolBar, true , "List Bill of Materials" },
+  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, _privileges->check("MaintainBOMs") || _privileges->check("ViewBOMs"), new QPixmap(":/images/boms.png"), toolBar, true , tr("List Bill of Materials") },
   { "pd.copyBOM", tr("&Copy..."), SLOT(sCopyBOM()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, bomMenu,	true, NULL, NULL, true , NULL },
   { "pd.massReplaceComponentItem", tr("Mass &Replace..."), SLOT(sMassReplaceComponent()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
@@ -201,7 +201,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Bill of Operations...
   { "menu",	tr("Bill Of &Operations"), (char*)booMenu,	mainMenu, true, NULL, NULL,  _metrics->boolean("Routings") , NULL },
   { "pd.enterNewBOO", tr("&New..."), SLOT(sNewBOO()), booMenu, (_privileges->check("MaintainBOOs") && _metrics->boolean("Routings")), NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, _privileges->check("MaintainBOOs") || _privileges->check("ViewBOOs"), new QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , "List Bill of Operations" },
+  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, _privileges->check("MaintainBOOs") || _privileges->check("ViewBOOs"), new QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , tr("List Bill of Operations") },
   { "pd.copyBOO", tr("&Copy..."), SLOT(sCopyBOO()), booMenu, _privileges->check("MaintainBOOs"), NULL, NULL, _metrics->boolean("Routings") , NULL },
 
   // Product | Breeder Bill of Materials

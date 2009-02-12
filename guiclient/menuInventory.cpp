@@ -379,7 +379,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     
     //  Inventory| Reports | Inventory Availability
     { "menu",				tr("Inventory &Availability"),			  (char*)reportsInvAvailMenu,			reportsMenu,	 _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true , NULL },
-    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"), new QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , "Inventory Availability by Planner Code" },
+    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"), new QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , tr("Inventory Availability by Planner Code") },
     { "im.dspInventoryAvailabilityByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryAvailabilityByClassCode()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
     { "im.dspInventoryAvailabilityBySourceVendor",	tr("by &Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
     { "im.dspInventoryAvailabilityByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
@@ -426,9 +426,9 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Item Site
     { "menu",				tr("&Item Site"),             		(char*)itemSitesMenu,	mainMenu,	true,	NULL, NULL, true	, NULL },
     { "im.newItemSite",			tr("&New..."),		SLOT(sNewItemSite()),	itemSitesMenu,	_privileges->check("MaintainItemSites"), NULL, NULL, true , NULL },
-    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	(_privileges->check("MaintainItemSites") || _privileges->check("ViewItemSites")), new QPixmap(":/images/itemSites.png"), toolBar, true , "List Item Sites" },							  
+    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	(_privileges->check("MaintainItemSites") || _privileges->check("ViewItemSites")), new QPixmap(":/images/itemSites.png"), toolBar, true , tr("List Item Sites") },							  
     { "separator", NULL, NULL, itemSitesMenu,	true, NULL, NULL, true , NULL },
-    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, _privileges->check("ViewItemAvailabilityWorkbench"), new QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , "Item Availability Workbench"},
+    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, _privileges->check("ViewItemAvailabilityWorkbench"), new QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , tr("Item Availability Workbench") },
     
     //  Inventory | Lot/Serial Control
     { "menu",				tr("&Lot/Serial Control"),	(char*)lotSerialControlMenu,	mainMenu, true,	NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
