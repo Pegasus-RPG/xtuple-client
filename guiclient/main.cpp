@@ -407,7 +407,6 @@ int main(int argc, char *argv[])
   QString keyname;
   QString keytogether;
   
-  keytogether = app.applicationDirPath() + "/OpenMFG.key";
 #ifdef Q_WS_WIN
   keypath = _metrics->value("CCWinEncKey");
 #elif defined Q_WS_MACX
@@ -424,7 +423,13 @@ int main(int argc, char *argv[])
 
   keyname = _metrics->value("CCEncKeyName");
   if (keyname.isEmpty())
-    keyname = "OpenMFG.key";
+  {
+    keyname = "xTuple.key";
+    keytogether = keypath + keyname;
+    QFile kn(keytogether);
+    if(!kn.exists())
+      keyname = "OpenMFG.key";
+  }
   
   keytogether = keypath + keyname;
   
