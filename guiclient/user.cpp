@@ -199,7 +199,7 @@ bool user::save()
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
-    passwd = passwd + "OpenMFG" + _username->text();
+    passwd = passwd + "xTuple" + _username->text();
     passwd = QMd5(passwd);
   }
 

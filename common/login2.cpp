@@ -204,7 +204,7 @@ void login2::sLogin()
   {
     if(_enhancedAuth)
     {
-      QString passwd = QMd5(QString(_cPassword + "OpenMFG" + _cUsername));
+      QString passwd = QMd5(QString(_cPassword + "xTuple" + _cUsername));
       db.setPassword(passwd);
     }
     else
@@ -224,6 +224,17 @@ void login2::sLogin()
   
   //  Try to connect to the Database
   bool result = db.open();
+  if(!result && _enhancedAuth)
+  {
+    QString altpasswd = QMd5(QString(_cPassword + "OpenMFG" + _cUsername));
+    db.setPassword(altpasswd);
+    result = db.open();
+    if(result)
+    {
+      altpasswd = QMd5(QString(_cPassword + "xTuple" + _cUsername));
+      XSqlQuery chgpass(QString("ALTER USER %1 WITH PASSWORD '%2'").arg(_cUsername).arg(altpasswd));
+    }
+  }
 
   if (!result)
   {
