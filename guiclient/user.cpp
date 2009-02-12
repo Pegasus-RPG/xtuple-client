@@ -226,7 +226,7 @@ bool user::save()
       }
     }
     else
-      q.exec( QString("ALTER GROUP openmfg ADD USER %1;")
+      q.exec( QString("ALTER GROUP xtrole ADD USER %1;")
               .arg(_username->text()) );
 
     q.prepare( "INSERT INTO usr "
