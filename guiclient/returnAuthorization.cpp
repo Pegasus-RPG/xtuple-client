@@ -34,7 +34,7 @@
 #include "dspShipmentsBySalesOrder.h"
 #include "dspSalesOrderStatus.h"
 
-#define TO_RECEIVE_COL 11
+#define TO_RECEIVE_COL 12
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -101,7 +101,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   _currency->setLabel(_currencyLit);
 
-  _raitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true, "raitem_linenumber" );
+  _raitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter,true,  "f_linenumber");
+  _raitem->addColumn(tr("Kit Seq. #"),  _seqColumn,   Qt::AlignRight, false, "raitem_subnumber");
   _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft,   true, "item_number"   );
   _raitem->addColumn(tr("UOM"),         _statusColumn,Qt::AlignLeft,   true, "uom_name"   );
   _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true, "item_descrip"   );
@@ -120,6 +121,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft,   true, "oldcohead_number"   );
   _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft,   true, "newcohead_number"   );
   _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft,   true, "raitem_scheddate"   );
+  _raitem->addColumn(tr("Item Type"),   _statusColumn,Qt::AlignLeft,  false, "item_type"   );
 
   _authorizeLine->hide();
   _clearAuthorization->hide();
@@ -511,15 +513,19 @@ bool returnAuthorization::sSave(bool partial)
 
 void returnAuthorization::sPostReceipts()
 {
+// TODO Recursive loop thru child items
   for (int i = 0; i < _raitem->topLevelItemCount(); i++)
   {
-    if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
+    for (int j = 0; j < _raitem->topLevelItem(i)->childCount(); j++)
     {
-      enterPoReceipt::post("RA", _raheadid);
-      sFillList();
-      _mode = cEdit;
-      _cancel->setText("&Close");
-      break;
+      if (_raitem->topLevelItem(i)->child(j)->text(TO_RECEIVE_COL).toFloat() > 0)
+      {
+        enterPoReceipt::post("RA", _raheadid);
+        sFillList();
+        _mode = cEdit;
+        _cancel->setText("&Close");
+        break;
+      }
     }
   }
 }
@@ -927,6 +933,8 @@ void returnAuthorization::sEdit()
 
       if (_mode==cView || ((XTreeWidgetItem*)(selected[i]))->altId() == -1)
         params.append("mode", "view");
+      else if (((XTreeWidgetItem*)(selected[i]))->rawValue("item_type") == "K")
+        params.append("mode", "view");
       else
         params.append("mode", "edit");
 
@@ -993,7 +1001,8 @@ void returnAuthorization::sFillList()
              "            WHEN (raitem_disposition='V') THEN 3"
              "            WHEN (raitem_disposition='S') THEN 4"
              "            ELSE -1 END AS disposition_code,"
-             "       raitem_linenumber, item_number,uom_name,"
+             "       formatRaLineNumber(raitem_id) AS f_linenumber, raitem_subnumber,"
+             "       item_number, uom_name, item_type,"
              "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip, warehous_code,"
              "       raitem_status, "
              "       CASE WHEN (raitem_disposition='C') THEN :credit "
@@ -1022,7 +1031,9 @@ void returnAuthorization::sFillList()
              "       'salesprice' AS raitem_unitprice_xtnumericrole, "
              "       'extprice' AS raitem_extprice_xtnumericrole, "
              "       'curr' AS raitem_amtcredited_xtnumericrole, "
-             "        :na AS raitem_scheddate_xtnullrole "
+             "        :na AS raitem_scheddate_xtnullrole,"
+             "       CASE WHEN raitem_subnumber = 0 THEN 0"
+             "            ELSE 1 END AS xtindentrole "
              "FROM raitem "
              " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
              " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "
@@ -1034,7 +1045,7 @@ void returnAuthorization::sFillList()
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (raitem_rahead_id=:rahead_id) "
              " AND (raitem_qty_uom_id=uom_id) ) "
-             "ORDER BY raitem_linenumber;" );
+             "ORDER BY raitem_linenumber, raitem_subnumber;" );
   q.bindValue(":rahead_id", _raheadid);
   q.bindValue(":credit", tr("Credit"));
   q.bindValue(":return", tr("Return"));
@@ -1673,7 +1684,7 @@ void returnAuthorization::sReceiveAll()
   params.append("EnableReturnAuth", TRUE);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
+  MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
   q = recvm.toQuery(params);
 
   while (q.next())
@@ -1837,14 +1848,14 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
 {
   int menuItem;
   menuItem = pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
-  if (selected->text(5) == "O")
+  if (selected->text(6) == "O")
     menuItem = pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
-  if (selected->text(5) == "C")
+  if (selected->text(6) == "C")
     menuItem = pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
   menuItem = pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
   pMenu->insertSeparator();
 
-  if (selected->text(16).length() != 0)
+  if (selected->text(17).length() != 0)
   {
     pMenu->insertItem(tr("View Original Order..."), this, SLOT(sViewOrigOrder()), 0);
     if(!_privileges->check("ViewSalesOrders"))
@@ -1853,7 +1864,7 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
   
     pMenu->insertSeparator();
 
-  if (selected->text(17).length() != 0)
+  if (selected->text(18).length() != 0)
   {
     menuItem = pMenu->insertItem(tr("Edit New Order..."), this, SLOT(sEditNewOrder()), 0);
     if(!_privileges->check("MaintainSalesOrders"))

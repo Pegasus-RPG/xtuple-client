@@ -1843,7 +1843,7 @@ void salesOrder::sHandleButtons()
           _edit->setText(tr("View"));
           _delete->setEnabled(FALSE);
         }
-        else if(cEdit == _mode || cEditQuote == _mode)
+        else if(cNew == _mode || cEdit == _mode || cNewQuote == _mode || cEditQuote == _mode)
         {
           _edit->setText(tr("&Edit"));
         }

@@ -188,13 +188,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     _shipWhs->setId(_preferredShipWarehousid);
   }
 
-  param = pParams.value("raitem_id", &valid);
-  if (valid)
-  {
-    _raitemid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -300,6 +293,13 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _close->setFocus();
     }
+  }
+
+  param = pParams.value("raitem_id", &valid);
+  if (valid)
+  {
+    _raitemid = param.toInt();
+    populate();
   }
 
   return NoError; 
@@ -678,6 +678,12 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           _createOrder->setEnabled(FALSE);
         }
 
+        else if (_item->itemType() == "K")
+        {
+          _qtyAuth->setDouble(0);
+          _qtyAuth->setEnabled(FALSE);
+        }
+
         else
         {
           _createOrder->setChecked(FALSE);
@@ -701,8 +707,9 @@ void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
   raitem.prepare("SELECT rahead_number, rahead_curr_id, rahead_authdate, rahead_taxauth_id, raitem.*, "
-                 "       och.cohead_number AS orig_number, oc.coitem_linenumber AS orig_linenumber, "
-                 "       nch.cohead_number AS new_number, nc.coitem_linenumber AS new_linenumber, "
+                 "       formatRaLineNumber(raitem_id) AS linenumber,"
+                 "       och.cohead_number AS orig_number, formatSoLineNumber(oc.coitem_id) AS orig_linenumber, "
+                 "       nch.cohead_number AS new_number, formatSoLineNumber(nc.coitem_id) AS new_linenumber, "
                  "       COALESCE(raitem_orig_coitem_id,-1) AS ra_coitem_id, oc.coitem_price, "
                  "       oc.coitem_qtyshipped AS qtysold,"   
                  "       raitem_qtyauthorized AS qtyauth,"
@@ -773,7 +780,7 @@ void returnAuthorizationItem::populate()
     _pricingUOM->setId(raitem.value("raitem_price_uom_id").toInt());
     _qtyinvuomratio = raitem.value("raitem_qty_invuomratio").toDouble();
     _priceinvuomratio = raitem.value("raitem_price_invuomratio").toDouble();
-    _lineNumber->setText(raitem.value("raitem_linenumber").toString());
+    _lineNumber->setText(raitem.value("linenumber").toString());
     _qtyAuth->setDouble(raitem.value("qtyauth").toDouble());
     _qtyReceived->setDouble(raitem.value("qtyrcvd").toDouble());
     _qtyShipped->setDouble(raitem.value("qtyshipd").toDouble());
@@ -1180,29 +1187,12 @@ void returnAuthorizationItem::sDispositionChanged()
 	return;
   }
 
-  if (_disposition->currentIndex() == 3)
-  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip "
-                              "FROM item, itemsite, uom "
-                              "WHERE ( (itemsite_item_id=item_id)"
-                              " AND (item_inv_uom_id=uom_id)"
-                              " AND (itemsite_active)"
-                              " AND (item_active)"
-							  " AND (item_type = 'J')"
-                              " AND (customerCanPurchase(item_id, %1, %2)) ) "
-                              "ORDER BY item_number;" )
-                     .arg(_custid).arg(_shiptoid) );
-  else
-  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip "
-                              "FROM item, itemsite, uom "
-                              "WHERE ( (itemsite_item_id=item_id)"
-                              " AND (item_inv_uom_id=uom_id)"
-                              " AND (itemsite_active)"
-                              " AND (item_active)"
-                              " AND (customerCanPurchase(item_id, %1, %2)) ) "
-                              "ORDER BY item_number;" )
-                     .arg(_custid).arg(_shiptoid) );
+  if ( (_mode == cNew) && (_disposition->currentIndex() == 3) )                     
+      _item->addExtraClause( QString("(item_type = 'J') AND (NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
+  else if (_mode == cNew)                     
+      _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
+  else if (_disposition->currentIndex() == 3)                     
+      _item->addExtraClause( QString("(item_type = 'J')") );
 
   if (_disposition->currentIndex() > 2)
   {
@@ -1233,7 +1223,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _tab->setTabEnabled(_tab->indexOf(_supply),FALSE);
     _scheduledDate->clear();
     _scheduledDate->setEnabled(FALSE);
-    _altcosAccntid->setEnabled(FALSE);
+    _altcosAccntid->setEnabled(TRUE);
     _shipWhsLit->setVisible(FALSE);
     _shipWhs->setVisible(FALSE);
   } 
