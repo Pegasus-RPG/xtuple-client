@@ -29,6 +29,7 @@ public:
 
 public slots:
     virtual void sPrint();
+    virtual void sNew();
     virtual void sEdit();
     virtual void sView();
     virtual void sPrintDue();

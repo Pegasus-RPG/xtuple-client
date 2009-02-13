@@ -41,6 +41,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
   connect(_queryReview, SIGNAL(clicked()), this, SLOT(sFillListReview()));
   connect(_queryDue, SIGNAL(clicked()), this, SLOT(sFillListDue()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -137,6 +138,16 @@ void returnAuthorizationWorkbench::sPrint()
   else
     report.reportError(this);
 
+}
+
+void returnAuthorizationWorkbench::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void returnAuthorizationWorkbench::sEdit()
