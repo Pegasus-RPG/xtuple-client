@@ -190,7 +190,8 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
       return UndefinedError;
     }
 
-    _status->setText("O");
+    // TO-DO: Changed to handle combo box
+    //_status->setText("O");
 
     if ( (_metrics->value("TONumberGeneration") == "A") ||
          (_metrics->value("TONumberGeneration") == "O")   )
@@ -295,7 +296,8 @@ bool transferOrder::insertPlaceholder()
   q.bindValue(":tohead_src_warehous_id",  _srcWhs->id());
   q.bindValue(":tohead_trns_warehous_id", _trnsWhs->id());
   q.bindValue(":tohead_dest_warehous_id", _dstWhs->id());
-  q.bindValue(":tohead_status",		  _status->text());
+  // TO-DO: Changed to handle combo box
+  // q.bindValue(":tohead_status",		  _status->text());
   if (_shippingForm->isValid())
     q.bindValue(":tohead_shipform_id",	  _shippingForm->id());
 
@@ -470,7 +472,8 @@ bool transferOrder::save(bool partial)
   q.bindValue(":id", _toheadid );
 
   q.bindValue(":number",		_orderNumber->text().toInt());
-  q.bindValue(":status",		_status->text());
+  // TO-DO: Changed to handle combo box
+  //q.bindValue(":status",		_status->text());
   q.bindValue(":orderdate",		_orderDate->date());
 
   q.bindValue(":src_warehous_id",	_srcWhs->id());
@@ -877,6 +880,7 @@ void transferOrder::sAction()
     }
     sFillItemList();
 
+    /* TO-DO: Changed to handle combo box
     q.prepare("SELECT tohead_status FROM tohead WHERE (tohead_id=:tohead_id);");
     q.bindValue(":tohead_id", _toheadid);
     q.exec();
@@ -887,6 +891,7 @@ void transferOrder::sAction()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    */
   }
 }
 
@@ -974,7 +979,8 @@ void transferOrder::populate()
       _orderNumber->setText(to.value("tohead_number"));
       _orderNumber->setEnabled(FALSE);
       _orderDate->setDate(to.value("tohead_orderdate").toDate(), true);
-      _status->setText(to.value("tohead_status").toString());
+      // TO-DO: Changed to handle combo box
+      // _status->setText(to.value("tohead_status").toString());
 
       _srcWhs->setId(to.value("tohead_src_warehous_id").toInt());
       if (! _srcWhs->isValid())
@@ -1302,7 +1308,8 @@ void transferOrder::clear()
   _srcWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   _trnsWhs->setId(_metrics->value("DefaultTransitWarehouse").toInt());
   _dstWhs->setId(_preferences->value("PreferredWarehouse").toInt());
-  _status->setText("O");
+  // TO-DO: Changed to handle combo box
+  // _status->setText("O");
   _agent->setCurrentIndex(-1);
   _srcAddr->setId(-1);
   _dstAddr->setId(-1);
