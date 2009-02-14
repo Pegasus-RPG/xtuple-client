@@ -156,12 +156,13 @@ void cashReceiptItem::populate()
   {
     query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype,"
                    "       aropen_docdate, aropen_duedate,"
-                   "       currToCurr(aropen_curr_id, :curr_id, "
-		   "		      aropen_amount - aropen_paid, aropen_docdate) AS f_amount "
-                   "FROM aropen "
-                   "WHERE (aropen_id=:aropen_id);" );
+                   "       currToCurr(aropen_curr_id,cashrcpt_curr_id,(aropen_amount - aropen_paid), "
+                   "       cashrcpt_distdate) AS f_amount "
+                   "FROM cashrcpt, aropen "
+                   "WHERE ( (aropen_id=:aropen_id)"
+                   " AND (cashrcpt_id=:cashrcpt_id) );" );
     query.bindValue(":aropen_id", _aropenid);
-    query.bindValue(":curr_id", _openAmount->id());
+    query.bindValue(":cashrcpt_id", _cashrcptid);
     query.exec();
     if (query.first())
     {
@@ -180,8 +181,8 @@ void cashReceiptItem::populate()
   {
     query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype,"
                    "       aropen_docdate, aropen_duedate,"
-                   "       currToCurr(aropen_curr_id, cashrcpt_curr_id, "
-		   "		      aropen_amount - aropen_paid, aropen_docdate) AS balance,"
+                   "       currToCurr(aropen_curr_id,cashrcpt_curr_id,(aropen_amount - aropen_paid), "
+                   "       cashrcpt_distdate) AS balance,"
                    "       cashrcptitem_amount, cashrcpt_curr_id "
                    "FROM cashrcptitem, cashrcpt, aropen "
                    "WHERE ( (cashrcptitem_cashrcpt_id=cashrcpt_id)"

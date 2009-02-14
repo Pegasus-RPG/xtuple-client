@@ -350,7 +350,7 @@ void miscCheck::sCreditMemoSelected()
 	if(!_date->isValid())
 	  _date->setDate(QDate::currentDate());
 	q.prepare("SELECT aropen_curr_id, "
-			  "       currtocurr(aropen_curr_id,:curr_id,aropen_amount-aropen_paid- "
+			  "       round((aropen_amount-aropen_paid- "
 			  //Subtract amount for existing checks
 			  "(SELECT COALESCE(SUM(checkhead_amount),0) "
 			  " FROM checkhead,checkitem "
@@ -359,7 +359,7 @@ void miscCheck::sCreditMemoSelected()
 			  " AND (NOT checkhead_void) "
 			  " AND (checkitem_aropen_id=aropen_id))) "
 
-			  ",:date) AS amount "
+			  ") * aropen_curr_rate / round(currRate(:curr_id,aropen_docdate),5),2) AS amount "
               "  FROM aropen "
               " WHERE (aropen_id=:aropen_id); ");
     q.bindValue(":aropen_id", _cmCluster->id());

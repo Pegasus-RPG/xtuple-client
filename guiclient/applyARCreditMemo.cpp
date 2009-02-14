@@ -197,7 +197,7 @@ void applyARCreditMemo::populate()
 	         "	     aropen_curr_id "
              "FROM aropen LEFT OUTER JOIN arcreditapply ON (arcreditapply_source_aropen_id=aropen_id) "
  	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
-             "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
+             "                               COALESCE(SUM(checkitem_amount + checkitem_discount),0) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
              "                         WHERE ((NOT checkhead_posted)"
@@ -226,7 +226,7 @@ void applyARCreditMemo::populate()
   MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
   ParameterList params;
   params.append("cust_id",          _cust->id());
-  params.append("debitMemo",        tr("D/M"));
+  params.append("debitMemo",        tr("Debit Memo"));
   params.append("invoice",          tr("Invoice"));
   params.append("source_aropen_id", _aropenid);
   q = mql.toQuery(params);

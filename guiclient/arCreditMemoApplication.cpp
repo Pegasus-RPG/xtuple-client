@@ -61,7 +61,7 @@ void arCreditMemoApplication::sSave()
   // check to make sure the amount being applied does not exceed
   // the balance due on the target item.
   q.prepare( "SELECT ROUND(currToCurr(aropen_curr_id, :curr_id,"
-	     "     aropen_amount - aropen_paid, aropen_docdate), 2) AS balance "
+	     "     aropen_amount - aropen_paid, current_date), 2) AS balance "
              "  FROM aropen "
              " WHERE (aropen_id=:aropen_id);");
   q.bindValue(":aropen_id", _targetAropenid);
@@ -93,7 +93,7 @@ void arCreditMemoApplication::sSave()
              "  ON ((arcreditapply_source_aropen_id=aropen_id) "
               " AND (arcreditapply_target_aropen_id<>:targetAropenid)) "
   	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
-             "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
+             "                               SUM(checkitem_amount + checkitem_discount) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
              "                         WHERE ((NOT checkhead_posted)"
@@ -202,10 +202,10 @@ void arCreditMemoApplication::populate()
 	         "                 COALESCE(arcreditapply_curr_id,aropen_curr_id),"
 	         "                 aropen_amount - aropen_paid, aropen_docdate) - "
 	         "		COALESCE(SUM(arcreditapply_amount), 0) - COALESCE(prepared,0.0) AS available,"
-             "       aropen_docdate "
+             "       current_date AS docdate "
              "FROM aropen LEFT OUTER JOIN arcreditapply ON (arcreditapply_source_aropen_id=aropen_id) "
     	     "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
-             "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
+             "                               SUM(checkitem_amount + checkitem_discount) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
              "                         WHERE ((NOT checkhead_posted)"
@@ -221,7 +221,7 @@ void arCreditMemoApplication::populate()
   {
     _availableToApply->set(q.value("available").toDouble(),
 		           q.value("curr_id").toInt(),
-		           q.value("aropen_docdate").toDate(), false);
+		           q.value("docdate").toDate(), false);
   }
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
