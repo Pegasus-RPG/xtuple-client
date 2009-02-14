@@ -98,10 +98,6 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
-
-  //TO DO: These things will be implemented at the site level later
-  _planningType->hide();
-  _planningTypeLit->hide();
 }
 
 itemSite::~itemSite()
