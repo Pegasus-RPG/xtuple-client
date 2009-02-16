@@ -154,7 +154,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QString altDragString() const;
     void setAltDragString(QString);
 
-    int  altId() const;
+    Q_INVOKABLE int  altId() const;
     Q_INVOKABLE int  id()    const;
     Q_INVOKABLE int  id(const QString)     const;
     Q_INVOKABLE void setId(int);
