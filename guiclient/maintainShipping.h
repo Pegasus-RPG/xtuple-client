@@ -37,6 +37,7 @@ public slots:
     virtual void sViewLine();
     virtual void sReturnAllStock();
     virtual void sFillList();
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
