@@ -101,7 +101,7 @@ void wotc::populate()
   if (_wotcid != -1)
   {
     XSqlQuery pop;
-    pop.prepare("SELECT wotc_wo_id, wotc_usr_id,"
+    pop.prepare("SELECT wotc_wo_id, wotc_username,"
 	        "       wotc_timein, wotc_timeout,"
 	        "       wotc_wooper_id "
 	        "FROM wotc "
@@ -111,7 +111,7 @@ void wotc::populate()
     if (pop.first())
     {
       _wo->setId(pop.value("wotc_wo_id").toInt());
-      _user->setId(pop.value("wotc_usr_id").toInt());
+      _user->setUsername(pop.value("wotc_username").toString());
       _dateIn->setDate(pop.value("wotc_timein").toDate());
       _dateOut->setDate(pop.value("wotc_timeout").toDate());
       _timeIn->setTime(pop.value("wotc_timein").toTime());
@@ -166,21 +166,21 @@ void wotc::sSave()
   }
   
   if (_mode == cNew)
-    q.prepare("INSERT INTO wotc (wotc_wo_id, wotc_usr_id,"
+    q.prepare("INSERT INTO wotc (wotc_wo_id, wotc_username,"
 	      "                  wotc_timein, wotc_timeout, wotc_wooper_id)"
-	      "    VALUES (:wotc_wo_id, :wotc_usr_id, "
+	      "    VALUES (:wotc_wo_id, :wotc_username, "
 	      "            :wotc_timein, :wotc_timeout, :wotc_wooper_id);");
   else if (_mode == cEdit)
   {
     q.prepare("UPDATE wotc SET"
-	      " wotc_wo_id=:wotc_wo_id, wotc_usr_id=:wotc_usr_id,"
+	      " wotc_wo_id=:wotc_wo_id, wotc_username=:wotc_username,"
 	      " wotc_timein=:wotc_timein, wotc_timeout=:wotc_timeout,"
 	      " wotc_wooper_id=:wotc_wooper_id "
 	      "WHERE (wotc_id=:wotc_id);");
     q.bindValue(":wotc_id", _wotcid);
   }
   q.bindValue(":wotc_wo_id", _wo->id());
-  q.bindValue(":wotc_usr_id", _user->id());
+  q.bindValue(":wotc_username", _user->username());
   q.bindValue(":wotc_timein", dtIn);
   q.bindValue(":wotc_timeout", (dtOut.isNull()) ? "" : dtOut.toString()); // bug 6655
 
@@ -238,10 +238,10 @@ void wotc::sPopulateWooper()
      {
        query.prepare("SELECT wotc_wooper_id "
 		     "FROM wotc "
-		     "WHERE ((wotc_usr_id=:usr_id)"
+		     "WHERE ((wotc_username=:username)"
 		     "  AND  (wotc_wo_id=:wo_id)"
 		     "  AND  (wotc_timeout IS NULL));");
-       query.bindValue(":usr_id", _user->id());
+       query.bindValue(":username", _user->username());
        query.bindValue(":wo_id", _wo->id());
        query.exec();
        if (query.first())

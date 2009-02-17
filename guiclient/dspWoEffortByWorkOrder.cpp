@@ -20,17 +20,10 @@
 #include "wotc.h"
 #include "wocluster.h"
 
-/*
- *  Constructs a dspWoEffortByWorkOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -42,7 +35,7 @@ dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name
 
   //omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wotc->addColumn(tr("User"),        _userColumn, Qt::AlignLeft, true, "usr_username");
+  _wotc->addColumn(tr("User"),        _userColumn, Qt::AlignLeft, true, "wotc_username");
   _wotc->addColumn(tr("Operation"),            -1, Qt::AlignLeft, true, "wooper");
   _wotc->addColumn(tr("Time In"), _timeDateColumn, Qt::AlignLeft, true, "wotc_timein");
   _wotc->addColumn(tr("Time Out"),_timeDateColumn, Qt::AlignLeft, true, "wotc_timeout");
@@ -53,18 +46,11 @@ dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name
   connect(omfgThis, SIGNAL(workOrdersUpdated(int,bool)),  this,SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoEffortByWorkOrder::~dspWoEffortByWorkOrder()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoEffortByWorkOrder::languageChange()
 {
   retranslateUi(this);
@@ -183,32 +169,30 @@ void dspWoEffortByWorkOrder::sFillList()
 
   if (_wo->isValid())
   {
-    q.prepare( "SELECT wotc_id, usr_username,"
+    q.prepare( "SELECT wotc_id, wotc_username,"
 	       "       wooper_seqnumber || ' - ' || wooper_descrip1 || ' - ' ||"
 	       "                                    wooper_descrip2 AS wooper, "
 	       "       wotc_timein,"
 	       "       wotc_timeout,"
 	       "       NULL AS setup_time, NULL AS run_time,"
 	       "       wotcTime(wotc_id) AS wo_effort "
-	       "FROM usr, wotc LEFT OUTER JOIN "
+	       "  FROM wotc LEFT OUTER JOIN "
 	       "     wooper ON (wotc_wooper_id=wooper_id) "
 	       "WHERE ((wotc_wo_id=:wo_id)"
-	       "  AND  (wotc_usr_id=usr_id) "
 	       "  AND  (wotc_id NOT IN (SELECT DISTINCT wooperpost_wotc_id "
 	       "                        FROM wooperpost"
 	       "                        WHERE (wooperpost_wo_id=:wo_id)"
 	       "                          AND (wooperpost_wotc_id IS NOT NULL)))) "
 	       "UNION "
-	       "SELECT wotc_id, usr_username,"
+	       "SELECT wotc_id, wotc_username,"
 	       "       CAST(wooperpost_seqnumber AS TEXT) AS wooper, "
 	       "       wotc_timein,"
 	       "       wotc_timeout,"
 	       "       wooperpost_sutime AS setup_time,"
 	       "       wooperpost_rntime AS run_time,"
 	       "       wotcTime(wotc_id) AS wo_effort "
-	       "FROM usr, wotc, wooperpost "
+	       "  FROM wotc, wooperpost "
 	       "WHERE ((wotc_wo_id=:wo_id)"
-	       "  AND  (wotc_usr_id=usr_id) "
 	       "  AND  (wooperpost_wotc_id=wotc_id)) "
 	       "ORDER BY wotc_timein, wotc_timeout;" );
     q.bindValue(":wo_id", _wo->id());

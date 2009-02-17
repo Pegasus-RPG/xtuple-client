@@ -114,10 +114,10 @@ void woTimeClock::sClockIn()
 		      .arg(_wo->woNumber())
 		      .arg(QDateTime::currentDateTime().toString());
   
-  q.prepare("SELECT woClockIn(:wotc_wo_id, :wotc_usr_id, NOW(), "
+  q.prepare("SELECT woClockIn(:wotc_wo_id, :wotc_username, NOW(), "
 	    ":wotc_wooper_id) AS result;");
   q.bindValue(":wotc_wo_id", WOID);
-  q.bindValue(":wotc_usr_id", _user->id());
+  q.bindValue(":wotc_username", _user->username());
   q.bindValue(":wotc_wooper_id", WOOPERID);
   q.exec();
   if (q.first())
@@ -147,10 +147,10 @@ void woTimeClock::sClockIn()
 void woTimeClock::sClockOut()
 {
   int wotc_id = -1;
-  q.prepare("SELECT woClockOut(:wotc_wo_id, :wotc_usr_id, NOW(),"
+  q.prepare("SELECT woClockOut(:wotc_wo_id, :wotc_username, NOW(),"
 	    "                  :wotc_wooper_id) AS result;");
   q.bindValue(":wotc_wo_id", WOID);
-  q.bindValue(":wotc_usr_id", _user->id());
+  q.bindValue(":wotc_username", _user->username());
   q.bindValue(":wotc_wooper_id", WOOPERID);
 
   q.exec();
@@ -317,13 +317,13 @@ void woTimeClock::sCheckValid()
 		  "FROM wo, wotc LEFT OUTER JOIN"
 		  "     wooper ON (wooper_id=wotc_wooper_id) "
 		  "WHERE ((wo_id=wotc_wo_id)"
-		  "  AND  (wotc_usr_id= <? value(\"usr_id\") ?> ) "
+		  "  AND  (wotc_username= <? value(\"username\") ?> ) "
 		  "  AND  (wotc_timeout IS NULL)"
 		  "  <? if exists(\"wo_id\") ?> AND (wotc_wo_id= <? value(\"wo_id\" ?> ) <? endif ?>"
 		  ");";
 
     ParameterList params;
-    params.append("usr_id", _user->id());
+    params.append("username", _user->username());
     if (_wo->isValid())
       params.append("wo_id",  _wo->id());	// not WOID
 
@@ -402,10 +402,10 @@ void woTimeClock::sPopulateWooper()
 
      query.prepare("SELECT wotc_wooper_id "
 		   "FROM wotc "
-		   "WHERE ((wotc_usr_id=:usr_id)"
+		   "WHERE ((wotc_username=:username)"
 		   "  AND  (wotc_wo_id=:wo_id)"
 		   "  AND  (wotc_timeout IS NULL));");
-     query.bindValue(":usr_id", _user->id());
+     query.bindValue(":username", _user->username());
      query.bindValue(":wo_id", _wo->id());	// not WOID
      query.exec();
      if (query.lastError().type() != QSqlError::NoError)

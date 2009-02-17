@@ -89,7 +89,7 @@ void dspWoEffortByUser::languageChange()
 void dspWoEffortByUser::sPrint()
 {
   ParameterList params;
-  params.append("usr_id", _user->id());
+  params.append("username", _user->username());
   _dates->appendValue(params);
 
   orReport report("WOEffortByUser", params);
@@ -272,7 +272,7 @@ void dspWoEffortByUser::sFillList()
                  " AND (itemsite_warehous_id=warehous_id)"
                  " AND (wotc_wooper_id=wooper_id)"
                  " AND (wotc_wo_id=wo_id)"
-                 " AND (wotc_usr_id=:usr_id)"
+                 " AND (wotc_username=:username)"
                  " AND (wo_startdate BETWEEN :startDate AND :endDate)) "
                  "UNION "
                  "SELECT wotc_id, wo_id, formatWONumber(wo_id) AS wonumber,"
@@ -287,13 +287,13 @@ void dspWoEffortByUser::sFillList()
                  " AND (itemsite_warehous_id=warehous_id)"
                  " AND (wotc_wooper_id IS NULL)"
                  " AND (wotc_wo_id=wo_id)"
-                 " AND (wotc_usr_id=:usr_id)"
+                 " AND (wotc_username=:username)"
                  " AND (wo_startdate BETWEEN :startDate AND :endDate)) "
                  "ORDER BY wonumber, wotc_timein, wotc_timeout;");
 
     q.prepare(sql);
     _dates->bindValue(q);
-    q.bindValue(":usr_id", _user->id());
+    q.bindValue(":username", _user->username());
     q.exec();
     _wotc->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
@@ -305,7 +305,7 @@ void dspWoEffortByUser::sFillList()
     // TODO: add this to the query above somehow?
     XTreeWidgetItem *last = 0;
     XSqlQuery total;
-    total.prepare("SELECT woTime(:wotc_wo_id, :wotc_usr_id) AS total;");
+    total.prepare("SELECT woTime(:wotc_wo_id, :wotc_username) AS total;");
     for (int i = 0; i < _wotc->topLevelItemCount(); i++)
     {
       last = _wotc->topLevelItem(i);
@@ -313,7 +313,7 @@ void dspWoEffortByUser::sFillList()
 	  last->altId() != ((XTreeWidgetItem*)(_wotc->topLevelItem(i + 1)))->altId())
       {
 	total.bindValue(":wotc_wo_id",  last->altId());
-	total.bindValue(":wotc_usr_id", _user->id());
+	total.bindValue(":wotc_username", _user->username());
 	total.exec();
 	if (total.first())
 	{
