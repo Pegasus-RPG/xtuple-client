@@ -29,7 +29,7 @@
             WHEN costhist_type='N' THEN 'New'
        END as f_type,
        formatDateTime(costhist_date) as f_time,
-       getUserName(costhist_user_id) as f_user,
+       costhist_username as f_user,
        formatCost(costhist_oldcost) as f_oldcost,
        formatCost(costhist_newcost) as f_newcost
   FROM costhist, costelem 

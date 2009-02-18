@@ -10,76 +10,60 @@
 
 #include <QFileDialog>
 #include <QUrl>
+#include <QVariant>
+#include <QMessageBox>
 
 #include "alarmMaint.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvariant.h>
-
 const char *_alarmQualifiers[] = { "MB", "HB", "DB", "MA", "HA", "DA" };
 
-/*
- *  Constructs a file as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+  : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_contactCluster, SIGNAL(newId(int)), this, SLOT(sContactLookup(int)));
-    connect(_usernameCluster, SIGNAL(newId(int)), this, SLOT(sUserLookup(int)));
+  // signals and slots connections
+  connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_contactCluster, SIGNAL(newId(int)), this, SLOT(sContactLookup(int)));
+  connect(_usernameCluster, SIGNAL(newId(int)), this, SLOT(sUserLookup(int)));
 
-    _mode = cNew;
-    _source = Alarms::Uninitialized;
-    _sourceid = -1;
-    _alarmid = -1;
-    XSqlQuery tickle;
-    tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
-    if (tickle.first())
+  _mode = cNew;
+  _source = Alarms::Uninitialized;
+  _sourceid = -1;
+  _alarmid = -1;
+  XSqlQuery tickle;
+  tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
+  if (tickle.first())
+  {
+    _alarmDate->setDate(tickle.value("dbdate").toDate());
+    _alarmTime->setTime(tickle.value("dbdate").toTime());
+  }
+  
+  _eventAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEventDefault"));
+  if (_x_metrics)
+  {
+    if (_x_metrics->boolean("EnableBatchManager"))
+      _emailAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEmailDefault"));
+    else
     {
-      _alarmDate->setDate(tickle.value("dbdate").toDate());
-      _alarmTime->setTime(tickle.value("dbdate").toTime());
+      _emailAlarm->hide();
+      _emailRecipient->hide();
     }
-    
-    _eventAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEventDefault"));
-    if (_x_metrics)
-    {
-      if (_x_metrics->boolean("EnableBatchManager"))
-        _emailAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEmailDefault"));
-      else
-      {
-        _emailAlarm->hide();
-        _emailRecipient->hide();
-      }
-    }
-    _sysmsgAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmSysmsgDefault"));
+  }
+  _sysmsgAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmSysmsgDefault"));
 
-    sHandleButtons();
+  sHandleButtons();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 alarmMaint::~alarmMaint()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void alarmMaint::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void alarmMaint::set( const ParameterList & pParams )

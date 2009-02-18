@@ -78,7 +78,7 @@ void dspItemCostHistory::sFillList()
                "            WHEN costhist_type='N' THEN :new"
                "       END AS type,"
                "       costhist_date,"
-               "       getUserName(costhist_user_id) AS username,"
+               "       costhist_username AS username,"
                "       costhist_oldcost,"
                "       currConcat(costhist_oldcurr_id) AS oldcurr, "
 	       "       costhist_newcost,"

@@ -96,7 +96,7 @@ void dspCountSlipsByWarehouse::sFillList()
 
   sql += " invcnt_tagnumber, warehous_code,"
          " item_number, (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-         " cntslip_entered, getUsername(cntslip_user_id) AS user,"
+         " cntslip_entered, cntslip_username AS user,"
          " cntslip_qty, 'qty' AS cntslip_qty_xtnumericrole,"
          " cntslip_posted "
          "FROM cntslip, invcnt, itemsite, item, warehous "

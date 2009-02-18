@@ -25,7 +25,7 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT getUsername(cntslip_user_id) AS f_username,
+  <sql>SELECT cntslip_username AS f_username,
        cntslip_number,
        formatBoolYN(cntslip_posted) AS f_posted,
        formatDateTime(cntslip_entered) AS f_entered,

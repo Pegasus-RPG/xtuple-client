@@ -283,14 +283,14 @@ void countSlip::sSave()
 
     q.prepare( "INSERT INTO cntslip "
                "( cntslip_id, cntslip_cnttag_id,"
-               "  cntslip_user_id, cntslip_entered, cntslip_posted,"
+               "  cntslip_username, cntslip_entered, cntslip_posted,"
                "  cntslip_number, cntslip_qty,"
                "  cntslip_location_id, cntslip_lotserial,"
                "  cntslip_lotserial_expiration,"
                "  cntslip_lotserial_warrpurc,"
                "  cntslip_comments ) "
                "SELECT :cntslip_id, :cnttag_id,"
-               "       currentUserId(), CURRENT_TIMESTAMP, FALSE,"
+               "       CURRENT_USER, CURRENT_TIMESTAMP, FALSE,"
                "       :cntslip_number, :cntslip_qty,"
                "       :cntslip_location_id, :cntslip_lotserial,"
                "       :cntslip_lotserial_expiration,"
@@ -299,7 +299,7 @@ void countSlip::sSave()
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE cntslip "
-               "SET cntslip_user_id=currentUserId(), cntslip_qty=:cntslip_qty, cntslip_comments=:cntslip_comments,"
+               "SET cntslip_username=CURRENT_USER, cntslip_qty=:cntslip_qty, cntslip_comments=:cntslip_comments,"
                "    cntslip_entered=CURRENT_TIMESTAMP,"
                "    cntslip_location_id=:cntslip_location_id, cntslip_lotserial=:cntslip_lotserial,"
                "    cntslip_lotserial_expiration=:cntslip_lotserial_expiration, "

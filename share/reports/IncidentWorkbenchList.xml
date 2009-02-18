@@ -32,9 +32,8 @@
         LEFT OUTER JOIN incdtseverity ON (incdt_incdtseverity_id = incdtseverity_id))
         LEFT OUTER JOIN incdtpriority ON (incdt_incdtpriority_id = incdtpriority_id)
  WHERE (true
- &lt;? if exists("usr_id") ?> 
- AND (incdt_assigned_username IN (SELECT usr_username FROM usr
-                     WHERE usr_id = &lt;? value("usr_id") ?>))  
+ &lt;? if exists("username") ?> 
+ AND (incdt_assigned_username = &lt;? value("username") ?>)  
  &lt;? elseif exists("usr_pattern") ?> 
  AND (incdt_assigned_username ~* &lt;? value("usr_pattern") ?>)
  &lt;? endif ?>
@@ -61,10 +60,8 @@
  <querysource>
   <name>username</name>
   <sql>SELECT
-  &lt;? if exists("usr_id") ?>
-    usr_username AS usr
-    FROM usr
-    WHERE (usr_id=&lt;? value("usr_id") ?>)
+  &lt;? if exists("username") ?>
+    &lt;? value("username") ?>
   &lt;? elseif exists("usr_pattern") ?>
     &lt;? value("usr_pattern") ?>
   &lt;? else ?>

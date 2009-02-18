@@ -164,8 +164,8 @@
   &lt;? if exists("completed") ?> 'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showClosed,
   &lt;? if exists("projects") ?>    'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showTasks,
   &lt;? if exists("incidents") ?> 'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showIncdts,
-  &lt;? if exists("usr_id") ?>
-    usr_username FROM usr WHERE usr_id = &lt;? value("usr_id") ?>
+  &lt;? if exists("username") ?>
+    &lt;? value("username") ?> AS usr_username
   &lt;? elseif exists("usr_pattern") ?>
     &lt;? value("usr_pattern") ?> AS usr_username
   &lt;? else ?>

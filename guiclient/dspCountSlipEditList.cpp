@@ -221,7 +221,7 @@ void dspCountSlipEditList::sFillList()
              "       CASE WHEN (cntslip_posted) THEN 1"
              "            ELSE 0"
              "       END,"
-             "       getUsername(cntslip_user_id) AS user, cntslip_number,"
+             "       cntslip_username AS user, cntslip_number,"
              "       CASE WHEN (cntslip_location_id=-1) THEN ''"
              "            ELSE formatLocationName(cntslip_location_id)"
              "       END AS locname,"

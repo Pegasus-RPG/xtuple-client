@@ -32,8 +32,8 @@
        OR (((&lt;? value("startDate") ?> &lt;= startOfTime()) OR (&lt;? value("endDate") ?> >= endOfTime()))
         AND (ophead_target_date IS NULL))
     )
-&lt;? if exists("usr_id") ?>
-   AND (ophead_owner_username=(SELECT usr_username FROM usr WHERE usr_id=&lt;? value("usr_id") ?>))
+&lt;? if exists("username") ?>
+   AND (ophead_owner_username=&lt;? value("username") ?>)
 &lt;? elseif exists("usr_pattern") ?>
    AND (ophead_owner_username ~ &lt;? value("username_pattern") ?>)
 &lt;? endif ?>
@@ -46,8 +46,8 @@
   <sql>SELECT
   formatDate(&lt;? value("startDate") ?>,'Earliest') AS f_startDate,
   formatDate(&lt;? value("endDate") ?>,'Latest') AS f_endDate,
-  &lt;? if exists("usr_id") ?>
-    usr_username FROM usr WHERE usr_id = &lt;? value("usr_id") ?>
+  &lt;? if exists("username") ?>
+    &lt;? value("username") ?> AS usr_username
   &lt;? elseif exists("usr_pattern") ?>
     &lt;? value("usr_pattern") ?> AS usr_username
   &lt;? else ?>

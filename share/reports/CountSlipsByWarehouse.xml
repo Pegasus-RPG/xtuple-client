@@ -37,7 +37,7 @@
        item_descrip1,
        item_descrip2,
        formatDate(cntslip_entered) AS date_entered,
-       ('( ' || getUsername(cntslip_user_id) || ' )') AS enteredby,
+       ('( ' || cntslip_username || ' )') AS enteredby,
        formatQty(cntslip_qty) AS f_qtycounted,
        formatBoolYN(cntslip_posted) AS f_posted
   FROM cntslip, invcnt, itemsite, item, warehous
