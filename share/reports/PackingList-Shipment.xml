@@ -173,7 +173,12 @@ SELECT 2 AS groupby,
        item_descrip2,
 
        formatQty(toitem_qty_ordered) AS ordered,
-       formatQty(shipitem_qty) AS shipped,
+
+       (SELECT formatQty(SUM(shipitem_qty))
+        FROM shipitem
+        WHERE ((shipitem_shiphead_id=&lt;? value("shiphead_id") ?>)
+          AND  (shipitem_orderitem_id=toitem_id))
+       ) AS shipped,
 
        toitem_status AS f_status,
        CASE
