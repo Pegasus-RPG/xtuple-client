@@ -161,7 +161,7 @@ QList<QDesignerCustomWidgetInterface*> xTuplePlugin::customWidgets() const
 }
 
 #ifndef QT_STATICPLUGIN
-Q_EXPORT_PLUGIN(xTuplePlugin)
+Q_EXPORT_PLUGIN2(xtuplewidgets, xTuplePlugin)
 #else
 Q_EXPORT_STATIC_PLUGIN(xTuplePlugin)
 #endif
