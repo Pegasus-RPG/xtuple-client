@@ -763,6 +763,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
     item.bindValue(":poitem_id", _poitemid);
     item.exec();
     int row = 0;
+    _itemchar->removeRows(0, _itemchar->rowCount());
     QModelIndex idx;
     while(item.next())
     {
@@ -833,7 +834,6 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
   bool skipClear = false;
   if (!_item->isValid())
     skipClear = true;
-  _itemchar->removeRows(0, _itemchar->rowCount());
   if (_mode == cNew)
   {
     if (pItemsrcid != -1)
