@@ -10,54 +10,34 @@
 
 #include "submitAction.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a submitAction as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 submitAction::submitAction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_scheduled, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-    // signals and slots connections
-    connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    connect(_scheduled, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  _action->setText("Unknown");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 submitAction::~submitAction()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void submitAction::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void submitAction::init()
-{
-    _action->setText("Unknown");
-}
-
-enum SetResponse submitAction::set(ParameterList &pParams)
+enum SetResponse submitAction::set(const ParameterList &pParams)
 {
   _params = pParams;
 
@@ -91,6 +71,13 @@ void submitAction::sSubmit()
     QMessageBox::critical( this, tr("Cannot Submit Action"),
                            tr("You must indicate an Email address to which the completed Action response will be sent.") );
     _email->setFocus();
+    return;
+  }
+
+  if(!_asap->isChecked() && !_date->isValid())
+  {
+    QMessageBox::critical( this, tr("Invalid Date"),
+      tr("You must enter a valid date.") );
     return;
   }
 
