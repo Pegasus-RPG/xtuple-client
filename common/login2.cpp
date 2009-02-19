@@ -85,6 +85,13 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
     _captive = FALSE;
   }
 
+  param = pParams.value("password", &valid);
+  if (valid)
+  {
+    _password->setText(param.toString());
+    _captive = TRUE;
+  }
+
   param = pParams.value("copyright", &valid);
   if (valid)
     _copyrightLit->setText(param.toString());
@@ -99,16 +106,7 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
 
   param = pParams.value("evaluation", &valid);
   if (valid)
-  {
-/*
-    _serverLit->hide();
-    _server->hide();
-    _databaseLit->hide();
-    _database->hide();
-    _options->setEnabled(false);
-*/
     _demoOption->setChecked(TRUE);
-  }
 
   param = pParams.value("name", &valid);
   if (valid)
@@ -127,6 +125,17 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
   param = pParams.value("multipleConnections", &valid);
   if (valid)
     _multipleConnections = true;
+
+  param = pParams.value("enhancedAuth", &valid);
+  if (valid)
+    _enhancedAuth = param.toBool();
+
+  param = pParams.value("requireSSL", &valid);
+  if (valid)
+    _requireSSL = param.toBool();
+
+  if(pParams.inList("login"))
+    sLogin();
 
   return 0;
 }
@@ -380,3 +389,14 @@ void login2::setLogo(const QImage & img)
   else
     _logo->setPixmap(QPixmap::fromImage(img));
 }
+
+void login2::setEnhancedAuth(bool on)
+{
+  _enhancedAuth = on;
+}
+
+void login2::setRequireSSL(bool on)
+{
+  _requireSSL = on;
+}
+

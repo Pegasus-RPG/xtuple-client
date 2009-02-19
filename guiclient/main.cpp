@@ -56,9 +56,15 @@ int main(int argc, char *argv[])
 
   QString username;
   QString databaseURL;
+  QString passwd;
   bool    haveUsername    = FALSE;
   bool    haveDatabaseURL = FALSE;
   bool    loggedIn        = FALSE;
+  bool    haveEnhancedAuth= false;
+  bool    _enhancedAuth   = false;
+  bool    haveRequireSSL  = false;
+  bool    _requireSSL     = false;
+  bool    havePasswd      = false;
 
 #ifdef XQ_WS_WIN
   WSADATA wsaData;
@@ -118,11 +124,6 @@ int main(int argc, char *argv[])
 
   if (argc > 1)
   {
-    bool    havePasswd          = FALSE;
-    bool    interactive         = TRUE;
-    bool    createCountTags     = FALSE;
-    QString passwd;
-
     for (int intCounter = 1; intCounter < argc; intCounter++)
     {
       QString argument(argv[intCounter]);
@@ -147,56 +148,21 @@ int main(int argc, char *argv[])
         haveUsername = TRUE;
         havePasswd   = TRUE;
       } 
-
-      else if (argument.contains("-createCountTags"))
+      else if (argument.contains("-enhancedAuth"))
       {
-        interactive = FALSE;
-        createCountTags = TRUE;
+        haveEnhancedAuth = true;
+        _enhancedAuth = true;
+        if(argument.contains("=no"))
+          _enhancedAuth = false;
+      }
+      else if (argument.contains("-requireSSL"))
+      {
+        haveRequireSSL = true;
+        _requireSSL = true;
+        if(argument.contains("=no"))
+          _requireSSL = false;
       }
     }
-
-    if ( (haveDatabaseURL) && (haveUsername) && (havePasswd) )
-    {
-      QSqlDatabase db;
-      QString      hostName;
-      QString      dbName;
-      QString      port;
-
-      db = QSqlDatabase::addDatabase("QPSQL7");
-      if (!db.isValid())
-      {
-        qDebug("Cannot load Database Driver.  Contact your Systems Administrator.");
-        exit(-1);
-      }
-
-      QString protocol;
-      parseDatabaseURL(databaseURL, protocol, hostName, dbName, port);
-      db.setDatabaseName(dbName);
-      db.setUserName(username);
-      db.setPassword(passwd);
-      db.setHostName(hostName);
-      bool valport = false;
-      int iport = port.toInt(&valport);
-      if(!valport) iport = 5432;
-      db.setPort(iport);
-
-      if (!db.open())
-      {
-        qDebug( QObject::tr( "Cannot log onto the database with the supplied username/password!\n"
-                             "Host = %1\n"
-                             "Database = %2\n"
-                             "Username = %3\n" )
-                .arg(hostName)
-                .arg(dbName)
-                .arg(username) );
-        exit(-1);
-      }
-      else
-        loggedIn = TRUE;
-    }
-
-    if (!interactive)
-      return 0;
   }
 
   _splash = new QSplashScreen();
@@ -207,7 +173,6 @@ int main(int argc, char *argv[])
   if (!loggedIn)
   {
     ParameterList params;
-//    params.append("name", _Name);  -- We can't tell now until were logged in what the app is.
     params.append("copyright", _Copyright);
     params.append("version", _Version);
     params.append("build", QString("%1 %2").arg(__DATE__).arg(__TIME__));
@@ -215,21 +180,36 @@ int main(int argc, char *argv[])
     if (haveUsername)
       params.append("username", username);
 
+    if (havePasswd)
+      params.append("password", passwd);
+
     if (haveDatabaseURL)
       params.append("databaseURL", databaseURL);
+
+    if (haveEnhancedAuth)
+      params.append("enhancedAuth", _enhancedAuth);
+    
+    if (haveRequireSSL)
+      params.append("requireSSL", _requireSSL);
 
     if (_evaluation)
       params.append("evaluation");
 
+    if ( (haveDatabaseURL) && (haveUsername) && (havePasswd) )
+      params.append("login");
+
     login2 newdlg(0, "", TRUE);
     newdlg.set(params, _splash);
 
-    if (newdlg.exec() == QDialog::Rejected)
-      return -1;
-    else
+    if(newdlg.result() != QDialog::Accepted)
     {
-      databaseURL = newdlg._databaseURL;
-      username = newdlg.username();
+      if (newdlg.exec() == QDialog::Rejected)
+        return -1;
+      else
+      {
+        databaseURL = newdlg._databaseURL;
+        username = newdlg.username();
+      }
     }
   }
 

@@ -37,17 +37,20 @@ class login2 : public QDialog, public Ui::login2
     virtual void populateDatabaseInfo();
     virtual QString username();
     virtual QString password();
+    virtual bool enhancedAuth() const { return _enhancedAuth; }
+    virtual bool requireSSL() const { return _requireSSL; }
 
   public slots:
     virtual int set( ParameterList & pParams );
     virtual void setLogo( const QImage & );
+    virtual void setEnhancedAuth(bool);
+    virtual void setRequireSSL(bool);
 
   protected slots:
     virtual void languageChange();
 
     virtual void sLogin();
     virtual void sOptions();
-
 
   private:
     bool _captive;
