@@ -441,30 +441,34 @@ void workOrder::sCreate()
     }
   
     int itemsiteid = q.value("itemsite_id").toInt();
+    double orderQty = _qty->toDouble();
   
-    q.prepare("SELECT validateOrderQty(:itemsite_id, :qty, TRUE) AS qty;");
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.bindValue(":qty", _qty->toDouble());
-    q.exec();
-    if (!q.first())
+    if (_assembly->isChecked())
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
+      q.prepare("SELECT validateOrderQty(:itemsite_id, :qty, TRUE) AS qty;");
+      q.bindValue(":itemsite_id", itemsiteid);
+      q.bindValue(":qty", _qty->toDouble());
+      q.exec();
+      if (!q.first())
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__) );
+        return;
+      }
   
-    double orderQty = q.value("qty").toDouble();
-    if (orderQty != _qty->toDouble())
-    {
-      if ( QMessageBox::warning( this, tr("Invalid Order Quantitiy"),
-                                 tr( "Order Parameters for this Item do not allow a quantitiy of %1 to be created.\n"
-                                     "You must create an order for at least %2 of this item.\n"
-                                     "Do you want to update the order quantity and create the order?" )
-                                 .arg(formatQty(_qty->toDouble()))
-                                 .arg(formatQty(orderQty)),
-                                 tr("&Yes"), tr("&No"), 0, 1 ) == 1)
-        return; 
+      orderQty = q.value("qty").toDouble();
+      if (orderQty != _qty->toDouble())
+      {
+        if ( QMessageBox::warning( this, tr("Invalid Order Quantitiy"),
+                                   tr( "Order Parameters for this Item do not allow a quantitiy of %1 to be created.\n"
+                                       "You must create an order for at least %2 of this item.\n"
+                                       "Do you want to update the order quantity and create the order?" )
+                                   .arg(formatQty(_qty->toDouble()))
+                                   .arg(formatQty(orderQty)),
+                                   tr("&Yes"), tr("&No"), 0, 1 ) == 1)
+          return; 
+      }
     }
   
     q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty * :sense,"
