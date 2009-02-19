@@ -78,7 +78,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                commentType.ui commentTypes.ui company.ui companies.ui				      \
                configureCC.ui configureSO.ui configureIM.ui                                           \
                configureGL.ui configureMS.ui configurePD.ui configurePO.ui                            \
-               configureWO.ui configureBackup.ui configureCRM.ui                                      \
+               configureWO.ui configureCRM.ui                                                         \
                configureIE.ui configureEncryption.ui                                                  \
                confirmAchOK.ui                                                                        \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
@@ -399,7 +399,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                commentType.h commentTypes.h company.h companies.h                                     \
                configureCC.h configureSO.h configureIM.h                                              \
                configureGL.h configureMS.h configurePD.h configurePO.h                                \
-               configureWO.h configureBackup.h configureCRM.h                                         \
+               configureWO.h configureCRM.h                                                           \
                configureIE.h configureEncryption.h                                                    \
                confirmAchOK.h                                                                         \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
@@ -728,7 +728,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                commentType.cpp commentTypes.cpp company.cpp companies.cpp                             \
                configureCC.cpp configureSO.cpp configureIM.cpp                                        \
                configureGL.cpp configureMS.cpp configurePD.cpp configurePO.cpp                        \
-               configureWO.cpp configureBackup.cpp configureCRM.cpp                                   \
+               configureWO.cpp configureCRM.cpp                                                       \
                configureIE.cpp configureEncryption.cpp                                                \
                confirmAchOK.cpp                                                                       \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \

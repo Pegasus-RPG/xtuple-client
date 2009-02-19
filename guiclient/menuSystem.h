@@ -71,11 +71,9 @@ class menuSystem : public QObject
     void sSearchEmployees();
     void sEmployeeGroups();
     void sScheduleServerMaintenance();
-    void sScheduleServerBackup();
     void sErrorLog();
 
     void sDatabaseInformation();
-    void sConfigureBackup();
 
     void sImages();
     void sReports();

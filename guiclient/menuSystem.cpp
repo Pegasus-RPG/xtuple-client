@@ -39,7 +39,6 @@
 #include "errorLog.h"
 
 #include "databaseInformation.h"
-#include "configureBackup.h"
 
 #include "accountNumbers.h"
 #include "calendars.h"
@@ -165,7 +164,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
     { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
     { "sys.scheduleServerMaintenance",tr("Schedule Server Mai&ntenance..."),SLOT(sScheduleServerMaintenance()),systemMenu, _privileges->check("MaintainServer"),      NULL, NULL, _metrics->boolean("EnableBatchManager") },
-    { "sys.scheduleServerBackup",     tr("Schedule Server Bac&kup..."),     SLOT(sScheduleServerBackup()),     systemMenu, _privileges->check("BackupServer"),        NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
 
   //  System | Configure Modules
@@ -182,7 +180,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   //  Master Information
     { "menu",				tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.databaseInformation",	tr("&Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	_privileges->check("ConfigDatabaseInfo"),	NULL,	NULL,	true	},
-    { "sys.configureBackup",		tr("Configure &Backup..."),	SLOT(sConfigureBackup()),	masterInfoMenu,	_privileges->check("ConfigureBackupServer"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
     { "separator",		NULL,			NULL,			masterInfoMenu,	true,					NULL,	NULL,	true	},
     { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	_privileges->check("MaintainImages"),	NULL,	NULL,	true	},
     { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
@@ -478,11 +475,6 @@ void menuSystem::sDatabaseInformation()
   databaseInformation(parent, "", TRUE).exec();
 }
 
-void menuSystem::sConfigureBackup()
-{
-  configureBackup(parent, "", TRUE).exec();
-}
-
 void menuSystem::sImages()
 {
   omfgThis->handleNewWindow(new images());
@@ -666,16 +658,6 @@ void menuSystem::sScheduleServerMaintenance()
 {
   ParameterList params;
   params.append("action_name", "ServerMaintenance");
-
-  submitAction newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void menuSystem::sScheduleServerBackup()
-{
-  ParameterList params;
-  params.append("action_name", "ServerBackup");
 
   submitAction newdlg(parent, "", TRUE);
   newdlg.set(params);
