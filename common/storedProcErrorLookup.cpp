@@ -849,6 +849,10 @@ void initErrorLookupHash()
   { "login",  -2, TR("The specified Username exists in the specified Database "
                      "but is not Active. Contact your Systems Administrator "
                      "to report this issue."),                          0, "" },
+  { "login",  -3, TR("The specified Database is currently in Maintenance Mode "
+                     "and can only be accessed by System Administators. "
+                     "Contact your Systems Administrator to report this issue."),
+                                                                        0, "" },
 
   { "massReplaceBomitem",  -1, TR("Cannot make this BOM Item replacement "
 				  "because it would create a recursive BOM."),

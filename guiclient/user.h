@@ -21,7 +21,7 @@ class user : public XDialog, public Ui::user
     Q_OBJECT
 
 public:
-    user(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    user(QWidget* parent = 0, Qt::WindowFlags fl = 0);
     ~user();
     bool save();
 
@@ -30,6 +30,7 @@ public slots:
     virtual void sCheck();
     virtual void populate();
     virtual void populateSite();
+    virtual void done(int);
 
 protected slots:
     virtual void languageChange();
@@ -51,6 +52,7 @@ private:
     QString _cUsername;
     int _mode;
     bool _authCache;
+    bool _inTransaction;
 
 };
 

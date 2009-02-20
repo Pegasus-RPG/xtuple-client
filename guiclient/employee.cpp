@@ -301,7 +301,7 @@ void employee::sSave(const bool pClose)
         ParameterList params;
         params.append("mode",     "new");
         params.append("username", _code->text());
-        user newdlg(this, "", TRUE);
+        user newdlg(this);
         newdlg.set(params);
         newdlg.exec();
       }
@@ -746,7 +746,7 @@ void employee::sUser()
     ParameterList params;
     params.append("mode",     (_mode == cView) ? "view" : "edit");
     params.append("username", _code->text());
-    user newdlg(this, "", TRUE);
+    user newdlg(this);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -768,7 +768,7 @@ void employee::sUser()
       ParameterList params;
       params.append("mode",     "new");
       params.append("username", _code->text());
-      user newdlg(this, "", TRUE);
+      user newdlg(this);
       newdlg.set(params);
       newdlg.exec();
     }

@@ -97,7 +97,7 @@ void users::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  user newdlg(this, "", TRUE);
+  user newdlg(this);
   newdlg.set(params);
 
   newdlg.exec();
@@ -110,7 +110,7 @@ void users::sEdit()
   params.append("mode", "edit");
   params.append("username", _usr->selectedItems().first()->text(0));
 
-  user newdlg(this, "", TRUE);
+  user newdlg(this);
   newdlg.set(params);
 
   newdlg.exec();

@@ -19,9 +19,10 @@
 
 #include "storedProcErrorLookup.h"
 
-user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+user::user(QWidget* parent, Qt::WindowFlags fl)
+  : XDialog(parent, fl)
 {
+  _inTransaction = false;
   setupUi(this);
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -82,6 +83,8 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 user::~user()
 {
   // no need to delete child widgets, Qt does it all for us
+  if(_inTransaction)
+    q.exec("ROLLBACK;");
 }
 
 void user::languageChange()
@@ -141,6 +144,9 @@ enum SetResponse user::set(const ParameterList &pParams)
     }
   }
 
+  if(cView != _mode)
+    _inTransaction = q.exec("BEGIN;");
+
   return NoError;
 }
 
@@ -167,7 +173,8 @@ void user::sSave()
 
 bool user::save()
 {
-  if (_username->text().length() == 0)
+  QString username = _username->text().trimmed().lower();
+  if (username.length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot save User"),
                           tr( "You must enter a valid Username before you can save this User." ));
@@ -199,7 +206,7 @@ bool user::save()
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
-    passwd = passwd + "xTuple" + _username->text();
+    passwd = passwd + "xTuple" + username;
     passwd = QMd5(passwd);
   }
 
@@ -208,16 +215,14 @@ bool user::save()
     q.prepare( "SELECT usesysid"
                "  FROM pg_user"
                " WHERE (usename=:username);" );
-    q.bindValue(":username", _username->text());
+    q.bindValue(":username", username);
     q.exec();
     if (!q.first())
     {
-      q.prepare( QString( "SELECT createUser(:username, :createUsers); "
-                          "ALTER USER %1 WITH PASSWORD :password;" )
-                 .arg(_username->text()) );
-      q.bindValue(":username", _username->text());
+      q.prepare( QString( "SELECT createUser(:username, :createUsers); ")
+                 .arg(username) );
+      q.bindValue(":username", username);
       q.bindValue(":createUsers", QVariant(_createUsers->isChecked()));
-      q.bindValue(":password", passwd);
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
       {
@@ -225,40 +230,13 @@ bool user::save()
 	return false;
       }
     }
-    else
-      q.exec( QString("ALTER GROUP xtrole ADD USER %1;")
-              .arg(_username->text()) );
-
-    q.prepare( "INSERT INTO usr "
-               "( usr_username, usr_propername,"
-               "  usr_email, usr_initials, usr_locale_id,"
-               "  usr_agent, usr_active,"
-	       "  usr_window ) "
-               "VALUES "
-               "( :usr_username, :usr_propername,"
-               "  :usr_email, :usr_initials, :usr_locale_id,"
-               "  :usr_agent, :usr_active,"
-	       "  :usr_window );" );
   }
   else if (_mode == cEdit)
   {
-    if (_passwd->text() != "        ")
-    {
-      q.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
-                 .arg(_username->text()) );
-      q.bindValue(":password", passwd);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return false;
-      }
-    }
-
     if(_createUsers->isEnabled())
     {
       q.prepare("SELECT setUserCanCreateUsers(:username, :createUsers);");
-      q.bindValue(":username", _username->text());
+      q.bindValue(":username", username);
       q.bindValue(":createUsers", QVariant(_createUsers->isChecked()));
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
@@ -267,60 +245,64 @@ bool user::save()
         return false;
       }
     }
-    
-    q.prepare( "UPDATE usr "
-               "SET usr_propername=:usr_propername, usr_initials=:usr_initials,"
-	       "    usr_email=:usr_email, usr_locale_id=:usr_locale_id,"
-	       "    usr_agent=:usr_agent, usr_active=:usr_active,"
-	       "    usr_window=:usr_window "
-               "WHERE (usr_username=:usr_username);" );
   }
 
-  q.bindValue(":usr_username", _username->text().trimmed().lower());
-  q.bindValue(":usr_propername", _properName->text());
-  q.bindValue(":usr_email", _email->text());
-  q.bindValue(":usr_initials", _initials->text());
-  q.bindValue(":usr_locale_id", _locale->id());
-  q.bindValue(":usr_agent", QVariant(_agent->isChecked()));
-  q.bindValue(":usr_active", QVariant(_active->isChecked()));
+  q.prepare("SELECT pg_has_role(:username,'xtrole','member') AS result;");
+  q.bindValue(":username", username);
+  q.exec();
+  if(q.first() && !q.value("result").toBool())
+  {
+    q.exec( QString("ALTER GROUP xtrole ADD USER %1;")
+            .arg(username) );
+  }
+  if(q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  if (_passwd->text() != "        ")
+  {
+    q.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
+               .arg(username) );
+    q.bindValue(":password", passwd);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+
+  q.prepare("SELECT setUserPreference(:username, 'DisableExportContents', :export),"
+            "       setUserPreference(:username, 'UseEnhancedAuthentication', :enhanced),"
+            "       setUserPreference(:username, 'selectedSites', :sites),"
+            "       setUserPreference(:username, 'propername', :propername),"
+            "       setUserPreference(:username, 'email', :email),"
+            "       setUserPreference(:username, 'initials', :initials),"
+            "       setUserPreference(:username, 'locale_id', text(:locale_id)),"
+            "       setUserPreference(:username, 'agent', :agent),"
+            "       setUserPreference(:username, 'active', :active),"
+            "       setUserPreference(:username, 'window', :window);");
+  q.bindValue(":username", username);
+  q.bindValue(":export", (_exportContents->isChecked() ? "t" : "f"));
+  q.bindValue(":enhanced", (_enhancedAuth->isChecked() ? "t" : "f"));
+  q.bindValue(":sites", (_selectedSites->isChecked() ? "t" : "f"));
+  q.bindValue(":propername", _properName->text());
+  q.bindValue(":email", _email->text());
+  q.bindValue(":initials", _initials->text());
+  q.bindValue(":locale_id", _locale->id());
+  q.bindValue(":agent", (_agent->isChecked() ? "t" : "f"));
+  q.bindValue(":active", (_active->isChecked() ? "t" : "f"));
   // keep synchronized with the select below, GUIClient, and main
-  q.bindValue(":usr_window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
+  q.bindValue(":window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
-
-  q.prepare("SELECT setUserPreference(:username, 'DisableExportContents', :value) AS result");
-  q.bindValue(":username", _username->text().trimmed().lower());
-  q.bindValue(":value", (_exportContents->isChecked() ? "t" : "f"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-
-  q.prepare("SELECT setUserPreference(:username, 'UseEnhancedAuthentication', :value) AS result");
-  q.bindValue(":username", _username->text().trimmed().lower());
-  q.bindValue(":value", (_enhancedAuth->isChecked() ? "t" : "f"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-  
-  q.prepare("SELECT setUserPreference(:username, 'selectedSites', :value) AS result");
-  q.bindValue(":username", _username->text().trimmed().lower());
-  q.bindValue(":value", (_selectedSites->isChecked() ? "t" : "f"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
+//////////////
 
   return true;
 }
@@ -529,29 +511,6 @@ void user::sCheck()
       _username->setEnabled(FALSE);
       _properName->setFocus();
     }
-    else
-    {
-      q.prepare( "SELECT userId(:username) AS userid,"
-                 "       userCanCreateUsers(CURRENT_USER) AS createusers;" );
-      q.bindValue(":username", _cUsername);
-      q.exec();
-      if (!q.first())
-      {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
-        reject();
-        return;
-      }
-
-      if ( (q.value("userid").toInt() == -1) &&
-           (!q.value("createusers").toBool()) )
-      {
-        QMessageBox::warning( this, tr("Cannot Create System User"),
-                              tr( "A User with the entered username does not exist in the system and you do not have privilege to create a new system User.\n"
-                                  "You may create the User but the new User will not be able to log into the database." ) );
-      }
-    }
   }
 }
 
@@ -571,8 +530,6 @@ void user::populate()
     _properName->setText(q.value("usr_propername"));
     _initials->setText(q.value("usr_initials"));
     _email->setText(q.value("usr_email"));
-    //_passwd->setText(q.value("usr_passwd"));
-    //_verify->setText(q.value("usr_passwd"));
     _locale->setId(q.value("usr_locale_id").toInt());
     _agent->setChecked(q.value("usr_agent").toBool());
     _createUsers->setChecked(q.value("createusers").toBool());
@@ -756,3 +713,17 @@ void user::populateSite()
   }
 
 }
+
+void user::done(int result)
+{
+  if(_inTransaction)
+  {
+    if(result == QDialog::Accepted)
+      q.exec("COMMIT;");
+    else
+      q.exec("ROLLBACK;");
+    _inTransaction = false;
+  }
+  XDialog::done(result);
+}
+

@@ -11,6 +11,7 @@
 #include "databaseInformation.h"
 
 #include <QVariant>
+#include <QDebug>
 
 #include <dbtools.h>
 
@@ -33,6 +34,15 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _version->setText(_metrics->value("ServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
+
+  QString access = _metrics->value("AllowedUserLogins");
+qDebug() << "loading with " << access;
+  if("AdminOnly" == access)
+    _access->setCurrentIndex(1);
+  else if("Any" == access)
+    _access->setCurrentIndex(2);
+  else
+    _access->setCurrentIndex(0);
 
   int val = _metrics->value("updateTickInterval").toInt();
   if(val < 1) val = 1;
@@ -103,6 +113,14 @@ void databaseInformation::sSave()
   _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
   _metrics->set("BatchManagerPurgeDays", _purgeDays->value());
   _metrics->set("updateTickInterval", _interval->value());
+
+qDebug() << "CurrentIndex " << _access->currentIndex();
+  if(_access->currentIndex() == 1)
+    _metrics->set("AllowedUserLogins", QString("AdminOnly"));
+  else if(_access->currentIndex() == 2)
+    _metrics->set("AllowedUserLogins", QString("Any"));
+  else
+    _metrics->set("AllowedUserLogins", QString("ActiveOnly"));
 
   _metrics->load();
 
