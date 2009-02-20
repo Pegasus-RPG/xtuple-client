@@ -31,11 +31,13 @@ public slots:
     virtual void sDelete();
     virtual void sEdit();
     virtual void sFillList();
+    virtual void sHandleButtons();
     virtual void sIssue();
     virtual void sNew();
-    virtual void sPopulateMenu(QMenu * pMenu);
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sPrint();
     virtual void sPrintPackingList();
+    virtual void sRelease();
     virtual void sView();
     virtual void setParams(ParameterList &);
 

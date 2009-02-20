@@ -98,12 +98,17 @@ to be bound by its terms.</comment>
                   </property>
                   <item>
                    <property name="text" >
+                    <string>Unreleased</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text" >
                     <string>Open</string>
                    </property>
                   </item>
                   <item>
                    <property name="text" >
-                    <string>Unreleased</string>
+                    <string>Closed</string>
                    </property>
                   </item>
                  </widget>
@@ -396,6 +401,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel" >
      <x>289</x>
      <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedStatus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_statuses</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>526</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>632</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>

@@ -17,6 +17,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "mqlutil.h"
 #include "copyTransferOrder.h"
 #include "issueToShipping.h"
 #include "storedProcErrorLookup.h"
@@ -36,11 +37,16 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print,	  SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_issue,	  SIGNAL(clicked()), this, SLOT(sIssue()));
   connect(_srcWarehouse,  SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_to, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_allStatuses,  SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_selectedStatus,  SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_statuses,  SIGNAL(activated(int)), this, SLOT(sFillList()));
+  connect(_to, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
+  connect(_to, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_view,	  SIGNAL(clicked()), this, SLOT(sView()));
   connect(omfgThis, SIGNAL(transferOrdersUpdated(int)), this, SLOT(sFillList()));
 
   _to->addColumn(tr("Order #"),                -1,  Qt::AlignLeft,   true,  "tohead_number"   );
+  _to->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "f_status" );
   _to->addColumn(tr("Source Site"),  _whsColumn*2,  Qt::AlignLeft,   true,  "srcWhs"   );
   _to->addColumn(tr("Dest. Site"),	 _whsColumn*2,  Qt::AlignLeft,   true,  "destWhs"   );
   _to->addColumn(tr("Ordered"),       _dateColumn,  Qt::AlignCenter, true,  "tohead_orderdate" );
@@ -81,7 +87,15 @@ void transferOrders::setParams(ParameterList& params)
     params.append("src_warehous_id", _srcWarehouse->id());
   if (_destWarehouse->isSelected())
     params.append("dest_warehous_id", _destWarehouse->id());
-  params.append("tohead_status", "O");
+  if (_selectedStatus->isChecked())
+  {
+    const char *statusTypes[] = { "U", "O", "C" };
+    QString status = QString(statusTypes[_statuses->currentIndex()]);
+    params.append("tohead_status", status);
+  }
+  params.append("unreleased", tr("Unreleased"));
+  params.append("open", tr("Open"));
+  params.append("closed", tr("Closed"));
 }
 
 void transferOrders::sPrint()
@@ -121,6 +135,10 @@ void transferOrders::sCopy()
   copyTransferOrder newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void transferOrders::sRelease()
+{
 }
 
 void transferOrders::sIssue()
@@ -228,72 +246,111 @@ void transferOrders::sAddToPackingListBatch()
   }
 }
 
-void transferOrders::sPopulateMenu(QMenu *pMenu)
+void transferOrders::sHandleButtons()
+{
+  XTreeWidgetItem *item = 0;
+  QList<QTreeWidgetItem*> selectedlist = _to->selectedItems();
+  item = (XTreeWidgetItem*)(selectedlist[0]);
+
+  if (item->altId() == 1 || item->altId() == 2)
+  {
+    if (!_privileges->check("MaintainTransferOrders"))
+    {
+      _edit->setEnabled(FALSE);
+      _delete->setEnabled(FALSE);
+    }
+    else
+    {
+      _edit->setEnabled(TRUE);
+      _delete->setEnabled(TRUE);
+    }
+  }
+  else
+  {
+    _edit->setEnabled(FALSE);
+    _delete->setEnabled(FALSE);
+  }
+
+  if (item->altId() == 1)
+  {  
+    if (!_privileges->check("ReleaseTransferOrders"))
+      _release->setEnabled(FALSE);
+    else
+      _release->setEnabled(TRUE);
+  }
+  else
+    _release->setEnabled(FALSE);
+
+  if (!_privileges->check("MaintainTransferOrders"))
+    _copy->setEnabled(FALSE);
+  else
+    _copy->setEnabled(TRUE);
+
+  if (item->altId() == 2)
+  {
+    if (!_privileges->check("IssueStockToShipping"))
+      _issue->setEnabled(FALSE);
+    else
+      _issue->setEnabled(TRUE);
+  }
+  else
+    _issue->setEnabled(FALSE);
+}
+
+void transferOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
-
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainTransferOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  XTreeWidgetItem * item = (XTreeWidgetItem*)pSelected;
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
-  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainTransferOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  if (item->altId() == 1 || item->altId() == 2)
+  {
+    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+    if (!_privileges->check("MaintainTransferOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Issue To Shipping..."), this, SLOT(sIssue()), 0);
-  if (!_privileges->check("IssueStockToShipping"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
+    if (!_privileges->check("MaintainTransferOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
+
+  if (item->altId() == 1)
+  {  
+    menuItem = pMenu->insertItem(tr("Release..."), this, SLOT(sRelease()), 0);
+    if (!_privileges->check("ReleaseTransferOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 
   menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
   if (!_privileges->check("MaintainTransferOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  pMenu->insertSeparator();
+  if (item->altId() == 2)
+  {
+    pMenu->insertSeparator();
 
-  menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-  if (!_privileges->check("PrintPackingLists"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->insertItem(tr("Issue To Shipping..."), this, SLOT(sIssue()), 0);
+    if (!_privileges->check("IssueStockToShipping"))
+      pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Add to Packing List Batch..."), this, SLOT(sAddToPackingListBatch()), 0);
-  if (!_privileges->check("MaintainPackingListBatch"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
+    if (!_privileges->check("PrintPackingLists"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    menuItem = pMenu->insertItem(tr("Add to Packing List Batch..."), this, SLOT(sAddToPackingListBatch()), 0);
+    if (!_privileges->check("MaintainPackingListBatch"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void transferOrders::sFillList()
 {
-  QString sql( "SELECT DISTINCT tohead_id, tohead_number,"
-               "       src.warehous_code AS srcWhs,"
-               "       dest.warehous_code AS destWhs,"
-               "       tohead_orderdate,"
-               "       MIN(toitem_schedshipdate) AS scheduled "
-               "FROM tohead LEFT OUTER JOIN toitem ON (tohead_id=toitem_tohead_id)"
-               "            LEFT OUTER JOIN whsinfo src ON (src.warehous_id=tohead_src_warehous_id) "
-               "            LEFT OUTER JOIN whsinfo dest ON (dest.warehous_id=tohead_dest_warehous_id) "
-               "WHERE ("
-	       "<? if exists(\"tohead_status\") ?>"
-	       " (tohead_status = <? value(\"tohead_status\") ?>)"
-	       "<? else ?>"
-	       "   true"
-	       "<? endif ?>"
-	       "<? if exists(\"src_warehous_id\") ?>"
-	       "  AND  (tohead_src_warehous_id=<? value(\"src_warehous_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"dest_warehous_id\") ?>"
-	       "  AND  (tohead_dest_warehous_id=<? value(\"dest_warehous_id\") ?>)"
-	       "<? endif ?>"
-	       " ) "
-	       "GROUP BY tohead_id, tohead_number,"
-	       "         src.warehous_code, dest.warehous_code,"
-	       "         tohead_orderdate "
-	       "ORDER BY tohead_number;" );
-
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("transferOrders", "detail");
   q = mql.toQuery(params);
-  _to->populate(q);
+  _to->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
