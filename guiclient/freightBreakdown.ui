@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -13,23 +12,20 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>341</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Freight Breakdown</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>12</number>
-     </property>
+  <layout class="QGridLayout" name="gridLayout_3" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout_2" >
      <property name="margin" >
       <number>12</number>
      </property>
-     <item>
+     <item row="0" column="0" >
       <layout class="QVBoxLayout" >
        <item>
         <layout class="QHBoxLayout" >
@@ -136,8 +132,29 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="XTreeWidget" name="_freight" />
+     <item row="1" column="0" >
+      <widget class="QFrame" name="_frame" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="XTreeWidget" name="_freight" />
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
