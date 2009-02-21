@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -293,20 +293,47 @@ to be bound by its terms.</comment>
        </property>
        <layout class="QGridLayout" name="gridLayout_4" >
         <item row="0" column="0" >
-         <widget class="QCheckBox" name="_createPr" >
+         <widget class="QCheckBox" name="_poSupply" >
           <property name="text" >
-           <string>Automatically create purchase requests  to meet demand</string>
+           <string>Site can purchase this item</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QCheckBox" name="checkBox" >
+         <layout class="QHBoxLayout" name="horizontalLayout_9" >
+          <item>
+           <spacer name="horizontalSpacer_8" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>5</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_createPr" >
+            <property name="text" >
+             <string>Create purchase requests  to meet demand</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QCheckBox" name="_woSupply" >
           <property name="text" >
            <string>Site can manufacture this item</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
+        <item row="3" column="0" >
          <layout class="QHBoxLayout" name="horizontalLayout_3" >
           <item>
            <spacer name="horizontalSpacer_2" >
@@ -333,7 +360,7 @@ to be bound by its terms.</comment>
              </sizepolicy>
             </property>
             <property name="text" >
-             <string>Automatically create work orders to meet sales demand</string>
+             <string>Create Work Orders linked to Sales Orders</string>
             </property>
            </widget>
           </item>
@@ -487,7 +514,7 @@ to be bound by its terms.</comment>
             <string/>
            </property>
            <layout class="QGridLayout" name="gridLayout_11" >
-            <item row="0" column="0" >
+            <item row="0" column="0" colspan="2" >
              <widget class="QCheckBox" name="_locationControl" >
               <property name="enabled" >
                <bool>true</bool>
@@ -497,7 +524,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
+            <item row="1" column="0" colspan="2" >
              <widget class="QGroupBox" name="_useDefaultLocation" >
               <property name="enabled" >
                <bool>false</bool>
@@ -590,23 +617,19 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="2" column="0" >
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="QLabel" name="_locationCommentLit" >
-                <property name="text" >
-                 <string>Location Comment:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLineEdit" name="_locationComments" />
-              </item>
-             </layout>
+             <widget class="QLabel" name="_locationCommentLit" >
+              <property name="text" >
+               <string>Location Comment:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
             </item>
-            <item row="3" column="0" >
+            <item row="2" column="1" >
+             <widget class="XLineEdit" name="_locationComments" />
+            </item>
+            <item row="3" column="0" colspan="2" >
              <widget class="QCheckBox" name="_disallowBlankWIP" >
               <property name="enabled" >
                <bool>false</bool>
@@ -616,7 +639,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="4" column="0" >
+            <item row="4" column="0" colspan="2" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
@@ -638,7 +661,7 @@ to be bound by its terms.</comment>
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <item row="5" column="1" >
+            <item row="4" column="1" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
@@ -748,35 +771,6 @@ to be bound by its terms.</comment>
              <widget class="QSpinBox" name="_cycleCountFreq" >
               <property name="maximum" >
                <number>999</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" >
-             <widget class="QLabel" name="_safetyStockLit" >
-              <property name="text" >
-               <string>Safety Stock:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1" >
-             <widget class="XLineEdit" name="_safetyStock" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize" >
-               <size>
-                <width>80</width>
-                <height>32767</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight</set>
               </property>
              </widget>
             </item>
@@ -1054,7 +1048,7 @@ to be bound by its terms.</comment>
                   </item>
                  </layout>
                 </item>
-                <item row="1" column="0" >
+                <item row="2" column="0" >
                  <widget class="QLabel" name="_orderGroupLit" >
                   <property name="text" >
                    <string>Group Planned Orders Every:</string>
@@ -1064,7 +1058,7 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1" >
+                <item row="2" column="1" >
                  <widget class="QSpinBox" name="_orderGroup" >
                   <property name="minimum" >
                    <number>0</number>
@@ -1077,14 +1071,14 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="2" colspan="3" >
+                <item row="2" column="2" colspan="3" >
                  <widget class="QLabel" name="_orderGroupDaysLit" >
                   <property name="text" >
                    <string>Days</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0" >
+                <item row="3" column="0" >
                  <widget class="QLabel" name="_leadTimeLit" >
                   <property name="text" >
                    <string>&amp;Lead Time:</string>
@@ -1097,7 +1091,7 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1" >
+                <item row="3" column="1" >
                  <widget class="QSpinBox" name="_leadTime" >
                   <property name="minimum" >
                    <number>0</number>
@@ -1107,14 +1101,14 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2" >
+                <item row="3" column="2" >
                  <widget class="QLabel" name="_days2Lit" >
                   <property name="text" >
                    <string>Days</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="3" >
+                <item row="3" column="3" >
                  <spacer name="horizontalSpacer_3" >
                   <property name="orientation" >
                    <enum>Qt::Horizontal</enum>
@@ -1130,7 +1124,7 @@ to be bound by its terms.</comment>
                   </property>
                  </spacer>
                 </item>
-                <item row="2" column="4" >
+                <item row="3" column="4" >
                  <widget class="QCheckBox" name="_orderGroupFirst" >
                   <property name="sizePolicy" >
                    <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
@@ -1143,7 +1137,7 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0" >
+                <item row="4" column="0" >
                  <widget class="QLabel" name="_mpsTimeFenceLit" >
                   <property name="text" >
                    <string>MPS Time Fence:</string>
@@ -1153,7 +1147,7 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1" >
+                <item row="4" column="1" >
                  <widget class="QSpinBox" name="_mpsTimeFence" >
                   <property name="minimum" >
                    <number>0</number>
@@ -1166,14 +1160,14 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="2" colspan="3" >
+                <item row="4" column="2" colspan="3" >
                  <widget class="QLabel" name="_mpsTimeFenceDaysLit" >
                   <property name="text" >
                    <string>Days</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0" colspan="5" >
+                <item row="5" column="0" colspan="5" >
                  <layout class="QHBoxLayout" name="horizontalLayout_7" >
                   <item>
                    <widget class="QGroupBox" name="groupBox_2" >
@@ -1235,6 +1229,35 @@ to be bound by its terms.</comment>
                   </item>
                  </layout>
                 </item>
+                <item row="1" column="0" >
+                 <widget class="QLabel" name="_safetyStockLit" >
+                  <property name="text" >
+                   <string>Safety Stock:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="XLineEdit" name="_safetyStock" >
+                  <property name="sizePolicy" >
+                   <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize" >
+                   <size>
+                    <width>80</width>
+                    <height>32767</height>
+                   </size>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight</set>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -1256,8 +1279,6 @@ to be bound by its terms.</comment>
           </widget>
          </item>
         </layout>
-        <zorder>_useParameters</zorder>
-        <zorder>groupBox</zorder>
        </widget>
        <widget class="QWidget" name="notesTab" >
         <attribute name="title" >
