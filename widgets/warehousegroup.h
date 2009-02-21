@@ -25,18 +25,22 @@ class XSqlQuery;
 class XTUPLEWIDGETS_EXPORT WarehouseGroup : public QGroupBox
 {
   Q_OBJECT
-
+  
+  Q_PROPERTY(bool fixedSize READ fixedSize WRITE setFixedSize)
+  
   public:
     WarehouseGroup(QWidget * = 0, const char * = 0);
 
-    Q_INVOKABLE int  id();
+    bool fixedSize() {return _fixed;};
     void appendValue(ParameterList &);
     void bindValue(XSqlQuery &);
 
+    Q_INVOKABLE int  id();
     Q_INVOKABLE bool isAll() const;
     Q_INVOKABLE bool isSelected() const;
 
   public slots:
+    void setFixedSize(bool);
     void setAll();
     void setId(int);
     void findItemSites(int);
@@ -45,9 +49,12 @@ class XTUPLEWIDGETS_EXPORT WarehouseGroup : public QGroupBox
     void updated();
 
   private:
+    bool         _fixed;
+    bool         _selectedOnly;
     QLabel	 *_site;
     QRadioButton *_all;
     QRadioButton *_selected;
+    QWidget      *_selectedGroup;
     WComboBox    *_warehouses;
 };
 

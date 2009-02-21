@@ -24,46 +24,45 @@
 WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   QGroupBox(pParent)
 {
-  bool selectedOnly = false;
+  _selectedOnly = false;
   if (_x_preferences)
     if (_x_preferences->boolean("selectedSites"))
-      selectedOnly=true;
+      _selectedOnly=true;
   
   if(pName)
     setObjectName(pName);
 
-  setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-  QWidget * selectedGroup = new QWidget(this);
+  _fixed = false;
+  _selectedGroup = new QWidget(this);
   QButtonGroup * buttonGroup = new QButtonGroup(this);
   
   _all = new QRadioButton(tr("All Sites"), this, "_all");
   _site = new QLabel(tr("Site:"),this,"_site");
-  _selected = new QRadioButton(tr("Selected:"), selectedGroup, "_selected");
+  _selected = new QRadioButton(tr("Selected:"), _selectedGroup, "_selected");
 	 
-  if (!selectedOnly)
+  if (!_selectedOnly)
   {
     _all->setChecked(TRUE);
     buttonGroup->addButton(_all);
     buttonGroup->addButton(_selected);
   }
   
-  _warehouses = new WComboBox(selectedGroup, "_warehouses");
-  _warehouses->setEnabled(FALSE);
+  _warehouses = new WComboBox(_selectedGroup, "_warehouses");
 
-  if(selectedOnly)
+  if(_selectedOnly)
   {
-    QHBoxLayout *hLayout = new QHBoxLayout(selectedGroup);
+    QHBoxLayout *hLayout = new QHBoxLayout(_selectedGroup);
     hLayout->setMargin(0);
     hLayout->setSpacing(5);
     hLayout->addWidget(_site);
     hLayout->addWidget(_warehouses);
-    selectedGroup->setLayout(hLayout);
+    hLayout->addStretch();
+    _selectedGroup->setLayout(hLayout);
     
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     vLayout->setMargin(5);
     vLayout->setSpacing(0);
-    vLayout->addWidget(selectedGroup);
+    vLayout->addWidget(_selectedGroup);
     setLayout(vLayout);
     
     _all->hide();
@@ -71,21 +70,8 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   }
   else
   {
-    QHBoxLayout *hLayout = new QHBoxLayout(selectedGroup);
-    hLayout->setMargin(0);
-    hLayout->setSpacing(5);
-    hLayout->addWidget(_selected);
-    hLayout->addWidget(_warehouses);
-    selectedGroup->setLayout(hLayout);
-
-    QVBoxLayout *vLayout = new QVBoxLayout(this);
-    vLayout->setMargin(5);
-    vLayout->setSpacing(0);
-    vLayout->addWidget(_all);
-    vLayout->addWidget(selectedGroup);
-    setLayout(vLayout);
-    
     _site->hide();
+    setFixedSize(true);
   }
 
   connect(_selected, SIGNAL(toggled(bool)), _warehouses, SLOT(setEnabled(bool)));
@@ -113,6 +99,60 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
 void WarehouseGroup::setAll()
 {
   _all->setChecked(TRUE);
+}
+
+void WarehouseGroup::setFixedSize(bool pFixed)
+{
+  if (pFixed == _fixed || _selectedOnly)
+    return;
+    
+  if (layout())
+    delete layout();
+    
+  if (_selectedGroup->layout())
+    delete _selectedGroup->layout();
+    
+  if (pFixed)
+  {
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QHBoxLayout *hLayout = new QHBoxLayout(_selectedGroup);
+    hLayout->setMargin(0);
+    hLayout->setSpacing(5);
+    hLayout->addWidget(_selected);
+    hLayout->addWidget(_warehouses);
+    _selectedGroup->setLayout(hLayout);
+
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->setMargin(5);
+    vLayout->setSpacing(0);
+    vLayout->addWidget(_all);
+    vLayout->addWidget(_selectedGroup);
+    setLayout(vLayout);
+  }
+  else
+  {
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    QGridLayout *gridLayout = new QGridLayout();
+    gridLayout->addWidget(_all,0,0);
+    gridLayout->addWidget(_selected,1,0);
+    gridLayout->addWidget(_warehouses,1,1);
+#if defined Q_OS_MAC
+    gridLayout->setRowMinimumHeight(0,24);
+#endif
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout->addLayout(gridLayout);
+    QSpacerItem * spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hLayout->addItem(spacerItem);
+    QVBoxLayout *vLayout = new QVBoxLayout();
+    vLayout->addLayout(hLayout);
+    QSpacerItem * spacerItem1 = new QSpacerItem(20, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    vLayout->addItem(spacerItem1);
+    QGridLayout *siteLayout = new QGridLayout(this);
+    siteLayout->addLayout(vLayout,0,0);
+  }
+  _warehouses->setEnabled(FALSE);
+  
+  _fixed = pFixed;
 }
 
 void WarehouseGroup::setId(int pId)

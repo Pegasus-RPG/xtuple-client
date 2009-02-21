@@ -25,64 +25,124 @@
 ParameterGroup::ParameterGroup(QWidget *pParent, const char *pName) :
   QGroupBox(pParent)
 {
+  _fixed = false;
+  
   if(pName)
     setObjectName(pName);
-
+  
   _type = AdhocGroup;
 
-  setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
-
-  QWidget *selectedGroup = new QWidget(this);
-  QWidget *patternGroup = new QWidget(this);
-
+  _selectedGroup = new QWidget(this);
+  _patternGroup = new QWidget(this);
+  
   _all= new QRadioButton(QObject::tr("All"), this, "_all");
   _all->setChecked(TRUE);
 
-  _selected = new QRadioButton(tr("Selected:"), selectedGroup, "_selected");
-
-  _items = new XComboBox(FALSE, selectedGroup, "_items");
+  _selected = new QRadioButton(tr("Selected:"), this, "_selected");
+  
+  _items = new XComboBox(FALSE, _selectedGroup, "_items");
+  
   _items->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
   _items->setEnabled(FALSE);
-
-  QHBoxLayout * hLayout = new QHBoxLayout(selectedGroup);
-  hLayout->setSpacing(5);
-  hLayout->setMargin(0);
-  hLayout->addWidget(_selected);
-  hLayout->addWidget(_items);
-  selectedGroup->setLayout(hLayout);
   
-  _usePattern = new QRadioButton(tr("Pattern:"), patternGroup, "_usePattern");
-
-  _pattern = new QLineEdit(patternGroup, "_pattern");
+  _usePattern = new QRadioButton(tr("Pattern:"),this, "_usePattern");
+  
+  _pattern = new QLineEdit(this, "_pattern");
   _pattern->setEnabled(FALSE);
-
-  hLayout = new QHBoxLayout(patternGroup);
-  hLayout->setSpacing(5);
-  hLayout->setMargin(0);
-  hLayout->addWidget(_usePattern);
-  hLayout->addWidget(_pattern);
-  patternGroup->setLayout(hLayout);
-
-  QVBoxLayout * vLayout = new QVBoxLayout(this);
-  vLayout->setSpacing(0);
-  vLayout->setMargin(5);
-  vLayout->addWidget(_all);
-  vLayout->addWidget(selectedGroup);
-  vLayout->addWidget(patternGroup);
-  setLayout(vLayout);
   
-  QButtonGroup * buttonGroup = new QButtonGroup(this);
-  buttonGroup->addButton(_all);
-  buttonGroup->addButton(_selected);
-  buttonGroup->addButton(_usePattern);
+  _buttonGroup = new QButtonGroup(this);
+  
+  setFixedSize(true);
 
   connect(_selected, SIGNAL(toggled(bool)), _items, SLOT(setEnabled(bool)));
   connect(_usePattern, SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
-  connect(buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(updated()));
+  connect(_buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(updated()));
   connect(_items, SIGNAL(newID(int)), this, SIGNAL(updated()));
   connect(_pattern, SIGNAL(lostFocus()), this, SIGNAL(updated()));
 
   setFocusProxy(_all);
+}
+
+void ParameterGroup::setFixedSize(bool pFixed)
+{
+  if (pFixed == _fixed)
+    return;
+  
+  if (layout())
+    delete layout();
+    
+  if (_selectedGroup->layout())
+    delete _selectedGroup->layout();
+      
+  if (_patternGroup->layout())
+    delete _patternGroup->layout();
+  
+  if (pFixed)
+  {
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+    QHBoxLayout * hLayout = new QHBoxLayout(_selectedGroup);
+    hLayout->setSpacing(5);
+    hLayout->setMargin(0);
+    hLayout->addWidget(_selected);
+    hLayout->addWidget(_items);
+    _selectedGroup->setLayout(hLayout);
+
+    hLayout = new QHBoxLayout(_patternGroup);
+    hLayout->setSpacing(5);
+    hLayout->setMargin(0);
+    hLayout->addWidget(_usePattern);
+    hLayout->addWidget(_pattern);
+    _patternGroup->setLayout(hLayout);
+
+    QVBoxLayout * vLayout = new QVBoxLayout(this);
+    vLayout->setSpacing(0);
+    vLayout->setMargin(5);
+    vLayout->addWidget(_all);
+    vLayout->addWidget(_selectedGroup);
+    vLayout->addWidget(_patternGroup);
+    setLayout(vLayout);
+  }
+  else
+  {
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    QGridLayout * gridLayout = new QGridLayout(this);
+    QGridLayout * gridLayout1 = new QGridLayout();
+  #if defined Q_OS_MAC
+    gridLayout1->setRowMinimumHeight(0,24);
+  #endif
+    
+    gridLayout1->addWidget(_all, 0, 0, 1, 2);
+    
+    gridLayout1->addWidget(_selected, 1, 0, 1, 1);
+
+    QHBoxLayout * hboxLayout = new QHBoxLayout();
+    hboxLayout->setSpacing(5);
+    hboxLayout->addWidget(_items);
+    QSpacerItem * spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hboxLayout->addItem(spacerItem);
+    gridLayout1->addLayout(hboxLayout, 1, 1, 1, 1);
+
+    gridLayout1->addWidget(_usePattern, 2, 0, 1, 1);
+
+    QHBoxLayout * hboxLayout1 = new QHBoxLayout();
+    hboxLayout1->setSpacing(5);
+    hboxLayout1->addWidget(_pattern);
+    QSpacerItem * spacerItem1 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hboxLayout1->addItem(spacerItem1);
+    gridLayout1->addLayout(hboxLayout1, 2, 1, 1, 1);
+    
+    QVBoxLayout * vboxLayout1 = new QVBoxLayout();
+    vboxLayout1->setSpacing(5);
+    vboxLayout1->addLayout(gridLayout1);
+    QSpacerItem * spacerItem2 = new QSpacerItem(20, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    vboxLayout1->addItem(spacerItem2);
+
+    gridLayout->addLayout(vboxLayout1, 0, 0, 1, 1);
+  }
+  _buttonGroup->addButton(_all);
+  _buttonGroup->addButton(_selected);
+  _buttonGroup->addButton(_usePattern);
+  _fixed = pFixed;
 }
 
 void ParameterGroup::setType(enum ParameterGroupTypes pType)

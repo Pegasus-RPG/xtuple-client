@@ -29,6 +29,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
   Q_ENUMS(ParameterGroupTypes)
   Q_ENUMS(ParameterGroupStates)
 
+  Q_PROPERTY(bool fixedSize READ fixedSize WRITE setFixedSize)
   Q_PROPERTY(QString pattern READ pattern WRITE setPattern)
   Q_PROPERTY(enum ParameterGroupTypes type READ type WRITE setType)
   Q_PROPERTY(enum ParameterGroupStates state READ state WRITE setState)
@@ -47,6 +48,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
       All, Selected, Pattern
     };
 
+    bool fixedSize() {return _fixed;};
     enum ParameterGroupStates state();
     Q_INVOKABLE int                       id();
     QString                   pattern();
@@ -59,6 +61,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
     inline bool               isPattern()  { return _usePattern->isChecked(); }
 
   public slots:
+    void setFixedSize(bool);
     void setId(int);
     void setPattern(const QString &);
     void setType(enum ParameterGroupTypes);
@@ -69,11 +72,15 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
     void updated();
 
   private:
+    bool _fixed;
     enum ParameterGroupTypes _type;
 
+    QButtonGroup *_buttonGroup;
     QRadioButton *_all;
     QRadioButton *_selected;
     QRadioButton *_usePattern;
+    QWidget      *_selectedGroup;
+    QWidget      *_patternGroup;
     XComboBox    *_items;
     QLineEdit    *_pattern;
 };
