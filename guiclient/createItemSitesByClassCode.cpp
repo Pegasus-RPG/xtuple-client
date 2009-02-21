@@ -27,7 +27,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(populateLocations()));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
-  connect(_supply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupply(bool)));
+  connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupply(bool)));
 
   _reorderLevel->setValidator(omfgThis->qtyVal());
   _orderUpToQty->setValidator(omfgThis->qtyVal());
@@ -127,7 +127,7 @@ void createItemSitesByClassCode::sSave()
   }
 
   if(!_costNone->isChecked() && !_costAvg->isChecked()
-   && !_costStd->isChecked() && !_costJob->isChecked())
+   && !_costStd->isChecked())
   {
     QMessageBox::critical(this, tr("Cannot Save Item Site"),
                           tr("<p>You must select a Cost Method for this "
@@ -222,7 +222,7 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_costcat_id", _costcat->id());
   q.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
   q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
-  q.bindValue(":itemsite_supply",        QVariant(_supply->isChecked()));
+  q.bindValue(":itemsite_supply",        QVariant(_woSupply->isChecked()));
   q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
   q.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
   q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
@@ -271,8 +271,6 @@ void createItemSitesByClassCode::sSave()
     q.bindValue(":itemsite_costmethod", "A");
   else if(_costStd->isChecked())
     q.bindValue(":itemsite_costmethod", "S");
-  else if(_costJob->isChecked())
-    q.bindValue(":itemsite_costmethod", "J");
 
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
@@ -322,7 +320,6 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _costNone->setEnabled(true);
     _costAvg->setEnabled(false);
     _costStd->setEnabled(false);
-    _costJob->setEnabled(false);
   }
   else
   {
@@ -333,7 +330,6 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _costNone->setEnabled(false);
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
-    _costJob->setEnabled(false);
   }
 
   if ( (_controlMethod->currentIndex() == 2) ||
@@ -389,7 +385,7 @@ void createItemSitesByClassCode::clear()
 
   _controlMethod->setCurrentIndex(1);
   sHandleControlMethod();
-  _supply->setChecked(TRUE);
+  _woSupply->setChecked(TRUE);
   _sold->setChecked(TRUE);
   _stocked->setChecked(FALSE);
 
