@@ -104,7 +104,7 @@ void dspShipmentsByShipment::sPrintShippingForm()
   ParameterList params;
   params.append("cosmisc_id", _soship->id());
 
-  printShippingForm newdlg(this, "", TRUE);
+  printShippingForm newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -765,7 +765,7 @@ void menuInventory::sPrintPackingListBatchByShipvia()
 
 void menuInventory::sPrintShippingForm()
 {
-  printShippingForm(parent, "", TRUE).exec();
+  printShippingForm(parent).exec();
 }
 
 void menuInventory::sPrintShippingForms()

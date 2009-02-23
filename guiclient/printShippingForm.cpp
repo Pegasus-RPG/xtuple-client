@@ -20,10 +20,14 @@
 #include "editICMWatermark.h"
 #include "mqlutil.h"
 
-printShippingForm::printShippingForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+printShippingForm::printShippingForm(QWidget* parent, Qt::WindowFlags fl)
+    : XDialog(parent, fl)
 {
   setupUi(this);
+
+  // programatically hiding -- see issue # 5853.
+  _shipchrg->hide();
+  _shipchrgLit->hide();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
@@ -54,12 +58,12 @@ printShippingForm::printShippingForm(QWidget* parent, const char* name, bool mod
 
 printShippingForm::~printShippingForm()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void printShippingForm::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse printShippingForm::set(const ParameterList &pParams)

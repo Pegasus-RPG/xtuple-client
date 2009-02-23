@@ -121,7 +121,7 @@ void dspShipmentsByDate::sPrintShippingForm()
   params.append("cosmisc_id", _ship->id());
   params.append("shiphead_id", _ship->id());
 
-  printShippingForm newdlg(this, "", TRUE);
+  printShippingForm newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }
