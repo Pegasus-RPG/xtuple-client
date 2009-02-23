@@ -467,9 +467,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>Report Setup T&amp;ime</string>
               </property>
-              <property name="shortcut" >
-               <string>Alt+I</string>
-              </property>
               <property name="checked" >
                <bool>true</bool>
               </property>
@@ -524,9 +521,6 @@ to be bound by its terms.</comment>
              <widget class="QCheckBox" name="_reportRun" >
               <property name="text" >
                <string>Report Run Ti&amp;me</string>
-              </property>
-              <property name="shortcut" >
-               <string>Alt+M</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -674,18 +668,12 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>Recei&amp;ve Inventory at this Operation</string>
               </property>
-              <property name="shortcut" >
-               <string>Alt+V</string>
-              </property>
              </widget>
             </item>
             <item row="1" column="0" >
              <widget class="QCheckBox" name="_issueComp" >
               <property name="text" >
                <string>&amp;Auto. Issue Components at this Operation</string>
-              </property>
-              <property name="shortcut" >
-               <string>Alt+A</string>
               </property>
              </widget>
             </item>
@@ -946,9 +934,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>&amp;New</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+N</string>
-             </property>
             </widget>
            </item>
            <item>
@@ -959,9 +944,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>&amp;Edit</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+E</string>
-             </property>
             </widget>
            </item>
            <item>
@@ -971,9 +953,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="text" >
               <string>&amp;Delete</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+D</string>
              </property>
             </widget>
            </item>

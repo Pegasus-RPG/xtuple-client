@@ -865,18 +865,12 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;Cancel</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+C</string>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="_save" >
          <property name="text" >
           <string>&amp;Save</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+S</string>
          </property>
          <property name="default" >
           <bool>true</bool>

@@ -278,9 +278,6 @@ to be bound by its terms.</comment>
                     <property name="text" >
                      <string>Issue &amp;Line Bal.</string>
                     </property>
-                    <property name="shortcut" >
-                     <string>Alt+L</string>
-                    </property>
                    </widget>
                   </item>
                   <item>
@@ -299,9 +296,6 @@ to be bound by its terms.</comment>
                  <widget class="QPushButton" name="_issueAll" >
                   <property name="text" >
                    <string>Issue All &amp;Bal.</string>
-                  </property>
-                  <property name="shortcut" >
-                   <string>Alt+B</string>
                   </property>
                  </widget>
                 </item>

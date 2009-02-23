@@ -95,18 +95,12 @@ to be bound by its terms.</comment>
                     <property name="text" >
                       <string>Show E&amp;xpired Pricing Schedules</string>
                     </property>
-                    <property name="shortcut" >
-                      <string>Alt+X</string>
-                    </property>
                   </widget>
                 </item>
                 <item>
                   <widget class="QCheckBox" name="_showFuture" >
                     <property name="text" >
                       <string>Show &amp;Future Pricing Schedules</string>
-                    </property>
-                    <property name="shortcut" >
-                      <string>Alt+F</string>
                     </property>
                   </widget>
                 </item>
@@ -124,9 +118,6 @@ to be bound by its terms.</comment>
                   <widget class="QPushButton" name="_close" >
                     <property name="text" >
                       <string>&amp;Close</string>
-                    </property>
-                    <property name="shortcut" >
-                      <string>Alt+C</string>
                     </property>
                   </widget>
                 </item>
@@ -209,9 +200,6 @@ to be bound by its terms.</comment>
                             </property>
                             <property name="text" >
                               <string>&amp;Edit</string>
-                            </property>
-                            <property name="shortcut" >
-                              <string>Alt+E</string>
                             </property>
                           </widget>
                         </item>

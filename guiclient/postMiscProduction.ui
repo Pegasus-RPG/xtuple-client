@@ -223,9 +223,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Backflush</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+B</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -295,9 +292,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Issue Items not on Pick List</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+I</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -360,9 +354,6 @@ to be bound by its terms.</comment>
         <widget class="XCheckBox" name="_immediateTransfer" >
          <property name="text" >
           <string>Immediate &amp;Transfer to Site:</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+T</string>
          </property>
         </widget>
        </item>

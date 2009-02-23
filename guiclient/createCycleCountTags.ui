@@ -116,9 +116,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>&amp;Cancel</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+C</string>
-           </property>
           </widget>
          </item>
          <item>
@@ -245,9 +242,6 @@ to be bound by its terms.</comment>
                         <property name="text" >
                          <string>Mark Created Count Tag as &amp;Priority</string>
                         </property>
-                        <property name="shortcut" >
-                         <string>Alt+P</string>
-                        </property>
                        </widget>
                       </item>
                       <item>
@@ -281,9 +275,6 @@ to be bound by its terms.</comment>
                         <property name="text" >
                          <string>&amp;Freeze Inventory</string>
                         </property>
-                        <property name="shortcut" >
-                         <string>Alt+F</string>
-                        </property>
                        </widget>
                       </item>
                       <item>
@@ -316,9 +307,6 @@ to be bound by its terms.</comment>
                        <widget class="XCheckBox" name="_ignoreZeroBalance" >
                         <property name="text" >
                          <string>Ignore Zero Balance Item Sites</string>
-                        </property>
-                        <property name="shortcut" >
-                         <string/>
                         </property>
                        </widget>
                       </item>

@@ -262,9 +262,6 @@ to be bound by its terms.</comment>
                   <property name="text" >
                    <string>Backflush &amp;Materials</string>
                   </property>
-                  <property name="shortcut" >
-                   <string>Alt+M</string>
-                  </property>
                  </widget>
                 </item>
                 <item>
@@ -311,9 +308,6 @@ to be bound by its terms.</comment>
                   <property name="text" >
                    <string>&amp;Return Items not on Pick List</string>
                   </property>
-                  <property name="shortcut" >
-                   <string>Alt+R</string>
-                  </property>
                  </widget>
                 </item>
                 <item>
@@ -345,9 +339,6 @@ to be bound by its terms.</comment>
                <widget class="XCheckBox" name="_backflushOperations" >
                 <property name="text" >
                  <string>Backflush &amp;Operations</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+O</string>
                 </property>
                </widget>
               </item>

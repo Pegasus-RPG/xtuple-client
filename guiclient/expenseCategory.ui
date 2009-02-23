@@ -82,9 +82,6 @@ to be bound by its terms.</comment>
                    <property name="text" >
                     <string>&amp;Active</string>
                    </property>
-                   <property name="shortcut" >
-                    <string>Alt+A</string>
-                   </property>
                    <property name="checked" >
                     <bool>true</bool>
                    </property>

@@ -211,9 +211,6 @@ to be bound by its terms.</comment>
                   <property name="text" >
                    <string>&amp;Highlight Tag when Variance % Exceeds</string>
                   </property>
-                  <property name="shortcut" >
-                   <string>Alt+H</string>
-                  </property>
                  </widget>
                 </item>
                 <item>
@@ -304,9 +301,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>Show Count &amp;Slips</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+S</string>
-             </property>
             </widget>
            </item>
           </layout>
@@ -341,18 +335,12 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>&amp;Close</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+C</string>
-             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="_query" >
              <property name="text" >
               <string>&amp;Query</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+Q</string>
              </property>
              <property name="autoDefault" >
               <bool>true</bool>
@@ -366,9 +354,6 @@ to be bound by its terms.</comment>
             <widget class="QPushButton" name="_print" >
              <property name="text" >
               <string>&amp;Print</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+P</string>
              </property>
             </widget>
            </item>

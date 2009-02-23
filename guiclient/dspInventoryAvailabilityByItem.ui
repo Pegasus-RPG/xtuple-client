@@ -404,9 +404,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>&amp;Close</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+C</string>
-           </property>
           </widget>
          </item>
          <item>
@@ -416,9 +413,6 @@ to be bound by its terms.</comment>
            </property>
            <property name="text" >
             <string>&amp;Query</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+Q</string>
            </property>
            <property name="autoDefault" >
             <bool>true</bool>
@@ -435,9 +429,6 @@ to be bound by its terms.</comment>
            </property>
            <property name="text" >
             <string>&amp;Print</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+P</string>
            </property>
           </widget>
          </item>

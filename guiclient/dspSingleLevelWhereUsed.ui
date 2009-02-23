@@ -190,9 +190,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
-              <property name="shortcut" >
-               <string>Alt+P</string>
-              </property>
              </widget>
             </item>
            </layout>

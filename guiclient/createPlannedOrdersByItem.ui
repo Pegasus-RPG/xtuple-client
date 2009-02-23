@@ -154,18 +154,12 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;Explode Children</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+D</string>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="XCheckBox" name="_deleteFirmed" >
          <property name="text" >
           <string>&amp;Delete Existing Firmed MRP Orders</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+D</string>
          </property>
         </widget>
        </item>

@@ -393,9 +393,6 @@ to be bound by its terms.</comment>
                <property name="text" >
                 <string>Close this &amp;Line After Billing</string>
                </property>
-               <property name="shortcut" >
-                <string>Alt+L</string>
-               </property>
               </widget>
              </item>
              <item>

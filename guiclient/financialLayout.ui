@@ -316,9 +316,6 @@ to be bound by its terms.</comment>
                       <property name="text" >
                        <string>&amp;Add Group</string>
                       </property>
-                      <property name="shortcut" >
-                       <string>Alt+A</string>
-                      </property>
                      </widget>
                     </item>
                     <item>
@@ -329,9 +326,6 @@ to be bound by its terms.</comment>
                       <property name="text" >
                        <string>Add Account</string>
                       </property>
-                      <property name="shortcut" >
-                       <string/>
-                      </property>
                      </widget>
                     </item>
                     <item>
@@ -341,9 +335,6 @@ to be bound by its terms.</comment>
                       </property>
                       <property name="text" >
                        <string>Add Special</string>
-                      </property>
-                      <property name="shortcut" >
-                       <string/>
                       </property>
                      </widget>
                     </item>
@@ -356,9 +347,6 @@ to be bound by its terms.</comment>
                     </property>
                     <property name="text" >
                      <string>Edit</string>
-                    </property>
-                    <property name="shortcut" >
-                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -380,9 +368,6 @@ to be bound by its terms.</comment>
                     <property name="text" >
                      <string>Delete</string>
                     </property>
-                    <property name="shortcut" >
-                     <string/>
-                    </property>
                    </widget>
                   </item>
                   <item>
@@ -398,9 +383,6 @@ to be bound by its terms.</comment>
                       <property name="text" >
                        <string>&amp;Move Up</string>
                       </property>
-                      <property name="shortcut" >
-                       <string>Alt+M</string>
-                      </property>
                      </widget>
                     </item>
                     <item>
@@ -410,9 +392,6 @@ to be bound by its terms.</comment>
                       </property>
                       <property name="text" >
                        <string>&amp;Move Down</string>
-                      </property>
-                      <property name="shortcut" >
-                       <string>Alt+M</string>
                       </property>
                      </widget>
                     </item>

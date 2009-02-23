@@ -612,9 +612,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Correct Inventory</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+C</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -672,9 +669,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="text" >
               <string>&amp;Return Components</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+R</string>
              </property>
              <property name="checked" >
               <bool>false</bool>

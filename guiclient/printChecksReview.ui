@@ -76,18 +76,12 @@ to be bound by its terms.</comment>
                       <property name="text" >
                         <string>&amp;Unmark</string>
                       </property>
-                      <property name="shortcut" >
-                        <string>Alt+U</string>
-                      </property>
                     </widget>
                   </item>
                   <item>
                     <widget class="QPushButton" name="_printed" >
                       <property name="text" >
                         <string>Mark as &amp;Printed</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string>Alt+P</string>
                       </property>
                     </widget>
                   </item>
@@ -96,18 +90,12 @@ to be bound by its terms.</comment>
                       <property name="text" >
                         <string>&amp;Void</string>
                       </property>
-                      <property name="shortcut" >
-                        <string>Alt+V</string>
-                      </property>
                     </widget>
                   </item>
                   <item>
                     <widget class="QPushButton" name="_replace" >
                       <property name="text" >
                         <string>Void &amp;&amp; &amp;Replace</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string>Alt+R</string>
                       </property>
                     </widget>
                   </item>
@@ -125,9 +113,6 @@ to be bound by its terms.</comment>
                     <widget class="QPushButton" name="_selectAll" >
                       <property name="text" >
                         <string>Select All</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string/>
                       </property>
                     </widget>
                   </item>

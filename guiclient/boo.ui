@@ -72,9 +72,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>Show Expi&amp;red Operations</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+R</string>
-           </property>
           </widget>
          </item>
          <item row="2" column="2" >
@@ -97,9 +94,6 @@ to be bound by its terms.</comment>
           <widget class="QCheckBox" name="_showFuture" >
            <property name="text" >
             <string>Show &amp;Future Operations</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+F</string>
            </property>
           </widget>
          </item>

@@ -106,9 +106,6 @@ to be bound by its terms.</comment>
                                 <property name="text" >
                                   <string>&amp;Vendor</string>
                                 </property>
-                                <property name="shortcut" >
-                                  <string>Alt+V</string>
-                                </property>
                               </widget>
                             </item>
                             <item>
@@ -141,9 +138,6 @@ to be bound by its terms.</comment>
                               <widget class="QCheckBox" name="_internalCopy" >
                                 <property name="text" >
                                   <string>&amp;Internal</string>
-                                </property>
-                                <property name="shortcut" >
-                                  <string>Alt+I</string>
                                 </property>
                               </widget>
                             </item>

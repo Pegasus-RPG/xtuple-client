@@ -117,9 +117,6 @@ to be bound by its terms.</comment>
        <property name="text" >
         <string>&amp;Restricted</string>
        </property>
-       <property name="shortcut" >
-        <string>Alt+R</string>
-       </property>
       </widget>
      </item>
      <item>
@@ -155,18 +152,12 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;Cancel</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+C</string>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="_save" >
          <property name="text" >
           <string>&amp;Save</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+S</string>
          </property>
          <property name="default" >
           <bool>true</bool>
@@ -379,9 +370,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>&amp;New</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+N</string>
-             </property>
             </widget>
            </item>
            <item>
@@ -391,9 +379,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="text" >
               <string>&amp;Delete</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+D</string>
              </property>
             </widget>
            </item>

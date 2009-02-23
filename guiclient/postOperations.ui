@@ -726,9 +726,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Receive Inventory</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+R</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -793,9 +790,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="text" >
               <string>&amp;Issue Components</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+I</string>
              </property>
              <property name="checked" >
               <bool>false</bool>

@@ -191,9 +191,6 @@ Invoice Number:</string>
          <property name="text" >
           <string>&amp;Cancel</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+C</string>
-         </property>
         </widget>
        </item>
        <item>

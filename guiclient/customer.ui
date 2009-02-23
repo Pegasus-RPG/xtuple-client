@@ -102,9 +102,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>&amp;Active</string>
              </property>
-             <property name="shortcut" >
-              <string>Alt+A</string>
-             </property>
              <property name="checked" >
               <bool>true</bool>
              </property>
@@ -147,18 +144,12 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>&amp;Cancel</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+C</string>
-           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="_save" >
            <property name="text" >
             <string>&amp;Save</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+S</string>
            </property>
            <property name="autoDefault" >
             <bool>true</bool>
@@ -1453,9 +1444,6 @@ to be bound by its terms.</comment>
                    <property name="text" >
                     <string>&amp;New</string>
                    </property>
-                   <property name="shortcut" >
-                    <string>Alt+N</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -1466,9 +1454,6 @@ to be bound by its terms.</comment>
                    <property name="text" >
                     <string>&amp;Edit</string>
                    </property>
-                   <property name="shortcut" >
-                    <string>Alt+E</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -1478,9 +1463,6 @@ to be bound by its terms.</comment>
                    </property>
                    <property name="text" >
                     <string>&amp;View</string>
-                   </property>
-                   <property name="shortcut" >
-                    <string>Alt+V</string>
                    </property>
                   </widget>
                  </item>
@@ -1545,9 +1527,6 @@ to be bound by its terms.</comment>
                  <property name="text" >
                   <string>&amp;New</string>
                  </property>
-                 <property name="shortcut" >
-                  <string>Alt+N</string>
-                 </property>
                 </widget>
                </item>
                <item>
@@ -1558,9 +1537,6 @@ to be bound by its terms.</comment>
                  <property name="text" >
                   <string>&amp;Edit</string>
                  </property>
-                 <property name="shortcut" >
-                  <string>Alt+E</string>
-                 </property>
                 </widget>
                </item>
                <item>
@@ -1570,9 +1546,6 @@ to be bound by its terms.</comment>
                  </property>
                  <property name="text" >
                   <string>&amp;Delete</string>
-                 </property>
-                 <property name="shortcut" >
-                  <string>Alt+D</string>
                  </property>
                 </widget>
                </item>
@@ -2336,18 +2309,12 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>New</string>
              </property>
-             <property name="shortcut" >
-              <string/>
-             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="_editCC" >
              <property name="text" >
               <string>Edit</string>
-             </property>
-             <property name="shortcut" >
-              <string/>
              </property>
             </widget>
            </item>
@@ -2356,9 +2323,6 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>View</string>
              </property>
-             <property name="shortcut" >
-              <string/>
-             </property>
             </widget>
            </item>
            <item>
@@ -2366,18 +2330,12 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>Move Up</string>
              </property>
-             <property name="shortcut" >
-              <string/>
-             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="_downCC" >
              <property name="text" >
               <string>Move Down</string>
-             </property>
-             <property name="shortcut" >
-              <string/>
              </property>
             </widget>
            </item>

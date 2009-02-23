@@ -74,9 +74,6 @@ to be bound by its terms.</comment>
                <property name="text" >
                 <string>&amp;Cancel</string>
                </property>
-               <property name="shortcut" >
-                <string>Alt+C</string>
-               </property>
               </widget>
              </item>
              <item>
@@ -284,9 +281,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>Create C&amp;hild W/O at Parent W/O Explosion</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+H</string>
-           </property>
           </widget>
          </item>
         </layout>
@@ -405,9 +399,6 @@ to be bound by its terms.</comment>
           <widget class="QCheckBox" name="_scheduleAtWooper" >
            <property name="text" >
             <string>Schedule at W/O &amp;Operation</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+O</string>
            </property>
           </widget>
          </item>

@@ -264,9 +264,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Close</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+C</string>
-            </property>
             <property name="autoDefault" >
              <bool>true</bool>
             </property>
@@ -280,9 +277,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>&amp;Query</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+Q</string>
-            </property>
             <property name="autoDefault" >
              <bool>true</bool>
             </property>
@@ -295,9 +289,6 @@ to be bound by its terms.</comment>
            <widget class="QPushButton" name="_print" >
             <property name="text" >
              <string>&amp;Print</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+P</string>
             </property>
             <property name="autoDefault" >
              <bool>true</bool>
@@ -390,9 +381,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>Post P&amp;roduction</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+R</string>
-           </property>
            <property name="autoDefault" >
             <bool>true</bool>
            </property>
@@ -406,9 +394,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>Post &amp;Operations</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+O</string>
-           </property>
            <property name="autoDefault" >
             <bool>true</bool>
            </property>
@@ -421,9 +406,6 @@ to be bound by its terms.</comment>
            </property>
            <property name="text" >
             <string>Print &amp;Traveler</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+T</string>
            </property>
            <property name="autoDefault" >
             <bool>true</bool>

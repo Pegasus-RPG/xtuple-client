@@ -488,9 +488,6 @@ to be bound by its terms.</comment>
             <property name="text" >
              <string>Report Setup T&amp;ime</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+I</string>
-            </property>
            </widget>
           </item>
          </layout>
@@ -566,9 +563,6 @@ to be bound by its terms.</comment>
             </property>
             <property name="text" >
              <string>Report Run Ti&amp;me</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+M</string>
             </property>
            </widget>
           </item>

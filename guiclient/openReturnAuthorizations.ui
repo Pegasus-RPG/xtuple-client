@@ -193,9 +193,6 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;New</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+N</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -216,9 +213,6 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;View</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+V</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -228,9 +222,6 @@ to be bound by its terms.</comment>
          </property>
          <property name="text" >
           <string>&amp;Delete</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+D</string>
          </property>
         </widget>
        </item>

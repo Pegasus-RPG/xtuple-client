@@ -78,9 +78,6 @@ to be bound by its terms.</comment>
           <property name="text" >
            <string>&amp;Save</string>
           </property>
-          <property name="shortcut" >
-           <string>Alt+S</string>
-          </property>
           <property name="autoDefault" >
            <bool>true</bool>
           </property>
@@ -700,9 +697,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>New</string>
               </property>
-              <property name="shortcut" >
-               <string/>
-              </property>
              </widget>
             </item>
             <item>
@@ -712,9 +706,6 @@ to be bound by its terms.</comment>
               </property>
               <property name="text" >
                <string>Edit</string>
-              </property>
-              <property name="shortcut" >
-               <string/>
               </property>
              </widget>
             </item>
@@ -726,9 +717,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>View</string>
               </property>
-              <property name="shortcut" >
-               <string/>
-              </property>
              </widget>
             </item>
             <item>
@@ -739,9 +727,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>Move Up</string>
               </property>
-              <property name="shortcut" >
-               <string/>
-              </property>
              </widget>
             </item>
             <item>
@@ -751,9 +736,6 @@ to be bound by its terms.</comment>
               </property>
               <property name="text" >
                <string>Move Down</string>
-              </property>
-              <property name="shortcut" >
-               <string/>
               </property>
              </widget>
             </item>

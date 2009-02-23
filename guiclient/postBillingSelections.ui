@@ -108,9 +108,6 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>&amp;Post</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+P</string>
-         </property>
          <property name="default" >
           <bool>true</bool>
          </property>

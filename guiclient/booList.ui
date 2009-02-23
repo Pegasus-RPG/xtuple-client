@@ -62,18 +62,12 @@ to be bound by its terms.</comment>
          <property name="text" >
           <string>Show BOOs for &amp;Inactive Items</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+I</string>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="_close" >
          <property name="text" >
           <string>&amp;Close</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+C</string>
          </property>
         </widget>
        </item>

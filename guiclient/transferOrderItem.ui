@@ -113,9 +113,6 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>&amp;Close</string>
            </property>
-           <property name="shortcut" >
-            <string>Alt+C</string>
-           </property>
           </widget>
          </item>
          <item>
@@ -125,9 +122,6 @@ to be bound by its terms.</comment>
            </property>
            <property name="text" >
             <string>&amp;Save</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+S</string>
            </property>
            <property name="default" >
             <bool>true</bool>
@@ -150,18 +144,12 @@ to be bound by its terms.</comment>
              <property name="text" >
               <string>Previous</string>
              </property>
-             <property name="shortcut" >
-              <string/>
-             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="_next" >
              <property name="text" >
               <string>Next</string>
-             </property>
-             <property name="shortcut" >
-              <string/>
              </property>
             </widget>
            </item>
@@ -171,9 +159,6 @@ to be bound by its terms.</comment>
           <widget class="QPushButton" name="_cancel" >
            <property name="text" >
             <string>Cancel Item</string>
-           </property>
-           <property name="shortcut" >
-            <string/>
            </property>
           </widget>
          </item>

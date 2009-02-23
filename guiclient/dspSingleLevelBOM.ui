@@ -152,9 +152,6 @@ to be bound by its terms.</comment>
               <property name="text" >
                <string>Show &amp;Expired Components</string>
               </property>
-              <property name="shortcut" >
-               <string>Alt+E</string>
-              </property>
              </widget>
             </item>
             <item>
@@ -314,9 +311,6 @@ to be bound by its terms.</comment>
              <widget class="XCheckBox" name="_showFuture" >
               <property name="text" >
                <string>Show &amp;Future Components</string>
-              </property>
-              <property name="shortcut" >
-               <string>Alt+F</string>
               </property>
              </widget>
             </item>
