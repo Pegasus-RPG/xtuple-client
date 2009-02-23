@@ -161,8 +161,8 @@ void fixSerial::sHandleSerial()
 bool fixSerial::fixOne(XTreeWidgetItem *pItem)
 {
   q.prepare("SELECT SETVAL(:sequence, :value);");
-  q.bindValue(":sequence",	pItem->text(2));
-  q.bindValue(":value",		pItem->text(3));
+  q.bindValue(":sequence",	pItem->text(3));
+  q.bindValue(":value",		pItem->text(4));
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
