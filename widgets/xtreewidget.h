@@ -213,9 +213,12 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QVector<int>        _stretch;
     bool        _resizingInProcess;
     bool        _forgetful;
+    bool        _forgetfulOrder;
     bool        _settingsLoaded;
     QString     _settingsName;
     int         _resetWhichWidth;
+    int         _scol;
+    Qt::SortOrder _sord;
     static void loadLocale();
 
   private slots:
@@ -229,6 +232,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void sResetWidth();
     void sResetAllWidths();
     void sToggleForgetfulness();
+    void sToggleForgetfulnessOrder();
     void popupMenuActionTriggered(QAction*);
 };
 

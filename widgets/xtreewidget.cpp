@@ -36,9 +36,12 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 {
   _resizingInProcess = false;
   _forgetful = false;
+  _forgetfulOrder = false;
   _settingsLoaded = false;
   _menu = new QMenu(this);
   _menu->setObjectName("_menu");
+  _scol = -1;
+  _sord = Qt::AscendingOrder;
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -69,6 +72,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 XTreeWidget::~XTreeWidget()
 {
   xtsettingsSetValue(_settingsName + "/isForgetful", _forgetful);
+  xtsettingsSetValue(_settingsName + "/isForgetfulOrder", _forgetfulOrder);
   QString savedString;
   if(!_forgetful)
   {
@@ -83,6 +87,12 @@ XTreeWidget::~XTreeWidget()
     }
     xtsettingsSetValue(_settingsName + "/columnWidths", savedString);
   }
+  if(!_forgetfulOrder && header()->isSortIndicatorShown())
+    savedString = QString::number(header()->sortIndicatorSection()) + " "
+      + (header()->sortIndicatorOrder() == Qt::AscendingOrder ? "ASC" : "DESC" );
+  else
+    savedString = "-1,ASC";
+  xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
   if(_x_preferences)
   {
     savedString = "";
@@ -443,6 +453,7 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
 
     // Load any previously saved information about column widths
     _forgetful = xtsettingsValue(_settingsName + "/isForgetful").toBool();
+    _forgetfulOrder = xtsettingsValue(_settingsName + "/isForgetfulOrder").toBool();
 
     QString savedString;
     QStringList savedParts;
@@ -463,6 +474,19 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
         int v = val.toInt(&b2);
         if(b1 && b2)
           _savedColumnWidths.insert(k, v);
+      }
+    }
+    if(!_forgetfulOrder)
+    {
+      part = xtsettingsValue(_settingsName + "/sortOrder", "-1,ASC").toString();
+      key = part.left(part.indexOf(" "));
+      val = part.right(part.length() - part.indexOf(" ") - 1);
+      b1 = false;
+      int k = key.toInt(&b1);
+      if(b1)
+      {
+        _scol = k;
+        _sord = ("ASC" == val ? Qt::AscendingOrder : Qt::DescendingOrder);
       }
     }
 
@@ -517,6 +541,12 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     _stretch.append(column);
   }
   setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
+  if(_scol >= 0 && column == _scol)
+  {
+    if(!header()->isSortIndicatorShown())
+      header()->setSortIndicatorShown(true);
+    sortItems(_scol, _sord);
+  }
 }
 
 int XTreeWidget::column(const QString pName) const
@@ -855,6 +885,11 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
   else
     _menu->insertItem(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
 
+  if(_forgetfulOrder)
+    _menu->insertItem(tr("Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
+  else
+    _menu->insertItem(tr("Do Not Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
+
   _menu->insertSeparator();
 
   QTreeWidgetItem * hitem = headerItem();
@@ -1052,6 +1087,11 @@ void XTreeWidget::sResetAllWidths()
 void XTreeWidget::sToggleForgetfulness()
 {
   _forgetful = !_forgetful;
+}
+
+void XTreeWidget::sToggleForgetfulnessOrder()
+{
+  _forgetfulOrder = !_forgetfulOrder;
 }
 
 void XTreeWidget::setColumnVisible(int pColumn, bool pVisible)
