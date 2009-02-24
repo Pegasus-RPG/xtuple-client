@@ -35,6 +35,7 @@
 #define cActiveOpen   0x02
 #define cInactiveOpen 0x04
 #define cCanceled     0x08
+#define cUnreleased   0x16
 
 transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -190,8 +191,7 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
       return UndefinedError;
     }
 
-    // TO-DO: Changed to handle combo box
-    //_status->setText("O");
+    _status->setCurrentIndex(0);
 
     if ( (_metrics->value("TONumberGeneration") == "A") ||
          (_metrics->value("TONumberGeneration") == "O")   )
@@ -296,8 +296,9 @@ bool transferOrder::insertPlaceholder()
   q.bindValue(":tohead_src_warehous_id",  _srcWhs->id());
   q.bindValue(":tohead_trns_warehous_id", _trnsWhs->id());
   q.bindValue(":tohead_dest_warehous_id", _dstWhs->id());
-  // TO-DO: Changed to handle combo box
-  // q.bindValue(":tohead_status",		  _status->text());
+
+  q.bindValue(":tohead_status", "U");
+  
   if (_shippingForm->isValid())
     q.bindValue(":tohead_shipform_id",	  _shippingForm->id());
 
@@ -472,8 +473,11 @@ bool transferOrder::save(bool partial)
   q.bindValue(":id", _toheadid );
 
   q.bindValue(":number",		_orderNumber->text().toInt());
-  // TO-DO: Changed to handle combo box
-  //q.bindValue(":status",		_status->text());
+
+  const char *statusTypes[] = { "U", "O", "C" };
+  QString status = QString(statusTypes[_status->currentIndex()]);
+  q.bindValue(":status",      status);
+
   q.bindValue(":orderdate",		_orderDate->date());
 
   q.bindValue(":src_warehous_id",	_srcWhs->id());
@@ -586,6 +590,12 @@ void transferOrder::sPopulateMenu(QMenu *pMenu)
       {
         pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
         pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
+        pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
+      }
+      else if (_lineMode == cUnreleased)
+      {
+        pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
+        pMenu->insertItem(tr("Release Line..."), this, SLOT(sAction()), 0);
         pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
       }
     }
@@ -779,45 +789,53 @@ void transferOrder::sHandleButtons()
 
       if (lineMode == 1)
       {
-	_lineMode = cClosed;
+        _lineMode = cClosed;
 
-	_action->setText(tr("Open"));
-	_action->setEnabled(TRUE);
-	_delete->setEnabled(FALSE);
+        _action->setText(tr("Open"));
+        _action->setEnabled(TRUE);
+        _delete->setEnabled(FALSE);
       }
       else if (lineMode == 2)
       {
-	_lineMode = cActiveOpen;
+        _lineMode = cActiveOpen;
 
-	_action->setText(tr("Close"));
-	_action->setEnabled(TRUE);
-	_delete->setEnabled(FALSE);
+        _action->setText(tr("Close"));
+        _action->setEnabled(TRUE);
+        _delete->setEnabled(FALSE);
       }
       else if (lineMode == 3)
       {
-	_lineMode = cInactiveOpen;
+        _lineMode = cInactiveOpen;
 
-	_action->setText(tr("Close"));
-	_action->setEnabled(TRUE);
-	_delete->setEnabled(TRUE);
+        _action->setText(tr("Close"));
+        _action->setEnabled(TRUE);
+        _delete->setEnabled(TRUE);
       }
       else if (lineMode == 4)
       {
-	_lineMode = cCanceled;
+        _lineMode = cCanceled;
 
-	_action->setEnabled(FALSE);
-	_delete->setEnabled(FALSE);
+        _action->setEnabled(FALSE);
+        _delete->setEnabled(FALSE);
+      }
+      else if (lineMode == 5)
+      {
+        _lineMode = cUnreleased;
+
+        _action->setText(tr("Release"));
+        _action->setEnabled(TRUE);
+        _delete->setEnabled(TRUE);
       }
       else
       {
-	_action->setEnabled(FALSE);
-	_delete->setEnabled(FALSE);
+        _action->setEnabled(FALSE);
+        _delete->setEnabled(FALSE);
       }
 
       if(1 == lineMode || 4 == lineMode)
       {
-	_issueStock->setEnabled(FALSE);
-	_issueLineBalance->setEnabled(FALSE);
+        _issueStock->setEnabled(FALSE);
+        _issueLineBalance->setEnabled(FALSE);
       }
     }
     else
@@ -847,14 +865,17 @@ void transferOrder::sAction()
     if (_lineMode == cClosed)
     {
       q.prepare( "UPDATE toitem "
-                 "SET toitem_status='O' "
+                 "SET toitem_status=:toitem_status "
                  "WHERE (toitem_id=:toitem_id);" );
+      const char *statusTypes[] = { "U", "O", "C" };
+      QString status = QString(statusTypes[_status->currentIndex()]);
+      q.bindValue(":toitem_status", status);
       q.bindValue(":toitem_id", _toitem->id());
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
     else
@@ -864,34 +885,39 @@ void transferOrder::sAction()
       q.exec();
       if (q.first())
       {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("closeToItem", result),
-		      __FILE__, __LINE__);
-	  return;
-	}
+        int result = q.value("result").toInt();
+        if (result < 0)
+        {
+          systemError(this, storedProcErrorLookup("closeToItem", result),
+                      __FILE__, __LINE__);
+          return;
+        }
       }
       else if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
     sFillItemList();
 
-    /* TO-DO: Changed to handle combo box
     q.prepare("SELECT tohead_status FROM tohead WHERE (tohead_id=:tohead_id);");
     q.bindValue(":tohead_id", _toheadid);
     q.exec();
     if (q.first())
-      _status->setText(q.value("tohead_status").toString());
+    {
+      if (q.value("tohead_status").toString() == "U")
+        _status->setCurrentIndex(0);
+      else if (q.value("tohead_status").toString() == "O")
+        _status->setCurrentIndex(1);
+      else if (q.value("tohead_status").toString() == "C")
+        _status->setCurrentIndex(2);
+    }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    */
   }
 }
 
@@ -979,12 +1005,17 @@ void transferOrder::populate()
       _orderNumber->setText(to.value("tohead_number"));
       _orderNumber->setEnabled(FALSE);
       _orderDate->setDate(to.value("tohead_orderdate").toDate(), true);
-      // TO-DO: Changed to handle combo box
-      // _status->setText(to.value("tohead_status").toString());
+
+      if (to.value("tohead_status").toString() == "U")
+        _status->setCurrentIndex(0);
+      else if (to.value("tohead_status").toString() == "O")
+        _status->setCurrentIndex(1);
+      else if (to.value("tohead_status").toString() == "C")
+        _status->setCurrentIndex(2);
 
       _srcWhs->setId(to.value("tohead_src_warehous_id").toInt());
       if (! _srcWhs->isValid())
-	_srcWhs->setCurrentText(to.value("tohead_srcname").toString());
+        _srcWhs->setCurrentText(to.value("tohead_srcname").toString());
       if (_srcAddr->line1() !=to.value("tohead_srcaddress1").toString() ||
           _srcAddr->line2() !=to.value("tohead_srcaddress2").toString() ||
           _srcAddr->line3() !=to.value("tohead_srcaddress3").toString() ||
@@ -1130,6 +1161,7 @@ void transferOrder::sFillItemList()
 	      "       toitem_status,"
 	      "       CASE WHEN (toitem_status='C') THEN 1"
 	      "            WHEN (toitem_status='X') THEN 4"
+	      "            WHEN (toitem_status='U') THEN 5"
 	      "            WHEN ((toitem_status='O')"
 	      "                  AND ((qtyAtShipping('TO', toitem_id) > 0) OR"
 	      "                          (toitem_qty_shipped > 0) ) ) THEN 2"
@@ -1308,8 +1340,7 @@ void transferOrder::clear()
   _srcWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   _trnsWhs->setId(_metrics->value("DefaultTransitWarehouse").toInt());
   _dstWhs->setId(_preferences->value("PreferredWarehouse").toInt());
-  // TO-DO: Changed to handle combo box
-  // _status->setText("O");
+  _status->setCurrentIndex(0);
   _agent->setCurrentIndex(-1);
   _srcAddr->setId(-1);
   _dstAddr->setId(-1);
@@ -1732,7 +1763,8 @@ void transferOrder::sIssueStock()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* toitem = (XTreeWidgetItem*)(selected[i]);
-    if (toitem->altId() != 1 && toitem->altId() != 4)
+    // skip if status = C or X or U
+    if (toitem->altId() != 1 && toitem->altId() != 4 && toitem->altId() != 5)
     {
       ParameterList params;
       params.append("toitem_id", toitem->id());
@@ -1757,7 +1789,8 @@ void transferOrder::sIssueLineBalance()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* toitem = (XTreeWidgetItem*)(selected[i]);
-    if (toitem->altId() != 1 && toitem->altId() != 4)
+    // skip if status = C or X or U
+    if (toitem->altId() != 1 && toitem->altId() != 4 && toitem->altId() != 5)
     {
 
       if(_requireInventory->isChecked())
