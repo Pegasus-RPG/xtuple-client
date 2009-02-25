@@ -129,6 +129,7 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       _shipping->setEnabled(FALSE);
       _countTagPrefix->setEnabled(FALSE);
       _countTagNumber->setEnabled(FALSE);
+      _sequence->setEnabled(FALSE);
       _useSlips->setEnabled(FALSE);
       _arblGroup->setEnabled(FALSE);
       _useZones->setEnabled(FALSE);
@@ -345,10 +346,11 @@ void warehouse::sSave()
                "  warehous_binsize, warehous_binalpha,"
                "  warehous_locationsize, warehous_locationalpha,"
                "  warehous_enforcearbl, warehous_usezones, "
-	       "  warehous_default_accnt_id, warehous_shipping_commission, "
-	       "  warehous_addr_id, warehous_taxauth_id, warehous_transit,"
-	       "  warehous_shipform_id, warehous_shipvia_id,"
-	       "  warehous_shipcomments, warehous_costcat_id, warehous_sitetype_id ) "
+               "  warehous_default_accnt_id, warehous_shipping_commission, "
+               "  warehous_addr_id, warehous_taxauth_id, warehous_transit,"
+               "  warehous_shipform_id, warehous_shipvia_id,"
+               "  warehous_shipcomments, warehous_costcat_id, warehous_sitetype_id,"
+               "  warehous_sequence ) "
                "VALUES "
                "( :warehous_id, :warehous_code, :warehous_descrip,"
                "  :warehous_cntct_id, :warehous_fob, :warehous_active,"
@@ -359,43 +361,45 @@ void warehouse::sSave()
                "  :warehous_binsize, :warehous_binalpha,"
                "  :warehous_locationsize, :warehous_locationalpha,"
                "  :warehous_enforcearbl, :warehous_usezones, "
-	       "  :warehous_default_accnt_id, :warehous_shipping_commission, "
-	       "  :warehous_addr_id, :warehous_taxauth_id, :warehous_transit,"
-	       "  :warehous_shipform_id, :warehous_shipvia_id,"
-	       "  :warehous_shipcomments, :warehous_costcat_id, :warehous_sitetype_id );" );
+               "  :warehous_default_accnt_id, :warehous_shipping_commission, "
+               "  :warehous_addr_id, :warehous_taxauth_id, :warehous_transit,"
+               "  :warehous_shipform_id, :warehous_shipvia_id,"
+               "  :warehous_shipcomments, :warehous_costcat_id, :warehous_sitetype_id,"
+               "  :warehous_sequence );" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE whsinfo "
                "SET warehous_code=:warehous_code,"
-	       "    warehous_descrip=:warehous_descrip,"
+               "    warehous_descrip=:warehous_descrip,"
                "    warehous_cntct_id=:warehous_cntct_id, "
                "    warehous_fob=:warehous_fob,"
-	       "    warehous_active=:warehous_active,"
+               "    warehous_active=:warehous_active,"
                "    warehous_bol_prefix=:warehous_bol_prefix,"
-	       "    warehous_bol_number=:warehous_bol_number,"
+               "    warehous_bol_number=:warehous_bol_number,"
                "    warehous_shipping=:warehous_shipping,"
                "    warehous_counttag_prefix=:warehous_counttag_prefix,"
-	       "    warehous_counttag_number=:warehous_counttag_number,"
+               "    warehous_counttag_number=:warehous_counttag_number,"
                "    warehous_useslips=:warehous_useslips,"
                "    warehous_aislesize=:warehous_aislesize,"
-	       "    warehous_aislealpha=:warehous_aislealpha,"
+               "    warehous_aislealpha=:warehous_aislealpha,"
                "    warehous_racksize=:warehous_racksize,"
-	       "    warehous_rackalpha=:warehous_rackalpha,"
+               "    warehous_rackalpha=:warehous_rackalpha,"
                "    warehous_binsize=:warehous_binsize,"
-	       "    warehous_binalpha=:warehous_binalpha,"
+               "    warehous_binalpha=:warehous_binalpha,"
                "    warehous_locationsize=:warehous_locationsize,"
-	       "    warehous_locationalpha=:warehous_locationalpha,"
+               "    warehous_locationalpha=:warehous_locationalpha,"
                "    warehous_enforcearbl=:warehous_enforcearbl,"
-	       "    warehous_usezones=:warehous_usezones,"
+               "    warehous_usezones=:warehous_usezones,"
                "    warehous_default_accnt_id=:warehous_default_accnt_id, "
-	       "    warehous_shipping_commission=:warehous_shipping_commission,"
-	       "    warehous_addr_id=:warehous_addr_id,"
-	       "    warehous_taxauth_id=:warehous_taxauth_id,"
-	       "    warehous_transit=:warehous_transit,"
-	       "    warehous_shipform_id=:warehous_shipform_id,"
-	       "    warehous_shipvia_id=:warehous_shipvia_id,"
-	       "    warehous_shipcomments=:warehous_shipcomments,"
-	       "    warehous_costcat_id=:warehous_costcat_id, "
-		   "    warehous_sitetype_id=:warehous_sitetype_id "
+               "    warehous_shipping_commission=:warehous_shipping_commission,"
+               "    warehous_addr_id=:warehous_addr_id,"
+               "    warehous_taxauth_id=:warehous_taxauth_id,"
+               "    warehous_transit=:warehous_transit,"
+               "    warehous_shipform_id=:warehous_shipform_id,"
+               "    warehous_shipvia_id=:warehous_shipvia_id,"
+               "    warehous_shipcomments=:warehous_shipcomments,"
+               "    warehous_costcat_id=:warehous_costcat_id, "
+               "    warehous_sitetype_id=:warehous_sitetype_id,"
+               "    warehous_sequence=:warehous_sequence "
                "WHERE (warehous_id=:warehous_id);" );
   
   q.bindValue(":warehous_id", _warehousid);
@@ -410,6 +414,7 @@ void warehouse::sSave()
   q.bindValue(":warehous_default_accnt_id", _account->id());
   if(_sitetype->isValid())
     q.bindValue(":warehous_sitetype_id", _sitetype->id());
+  q.bindValue(":warehous_sequence",	_sequence->value());
 
   if (_standard->isChecked())
   {
@@ -501,6 +506,7 @@ void warehouse::populate()
     _shipvia->setId(q.value("warehous_shipvia_id").toInt());
     _shipcomments->setText(q.value("warehous_shipcomments").toString());
     _costcat->setId(q.value("warehous_costcat_id").toInt());
+    _sequence->setValue(q.value("warehous_sequence").toInt());
 
     sFillList();
     _comments->setId(_warehousid);
