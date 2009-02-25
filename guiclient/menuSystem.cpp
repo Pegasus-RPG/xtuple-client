@@ -171,7 +171,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configurePD",	tr("&Products..."),	SLOT(sConfigurePD()),	configModulesMenu,	_privileges->check("ConfigurePD"),	NULL,	NULL,	true	},
     { "sys.configureIM",	tr("&Inventory..."),	SLOT(sConfigureIM()),	configModulesMenu,	_privileges->check("ConfigureIM"),	NULL,	NULL,	true	},
     { "sys.configurePO",	tr("P&urchase..."),	SLOT(sConfigurePO()),	configModulesMenu,	_privileges->check("ConfigurePO"),	NULL,	NULL,	true	},
-    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privileges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->value("Application") == "Manufacturing")	},
+    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privileges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->boolean("MultiWhs"))	},
     { "sys.configureWO",	tr("&Manufacture..."),	SLOT(sConfigureWO()),	configModulesMenu,	_privileges->check("ConfigureWO"),	NULL,	NULL,	true	},
     { "sys.configureCRM",	tr("&CRM..."),	SLOT(sConfigureCRM()),	configModulesMenu,	_privileges->check("ConfigureCRM"),	NULL,	NULL,	true	},
     { "sys.configureSO",	tr("&Sales..."),	SLOT(sConfigureSO()),	configModulesMenu,	_privileges->check("ConfigureSO"),	NULL,	NULL,	true	},
