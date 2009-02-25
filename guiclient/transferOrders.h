@@ -44,6 +44,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+private:
+    int _numSelected;
+
 };
 
 #endif // TRANSFERORDERS_H

@@ -67,6 +67,7 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_to, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
+  _numSelected = 0;
   _destWarehouse->setAll();
 
   sFillList();
@@ -268,53 +269,60 @@ void transferOrders::sAddToPackingListBatch()
 
 void transferOrders::sHandleButtons()
 {
-  XTreeWidgetItem *item = 0;
-  QList<QTreeWidgetItem*> selectedlist = _to->selectedItems();
-  item = (XTreeWidgetItem*)(selectedlist[0]);
+  XTreeWidgetItem *selected = 0;
+  _numSelected = 0;
 
-  if (item->altId() == 1 || item->altId() == 2)
+  QList<QTreeWidgetItem*> selectedlist = _to->selectedItems();
+  _numSelected = selectedlist.size();
+  if (_numSelected > 0)
+    selected = (XTreeWidgetItem*)(selectedlist[0]);
+
+  if (selected)
   {
-    if (!_privileges->check("MaintainTransferOrders"))
+    if (selected->altId() == 1 || selected->altId() == 2)
+    {
+      if (!_privileges->check("MaintainTransferOrders"))
+      {
+        _edit->setEnabled(FALSE);
+        _delete->setEnabled(FALSE);
+      }
+      else
+      {
+        _edit->setEnabled(TRUE);
+        _delete->setEnabled(TRUE);
+      }
+    }
+    else
     {
       _edit->setEnabled(FALSE);
       _delete->setEnabled(FALSE);
     }
-    else
-    {
-      _edit->setEnabled(TRUE);
-      _delete->setEnabled(TRUE);
+
+    if (selected->altId() == 1)
+    {  
+      if (!_privileges->check("ReleaseTransferOrders"))
+        _release->setEnabled(FALSE);
+      else
+        _release->setEnabled(TRUE);
     }
-  }
-  else
-  {
-    _edit->setEnabled(FALSE);
-    _delete->setEnabled(FALSE);
-  }
-
-  if (item->altId() == 1)
-  {  
-    if (!_privileges->check("ReleaseTransferOrders"))
+    else
       _release->setEnabled(FALSE);
+
+    if (!_privileges->check("MaintainTransferOrders"))
+      _copy->setEnabled(FALSE);
     else
-      _release->setEnabled(TRUE);
-  }
-  else
-    _release->setEnabled(FALSE);
+      _copy->setEnabled(TRUE);
 
-  if (!_privileges->check("MaintainTransferOrders"))
-    _copy->setEnabled(FALSE);
-  else
-    _copy->setEnabled(TRUE);
-
-  if (item->altId() == 2)
-  {
-    if (!_privileges->check("IssueStockToShipping"))
+    if (selected->altId() == 2)
+    {
+      if (!_privileges->check("IssueStockToShipping"))
+        _issue->setEnabled(FALSE);
+      else
+        _issue->setEnabled(TRUE);
+    }
+    else
       _issue->setEnabled(FALSE);
-    else
-      _issue->setEnabled(TRUE);
   }
-  else
-    _issue->setEnabled(FALSE);
 }
 
 void transferOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
