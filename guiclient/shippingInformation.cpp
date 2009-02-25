@@ -239,7 +239,7 @@ void shippingInformation::sViewLine()
   {
     params.append("soitem_id", _item->id());
 
-    salesOrderItem newdlg(this, "", TRUE);
+    salesOrderItem newdlg(this);
     newdlg.set(params);
     newdlg.exec();
   }

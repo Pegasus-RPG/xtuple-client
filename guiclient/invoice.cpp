@@ -596,7 +596,7 @@ void invoice::sNew()
   params.append("cust_curr_id", _custCurrency->id());
   params.append("curr_date", _invoiceDate->date());
 
-  invoiceItem newdlg(this, "", TRUE);
+  invoiceItem newdlg(this);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillItemList();
@@ -612,7 +612,7 @@ void invoice::sEdit()
   params.append("cust_curr_id", _custCurrency->id());
   params.append("curr_date", _orderDate->date());
 
-  invoiceItem newdlg(this, "", TRUE);
+  invoiceItem newdlg(this);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillItemList();
@@ -628,7 +628,7 @@ void invoice::sView()
   params.append("cust_curr_id", _custCurrency->id());
   params.append("curr_date", _orderDate->date());
 
-  invoiceItem newdlg(this, "", TRUE);
+  invoiceItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }

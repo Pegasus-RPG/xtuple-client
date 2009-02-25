@@ -13,15 +13,8 @@
 #include <QVariant>
 #include <QSqlError>
 
-/*
- *  Constructs a priceList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-priceList::priceList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+priceList::priceList(QWidget* parent, Qt::WindowFlags fl)
+    : XDialog(parent, fl)
 {
   setupUi(this);
 
@@ -36,7 +29,9 @@ priceList::priceList(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _price->addColumn(tr("Schedule"),        _itemColumn,  Qt::AlignLeft,     true, "schedulename"  );
   _price->addColumn(tr("Source"),          _itemColumn,  Qt::AlignLeft,     true, "type"  );
   _price->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,    true, "qty_break" );
+  _price->addColumn(tr("Qty. UOM"),        _qtyColumn,   Qt::AlignRight,    true, "qty_uom" );
   _price->addColumn(tr("Price"),           _priceColumn, Qt::AlignRight ,   true, "base_price");
+  _price->addColumn(tr("Price UOM"),       _priceColumn, Qt::AlignRight ,   true, "price_uom");
   _price->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignLeft , true, "currency");
   _price->addColumn(tr("Price (in curr)"), _priceColumn, Qt::AlignRight ,   true, "price");
   // column title reset in priceList::set
@@ -52,21 +47,14 @@ priceList::priceList(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _qty->setValidator(omfgThis->qtyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 priceList::~priceList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void priceList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse priceList::set(const ParameterList &pParams)
@@ -190,16 +178,21 @@ void priceList::sSelect()
 void priceList::sFillList()
 {
   q.prepare( "SELECT source, sourceid, schedulename, type,"
+             "       invqty AS qty_break,"
              "       CASE WHEN (qtybreak = -1) THEN :na"
              "            ELSE formatQty(qtybreak)"
-             "       END AS qty_break,"
+             "       END AS qty_break_qtdisplayrole,"
+             "       invuom.uom_name AS qty_uom,"
              "       price, currConcat(curr_id) AS currency,"
+             "       priceuom.uom_name AS price_uom,"
 	     "	     currToCurr(curr_id, :curr_id, price, :effective) AS base_price, "
              "       'salesprice' AS price_xtnumericrole, "
              "       'salesprice' AS base_price_xtnumericrole "
              "FROM ( SELECT 1 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "              ipshead_name AS schedulename, :customer AS type,"
-             "              ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "              ipsprice_qtybreak AS invqty,"
+             "              ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "              ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "		    ipshead_curr_id AS curr_id "
              "       FROM ipsass, ipshead, ipsprice "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -211,7 +204,9 @@ void priceList::sFillList()
 
              "       UNION SELECT 2 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :custType AS type,"
-             "                    ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "                    ipsprice_qtybreak AS invqty,"
+             "                    ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "                    ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "                    ipshead_curr_id AS curr_id "
              "       FROM ipsass, ipshead, ipsprice, cust "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -223,7 +218,9 @@ void priceList::sFillList()
 
              "       UNION SELECT 3 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :custTypePattern AS type,"
-             "                    ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "                    ipsprice_qtybreak AS invqty,"
+             "                    ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "                    ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "                    ipshead_curr_id AS curr_id "
              "       FROM ipsass, ipshead, ipsprice, custtype, cust "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -237,7 +234,9 @@ void priceList::sFillList()
 
              "       UNION SELECT 6 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :shipTo AS type,"
-             "                    ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "                    ipsprice_qtybreak AS invqty,"
+             "                    ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "                    ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "                    ipshead_curr_id AS curr_id "
              "       FROM ipsass, ipshead, ipsprice "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -249,7 +248,9 @@ void priceList::sFillList()
      
              "       UNION SELECT 7 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :shipToPattern AS type,"
-             "                    ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "                    ipsprice_qtybreak AS invqty,"
+             "                    ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "                    ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "                    ipshead_curr_id AS curr_id "
              "       FROM ipsass, ipshead, ipsprice, shipto "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -263,7 +264,9 @@ void priceList::sFillList()
      
              "       UNION SELECT 4 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, (:sale || '-' || sale_name) AS type,"
-             "                    ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"
+             "                    ipsprice_qtybreak AS invqty,"
+             "                    ipsprice_uomqtybreak AS qtybreak, ipsprice_uomprice AS price,"
+             "                    ipsprice_uomqtybreak_uom_id AS qtybreak_uom_id, ipsprice_uomprice_uom_id AS price_uom_id,"
 	     "                    ipshead_curr_id AS curr_id "
              "       FROM sale, ipshead, ipsprice "
              "       WHERE ((sale_ipshead_id=ipshead_id)"
@@ -273,15 +276,19 @@ void priceList::sFillList()
 
              "       UNION SELECT 5 AS source, item_id AS sourceid,"
              "               '' AS schedulename, :listPrice AS type,"
+             "               -1 AS invqty,"
              "               -1 AS qtybreak, "
 	     "		    (item_listprice - (item_listprice * cust_discntprcnt)) AS price, "
+             "              item_inv_uom_id AS qtybreak_uom_id, item_price_uom_id AS price_uom_id,"
 	     "		    baseCurrId() AS curr_id "
              "       FROM item, cust "
              "       WHERE ( (item_sold)"
              "        AND (NOT item_exclusive)"
              "        AND (item_id=:item_id)"
              "        AND (cust_id=:cust_id) ) ) AS data "
-             "ORDER BY price;" );
+             "  LEFT OUTER JOIN uom AS invuom ON (invuom.uom_id=qtybreak_uom_id)"
+             "  LEFT OUTER JOIN uom AS priceuom ON (priceuom.uom_id=price_uom_id)"
+             " ORDER BY price_uom_id, price;" );
   q.bindValue(":na", tr("N/A"));
   q.bindValue(":customer", tr("Customer"));
   q.bindValue(":shipTo", tr("Cust. Ship-To"));
@@ -298,14 +305,20 @@ void priceList::sFillList()
   q.exec();
   _price->populate(q, TRUE);
 
+// This code is not choosing appropriate values with all the changes
+// that have been made over time. Commenting out as it does not seem
+// to be often used or useful.
+/*
   for (int i = 0; i < _price->topLevelItemCount(); i++)
   {
-    QTreeWidgetItem *cursor = _price->topLevelItem(i);
-    if ( (cursor->text(2) != tr("N/A")) &&
-         (_qty->toDouble() >= cursor->text(2).toDouble()) )
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)_price->topLevelItem(i);
+qDebug() << cursor->rawValue("qty_break").toDouble();
+    if ( (cursor->rawValue("qty_break").toDouble() != -1) &&
+         (_qty->toDouble() >= cursor->rawValue("qty_break").toDouble()) )
     {
       _price->setCurrentItem(cursor);
       break;
     }
   }
+*/
 }

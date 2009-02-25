@@ -130,7 +130,7 @@ void dspBacklogByItem::sEditItem()
   params.append("mode", "edit");
   params.append("soitem_id", _soitem->altId());
       
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -141,7 +141,7 @@ void dspBacklogByItem::sViewItem()
   params.append("mode", "view");
   params.append("soitem_id", _soitem->altId());
       
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }

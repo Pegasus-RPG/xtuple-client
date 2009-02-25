@@ -274,7 +274,7 @@ void maintainShipping::sViewLine()
   params.append("mode", "view");
   params.append("soitem_id", _ship->altId());
       
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }

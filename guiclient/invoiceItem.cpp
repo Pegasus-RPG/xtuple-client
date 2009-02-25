@@ -19,8 +19,8 @@
 #include "priceList.h"
 #include "taxDetail.h"
 
-invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+invoiceItem::invoiceItem(QWidget* parent, Qt::WindowFlags fl)
+    : XDialog(parent, fl)
 {
   setupUi(this);
 
@@ -523,13 +523,16 @@ void invoiceItem::sDeterminePrice()
   {
     XSqlQuery itemprice;
     itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, -1, "
-		       "		 :qty, :curr_id) AS price "
+		       "		 :qty, :qtyUOM, :priceUOM, :curr_id, :effective) AS price "
                        "FROM item "
                        "WHERE (item_id=:item_id);" );
     itemprice.bindValue(":cust_id", _custid);
     itemprice.bindValue(":qty", _billed->toDouble());
+    itemprice.bindValue(":qtyUOM", _qtyUOM->id());
+    itemprice.bindValue(":priceUOM", _pricingUOM->id());
     itemprice.bindValue(":item_id", _item->id());
     itemprice.bindValue(":curr_id", _price->id());
+    itemprice.bindValue(":effective", _price->effective());
     itemprice.exec();
     if (itemprice.first())
     {
@@ -551,7 +554,7 @@ void invoiceItem::sDeterminePrice()
 	return;
       }
       double price = itemprice.value("price").toDouble();
-      price = price * (_priceinvuomratio / _priceRatioCache);
+      //price = price * (_priceinvuomratio / _priceRatioCache);
       _custPrice->setLocalValue(price);
       _price->setLocalValue(price);
     }
@@ -687,6 +690,7 @@ void invoiceItem::sQtyUOMChanged()
   }
   else
     _pricingUOM->setEnabled(true);
+  sDeterminePrice();
   sCalculateExtendedPrice();
 }
 
@@ -740,7 +744,7 @@ void invoiceItem::sListPrices()
   params.append("curr_id",   _price->id());
   params.append("effective", _price->effective());
 
-  priceList newdlg(this, "", TRUE);
+  priceList newdlg(this);
   newdlg.set(params);
   if ( (newdlg.exec() == XDialog::Accepted) &&
        (_privileges->check("OverridePrice")) &&

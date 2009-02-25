@@ -21,7 +21,6 @@
 #include "guiclient.h"
 #include "printPackingList.h"
 #include "salesOrder.h"
-#include "salesOrderItem.h"
 
 #define AMOUNT_COL	7
 #define AMOUNT_CURR_COL	8

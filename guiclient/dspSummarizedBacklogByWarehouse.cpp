@@ -19,7 +19,6 @@
 
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "salesOrder.h"
-#include "salesOrderItem.h"
 #include "rescheduleSoLineItems.h"
 #include "printPackingList.h"
 #include "storedProcErrorLookup.h"

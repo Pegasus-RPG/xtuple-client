@@ -33,8 +33,8 @@
 #define iAskToUpdate 2
 #define iJustUpdate 3
 
-salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+salesOrderItem::salesOrderItem(QWidget* parent, Qt::WindowFlags fl)
+    : XDialog(parent, fl)
 {
   setupUi(this);
 
@@ -1400,7 +1400,7 @@ void salesOrderItem::sListPrices()
   params.append("curr_id", _netUnitPrice->id());
   params.append("effective", _netUnitPrice->effective());
 
-  priceList newdlg(this, "", TRUE);
+  priceList newdlg(this);
   newdlg.set(params);
   if ( (newdlg.exec() == XDialog::Accepted) &&
        (_privileges->check("OverridePrice")) &&
@@ -1496,13 +1496,15 @@ void salesOrderItem::sDeterminePrice(bool p)
     }
     
     XSqlQuery itemprice;
-    itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, :shipto_id, :qty, "
+    itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
                        "                 :curr_id, :effective) AS price "
                        "FROM item "
                        "WHERE (item_id=:item_id);" );
     itemprice.bindValue(":cust_id", _custid);
     itemprice.bindValue(":shipto_id", _shiptoid);
-    itemprice.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+    itemprice.bindValue(":qty", _qtyOrdered->toDouble());
+    itemprice.bindValue(":qtyUOM", _qtyUOM->id());
+    itemprice.bindValue(":priceUOM", _priceUOM->id());
     itemprice.bindValue(":item_id", _item->id());
     itemprice.bindValue(":curr_id", _customerPrice->id());
     itemprice.bindValue(":effective", _customerPrice->effective());
@@ -1531,7 +1533,7 @@ void salesOrderItem::sDeterminePrice(bool p)
       else
       {
         double price = itemprice.value("price").toDouble();
-        price = price * (_priceinvuomratio / _priceRatio);
+        //price = price * (_priceinvuomratio / _priceRatio);
         
         _baseUnitPrice->setLocalValue(price);
         _customerPrice->setLocalValue(price + charTotal);

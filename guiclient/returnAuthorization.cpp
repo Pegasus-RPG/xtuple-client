@@ -13,7 +13,6 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -1925,7 +1924,7 @@ void returnAuthorization::sEditNewOrderLine()
     params.append("orderDate", q.value("cohead_orderdate").toDate());
     params.append("mode", "edit");
 
-    salesOrderItem newdlg(this, "", TRUE);
+    salesOrderItem newdlg(this);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -1951,7 +1950,7 @@ void returnAuthorization::sViewNewOrderLine()
     params.append("orderDate", q.value("cohead_orderdate").toDate());
     params.append("mode", "view");
 
-    salesOrderItem newdlg(this, "", TRUE);
+    salesOrderItem newdlg(this);
     newdlg.set(params);
     newdlg.exec();
   }

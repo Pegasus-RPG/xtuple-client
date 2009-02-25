@@ -618,7 +618,7 @@ void creditMemoItem::sListPrices()
     params.append("curr_id", _netUnitPrice->id());
     params.append("effective", _netUnitPrice->effective());
 
-    priceList newdlg(this, "", TRUE);
+    priceList newdlg(this);
     newdlg.set(params);
     if (newdlg.exec() == XDialog::Accepted)
     {

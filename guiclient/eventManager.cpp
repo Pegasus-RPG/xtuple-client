@@ -231,7 +231,7 @@ void eventManager::sViewSalesOrderItem()
   params.append("mode", "view");
   params.append("soitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
       
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }

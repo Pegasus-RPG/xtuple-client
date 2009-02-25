@@ -1692,7 +1692,7 @@ void salesOrder::sNew()
   else if ((_mode == cNewQuote) || (_mode == cEditQuote))
     params.append("mode", "newQuote");
 
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
 
   newdlg.exec();
@@ -1741,7 +1741,7 @@ void salesOrder::sEdit()
   else if ((_mode == cNewQuote) || (_mode == cEditQuote))
     params.append("mode", "editQuote");
 
-  salesOrderItem newdlg(this, "", TRUE);
+  salesOrderItem newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 
@@ -2998,7 +2998,7 @@ void salesOrder::dropEvent(QDropEvent *pEvent)
       else if (_mode == cNewQuote)
         params.append("mode", "newQuote");
 
-      salesOrderItem newdlg(this, "", TRUE);
+      salesOrderItem newdlg(this);
       newdlg.set(params);
 
       newdlg.exec();
