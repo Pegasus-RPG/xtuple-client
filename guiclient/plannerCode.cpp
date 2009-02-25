@@ -25,10 +25,18 @@ plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
     setupUi(this);
 
-    QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
-    _explosionGroupInt->addButton(_singleLevel);
-    _explosionGroupInt->addButton(_multipleLevel);
-
+    if (_metrics->value("Application") == "Manufacturing")
+    {
+      QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
+      _explosionGroupInt->addButton(_singleLevel);
+      _explosionGroupInt->addButton(_multipleLevel);
+    }
+    else
+    {
+      _autoExplode->hide();
+      _explosionGroup->hide();
+    }
+    
     // signals and slots connections
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));

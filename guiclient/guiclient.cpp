@@ -527,7 +527,7 @@ void GUIClient::initMenuBar()
     inventoryMenu = new menuInventory(this);
   }
       
-  if (_metrics->value("Application") == "Manufacturing")
+  if (_metrics->boolean("MultiWhs"))
   {
     if (_preferences->boolean("ShowMSMenu"))
     {
