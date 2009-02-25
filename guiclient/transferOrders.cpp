@@ -29,6 +29,7 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  connect(_release, SIGNAL(clicked()), this, SLOT(sRelease()));
   connect(_copy,	  SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_delete,	  SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_destWarehouse, SIGNAL(updated()), this, SLOT(sFillList()));
@@ -139,6 +140,25 @@ void transferOrders::sCopy()
 
 void transferOrders::sRelease()
 {
+	q.prepare( "SELECT releaseTransferOrder(:tohead_id) AS result;");
+	q.bindValue(":tohead_id", _to->id());
+	q.exec();
+	if (q.first())
+	{
+	  int result = q.value("result").toInt();
+	  if (result < 0)
+	  {
+	    systemError(this, storedProcErrorLookup("releaseTransferOrder", result), __FILE__, __LINE__);
+	    return;
+	  }
+	}
+	else if (q.lastError().type() != QSqlError::NoError)
+	{
+	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+  
+	sFillList();
 }
 
 void transferOrders::sIssue()
@@ -357,4 +377,5 @@ void transferOrders::sFillList()
     return;
   }
   _to->setDragString("toheadid=");
+  sHandleButtons();
 }

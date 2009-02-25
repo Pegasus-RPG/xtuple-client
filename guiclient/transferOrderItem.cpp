@@ -412,7 +412,7 @@ void transferOrderItem::sSave()
 	       "  toitem_freighttax_ratec ) "
                "VALUES "
 	       "( :toitem_id, :toitem_tohead_id, :toitem_linenumber,"
-               "  :toitem_item_id, 'O', :toitem_duedate,"
+               "  :toitem_item_id, 'U', :toitem_duedate,"
 	       "  :toitem_schedshipdate, :toitem_schedrecvdate,"
                "  :toitem_qty_ordered, :toitem_notes,"
                "  :toitem_uom, stdCost(:toitem_item_id), :toitem_prj_id,"

@@ -31,6 +31,8 @@
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 
+const char *_statusTypes[] = { "U", "O", "C" };
+
 #define cClosed       0x01
 #define cActiveOpen   0x02
 #define cInactiveOpen 0x04
@@ -473,13 +475,8 @@ bool transferOrder::save(bool partial)
   q.bindValue(":id", _toheadid );
 
   q.bindValue(":number",		_orderNumber->text().toInt());
-
-  const char *statusTypes[] = { "U", "O", "C" };
-  QString status = QString(statusTypes[_status->currentIndex()]);
-  q.bindValue(":status",      status);
-
+  q.bindValue(":status",    _statusTypes[_status->currentIndex()]);
   q.bindValue(":orderdate",		_orderDate->date());
-
   q.bindValue(":src_warehous_id",	_srcWhs->id());
   q.bindValue(":srcname",		_srcWhs->currentText());
   q.bindValue(":srcaddress1",		_srcAddr->line1());
@@ -557,6 +554,41 @@ bool transferOrder::save(bool partial)
   {
     // should I bother to check because no one should have this but us?
     q.prepare("SELECT lockTohead(:head_id) AS result;");
+    q.bindValue(":head_id", _toheadid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+
+  // keep the status of toitems in synch with tohead
+  if (_statusTypes[_status->currentIndex()] == "U")
+  {
+    q.prepare("SELECT unreleaseTransferOrder(:head_id) AS result;");
+    q.bindValue(":head_id", _toheadid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (_statusTypes[_status->currentIndex()] == "O")
+  {
+    q.prepare("SELECT releaseTransferOrder(:head_id) AS result;");
+    q.bindValue(":head_id", _toheadid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (_statusTypes[_status->currentIndex()] == "C")
+  {
+    q.prepare("SELECT closeTransferOrder(:head_id) AS result;");
     q.bindValue(":head_id", _toheadid);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
@@ -867,9 +899,7 @@ void transferOrder::sAction()
       q.prepare( "UPDATE toitem "
                  "SET toitem_status=:toitem_status "
                  "WHERE (toitem_id=:toitem_id);" );
-      const char *statusTypes[] = { "U", "O", "C" };
-      QString status = QString(statusTypes[_status->currentIndex()]);
-      q.bindValue(":toitem_status", status);
+      q.bindValue(":toitem_status", _statusTypes[_status->currentIndex()]);
       q.bindValue(":toitem_id", _toitem->id());
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
@@ -1011,7 +1041,10 @@ void transferOrder::populate()
       else if (to.value("tohead_status").toString() == "O")
         _status->setCurrentIndex(1);
       else if (to.value("tohead_status").toString() == "C")
+      {
         _status->setCurrentIndex(2);
+        _status->setEnabled(false);
+      }
 
       _srcWhs->setId(to.value("tohead_src_warehous_id").toInt());
       if (! _srcWhs->isValid())
@@ -1561,6 +1594,7 @@ void transferOrder::setViewMode()
   setObjectName(QString("transferOrder view %1").arg(_toheadid));
 
   _orderNumber->setEnabled(FALSE);
+  _status->setEnabled(FALSE);
   _packDate->setEnabled(FALSE);
   _srcWhs->setEnabled(FALSE);
   _dstWhs->setEnabled(FALSE);
