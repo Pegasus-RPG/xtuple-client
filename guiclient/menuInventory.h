@@ -45,6 +45,7 @@ class menuInventory : public QObject
     void sTransferTrans();
     void sNewTransferOrder();
     void sTransferOrders();
+    void sReleaseTransferOrders();
     void sReceiptTrans();
     void sScrapTrans();
     void sExpenseTrans();

@@ -27,6 +27,7 @@
 #include "transferTrans.h"
 #include "transferOrders.h"
 #include "transferOrder.h"
+#include "releaseTransferOrdersByAgent.h"
 #include "scrapTrans.h"
 #include "expenseTrans.h"
 #include "transformTrans.h"
@@ -234,6 +235,8 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "menu",				tr("Transfer &Order"),	  (char*)transferOrderMenu,	mainMenu,	  true,	NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
     { "im.interWarehouseTransfer",	tr("&New..."),	  SLOT(sNewTransferOrder()),	transferOrderMenu, _privileges->check("MaintainTransferOrders"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
     { "im.transferOrders",		tr("&List..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
+    { "separator",			NULL,					   NULL,				 transferOrderMenu,	true, NULL, NULL, true, NULL},
+    { "im.releaseTransferOrders",		tr("&Release by Agent..."),	  SLOT(sReleaseTransferOrders()),	transferOrderMenu, (_privileges->check("ReleaseTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
 
     //  Inventory | Physical Inventory
     { "menu",				tr("&Physical Inventory"),		   (char*)physicalMenu,			 mainMenu,	true,	NULL, NULL, true, NULL },
@@ -591,6 +594,11 @@ void menuInventory::sNewTransferOrder()
 void menuInventory::sTransferOrders()
 {
   omfgThis->handleNewWindow(new transferOrders());
+}
+
+void menuInventory::sReleaseTransferOrders()
+{
+  omfgThis->handleNewWindow(new releaseTransferOrdersByAgent());
 }
 
 void menuInventory::sReceiptTrans()

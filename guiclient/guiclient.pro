@@ -299,7 +299,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                registration.ui                                                                        \
                releasePlannedOrdersByPlannerCode.ui releaseWorkOrdersByPlannerCode.ui                 \
                relativeCalendarItem.ui relocateInventory.ui editOwners.ui                             \
-               reports.ui reprioritizeWo.ui                                                           \
+               releaseTransferOrdersByAgent.ui reports.ui reprioritizeWo.ui                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                reserveSalesOrderItem.ui                                                               \
                resetQOHBalances.ui returnAuthCheck.ui returnAuthorization.ui                          \
@@ -622,7 +622,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                registration.h                                                                         \
                releasePlannedOrdersByPlannerCode.h releaseWorkOrdersByPlannerCode.h                   \
                relativeCalendarItem.h relocateInventory.h editOwners.h                                \
-               reports.h reprioritizeWo.h                                                             \
+               releaseTransferOrdersByAgent.h reports.h reprioritizeWo.h                              \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                reserveSalesOrderItem.h                                                                \
                resetQOHBalances.h returnAuthCheck.h returnAuthorization.h returnAuthorizationItem.h   \
@@ -953,7 +953,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                registration.cpp                                                                       \
                releasePlannedOrdersByPlannerCode.cpp releaseWorkOrdersByPlannerCode.cpp               \
                relativeCalendarItem.cpp relocateInventory.cpp editOwners.cpp                          \
-               reports.cpp reprioritizeWo.cpp                                                         \
+               releaseTransferOrdersByAgent.cpp reports.cpp reprioritizeWo.cpp                        \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                reserveSalesOrderItem.cpp                                                              \
                resetQOHBalances.cpp returnAuthCheck.cpp returnAuthorization.cpp                       \
