@@ -292,7 +292,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0" >
          <widget class="QCheckBox" name="_poSupply" >
           <property name="text" >
-           <string>Site can purchase this item</string>
+           <string>Site can purchase this Item</string>
           </property>
          </widget>
         </item>
@@ -317,7 +317,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="QCheckBox" name="_createPr" >
             <property name="text" >
-             <string>Create purchase requests  to meet demand</string>
+             <string>Create Purchase Requests to meet demand</string>
             </property>
            </widget>
           </item>
@@ -326,7 +326,7 @@ to be bound by its terms.</comment>
         <item row="2" column="0" >
          <widget class="QCheckBox" name="_woSupply" >
           <property name="text" >
-           <string>Site can manufacture this item</string>
+           <string>Site can manufacture this Item</string>
           </property>
          </widget>
         </item>

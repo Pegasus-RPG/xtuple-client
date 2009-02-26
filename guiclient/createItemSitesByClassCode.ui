@@ -230,7 +230,7 @@ to be bound by its terms.</comment>
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>Supplied at this Site</string>
+               <string>Site can purchase this Item</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -258,7 +258,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QCheckBox" name="_createPr" >
                 <property name="text" >
-                 <string>Create P/Rs to Meet Demands</string>
+                 <string>Create Purchase Requests to meet demand</string>
                 </property>
                </widget>
               </item>
@@ -273,7 +273,7 @@ to be bound by its terms.</comment>
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>Supplied at this Site</string>
+               <string>Site can manufacture this Item</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
