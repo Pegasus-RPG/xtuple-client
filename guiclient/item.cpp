@@ -36,7 +36,6 @@
 #include "storedProcErrorLookup.h"
 
 const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
-const char *_planningTypes[] = { "M", "S", "N" };
 
 /*
  *  Constructs a item as a child of 'parent', with the
@@ -210,13 +209,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     _itemtype->removeItem(10);
   }
     
-  if (_metrics->value("Application") != "Manufacturing")
-  {
-    _planningType->setCurrentIndex(2);
-    _planningType->hide();
-    _planningTypeLit->hide();
-  }
-  
   q.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
   if (q.first())
   {
@@ -365,7 +357,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newSubstitute->setEnabled(FALSE);
       _newTransform->setEnabled(FALSE);
       _itemtaxNew->setEnabled(FALSE);
-      _planningType->setEnabled(false);
       _close->setText(tr("&Close"));
 
       connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
@@ -771,7 +762,6 @@ void item::sSave()
                "( item_id, item_number, item_active,"
                "  item_descrip1, item_descrip2,"
                "  item_type, item_inv_uom_id, item_classcode_id,"
-               "  item_planning_type,"
                "  item_picklist, item_sold, item_fractional,"
                "  item_maxcost, item_prodweight, item_packweight,"
                "  item_prodcat_id, item_price_uom_id,"
@@ -782,7 +772,6 @@ void item::sSave()
                "( :item_id, :item_number, :item_active,"
                "  :item_descrip1, :item_descrip2,"
                "  :item_type, :item_inv_uom_id, :item_classcode_id,"
-               "  :item_planning_type,"
                "  :item_picklist, :item_sold, :item_fractional,"
                "  :item_maxcost, :item_prodweight, :item_packweight,"
                "  :item_prodcat_id, :item_price_uom_id,"
@@ -793,7 +782,6 @@ void item::sSave()
          sql = "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
                "    item_type=:item_type, item_inv_uom_id=:item_inv_uom_id, item_classcode_id=:item_classcode_id,"
-               "    item_planning_type=:item_planning_type,"
                "    item_picklist=:item_picklist, item_sold=:item_sold, item_fractional=:item_fractional,"
                "    item_active=:item_active,"
                "    item_maxcost=:item_maxcost, item_prodweight=:item_prodweight, item_packweight=:item_packweight,"
@@ -810,7 +798,6 @@ void item::sSave()
   q.bindValue(":item_descrip1", _description1->text());
   q.bindValue(":item_descrip2", _description2->text());
   q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
-  q.bindValue(":item_planning_type", _planningTypes[_planningType->currentIndex()]);
   q.bindValue(":item_classcode_id", _classcode->id());
   q.bindValue(":item_sold", QVariant(_sold->isChecked()));
   q.bindValue(":item_prodcat_id", _prodcat->id());
@@ -1053,10 +1040,6 @@ void item::populate()
     _priceUOM->setId(item.value("item_price_uom_id").toInt());
     _warranty->setValue(item.value("item_warrdays").toInt());
 
-    for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
-      if (QString(item.value("item_planning_type").toString()[0]) == _planningTypes[pcounter])
-        _planningType->setCurrentIndex(pcounter);
-
     sFillList();
     sFillUOMList();
     sFillSourceList();
@@ -1244,19 +1227,11 @@ void item::sHandleItemtype()
     _fractional->setChecked(false);
   }
   _fractional->setEnabled(itemType!="K");
-  _planningType->setEnabled(itemType!="K");
   if(_privileges->check("MaintainBOOs") && _metrics->boolean("Routings"))
     _boo->setVisible(itemType!="K");
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
   _transformationsButton->setEnabled(itemType!="K");
-
-  if (itemType == "L")
-    _planningType->setCurrentIndex(1);
-  else if (!planType)
-    _planningType->setCurrentIndex(2);
-  else
-    _planningType->setCurrentIndex(0);
 
   _pickListItem->setChecked(pickList);
   _pickListItem->setEnabled(pickList);
@@ -1266,8 +1241,6 @@ void item::sHandleItemtype()
 
   _prodWeight->setEnabled(weight);
   _packWeight->setEnabled(weight);
-
-  _planningType->setEnabled(planType);
 
   _freightClass->setEnabled(freight);
 

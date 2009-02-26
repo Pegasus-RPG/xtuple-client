@@ -27,7 +27,8 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(populateLocations()));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
-  connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupply(bool)));
+  connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupply(bool)));
+  connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupply(bool)));
 
   _reorderLevel->setValidator(omfgThis->qtyVal());
   _orderUpToQty->setValidator(omfgThis->qtyVal());
@@ -171,7 +172,8 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_minordqty, itemsite_maxordqty, itemsite_multordqty,"
                "  itemsite_safetystock, itemsite_cyclecountfreq,"
                "  itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id, itemsite_costcat_id,"
-               "  itemsite_supply, itemsite_createpr, itemsite_createwo,"
+               "  itemsite_posupply, itemsite_wosupply,"
+               "  itemsite_createpr, itemsite_createwo,"
                "  itemsite_sold, itemsite_soldranking,"
                "  itemsite_stocked,"
                "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
@@ -187,7 +189,8 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_minordqty, :itemsite_maxordqty, :itemsite_multordqty,"
                "       :itemsite_safetystock, :itemsite_cyclecountfreq,"
                "       :itemsite_leadtime, :itemsite_eventfence, :itemsite_plancode_id, :itemsite_costcat_id,"
-               "       :itemsite_supply, :itemsite_createpr, :itemsite_createwo,"
+               "       :itemsite_posupply, :itemsite_wosupply,"
+               "       :itemsite_createpr, :itemsite_createwo,"
                "       :itemsite_sold, :itemsite_soldranking,"
                "       :itemsite_stocked,"
                "       :itemsite_controlmethod, :itemsite_perishable, TRUE,"
@@ -222,7 +225,8 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_costcat_id", _costcat->id());
   q.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
   q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
-  q.bindValue(":itemsite_supply",        QVariant(_woSupply->isChecked()));
+  q.bindValue(":itemsite_posupply",        QVariant(_poSupply->isChecked()));
+  q.bindValue(":itemsite_wosupply",        QVariant(_woSupply->isChecked()));
   q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
   q.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
   q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
@@ -281,7 +285,7 @@ void createItemSitesByClassCode::sSave()
   accept();
 }
 
-void createItemSitesByClassCode::sHandleSupply(bool pSupplied)
+void createItemSitesByClassCode::sHandlePOSupply(bool pSupplied)
 {
   if (pSupplied)
     _createPr->setEnabled(TRUE);
@@ -290,7 +294,10 @@ void createItemSitesByClassCode::sHandleSupply(bool pSupplied)
     _createPr->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
   }
+} 
 
+void createItemSitesByClassCode::sHandleWOSupply(bool pSupplied)
+{
   if (pSupplied)
     _createWo->setEnabled(TRUE);
   else
@@ -385,6 +392,7 @@ void createItemSitesByClassCode::clear()
 
   _controlMethod->setCurrentIndex(1);
   sHandleControlMethod();
+  _poSupply->setChecked(TRUE);
   _woSupply->setChecked(TRUE);
   _sold->setChecked(TRUE);
   _stocked->setChecked(FALSE);

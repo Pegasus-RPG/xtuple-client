@@ -78,7 +78,7 @@ void createPlannedOrdersByPlannerCode::sCreate()
                "       WHERE ( (itemsite_plancode_id=plancode_id)"
                "         AND (itemsite_active)"
                "         AND (item_active)"
-               "         AND (item_planning_type='M')"
+               "         AND (itemsite_planning_type='M')"
                "         AND (itemsite_item_id=item_id) ");
 
   if (_plannerCode->isSelected())

@@ -18,6 +18,8 @@
 
 #include "storedProcErrorLookup.h"
 
+const char *_planningTypes[] = { "M", "S", "N" };
+
 itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -26,7 +28,8 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_supply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupplied(bool)));
+  connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupplied(bool)));
+  connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupplied(bool)));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sCacheItemType(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sCheckItemsite()));
   connect(_controlMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleControlMethod()));
@@ -36,6 +39,13 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
+  if (_metrics->value("Application") != "Manufacturing" && _metrics->value("Application") != "Standard")
+  {
+    _planningType->setCurrentIndex(2);
+    _planningType->hide();
+    _planningTypeLit->hide();
+  }
+  
   _itemType = 0;
   _qohCache = 0;
 
@@ -229,7 +239,8 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_leadTime->setEnabled(FALSE);
 	_eventFence->setEnabled(FALSE);
 	_active->setEnabled(FALSE);
-	_supply->setEnabled(FALSE);
+	_poSupply->setEnabled(FALSE);
+	_woSupply->setEnabled(FALSE);
 	_createPr->setEnabled(FALSE);
 	_createWo->setEnabled(FALSE);
 	_sold->setEnabled(FALSE);
@@ -252,6 +263,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_orderGroup->setEnabled(FALSE);
 	_orderGroupFirst->setEnabled(FALSE);
 	_mpsTimeFence->setEnabled(FALSE);
+  _planningType->setEnabled(false);
 	_close->setText(tr("&Close"));
 	_save->hide();
 	_comments->setReadOnly(TRUE);
@@ -491,9 +503,9 @@ void itemSite::sSave()
                          "  itemsite_ordertoqty, itemsite_minordqty, itemsite_maxordqty, itemsite_multordqty,"
                          "  itemsite_safetystock, itemsite_cyclecountfreq,"
                          "  itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id, itemsite_costcat_id,"
-                         "  itemsite_supply, itemsite_createpr, itemsite_createwo, "
+                         "  itemsite_poSupply, itemsite_woSupply, itemsite_createpr, itemsite_createwo, "
                          "  itemsite_sold, itemsite_soldranking,"
-                         "  itemsite_stocked,"
+                         "  itemsite_stocked, itemsite_planning_type,"
                          "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
                          "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
                          "  itemsite_location_comments, itemsite_notes,"
@@ -509,9 +521,9 @@ void itemSite::sSave()
                          "  :itemsite_ordertoqty, :itemsite_minordqty, :itemsite_maxordqty, :itemsite_multordqty,"
                          "  :itemsite_safetystock, :itemsite_cyclecountfreq,"
                          "  :itemsite_leadtime, :itemsite_eventfence, :itemsite_plancode_id, :itemsite_costcat_id,"
-                         "  :itemsite_supply, :itemsite_createpr, :itemsite_createwo, "
+                         "  :itemsite_poSupply, :itemsite_woSupply, :itemsite_createpr, :itemsite_createwo, "
                          "  :itemsite_sold, :itemsite_soldranking,"
-                         "  :itemsite_stocked,"
+                         "  :itemsite_stocked, :itemsite_planning_type,"
                          "  :itemsite_controlmethod, :itemsite_perishable, :itemsite_active,"
                          "  :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
                          "  :itemsite_location_comments, :itemsite_notes,"
@@ -583,9 +595,10 @@ void itemSite::sSave()
                          "    itemsite_safetystock=:itemsite_safetystock, itemsite_cyclecountfreq=:itemsite_cyclecountfreq,"
                          "    itemsite_leadtime=:itemsite_leadtime, itemsite_eventfence=:itemsite_eventfence,"
                          "    itemsite_plancode_id=:itemsite_plancode_id, itemsite_costcat_id=:itemsite_costcat_id,"
-                         "    itemsite_supply=:itemsite_supply, itemsite_createpr=:itemsite_createpr, itemsite_createwo=:itemsite_createwo, "
+                         "    itemsite_poSupply=:itemsite_poSupply, itemsite_woSupply=:itemsite_woSupply,"
+                         "    itemsite_createpr=:itemsite_createpr, itemsite_createwo=:itemsite_createwo, "
                          "    itemsite_sold=:itemsite_sold, itemsite_soldranking=:itemsite_soldranking,"
-                         "    itemsite_stocked=:itemsite_stocked,"
+                         "    itemsite_stocked=:itemsite_stocked, itemsite_planning_type=:itemsite_planning_type,"
                          "    itemsite_controlmethod=:itemsite_controlmethod, itemsite_active=:itemsite_active,"
                          "    itemsite_perishable=:itemsite_perishable,"
                          "    itemsite_loccntrl=:itemsite_loccntrl, itemsite_location_id=:itemsite_location_id,"
@@ -620,7 +633,9 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_costcat_id", _costcat->id());
     
   newItemSite.bindValue(":itemsite_active", QVariant(_active->isChecked()));
-  newItemSite.bindValue(":itemsite_supply", QVariant(_supply->isChecked()));
+  newItemSite.bindValue(":itemsite_planning_type", _planningTypes[_planningType->currentIndex()]);
+  newItemSite.bindValue(":itemsite_poSupply", QVariant(_poSupply->isChecked()));
+  newItemSite.bindValue(":itemsite_woSupply", QVariant(_woSupply->isChecked()));
   newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
   newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked()));
   newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked()));
@@ -743,7 +758,7 @@ void itemSite::sCheckItemsite()
   }
 }
 
-void itemSite::sHandleSupplied(bool pSupplied)
+void itemSite::sHandlePOSupplied(bool pSupplied)
 {
   if ( (pSupplied) &&
        ( (_itemType == 'P') || (_itemType == 'O') ) )
@@ -753,7 +768,10 @@ void itemSite::sHandleSupplied(bool pSupplied)
     _createPr->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
   }
+} 
 
+void itemSite::sHandleWOSupplied(bool pSupplied)
+{
   if ( (pSupplied) &&
        ( (_itemType == 'M') ) )
     _createWo->setEnabled(TRUE);
@@ -763,7 +781,6 @@ void itemSite::sHandleSupplied(bool pSupplied)
     _createWo->setChecked(FALSE);
   }
 } 
-
 
 void itemSite::sHandleControlMethod()
 {
@@ -818,6 +835,23 @@ void itemSite::sCacheItemType(char pItemType)
 {
   _itemType = pItemType;
 
+  if (_itemType == 'L')
+  {
+    _planningType->setCurrentIndex(1);
+    _planningType->setEnabled(FALSE);
+  }
+  else if (_itemType != 'P' && _itemType != 'M' && _itemType != 'F' && _itemType != 'B' &&
+           _itemType != 'C' && _itemType != 'Y' && _itemType != 'O' && _itemType != 'A')
+  {
+    _planningType->setCurrentIndex(2);
+    _planningType->setEnabled(FALSE);
+  }
+  else
+  {
+    _planningType->setCurrentIndex(0);
+    _planningType->setEnabled(TRUE);
+  }
+
   if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
@@ -869,8 +903,10 @@ void itemSite::sCacheItemType(char pItemType)
       _mpsTimeFence->setEnabled(FALSE);
     }
 
-    _supply->setChecked((_itemType!='L') && (_itemType!='K'));
-    _supply->setEnabled(FALSE);
+    _poSupply->setChecked((_itemType!='L') && (_itemType!='K'));
+    _poSupply->setEnabled(FALSE);
+    _woSupply->setChecked((_itemType!='L') && (_itemType!='K'));
+    _woSupply->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
     _createPr->setEnabled(FALSE);
     _createWo->setChecked(_itemType == 'J');
@@ -910,10 +946,11 @@ void itemSite::sCacheItemType(char pItemType)
     _orderGroupFirst->setEnabled(TRUE);
     _mpsTimeFence->setEnabled(TRUE);
 	
-    _supply->setEnabled(TRUE);
+    _poSupply->setEnabled(TRUE);
+    _woSupply->setEnabled(TRUE);
     
     if ( (_itemType == 'O') || (_itemType == 'P') )
-      _createPr->setEnabled(_supply->isChecked());
+      _createPr->setEnabled(_poSupply->isChecked());
     else
     {
       _createPr->setChecked(FALSE);
@@ -921,7 +958,7 @@ void itemSite::sCacheItemType(char pItemType)
     }
     
     if ( (_itemType == 'M') )
-      _createWo->setEnabled(_supply->isChecked());
+      _createWo->setEnabled(_woSupply->isChecked());
     else
     {
       _createWo->setChecked(FALSE);
@@ -969,26 +1006,8 @@ void itemSite::populateLocations()
 void itemSite::populate()
 {
   XSqlQuery itemsite;
-  itemsite.prepare( "SELECT itemsite_item_id, itemsite_warehous_id, itemsite_qtyonhand,"
-                    "       item_sold, item_type, itemsite_active, itemsite_controlmethod,"
-                    "       itemsite_perishable, itemsite_useparams, itemsite_useparamsmanual,"
-                    "       itemsite_reorderlevel,"
-                    "       itemsite_ordertoqty,"
-                    "       itemsite_minordqty,"
-                    "       itemsite_maxordqty,"
-                    "       itemsite_multordqty,"
-                    "       itemsite_safetystock,"
-                    "       itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id,"
-                    "       itemsite_supply, itemsite_createpr, itemsite_createwo, itemsite_sold,"
-                    "       itemsite_soldranking, itemsite_stocked, itemsite_abcclass, itemsite_autoabcclass,"
-                    "       itemsite_loccntrl, itemsite_location_id, itemsite_location,"
-                    "       itemsite_location_comments,"
-                    "       itemsite_cyclecountfreq,"
-                    "       itemsite_costcat_id, itemsite_notes,"
-                    "       itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence,"
-                    "       itemsite_disallowblankwip, "
-                    "       itemsite_costmethod,"
-                    "       itemsite_warrpurc, itemsite_autoreg "
+  itemsite.prepare( "SELECT itemsite.*,"
+                    "       item_sold, item_type "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
                     " AND (itemsite_id=:itemsite_id) );" );
@@ -1067,7 +1086,13 @@ void itemSite::populate()
 
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());
-    _supply->setChecked(itemsite.value("itemsite_supply").toBool());
+
+    for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
+      if (QString(itemsite.value("itemsite_planning_type").toString()[0]) == _planningTypes[pcounter])
+        _planningType->setCurrentIndex(pcounter);
+
+    _poSupply->setChecked(itemsite.value("itemsite_poSupply").toBool());
+    _woSupply->setChecked(itemsite.value("itemsite_woSupply").toBool());
     _sold->setChecked(itemsite.value("itemsite_sold").toBool());
     _soldRanking->setValue(itemsite.value("itemsite_soldranking").toInt());
     _stocked->setChecked(itemsite.value("itemsite_stocked").toBool());
@@ -1122,8 +1147,8 @@ void itemSite::populate()
 
     _autoUpdateABCClass->setChecked(itemsite.value("itemsite_autoabcclass").toBool());
 	
-    sHandleSupplied(itemsite.value("itemsite_supply").toBool());
-    sCacheItemType(_itemType);
+    sHandlePOSupplied(itemsite.value("itemsite_poSupply").toBool());
+    sHandleWOSupplied(itemsite.value("itemsite_woSupply").toBool());
     _comments->setId(_itemsiteid);
     
     

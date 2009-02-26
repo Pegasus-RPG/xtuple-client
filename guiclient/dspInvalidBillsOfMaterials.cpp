@@ -109,7 +109,7 @@ void dspInvalidBillsOfMaterials::sFillList()
                " AND (itemsite_item_id=parent.item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (parent.item_type='M')"
-               " AND (itemsite_supply)"
+               " AND (itemsite_wosupply)"
                " AND (itemsite_active)"
                " AND (component.item_id NOT IN ( SELECT itemsite_item_id"
                "                                 FROM itemsite"

@@ -27,7 +27,8 @@ public:
 public slots:
     virtual void sSave();
     virtual void sHandleMLC( bool pMLC );
-    virtual void sHandleSupply( bool pSupplied );
+    virtual void sHandlePOSupply( bool pSupplied );
+    virtual void sHandleWOSupply( bool pSupplied );
     virtual void sHandleControlMethod();
     virtual void populateLocations();
     virtual void clear();

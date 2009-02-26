@@ -366,7 +366,7 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                "            WHEN ((qoh + ordered - allocated) < reorderlevel) THEN 'warning'"
                "       END AS totalavail_qtforegroundrole "
                "FROM ( SELECT itemsite_id, womatl_id,"
-               "              CASE WHEN itemsite_supply THEN item_type"
+               "              CASE WHEN itemsite_wosupply THEN item_type"
                "                   ELSE ''"
                "              END AS type,"
                "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"

@@ -151,7 +151,7 @@ void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeW
              "FROM itemsite,item "
              "WHERE ((itemsite_id=:itemsite_id)"
              "AND (itemsite_item_id=item_id)"
-             "AND (itemsite_supply));");
+             "AND (itemsite_wosupply));");
     q.bindValue(":itemsite_id", _avail->id());
     q.exec();
     if (q.next())

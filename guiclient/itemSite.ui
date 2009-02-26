@@ -1012,17 +1012,17 @@ to be bound by its terms.</comment>
                    <widget class="QComboBox" name="_planningType" >
                     <item>
                      <property name="text" >
-                      <string>None</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
                       <string>MRP</string>
                      </property>
                     </item>
                     <item>
                      <property name="text" >
                       <string>MPS</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text" >
+                      <string>None</string>
                      </property>
                     </item>
                    </widget>

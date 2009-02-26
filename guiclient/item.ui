@@ -544,35 +544,6 @@ to be bound by its terms.</comment>
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="_planningTypeLit" >
-                <property name="text" >
-                 <string>Planning System:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="_planningType" >
-                <item>
-                 <property name="text" >
-                  <string>MRP</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>MPS</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>None</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
                <spacer>
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>

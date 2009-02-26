@@ -30,7 +30,8 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sCheckItemsite();
-    virtual void sHandleSupplied( bool pSupplied );
+    virtual void sHandlePOSupplied( bool pSupplied );
+    virtual void sHandleWOSupplied( bool pSupplied );
     virtual void sHandleControlMethod();
     virtual void sCacheItemType( const QString & pItemType );
     virtual void sCacheItemType( char pItemType );

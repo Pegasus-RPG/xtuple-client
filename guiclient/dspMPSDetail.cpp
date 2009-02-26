@@ -243,7 +243,7 @@ void dspMPSDetail::sFillItemsites()
                "WHERE ((itemsite_active)"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
-               " AND (item_planning_type='S')" );
+               " AND (itemsite_planning_type='S')" );
 
   if (_plannerCode->isSelected())
     sql += " AND (itemsite_plancode_id=:plancode_id)";
