@@ -46,6 +46,7 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* na
   _itemcost->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
   _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true,  "scost"  );
   _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true,  "acost"  );
+  _itemcost->addColumn(tr("% Var."),      _costColumn,  Qt::AlignRight,  false,  "percent_variance" );
 }
 
 /*
@@ -168,8 +169,16 @@ void dspItemCostsByClassCode::sPostCosts()
 
 void dspItemCostsByClassCode::sFillList()
 {
-  QString sql( "SELECT item_id, item_number, description,"
-               "       uom_name, scost, acost,"
+  QString sql( "SELECT item_id, item_number, description, "
+               "       uom_name, scost, acost, "
+	       "CASE WHEN (scost = 0) THEN NULL " 
+	       "ELSE ((acost - scost) / scost)"      
+	       "END AS percent_variance,  "
+	       "'percent' AS percent_variance_xtnumericrole, "
+	       "CASE WHEN (scost = 0) THEN NULL "
+	       "WHEN (((acost - scost) / scost) < 0) THEN 'error' "    
+	       "ELSE NULL "
+	       "END AS percent_variance_qtforegroundrole, "
                "       'cost' AS scost_xtnumericrole,"
                "       'cost' AS acost_xtnumericrole "
                "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
