@@ -490,6 +490,8 @@ void initErrorLookupHash()
 			      "You may edit the Item Site and deactivate it."),	0, "" },
   { "deleteItemSite",  -6, TR("The selected Item Site cannot be deleted as "
 			      "there are Production Plans associated with it."),	0, "" },
+  { "deleteItemSite",  -7, TR("The selected Item Site cannot be deleted as "
+			      "it is used as a Supplied from Site."),	0, "" },
   { "deleteItemSite",  -9, TR("The selected Item Site cannot be deleted as "
 			      "there is a non-zero Inventory Quantity posted "
 			      "against it."),	0, "" },
