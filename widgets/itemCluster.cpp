@@ -755,22 +755,24 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
       clauses << QString("(item_type IN (" + types.join(",") + "))");
   }
 
-  if (pType & ItemLineEdit::cPlanningAny)
-  {
-    QStringList plantypes;
+// TODO
+// Planning Type moved to Itemsite.  Don't think this is used.
+//  if (pType & ItemLineEdit::cPlanningAny)
+//  {
+//    QStringList plantypes;
 
-    if (pType & ItemLineEdit::cPlanningMRP)
-      plantypes << "'M'";
+//    if (pType & ItemLineEdit::cPlanningMRP)
+//      plantypes << "'M'";
 
-    if (pType & ItemLineEdit::cPlanningMPS)
-      plantypes << "'S'";
+//    if (pType & ItemLineEdit::cPlanningMPS)
+//      plantypes << "'S'";
 
-    if (pType & ItemLineEdit::cPlanningNone)
-      plantypes << "'N'";
+//    if (pType & ItemLineEdit::cPlanningNone)
+//      plantypes << "'N'";
 
-    if (!plantypes.isEmpty())
-      clauses << QString("(item_planning_type IN (" + plantypes.join(",") + "))");
-  }
+//    if (!plantypes.isEmpty())
+//      clauses << QString("(item_planning_type IN (" + plantypes.join(",") + "))");
+//  }
 
   if (pType & (ItemLineEdit::cLocationControlled | ItemLineEdit::cLotSerialControlled | ItemLineEdit::cDefaultLocation))
   {

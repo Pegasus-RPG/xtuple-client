@@ -120,7 +120,7 @@ void WComboBox::findItemsites(int pItemID)
                "<? endif ?>"
                "<? if exists(\"active\") ?>    AND (itemsite_active)  <? endif ?>"
                "<? if exists(\"soldIS\") ?>    AND (itemsite_sold)    <? endif ?>"
-               "<? if exists(\"supplyIS\") ?>  AND (itemsite_supply)  <? endif ?>"
+               "<? if exists(\"supplyIS\") ?>  AND (itemsite_wosupply)  <? endif ?>"
                "<? if exists(\"inventory\") ?> AND (itemsite_controlmethod<>'N')  <? endif ?>"
                ") "
                "ORDER BY warehous_code;" );

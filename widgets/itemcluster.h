@@ -57,11 +57,13 @@ friend class ItemCluster;
       cAllItemTypes_Mask   = 0x0000FFFF,
 
       // Planning Systems
-      cPlanningMRP         = 0x00100000,
-      cPlanningMPS         = 0x00200000,
-      cPlanningNone        = 0x00400000,
+      // TODO
+      // Planning Type moved to Itemsite, don't think this is used
+       cPlanningMRP         = 0x00100000,
+       cPlanningMPS         = 0x00200000,
+       cPlanningNone        = 0x00400000,
 
-      cPlanningAny         = cPlanningMRP | cPlanningMPS | cPlanningNone,
+       cPlanningAny         = cPlanningMRP | cPlanningMPS | cPlanningNone,
 
       // Misc. Options
       cItemActive          = 0x04000000,
