@@ -50,7 +50,7 @@ qDebug() << "loading with " << access;
 
    //Disable batch manager if PostBooks 	 
   if ( (_metrics->value("Application") != "Manufacturing") 	 
-    && (_metrics->value("Application") != "xTupleERP") ) 	 
+    && (_metrics->value("Application") != "Standard") ) 	 
   { 	 
     _enableBatchManager->setChecked(FALSE); 	 
     _enableBatchManager->hide(); 	 

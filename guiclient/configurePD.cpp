@@ -85,7 +85,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   
   
   if ( (_metrics->value("Application") != "Manufacturing")
-    && (_metrics->value("Application") != "xTupleERP") )
+    && (_metrics->value("Application") != "Standard") )
   {
     _revControl->hide();
     _transforms->hide();

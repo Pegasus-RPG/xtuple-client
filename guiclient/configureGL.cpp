@@ -98,7 +98,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
 
   bool extConsolAllowed = _metrics->value("Application") == "Manufacturing" ||
-                          _metrics->value("Application") == "xTupleERP";
+                          _metrics->value("Application") == "Standard";
   _externalConsolidation->setVisible(extConsolAllowed);
   if (_metrics->value("GLCompanySize").toInt() == 0)
   {

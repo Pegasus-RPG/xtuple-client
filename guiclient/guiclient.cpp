@@ -527,6 +527,8 @@ void GUIClient::initMenuBar()
     inventoryMenu = new menuInventory(this);
   }
       
+  if ( (_metrics->value("Application") == "Manufacturing")
+    || (_metrics->value("Application") == "Standard") )
   if (_metrics->boolean("MultiWhs"))
   {
     if (_preferences->boolean("ShowMSMenu"))
@@ -716,7 +718,7 @@ void GUIClient::sTick()
         _eventButton->hide();
 
       if ( (_metrics->value("Application") != "Manufacturing")
-        && (_metrics->value("Application") != "xTupleERP") )
+        && (_metrics->value("Application") != "Standard") )
       {
         if(_metrics->value("Registered") != "Yes")
         {

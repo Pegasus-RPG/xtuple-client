@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
     _splash->setPixmap(QPixmap(":/images/splashManufacturing.png"));
     _Name = _Name.arg("Manufacturing");
   }
-  else if(!metric.first() || (metric.value("metric_value").toString() == "xTupleERP"))
+  else if(!metric.first() || (metric.value("metric_value").toString() == "Standard"))
   {
     _splash->setPixmap(QPixmap(":/images/splashxTupleERP.png"));
     _Name = _Name.arg("Standard");

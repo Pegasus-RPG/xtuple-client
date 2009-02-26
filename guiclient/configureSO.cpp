@@ -177,7 +177,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   //Set status of Returns Authorization based on context
   if ( (_metrics->value("Application") != "Manufacturing")
-    && (_metrics->value("Application") != "xTupleERP") )
+    && (_metrics->value("Application") != "Standard") )
   {
     _authNumGenerationLit->setVisible(false);
     _returnAuthorizationNumGeneration->setVisible(false);
