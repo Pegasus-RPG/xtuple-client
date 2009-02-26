@@ -30,8 +30,9 @@
 #include "splashconst.h"
 
 login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
+  setObjectName(name);
   Q_INIT_RESOURCE(xTupleCommon);
   setupUi(this);
 
@@ -223,7 +224,7 @@ void login2::sLogin()
       db.setConnectOptions("requiressl=1");
   }
 
-  setCursor(QCursor(Qt::waitCursor));
+  setCursor(QCursor(Qt::WaitCursor));
 
   if (_splash)
   {
@@ -253,7 +254,7 @@ void login2::sLogin()
     if (_splash)
       _splash->hide();
     
-    setCursor(QCursor(Qt::arrowCursor));
+    setCursor(QCursor(Qt::ArrowCursor));
 
     QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
                           tr("<p>A connection to the specified xTuple ERP "
@@ -289,7 +290,7 @@ void login2::sLogin()
   {
     XSqlQuery login( "SELECT login() AS result,"
                      "       CURRENT_USER AS user;" );
-    setCursor(QCursor(Qt::arrowCursor));
+    setCursor(QCursor(Qt::ArrowCursor));
     if (login.first())
     {
       int result = login.value("result").toInt();
@@ -328,7 +329,7 @@ void login2::sLogin()
   }
   else
   {
-    setCursor(QCursor(Qt::arrowCursor));
+    setCursor(QCursor(Qt::ArrowCursor));
     _databaseURL = databaseURL;
     accept();
   }

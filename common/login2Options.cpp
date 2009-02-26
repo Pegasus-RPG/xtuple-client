@@ -16,8 +16,9 @@
 #include "dbtools.h"
 
 login2Options::login2Options(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
+  setObjectName(name);
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));

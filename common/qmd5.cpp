@@ -20,7 +20,7 @@ enum Operation {
 };
 
 // these values are taken from RFC1321
-static const Q_UINT32 T[64] = {
+static const quint32 T[64] = {
   0xd76aa478, // 1, 0 based accessed
   0xe8c7b756, // 2
   0x242070db, // 3
@@ -87,9 +87,9 @@ static const Q_UINT32 T[64] = {
   0xeb86d391  // 64
 };
 
-static void md5Round( Operation func, Q_UINT32 & a, Q_UINT32 & b, Q_UINT32 & c, Q_UINT32 & d, Q_UINT32 k, int s, int i)
+static void md5Round( Operation func, quint32 & a, quint32 & b, quint32 & c, quint32 & d, quint32 k, int s, int i)
 {
-  Q_UINT32 o = 0, t = 0;
+  quint32 o = 0, t = 0;
   switch(func)
   {
     case OperationF:
@@ -126,46 +126,46 @@ QString QMd5(const QByteArray & message)
   dataIN.setByteOrder(QDataStream::LittleEndian);
 
   // add the data to the stream
-  Q_UINT32 len = message.size();
-  dataIN.writeRawBytes(message.data(), len);
+  quint32 len = message.size();
+  dataIN.writeRawData(message.data(), len);
   
   // Calculate the size of the pad required.
   // The pad must be at least 1 bit long and
   // should make the overall data size a multiple
   // of 512 bits minus the size for the 64 bit
   // length value.
-  Q_INT32 pad = 64 - (len % 64) - 8;
+  qint32 pad = 64 - (len % 64) - 8;
   if(pad <= 0)
     pad += 64;
 
   // populate the data array with the pad values
   int i;
-  dataIN << (Q_UINT8)0x80;
+  dataIN << (quint8)0x80;
   for(pad--; pad > 0; pad--)
-    dataIN << (Q_UINT8)0x00;
+    dataIN << (quint8)0x00;
 
   // create a 64bit count of the number of bits in the data array
-  Q_UINT64 bitLen = (Q_UINT64)len << 3;
+  quint64 bitLen = (quint64)len << 3;
   dataIN << bitLen;
 
   // Initialize the MD state variables
-  Q_UINT32 stateA = 0x67452301;
-  Q_UINT32 stateB = 0xefcdab89;
-  Q_UINT32 stateC = 0x98badcfe;
-  Q_UINT32 stateD = 0x10325476;
+  quint32 stateA = 0x67452301;
+  quint32 stateB = 0xefcdab89;
+  quint32 stateC = 0x98badcfe;
+  quint32 stateD = 0x10325476;
 
   // setup a data stream for reading the data
   QDataStream dataOUT(&data, QIODevice::ReadOnly);
   dataOUT.setByteOrder(QDataStream::LittleEndian);
 
   // process the message in 16-word blocks
-  Q_UINT32 X[16];
+  quint32 X[16];
   for(i = 0; i * 64 < data.size(); i++)
   {
-    Q_UINT32 a = stateA;
-    Q_UINT32 b = stateB;
-    Q_UINT32 c = stateC;
-    Q_UINT32 d = stateD;
+    quint32 a = stateA;
+    quint32 b = stateB;
+    quint32 c = stateC;
+    quint32 d = stateD;
 
     for(int j = 0; j < 16; j++)
       dataOUT >> X[j];
@@ -248,19 +248,19 @@ QString QMd5(const QByteArray & message)
     stateD += d;
   }
 
-  // encode the hash from 4 Q_UINT32 to 16 Q_UINT8
+  // encode the hash from 4 quint32 to 16 quint8
   QByteArray digest;
   QDataStream digestIN(&digest, QIODevice::WriteOnly);
   digestIN.setByteOrder(QDataStream::LittleEndian);
-  digestIN << (Q_UINT32)stateA;
-  digestIN << (Q_UINT32)stateB;
-  digestIN << (Q_UINT32)stateC;
-  digestIN << (Q_UINT32)stateD;
+  digestIN << (quint32)stateA;
+  digestIN << (quint32)stateB;
+  digestIN << (quint32)stateC;
+  digestIN << (quint32)stateD;
 
-  // encode the 16 Q_UINT8 into a HexString
+  // encode the 16 quint8 into a HexString
   QString hex;
   for(i = 0; i < digest.size(); i++)
-    hex = hex.sprintf("%s%02x", hex.latin1(), (Q_UINT8)digest.at(i));
+    hex = hex.sprintf("%s%02x", hex.toLatin1().data(), (quint8)digest.at(i));
 
   return hex;
 }

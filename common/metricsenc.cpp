@@ -44,7 +44,7 @@ QString Parametersenc::value(const QString &pName)
   if (it == _values.end())
     return QString::null;
   else
-    return it.data();
+    return it.value();
 }
 
 bool Parametersenc::boolean(const char *pName)
@@ -57,7 +57,7 @@ bool Parametersenc::boolean(const QString &pName)
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())
     return FALSE;
-  else if (it.data() == "t")
+  else if (it.value() == "t")
     return TRUE;
 
   return FALSE;
@@ -71,7 +71,7 @@ void Parametersenc::set(const char *pName, bool pValue)
 void Parametersenc::set(const QString &pName, bool pValue)
 {
   MetricMap::iterator it = _values.find(pName);
-  if ( (it != _values.end()) && (it.data() == ((pValue) ? "t" : "f")) )
+  if ( (it != _values.end()) && (it.value() == ((pValue) ? "t" : "f")) )
     return;
 
   _set(pName, ((pValue) ? QString("t") : QString("f")));
@@ -85,7 +85,7 @@ void Parametersenc::set(const char *pName, int pValue)
 void Parametersenc::set(const QString &pName, int pValue)
 {
   MetricMap::iterator it = _values.find(pName);
-  if ( (it != _values.end()) && (it.data().toInt() == pValue) )
+  if ( (it != _values.end()) && (it.value().toInt() == pValue) )
     return;
 
   _set(pName, pValue);
@@ -101,10 +101,10 @@ void Parametersenc::set(const QString &pName, const QString &pValue)
   MetricMap::iterator it = _values.find(pName);
   if (it != _values.end())
   {
-    if (it.data() == pValue)
+    if (it.value() == pValue)
       return;
     else
-      _values.replace(pName, pValue);
+      it.value() =  pValue;
   }
   else
     _values[pName] = pValue;
@@ -128,7 +128,7 @@ void Parametersenc::_set(const QString &pName, QVariant pValue)
 QString Parametersenc::parent(const QString &pValue)
 {
   for (MetricMap::iterator it = _values.begin(); it != _values.end(); it++)
-    if (it.data() == pValue)
+    if (it.value() == pValue)
       return it.key();
 
   return QString::null;

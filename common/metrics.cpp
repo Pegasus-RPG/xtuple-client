@@ -44,7 +44,7 @@ QString Parameters::value(const QString &pName)
   if (it == _values.end())
     return QString::null;
   else
-    return it.data();
+    return it.value();
 }
 
 bool Parameters::boolean(const char *pName)
@@ -57,7 +57,7 @@ bool Parameters::boolean(const QString &pName)
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())
     return FALSE;
-  else if (it.data() == "t")
+  else if (it.value() == "t")
     return TRUE;
 
   return FALSE;
@@ -93,10 +93,10 @@ void Parameters::set(const QString &pName, const QString &pValue)
   MetricMap::iterator it = _values.find(pName);
   if (it != _values.end())
   {
-    if (it.data() == pValue)
+    if (it.value() == pValue)
       return;
     else
-      _values.replace(pName, pValue);
+      it.value() = pValue;
   }
   else
     _values[pName] = pValue;
@@ -119,7 +119,7 @@ void Parameters::_set(const QString &pName, QVariant pValue)
 QString Parameters::parent(const QString &pValue)
 {
   for (MetricMap::iterator it = _values.begin(); it != _values.end(); it++)
-    if (it.data() == pValue)
+    if (it.value() == pValue)
       return it.key();
 
   return QString::null;

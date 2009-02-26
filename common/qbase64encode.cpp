@@ -33,14 +33,14 @@ QString QBase64Encode(QIODevice & iod) {
     char _in[3];
     unsigned char in[3];
     char out[4];
-    Q_LONG didRead = 0;
+    qint64 didRead = 0;
 
     while(!iod.atEnd()) {
         // set the values to 0 in case we don't read all 3
         _in[0] = _in[1] = _in[2] = (char)0;
 
         // read in up to the next 3 chars
-        didRead = iod.readBlock(&_in[0], 3);
+        didRead = iod.read(&_in[0], 3);
 
         in[0] = (unsigned char)_in[0];
         in[1] = (unsigned char)_in[1];
@@ -92,7 +92,7 @@ QByteArray QBase64Decode(const QString & _source) {
     buf.open(QIODevice::WriteOnly);
 
     char a[4], b[4], o[3];
-    int n = 0;
+    qint64 n = 0;
     int p = 0; // current position in string
     int l = source.length(); // length of string
     char c = 0;
@@ -122,7 +122,7 @@ QByteArray QBase64Decode(const QString & _source) {
         else if(a[3] == '=') n = 2;
         else                 n = 3;
 
-        if(n != buf.writeBlock(&o[0], n)) {
+        if(n != buf.write(&o[0], n)) {
             // eek we didn't write the number of block we were supposed to
         }
 
