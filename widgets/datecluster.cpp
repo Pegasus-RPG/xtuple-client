@@ -464,6 +464,12 @@ void DLineEdit::setEnabled(const bool p)
   _calbutton.setEnabled(p);
 }
 
+QString DLineEdit::toISOString()
+{
+  QDate mydate = _lineedit.date();
+  return mydate.toString(Qt::ISODate);
+}
+
 DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
 {
   if(pName)
@@ -560,4 +566,5 @@ void DateCluster::bindValue(XSqlQuery &pQuery)
   pQuery.bindValue(":startDate", _startDate->date());
   pQuery.bindValue(":endDate", _endDate->date());
 }
+
 

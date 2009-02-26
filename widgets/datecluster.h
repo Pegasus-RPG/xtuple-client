@@ -107,6 +107,8 @@ class XTUPLEWIDGETS_EXPORT DLineEdit : public QWidget
     void setNull()                                                  { _lineedit.setNull(); };
     void showCalendar()                                             { _lineedit.showCalendar(); };
 
+    QString toISOString();
+
   signals:
     void newDate(const QDate &);
 
