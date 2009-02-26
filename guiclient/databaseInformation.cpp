@@ -11,7 +11,6 @@
 #include "databaseInformation.h"
 
 #include <QVariant>
-#include <QDebug>
 
 #include <dbtools.h>
 
@@ -36,7 +35,6 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
 
   QString access = _metrics->value("AllowedUserLogins");
-qDebug() << "loading with " << access;
   if("AdminOnly" == access)
     _access->setCurrentIndex(1);
   else if("Any" == access)
@@ -47,26 +45,6 @@ qDebug() << "loading with " << access;
   int val = _metrics->value("updateTickInterval").toInt();
   if(val < 1) val = 1;
   _interval->setValue(val);
-
-   //Disable batch manager if PostBooks 	 
-  if ( (_metrics->value("Application") != "Manufacturing") 	 
-    && (_metrics->value("Application") != "Standard") ) 	 
-  { 	 
-    _enableBatchManager->setChecked(FALSE); 	 
-    _enableBatchManager->hide(); 	 
-    _defaultFromAddress->setText(""); 	 
-    _defaultFromAddress->hide(); 	 
-    _defaultFromAddressLit->hide(); 	 
-    _purgeDaysLit->hide(); 	 
-    _purgeDays->hide(); 	 
-    _purgeDaysDaysLit->hide(); 	 
-  } 	 
-  else 	 
-  {
-    _defaultFromAddress->setText(_metrics->value("DefaultBatchFromEmailAddress"));
-    _enableBatchManager->setChecked(_metrics->boolean("EnableBatchManager"));
-    _purgeDays->setValue(_metrics->value("BatchManagerPurgeDays").toInt());
-  }
 
   QString protocol;
   parseDatabaseURL(omfgThis->databaseURL(), protocol, server, database, port);
@@ -86,7 +64,6 @@ qDebug() << "loading with " << access;
   if (!_privileges->check("ConfigDatabaseInfo"))
   {
     _description->setEnabled(FALSE);
-    _defaultFromAddress->setEnabled(FALSE);
     _comments->setEnabled(FALSE);
     _close->setText(tr("&Close"));
     _save->hide();
@@ -106,15 +83,11 @@ void databaseInformation::languageChange()
 void databaseInformation::sSave()
 {
   _metrics->set("DatabaseName", _description->text().trimmed());
-  _metrics->set("DefaultBatchFromEmailAddress", _defaultFromAddress->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
 
-  _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
-  _metrics->set("BatchManagerPurgeDays", _purgeDays->value());
   _metrics->set("updateTickInterval", _interval->value());
 
-qDebug() << "CurrentIndex " << _access->currentIndex();
   if(_access->currentIndex() == 1)
     _metrics->set("AllowedUserLogins", QString("AdminOnly"));
   else if(_access->currentIndex() == 2)
