@@ -75,13 +75,14 @@ void runMPSByPlannerCode::sCreate()
                "                  ELSE 3 "
                "             END AS orderid, "
                "             bomLevelByItem(item_id) AS levelid, "
-               "             itemsite_id "
-               "        FROM itemsite, item, plancode "
+               "             warehous_sequence, itemsite_id "
+               "        FROM itemsite, item, plancode, whsinfo "
                "       WHERE ( (itemsite_plancode_id=plancode_id)"
                "         AND (itemsite_active)"
                "         AND (item_active)"
                "         AND (itemsite_planning_type='S')"
-               "         AND (itemsite_item_id=item_id) ");
+               "         AND (itemsite_item_id=item_id)"
+               "         AND (itemsite_warehous_id=warehous_id) ");
 
   if (_plannerCode->isSelected())
     sql += " AND (plancode_id=:plancode_id)";
@@ -93,7 +94,7 @@ void runMPSByPlannerCode::sCreate()
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "ORDER BY orderid, levelid) AS data; ";
+         "ORDER BY orderid, levelid, warehous_sequence) AS data; ";
 
   q.prepare(sql);
   _warehouse->bindValue(q);
