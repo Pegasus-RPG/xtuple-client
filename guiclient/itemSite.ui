@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>605</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -1009,23 +1009,7 @@ to be bound by its terms.</comment>
                 <item row="0" column="1" colspan="4" >
                  <layout class="QHBoxLayout" name="horizontalLayout" >
                   <item>
-                   <widget class="QComboBox" name="_planningType" >
-                    <item>
-                     <property name="text" >
-                      <string>MRP</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
-                      <string>MPS</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
-                      <string>None</string>
-                     </property>
-                    </item>
-                   </widget>
+                   <widget class="XComboBox" name="_planningType" />
                   </item>
                   <item>
                    <spacer>

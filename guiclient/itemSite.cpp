@@ -18,8 +18,6 @@
 
 #include "storedProcErrorLookup.h"
 
-const char *_planningTypes[] = { "M", "S", "N" };
-
 itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -39,11 +37,18 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
+  _planningType->append(0, "None", "N");
   if (_metrics->value("Application") != "Manufacturing" && _metrics->value("Application") != "Standard")
   {
-    _planningType->setCurrentIndex(2);
+    _planningType->setCurrentIndex(0);
     _planningType->hide();
     _planningTypeLit->hide();
+  }
+  else
+  {
+    _planningType->append(1, "MRP", "M");
+    if (_metrics->value("Application") == "Manufacturing")
+      _planningType->append(2, "MPS", "S");
   }
   
   _itemType = 0;
@@ -633,7 +638,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_costcat_id", _costcat->id());
     
   newItemSite.bindValue(":itemsite_active", QVariant(_active->isChecked()));
-  newItemSite.bindValue(":itemsite_planning_type", _planningTypes[_planningType->currentIndex()]);
+  newItemSite.bindValue(":itemsite_planning_type", _planningType->code());
   newItemSite.bindValue(":itemsite_poSupply", QVariant(_poSupply->isChecked()));
   newItemSite.bindValue(":itemsite_woSupply", QVariant(_woSupply->isChecked()));
   newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
@@ -843,7 +848,7 @@ void itemSite::sCacheItemType(char pItemType)
   else if (_itemType != 'P' && _itemType != 'M' && _itemType != 'F' && _itemType != 'B' &&
            _itemType != 'C' && _itemType != 'Y' && _itemType != 'O' && _itemType != 'A')
   {
-    _planningType->setCurrentIndex(2);
+    _planningType->setCurrentIndex(0);
     _planningType->setEnabled(FALSE);
   }
   else
@@ -1088,8 +1093,11 @@ void itemSite::populate()
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());
 
     for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
-      if (QString(itemsite.value("itemsite_planning_type").toString()[0]) == _planningTypes[pcounter])
-        _planningType->setCurrentIndex(pcounter);
+    {
+      _planningType->setCurrentIndex(pcounter);
+      if (QString(itemsite.value("itemsite_planning_type").toString()[0]) == _planningType->code())
+        break;
+    }
 
     _poSupply->setChecked(itemsite.value("itemsite_poSupply").toBool());
     _woSupply->setChecked(itemsite.value("itemsite_woSupply").toBool());
