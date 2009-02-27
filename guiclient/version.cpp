@@ -18,5 +18,5 @@ QString _dbVersion = "3.3.0Dev";
 #else
 #include "../altVersion.cpp"
 #endif
-QString _Copyright = "Copyright (c) 1999-2009, xTuple, LLC.";
+QString _Copyright = "Copyright (c) 1999-2009, OpenMFG, LLC.";
 
