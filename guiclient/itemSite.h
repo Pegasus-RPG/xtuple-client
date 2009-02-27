@@ -30,6 +30,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sCheckItemsite();
+    virtual void sHandlePlanningType();
     virtual void sHandlePOSupplied( bool pSupplied );
     virtual void sHandleWOSupplied( bool pSupplied );
     virtual void sHandleControlMethod();

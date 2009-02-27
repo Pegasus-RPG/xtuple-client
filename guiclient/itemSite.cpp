@@ -26,6 +26,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_planningType, SIGNAL(activated(int)), this, SLOT(sHandlePlanningType()));
   connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupplied(bool)));
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupplied(bool)));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sCacheItemType(const QString&)));
@@ -43,13 +44,17 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _planningType->setCurrentIndex(0);
     _planningType->hide();
     _planningTypeLit->hide();
+    _createPlannedTransfers->hide();
   }
   else
   {
     _planningType->append(1, "MRP", "M");
     if (_metrics->value("Application") == "Manufacturing")
       _planningType->append(2, "MPS", "S");
+    if (!_metrics->boolean("MultiWhs"))
+      _createPlannedTransfers->hide();
   }
+  sHandlePlanningType();
   
   _itemType = 0;
   _qohCache = 0;
@@ -269,6 +274,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_orderGroupFirst->setEnabled(FALSE);
 	_mpsTimeFence->setEnabled(FALSE);
   _planningType->setEnabled(false);
+  _createPlannedTransfers->setEnabled(false);
 	_close->setText(tr("&Close"));
 	_save->hide();
 	_comments->setReadOnly(TRUE);
@@ -488,6 +494,35 @@ void itemSite::sSave()
       }
     }
   }
+  
+  int _supplyItemsiteId = -1;
+  if (_createPlannedTransfers->isChecked())
+  {
+    q.prepare("SELECT itemsite_id "
+              "FROM itemsite "
+              "WHERE ( (itemsite_item_id=:item_id)"
+              "  AND   (itemsite_warehous_id=:warehous_id) ); ");
+    q.bindValue(":item_id", _item->id());
+    q.bindValue(":warehous_id", _suppliedFromSite->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("itemsite_id").toInt() == _itemsiteid)
+      { 
+        QMessageBox::warning( this, tr("Cannot Save Item Site"),
+          tr("The Supplied From Site must be different from this Site.") );
+        return;
+      }
+      else
+        _supplyItemsiteId = q.value("itemsite_id").toInt();
+    }
+    else
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item Site"),
+        tr("Cannot find Supplied From Item Site.") );
+      return;
+    }
+  }
 
   XSqlQuery newItemSite;
     
@@ -510,7 +545,7 @@ void itemSite::sSave()
                          "  itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id, itemsite_costcat_id,"
                          "  itemsite_poSupply, itemsite_woSupply, itemsite_createpr, itemsite_createwo, "
                          "  itemsite_sold, itemsite_soldranking,"
-                         "  itemsite_stocked, itemsite_planning_type,"
+                         "  itemsite_stocked, itemsite_planning_type, itemsite_supply_itemsite_id,"
                          "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
                          "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
                          "  itemsite_location_comments, itemsite_notes,"
@@ -528,7 +563,7 @@ void itemSite::sSave()
                          "  :itemsite_leadtime, :itemsite_eventfence, :itemsite_plancode_id, :itemsite_costcat_id,"
                          "  :itemsite_poSupply, :itemsite_woSupply, :itemsite_createpr, :itemsite_createwo, "
                          "  :itemsite_sold, :itemsite_soldranking,"
-                         "  :itemsite_stocked, :itemsite_planning_type,"
+                         "  :itemsite_stocked, :itemsite_planning_type, :itemsite_supply_itemsite_id,"
                          "  :itemsite_controlmethod, :itemsite_perishable, :itemsite_active,"
                          "  :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
                          "  :itemsite_location_comments, :itemsite_notes,"
@@ -604,6 +639,7 @@ void itemSite::sSave()
                          "    itemsite_createpr=:itemsite_createpr, itemsite_createwo=:itemsite_createwo, "
                          "    itemsite_sold=:itemsite_sold, itemsite_soldranking=:itemsite_soldranking,"
                          "    itemsite_stocked=:itemsite_stocked, itemsite_planning_type=:itemsite_planning_type,"
+                         "    itemsite_supply_itemsite_id=:itemsite_supply_itemsite_id,"
                          "    itemsite_controlmethod=:itemsite_controlmethod, itemsite_active=:itemsite_active,"
                          "    itemsite_perishable=:itemsite_perishable,"
                          "    itemsite_loccntrl=:itemsite_loccntrl, itemsite_location_id=:itemsite_location_id,"
@@ -639,6 +675,8 @@ void itemSite::sSave()
     
   newItemSite.bindValue(":itemsite_active", QVariant(_active->isChecked()));
   newItemSite.bindValue(":itemsite_planning_type", _planningType->code());
+  if (_createPlannedTransfers->isChecked())
+    newItemSite.bindValue(":itemsite_supply_itemsite_id", _supplyItemsiteId);
   newItemSite.bindValue(":itemsite_poSupply", QVariant(_poSupply->isChecked()));
   newItemSite.bindValue(":itemsite_woSupply", QVariant(_woSupply->isChecked()));
   newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
@@ -762,6 +800,29 @@ void itemSite::sCheckItemsite()
     _updates = TRUE;
   }
 }
+
+void itemSite::sHandlePlanningType()
+{
+  if (_planningType->code() == "M" || _planningType->code() == "S")
+  {
+    _createPlannedTransfers->setEnabled(TRUE);
+    _orderGroup->setEnabled(TRUE);
+    _orderGroupFirst->setEnabled(TRUE);
+
+    if (_planningType->code() == "S")
+      _mpsTimeFence->setEnabled(TRUE);
+    else
+      _mpsTimeFence->setEnabled(FALSE);
+  }
+  else
+  {
+    _createPlannedTransfers->setEnabled(FALSE);
+    _orderGroup->setEnabled(FALSE);
+    _orderGroupFirst->setEnabled(FALSE);
+    _mpsTimeFence->setEnabled(FALSE);
+  }
+
+} 
 
 void itemSite::sHandlePOSupplied(bool pSupplied)
 {
@@ -1012,10 +1073,10 @@ void itemSite::populate()
 {
   XSqlQuery itemsite;
   itemsite.prepare( "SELECT itemsite.*,"
-                    "       item_sold, item_type "
-                    "FROM itemsite, item "
-                    "WHERE ( (itemsite_item_id=item_id)"
-                    " AND (itemsite_id=:itemsite_id) );" );
+                    "       item_sold, item_type, supplysite.itemsite_warehous_id AS supplywarehousid "
+                    "FROM itemsite JOIN item ON (itemsite.itemsite_item_id=item_id) "
+                    "              LEFT OUTER JOIN itemsite supplysite ON (itemsite.itemsite_supply_itemsite_id=supplysite.itemsite_id) "
+                    "WHERE (itemsite.itemsite_id=:itemsite_id);" );
   itemsite.bindValue(":itemsite_id", _itemsiteid);
   itemsite.exec();
   if (itemsite.first())
@@ -1098,6 +1159,15 @@ void itemSite::populate()
       if (QString(itemsite.value("itemsite_planning_type").toString()[0]) == _planningType->code())
         break;
     }
+    sHandlePlanningType();
+    
+    if (!itemsite.value("supplywarehousid").isNull())
+    {
+      _suppliedFromSite->setId(itemsite.value("supplywarehousid").toInt());
+      _createPlannedTransfers->setChecked(TRUE);
+    }
+    else
+      _createPlannedTransfers->setChecked(FALSE);
 
     _poSupply->setChecked(itemsite.value("itemsite_poSupply").toBool());
     _woSupply->setChecked(itemsite.value("itemsite_woSupply").toBool());

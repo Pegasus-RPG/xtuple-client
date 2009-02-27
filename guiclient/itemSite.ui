@@ -1148,7 +1148,7 @@ to be bound by its terms.</comment>
                 <item row="5" column="0" colspan="5" >
                  <layout class="QHBoxLayout" name="horizontalLayout_7" >
                   <item>
-                   <widget class="QGroupBox" name="groupBox_2" >
+                   <widget class="QGroupBox" name="_createPlannedTransfers" >
                     <property name="title" >
                      <string>Create Planned Transfer Orders</string>
                     </property>
@@ -1160,7 +1160,7 @@ to be bound by its terms.</comment>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_2" >
                      <item row="0" column="0" >
-                      <widget class="QLabel" name="_planningTypeLit_2" >
+                      <widget class="QLabel" name="_suppliedFromSiteLit" >
                        <property name="text" >
                         <string>Supplied from Site:</string>
                        </property>
@@ -1172,7 +1172,11 @@ to be bound by its terms.</comment>
                      <item row="0" column="1" >
                       <layout class="QHBoxLayout" name="horizontalLayout_2" >
                        <item>
-                        <widget class="WComboBox" name="wcomboBox" />
+                        <widget class="WComboBox" name="_suppliedFromSite" >
+                         <property name="type" >
+                          <enum>WComboBox::Supply</enum>
+                         </property>
+                        </widget>
                        </item>
                        <item>
                         <spacer name="horizontalSpacer" >
@@ -1583,6 +1587,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel" >
      <x>183</x>
      <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_suppliedFromSite</receiver>
+   <slot>findItemsites(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>warehouseIdChanged(int)</signal>
+   <receiver>_suppliedFromSite</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
