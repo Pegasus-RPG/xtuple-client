@@ -109,15 +109,15 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   actionProperties acts[] = {
   
     // Schedule | Planning
-    { "menu",	tr("&Production Plan"), (char*)planningMenu,	mainMenu,	true,	NULL, NULL, true	, NULL },
-    { "ms.newProductionPlan", tr("&New..."), SLOT(sNewProductionPlan()), planningMenu, _privileges->check("MaintainPlannedSchedules"), NULL, NULL, true , NULL },
-    { "ms.listProductionPlans", tr("&List..."), SLOT(sListProductionPlans()), planningMenu, _privileges->check("MaintainPlannedSchedules") || _privileges->check("ViewPlannedSchedules"), NULL, NULL, true , NULL },
+    { "menu",	tr("&Production Plan"), (char*)planningMenu,	mainMenu,	true,	NULL, NULL, _metrics->value("Application") == "Manufacturing"	, NULL },
+    { "ms.newProductionPlan", tr("&New..."), SLOT(sNewProductionPlan()), planningMenu, _privileges->check("MaintainPlannedSchedules"), NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
+    { "ms.listProductionPlans", tr("&List..."), SLOT(sListProductionPlans()), planningMenu, _privileges->check("MaintainPlannedSchedules") || _privileges->check("ViewPlannedSchedules"), NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
 
     // Schedule | Schedule  
     { "menu",	tr("&Scheduling"), (char*)plannedOrdersMenu,	mainMenu,	true,	NULL, NULL, true	, NULL },
     { "ms.createPlannedOrder", tr("&New Planned Order..."), SLOT(sCreatePlannedOrder()), plannedOrdersMenu, _privileges->check("CreatePlannedOrders"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, plannedOrdersMenu, true, NULL, NULL, true , NULL },
-    { "ms.runMPSByPlannerCode", tr("Run M&PS..."), SLOT(sRunMPSByPlannerCode()),plannedOrdersMenu, _privileges->check("CreatePlannedOrders"), NULL, NULL, true , NULL },
+    { "ms.runMPSByPlannerCode", tr("Run M&PS..."), SLOT(sRunMPSByPlannerCode()),plannedOrdersMenu, _privileges->check("CreatePlannedOrders"), NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
  
     // Schedule | Schedule | MRP
     { "menu",	tr("Run &MRP"), (char*)plannedOrdersMrpMenu,	plannedOrdersMenu,	true,	NULL, NULL, true	, NULL },
@@ -186,7 +186,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true , NULL },
     { "ms.dspRunningAvailability", tr("&Running Availability..."), SLOT(sDspRunningAvailability()), reportsMenu, _privileges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
     { "ms.dspTimePhasedAvailabiltiy", tr("&Time-Phased Availability..."), SLOT(sDspTimePhasedAvailability()), reportsMenu, _privileges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
-    { "ms.dspMPSDetail", tr("MP&S Detail..."), SLOT(sDspMPSDetail()), reportsMenu, _privileges->check("ViewMPS"), NULL, NULL, true , NULL },
+    { "ms.dspMPSDetail", tr("MP&S Detail..."), SLOT(sDspMPSDetail()), reportsMenu, _privileges->check("ViewMPS"), NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
     { "ms.dspMRPDetail", tr("&MRP Detail..."), SLOT(sDspMRPDetail()), reportsMenu, _privileges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true , NULL },
     { "ms.dspExpediteExceptionsByPlannerCode", tr("E&xpedite Exceptions..."), SLOT(sDspExpediteExceptionsByPlannerCode()), reportsMenu, _privileges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
