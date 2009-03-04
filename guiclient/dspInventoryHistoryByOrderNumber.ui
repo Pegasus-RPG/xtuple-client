@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -20,130 +19,152 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Inventory History by Order Number</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QGridLayout" name="gridLayout_5" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="leftMargin" >
+    <layout class="QGridLayout" name="gridLayout_4" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout_3" >
        <item>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_3" >
          <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout" name="horizontalLayout" >
            <item>
-            <widget class="QLabel" name="_orderNumberLit" >
-             <property name="text" >
-              <string>Order #:</string>
+            <widget class="QGroupBox" name="_orderGroup" >
+             <property name="title" >
+              <string/>
              </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4" >
+              <item>
+               <widget class="QLabel" name="_orderNumberLit" >
+                <property name="text" >
+                 <string>Order #:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XLineEdit" name="_orderNumber" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>100</width>
+                  <height>32767</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::MinimumExpanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
-            <widget class="XLineEdit" name="_orderNumber" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <widget class="QGroupBox" name="_transGroup" >
+             <property name="title" >
+              <string/>
              </property>
-             <property name="maximumSize" >
-              <size>
-               <width>100</width>
-               <height>32767</height>
-              </size>
-             </property>
+             <layout class="QGridLayout" name="gridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="_transTypeLit" >
+                <property name="text" >
+                 <string>Trans. Types:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="XComboBox" name="_transType" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
-         <item rowspan="2" row="0" column="1" >
-          <widget class="QGroupBox" name="_dateGroup" >
-           <property name="title" >
-            <string/>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="DateCluster" name="_dates" />
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="1" column="0" >
-          <widget class="WarehouseGroup" name="_warehouse" >
-           <property name="title" >
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout" name="horizontalLayout_2" >
            <item>
-            <widget class="QLabel" name="_transTypeLit" >
-             <property name="text" >
-              <string>Trans. Types:</string>
+            <widget class="WarehouseGroup" name="_warehouse" >
+             <property name="title" >
+              <string/>
              </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <property name="fixedSize" >
+              <bool>false</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="XComboBox" name="_transType" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <widget class="QGroupBox" name="_dateGroup" >
+             <property name="title" >
+              <string/>
              </property>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="DateCluster" name="_dates" />
+              </item>
+              <item row="0" column="1" >
+               <spacer name="horizontalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -157,10 +178,10 @@ to be bound by its terms.</comment>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
-           <width>16</width>
-           <height>65</height>
+           <width>0</width>
+           <height>78</height>
           </size>
          </property>
         </spacer>
@@ -173,7 +194,7 @@ to be bound by its terms.</comment>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="_close" >
@@ -212,10 +233,10 @@ to be bound by its terms.</comment>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
-             <height>22</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -239,16 +260,7 @@ to be bound by its terms.</comment>
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item row="0" column="0" >
