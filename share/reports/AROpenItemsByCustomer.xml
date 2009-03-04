@@ -11,7 +11,15 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT cust_number,
+  <sql>SELECT 
+&lt;? if exists("startDate") ?>
+      'Start Doc Date:' AS start_label,
+      'End Doc Date:' AS end_label,
+&lt;? else ?>
+      'Start Due Date:' AS start_label,   
+      'End Due Date:' AS end_label,
+&lt;? endif ?>
+       cust_number,
        cust_name,
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
@@ -57,7 +65,15 @@
   WHERE ( (COALESCE(aropen_closedate,date &lt;? value("asofDate") ?> + integer '1')>&lt;? value("asofDate") ?>)
         AND   (aropen_docdate&lt;=&lt;? value("asofDate") ?>)
         AND   (aropen_cust_id=&lt;? value("cust_id") ?>) 
-        AND   (aropen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) )
+&lt;? if exists("startDate") ?>
+    AND   (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("startDueDate") ?>
+    AND   (aropen_duedate >= &lt;? value("startDueDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("endDueDate") ?>
+    AND   (aropen_duedate &lt;= &lt;? value("endDueDate") ?>)
+&lt;? endif ?> )
 GROUP BY aropen_id,aropen_docnumber,aropen_ordernumber,aropen_doctype,aropen_docdate,aropen_duedate,aropen_amount,aropen_curr_id,aropen_paid
 ORDER BY aropen_docdate;</sql>
  </querysource>
@@ -94,22 +110,6 @@ ORDER BY aropen_docdate;</sql>
    <right/>
    <vcenter/>
    <string>A/R Open Items By Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>442</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
   </label>
   <field>
    <rect>
@@ -164,22 +164,6 @@ ORDER BY aropen_docdate;</sql>
   </label>
   <label>
    <rect>
-    <x>442</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>195</x>
     <y>155</y>
     <width>100</width>
@@ -215,10 +199,10 @@ ORDER BY aropen_docdate;</sql>
   </field>
   <label>
    <rect>
-    <x>442</x>
-    <y>115</y>
+    <x>441</x>
+    <y>134</y>
     <width>100</width>
-    <height>20</height>
+    <height>-18</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -387,6 +371,44 @@ ORDER BY aropen_docdate;</sql>
    <data>
     <query>head</query>
     <column>asofDate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>442</x>
+    <y>62</y>
+    <width>100</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>start_label</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>443</x>
+    <y>82</y>
+    <width>100</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>end_label</column>
    </data>
   </field>
  </rpthead>

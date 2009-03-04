@@ -11,7 +11,15 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
+  <sql>SELECT 
+&lt;? if exists("startDate") ?>
+      'Start Doc Date:' AS start_label,
+      'End Doc Date:' AS end_label,
+&lt;? else ?>
+      'Start Due Date:' AS start_label,   
+      'End Due Date:' AS end_label,
+&lt;? endif ?>
+       formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
        currConcat(baseCurrId()) AS baseAbbr;</sql>
  </querysource>
@@ -38,7 +46,15 @@
        cust_number, cust_name
   FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
  WHERE ((aropen_open)
-   AND (aropen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("startDate") ?>
+  AND   (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("startDueDate") ?>
+  AND   (aropen_duedate >= &lt;? value("startDueDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("endDueDate") ?>
+  AND   (aropen_duedate &lt;= &lt;? value("endDueDate") ?>)
+&lt;? endif ?>
        )
 ORDER BY aropen_docnumber;</sql>
  </querysource>
@@ -110,22 +126,6 @@ ORDER BY aropen_docnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>444</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>160</x>
     <y>155</y>
     <width>100</width>
@@ -171,22 +171,6 @@ ORDER BY aropen_docnumber;</sql>
    <left/>
    <vcenter/>
    <string>Debit Memo# (D) </string>
-  </label>
-  <label>
-   <rect>
-    <x>444</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
   </label>
   <field>
    <rect>
@@ -313,6 +297,44 @@ ORDER BY aropen_docnumber;</sql>
    <yend>170</yend>
    <weight>2</weight>
   </line>
+  <field>
+   <rect>
+    <x>442</x>
+    <y>62</y>
+    <width>100</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>start_label</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>446</x>
+    <y>82</y>
+    <width>100</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>end_label</column>
+   </data>
+  </field>
  </rpthead>
  <pghead>
   <firstpage/>
