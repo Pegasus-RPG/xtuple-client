@@ -189,6 +189,7 @@ void dspTimePhasedOpenARItems::sViewOpenItems()
     else if (_column == 7)
       params.append("endDate",asOfDate.addDays(-91) );
   }
+  params.append("byDueDate");
   params.append("run");
   params.append("asofDate", _asOf->date());
 

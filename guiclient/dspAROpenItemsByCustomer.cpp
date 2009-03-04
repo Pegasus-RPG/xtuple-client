@@ -76,6 +76,9 @@ enum SetResponse dspAROpenItemsByCustomer::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  if (pParams.inList("byDueDate"))
+    _dueDate->setChecked(true);
+    
   param = pParams.value("cust_id", &valid);
   if (valid)
     _cust->setId(param.toInt());
@@ -245,9 +248,16 @@ void dspAROpenItemsByCustomer::sViewIncident()
 
 bool dspAROpenItemsByCustomer::setParams(ParameterList &params)
 {
-  _dates->appendValue(params);
+  if (_docDate->isChecked())
+    _dates->appendValue(params);
+  else
+  {
+    params.append("startDueDate", _dates->startDate());
+    params.append("endDueDate", _dates->endDate());
+  }
   params.append("asofDate",     _asOf->date());
-  params.append("cust_id",      _cust->id());
+  if (_cust->isValid())
+    params.append("cust_id",      _cust->id());
   params.append("invoice",      tr("Invoice"));
   params.append("creditMemo",   tr("Credit Memo"));
   params.append("debitMemo",    tr("Debit Memo"));

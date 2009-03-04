@@ -233,8 +233,13 @@ void dspAROpenItems::sViewIncident()
 
 bool dspAROpenItems::setParams(ParameterList &params)
 {
-  _dates->appendValue(params);
-
+  if (_docDate->isChecked())
+    _dates->appendValue(params);
+  else
+  {
+    params.append("startDueDate", _dates->startDate());
+    params.append("endDueDate", _dates->endDate());
+  }
   params.append("invoice", tr("Invoice"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
