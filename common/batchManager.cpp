@@ -73,7 +73,7 @@ void batchManager::sFillList()
                "            ELSE <? value(\"completed\") ?>"
                "       END AS runstatus,"
                "       firstLine(batch_exitstatus) AS exitstatus "
-               "  FROM batch "
+               "  FROM xtbatch.batch "
                " WHERE((true) "
                "<? if not exists(\"showCompleted\") ?>"
                "   AND (batch_completed IS NULL)"
@@ -125,7 +125,7 @@ void batchManager::sReschedule()
 void batchManager::sCancel()
 {
   XSqlQuery cancel(_db);
-  cancel.prepare("SELECT cancelBatchItem(:batch_id) AS result;");
+  cancel.prepare("SELECT xtbatch.cancelBatchItem(:batch_id) AS result;");
   cancel.bindValue(":batch_id", _batch->id());
   cancel.exec();
 

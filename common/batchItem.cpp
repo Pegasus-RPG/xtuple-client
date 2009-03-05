@@ -89,7 +89,7 @@ void batchItem::sSave()
   if (_mode == cReschedule)
   {
     XSqlQuery schedq(_db);
-    schedq.prepare("SELECT rescheduleBatchItem(:batchid,"
+    schedq.prepare("SELECT xtbatch.rescheduleBatchItem(:batchid,"
                    "                           CAST(:date AS DATE) +"
                    "                           CAST(:time AS TIME),"
                    "                           :interval) AS result;");
@@ -136,7 +136,7 @@ void batchItem::populate()
                  "       CAST(batch_started AS TIME) AS started_time,"
                  "       date(batch_completed) AS completed_date,"
                  "       CAST(batch_completed AS TIME) AS completed_time "
-                 "FROM batch "
+                 "FROM xtbatch.batch "
                  "WHERE (batch_id=:batch_id);" );
   batch.bindValue(":batch_id", _batchid);
   batch.exec();
