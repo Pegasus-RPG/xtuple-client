@@ -34,6 +34,7 @@ public slots:
     virtual void sPopulateCustInfo( int pCustid );
     virtual void reset();
     virtual void sPopulateDueDate();
+    virtual void sPrintOnPost(int temp_id);
 
 protected slots:
     virtual void languageChange();

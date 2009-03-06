@@ -133,7 +133,7 @@ void unappliedARCreditMemos::sFillList()
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
              "                         WHERE ((NOT checkhead_posted)"
              "                           AND  (NOT checkhead_void))"
-             "                         GROUP BY aropen_id,) AS sub1"
+             "                         GROUP BY aropen_id ) AS sub1"
              "         ON (prepared_aropen_id=aropen_id)"
              ", cust "
              "WHERE ( (aropen_doctype IN ('C', 'R'))"

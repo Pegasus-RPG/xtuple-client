@@ -14,6 +14,8 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <openreports.h>
+
 #include "storedProcErrorLookup.h"
 
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -35,6 +37,8 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "arapply_applied");
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "baseapplied");
+
+  _printOnPost->setVisible(false);
 
   if (omfgThis->singleCurrency())
       _arapply->hideColumn("currabbr");
@@ -108,6 +112,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _paid->clear();
       _commissionPaid->clear();
       _save->setText(tr("Post"));
+      _printOnPost->setVisible(true);
     }
     else if (param.toString() == "edit")
     {
@@ -169,7 +174,9 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
 
 void arOpenItem::sSave()
 {
+  int temp_id;
   QString storedProc;
+
   if (_mode == cNew)
   {
     if (!_docDate->isValid())
@@ -294,6 +301,13 @@ void arOpenItem::sSave()
       q.bindValue(":aropen_doctype", "R");
       break;
   }
+
+  q.exec("SELECT MAX(aropen_id) AS max_aropen_id FROM aropen;");
+  if (q.first())
+    temp_id = q.value("max_aropen_id").toInt();
+
+  if(_printOnPost->isChecked())
+    sPrintOnPost(temp_id);
 
   if (q.exec())
   {
@@ -552,5 +566,37 @@ void arOpenItem::sPopulateDueDate()
     q.exec();
     if (q.first())
       _dueDate->setDate(q.value("duedate").toDate());
+  }
+}
+
+void arOpenItem::sPrintOnPost(int temp_id)
+{
+  ParameterList params;
+  params.append("aropen_id", temp_id);
+
+  switch (_docType->currentIndex())
+  {
+    case 0:
+      params.append("docTypeRC", "1");
+      break;
+    case 1:
+      params.append("docTypeID", "1");
+      break;
+    case 2:
+      params.append("docTypeID", "1");
+      break;
+    case 3:
+      params.append("docTypeRC", "1");
+      break;
+  }
+
+  orReport report("AROpenItem", params);
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(this);
+    reject();
+    return;
   }
 }
