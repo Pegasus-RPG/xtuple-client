@@ -12,23 +12,17 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>629</height>
+    <width>567</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>A/R Open Item</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QGridLayout" name="gridLayout_7" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
      <property name="spacing" >
@@ -73,7 +67,7 @@ to be bound by its terms.</comment>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="_close" >
@@ -89,6 +83,9 @@ to be bound by its terms.</comment>
              </property>
              <property name="text" >
               <string>&amp;Save</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+S</string>
              </property>
              <property name="autoDefault" >
               <bool>true</bool>
@@ -241,169 +238,211 @@ to be bound by its terms.</comment>
        <property name="title" >
         <string/>
        </property>
-       <layout class="QGridLayout" >
+       <layout class="QGridLayout" name="gridLayout_2" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_docTypeLit" >
-          <property name="text" >
-           <string>Document Type:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="XComboBox" name="_docType" >
-          <property name="maximumSize" >
-           <size>
-            <width>150</width>
-            <height>16777215</height>
-           </size>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout" >
           <item>
-           <property name="text" >
-            <string>Credit Memo</string>
-           </property>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_docTypeLit" >
+              <property name="text" >
+               <string>Document Type:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" name="horizontalLayout_2" >
+              <item>
+               <widget class="XComboBox" name="_docType" >
+                <property name="maximumSize" >
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text" >
+                  <string>Credit Memo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Debit Memo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Invoice</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Customer Deposit</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_docNumberLit" >
+              <property name="text" >
+               <string>Document #:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="XLineEdit" name="_docNumber" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>100</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="_orderNumberLit" >
+              <property name="text" >
+               <string>Order #:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="XLineEdit" name="_orderNumber" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>100</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="_journalNumberLit" >
+              <property name="text" >
+               <string>Journal #:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="XLineEdit" name="_journalNumber" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>100</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="_rsnCodeLit" >
+              <property name="text" >
+               <string>Reason Code:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
+             <layout class="QHBoxLayout" name="horizontalLayout" >
+              <item>
+               <widget class="XComboBox" name="_rsnCode" >
+                <property name="maximumSize" >
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="allowNull" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
-           <property name="text" >
-            <string>Debit Memo</string>
-           </property>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
           </item>
-          <item>
-           <property name="text" >
-            <string>Invoice</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Customer Deposit</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_docNumberLit" >
-          <property name="text" >
-           <string>Document #:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="XLineEdit" name="_docNumber" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>100</width>
-            <height>32767</height>
-           </size>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="_orderNumberLit" >
-          <property name="text" >
-           <string>Order #:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" >
-         <widget class="XLineEdit" name="_orderNumber" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>100</width>
-            <height>32767</height>
-           </size>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" >
-         <widget class="QLabel" name="_journalNumberLit" >
-          <property name="text" >
-           <string>Journal #:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" >
-         <widget class="XLineEdit" name="_journalNumber" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>100</width>
-            <height>32767</height>
-           </size>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" >
-         <widget class="QLabel" name="_rsnCodeLit" >
-          <property name="text" >
-           <string>Reason Code:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" >
-         <widget class="XComboBox" name="_rsnCode" >
-          <property name="maximumSize" >
-           <size>
-            <width>150</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="allowNull" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>20</width>
-            <height>21</height>
-           </size>
-          </property>
-         </spacer>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -413,91 +452,112 @@ to be bound by its terms.</comment>
        <property name="title" >
         <string/>
        </property>
-       <layout class="QGridLayout" >
+       <layout class="QGridLayout" name="gridLayout_4" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_amountLit" >
-          <property name="text" >
-           <string>Amount:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="CurrCluster" name="_amount" />
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_paidLit" >
-          <property name="text" >
-           <string>Paid:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="CurrDisplay" name="_paid" />
-        </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="_balanceLit" >
-          <property name="text" >
-           <string>Balance:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" >
-         <widget class="CurrDisplay" name="_balance" />
-        </item>
-        <item row="3" column="0" >
-         <widget class="QLabel" name="_commissionDueLit" >
-          <property name="text" >
-           <string>Commission Due:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" >
-         <widget class="CurrCluster" name="_commissionDue" >
-          <property name="baseVisible" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyEditable" stdset="0" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyVisible" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" >
-         <widget class="QLabel" name="_commissionPaidLit" >
-          <property name="text" >
-           <string>Commission Paid:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" >
-         <widget class="CurrCluster" name="_commissionPaid" >
-          <property name="baseVisible" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyEditable" stdset="0" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyVisible" >
-           <bool>false</bool>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_2" >
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_amountLit" >
+              <property name="text" >
+               <string>Amount:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="CurrCluster" name="_amount" />
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_paidLit" >
+              <property name="text" >
+               <string>Paid:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="CurrDisplay" name="_paid" />
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="_balanceLit" >
+              <property name="text" >
+               <string>Balance:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="CurrDisplay" name="_balance" />
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="_commissionDueLit" >
+              <property name="text" >
+               <string>Commission Due:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="CurrCluster" name="_commissionDue" >
+              <property name="baseVisible" >
+               <bool>false</bool>
+              </property>
+              <property name="currencyEditable" stdset="0" >
+               <bool>false</bool>
+              </property>
+              <property name="currencyVisible" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="_commissionPaidLit" >
+              <property name="text" >
+               <string>Commission Paid:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
+             <widget class="CurrCluster" name="_commissionPaid" >
+              <property name="baseVisible" >
+               <bool>false</bool>
+              </property>
+              <property name="currencyEditable" stdset="0" >
+               <bool>false</bool>
+              </property>
+              <property name="currencyVisible" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -598,6 +658,131 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_taxTab" >
+        <attribute name="title" >
+         <string>Tax</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_6" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout_5" >
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3" >
+             <item>
+              <layout class="QGridLayout" name="gridLayout_5" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="_taxareaLit" >
+                 <property name="text" >
+                  <string>Tax Zone:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <layout class="QHBoxLayout" name="horizontalLayout_3" >
+                 <item>
+                  <widget class="XComboBox" name="_taxZone" />
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_3" >
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0" >
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0" >
+                <widget class="QLabel" name="_taxtypeLit" >
+                 <property name="text" >
+                  <string>Tax Type:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" >
+                <layout class="QHBoxLayout" name="horizontalLayout_4" >
+                 <item>
+                  <widget class="XComboBox" name="_taxtype" />
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4" >
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0" >
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0" >
+                <widget class="XURLLabel" name="_taxLit" >
+                 <property name="text" >
+                  <string>Tax:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+                 </property>
+                 <property name="margin" >
+                  <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1" >
+                <widget class="CurrCluster" name="_tax" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2" >
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_5" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_applicationsTab" >
         <attribute name="title" >
          <string>Applications</string>
@@ -626,7 +811,7 @@ to be bound by its terms.</comment>
      <item row="4" column="0" >
       <widget class="XCheckBox" name="_printOnPost" >
        <property name="text" >
-        <string>Print On Post</string>
+        <string>Print on post</string>
        </property>
       </widget>
      </item>
@@ -677,11 +862,18 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XURLLabel</class>
+   <extends>QLabel</extends>
+   <header>xurllabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
