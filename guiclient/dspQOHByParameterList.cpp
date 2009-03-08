@@ -289,8 +289,6 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
   _qoh->setColumnHidden(_qoh->column("value"),        !pShowValue);
   _qoh->setColumnHidden(_qoh->column("f_nnvalue"),    !pShowValue);
   _qoh->setColumnHidden(_qoh->column("f_costmethod"), !pShowValue);
-
-  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspQOHByParameterList::sFillList()

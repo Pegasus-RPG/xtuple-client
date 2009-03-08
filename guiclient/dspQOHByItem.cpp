@@ -206,7 +206,6 @@ void dspQOHByItem::sHandleValue(bool pShowValue)
   _qoh->setColumnHidden(6, !pShowValue);
   _qoh->setColumnHidden(7, !pShowValue);
   _qoh->setColumnHidden(8, !pShowValue);
-  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspQOHByItem::sFillList()
