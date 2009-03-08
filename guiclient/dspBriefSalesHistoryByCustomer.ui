@@ -106,7 +106,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0" >
           <layout class="QHBoxLayout" name="horizontalLayout_2" >
            <item>
-            <widget class="WarehouseGroup" name="_warehouse" >
+            <widget class="ParameterGroup" name="_productCategory" >
              <property name="title" >
               <string/>
              </property>
@@ -116,7 +116,7 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
-            <widget class="ParameterGroup" name="_productCategory" >
+            <widget class="WarehouseGroup" name="_warehouse" >
              <property name="title" >
               <string/>
              </property>
@@ -190,7 +190,7 @@ to be bound by its terms.</comment>
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0" >
             <size>
@@ -293,7 +293,6 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_cust</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_productCategory</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_sohist</tabstop>
   <tabstop>_print</tabstop>

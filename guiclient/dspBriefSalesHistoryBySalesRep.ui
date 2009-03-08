@@ -45,16 +45,10 @@ to be bound by its terms.</comment>
                 <property name="spacing" >
                  <number>0</number>
                 </property>
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <item>
                  <layout class="QHBoxLayout" >
                   <property name="spacing" >
                    <number>5</number>
-                  </property>
-                  <property name="margin" >
-                   <number>0</number>
                   </property>
                   <item>
                    <widget class="QLabel" name="_salesrepLit" >
@@ -124,30 +118,6 @@ to be bound by its terms.</comment>
              </layout>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_2" >
-           <item>
-            <widget class="WarehouseGroup" name="_warehouse" >
-             <property name="title" >
-              <string/>
-             </property>
-             <property name="fixedSize" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ParameterGroup" name="_productCategory" >
-             <property name="title" >
-              <string/>
-             </property>
-             <property name="fixedSize" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QGroupBox" name="_optionsGroup" >
              <property name="title" >
@@ -159,15 +129,9 @@ to be bound by its terms.</comment>
                 <property name="spacing" >
                  <number>0</number>
                 </property>
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <item>
                  <layout class="QHBoxLayout" >
                   <property name="spacing" >
-                   <number>0</number>
-                  </property>
-                  <property name="margin" >
                    <number>0</number>
                   </property>
                   <item>
@@ -198,9 +162,6 @@ to be bound by its terms.</comment>
                 <item>
                  <layout class="QHBoxLayout" >
                   <property name="spacing" >
-                   <number>0</number>
-                  </property>
-                  <property name="margin" >
                    <number>0</number>
                   </property>
                   <item>
@@ -251,6 +212,30 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
+         <item row="1" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout_2" >
+           <item>
+            <widget class="ParameterGroup" name="_productCategory" >
+             <property name="title" >
+              <string/>
+             </property>
+             <property name="fixedSize" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="WarehouseGroup" name="_warehouse" >
+             <property name="title" >
+              <string/>
+             </property>
+             <property name="fixedSize" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
        <item>
@@ -271,15 +256,9 @@ to be bound by its terms.</comment>
          <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="margin" >
             <number>0</number>
            </property>
            <item>
@@ -354,9 +333,6 @@ to be bound by its terms.</comment>
           <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <item>
            <widget class="QLabel" name="_cohistLit" >
             <property name="text" >
@@ -373,7 +349,6 @@ to be bound by its terms.</comment>
          </layout>
         </item>
        </layout>
-       <zorder></zorder>
        <zorder></zorder>
       </widget>
      </item>
@@ -417,8 +392,6 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_salesrep</tabstop>
-  <tabstop>_warehouse</tabstop>
-  <tabstop>_productCategory</tabstop>
   <tabstop>_showCosts</tabstop>
   <tabstop>_showPrices</tabstop>
   <tabstop>_query</tabstop>
