@@ -9,6 +9,8 @@
 #include <QDomText>
 #include <QFile>
 #include <QTextStream>
+#include <QProcess>
+#include <QApplication>
 
 #include "guiclient.h"
 #include "version.h"
@@ -131,4 +133,27 @@ void collectMetrics()
   out << doc.toString();
 
   file.close();
+
+  QString path = QApplication::applicationDirPath();
+  QFile f(path+"/network.cfg");
+  if(f.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream in(&f);
+    in >> path;
+    f.close();
+  }
+  QString exe = path + "/agent";
+#if defined Q_WS_X11
+  exe.append(".bin");
+#endif
+  QProcess * proc = new QProcess();
+#if defined Q_WS_MACX
+  QStringList aguments;
+  arguments << exe;
+  proc->start("open", arguments);
+#else
+  proc->start(exe);
+#endif
+  
+  
 }
