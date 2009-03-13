@@ -148,7 +148,7 @@ void collectMetrics()
 #endif
   QProcess * proc = new QProcess();
 #if defined Q_WS_MACX
-  QStringList aguments;
+  QStringList arguments;
   arguments << exe;
   proc->start("open", arguments);
 #else
