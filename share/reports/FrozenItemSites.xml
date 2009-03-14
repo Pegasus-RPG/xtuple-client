@@ -11,10 +11,10 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("warehous_id") ?>
         ( SELECT warehous_code
             FROM warehous
-           WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+           WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
@@ -28,7 +28,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       formatBoolYN(itemsite_supply) AS supplied,
+       formatBoolYN(itemsite_wosupply) AS supplied,
        formatBoolYN(itemsite_sold) AS sold,
        itemsite_soldranking,
        formatBoolYN(itemsite_stocked) AS stocked,
@@ -64,8 +64,8 @@ FROM itemsite, warehous, item
 WHERE ((itemsite_item_id=item_id)
  AND (itemsite_warehous_id=warehous_id)
  AND (itemsite_freeze)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
- AND (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? if exists("warehous_id") ?>
+ AND (warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
 )
 ORDER BY item_number;</sql>

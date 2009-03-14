@@ -15,14 +15,14 @@
        item_descrip1,
        item_descrip2
   FROM item
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+ WHERE (item_id=&lt;? value("item_id") ?>);
 </sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>SELECT warehous_code, formatBoolYN(itemsite_active) AS active,
        item_number, item_descrip1, item_descrip2,
-       formatBoolYN(itemsite_supply) AS supplied,
+       formatBoolYN(itemsite_wosupply) AS supplied,
        formatBoolYN(itemsite_sold) AS sold, itemsite_soldranking,
        formatBoolYN(itemsite_stocked) AS stocked,
        formatBoolYN(itemsite_createpr) AS createpr,
@@ -54,7 +54,7 @@
   FROM itemsite, warehous, item
  WHERE ((itemsite_item_id=item_id)
    AND (itemsite_warehous_id=warehous_id)
-   AND (item_id=&lt;? value(&quot;item_id&quot;) ?>) )
+   AND (item_id=&lt;? value("item_id") ?>) )
 ORDER BY warehous_code;</sql>
  </querysource>
  <rpthead>

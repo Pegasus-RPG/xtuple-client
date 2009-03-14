@@ -11,55 +11,55 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;classcode_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("classcode_id") ?>
          ( SELECT (classcode_code||'-'||classcode_descrip)
              FROM classcode
-            WHERE (classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
-         text(&lt;? value(&quot;classcode_pattern&quot;) ?>)
-       &lt;? elseif exists(&quot;plancode_id&quot;) ?>
+            WHERE (classcode_id=&lt;? value("classcode_id") ?>) )
+       &lt;? elseif exists("classcode_pattern") ?>
+         text(&lt;? value("classcode_pattern") ?>)
+       &lt;? elseif exists("plancode_id") ?>
          ( SELECT (plancode_code||'-'||plancode_name)
              FROM plancode
-            WHERE (plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
-         text(&lt;? value(&quot;plancode_pattern&quot;) ?>)
-       &lt;? elseif exists(&quot;costcat_id&quot;) ?>
+            WHERE (plancode_id=&lt;? value("plancode_id") ?>) )
+       &lt;? elseif exists("plancode_pattern") ?>
+         text(&lt;? value("plancode_pattern") ?>)
+       &lt;? elseif exists("costcat_id") ?>
          ( SELECT (costcat_code||'-'||costcat_descrip)
              FROM costcat
-            WHERE (costcat_id=&lt;? value(&quot;costcat_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;costcat_pattern&quot;) ?>
-         text(&lt;? value(&quot;costcat_pattern&quot;) ?>)
-       &lt;? elseif exists(&quot;itemgrp_id&quot;) ?>
+            WHERE (costcat_id=&lt;? value("costcat_id") ?>) )
+       &lt;? elseif exists("costcat_pattern") ?>
+         text(&lt;? value("costcat_pattern") ?>)
+       &lt;? elseif exists("itemgrp_id") ?>
          ( SELECT (itemgrp_name||'-'||itemgrp_descrip)
              FROM itemgrp
-            WHERE (itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
-         text(&lt;? value(&quot;itemgrp_pattern&quot;) ?>)
+            WHERE (itemgrp_id=&lt;? value("itemgrp_id") ?>) )
+       &lt;? elseif exists("itemgrp_pattern") ?>
+         text(&lt;? value("itemgrp_pattern") ?>)
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_value,
-       &lt;? if reExists(&quot;classcode.*&quot;) ?>
+       &lt;? if reExists("classcode.*") ?>
          text('Class Codes:')
-       &lt;? elseif reExists(&quot;plancode.*&quot;) ?>
+       &lt;? elseif reExists("plancode.*") ?>
          text('Planner Codes:')
-       &lt;? elseif reExists(&quot;costcat.*&quot;) ?>
+       &lt;? elseif reExists("costcat.*") ?>
          text('Cost Categories:')
-       &lt;? elseif reExists(&quot;itemgrp.*&quot;) ?>
+       &lt;? elseif reExists("itemgrp.*") ?>
          text('Item Groups:')
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_label,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;showInactive&quot;) ?>
+       &lt;? if exists("showInactive") ?>
          text('Yes')
        &lt;? else ?>
          text('No')
@@ -73,7 +73,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       formatBoolYN(itemsite_supply) AS supplied,
+       formatBoolYN(itemsite_wosupply) AS supplied,
        formatBoolYN(itemsite_sold) AS sold,
        itemsite_soldranking,
        formatBoolYN(itemsite_stocked) AS stocked,
@@ -111,38 +111,38 @@
   FROM itemsite, warehous, item
  WHERE ((itemsite_item_id=item_id)
    AND (itemsite_warehous_id=warehous_id)
-&lt;? if exists(&quot;classcode_id&quot;) ?>
-   AND (item_classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
-&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
+&lt;? if exists("classcode_id") ?>
+   AND (item_classcode_id=&lt;? value("classcode_id") ?>)
+&lt;? elseif exists("classcode_pattern") ?>
    AND (item_classcode_id IN (SELECT classcode_id
                                 FROM classcode
-                               WHERE (classcode_code ~ &lt;? value(&quot;classcode_pattern&quot;) ?>) ) )
-&lt;? elseif exists(&quot;plancode_id&quot;) ?>
-   AND (itemsite_plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>)
-&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
+                               WHERE (classcode_code ~ &lt;? value("classcode_pattern") ?>) ) )
+&lt;? elseif exists("plancode_id") ?>
+   AND (itemsite_plancode_id=&lt;? value("plancode_id") ?>)
+&lt;? elseif exists("plancode_pattern") ?>
    AND (itemsite_plancode_id IN (SELECT plancode_id
                                    FROM plancode
-                                  WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
-&lt;? elseif exists(&quot;costcat_id&quot;) ?>
-   AND (itemsite_costcat_id=&lt;? value(&quot;costcat_id&quot;) ?>)
-&lt;? elseif exists(&quot;costcat_pattern&quot;) ?>
+                                  WHERE (plancode_code ~ &lt;? value("plancode_pattern") ?>)))
+&lt;? elseif exists("costcat_id") ?>
+   AND (itemsite_costcat_id=&lt;? value("costcat_id") ?>)
+&lt;? elseif exists("costcat_pattern") ?>
    AND (itemsite_costcat_id IN (SELECT costcat_id
                                   FROM costcat
-                                 WHERE (costcat_code ~ &lt;? value(&quot;costcat_pattern&quot;) ?>)))
-&lt;? elseif exists(&quot;itemgrp_id&quot;) ?>
+                                 WHERE (costcat_code ~ &lt;? value("costcat_pattern") ?>)))
+&lt;? elseif exists("itemgrp_id") ?>
    AND (item_id IN (SELECT itemgrpitem_item_id
                       FROM itemgrpitem
-                     WHERE (itemgrpitem_itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>) ) )
-&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
+                     WHERE (itemgrpitem_itemgrp_id=&lt;? value("itemgrp_id") ?>) ) )
+&lt;? elseif exists("itemgrp_pattern") ?>
    AND (item_id IN (SELECT itemgrpitem_item_id
                       FROM itemgrpitem, itemgrp
                      WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id)
-                       AND (itemgrp_name ~ &lt;? value(&quot;itemgrp_pattern&quot;) ?>) ) ))
+                       AND (itemgrp_name ~ &lt;? value("itemgrp_pattern") ?>) ) ))
 &lt;? endif ?>
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? if exists("warehous_id") ?>
+   AND (warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
-&lt;? if NOT exists(&quot;showInactive&quot;) ?>
+&lt;? if NOT exists("showInactive") ?>
    AND (itemsite_active)
 &lt;? endif ?>
 )
