@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <QSqlError>
 
 plannedOrder::plannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -20,7 +21,7 @@ plannedOrder::plannedOrder(QWidget* parent, const char* name, bool modal, Qt::WF
   setupUi(this);
 
   connect(_create, SIGNAL(clicked()), this, SLOT(sCreate()));
-  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLeadTime(int)));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sHandleItemsite(int)));
   connect(_dueDate, SIGNAL(newDate(const QDate &)), this, SLOT(sUpdateStartDate()));
   connect(_leadTime, SIGNAL(valueChanged(int)), this, SLOT(sUpdateStartDate()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -78,7 +79,11 @@ enum SetResponse plannedOrder::set(ParameterList &pParams)
 
   param = pParams.value("planord_id", &valid);
   if (valid)
+  {
+    _captive = TRUE;
+
     _planordid = param.toInt();
+  }
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -89,6 +94,12 @@ enum SetResponse plannedOrder::set(ParameterList &pParams)
 
       populateFoNumber();
     }
+    else if (param.toString() == "edit")
+    {
+      _mode = cEdit;
+      populate();
+      _close->setFocus();
+    }
     else if (param.toString() == "view")
     {
       _mode = cView;
@@ -96,6 +107,7 @@ enum SetResponse plannedOrder::set(ParameterList &pParams)
       _number->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
+      _typeGroup->setEnabled(FALSE);
       _qty->setEnabled(FALSE);
       _startDate->setEnabled(FALSE);
       _dueDate->setEnabled(FALSE);
@@ -179,14 +191,62 @@ void plannedOrder::sCreate()
   }
 
   int itemsiteid = q.value("itemsite_id").toInt();
+  int _supplyItemsiteId = -1;
+  if (_toButton->isChecked())
+  {
+    q.prepare("SELECT itemsite_id "
+              "FROM itemsite "
+              "WHERE ( (itemsite_item_id=:item_id)"
+              "  AND   (itemsite_warehous_id=:warehous_id) ); ");
+    q.bindValue(":item_id", _item->id());
+    q.bindValue(":warehous_id", _fromWarehouse->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("itemsite_id").toInt() == itemsiteid)
+      { 
+        QMessageBox::warning( this, tr("Cannot Save Planned Order"),
+          tr("The Supplied From Site must be different from the Transfer To Site.") );
+        return;
+      }
+      else
+        _supplyItemsiteId = q.value("itemsite_id").toInt();
+    }
+    else
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Planned"),
+        tr("Cannot find Supplied From Item Site.") );
+      return;
+    }
+  }
 
+
+  if(cEdit == _mode)
+  {
+    q.prepare( "SELECT deletePlannedOrder(:planord_id, :deleteChildren);" );
+    q.bindValue(":planord_id", _planordid);
+    q.bindValue(":deleteChildren", TRUE);
+    q.exec();
+  }
+  
   q.prepare( "SELECT createPlannedOrder( :orderNumber, :itemsite_id, :qty, "
-             "                           (DATE(:dueDate) - :leadTime), :dueDate) AS result;" );
+             "                           (DATE(:dueDate) - :leadTime), :dueDate, "
+             "                           :type, :supply_itemsite_id) AS result;" );
   q.bindValue(":orderNumber", _number->text().toInt());
   q.bindValue(":itemsite_id", itemsiteid);
   q.bindValue(":qty", _qty->toDouble());
   q.bindValue(":dueDate", _dueDate->date());
   q.bindValue(":leadTime", _leadTime->value());
+  if (_poButton->isChecked())
+    q.bindValue(":type", "P");
+  else if (_woButton->isChecked())
+    q.bindValue(":type", "W");
+  else if (_toButton->isChecked())
+  {
+    q.bindValue(":type", "T");
+    q.bindValue(":supply_itemsite_id", _supplyItemsiteId);
+  }
+  
   q.exec();
   if (!q.first())
   {
@@ -223,6 +283,7 @@ void plannedOrder::sCreate()
   {
     populateFoNumber();
     _item->setId(-1);
+    _typeGroup->setEnabled(FALSE);
     _qty->clear();
     _dueDate->setNull();
     _leadTime->setValue(0);
@@ -233,26 +294,126 @@ void plannedOrder::sCreate()
   }
 }
 
+void plannedOrder::populate()
+{
+  XSqlQuery planord;
+  planord.prepare( "SELECT planord.*, (planord_duedate - planord_startdate) AS leadtime,"
+                   "       itemsite_warehous_id AS supplywarehousid "
+                   "FROM planord LEFT OUTER JOIN itemsite ON (planord_supply_itemsite_id=itemsite_id) "
+                   "WHERE (planord_id=:planord_id);" );
+  planord.bindValue(":planord_id", _planordid);
+  planord.exec();
+  if (planord.first())
+  {
+    _number->setText(planord.value("planord_number").toString());
+    _item->setItemsiteid(planord.value("planord_itemsite_id").toInt());
+    _qty->setDouble(planord.value("planord_qty").toDouble());
+    _dueDate->setDate(planord.value("planord_duedate").toDate());
+    _startDate->setDate(planord.value("planord_startdate").toDate());
+    _leadTime->setValue(planord.value("leadtime").toInt());
+    if (planord.value("planord_type").toString() == "P")
+      _poButton->setChecked(TRUE);
+    else if (planord.value("planord_type").toString() == "W")
+      _woButton->setChecked(TRUE);
+    else
+    {
+      _toButton->setChecked(TRUE);
+      _fromWarehouse->setId(planord.value("supplywarehousid").toInt());
+    }
+  }
+  else if (planord.lastError().type() != QSqlError::None)
+  {
+    systemError(this, planord.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
 void plannedOrder::sUpdateStartDate()
 {
   if(_dueDate->isValid())
     _startDate->setDate(_dueDate->date().addDays(_leadTime->value() * -1));
 }
 
-void plannedOrder::sPopulateLeadTime(int pWarehousid)
+void plannedOrder::sHandleItemsite(int pWarehousid)
 {
-  q.prepare( "SELECT itemsite_leadtime "
-             "FROM itemsite "
+  q.prepare( "SELECT itemsite_leadtime, itemsite_wosupply, itemsite_posupply, item_type "
+             "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", pWarehousid);
   q.exec();
   if (!q.first())
-// ToDo - should issue a system error message here
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
 
   _leadTime->setValue(q.value("itemsite_leadtime").toInt());
+  
+  if ( q.value("itemsite_posupply").toBool() &&
+      (q.value("item_type").toString() == "P" ||
+       q.value("item_type").toString() == "O" ||
+       q.value("item_type").toString() == "M") )
+    _poButton->setEnabled(TRUE);
+  else
+    _poButton->setEnabled(FALSE);
+  if ( q.value("itemsite_wosupply").toBool() &&
+      (q.value("item_type").toString() == "P" ||
+       q.value("item_type").toString() == "M") )
+    _woButton->setEnabled(TRUE);
+  else
+    _woButton->setEnabled(FALSE);
+  if ( q.value("itemsite_wosupply").toBool() )
+  {
+    _poButton->setChecked(FALSE);
+    _woButton->setChecked(TRUE);
+  }
+  else
+  {
+    _poButton->setChecked(TRUE);
+    _woButton->setChecked(FALSE);
+  }
+
+  q.prepare( "SELECT COALESCE(COUNT(*), 0) AS supplysites "
+             "FROM itemsite "
+             "WHERE ( (itemsite_item_id=:item_id)"
+             " AND (itemsite_warehous_id <> :warehous_id) );" );
+  q.bindValue(":item_id", _item->id());
+  q.bindValue(":warehous_id", pWarehousid);
+  q.exec();
+  if (!q.first())
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (q.value("supplysites").toInt() > 0)
+    _toButton->setEnabled(TRUE);
+  else
+    _toButton->setEnabled(FALSE);
+
+  q.prepare( "SELECT COALESCE(supply.itemsite_id, -1) AS supplyitemsiteid,"
+             "       COALESCE(supply.itemsite_warehous_id, -1) AS supplywarehousid "
+             "FROM itemsite LEFT OUTER JOIN itemsite supply ON (supply.itemsite_id=itemsite.itemsite_supply_itemsite_id)"
+             "WHERE ( (itemsite.itemsite_item_id=:item_id)"
+             "  AND   (itemsite.itemsite_warehous_id=:warehous_id) );" );
+  q.bindValue(":item_id", _item->id());
+  q.bindValue(":warehous_id", pWarehousid);
+  q.exec();
+  if (!q.first())
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (q.value("supplyitemsiteid").toInt() != -1)
+  {
+    _toButton->setChecked(TRUE);
+    _fromWarehouse->setId(q.value("supplywarehousid").toInt());
+  }
+  else
+    _fromWarehouse->setId(pWarehousid);
 }
 
 void plannedOrder::populateFoNumber()
@@ -262,7 +423,10 @@ void plannedOrder::populateFoNumber()
     _number->setText(q.value("foNumber").toString());
   else
   {
-//  ToDo - should issue a system error message here
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
     _number->setText("Error");
     return;
   }

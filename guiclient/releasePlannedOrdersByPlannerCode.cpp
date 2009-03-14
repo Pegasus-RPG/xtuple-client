@@ -65,7 +65,7 @@ void releasePlannedOrdersByPlannerCode::sRelease()
     return;
   }
 
-  QString sql( "SELECT releasePlannedOrder(planord_id) "
+  QString sql( "SELECT releasePlannedOrder(planord_id, TRUE, :appendTransferOrder) "
                "FROM planord, itemsite "
                "WHERE ( (planord_itemsite_id=itemsite_id)"
                " AND (planord_startdate<=:cutOffDate)" );
@@ -85,6 +85,7 @@ void releasePlannedOrdersByPlannerCode::sRelease()
 
   q.prepare(sql);
   q.bindValue(":cutOffDate", _cutoffDate->date());
+  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
   _warehouse->bindValue(q);
   _plannerCode->bindValue(q);
   q.exec();

@@ -28,10 +28,10 @@ public slots:
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sDspRunningAvailability();
+    virtual void sEditOrder();
     virtual void sFirmOrder();
     virtual void sSoftenOrder();
     virtual void sReleaseOrder();
-    virtual void sChangeType();
     virtual void sDeleteOrder();
     virtual void sFillList();
     virtual bool setParams(ParameterList &);

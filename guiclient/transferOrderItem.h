@@ -57,6 +57,7 @@ private:
     int			_availabilityLastWarehousid;
     double		_availabilityQtyOrdered;
     bool		_canceling;
+    bool    _captive;
     int			_dstwhsid;
     bool		_error;
     QStandardItemModel	*_itemchar;

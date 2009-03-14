@@ -29,7 +29,8 @@ public slots:
     virtual void sClose();
     virtual void sCreate();
     virtual void sUpdateStartDate();
-    virtual void sPopulateLeadTime( int pWarehousid );
+    virtual void sHandleItemsite( int pWarehousid );
+    virtual void populate();
     virtual void populateFoNumber();
 
 protected slots:

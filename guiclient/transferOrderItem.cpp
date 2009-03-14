@@ -95,6 +95,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
 
   _comments->setType(Comments::TransferOrderItem);
 
+  _captive = FALSE;
   _dstwhsid	= -1;
   _itemsiteid	= -1;
   _transwhsid	= -1;
@@ -173,6 +174,26 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 
       prepare();
 
+      param = pParams.value("captive", &valid);
+      if (valid)
+        _captive = TRUE;
+
+      param = pParams.value("item_id", &valid);
+      if (valid)
+        _item->setId(param.toInt());
+
+      param = pParams.value("item_id", &valid);
+      if (valid)
+        qDebug(QString("set item-id to %1").arg(param.toInt()));
+
+      param = pParams.value("dueDate", &valid);
+      if (valid)
+        _scheduledDate->setDate(param.toDate());
+
+      param = pParams.value("qty", &valid);
+      if (valid)
+        _qtyOrdered->setDouble(param.toDouble());
+
       q.prepare("SELECT count(*) AS cnt"
                 "  FROM toitem"
                 " WHERE (toitem_tohead_id=:tohead_id);");
@@ -182,8 +203,8 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
         _prev->setEnabled(false);
       if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
     }
     else if (param.toString() == "edit")
@@ -510,13 +531,15 @@ void transferOrderItem::sSave()
 
   omfgThis->sTransferOrdersUpdated(_toheadid);
 
-  if ((!_canceling) && (cNew == _mode))
+  if ((!_captive) && (!_canceling) && (cNew == _mode))
   {
     clear();
     prepare();
     _prev->setEnabled(true);
     _item->setFocus();
   }
+  else
+    close();
 
   _modified = false;
 }
@@ -842,7 +865,7 @@ void transferOrderItem::populate()
 
       // do tax stuff before _qtyOrdered so signal cascade has data to work with
       _taxCache.setFreightId(item.value("toitem_freighttax_id").toInt());
-      _qtyOrdered->setText(formatQty(item.value("toitem_qty_ordered").toDouble()));
+      _qtyOrdered->setDouble(item.value("toitem_qty_ordered").toDouble());
       _scheduledDate->setDate(item.value("toitem_schedshipdate").toDate());
       _notes->setText(item.value("toitem_notes").toString());
       if (!item.value("toitem_schedrecvdate").isNull() && _metrics->boolean("UsePromiseDate"))

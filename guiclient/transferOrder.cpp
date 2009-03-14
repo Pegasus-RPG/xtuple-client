@@ -139,6 +139,18 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+  int      itemid;
+  int      srcwarehousid = -1;
+  int      destwarehousid = -1;
+  double   qty;
+  QDate    dueDate;
+  
+  setToheadid(-1);
+  int      _planordid = -1;
+
+  param = pParams.value("planord_id", &valid);
+  if (valid)
+    _planordid = param.toInt();
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -159,6 +171,138 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
       setViewMode();
+    else if (param.toString() == "releaseTO")
+    {
+      _mode = cNew;
+      q.prepare( "SELECT planord.*,"
+                 "       srcsite.itemsite_item_id AS itemid,"
+                 "       srcsite.itemsite_warehous_id AS srcwarehousid,"
+                 "       destsite.itemsite_warehous_id AS destwarehousid "
+                 "FROM planord JOIN itemsite srcsite  ON (srcsite.itemsite_id=planord_supply_itemsite_id) "
+                 "             JOIN itemsite destsite ON (destsite.itemsite_id=planord_itemsite_id) "
+                 "WHERE (planord_id=:planord_id);" );
+      q.bindValue(":planord_id", _planordid);
+      q.exec();
+      if (q.first())
+      {
+        itemid = q.value("itemid").toInt();
+        qty = q.value("planord_qty").toDouble();
+        dueDate = q.value("planord_duedate").toDate();
+        srcwarehousid = q.value("srcwarehousid").toInt();
+        destwarehousid = q.value("destwarehousid").toInt();
+      }
+      else
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__) );
+        return UndefinedError;
+      }
+
+      connect(_toitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+      connect(_toitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      connect(_toitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+
+      q.prepare( "SELECT tohead_id "
+                 "FROM tohead "
+                 "WHERE ( (tohead_status='U')"
+                 "  AND   (tohead_src_warehous_id=:tohead_src_warehous_id) "
+                 "  AND   (tohead_dest_warehous_id=:tohead_dest_warehous_id) ) "
+                 "ORDER BY tohead_number "
+                 "LIMIT 1;" );
+      q.bindValue(":tohead_src_warehous_id", srcwarehousid);
+      q.bindValue(":tohead_dest_warehous_id", destwarehousid);
+      q.exec();
+      if (q.first())
+      {
+//  Transfer order found
+        if(QMessageBox::question( this, tr("Unreleased Transfer Order Exists"),
+                                        tr("An Unreleased Transfer Order\n"
+                                           "already exists for this\n"
+                                           "Source/Destination Warehouse.\n"
+                                           "Would you like to use this Transfer Order?\n"
+                                           "Click Yes to use the existing Transfer Order\n"
+                                           "otherwise a new one will be created."),
+                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+        {
+//  Use an existing order
+          _mode = cEdit;
+
+          setToheadid(q.value("tohead_id").toInt());
+          _orderNumber->setEnabled(FALSE);
+          _orderDate->setEnabled(FALSE);
+          populate();
+        }
+        else
+        {
+//  Do not use an existing order, create new
+          _srcWhs->setId(srcwarehousid);
+          _dstWhs->setId(destwarehousid);
+          insertPlaceholder();
+        }
+      }
+      else
+      {
+//  Transfer order not found, create new
+        _srcWhs->setId(srcwarehousid);
+        _dstWhs->setId(destwarehousid);
+        insertPlaceholder();
+      }
+
+//  Start to create the new toitem
+      ParameterList newItemParams;
+      newItemParams.append("mode", "new");
+      newItemParams.append("tohead_id", _toheadid);
+      newItemParams.append("srcwarehouse_id", _srcWhs->id());
+      newItemParams.append("orderNumber",	_orderNumber->text());
+      newItemParams.append("orderDate",	_orderDate->date());
+      newItemParams.append("taxauth_id",	_taxauth->id());
+      newItemParams.append("curr_id",	_freightCurrency->id());
+      newItemParams.append("item_id", itemid);
+      newItemParams.append("captive", TRUE);
+
+      if (qty > 0.0)
+        newItemParams.append("qty", qty);
+
+      if (!dueDate.isNull())
+        newItemParams.append("dueDate", dueDate);
+
+      transferOrderItem toItem(this, "", TRUE);
+      toItem.set(newItemParams);
+// TODO
+//      if (toItem.exec() != XDialog::Rejected)
+      if (toItem.exec() == XDialog::Rejected)
+      {
+        qDebug(QString("deleting planned order"));
+        q.prepare("SELECT deletePlannedOrder(:planord_id, FALSE) AS _result;");
+        q.bindValue(":planord_id", _planordid);
+        q.exec();
+// TODO
+//        omfgThis->sPlannedOrdersUpdated();
+        if(_mode == cEdit)
+        {
+          // check for another open window
+          QWidgetList list = omfgThis->windowList();
+          for(int i = 0; i < list.size(); i++)
+          {
+            QWidget * w = list.at(i);
+            if(w->isA("transferOrder") && w != this)
+            {
+              transferOrder *other = (transferOrder*)w;
+              if(_toheadid == other->_toheadid)
+              {
+                other->sFillItemList();
+                other->setFocus();
+                return UndefinedError;
+              }
+            }
+          }
+        }
+        sFillItemList();
+      }
+      else
+        _planordid = -1;
+    }
   }
 
   param = pParams.value("src_warehous_id", &valid);
@@ -180,18 +324,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
       _packDate->setFocus();
 
     _ignoreSignals = FALSE;
-
-    q.exec("SELECT NEXTVAL('tohead_tohead_id_seq') AS head_id;");
-    if (q.first())
-    {
-      setToheadid(q.value("head_id").toInt());
-      _orderDate->setDate(omfgThis->dbDate(), true);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return UndefinedError;
-    }
 
     _status->setCurrentIndex(0);
 
@@ -279,6 +411,18 @@ bool transferOrder::insertPlaceholder()
       tr("There are no transit sites defined in the system."
          " You must define at least one transit site to use Transfer Orders.") );
     return false;
+  }
+
+  q.exec("SELECT NEXTVAL('tohead_tohead_id_seq') AS head_id;");
+  if (q.first())
+  {
+    setToheadid(q.value("head_id").toInt());
+    _orderDate->setDate(omfgThis->dbDate(), true);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return UndefinedError;
   }
 
   q.prepare("INSERT INTO tohead ("
@@ -1001,6 +1145,7 @@ void transferOrder::populate()
 {
   if ( (_mode == cEdit) || (_mode == cView) )
   {
+    qDebug(QString("populate, _toheadid=%1").arg(_toheadid));
     XSqlQuery to;
     if(_mode == cEdit)
     {
@@ -1412,14 +1557,6 @@ void transferOrder::clear()
     _orderNumber->setFocus();
   else
     _srcWhs->setFocus();
-
-  XSqlQuery headid;
-  headid.exec("SELECT NEXTVAL('tohead_tohead_id_seq') AS toheadid");
-
-  if (headid.first())
-    setToheadid(headid.value("toheadid").toInt());
-  else if (headid.lastError().type() != QSqlError::NoError)
-    systemError(this, headid.lastError().databaseText(), __FILE__, __LINE__);
 
   if ( (_metrics->value("TONumberGeneration") == "A") ||
        (_metrics->value("TONumberGeneration") == "O")   )

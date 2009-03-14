@@ -20,9 +20,11 @@
 #include "deletePlannedOrder.h"
 #include "dspRunningAvailability.h"
 #include "dspUsageStatisticsByItem.h"
+#include "plannedOrder.h"
 #include "firmPlannedOrder.h"
 #include "mqlutil.h"
 #include "purchaseRequest.h"
+#include "transferOrder.h"
 #include "workOrder.h"
 
 dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -39,6 +41,7 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
   _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");
   _planord->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
+  _planord->addColumn(tr("Supply Site"), _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
   _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
   _planord->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
@@ -92,6 +95,10 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
 
   pMenu->insertSeparator();
 
+  menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
+  if (!_privileges->check("CreatePlannedOrders"))
+    pMenu->setItemEnabled(menuItem, FALSE);
+
   if (pSelected->text(9) == "No")
   {
     menuItem = pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
@@ -105,12 +112,9 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  menuItem = pMenu->insertItem(tr("Change Order Type..."), this, SLOT(sChangeType()), 0);
-  if (!_privileges->check("CreatePlannedOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
   menuItem = pMenu->insertItem(tr("Release Order..."), this, SLOT(sReleaseOrder()), 0);
   if ( (!_privileges->check("ReleasePlannedOrders")) ||
+       ((pSelected->text(1) == "T/O") && (!_privileges->check("MaintainTransferOrders")) ) ||
        ((pSelected->text(1) == "W/O") && (!_privileges->check("MaintainWorkOrders")) ) ||
        ((pSelected->text(1) == "P/O") && (!_privileges->check("MaintainPurchaseRequests")) ) )
     pMenu->setItemEnabled(menuItem, FALSE);
@@ -131,6 +135,18 @@ void dspPlannedOrdersByPlannerCode::sDspRunningAvailability()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspPlannedOrdersByPlannerCode::sEditOrder()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("planord_id", _planord->id());
+
+  plannedOrder newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+  sFillList();
+}
+
 void dspPlannedOrdersByPlannerCode::sFirmOrder()
 {
   ParameterList params;
@@ -149,50 +165,6 @@ void dspPlannedOrdersByPlannerCode::sSoftenOrder()
              "WHERE (planord_id=:planord_id);" );
   q.bindValue(":planord_id", _planord->id());
   q.exec();
-
-  sFillList();
-}
-
-void dspPlannedOrdersByPlannerCode::sChangeType()
-{
-  XSqlQuery query;
-  query.prepare( "SELECT * "
-                 "FROM planord "
-			     "WHERE planord_id=:planord_id;" );
-  query.bindValue(":planord_id", _planord->id());
-  query.exec();
-  if (!query.first())
-  {
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
-    return;
-  }
-
-  q.prepare( "SELECT deletePlannedOrder(:planord_id, TRUE);" );
-  q.bindValue(":planord_id", _planord->id());
-  q.exec();
-
-  q.prepare( "SELECT createPlannedOrder( -1, :orderNumber, :itemsite_id, :qty, "
-             "                           :startDate, :dueDate, "
-			 "                           TRUE, FALSE, NULL, :itemType) AS result;" );
-  q.bindValue(":orderNumber", query.value("planord_number").toInt());
-  q.bindValue(":itemsite_id", query.value("planord_itemsite_id").toInt());
-  q.bindValue(":qty", query.value("planord_qty").toDouble());
-  q.bindValue(":dueDate", query.value("planord_duedate").toDate());
-  q.bindValue(":startDate", query.value("planord_startdate").toDate());
-  if (_planord->currentItem()->text(1) == "W/O")
-    q.bindValue(":itemType", "P");
-  else
-    q.bindValue(":itemType", "M");
-  q.exec();
-  if (!q.first())
-  {
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
-    return;
-  }
 
   sFillList();
 }
@@ -221,6 +193,19 @@ void dspPlannedOrdersByPlannerCode::sReleaseOrder()
     if (newdlg.exec() != XDialog::Rejected)
       sFillList();
   }
+  else if (_planord->currentItem()->text(1) == "T/O")
+  {
+    ParameterList params;
+    params.append("mode", "releaseTO");
+    params.append("planord_id", _planord->id());
+
+    transferOrder *newdlg = new transferOrder();
+    if(newdlg->set(params) == NoError)
+      omfgThis->handleNewWindow(newdlg);
+    else
+      delete newdlg;
+  }
+  sFillList();
 }
 
 void dspPlannedOrdersByPlannerCode::sDeleteOrder()

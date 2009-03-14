@@ -105,7 +105,7 @@ to be bound by its terms.</comment>
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="XCheckBox" name="xCheckBox" >
+           <widget class="XCheckBox" name="_appendTransferOrder" >
             <property name="text" >
              <string>Append planned transfer orders to existing unreleased transfer orders</string>
             </property>

@@ -29,13 +29,13 @@ public slots:
     virtual void sDeleteOrder();
     virtual void sDspRunningAvailability();
     virtual void sDspUsageStatistics();
+    virtual void sEditOrder();
     virtual void sFillList();
     virtual void sFirmOrder();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sPrint();
     virtual void sReleaseOrder();
     virtual void sSoftenOrder();
-    virtual void sChangeType();
 
 protected slots:
     virtual void languageChange();
