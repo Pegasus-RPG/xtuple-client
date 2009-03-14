@@ -41,7 +41,7 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
   _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");
   _planord->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
-  _planord->addColumn(tr("Supply Site"), _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
+  _planord->addColumn(tr("From Site"),   _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
   _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
   _planord->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
