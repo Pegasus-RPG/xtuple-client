@@ -182,10 +182,6 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
       if (valid)
         _item->setId(param.toInt());
 
-      param = pParams.value("item_id", &valid);
-      if (valid)
-        qDebug(QString("set item-id to %1").arg(param.toInt()));
-
       param = pParams.value("dueDate", &valid);
       if (valid)
         _scheduledDate->setDate(param.toDate());

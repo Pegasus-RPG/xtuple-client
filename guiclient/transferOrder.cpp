@@ -273,7 +273,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 //      if (toItem.exec() != XDialog::Rejected)
       if (toItem.exec() == XDialog::Rejected)
       {
-        qDebug(QString("deleting planned order"));
         q.prepare("SELECT deletePlannedOrder(:planord_id, FALSE) AS _result;");
         q.bindValue(":planord_id", _planordid);
         q.exec();
@@ -1145,7 +1144,6 @@ void transferOrder::populate()
 {
   if ( (_mode == cEdit) || (_mode == cView) )
   {
-    qDebug(QString("populate, _toheadid=%1").arg(_toheadid));
     XSqlQuery to;
     if(_mode == cEdit)
     {

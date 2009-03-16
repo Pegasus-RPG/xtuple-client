@@ -28,6 +28,7 @@ public slots:
     virtual void sFillList();
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu *, QTreeWidgetItem * );
+    virtual void setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

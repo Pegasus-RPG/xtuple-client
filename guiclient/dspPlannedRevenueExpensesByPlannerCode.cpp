@@ -15,6 +15,7 @@
 #include <QSqlError>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 
 dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -36,13 +37,15 @@ dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(Q
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft, true, "plonumber");
-  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "plotype");
+  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
+  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");
+  _planord->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
+  _planord->addColumn(tr("From Site"),   _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
   _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
-  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "itemdescrip");
+  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
   _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
   _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight, true, "planord_qty");
-  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "plofirm");
+  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "planord_firm");
   _planord->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight, true, "plocost");
   _planord->addColumn(tr("Revenue"),     _moneyColumn, Qt::AlignRight, true, "plorevenue");
   _planord->addColumn(tr("Gr. Profit"),  _moneyColumn, Qt::AlignRight, true, "profit");
@@ -74,6 +77,7 @@ void dspPlannedRevenueExpensesByPlannerCode::languageChange()
 
 bool dspPlannedRevenueExpensesByPlannerCode::setParams(ParameterList &params)
 {
+  params.append("soldOnly");
   params.append("startDate", _startDate->date());
   params.append("endDate", _endDate->date());
   _warehouse->appendValue(params);
@@ -121,63 +125,7 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
   ParameterList params;
   setParams(params);
 
-  QString sql( "SELECT *,"
-               "       plorevenue - plocost AS profit,"
-               "       CASE WHEN plocost > plorevenue THEN 'error'"
-               "       END AS plorevenue_xtforegroundrole,"
-               "       'qty' AS planord_qty_xtnumericrole,"
-               "       'curr' AS plocost_xtnumericrole,"
-               "       'curr' AS plorevenue_xtnumericrole,"
-               "       'curr' AS profit_xtnumericrole,"
-               "       0 AS plocost_xttotalrole,"
-               "       0 AS plorevenue_xttotalrole,"
-               "       0 AS profit_xttotalrole "
-               "FROM ( SELECT planord_id, planord_itemsite_id, planord_duedate,"
-               "       formatPloNumber(planord_id) AS plonumber,"
-               "       CASE WHEN (planord_type='P') THEN 'P/O'"
-               "            WHEN (planord_type='W') THEN 'W/O'"
-               "            ELSE '?'"
-               "       END AS plotype,"
-               "       item_number,"
-	       "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       planord_qty, formatBoolYN(planord_firm) AS plofirm,"
-	       "<? if exists(\"useActualCost\") ?>"
-	       "       (actcost(item_id) * planord_qty)"
-	       "<? elseif exists(\"useStandardCost\") ?>"
-	       "       (stdcost(item_id) * planord_qty)"
-	       "<? endif ?> AS plocost,"
-	       "<? if exists(\"useListPrice\") ?>"
-	       "       (item_listprice * planord_qty) "
-	       "<? elseif exists(\"useAveragePrice\") ?>"
-	       "       (CASE WHEN(averageSalesPrice(itemsite_id,"
-	       "                               <? value(\"startEvalDate\") ?>,"
-	       "                               <? value(\"endEvalDate\") ?>)=0)"
-	       "                               THEN item_listprice"
-	       "             ELSE averageSalesPrice(itemsite_id,"
-	       "                               <? value(\"startEvalDate\") ?>,"
-	       "                               <? value(\"endEvalDate\") ?>)"
-	       "             END * planord_qty)"
-	       "<? endif ?> AS plorevenue "
-	       "FROM planord, itemsite, item "
-	       "WHERE ((planord_itemsite_id=itemsite_id)"
-	       " AND (itemsite_item_id=item_id)"
-	       " AND (item_sold)"
-	       " AND (planord_duedate BETWEEN <? value(\"startDate\") ?>"
-	       "			  AND <? value(\"endDate\") ?>)"
-	       "<? if exists(\"plancode_id\") ?>"
-	       " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
-	       "<? elseif exists(\"plancode_pattern\") ?>"
-	       " AND (itemsite_plancode_id IN (SELECT plancode_id"
-	       "      FROM plancode"
-	       "      WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
-	       "<? endif ?>"
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       ") ) AS data "
-	       "ORDER BY planord_duedate, item_number;" );
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("schedule", "plannedorders");
   q = mql.toQuery(params);
   _planord->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
@@ -187,7 +135,7 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
   }
 
   // set color if profit is negative
-  XTreeWidgetItem *last = _planord->topLevelItem(_planord->topLevelItemCount() - 1);
-  if (last && last->data(9, Qt::UserRole).toMap().value("raw").toDouble() < 0)
-    last->setTextColor(9, "red");
+//  XTreeWidgetItem *last = _planord->topLevelItem(_planord->topLevelItemCount() - 1);
+//  if (last && last->data(9, Qt::UserRole).toMap().value("raw").toDouble() < 0)
+//    last->setTextColor(9, "red");
 }
