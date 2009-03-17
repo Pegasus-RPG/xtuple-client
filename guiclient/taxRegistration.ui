@@ -199,7 +199,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="2" column="0" colspan="2" >
+     <item row="3" column="0" colspan="2" >
       <widget class="QFrame" name="_frame" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
@@ -240,6 +240,18 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
+     <item row="2" column="0" >
+      <widget class="QGroupBox" name="_dateGroup" >
+       <property name="title" >
+        <string>Effectivity</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5" >
+        <item row="0" column="0" >
+         <widget class="DateCluster" name="_dates" />
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -249,6 +261,11 @@ to be bound by its terms.</comment>
    <class>CustInfo</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>VendorInfo</class>

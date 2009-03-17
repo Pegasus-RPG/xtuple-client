@@ -25,7 +25,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-
+  /* Comment until new code
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -33,7 +33,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _taxRateA->setValidator(omfgThis->percentVal());
   _taxRateB->setValidator(omfgThis->percentVal());
   _taxRateC->setValidator(omfgThis->percentVal());
-  
+  */
 }
 
 /*
@@ -58,6 +58,7 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  /* comment until new code
   param = pParams.value("tax_id", &valid);
   if (valid)
   {
@@ -95,12 +96,13 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
-
+  */ 
   return NoError;
 }
 
 void taxCode::sSave()
 {
+  /* Comment until new code
   if(_code->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("No Tax Name Code"),
@@ -202,7 +204,7 @@ void taxCode::sSave()
   q.bindValue(":tax_salesc_accnt_id", accountc);
   q.bindValue(":tax_cumulative", QVariant(_cumulative->isChecked()));
   q.exec();
-
+  */
   done (_taxid);
 }
 
@@ -229,6 +231,7 @@ void taxCode::sCheck()
 
 void taxCode::populate()
 {
+  /* Comment until new code
   q.prepare( "SELECT tax_code, tax_descrip,"
              "       tax_ratea * 100 AS ratea,"
              "       tax_sales_accnt_id,"
@@ -253,5 +256,6 @@ void taxCode::populate()
     _accountC->setId(q.value("tax_salesc_accnt_id").toInt());
     _cumulative->setChecked(q.value("tax_cumulative").toBool());
   }
+  */
 }
 

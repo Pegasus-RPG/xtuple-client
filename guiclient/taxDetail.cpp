@@ -18,6 +18,7 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 {
     setupUi(this);
 
+    /* comment out until new code is written
     connect(_amountA,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
     connect(_amountB,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
     connect(_amountC,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
@@ -34,6 +35,7 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     _prcntB->setPrecision(omfgThis->percentVal());
     _prcntC->setPrecision(omfgThis->percentVal());
     
+    */
     sCalculateTotal();
 }
 
@@ -52,6 +54,7 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
   QVariant param;
   bool     valid;
   
+  /* comment out until new code is written
   _readonly = pParams.inList("readOnly") ||
 	(!pParams.inList("readOnly") && !_privileges->check("OverrideTax"));
 
@@ -134,12 +137,13 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
     _save->hide();
     _cancel->setText(tr("&Close"));
   }
-
+  */
   return NoError;
 }
 
 void taxDetail::sCancel()
 {
+  /*
     _amountA->setLocalValue(_aCache);
     _amountB->setLocalValue(_bCache);
     _amountC->setLocalValue(_cCache);
@@ -147,50 +151,52 @@ void taxDetail::sCancel()
     _prcntB->setText(QString::number(_bPctCache));
     _prcntC->setText(QString::number(_cPctCache));
     reject();
+   */
 }
 
 void taxDetail::sCalculateTotal()
 {
-  _total->setLocalValue(_amountA->localValue() + _amountB->localValue() + _amountC->localValue());
+  //_total->setLocalValue(_amountA->localValue() + _amountB->localValue() + _amountC->localValue());
 }
 
 double taxDetail::amountA() const
 {
-  return _amountA->localValue();
+  //return _amountA->localValue();
 }
 
 double taxDetail::amountB() const
 {
-  return _amountB->localValue();
+  //return _amountB->localValue();
 }
 
 double taxDetail::amountC() const
 {
-  return _amountC->localValue();
+  //return _amountC->localValue();
 }
 
 double taxDetail::pctA() const
 {
-  return _prcntA->text().toDouble();
+  //return _prcntA->text().toDouble();
 }
 
 double taxDetail::pctB() const
 {
-  return _prcntB->text().toDouble();
+  //return _prcntB->text().toDouble();
 }
 
 double taxDetail::pctC() const
 {
-  return _prcntC->text().toDouble();
+  //return _prcntC->text().toDouble();
 }
 
 int taxDetail::tax() const
 {
-  return _taxCode->id();
+  //return _taxCode->id();
 }
 
 void taxDetail::sCalculateTax()
 {
+  /* comment out until new code is written
   XSqlQuery calcq;
   calcq.prepare("SELECT calculateTax(:tax_id, :subtotal, 0, 'A') AS ratea,"
             "       calculateTax(:tax_id, :subtotal, 0, 'B') AS rateb,"
@@ -210,10 +216,12 @@ void taxDetail::sCalculateTax()
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  */
 }
 
 void taxDetail::clear()
 {
+  /* comment out until new code is written
   if (_blankDetailDescriptions)
   {
     _description->setText("");
@@ -242,10 +250,12 @@ void taxDetail::clear()
   _amountA->setEnabled(false);
   _amountB->setEnabled(false);
   _amountC->setEnabled(false);
+  */
 }
 
 void taxDetail::sPopulate()
 {
+  /* comment out until new code is written
   clear();
   XSqlQuery popq;
   popq.prepare("SELECT tax_descrip,"
@@ -301,4 +311,5 @@ void taxDetail::sPopulate()
     systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  */
 }
