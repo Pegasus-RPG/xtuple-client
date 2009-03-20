@@ -174,7 +174,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
 
 void arOpenItem::sSave()
 {
-  int temp_id;
   QString storedProc;
 
   if (_mode == cNew)
@@ -302,13 +301,6 @@ void arOpenItem::sSave()
       break;
   }
 
-  q.exec("SELECT MAX(aropen_id) AS max_aropen_id FROM aropen;");
-  if (q.first())
-    temp_id = q.value("max_aropen_id").toInt();
-
-  if(_printOnPost->isChecked())
-    sPrintOnPost(temp_id);
-
   if (q.exec())
   {
     if (_mode == cEdit)
@@ -337,6 +329,15 @@ void arOpenItem::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  q.exec("SELECT MAX(aropen_id) AS max_aropen_id FROM aropen;");
+  if (q.first())
+  {
+    if(_printOnPost->isChecked())
+    {
+      sPrintOnPost(q.value("max_aropen_id").toInt()); 
+    }
   }
 }
 
