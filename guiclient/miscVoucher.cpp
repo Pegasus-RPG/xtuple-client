@@ -104,6 +104,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _miscDistrib->setEnabled(FALSE);
       _new->setEnabled(FALSE);
       _flagFor1099->setEnabled(FALSE);
+      _notes->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -183,12 +184,12 @@ void miscVoucher::sSave()
                "( vohead_id, vohead_number, vohead_pohead_id, vohead_vend_id,"
                "  vohead_terms_id, vohead_distdate, vohead_docdate, vohead_duedate,"
                "  vohead_invcnumber, vohead_reference,"
-               "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id, vohead_misc ) "
+               "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id, vohead_misc, vohead_notes ) "
                "VALUES "
                "( :vohead_id, :vohead_number, -1, :vohead_vend_id,"
                "  :vohead_terms_id, :vohead_distdate, :vohead_docdate, :vohead_duedate,"
                "  :vohead_invcnumber, :vohead_reference,"
-               "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id, TRUE );" );
+               "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id, TRUE, :vohead_notes );" );
     q.bindValue(":vohead_number", _voucherNumber->text().toInt());
     q.bindValue(":vohead_vend_id", _vendor->id());
   }
@@ -198,7 +199,7 @@ void miscVoucher::sSave()
                "    vohead_terms_id=:vohead_terms_id,"
                "    vohead_invcnumber=:vohead_invcnumber, vohead_reference=:vohead_reference,"
                "    vohead_amount=:vohead_amount, vohead_1099=:vohead_1099, "
-	       "    vohead_curr_id=:vohead_curr_id "
+	       "    vohead_curr_id=:vohead_curr_id, vohead_notes=:vohead_notes "
                "WHERE (vohead_id=:vohead_id);" );
 
   q.bindValue(":vohead_id", _voheadid);
@@ -211,6 +212,7 @@ void miscVoucher::sSave()
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
   q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
+  q.bindValue(":vohead_notes", _notes->text());
   q.exec();
 
   omfgThis->sVouchersUpdated();
@@ -235,7 +237,7 @@ void miscVoucher::sSave()
   _reference->clear();
   _flagFor1099->setChecked(false);
   _miscDistrib->clear();
-
+  _notes->setText("");
   _cachedAmountDistributed = 0.0;
 
   ParameterList params;
@@ -400,7 +402,7 @@ void miscVoucher::populate()
   vohead.prepare( "SELECT vohead_number, vohead_vend_id, vohead_terms_id,"
                   "       vohead_distdate, vohead_docdate, vohead_duedate,"
                   "       vohead_invcnumber, vohead_reference,"
-                  "       vohead_1099, vohead_amount, vohead_curr_id "
+                  "       vohead_1099, vohead_amount, vohead_curr_id, vohead_notes "
                   "FROM vohead "
                   "WHERE (vohead_id=:vohead_id);" );
   vohead.bindValue(":vohead_id", _voheadid);
@@ -420,6 +422,7 @@ void miscVoucher::populate()
     _invoiceNum->setText(vohead.value("vohead_invcnumber").toString());
     _reference->setText(vohead.value("vohead_reference").toString());
     _flagFor1099->setChecked(vohead.value("vohead_1099").toBool());
+    _notes->setText(vohead.value("vohead_notes").toString());
 
     sFillMiscList();
     sPopulateDistributed();
