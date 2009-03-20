@@ -28,6 +28,7 @@ public:
     virtual void setParams(ParameterList &);
 
 public slots:
+    virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem* = NULL);
     virtual void sNew();
     virtual void sEdit();
@@ -35,6 +36,8 @@ public slots:
     virtual void sDelete();
     virtual void sPrint();
     virtual void sFillList();
+    virtual void sAttach();
+    virtual void sDetach();
 
 protected slots:
     virtual void languageChange();

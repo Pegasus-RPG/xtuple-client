@@ -13,6 +13,10 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+#include "contacts.h"
+#include "todoList.h"
+#include "opportunityList.h"
+
 #include <QStandardItemModel>
 #include "ui_crmaccount.h"
 
@@ -29,65 +33,48 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulate();
-    virtual void sPopulateContacts();
-    virtual void sPopulateTodo();
-    virtual void sPopulateOplist();
+ //   virtual void sPopulateOplist();
     virtual void sPopulateRegistrations();
 
 protected slots:
     virtual void languageChange();
 
-    virtual void sAttach();
     virtual int  saveContact(ContactCluster*);
     virtual void sClose();
     virtual void sCompetitor();
     virtual void sCustomer();
     virtual void sDeleteCharacteristic();
-    virtual void sDeleteIncdt();
     virtual void sDeleteReg();
-    virtual void sDeleteTodo();
-    virtual void sDeleteTodoIncdt();
-    virtual void sDetach();
-    virtual void sEdit();
     virtual void sEditCharacteristic();
-    virtual void sEditIncdt();
     virtual void sEditReg();
-    virtual void sEditTodo();
-    virtual void sEditTodoIncdt();
     virtual void sGetCharacteristics();
-    virtual void sHandleAutoUpdate();
-    virtual void sHandleTodoPrivs();
-    virtual void sNew();
     virtual void sNewCharacteristic();
-    virtual void sNewIncdt();
     virtual void sNewReg();
-    virtual void sNewTodo();
     virtual void sPartner();
     virtual void sPopulateMenu(QMenu *);
-    virtual void sPopulateTodoMenu(QMenu *);
-    virtual void sPopulateOplistMenu(QMenu *);
+  //  virtual void sPopulateOplistMenu(QMenu *);
     virtual void sProspect();
     virtual void sSave();
     virtual void sTaxAuth();
     virtual void sUpdateRelationships();
     virtual void sVendor();
-    virtual void sView();
-    virtual void sViewIncdt();
-    virtual void sViewTodo();
-    virtual void sViewTodoIncdt();
     virtual void sCustomerInfo();
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
-    virtual void sOplistNew();
-    virtual void sOplistDelete();
-    virtual void sOplistView();
-    virtual void sOplistEdit();
+   //virtual void sOplistNew();
+    //virtual void sOplistDelete();
+    //virtual void sOplistView();
+   // virtual void sOplistEdit();
     virtual void sCheckNumber();
     virtual void sHandleButtons();
     virtual void sVendorInfo();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
+    
+    todoList *_todoList;
+    contacts *_contacts;
+    opportunityList *_oplist;
 
 private:
     bool	_modal;

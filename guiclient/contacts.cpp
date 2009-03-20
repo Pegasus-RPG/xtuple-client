@@ -19,12 +19,19 @@
 #include <metasql.h>
 
 #include "contact.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
     setupUi(this);
+    
+    _crmAccount->hide();
+    _attach->hide();
+    _detach->hide();
+
+    _activeOnly->setChecked(true);
 
     connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
     connect(_edit,		SIGNAL(clicked()),	this, SLOT(sEdit()));
@@ -34,8 +41,8 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_close,		SIGNAL(clicked()),	this, SLOT(close()));
     connect(_new,		SIGNAL(clicked()),	this, SLOT(sNew()));
     connect(_activeOnly,	SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
-
-    _activeOnly->setChecked(true);
+    connect(_attach,            SIGNAL(clicked()),      this, SLOT(sAttach()));
+    connect(_detach,            SIGNAL(clicked()),      this, SLOT(sDetach()));
     
     _contacts->addColumn(tr("First Name"),    50, Qt::AlignLeft, true, "cntct_first_name");
     _contacts->addColumn(tr("Last Name"),    100, Qt::AlignLeft, true, "cntct_last_name");
@@ -51,6 +58,7 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     {
       connect(_contacts, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+      connect(_contacts, SIGNAL(valid(bool)), _detach, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     }
     else
@@ -58,8 +66,6 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
       _new->setEnabled(FALSE);
       connect(_contacts, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     }
-
-    sFillList();
 }
 
 contacts::~contacts()
@@ -70,6 +76,18 @@ contacts::~contacts()
 void contacts::languageChange()
 {
     retranslateUi(this);
+}
+
+enum SetResponse contacts::set(const ParameterList& pParams)
+{
+  QVariant param;
+  bool	   valid;
+  
+  param = pParams.value("fillList", &valid);
+  if (valid)
+    sFillList();
+
+  return NoError;
 }
 
 void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
@@ -91,6 +109,8 @@ void contacts::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  if (_crmAccount->isValid())
+    params.append("crmacct_id", _crmAccount->id());
 
   contact newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -148,6 +168,8 @@ void contacts::sDelete()
 
 void contacts::setParams(ParameterList &params)
 {
+  if (_crmAccount->isValid())
+    params.append("crmAccountId", _crmAccount->id());
   if (_activeOnly->isChecked())
     params.append("activeOnly");
 }
@@ -166,20 +188,86 @@ void contacts::sPrint()
 
 void contacts::sFillList()
 {
-  QString sql("SELECT cntct_id, cntct_first_name, cntct_last_name, "
-	      "       crmacct_number, crmacct_name, cntct_phone, "
-	      "       cntct_phone2, cntct_fax, cntct_email, cntct_webaddr "
-	      "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id=crmacct_id) "
-	      "<? if exists(\"activeOnly\") ?> WHERE cntct_active <? endif ?>"
-	      "ORDER BY cntct_last_name, cntct_first_name, crmacct_number;");
+  MetaSQLQuery mql = mqlLoad("contacts", "detail");
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _contacts->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+}
+
+void contacts::sAttach()
+{
+  ContactCluster attached(this, "attached");
+  attached.sEllipses();
+  if (attached.id() > 0)
+  {
+    int answer = QMessageBox::Yes;
+
+    if (attached.crmAcctId() > 0 && attached.crmAcctId() != _crmAccount->id())
+      answer = QMessageBox::question(this, tr("Detach Contact?"),
+			    tr("<p>This Contact is currently attached to a "
+			       "different CRM Account. Are you sure you want "
+			       "to change the CRM Account for this person?"),
+			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
+    if (answer == QMessageBox::Yes)
+    {
+      q.prepare("SELECT attachContact(:cntct_id, :crmacct_id) AS returnVal;");
+      q.bindValue(":cntct_id", attached.id());
+      q.bindValue(":crmacct_id", _crmAccount->id());
+      q.exec();
+      if (q.first())
+      {
+	int returnVal = q.value("returnVal").toInt();
+	if (returnVal < 0)
+	{
+	  systemError(this, storedProcErrorLookup("attachContact", returnVal),
+			    __FILE__, __LINE__);
+	  return;
+	}
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
+    }
+    sFillList();
+  }
+}
+
+void contacts::sDetach()
+{
+  int answer = QMessageBox::question(this, tr("Detach Contact?"),
+			tr("<p>Are you sure you want to detach this Contact "
+			   "from this CRM Account?"),
+			QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
+  if (answer == QMessageBox::Yes)
+  {
+    q.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
+    q.bindValue(":cntct_id", _contacts->id());
+    q.bindValue(":crmacct_id", _crmAccount->id());
+    q.exec();
+    if (q.first())
+    {
+      int returnVal = q.value("returnVal").toInt();
+      if (returnVal < 0)
+      {
+	systemError(this, tr("Error detaching Contact from CRM Account (%1).")
+			  .arg(returnVal), __FILE__, __LINE__);
+	return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    sFillList();
   }
 }

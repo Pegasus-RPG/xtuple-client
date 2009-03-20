@@ -49,6 +49,19 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _todoList = new todoList(this, "todoList", Qt::Widget);
+  _todoListPage->layout()->addWidget(_todoList);
+  _todoList->findChild<QWidget*>("_close")->hide();
+  _todoList->findChild<QWidget*>("_usr")->hide();
+  _todoList->findChild<QWidget*>("_startdateGroup")->hide();
+  _todoList->findChild<QWidget*>("_duedateGroup")->hide();
+  _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  
+  _contacts = new contacts(this, "contacts", Qt::Widget);
+  _contactsPage->layout()->addWidget(_contacts);
+  _contacts->findChild<QWidget*>("_close")->hide();
+  _contacts->findChild<QWidget*>("_activeOnly")->hide();
+
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*, QTreeWidgetItem*)));
@@ -81,6 +94,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
   connect(_printCreditMemo, SIGNAL(clicked()), this ,SLOT(sPrintCreditMemo()));
   connect(_printReceipt,    SIGNAL(clicked()), this, SLOT(sPrintCCReceipt()));
+  connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_opportunitiesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
 #ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
@@ -320,11 +336,12 @@ void dspCustomerInformation::sPopulateCustInfo()
                    "       cust_creditstatus, cust_comments, cust_shipvia,"
                    "       (custtype_code || '-' || custtype_descrip) AS f_custtype,"
                    "       (terms_code || '-' || terms_descrip) AS f_terms,"
-                   "       cust_creditlmt "
-                   "  FROM cust, custtype, terms "
+                   "       cust_creditlmt, crmacct_id "
+                   "  FROM cust, custtype, terms, crmacct "
                    " WHERE ((cust_custtype_id=custtype_id)"
                    "   AND  (cust_terms_id=terms_id)"
-                   "   AND  (cust_id=:cust_id));" );
+                   "   AND  (cust_id=:cust_id)"
+                   "   AND  (crmacct_cust_id=cust_id));" );
     query.bindValue(":cust_id", _cust->id());
     query.exec();
     if (query.first())
@@ -356,6 +373,9 @@ void dspCustomerInformation::sPopulateCustInfo()
       _terms->setText(query.value("f_terms").toString());
       _shipvia->setText(query.value("cust_shipvia").toString());
       _creditLimit->setDouble(query.value("cust_creditlmt").toDouble());
+      _crmacctId = query.value("crmacct_id").toInt();
+      _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+      _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -451,6 +471,8 @@ void dspCustomerInformation::sPopulate()
   sFillInvoiceList();
   sFillCreditMemoList();
   sFillPaymentsList();
+  _todoList->sFillList();
+  _contacts->sFillList();
 }
 
 void dspCustomerInformation::sEdit()
@@ -1586,14 +1608,6 @@ void dspCustomerInformation::sARWorkbench()
 
 void dspCustomerInformation::sCRMAccount()
 {
-  q.prepare("SELECT crmacct_id FROM crmacct "
-            "WHERE (crmacct_cust_id=:cust_id);");
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-
-  if(q.first())
-    _crmacctId = q.value("crmacct_id").toInt();
-
   ParameterList params;
   if (!_privileges->check("MaintainCRMAccounts"))
     params.append("mode", "view");
@@ -1778,6 +1792,16 @@ void dspCustomerInformation::sPrintStatement()
 	  }
 }
 
+void dspCustomerInformation::sHandleButtons()
+{
+  if (_contactsButton->isChecked())
+    _crmStack->setCurrentIndex(0);
+  else if (_todoListButton->isChecked())
+    _crmStack->setCurrentIndex(1);
+  else
+    _crmStack->setCurrentIndex(2);
+}
+
 bool dspCustomerInformation::checkSitePrivs(int invcid)
 {
   if (_preferences->boolean("selectedSites"))
@@ -1799,4 +1823,5 @@ bool dspCustomerInformation::checkSitePrivs(int invcid)
   }
   return true;
 }
+
 

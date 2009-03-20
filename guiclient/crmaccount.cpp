@@ -18,17 +18,14 @@
 #include <metasql.h>
 
 #include "characteristicAssignment.h"
-#include "contact.h"
 #include "customer.h"
 #include "incident.h"
 #include "prospect.h"
 #include "taxAuthority.h"
-#include "todoItem.h"
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
 #include "dspCustomerInformation.h"
 #include "vendorWorkBench.h"
-#include "opportunity.h"
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
 
@@ -39,100 +36,63 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _todoList = new todoList(this, "todoList", Qt::Widget);
+  _todoListTab->layout()->addWidget(_todoList);
+  _todoList->findChild<QWidget*>("_usr")->hide();
+  _todoList->findChild<QWidget*>("_close")->hide();
+  _todoList->findChild<QWidget*>("_startdateGroup")->hide();
+  _todoList->findChild<QWidget*>("_duedateGroup")->hide();
+  _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  
+  _contacts = new contacts(this, "contacts", Qt::Widget);
+  _allPage->layout()->addWidget(_contacts);
+  _contacts->findChild<QWidget*>("_close")->hide();
+  _contacts->findChild<QWidget*>("_activeOnly")->hide();
+  
+  _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
+  _oplistTab->layout()->addWidget(_oplist);
+  _oplist->findChild<QWidget*>("_close")->hide();
+  _oplist->findChild<QWidget*>("_usr")->hide();
+  _oplist->findChild<QWidget*>("_dates")->hide();
+  _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+    
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   _owner->setUsername(omfgThis->username());
-  
-  int menuItem;
-  QMenu * todoMenu = new QMenu;
-  menuItem = todoMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
-  if (!_privileges->check("MaintainIncidents"))
-    todoMenu->setItemEnabled(menuItem, FALSE);
-  menuItem = todoMenu->insertItem(tr("To-Do Item"),   this, SLOT(sNewTodo()));
-  if (!_privileges->check("MaintainPersonalTodoList") &&
-      !_privileges->check("MaintainOtherTodoLists"))
-    todoMenu->setItemEnabled(menuItem, FALSE);
-  _newTodo->setMenu(todoMenu);
-
-  if (_privileges->check("MaintainOpportunities"))
-    _newOpportunity->setEnabled(TRUE);
     
-  connect(_activeTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
-  connect(_attach,		SIGNAL(clicked()), this, SLOT(sAttach()));
-  connect(_autoUpdateTodo,  SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate()));
   connect(_close,		SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
-  connect(_completedTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
-  connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_contacts,            SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
-  connect(_deleteOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistDelete()));
+//  connect(_deleteOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistDelete()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
-  connect(_deleteTodoIncdt,	SIGNAL(clicked()), this, SLOT(sDeleteTodoIncdt()));
-  connect(_detach,		SIGNAL(clicked()), this, SLOT(sDetach()));
-  connect(_edit,		SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_editCharacteristic,	SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
-  connect(_editOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistEdit()));
+//  connect(_editOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistEdit()));
   connect(_editReg,		SIGNAL(clicked()), this, SLOT(sEditReg()));
-  connect(_editTodoIncdt,	SIGNAL(clicked()), this, SLOT(sEditTodoIncdt()));
-  connect(_new,			SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newCharacteristic,	SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
-  connect(_newOpportunity,		SIGNAL(clicked()), this, SLOT(sOplistNew()));
+//  connect(_newOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistNew()));
   connect(_newReg,		SIGNAL(clicked()), this, SLOT(sNewReg()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,	SIGNAL(clicked()), this, SLOT(sProspect()));
   connect(_save,		SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_showTodo,	    SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
-  connect(_showIncdt,	    SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_taxauthButton,	SIGNAL(clicked()), this, SLOT(sTaxAuth()));
-  connect(_todo, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleTodoPrivs()));
-  connect(_todo, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_viewOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistView()));
-  connect(_viewTodoIncdt,	SIGNAL(clicked()), this, SLOT(sViewTodoIncdt()));
+//  connect(_viewOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistView()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
-  connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
+//  connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
-	connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
 
-  _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
-  _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
-  _contacts->addColumn(tr("Phone"),	  100, Qt::AlignLeft, true, "cntct_phone");
-  _contacts->addColumn(tr("Alternate"),	  100, Qt::AlignLeft, true, "cntct_phone2");
-  _contacts->addColumn(tr("Fax"),	  100, Qt::AlignLeft, true, "cntct_fax");
-  _contacts->addColumn(tr("E-Mail"),	  100, Qt::AlignLeft, true, "cntct_email");
-  _contacts->addColumn(tr("Web Address"), 100, Qt::AlignLeft, true, "cntct_webaddr");
-
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
-
-  _todo->addColumn(tr("Type"),    _statusColumn, Qt::AlignCenter, true, "type");	
-  _todo->addColumn(tr("Priority"),  _userColumn, Qt::AlignRight,  true, "priority");
-  _todo->addColumn(tr("User"),      _userColumn, Qt::AlignLeft,   true, "usr");
-  _todo->addColumn(tr("Name"),		    100, Qt::AlignLeft,   true, "name");
-  _todo->addColumn(tr("Description"),        -1, Qt::AlignLeft,   true, "descrip");
-  _todo->addColumn(tr("Status"),  _statusColumn, Qt::AlignLeft,   true, "status");
-  _todo->addColumn(tr("Due Date"),  _dateColumn, Qt::AlignLeft,   true, "due");
-  _todo->addColumn(tr("Incident"), _orderColumn, Qt::AlignLeft,   true, "incdt");
-
-  _oplist->addColumn(tr("Name"),         _itemColumn, Qt::AlignLeft,  true, "ophead_name");
-  _oplist->addColumn(tr("CRM Acct."),    _userColumn, Qt::AlignLeft,  true, "crmacct_number");
-  _oplist->addColumn(tr("Owner"),        _userColumn, Qt::AlignLeft,  true, "ophead_owner_username");
-  _oplist->addColumn(tr("Stage"),       _orderColumn, Qt::AlignLeft,  true, "opstage_name");
-  _oplist->addColumn(tr("Source"),      _orderColumn, Qt::AlignLeft,  false,"opsource_name");
-  _oplist->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,  false, "optype_name");
-  _oplist->addColumn(tr("Prob.%"),      _prcntColumn, Qt::AlignRight, false,"ophead_probability_prcnt");
-  _oplist->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight, false,"ophead_amount");
-  _oplist->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft,  false,"ophead_currabbr");
-  _oplist->addColumn(tr("Target Date"),  _dateColumn, Qt::AlignLeft,  true, "ophead_target_date");
-  _oplist->addColumn(tr("Actual Date"),  _dateColumn, Qt::AlignLeft,   false,"ophead_actual_date");
   
   _reg->addColumn(tr("Lot/Serial")  ,  _itemColumn,  Qt::AlignLeft, true, "ls_number" );
   _reg->addColumn(tr("Item")        ,  _itemColumn,  Qt::AlignLeft, true, "item_number" );
@@ -143,12 +103,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _reg->addColumn(tr("Expires"   )  ,  _dateColumn,  Qt::AlignLeft, true, "lsreg_expiredate" );
 
   if (_preferences->boolean("XCheckBox/forgetful"))
-  {
     _active->setChecked(true);
-    _activeTodoIncdt->setChecked(true);
-    _showIncdt->setChecked(true);
-    _showTodo->setChecked(true);
-  }
 
   _NumberGen    = -1;
   _mode		= cNew;
@@ -165,8 +120,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_registrationsTab));
-
-  sHandleTodoPrivs();
   
   _primary->setMinimalLayout(FALSE);
   _primary->setAccountVisible(FALSE);
@@ -174,8 +127,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _secondary->setMinimalLayout(FALSE);
   _secondary->setAccountVisible(FALSE);
   _secondary->setActiveVisible(FALSE);
-  
-  sHandleAutoUpdate();
   
   _primary->setInitialsVisible(false);
   _secondary->setInitialsVisible(false);
@@ -217,12 +168,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     _competitor->setEnabled(_privileges->check("MaintainCompetitorMasters"));
   }
 
-  if (! _privileges->check("MaintainContacts") || _mode == cView)
-    _edit->setText("View");
-  _edit->setEnabled(_privileges->check("MaintainContacts"));
-  _attach->setEnabled(_privileges->check("MaintainContacts"));
-  _detach->setEnabled(_privileges->check("MaintainContacts"));
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -240,11 +185,17 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       if (q.first())
       {
         _crmacctId = q.value("result").toInt();
+        _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+        _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+        _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
         if (_crmacctId < 0)
         {
           QMessageBox::critical(this, tr("Error creating Initial Account"),
                 storedProcErrorLookup("createCrmAcct", _crmacctId));
           _crmacctId = -1;
+          _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+          _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+          _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
           return UndefinedError;
         }
         _comments->setId(_crmacctId);
@@ -297,15 +248,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _parentCrmacct->setEnabled(FALSE);
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
-      _new->setEnabled(FALSE);
-      //_newIncdt->setEnabled(FALSE);
-      _newOpportunity->setEnabled(FALSE);
-      _newTodo->setEnabled(FALSE);
-      _deleteTodoIncdt->setEnabled(FALSE);
-      _editTodoIncdt->setEnabled(FALSE);
-
-      _attach->hide();
-      _detach->hide();
       _save->hide();
 
       _close->setFocus();
@@ -316,6 +258,9 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   if (valid)
   {
     _crmacctId = param.toInt();
+    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
     sPopulate();
   }
 
@@ -489,16 +434,6 @@ void crmaccount::sSave()
       incomplete.arg(_vendor->text()).arg(_vendorButton->text()),
       _vendorButton
     },
-    /*	nothing necessary for now
-    { _partner->isChecked() && _partnerId <= 0,
-      incomplete.arg(_partner->text()).arg(_partnerButton->text()),
-      _partnerButton
-    },
-    { _competitor->isChecked() && _competitorId <= 0,
-      incomplete.arg(_competitor->text()).arg(_competitorButton->text()),
-      _competitorButton
-    },
-    */
     { _taxauth->isChecked() && _taxauthId <= 0,
       incomplete.arg(_taxauth->text()).arg(_taxauthButton->text()),
       _taxauthButton
@@ -897,198 +832,11 @@ void crmaccount::sPopulate()
     return;
   }
 
-  sPopulateContacts();
   sGetCharacteristics();
-  sPopulateTodo();
-  sPopulateOplist();
   sPopulateRegistrations();
-}
-
-void crmaccount::sPopulateContacts()
-{
-  q.prepare("SELECT * "
-	    "FROM cntct "
-	    "WHERE (cntct_crmacct_id=:crmacct_id) "
-	    "ORDER BY cntct_last_name, cntct_first_name;");
-  q.bindValue(":crmacct_id", _crmacctId);
-  q.exec();
-  _contacts->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-void crmaccount::sPopulateTodo()
-{
-  _todo->clear();
-
-  if (! _showTodo->isChecked() && ! _showIncdt->isChecked())
-    return;
-
-  QString sql = "SELECT *, "
-                "       CASE WHEN (status != 'C' AND due < CURRENT_DATE) THEN"
-                "            'expired'"
-                "            WHEN (status != 'C' AND due > CURRENT_DATE) THEN"
-                "            'future'"
-                "       END AS due_qtforegroundrole "
-                "FROM ("
-                "<? if exists(\"showTodo\") ?>"
-		"SELECT todoitem_id AS id, "
-		"       'T' AS type, incdtpriority_name AS priority, incdtpriority_order, "
-		"       todoitem_name AS name, "
-		"       firstLine(todoitem_description) AS descrip, "
-		"       todoitem_status AS status, todoitem_due_date AS due, "
-		"       todoitem_username AS usr, incdt_number AS incdt "
-		"FROM todoitem LEFT OUTER JOIN "
-		"     incdt ON (incdt_id=todoitem_incdt_id) "
-                "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-		"WHERE ( (todoitem_crmacct_id=<? value(\"crmacct_id\") ?>)"
-		"  <? if not exists(\"completed\") ?>"
-		"    AND   (todoitem_status != 'C')"
-		"  <? endif ?>"
-		"  <? if exists(\"active\") ?>AND (todoitem_active) <? endif ?>"
-		"  <? if exists(\"username\") ?>"
-		"    AND (todoitem_username=<? value(\"username\") ?>)"
-		"  <? endif ?>"
-		"       ) "
-		"  <? if exists(\"showIncidents\")?>"
-		"  UNION "
-		"  <? endif ?>"
-		"<? endif ?>"
-		"<? if exists(\"showIncidents\")?>"
-		"SELECT incdt_id AS id, "
-		"       'I' AS type, incdtpriority_name AS priority, incdtpriority_order, "
-		"       incdt_summary AS name, "
-		"       firstLine(incdt_descrip) AS descrip, "
-		"       incdt_status AS status, CAST(NULL AS DATE) AS due, "
-		"       incdt_assigned_username AS usr, incdt_number AS incdt "
-		"  FROM incdt "
-                "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
-		"WHERE ((incdt_crmacct_id=<? value(\"crmacct_id\") ?>)"
-		"  <? if not exists(\"completed\") ?> "
-		"   AND (incdt_status != 'L')"
-		"  <? endif ?>"
-		"       ) "
-		"<? endif ?>"
-                ") AS sub "
-		"ORDER BY incdt, incdtpriority_order, usr;" ;
-
-  ParameterList params;
-  params.append("crmacct_id", _crmacctId);
-  if (_showTodo->isChecked())
-    params.append("showTodo");
-  if (_showIncdt->isChecked())
-    params.append("showIncidents");
-  if (_activeTodoIncdt->isChecked())
-    params.append("active");
-  if (_completedTodoIncdt->isChecked())
-    params.append("completed");
-  if ((_privileges->check("MaintainPersonalTodoList") ||
-       _privileges->check("ViewPersonalTodoList")) &&
-      ! (_privileges->check("MaintainOtherTodoLists") ||
-	 _privileges->check("ViewOtherTodoLists")) )
-    params.append("username", omfgThis->username());
-
-  MetaSQLQuery mql(sql);
-  XSqlQuery itemQ = mql.toQuery(params);
-  _todo->populate(itemQ);
-  if (itemQ.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  sHandleTodoPrivs();
-}
-
-void crmaccount::sHandleTodoPrivs()
-{
-  bool newTodoPriv = ((cEdit == _mode || cNew == _mode) &&
-		      (_privileges->check("MaintainPersonalTodoList") ||
-		       _privileges->check("MaintainOtherTodoLists")) );
-
-  _newTodo->setEnabled((cEdit == _mode || cNew == _mode) &&
-			(_privileges->check("MaintainIncidents") || newTodoPriv));
-
-  if (_todo->currentItem())
-  {
-    bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
-      (_privileges->check("MaintainOtherTodoLists")) );
-
-    bool viewTodoPriv =
-      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
-      (_privileges->check("ViewOtherTodoLists"));
-
-    if (_todo->currentItem()->text(0) == "T")
-      _editTodoIncdt->setEnabled(editTodoPriv);
-    else
-      _editTodoIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-				  _privileges->check("MaintainIncidents"));
-
-    if (_todo->currentItem()->text(0) == "T")
-      _viewTodoIncdt->setEnabled(viewTodoPriv);
-    else
-      _viewTodoIncdt->setEnabled(_privileges->check("ViewIncidents"));
-
-    if (_todo->currentItem()->text(0) == "T")
-      _deleteTodoIncdt->setEnabled(editTodoPriv);
-    else
-      _deleteTodoIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-				    _privileges->check("MaintainIncidents"));
-  }
-  else
-  {
-    _editTodoIncdt->setEnabled(false);
-    _viewTodoIncdt->setEnabled(false);
-    _deleteTodoIncdt->setEnabled(false);
-  }
-}
-
-void crmaccount::sPopulateTodoMenu(QMenu *pMenu)
-{
-  int menuItem;
-
-  bool newTodoPriv = ((cEdit == _mode || cNew == _mode) &&
-		      (_privileges->check("MaintainPersonalTodoList") ||
-		       _privileges->check("MaintainOtherTodoLists")) );
-
-  bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("MaintainPersonalTodoList")) ||
-      _privileges->check("MaintainOtherTodoLists"));
-
-  bool viewTodoPriv =
-      (omfgThis->username() == _todo->currentItem()->text("usr") && _privileges->check("ViewPersonalTodoList")) ||
-      _privileges->check("ViewOtherTodoLists");
-
-  menuItem = pMenu->insertItem(tr("New To-Do Item..."), this, SLOT(sNewTodo()));
-  pMenu->setItemEnabled(menuItem, newTodoPriv);
-
-  menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sNewIncdt()));
-  pMenu->setItemEnabled(menuItem, (cEdit == _mode || cNew == _mode) &&
-				  _privileges->check("MaintainIncidents"));
-
-  if (_todo->currentItem())
-  {
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditTodoIncdt()));
-    pMenu->setItemEnabled(menuItem,
-			  _todo->currentItem()->text(0) == "T" ? editTodoPriv :
-			       (cEdit == _mode || cNew == _mode) &&
-				_privileges->check("MaintainIncidents") );
-
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewTodoIncdt()));
-    pMenu->setItemEnabled(menuItem,
-			  _todo->currentItem()->text(0) == "T" ? viewTodoPriv :
-				_privileges->check("ViewIncidents"));
-
-    menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDeleteTodoIncdt()));
-    pMenu->setItemEnabled(menuItem,
-			  _todo->currentItem()->text(0) == "T" ? editTodoPriv :
-			      (cEdit == _mode || cNew == _mode) &&
-				_privileges->check("MaintainIncidents"));
-  }
+  _contacts->sFillList();
+  _todoList->sFillList();
+  _oplist->sFillList();
 }
 
 void crmaccount::sCompetitor()
@@ -1281,319 +1029,6 @@ void crmaccount::sVendor()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void crmaccount::sNew()
-{
-  ParameterList params;
-  params.append("crmacct_id", _crmacctId);
-  params.append("mode", "new");
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  contact newdlg(this);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulate();
-}
-
-void crmaccount::sEdit()
-{
-  ParameterList params;
-  params.append("cntct_id", _contacts->id());
-  params.append("crmacct_id", _crmacctId);
-
-  if (_mode == cView && _contacts->id() > 0)
-    params.append("mode", "view");
-  else if (_privileges->check("MaintainContacts") && _contacts->id() > 0)
-  {
-    params.append("mode", "edit");
-    params.append("cntct_id", _contacts->id());
-  }
-  else  if (_privileges->check("MaintainContacts") && _contacts->id() <= 0)
-    params.append("mode", "new");
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  contact *newdlg = new contact();
-  newdlg->set(params);
-  if (newdlg->exec() != XDialog::Rejected)
-    sPopulate();
-}
-
-void crmaccount::sView()
-{
-  ParameterList params;
-  params.append("cntct_id", _contacts->id());
-
-  params.append("mode", "view");
-
-  contact *newdlg = new contact();
-  newdlg->set(params);
-  if (newdlg->exec() != XDialog::Rejected)
-    sPopulate();
-}
-
-void crmaccount::sAttach()
-{
-  ContactCluster attached(this, "attached");
-  attached.sEllipses();
-  if (attached.id() > 0)
-  {
-    int answer = QMessageBox::Yes;
-
-    if (attached.crmAcctId() > 0 && attached.crmAcctId() != _crmacctId)
-      answer = QMessageBox::question(this, tr("Detach Contact?"),
-			    tr("<p>This Contact is currently attached to a "
-			       "different CRM Account. Are you sure you want "
-			       "to change the CRM Account for this person?"),
-			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
-    if (answer == QMessageBox::Yes)
-    {
-      q.prepare("SELECT attachContact(:cntct_id, :crmacct_id) AS returnVal;");
-      q.bindValue(":cntct_id", attached.id());
-      q.bindValue(":crmacct_id", _crmacctId);
-      q.exec();
-      if (q.first())
-      {
-	int returnVal = q.value("returnVal").toInt();
-	if (returnVal < 0)
-	{
-	  systemError(this, storedProcErrorLookup("attachContact", returnVal),
-			    __FILE__, __LINE__);
-	  return;
-	}
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-      }
-    }
-    sPopulate();
-  }
-}
-
-void crmaccount::sDetach()
-{
-  int answer = QMessageBox::question(this, tr("Detach Contact?"),
-			tr("<p>Are you sure you want to detach this Contact "
-			   "from this CRM Account?"),
-			QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
-  if (answer == QMessageBox::Yes)
-  {
-    q.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
-    q.bindValue(":cntct_id", _contacts->id());
-    q.bindValue(":crmacct_id", _crmacctId);
-    q.exec();
-    if (q.first())
-    {
-      int returnVal = q.value("returnVal").toInt();
-      if (returnVal < 0)
-      {
-	systemError(this, tr("Error detaching Contact from CRM Account (%1).")
-			  .arg(returnVal), __FILE__, __LINE__);
-	return;
-      }
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    sPopulate();
-  }
-}
-
-void crmaccount::sNewTodo()
-{
-  ParameterList params;
-  params.append("crmacct_id", _crmacctId);
-  params.append("mode", "new");
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  todoItem newdlg(this, "", true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateTodo();
-}
-
-void crmaccount::sNewIncdt()
-{
-  ParameterList params;
-  params.append("crmacct_id", _crmacctId);
-  params.append("mode", "new");
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  incident newdlg(this, "", true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateTodo();
-}
-
-void crmaccount::sEditTodoIncdt()
-{
-  if (_todo->currentItem()->text(0) == "T")
-    sEditTodo();
-  else
-    sEditIncdt();
-}
-
-void crmaccount::sEditTodo()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("todoitem_id", _todo->id());
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  todoItem newdlg(this, "", true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateTodo();
-}
-
-int crmaccount::getIncidentId()
-{
-  int returnVal = -1;
-
-  if (_todo->currentItem()->text(0) == "I")
-    returnVal = _todo->id();
-  else if (! _todo->currentItem()->text(7).isEmpty())
-  {
-    XSqlQuery incdt;
-    incdt.prepare("SELECT incdt_id FROM incdt WHERE (incdt_number=:number);");
-    incdt.bindValue(":number", _todo->currentItem()->text(7).toInt());
-    if (incdt.exec() && incdt.first())
-     returnVal = incdt.value("incdt_id").toInt();
-    else if (incdt.lastError().type() != QSqlError::NoError)
-      systemError(this, incdt.lastError().databaseText(), __FILE__, __LINE__);
-  }
-
-  return returnVal;
-}
-
-void crmaccount::sEditIncdt()
-{
-  ParameterList params;
-  params.append("mode",     "edit");
-  params.append("incdt_id", getIncidentId());
-
-  if (saveNoErrorCheck() < 0)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  incident newdlg(this, "", true);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateTodo();
-}
-
-void crmaccount::sDeleteTodoIncdt()
-{
-  if (_todo->currentItem()->text(0) == "T")
-    sDeleteTodo();
-  else
-    sDeleteIncdt();
-}
-
-void crmaccount::sDeleteTodo()
-{
-  q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  q.bindValue(":todoitem_id", _todo->id());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteTodoItem", result));
-      return;
-    }
-    sPopulateTodo();
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-void crmaccount::sDeleteIncdt()
-{
-  q.prepare("SELECT deleteIncident(:incdt_id) AS result;");
-  q.bindValue(":incdt_id", getIncidentId());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteIncident", result));
-      return;
-    }
-    sPopulateTodo();
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-void crmaccount::sViewTodoIncdt()
-{
-  if (_todo->currentItem()->text(0) == "T")
-    sViewTodo();
-  else
-    sViewIncdt();
-}
-
-void crmaccount::sViewTodo()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("todoitem_id", _todo->id());
-
-  todoItem newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void crmaccount::sViewIncdt()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("incdt_id", getIncidentId());
-
-  incident newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void crmaccount::sUpdateRelationships()
 {
   q.prepare( "SELECT * "
@@ -1619,7 +1054,6 @@ void crmaccount::sUpdateRelationships()
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
     _owner->setUsername(q.value("crmacct_owner_username").toString());
-  //  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -1627,7 +1061,7 @@ void crmaccount::sUpdateRelationships()
     return;
   }
   
-  sPopulateContacts();
+  _contacts->sFillList();
 }
 
 void crmaccount::sPopulateMenu(QMenu *pMenu)
@@ -1655,26 +1089,6 @@ void crmaccount::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
-void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
-{
-  int menuItem;
-
-  bool editPriv = _privileges->check("MaintainOpportunities");
-  bool viewPriv = _privileges->check("ViewOpportunities") || editPriv;
-
-  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
-
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sOplistEdit()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
-
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sOplistView()), 0);
-  pMenu->setItemEnabled(menuItem, viewPriv);
-
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
-}
-
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
 {
   //XDialog newdlg(parent);
@@ -1688,14 +1102,6 @@ void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
   ci->set(pParams);
   //newdlg.exec();
   omfgThis->handleNewWindow(ci);
-}
-
-void crmaccount::sHandleAutoUpdate()
-{
-  if (_autoUpdateTodo)
-    connect(omfgThis, SIGNAL(tick()), this, SLOT(sPopulateTodo()));
-  else
-    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sPopulateTodo()));
 }
 
 void crmaccount::sCustomerInfo()
@@ -1722,94 +1128,12 @@ void crmaccount::sCustomerToggled()
 {
   if (_customer->isChecked())
     _prospect->setChecked(FALSE);
-
-//  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
 }
 
 void crmaccount::sProspectToggled()
 {
   if (_prospect->isChecked())
     _customer->setChecked(FALSE);
-}
-
-void crmaccount::sOplistNew()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("crmacct_id", _crmacctId);
-
-  opportunity newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateOplist();
-}
-
-void crmaccount::sOplistDelete()
-{
-  q.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
-  q.bindValue(":ophead_id", _oplist->id());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteOpportunity", result));
-      return;
-    }
-    else
-      sPopulateOplist();
-    }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-}
-
-void crmaccount::sOplistView()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("ophead_id", _oplist->id());
-
-  opportunity newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  newdlg.exec();
-}
-
-void crmaccount::sOplistEdit()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("ophead_id", _oplist->id());
-
-  opportunity newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sPopulateOplist();
-}
-
-void crmaccount::sPopulateOplist()
-{
-  MetaSQLQuery mql = mqlLoad("opportunitiesByCRM", "detail");
-
-  ParameterList params;
-  params.append("crmacct_id", _crmacctId);
-
-  XSqlQuery itemQ = mql.toQuery(params);
-
-  if (itemQ.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  _oplist->populate(itemQ);
 }
 
 void crmaccount::sPopulateRegistrations()
@@ -1918,6 +1242,8 @@ void crmaccount::sCheckNumber()
       }
       
       _crmacctId = newq.value("crmacct_id").toInt();
+      _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+      _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _mode = cEdit;
       sPopulate();
 
@@ -1949,10 +1275,10 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
 
 void crmaccount::sHandleButtons() 	 
 { 	 
-	if (_primaryButton->isChecked()) 	 
-	  _widgetStack->setCurrentIndex(_widgetStack->indexOf(_primaryPage)); 	 
-	else if (_secondaryButton->isChecked()) 	 
-	  _widgetStack->setCurrentIndex(_widgetStack->indexOf(_secondaryPage)); 	 
+  if (_primaryButton->isChecked()) 	 
+    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_primaryPage)); 	 
+  else if (_secondaryButton->isChecked()) 	 
+    _widgetStack->setCurrentIndex(_widgetStack->indexOf(_secondaryPage)); 	 
   else 	 
     _widgetStack->setCurrentIndex(_widgetStack->indexOf(_allPage)); 	 
 }

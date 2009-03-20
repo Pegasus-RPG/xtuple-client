@@ -27,25 +27,24 @@ class todoList : public XWidget, public Ui::todoList
   public slots:
     virtual void	languageChange();
     virtual SetResponse	set(const ParameterList&);
-
-  protected slots:
     virtual void	handlePrivs();
     virtual void	sClose();
     virtual void	sDelete();
     virtual void	sEdit();
     virtual void	sEditIncident();
-    virtual void  sEditTask();
-    virtual void  sEditProject();
+    virtual void        sEditTask();
+    virtual void        sEditProject();
     virtual void	sCustomerInfo();
     virtual void	sFillList();
     virtual void	sHandleAutoUpdate(bool);
     virtual void	sNew();
+    virtual void        sNewIncdt();
     virtual void	sPopulateMenu(QMenu*);
     virtual void	sPrint();
     virtual void	sView();
     virtual void	sViewIncident();
-    virtual void  sViewTask();
-    virtual void  sViewProject();
+    virtual void        sViewTask();
+    virtual void        sViewProject();
     virtual void 	setParams(ParameterList &);
 
   private:

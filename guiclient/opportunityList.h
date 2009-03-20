@@ -9,7 +9,7 @@
  */
 
 #ifndef OPPORTUNITYLIST_H
-#define OPOORTUNITYLIST_H
+#define OPPORTUNITYLIST_H
 
 #include "guiclient.h"
 #include "xwidget.h"
@@ -27,8 +27,6 @@ class opportunityList : public XWidget, public Ui::opportunityList
   public slots:
     virtual void	languageChange();
     virtual SetResponse	set(const ParameterList&);
-
-  protected slots:
     virtual void	sClose();
     virtual void	sDelete();
     virtual void	sEdit();

@@ -25,6 +25,8 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+  
+  _crmAccount->hide();
 
   _targetDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _targetDates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -136,6 +138,8 @@ void opportunityList::sNew()
   params.append("mode", "new");
   if (_usr->isSelected())
     params.append("usr_id", _usr->id());
+  if (_crmAccount->isValid())
+    params.append("crmAccountId",_crmAccount->id());
 
   opportunity newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -195,6 +199,8 @@ void opportunityList::sDelete()
 
 void opportunityList::setParams(ParameterList &params)
 {
+  if (_crmAccount->isValid())
+    params.append("crmAccountId",_crmAccount->id());
   _usr->appendValue(params);
   _targetDates->appendValue(params);
 }

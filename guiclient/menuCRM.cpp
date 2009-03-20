@@ -284,7 +284,11 @@ void menuCRM::sContact()
 
 void menuCRM::sContacts()
 {
-  omfgThis->handleNewWindow(new contacts());
+  ParameterList params;
+  params.append("fillList");
+  contacts* win = new contacts();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }
 
 void menuCRM::sSearchForContact()
@@ -322,7 +326,11 @@ void menuCRM::sIncident()
 
 void menuCRM::sTodoList()
 {
-  omfgThis->handleNewWindow(new todoList());
+  ParameterList params;
+  params.append("fillList");
+  todoList* win = new todoList();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }
 
 void menuCRM::sTodoListCalendar()

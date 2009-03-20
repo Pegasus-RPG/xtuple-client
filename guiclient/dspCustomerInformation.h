@@ -13,6 +13,10 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+
+#include "contacts.h"
+#include "todoList.h"
+
 #include <QStandardItemModel>
 #include <parameter.h>
 
@@ -81,9 +85,14 @@ public slots:
     virtual void sPrintInvoice();
     virtual void sHandleCreditMemoPrint();
     virtual void sPrintStatement();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
+    
+protected:
+    todoList *_todoList;
+    contacts *_contacts;
 
 private:
     int _crmacctId;

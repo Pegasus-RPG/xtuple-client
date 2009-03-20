@@ -9,15 +9,8 @@
  */
 
 #include "todoList.h"
-
 #include "xdialog.h"
-#include <QMenu>
-#include <QMessageBox>
-#include <QSqlError>
-#include <QVariant>
-#include <metasql.h>
-#include <openreports.h>
-
+#include "mqlutil.h"
 #include "todoItem.h"
 #include "incident.h"
 #include "dspCustomerInformation.h"
@@ -25,11 +18,21 @@
 #include "storedProcErrorLookup.h"
 #include "task.h"
 
+#include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
+#include <openreports.h>
+
+
 todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
+  _crmAccount->hide();
   _dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
   _startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -57,6 +60,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
   connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_startDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_todolist,    SIGNAL(toggled(bool)),  this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
@@ -82,14 +86,26 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Start Date"),_dateColumn, Qt::AlignLeft,   false, "start");
   _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
   _todoList->addColumn(tr("Parent#"),   _orderColumn,  Qt::AlignLeft,  true, "number");
-  _todoList->addColumn(tr("Customer"), _orderColumn,  Qt::AlignLeft,   true, "cust");
+  _todoList->addColumn(tr("Customer#"),  _orderColumn, Qt::AlignLeft,   false, "cust");
+  _todoList->addColumn(tr("Account#"), _orderColumn,  Qt::AlignLeft,   true, "crmacct_number");
+  _todoList->addColumn(tr("Account Name"),      100,  Qt::AlignLeft,   true, "crmacct_name");
   _todoList->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
+
+  int menuItem;
+  QMenu * todoMenu = new QMenu;
+  menuItem = todoMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
+  if (!_privileges->check("MaintainIncidents"))
+    todoMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = todoMenu->insertItem(tr("To-Do Item"),   this, SLOT(sNew()));
+  if (!_privileges->check("MaintainPersonalTodoList") &&
+      !_privileges->check("MaintainOtherTodoLists"))
+    todoMenu->setItemEnabled(menuItem, FALSE);
+  _new->setMenu(todoMenu);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _incidents->setChecked(true);
 
   handlePrivs();
-  sFillList();
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
 
@@ -102,19 +118,19 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem; 
 
+  bool editPriv =
+      (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
+
+  bool viewPriv =
+      (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
+      (omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
+
+  menuItem = pMenu->insertItem(tr("New To-do..."), this, SLOT(sNew()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
+
   if (_todoList->currentItem()->altId() == 1)
   {
-    bool editPriv =
-	(omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
-	(omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
-
-    bool viewPriv =
-	(omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
-	(omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
-
-    menuItem = pMenu->insertItem(tr("New To-do..."), this, SLOT(sNew()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
-
     menuItem = pMenu->insertItem(tr("Edit To-do..."), this, SLOT(sEdit()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
 
@@ -125,8 +141,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, editPriv);
   }
 
-  if (_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty())
-    pMenu->addSeparator();
+  pMenu->addSeparator();
+  
+  menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sNewIncdt()), 0);
+  pMenu->setItemEnabled(menuItem,  _privileges->check("MaintainIncidents"));
   
   if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty()) ||
        _todoList->altId() == 2)
@@ -137,6 +155,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
 				    _privileges->check("MaintainIncidents"));
   }
+  pMenu->addSeparator();
   
   if (_todoList->altId() == 3)
   {
@@ -177,6 +196,10 @@ enum SetResponse todoList::set(const ParameterList& pParams)
     handlePrivs();
     sFillList();
   }
+  
+  param = pParams.value("fillList", &valid);
+  if (valid)
+    sFillList();
 
   return NoError;
 }
@@ -241,6 +264,8 @@ void todoList::sClose()
 void todoList::sNew()
 {
   ParameterList params;
+  if (_crmAccount->isValid())
+    params.append("crmacct_id", _crmAccount->id());
   params.append("mode", "new");
   if (_usr->isSelected())
     _usr->appendValue(params);
@@ -248,6 +273,19 @@ void todoList::sNew()
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
 
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void todoList::sNewIncdt()
+{
+  ParameterList params;
+  if (_crmAccount->isValid())
+    params.append("crmacct_id", _crmAccount->id());
+  params.append("mode", "new");
+
+  incident newdlg(this, "", true);
+  newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
@@ -334,6 +372,10 @@ void todoList::sDelete()
 
 void todoList::setParams(ParameterList &params)
 {
+  if (_crmAccount->isValid())
+    params.append("crmAccountId",_crmAccount->id());
+  if (_todolist->isChecked())
+    params.append("todoList");
   if (_completed->isChecked())
     params.append("completed");
   if (_incidents->isChecked())
@@ -371,143 +413,16 @@ void todoList::sPrint()
 
 void todoList::sFillList()
 {
-  QString sql = "SELECT todoitem_id AS id, 1 AS altId, todoitem_owner_username AS owner, "
-		"       <? value(\"todo\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
-		"       todoitem_name AS name, "
-		"       firstLine(todoitem_description) AS descrip, "
-                "       todoitem_status AS status, todoitem_start_date as start, "
-		"       todoitem_due_date AS due, formatDate(todoitem_due_date) AS f_due, "
-		"       todoitem_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
-                "       CASE WHEN (todoitem_status != 'C'AND "
-                "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
-                "            WHEN (todoitem_status != 'C'AND "
-                "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
-                "       END AS due_qtforegroundrole "
-		"  FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
-		"                LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-		"                LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-                "                LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-		" WHERE((true)"
-                "  <? if exists(\"startStartDate\") ?> "
-                "  AND (todoitem_start_date BETWEEN <? value(\"startStartDate\") ?>"
-		"                             AND <? value(\"startEndDate\") ?>)"
-                "  <? endif ?>"
-                "  <? if exists(\"dueStartDate\") ?> "
-		"  AND   (todoitem_due_date BETWEEN <? value(\"dueStartDate\") ?> "
-		"                               AND <? value(\"dueEndDate\") ?>) "
-  	        "  <? endif ?>"
-		"  <? if not exists(\"completed\") ?>"
-		"  AND   (todoitem_status != 'C')"
-		"  <? endif ?>"
-		"  <? if exists(\"username\") ?> "
-		"  AND (todoitem_username=<? value(\"username\") ?>) "
-		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (todoitem_username ~ <? value(\"usr_pattern\") ?>) "
-		"  <? endif ?>"
-		"  <? if not exists(\"completed\") ?>AND (todoitem_active) <? endif ?>"
-		"       ) "
-		"<? if exists(\"incidents\")?>"
-                "<? if not exists(\"dueStartDate\") ?> "
-		" UNION "
-		"SELECT incdt_id AS id, 2 AS altId, incdt_owner_username AS owner, "
-		"       <? value(\"incident\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
-		"       incdt_summary AS name, "
-		"       firstLine(incdt_descrip) AS descrip, "
-                "       incdt_status AS status, CAST(incdt_timestamp AS date) AS start, "
-		"       null AS due, null AS f_due, "
-		"       incdt_assigned_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
-                "       NULL AS due_qtforegroundrole "
-		"  FROM incdt LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
-		"             LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-                "             LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
-		" WHERE((true) "
-                "  <? if exists(\"startStartDate\") ?> "
-                "  AND (incdt_timestamp BETWEEN <? value(\"startStartDate\") ?>"
-		"                            AND <? value(\"startEndDate\") ?>)"
-                "  <? endif ?>"
-		"  <? if not exists(\"completed\") ?> "
-		"  AND (incdt_status != 'L')"
-		"  <? endif ?>"
-		"  <? if exists(\"username\") ?> "
-		"  AND (incdt_assigned_username=<? value(\"username\") ?>) "
-		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (incdt_assigned_username ~ <? value(\"usr_pattern\") ?>) "
-		"  <? endif ?>"
-		"       ) "
-		"<? endif ?>"
-                "<? endif ?>"
-		"<? if exists(\"projects\")?>"
-		" UNION "
-		"SELECT prjtask_id AS id, 3 AS altId, prjtask_owner_username AS owner, "
-		"       <? value(\"task\") ?> AS type, NULL AS seq, NULL AS priority, "
-		"       prjtask_number || '-' || prjtask_name AS name, "
-		"       firstLine(prjtask_descrip) AS descrip, "
-		"       prjtask_status AS status,  prjtask_start_date AS start, "
-                "       prjtask_due_date AS due, formatDate(prjtask_due_date) AS f_due, "
-		"       prjtask_username AS usr, prj_number, '' AS cust, "
-                "       CASE WHEN (prjtask_status != 'C'AND "
-                "                  prjtask_due_date < CURRENT_DATE) THEN 'expired'"
-                "            WHEN (prjtask_status != 'C'AND "
-                "                  prjtask_due_date > CURRENT_DATE) THEN 'future'"
-                "       END AS due_qtforegroundrole "
-		"  FROM prj, prjtask "
-		" WHERE((prj_id=prjtask_prj_id) "
-                "  <? if exists(\"startStartDate\") ?> "
-                "  AND (prjtask_start_date BETWEEN <? value(\"startStartDate\") ?>"
-		"                             AND <? value(\"startEndDate\") ?>)"
-                "  <? endif ?>"
-                "  <? if exists(\"dueStartDate\") ?> "
-                "  AND (prjtask_due_date BETWEEN <? value(\"dueStartDate\") ?>"
-		"                             AND <? value(\"dueEndDate\") ?>)"
-                "  <? endif ?>"
-		"  <? if not exists(\"completed\") ?> "
-		"  AND (prjtask_status != 'C')"
-		"  <? endif ?>"
-		"  <? if exists(\"username\") ?> "
-		"  AND (prjtask_username=<? value(\"username\") ?>) "
-		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (prjtask_username ~ <? value(\"usr_pattern\") ?>) "
-		"  <? endif ?>"
-		"       ) "
-  	        " UNION "
-		"SELECT prj_id AS id, 4 AS altId, prj_owner_username AS owner, "
-		"       <? value(\"project\") ?> AS type, NULL AS seq, NULL AS priority, "
-		"       prj_number || '-' || prj_name AS name, "
-		"       firstLine(prj_descrip) AS descrip, "
-		"       prj_status AS status,  prj_start_date AS start, "
-                "       prj_due_date AS due, formatDate(prj_due_date) AS f_due, "
-		"       prj_username AS usr, NULL AS number, '' AS cust, "
-                "       CASE WHEN (prj_status != 'C'AND "
-                "                  prj_due_date < CURRENT_DATE) THEN 'expired'"
-                "            WHEN (prj_status != 'C'AND "
-                "                  prj_due_date > CURRENT_DATE) THEN 'future'"
-                "       END AS due_qtforegroundrole "
-		"  FROM prj "
-		" WHERE((true) "
-                "  <? if exists(\"startStartDate\") ?> "
-                "  AND (prj_start_date BETWEEN <? value(\"startStartDate\") ?>"
-		"                             AND <? value(\"startEndDate\") ?>)"
-                "  <? endif ?>"
-                "  <? if exists(\"dueStartDate\") ?> "
-                "  AND (prj_due_date BETWEEN <? value(\"dueStartDate\") ?>"
-		"                             AND <? value(\"dueEndDate\") ?>)"
-                "  <? endif ?>"
-		"  <? if not exists(\"completed\") ?> "
-		"  AND (prj_status != 'C')"
-		"  <? endif ?>"
-		"  <? if exists(\"username\") ?> "
-		"  AND (prj_username=<? value(\"username\") ?>) "
-		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (prj_username ~ <? value(\"usr_pattern\") ?>) "
-		"  <? endif ?>"
-		"       ) "
-		"<? endif ?> "
-		"ORDER BY due, seq, usr;";
-
+  if (!_todolist->isChecked() && !_incidents->isChecked() && !_projects->isChecked())
+  {
+    _todoList->clear();
+    return;
+  }
+     
+  MetaSQLQuery mql = mqlLoad("todolist", "detail");
   ParameterList params;
   setParams(params);
 
-  MetaSQLQuery mql(sql);
   XSqlQuery itemQ = mql.toQuery(params);
 
   _todoList->populate(itemQ, true);
