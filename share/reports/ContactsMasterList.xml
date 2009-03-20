@@ -9,22 +9,10 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT cntct_first_name,
-       cntct_last_name,
-       crmacct_number,
-       crmacct_name,
-       cntct_phone,
-       cntct_phone2,
-       cntct_fax,
-       cntct_email,
-       cntct_webaddr
-  FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id=crmacct_id)
-&lt;? if exists("activeOnly") ?>
- WHERE cntct_active
-&lt;? endif ?>
-ORDER BY cntct_last_name, cntct_first_name, crmacct_number;</sql>
+  <mqlgroup>contacts</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>77</height>

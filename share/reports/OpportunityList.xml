@@ -9,37 +9,10 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT ophead_id,
-       ophead_name,
-       crmacct_number,
-       ophead_owner_username,
-       opstage_name,
-       opsource_name,
-       optype_name,
-       ophead_probability_prcnt,
-       formatMoney(ophead_amount) AS f_amount,
-       currConcat(ophead_curr_id) As f_currency,
-       formatDate(ophead_target_date) AS f_targetdate,
-       formatDate(ophead_actual_date) AS f_actualdate
-  FROM ophead
-       LEFT OUTER JOIN crmacct ON (ophead_crmacct_id=crmacct_id)
-       LEFT OUTER JOIN opstage ON (ophead_opstage_id=opstage_id)
-       LEFT OUTER JOIN opsource ON (ophead_opsource_id=opsource_id)
-       LEFT OUTER JOIN optype ON (ophead_optype_id=optype_id)
- WHERE(((ophead_target_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-       OR (((&lt;? value("startDate") ?> &lt;= startOfTime()) OR (&lt;? value("endDate") ?> >= endOfTime()))
-        AND (ophead_target_date IS NULL))
-    )
-&lt;? if exists("username") ?>
-   AND (ophead_owner_username=&lt;? value("username") ?>)
-&lt;? elseif exists("usr_pattern") ?>
-   AND (ophead_owner_username ~ &lt;? value("username_pattern") ?>)
-&lt;? endif ?>
- )
- ORDER BY ophead_target_date;
-</sql>
+  <mqlgroup>opportunities</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>queryParams</name>
