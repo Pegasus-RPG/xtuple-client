@@ -265,6 +265,8 @@ void itemAvailabilityWorkbench::setParams(ParameterList & params)
   params.append("plannedPo",	tr("Planned P/O"));
   params.append("firmWo",	tr("Planned W/O (firmed)"));
   params.append("plannedWo",	tr("Planned W/O"));
+  params.append("firmTo",	tr("Planned T/O (firmed)"));
+  params.append("plannedTo",	tr("Planned T/O"));
   params.append("firmWoReq",	tr("Planned W/O Req. (firmed)"));
   params.append("plannedWoReq",	tr("Planned W/O Req."));
   params.append("pr",		tr("Purchase Request"));
@@ -698,11 +700,7 @@ void itemAvailabilityWorkbench::sFillListAvail()
 void itemAvailabilityWorkbench::sPrintRunning()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("warehous_id", _warehouse->id());
-
-  if (_showPlanned->isChecked())
-    params.append("showPlanned");
+  setParams(params);
 
   orReport report("RunningAvailability", params);
   if (report.isValid())

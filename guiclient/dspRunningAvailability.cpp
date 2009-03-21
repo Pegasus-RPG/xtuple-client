@@ -101,6 +101,8 @@ void dspRunningAvailability::setParams(ParameterList & params)
   params.append("plannedPo",	tr("Planned P/O"));
   params.append("firmWo",	tr("Planned W/O (firmed)"));
   params.append("plannedWo",	tr("Planned W/O"));
+  params.append("firmTo",	tr("Planned T/O (firmed)"));
+  params.append("plannedTo",	tr("Planned T/O"));
   params.append("firmWoReq",	tr("Planned W/O Req. (firmed)"));
   params.append("plannedWoReq",	tr("Planned W/O Req."));
   params.append("pr",		tr("Purchase Request"));
