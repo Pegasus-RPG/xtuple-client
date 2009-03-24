@@ -724,7 +724,7 @@ void GUIClient::sTick()
       if ( (_metrics->value("Application") != "Manufacturing")
         && (_metrics->value("Application") != "Standard") )
       {
-        if(_metrics->value("Registered") != "Yes")
+        if(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes")
         {
           if (_registerButton)
             _registerButton->setVisible(true);
@@ -763,7 +763,7 @@ void GUIClient::sTick()
 void GUIClient::sNewErrorMessage()
 {
   if (_errorButton)
-    _errorButton->setVisible(_metrics->value("Registered") != "Yes");
+    _errorButton->setVisible(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes");
   else
   {
     _errorButton = new QPushButton(QIcon(":/images/dspError.png"), "", statusBar());
