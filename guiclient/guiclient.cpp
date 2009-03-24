@@ -753,8 +753,8 @@ void GUIClient::sTick()
     _tick.singleShot(60000, this, SLOT(sTick()));
   }
   else
-    systemError(this, tr("<p>You have been disconnected from the database server."
-                          "This is usually caused by an interruption in your"
+    systemError(this, tr("<p>You have been disconnected from the database server.  "
+                          "This is usually caused by an interruption in your "
                           "network.  Please exit the application and restart."
                           "<br><pre>%1</pre>" )
                       .arg(tickle.lastError().databaseText()));
