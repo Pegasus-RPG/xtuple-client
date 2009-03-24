@@ -3,6 +3,9 @@
  <title>Picking List</title>
  <name>PickingListSONoClosedLines</name>
  <description>Omits Closed Lines -- With Barcodes formatitemsitebarcode(itemsite_id) -- SO # barcoded formatsobarcode(cohead_id) -- With Logo, place logo graphic in images DB with name "logo"</description>
+ <parameter default="3203" active="true" listtype="static" type="string" name="sohead_id" >
+  <description></description>
+ </parameter>
  <size>Letter</size>
  <portrait/>
  <topmargin>25</topmargin>
@@ -52,7 +55,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT 1 AS groupby,
-       formatsolinenumber(coitem_linenumber) AS linenumber,
+       formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
@@ -151,6 +154,7 @@ WHERE ((image_name='logo'));</sql>
    <format>3of9</format>
    <maxlength>20</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cohead_custponumber</column>
@@ -461,6 +465,7 @@ WHERE ((image_name='logo'));</sql>
    <format>128</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>order_barcode</column>
@@ -640,6 +645,7 @@ WHERE ((image_name='logo'));</sql>
    <format>3of9</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cust_number</column>
@@ -1102,6 +1108,7 @@ WHERE ((image_name='logo'));</sql>
     <format>128</format>
     <maxlength>15</maxlength>
     <left/>
+    <narrowBarWidth>0.01</narrowBarWidth>
     <data>
      <query>detail</query>
      <column>item_barcode</column>
