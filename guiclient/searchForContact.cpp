@@ -44,6 +44,7 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   _cntct->addColumn(tr("Account Number"),      80, Qt::AlignCenter , true, "number");
   _cntct->addColumn(tr("Account Name"),        -1, Qt::AlignLeft   , true, "name");
   _cntct->addColumn(tr("Phone"),      100, Qt::AlignLeft           , true, "cntct_phone");
+  _cntct->addColumn(tr("Email"),      100, Qt::AlignLeft           , true, "cntct_email");
   _cntct->addColumn(tr("Address"),     -1, Qt::AlignLeft           , true, "addr_line1");
   _cntct->addColumn(tr("City"),        75, Qt::AlignLeft           , true, "addr_city");
   _cntct->addColumn(tr("State"),       50, Qt::AlignLeft           , true, "addr_state");
@@ -141,6 +142,9 @@ void searchForContact::sFillList()
 	"   OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
 	"             cntct_fax) ~ <? value(\"searchString\") ?>)"
 	"<? endif ?>"
+	"<? if exists(\"searchEmail\") ?>"
+	"   OR (cntct_email ~* <? value(\"searchString\") ?>)"
+	"<? endif ?>"
 	"<? if exists(\"searchStreetAddr\") ?>"
 	"   OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
 	"             addr_line3) ~ <? value(\"searchString\") ?>)"
@@ -178,6 +182,9 @@ void searchForContact::sFillList()
 
   if (_searchPhone->isChecked())
     params.append("searchPhone");
+    
+  if (_searchEmail->isChecked())
+    params.append("searchEmail");
 
   if (_searchStreet->isChecked())
     params.append("searchStreetAddr");
