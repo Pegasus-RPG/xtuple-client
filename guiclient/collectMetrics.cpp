@@ -224,7 +224,7 @@ void collectMetrics()
   // TODO: add additional arguments here
   arguments << "--run";
   arguments << "--enable-gui";
-  arguments << "--pid-file"
+  arguments << "--pid-file";
   arguments << ns_agent_config_path + "/agent.pid";
   arguments << "--log-file";
   arguments << ns_agent_config_path + "/agent.log";
