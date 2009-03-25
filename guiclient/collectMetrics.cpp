@@ -13,6 +13,10 @@
 #include <QApplication>
 #include <QDir>
 
+#if defined Q_WS_WIN
+#include <windows.h>
+#endif
+
 #include "guiclient.h"
 #include "version.h"
 
@@ -218,9 +222,14 @@ void collectMetrics()
 */
 
   // TODO: add additional arguments here
-  arguments << "--pid-file=" + ns_agent_config_path + "/agent.pid";
-  arguments << "--log-file=" + ns_agent_config_path + "/agent.log";
-  arguments << "--config-file=" + ns_agent_config_path + "/agent.conf";
+  arguments << "--run";
+  arguments << "--enable-gui";
+  arguments << "--pid-file"
+  arguments << ns_agent_config_path + "/agent.pid";
+  arguments << "--log-file";
+  arguments << ns_agent_config_path + "/agent.log";
+  arguments << "--config-file";
+  arguments << ns_agent_config_path + "/agent.conf";
 
   proc->start(exe, arguments);
 }
