@@ -15,6 +15,7 @@
 
 #if defined Q_WS_WIN
 #include <windows.h>
+#include <shlobj.h>
 #endif
 
 #include "guiclient.h"
@@ -162,7 +163,13 @@ void collectMetrics()
 #if defined Q_WS_WIN
   TCHAR szPath[MAX_PATH];
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath))) 
-    appdata = QString(szPath);
+  {
+#ifdef UNICODE
+    appdata = QString::fromUtf16((ushort*)szPath);
+#else
+    appdata = QString::fromLocal8Bit(szPath);
+#endif
+  }
 #endif
   ns_agent_config_path.replace("%APPDATA%", appdata);
   ns_agent_binary_path.replace("%APPDATA%", appdata);
