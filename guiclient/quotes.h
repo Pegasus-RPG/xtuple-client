@@ -26,6 +26,7 @@ public:
     virtual bool checkSitePrivs(int orderid);
 
 public slots:
+    virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
     virtual void sConvert();

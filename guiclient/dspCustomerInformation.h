@@ -16,6 +16,8 @@
 
 #include "contacts.h"
 #include "todoList.h"
+#include "opportunityList.h"
+#include "quotes.h"
 
 #include <QStandardItemModel>
 #include <parameter.h>
@@ -39,10 +41,6 @@ public slots:
     virtual void sPopulate();
     virtual void sEdit();
     virtual void sPrint();
-    virtual void sFillQuoteList();
-    virtual void sNewQuote();
-    virtual void sEditQuote();
-    virtual void sViewQuote();
     virtual void sFillOrderList();
     virtual void sNewOrder();
     virtual void sEditOrder();
@@ -62,12 +60,10 @@ public slots:
     virtual void sEditAropen();
     virtual void sViewAropen();
     virtual void sFillPaymentsList();
-    virtual void sPopulateMenuQuote(QMenu*);
     virtual void sPopulateMenuSalesOrder(QMenu*);
     virtual void sPopulateMenuInvoice(QMenu*, QTreeWidgetItem *selected);
     virtual void sPopulateMenuCreditMemo(QMenu*, QTreeWidgetItem *selected);
     virtual void sPopulateMenuArhist(QMenu*, QTreeWidgetItem *selected);
-    virtual void sConvertQuote();
     virtual void sCreditMemoSelected(bool);
     virtual void sFillARHistory();
     virtual void sPopulateCustInfo();
@@ -80,7 +76,6 @@ public slots:
     virtual void sCashReceipt();
     virtual void sPrintCCReceipt();
     virtual void sPrintSalesOrder();
-    virtual void sPrintQuote();
     virtual void sPrintCreditMemo();
     virtual void sPrintInvoice();
     virtual void sHandleCreditMemoPrint();
@@ -93,6 +88,8 @@ protected slots:
 protected:
     todoList *_todoList;
     contacts *_contacts;
+    opportunityList *_oplist;
+    quotes *_quotes;
 
 private:
     int _crmacctId;

@@ -219,7 +219,11 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" >
             <item row="0" column="0" >
-             <widget class="UsernameCluster" name="_owner" />
+             <widget class="UsernameCluster" name="_owner" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
+             </widget>
             </item>
             <item row="0" column="1" >
              <spacer>
@@ -822,11 +826,28 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_number</tabstop>
-  <tabstop>_name</tabstop>
   <tabstop>_active</tabstop>
-  <tabstop>_parentCrmacct</tabstop>
+  <tabstop>_name</tabstop>
   <tabstop>_organization</tabstop>
   <tabstop>_individual</tabstop>
+  <tabstop>_owner</tabstop>
+  <tabstop>_parentCrmacct</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_primaryButton</tabstop>
+  <tabstop>_secondaryButton</tabstop>
+  <tabstop>_allButton</tabstop>
+  <tabstop>_secondary</tabstop>
+  <tabstop>_primary</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_comments</tabstop>
+  <tabstop>_charass</tabstop>
+  <tabstop>_reg</tabstop>
+  <tabstop>_newReg</tabstop>
+  <tabstop>_editReg</tabstop>
+  <tabstop>_deleteReg</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_prospect</tabstop>
   <tabstop>_prospectButton</tabstop>
   <tabstop>_customer</tabstop>
@@ -837,17 +858,8 @@ to be bound by its terms.</comment>
   <tabstop>_taxauthButton</tabstop>
   <tabstop>_competitor</tabstop>
   <tabstop>_partner</tabstop>
-  <tabstop>_primary</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_comments</tabstop>
-  <tabstop>_charass</tabstop>
-  <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
-  <tabstop>_deleteCharacteristic</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_notes</tabstop>
-  <tabstop>_secondary</tabstop>
+  <tabstop>_newCharacteristic</tabstop>
  </tabstops>
  <resources/>
  <connections>

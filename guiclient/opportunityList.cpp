@@ -58,7 +58,6 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_list,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_list,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
-  connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
   if(_privileges->check("MaintainOpportunities"))
@@ -83,8 +82,6 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _list->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false, "f_currency" );
   _list->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_target_date" );
   _list->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
-
-  sFillList();
 }
 
 void opportunityList::languageChange()
@@ -123,6 +120,13 @@ enum SetResponse opportunityList::set(const ParameterList& pParams)
     _usr->setId(param.toInt());
     sFillList();
   }
+  
+  param = pParams.value("fillList", &valid);
+  if (valid)
+  {
+    connect(_usr, SIGNAL(updated()),	this,	SLOT(sFillList()));
+    sFillList();
+  }
 
   return NoError;
 }
@@ -139,7 +143,7 @@ void opportunityList::sNew()
   if (_usr->isSelected())
     params.append("usr_id", _usr->id());
   if (_crmAccount->isValid())
-    params.append("crmAccountId",_crmAccount->id());
+    params.append("crmacct_id",_crmAccount->id());
 
   opportunity newdlg(this, "", TRUE);
   newdlg.set(params);

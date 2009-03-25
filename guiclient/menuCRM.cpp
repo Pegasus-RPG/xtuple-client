@@ -414,5 +414,9 @@ void menuCRM::sNewOpportunity()
 
 void menuCRM::sOpportunities()
 {
-  omfgThis->handleNewWindow(new opportunityList());
+  ParameterList params;
+  params.append("fillList");
+  opportunityList* win = new opportunityList();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }

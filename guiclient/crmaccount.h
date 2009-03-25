@@ -33,7 +33,6 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulate();
- //   virtual void sPopulateOplist();
     virtual void sPopulateRegistrations();
 
 protected slots:
@@ -52,7 +51,6 @@ protected slots:
     virtual void sNewReg();
     virtual void sPartner();
     virtual void sPopulateMenu(QMenu *);
-  //  virtual void sPopulateOplistMenu(QMenu *);
     virtual void sProspect();
     virtual void sSave();
     virtual void sTaxAuth();
@@ -61,10 +59,6 @@ protected slots:
     virtual void sCustomerInfo();
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
-   //virtual void sOplistNew();
-    //virtual void sOplistDelete();
-    //virtual void sOplistView();
-   // virtual void sOplistEdit();
     virtual void sCheckNumber();
     virtual void sHandleButtons();
     virtual void sVendorInfo();

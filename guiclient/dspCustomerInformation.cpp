@@ -49,6 +49,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _crmTab->setEnabled(false);
+  _salesTab->setEnabled(false);
+  
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListPage->layout()->addWidget(_todoList);
   _todoList->findChild<QWidget*>("_close")->hide();
@@ -61,6 +64,26 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _contactsPage->layout()->addWidget(_contacts);
   _contacts->findChild<QWidget*>("_close")->hide();
   _contacts->findChild<QWidget*>("_activeOnly")->hide();
+  _contacts->findChild<QWidget*>("_contactsLit")->hide();
+  
+  _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
+  _opportunitiesPage->layout()->addWidget(_oplist);
+  _oplist->findChild<QWidget*>("_close")->hide();
+  _oplist->findChild<QWidget*>("_usr")->hide();
+  _oplist->findChild<QWidget*>("_dates")->hide();
+  _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  
+  _quotes = new quotes(this, "quotes", Qt::Widget);
+  _quotesPage->layout()->addWidget(_quotes);
+  _quotes->findChild<QWidget*>("_close")->hide();
+  _quotes->findChild<QWidget*>("_warehouse")->hide();
+  _quotes->findChild<QWidget*>("_quoteLit")->hide();
+  _quotes->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _quotes->findChild<XCheckBox*>("_showExpired")->setForgetful(true);
+  _quotes->findChild<XCheckBox*>("_showExpired")->setChecked(true);
+  _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
+  _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
+  _quotes->findChild<QWidget*>("_options")->hide();
 
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -71,32 +94,31 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_editCreditMemo, SIGNAL(clicked()), this, SLOT(sEditCreditMemo()));
   connect(_editInvoice, SIGNAL(clicked()), this, SLOT(sEditInvoice()));
   connect(_editOrder, SIGNAL(clicked()), this, SLOT(sEditOrder()));
-  connect(_editQuote, SIGNAL(clicked()), this, SLOT(sEditQuote()));
   connect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*, QTreeWidgetItem*)));
   connect(_newCreditMemo, SIGNAL(clicked()), this, SLOT(sNewCreditMemo()));
   connect(_newInvoice, SIGNAL(clicked()), this, SLOT(sNewInvoice()));
   connect(_newOrder, SIGNAL(clicked()), this, SLOT(sNewOrder()));
-  connect(_newQuote, SIGNAL(clicked()), this, SLOT(sNewQuote()));
   connect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
-  connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuQuote(QMenu*)));
   connect(_viewCreditMemo, SIGNAL(clicked()), this, SLOT(sViewCreditMemo()));
   connect(_viewInvoice, SIGNAL(clicked()), this, SLOT(sViewInvoice()));
   connect(_viewOrder, SIGNAL(clicked()), this, SLOT(sViewOrder()));
-  connect(_viewQuote, SIGNAL(clicked()), this, SLOT(sViewQuote()));
-  connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
   connect(_crmAccount, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
   connect(_refresh, SIGNAL(clicked()), this, SLOT(sPopulate()));
   connect(_workbenchInvoice, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
   connect(_cashReceiptInvoice, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
   connect(_workbenchCreditMemo, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
   connect(_printOrder, SIGNAL(clicked()), this ,SLOT(sPrintSalesOrder()));
-  connect(_printQuote, SIGNAL(clicked()), this ,SLOT(sPrintQuote()));
   connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
   connect(_printCreditMemo, SIGNAL(clicked()), this ,SLOT(sPrintCreditMemo()));
   connect(_printReceipt,    SIGNAL(clicked()), this, SLOT(sPrintCCReceipt()));
   connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_opportunitiesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_quotesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_ordersButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_returnsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_cust, SIGNAL(valid(bool)), _crmTab, SLOT(setEnabled(bool)));
+  connect(_cust, SIGNAL(valid(bool)), _salesTab, SLOT(setEnabled(bool)));
 
 #ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
@@ -112,34 +134,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _arhist->addColumn(tr("Balance"),       _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _arhist->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   _arhist->addColumn(tr("Base Balance"),  _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
-
-  // setup Quote list
-  _quote->addColumn(tr("Quote #"),       _itemColumn,     Qt::AlignLeft,   true,  "quhead_number"  );
-  _quote->addColumn(tr("P/O Number"),    -1,              Qt::AlignLeft,   true,  "quhead_custponumber"   );
-  _quote->addColumn(tr("Quote Date"),    _dateColumn,     Qt::AlignCenter, true,  "quhead_quotedate" );
-  if(_privileges->check("MaintainQuotes"))
-  {
-    _newQuote->setEnabled(true);
-    connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
-    connect(_quote, SIGNAL(valid(bool)), _printQuote, SLOT(setEnabled(bool)));
-    connect(_quote, SIGNAL(valid(bool)), _editQuote, SLOT(setEnabled(bool)));
-    connect(_quote, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
-  }
-  else if (_privileges->check("ViewQuotes"))
-  {
-    connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
-    connect(_quote, SIGNAL(valid(bool)), _printQuote, SLOT(setEnabled(bool)));
-  }
-  else
-  {
-    _newQuote->setEnabled(false);
-    _editQuote->setEnabled(false);
-    _viewQuote->setEnabled(false);
-    _printQuote->setEnabled(false);
-  }
-  if (_privileges->check("ConvertQuotes"))
-    connect(_quote, SIGNAL(valid(bool)), _convertQuote, SLOT(setEnabled(bool)));
-  connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuoteList()));
 
   // setup Order list
   _order->addColumn(tr("S/O #"),            _itemColumn,   Qt::AlignLeft,   true,  "cohead_number"   );
@@ -239,8 +233,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     connect (_cust, SIGNAL(valid(bool)), _newInvoice, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainSalesOrders"))
     connect (_cust, SIGNAL(valid(bool)), _newOrder, SLOT(setEnabled(bool)));
-  if (_privileges->check("MaintainQuotes"))
-    connect (_cust, SIGNAL(valid(bool)), _newQuote, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainCreditMemos"))
     connect (_cust, SIGNAL(valid(bool)), _newCreditMemo, SLOT(setEnabled(bool)));
 
@@ -285,11 +277,6 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     disconnect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
     disconnect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*)));
     disconnect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
-    disconnect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuQuote(QMenu*)));
-    if(_privileges->check("MaintainQuotes"))
-      disconnect(_quote, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
-    else
-      disconnect(_quote, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
     if(_privileges->check("MaintainSalesOrders"))
       disconnect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
     else
@@ -304,16 +291,12 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     _editCreditMemo->hide();
     _editInvoice->hide();
     _editOrder->hide();
-    _editQuote->hide();
     _viewCreditMemo->hide();
     _viewInvoice->hide();
     _viewOrder->hide();
-    _viewQuote->hide();
     _newCreditMemo->hide();
     _newInvoice->hide();
     _newOrder->hide();
-    _newQuote->hide();
-    _convertQuote->hide();
   }
   return NoError;
 }
@@ -376,6 +359,8 @@ void dspCustomerInformation::sPopulateCustInfo()
       _crmacctId = query.value("crmacct_id").toInt();
       _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+      _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+      _quotes->findChild<CustCluster*>("_cust")->setId(_cust->id());
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -466,13 +451,14 @@ void dspCustomerInformation::sPopulate()
 {
   sPopulateCustInfo();
   sFillARHistory();
-  sFillQuoteList();
   sFillOrderList();
   sFillInvoiceList();
   sFillCreditMemoList();
   sFillPaymentsList();
   _todoList->sFillList();
   _contacts->sFillList();
+  _oplist->sFillList();
+  _quotes->sFillList();
 }
 
 void dspCustomerInformation::sEdit()
@@ -502,53 +488,6 @@ void dspCustomerInformation::sPrint()
     report.print();
   else
     report.reportError(this);
-}
-
-void dspCustomerInformation::sFillQuoteList()
-{
-  _quote->clear();
-
-  q.prepare( "SELECT DISTINCT quhead_id, quhead_number,"
-             "                quhead_custponumber, quhead_quotedate "
-             "FROM quhead "
-             "WHERE (quhead_cust_id=:cust_id) "
-             "ORDER BY quhead_number;" );
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-  _quote->populate(q);
-}
-
-void dspCustomerInformation::sNewQuote()
-{
-  ParameterList params;
-  params.append("mode", "newQuote");
-  params.append("cust_id", _cust->id());
-
-  salesOrder *newdlg = new salesOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspCustomerInformation::sEditQuote()
-{
-  ParameterList params;
-  params.append("mode", "editQuote");
-  params.append("quhead_id", _quote->id());
-
-  salesOrder *newdlg = new salesOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspCustomerInformation::sViewQuote()
-{
-  ParameterList params;
-  params.append("mode", "viewQuote");
-  params.append("quhead_id", _quote->id());
-
-  salesOrder *newdlg = new salesOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspCustomerInformation::sFillARHistory()
@@ -1323,31 +1262,6 @@ void dspCustomerInformation::sFillPaymentsList()
   }
 }
 
-void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
-{
-  int menuItem;
-
-  menuItem = pMenu->insertItem(tr("New Quote..."), this, SLOT(sNewQuote()), 0);
-  if (!_privileges->check("MaintainQuotes"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertSeparator();
-
-  menuItem = pMenu->insertItem(tr("Edit Quote..."), this, SLOT(sEditQuote()), 0);
-  if (!_privileges->check("MaintainQuotes"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("View Quote..."), this, SLOT(sViewQuote()), 0);
-  if (!_privileges->check("ViewQuotes"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertSeparator();
-
-  menuItem = pMenu->insertItem(tr("Convert Quote..."), this, SLOT(sConvertQuote()), 0);
-  if (!_privileges->check("ConvertQuotes"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-}
-
 void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
 {
   int menuItem;
@@ -1454,103 +1368,6 @@ void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu,  QTreeWidgetIte
   }
 }
 
-void dspCustomerInformation::sConvertQuote()
-{
-  if ( QMessageBox::information( this, tr("Convert Selected Quote(s)"),
-                               tr("Are you sure that you want to convert the selected Quote(s) to Sales Order(s)?" ),
-                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
-  {
-    XSqlQuery check;
-    check.prepare( "SELECT quhead_number, cust_creditstatus "
-                   "FROM quhead, cust "
-                   "WHERE ( (quhead_cust_id=cust_id)"
-                   " AND (quhead_id=:quhead_id) );" );
-
-    XSqlQuery convert;
-    convert.prepare("SELECT convertQuote(:quhead_id) AS sohead_id;");
-
-    int counter = 0;
-    int soheadid = -1;
-    QList<QTreeWidgetItem*> selected = _quote->selectedItems();
-    for (int i = 0; i < selected.size(); i++)
-    {
-      int id = ((XTreeWidgetItem *)(selected[i]))->id();
-
-      check.bindValue(":quhead_id", id);
-      check.exec();
-      if (check.first())
-      {
-        if ( (check.value("cust_creditstatus").toString() == "H") &&
-             (!_privileges->check("CreateSOForHoldCustomer")) )
-        {
-          QMessageBox::warning( this, tr("Cannot Convert Quote"),
-              tr("<p>Quote #%1 is for a Customer that has "
-                 "been placed on a Credit Hold and you do not"
-                 " have privilege to create Sales Orders for "
-                 "Customers on Credit Hold.  The selected "
-                 "Customer must be taken off of Credit Hold "
-                 "before you may create convert this Quote." )
-              .arg(check.value("quhead_number").toString()) );
-          return;
-        }
-
-        if ( (check.value("cust_creditstatus").toString() == "W") &&
-             (!_privileges->check("CreateSOForWarnCustomer")) )
-        {
-          QMessageBox::warning( this, tr("Cannot Convert Quote"),
-              tr("<p>Quote #%1 is for a Customer that has "
-                 "been placed on a Credit Warning and you do "
-                 " not have privilege to create Sales Orders "
-                 "for Customers on Credit Warning.  The "
-                 "selected Customer must be taken off of "
-                 "Credit Warning before you may convert this "
-                 "Quote." )
-              .arg(check.value("quhead_number").toString()) );
-          return;
-        }
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        continue;
-      }
-
-      convert.bindValue(":quhead_id", id);
-      convert.exec();
-      if (convert.first())
-      {
-        soheadid = convert.value("sohead_id").toInt();
-        if(soheadid < 0)
-        {
-          QMessageBox::warning( this, tr("Cannot Convert Quote"),
-              tr("<p>Quote #%1 has one or more line items "
-                 "without a Site specified. These line "
-                 "items must be fixed before you may convert "
-                 "this quote." )
-              .arg(check.value("quhead_number").toString()) );
-          return;
-        }
-        counter++;
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-
-    if (counter)
-    {
-      omfgThis->sQuotesUpdated(-1);
-      omfgThis->sSalesOrdersUpdated(-1);
-    }
-
-    if (counter == 1)
-    {
-      salesOrder::editSalesOrder(soheadid, true);
-    }
-  }
-}
 
 void dspCustomerInformation::doDialog(QWidget * parent, const ParameterList & pParams)
 {
@@ -1696,26 +1513,6 @@ void dspCustomerInformation::sPrintSalesOrder()
     newdlgS.exec();
 }
 
-void dspCustomerInformation::sPrintQuote()
-{
-  q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
-             "FROM quhead "
-             "WHERE (quhead_id=:quheadid); " );
-  q.bindValue(":quheadid", _quote->id());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("quhead_id", _quote->id());
-
-    orReport report(q.value("reportname").toString(), params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
-}
-
 void dspCustomerInformation::sPrintInvoice()
 {
   ParameterList params;
@@ -1800,6 +1597,13 @@ void dspCustomerInformation::sHandleButtons()
     _crmStack->setCurrentIndex(1);
   else
     _crmStack->setCurrentIndex(2);
+    
+  if (_quotesButton->isChecked())
+    _salesStack->setCurrentIndex(0);
+  else if (_ordersButton->isChecked())
+    _salesStack->setCurrentIndex(1);
+  else
+    _salesStack->setCurrentIndex(2);
 }
 
 bool dspCustomerInformation::checkSitePrivs(int invcid)

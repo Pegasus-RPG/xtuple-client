@@ -23,6 +23,7 @@
 #include <metasql.h>
 
 #include "failedPostList.h"
+#include "mqlutil.h"
 #include "salesOrder.h"
 #include "storedProcErrorLookup.h"
 #include "customer.h"
@@ -31,6 +32,8 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+  
+  _cust->hide();
 
   connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_convert, SIGNAL(clicked()), this, SLOT(sConvert()));
@@ -39,9 +42,6 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
   _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
@@ -72,8 +72,6 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _showProspects->setChecked(true);
-
-  sFillList();
 }
 
 quotes::~quotes()
@@ -84,6 +82,23 @@ quotes::~quotes()
 void quotes::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse quotes::set(const ParameterList& pParams)
+{
+  QVariant param;
+  bool	   valid;
+  
+  param = pParams.value("fillList", &valid);
+  if (valid)
+  {
+    connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+    connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+    sFillList();
+  }
+
+  return NoError;
 }
 
 void quotes::sPopulateMenu(QMenu *pMenu)
@@ -312,6 +327,8 @@ void quotes::sNew()
 {
   ParameterList params;
   params.append("mode", "newQuote");
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
       
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
@@ -403,37 +420,16 @@ void quotes::sDelete()
 
 void quotes::sFillList()
 {
-  QString sql("SELECT DISTINCT quhead_id, quhead_number, quhead_billtoname,"
-              "                quhead_custponumber, quhead_quotedate,"
-              "                quhead_expire "
-              "FROM quhead "
-	      " <? if exists(\"customersOnly\") ?>"
-	      "     JOIN custinfo ON (quhead_cust_id=cust_id) "
-	      " <? endif ?>"
-	      " <? if exists(\"warehous_id\") ?>"
-              "     LEFT OUTER JOIN quitem "
-	      "     JOIN itemsite ON (quitem_itemsite_id=itemsite_id) "
-              "              ON (quitem_quhead_id=quhead_id) "
-	      " <? endif ?>"
-	      " <? if exists(\"warehous_id\") ?>"
-	      " WHERE (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-              " <?   if not exists(\"showExpired\") ?>"
-              "   AND ((quhead_expire IS NULL) OR (quhead_expire >= CURRENT_DATE))"
-              " <?   endif ?>"
-              " <? elseif not exists(\"showExpired\") ?>"
-              " WHERE((quhead_expire IS NULL) OR (quhead_expire >= CURRENT_DATE))"
-	      " <? endif ?>"
-	      "ORDER BY quhead_number;");
-
+  MetaSQLQuery mql = mqlLoad("quotes", "detail");
   ParameterList params;
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
   if (_warehouse->isSelected())
     params.append("warehous_id", _warehouse->id());
   if (! _showProspects->isChecked())
     params.append("customersOnly");
   if ( _showExpired->isChecked())
     params.append("showExpired");
-
-  MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _quote->clear();
   _quote->populate(q);

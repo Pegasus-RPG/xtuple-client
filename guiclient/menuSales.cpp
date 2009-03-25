@@ -597,9 +597,12 @@ void menuSales::sNewQuote()
 
 void menuSales::sQuotes()
 {
-  omfgThis->handleNewWindow(new quotes());
+  ParameterList params;
+  params.append("fillList");
+  quotes* win = new quotes();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }
-
 
 //  Billing
 void menuSales::sUninvoicedShipments()

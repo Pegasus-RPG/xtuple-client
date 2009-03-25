@@ -968,7 +968,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0" >
           <widget class="QStackedWidget" name="_crmStack" >
            <property name="enabled" >
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="currentIndex" >
             <number>0</number>
@@ -979,105 +979,75 @@ to be bound by its terms.</comment>
            <widget class="QWidget" name="_todoListPage" >
             <layout class="QGridLayout" name="gridLayout_9" />
            </widget>
-           <widget class="QWidget" name="_opportunitiesPage" />
+           <widget class="QWidget" name="_opportunitiesPage" >
+            <layout class="QGridLayout" name="gridLayout_11" />
+           </widget>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_quotesTab" >
+       <widget class="QWidget" name="_salesTab" >
         <attribute name="title" >
-         <string>Quotes</string>
+         <string>Sales</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_3" >
+        <layout class="QGridLayout" name="gridLayout_12" >
          <item row="0" column="0" >
-          <widget class="XTreeWidget" name="_quote" />
-         </item>
-         <item row="0" column="1" >
-          <layout class="QVBoxLayout" >
+          <layout class="QHBoxLayout" name="horizontalLayout_2" >
            <property name="spacing" >
-            <number>0</number>
+            <number>12</number>
            </property>
            <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>5</number>
+            <widget class="QRadioButton" name="_quotesButton" >
+             <property name="text" >
+              <string>Quotes</string>
              </property>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QPushButton" name="_printQuote" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>&amp;Print</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_newQuote" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>New</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_editQuote" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Edit</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_viewQuote" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>View</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_convertQuote" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Convert</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
            <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
+            <widget class="QRadioButton" name="_ordersButton" >
+             <property name="text" >
+              <string>Orders</string>
              </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_returnsButton" >
+             <property name="text" >
+              <string>Returns</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0" >
               <size>
-               <width>20</width>
-               <height>30</height>
+               <width>40</width>
+               <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
           </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_salesStack" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_quotesPage" >
+            <layout class="QGridLayout" name="gridLayout_13" />
+           </widget>
+           <widget class="QWidget" name="_ordersPage" >
+            <layout class="QGridLayout" name="gridLayout_14" />
+           </widget>
+           <widget class="QWidget" name="_returnsPage" />
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1526,10 +1496,6 @@ to be bound by its terms.</comment>
   <tabstop>_notes</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_comment</tabstop>
-  <tabstop>_quote</tabstop>
-  <tabstop>_newQuote</tabstop>
-  <tabstop>_editQuote</tabstop>
-  <tabstop>_viewQuote</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_newOrder</tabstop>
   <tabstop>_editOrder</tabstop>

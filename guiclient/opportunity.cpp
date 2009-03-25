@@ -99,6 +99,10 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
   {
     _mode = cNew;
 
+    param = pParams.value("crmacct_id", &valid);
+    if (valid)
+      _crmacct->setId(param.toInt());
+
     if (param.toString() == "new")
     {
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));

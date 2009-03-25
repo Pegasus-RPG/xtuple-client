@@ -153,6 +153,8 @@ void dspQuotesByCustomer::sFillList()
     ParameterList params;
     _dates->appendValue(params);
     params.append("cust_id", _cust->id());
+    params.append("showExpired");
+    params.append("customersOnly");
     if (_selectedPO->isChecked())
       params.append("poNumber", _poNumber->currentText());
 
