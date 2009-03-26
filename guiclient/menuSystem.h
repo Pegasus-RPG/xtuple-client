@@ -106,7 +106,7 @@ class menuSystem : public QObject
     void sTOC();
 
     void sCommunityHome();
-    void sCommunityNewAccount();
+    //void sCommunityNewAccount();
     void sCommunityEditAccount();
     void sCommunityForums();
     void sCommunityBlogs();
@@ -114,6 +114,8 @@ class menuSystem : public QObject
     void sCommunityWiki();
     void sCommunityDownloads();
     void sRegister();
+    void sCommunitySupport();
+    void sCommunityTranslation();
 
   private:
     GUIClient *parent;
