@@ -43,6 +43,8 @@ public slots:
     virtual void sDeliver();
     virtual void sPrintForms(); 
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
+    virtual void sDspShipmentStatus();
+    virtual void sShipment();
 
 protected slots:
     virtual void languageChange();

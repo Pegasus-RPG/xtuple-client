@@ -17,7 +17,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-
 #include <metasql.h>
 #include "mqlutil.h"
 
@@ -37,8 +36,6 @@
 #include "invoice.h"
 #include "printCreditMemo.h"
 #include "printInvoice.h"
-#include "printSoForm.h"
-#include "salesOrder.h"
 #include "crmaccount.h"
 #include "failedPostList.h"
 #include "getGLDistDate.h"
@@ -49,8 +46,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _crmTab->setEnabled(false);
-  _salesTab->setEnabled(false);
+ //_crmTab->setEnabled(false);
+  //_salesTab->setEnabled(false);
   
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListPage->layout()->addWidget(_todoList);
@@ -84,6 +81,18 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
   _quotes->findChild<QWidget*>("_options")->hide();
+  
+  _orders = new openSalesOrders(this, "_orders", Qt::Widget);
+  _ordersPage->layout()->addWidget(_orders);
+  _orders->findChild<QWidget*>("_close")->hide();
+  _orders->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
+  _orders->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
+  _orders->findChild<XCheckBox*>("_autoUpdate")->hide();
+  _orders->findChild<QWidget*>("_warehouse")->hide();
+  _orders->findChild<QWidget*>("_salesOrdersLit")->hide();
+  _orders->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _orders->findChild<XCheckBox*>("_showClosed")->setForgetful(false);
+  _orders->findChild<XCheckBox*>("_showClosed")->show();
 
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -93,27 +102,24 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_editCreditMemo, SIGNAL(clicked()), this, SLOT(sEditCreditMemo()));
   connect(_editInvoice, SIGNAL(clicked()), this, SLOT(sEditInvoice()));
-  connect(_editOrder, SIGNAL(clicked()), this, SLOT(sEditOrder()));
   connect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*, QTreeWidgetItem*)));
   connect(_newCreditMemo, SIGNAL(clicked()), this, SLOT(sNewCreditMemo()));
   connect(_newInvoice, SIGNAL(clicked()), this, SLOT(sNewInvoice()));
-  connect(_newOrder, SIGNAL(clicked()), this, SLOT(sNewOrder()));
-  connect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
   connect(_viewCreditMemo, SIGNAL(clicked()), this, SLOT(sViewCreditMemo()));
   connect(_viewInvoice, SIGNAL(clicked()), this, SLOT(sViewInvoice()));
-  connect(_viewOrder, SIGNAL(clicked()), this, SLOT(sViewOrder()));
   connect(_crmAccount, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
   connect(_refresh, SIGNAL(clicked()), this, SLOT(sPopulate()));
   connect(_workbenchInvoice, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
   connect(_cashReceiptInvoice, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
   connect(_workbenchCreditMemo, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
-  connect(_printOrder, SIGNAL(clicked()), this ,SLOT(sPrintSalesOrder()));
   connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
   connect(_printCreditMemo, SIGNAL(clicked()), this ,SLOT(sPrintCreditMemo()));
   connect(_printReceipt,    SIGNAL(clicked()), this, SLOT(sPrintCCReceipt()));
   connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_opportunitiesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_quotesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_ordersButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_returnsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -134,33 +140,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _arhist->addColumn(tr("Balance"),       _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _arhist->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   _arhist->addColumn(tr("Base Balance"),  _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
-
-  // setup Order list
-  _order->addColumn(tr("S/O #"),            _itemColumn,   Qt::AlignLeft,   true,  "cohead_number"   );
-  _order->addColumn(tr("Cust. P/O Number"), -1,            Qt::AlignLeft,   true,  "cohead_custponumber"   );
-  _order->addColumn(tr("Ordered"),          _dateColumn,   Qt::AlignCenter, true,  "cohead_orderdate" );
-  _order->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter, true,  "scheduled" );
-  if(_privileges->check("MaintainSalesOrders"))
-  {
-    _newOrder->setEnabled(true);
-    connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
-    connect(_order, SIGNAL(valid(bool)), _printOrder, SLOT(setEnabled(bool)));
-    connect(_order, SIGNAL(valid(bool)), _editOrder, SLOT(setEnabled(bool)));
-    connect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
-  }
-  else if (_privileges->check("ViewSalesOrders"))
-  {
-    connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
-    connect(_order, SIGNAL(valid(bool)), _printOrder, SLOT(setEnabled(bool)));
-  }
-  else
-  {
-    _newOrder->setEnabled(false);
-    _editOrder->setEnabled(false);
-    _viewOrder->setEnabled(false);
-    _printOrder->setEnabled(false);
-  }
-  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillOrderList()));
 
   // setup Invoice list
   _invoice->addColumn(tr("Posted"),     _ynColumn,       Qt::AlignCenter, true,  "posted" );
@@ -231,8 +210,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     connect (_cust, SIGNAL(valid(bool)), _workbenchCreditMemo, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainMiscInvoices"))
     connect (_cust, SIGNAL(valid(bool)), _newInvoice, SLOT(setEnabled(bool)));
-  if (_privileges->check("MaintainSalesOrders"))
-    connect (_cust, SIGNAL(valid(bool)), _newOrder, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainCreditMemos"))
     connect (_cust, SIGNAL(valid(bool)), _newCreditMemo, SLOT(setEnabled(bool)));
 
@@ -276,11 +253,6 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
   {
     disconnect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
     disconnect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*)));
-    disconnect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
-    if(_privileges->check("MaintainSalesOrders"))
-      disconnect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
-    else
-      disconnect(_order, SIGNAL(itemSelected(int)), _viewOrder, SLOT(animateClick()));
     if(_privileges->check("MaintainMiscInvoices"))
       disconnect(_invoice, SIGNAL(itemSelected(int)), _editInvoice, SLOT(animateClick()));
     else
@@ -290,13 +262,10 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     _edit->hide();
     _editCreditMemo->hide();
     _editInvoice->hide();
-    _editOrder->hide();
     _viewCreditMemo->hide();
     _viewInvoice->hide();
-    _viewOrder->hide();
     _newCreditMemo->hide();
     _newInvoice->hide();
-    _newOrder->hide();
   }
   return NoError;
 }
@@ -319,12 +288,14 @@ void dspCustomerInformation::sPopulateCustInfo()
                    "       cust_creditstatus, cust_comments, cust_shipvia,"
                    "       (custtype_code || '-' || custtype_descrip) AS f_custtype,"
                    "       (terms_code || '-' || terms_descrip) AS f_terms,"
+                   "       (salesrep_number || '-' || salesrep_name) AS f_salesrep,"
                    "       cust_creditlmt, crmacct_id "
-                   "  FROM cust, custtype, terms, crmacct "
+                   "  FROM cust, custtype, terms, crmacct, salesrep "
                    " WHERE ((cust_custtype_id=custtype_id)"
                    "   AND  (cust_terms_id=terms_id)"
                    "   AND  (cust_id=:cust_id)"
-                   "   AND  (crmacct_cust_id=cust_id));" );
+                   "   AND  (crmacct_cust_id=cust_id) "
+                   "   AND  (salesrep_id=cust_salesrep_id));" );
     query.bindValue(":cust_id", _cust->id());
     query.exec();
     if (query.first())
@@ -355,12 +326,14 @@ void dspCustomerInformation::sPopulateCustInfo()
       _type->setText(query.value("f_custtype").toString());
       _terms->setText(query.value("f_terms").toString());
       _shipvia->setText(query.value("cust_shipvia").toString());
+      _salesrep->setText(query.value("f_salesrep").toString());
       _creditLimit->setDouble(query.value("cust_creditlmt").toDouble());
       _crmacctId = query.value("crmacct_id").toInt();
       _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _quotes->findChild<CustCluster*>("_cust")->setId(_cust->id());
+      _orders->findChild<CustCluster*>("_cust")->setId(_cust->id());
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -450,15 +423,26 @@ void dspCustomerInformation::sPopulateCustInfo()
 void dspCustomerInformation::sPopulate()
 {
   sPopulateCustInfo();
-  sFillARHistory();
-  sFillOrderList();
-  sFillInvoiceList();
-  sFillCreditMemoList();
-  sFillPaymentsList();
-  _todoList->sFillList();
-  _contacts->sFillList();
-  _oplist->sFillList();
-  _quotes->sFillList();
+  if (_cust->isValid())
+  {
+    sFillARHistory();
+    sFillInvoiceList();
+    sFillCreditMemoList();
+    sFillPaymentsList();
+    _todoList->sFillList();
+    _contacts->sFillList();
+    _oplist->sFillList();
+    _quotes->sFillList();
+    _orders->sFillList();
+  }
+  else
+  {
+    _todoList->findChild<XTreeWidget*>("_todoList")->clear();
+    _contacts->findChild<XTreeWidget*>("_contacts")->clear();
+    _oplist->findChild<XTreeWidget*>("_list")->clear();
+    _quotes->findChild<XTreeWidget*>("_quote")->clear();
+    _orders->findChild<XTreeWidget*>("_so")->clear();
+  }
 }
 
 void dspCustomerInformation::sEdit()
@@ -520,43 +504,6 @@ void dspCustomerInformation::sFillARHistory()
 
   // End Population of A/R History
 }
-void dspCustomerInformation::sFillOrderList()
-{
-  QString sql( "SELECT DISTINCT cohead_id, cohead_number,"
-             "       cohead_custponumber, cohead_orderdate,"
-             "       MIN(coitem_scheddate) AS scheduled "
-             "  FROM cohead LEFT OUTER JOIN coitem ON (coitem_cohead_id=cohead_id) "
-             " WHERE ( ");
-  if (!_orderShowclosed->isChecked())
-    sql += " ((coitem_status = 'O') OR (coitem_status IS NULL)) AND ";
-
-  sql +=     " (cohead_cust_id=:cust_id) )"
-             "GROUP BY cohead_id, cohead_number,"
-             "         cohead_custponumber, cohead_orderdate "
-             "ORDER BY cohead_number; ";
-  q.prepare(sql);
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-
-  _order->clear();
-  _order->populate(q);
-  //_order->setDragString("soheadid=");
-}
-
-void dspCustomerInformation::sNewOrder()
-{
-  salesOrder::newSalesOrder(_cust->id());
-}
-
-void dspCustomerInformation::sEditOrder()
-{
-  salesOrder::editSalesOrder(_order->id(), false);
-}
-
-void dspCustomerInformation::sViewOrder()
-{
-  salesOrder::viewSalesOrder(_order->id());
-}
 
 void dspCustomerInformation::sEditInvOrder()
 {
@@ -566,8 +513,8 @@ void dspCustomerInformation::sEditInvOrder()
               "  AND (invchead_id=:invoice_id));");
     q.bindValue(":invoice_id",  _invoice->id());
     q.exec();
-    if (q.first())
-      salesOrder::editSalesOrder(q.value("cohead_id").toInt(), false);
+ //   if (q.first())
+ //     salesOrder::editSalesOrder(q.value("cohead_id").toInt(), false);
 }
 
 void dspCustomerInformation::sViewInvOrder()
@@ -578,8 +525,8 @@ void dspCustomerInformation::sViewInvOrder()
               "  AND (invchead_id=:invoice_id));");
     q.bindValue(":invoice_id",  _invoice->id());
     q.exec();
-    if (q.first())
-      salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
+ //   if (q.first())
+ //     salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
 }
 
 void dspCustomerInformation::sFillInvoiceList()
@@ -1262,30 +1209,6 @@ void dspCustomerInformation::sFillPaymentsList()
   }
 }
 
-void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
-{
-  int menuItem;
-
-  menuItem = pMenu->insertItem(tr("New Order..."), this, SLOT(sNewOrder()), 0);
-  if(!_privileges->check("MaintainSalesOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertSeparator();
-
-  menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if(!_privileges->check("MaintainSalesOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if (!_privileges->check("ViewSalesOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertSeparator();
-
-  pMenu->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
-  pMenu->insertItem(tr("Shipments..."), this, SLOT(sShipment()), 0);
-}
-
 void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
@@ -1438,27 +1361,6 @@ void dspCustomerInformation::sCRMAccount()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspCustomerInformation::sDspShipmentStatus()
-{
-  ParameterList params;
-  params.append("sohead_id", _order->id());
-  params.append("run");
-
-  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspCustomerInformation::sShipment()
-{
-  ParameterList params;
-  params.append("sohead_id", _order->id());
-
-  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void dspCustomerInformation::sInvShipmentStatus()
 {
   q.prepare("SELECT cohead_id "
@@ -1501,16 +1403,6 @@ void dspCustomerInformation::sInvShipment()
 void dspCustomerInformation::sPrintCCReceipt()
 {
   CreditCardProcessor::printReceipt(_payments->id());
-}
-
-void dspCustomerInformation::sPrintSalesOrder()
-{
-    ParameterList params;
-    params.append("sohead_id", _order->id());
-
-    printSoForm newdlgS(this, "", true);
-    newdlgS.set(params);
-    newdlgS.exec();
 }
 
 void dspCustomerInformation::sPrintInvoice()
@@ -1591,6 +1483,11 @@ void dspCustomerInformation::sPrintStatement()
 
 void dspCustomerInformation::sHandleButtons()
 {
+  if (_notesButton->isChecked())
+    _remarksStack->setCurrentIndex(0);
+  else
+    _remarksStack->setCurrentIndex(1);
+    
   if (_contactsButton->isChecked())
     _crmStack->setCurrentIndex(0);
   else if (_todoListButton->isChecked())

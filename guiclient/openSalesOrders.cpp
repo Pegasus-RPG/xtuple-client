@@ -20,6 +20,8 @@
 #include "copySalesOrder.h"
 #include "creditcardprocessor.h"
 #include "deliverSalesOrder.h"
+#include "dspSalesOrderStatus.h"
+#include "dspShipmentsBySalesOrder.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
 #include "rescheduleSoLineItems.h"
@@ -30,6 +32,11 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+  
+  _cust->hide();
+  _showClosed->hide();
+  _showClosed->setForgetful(true);
+  _showClosed->setChecked(false);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -40,6 +47,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
+  connect(_showClosed, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _so->addColumn(tr("S/O #"),           _orderColumn, Qt::AlignLeft,  true, "cohead_number");
   _so->addColumn(tr("Cust. #"),         _orderColumn, Qt::AlignLeft,  true, "cust_number");
@@ -80,6 +88,12 @@ void openSalesOrders::languageChange()
 void openSalesOrders::setParams(ParameterList &params)
 {
   params.append("error", tr("Error"));
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
+  if (_showClosed->isChecked())
+    params.append("showClosed");
+  if (_preferences->boolean("selectedSites") || _warehouse->isSelected())
+    params.append("selectedSites");
   _warehouse->appendValue(params);
 }
 
@@ -369,6 +383,11 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
   }
 
   menuItem = pMenu->insertItem(tr("Print Sales Order Form..."), this, SLOT(sPrintForms()), 0); 
+  
+  pMenu->insertSeparator();
+
+  pMenu->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
+  pMenu->insertItem(tr("Shipments..."), this, SLOT(sShipment()), 0);
 
 }
 
@@ -381,19 +400,26 @@ void openSalesOrders::sFillList()
   QString sql( "SELECT DISTINCT cohead.*,"
                "       COALESCE(cust_number, :error) AS cust_number,"
                "       MIN(coitem_scheddate) AS scheddate "
-               "  FROM cohead LEFT OUTER JOIN custinfo ON (cohead_cust_id=cust_id) "
-               "       LEFT OUTER JOIN "
+               "  FROM cohead "
+               "    JOIN custinfo ON (cohead_cust_id=cust_id) "
+               "<? if exists(\"selectedSites\") ?> "
+               "    JOIN coitem ON (coitem_cohead_id=cohead_id) "
+               "    JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
+               "    JOIN site() ON (itemsite_warehous_id=warehous_id) "
+               "<? else ?> "
+               "    LEFT OUTER JOIN coitem ON (coitem_cohead_id=cohead_id) "
+               "    LEFT OUTER JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
+               "    LEFT OUTER JOIN whsinfo ON (itemsite_warehous_id=warehous_id) "
+               " <? endif ?> "
+               " WHERE((true) "
+               "<? if exists(\"cust_id\") ?>"
+               "  AND (cust_id=<? value(\"cust_id\") ?> )"
+               "<? endif ?>"
+               "<? if not exists(\"showClosed\") ?> "
+               "  AND ((coitem_status = 'O') OR (coitem_status IS NULL)) "
+               "<? endif ?>"
 	       "<? if  exists(\"warehous_id\") ?>"
-               " ( "
-	       "<? endif ?>"
-               "    coitem "
-	       "<? if  exists(\"warehous_id\") ?>"
-               "       JOIN itemsite ON (coitem_itemsite_id=itemsite_id) )"
-	       "<? endif ?>"
-               "         ON (coitem_cohead_id=cohead_id)"
-               " WHERE(((coitem_status = 'O') OR (coitem_status IS NULL)) "
-	       "<? if  exists(\"warehous_id\") ?>"
-	       "   AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "  AND (warehous_id=<? value(\"warehous_id\") ?>)"
 	       "<? endif ?>"
 	       " ) "
 	       "GROUP BY cust_number,"
@@ -489,4 +515,25 @@ bool openSalesOrders::checkSitePrivs()
     }
   }
   return true;
+}
+
+void openSalesOrders::sDspShipmentStatus()
+{
+  ParameterList params;
+  params.append("sohead_id", _so->id());
+  params.append("run");
+
+  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void openSalesOrders::sShipment()
+{
+  ParameterList params;
+  params.append("sohead_id", _so->id());
+
+  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }

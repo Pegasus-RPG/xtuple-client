@@ -89,7 +89,7 @@ enum SetResponse quotes::set(const ParameterList& pParams)
   QVariant param;
   bool	   valid;
   
-  param = pParams.value("fillList", &valid);
+  param = pParams.value("run", &valid);
   if (valid)
   {
     connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));

@@ -197,7 +197,7 @@ enum SetResponse todoList::set(const ParameterList& pParams)
     sFillList();
   }
   
-  param = pParams.value("fillList", &valid);
+  param = pParams.value("run", &valid);
   if (valid)
     sFillList();
 

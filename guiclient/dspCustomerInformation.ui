@@ -12,14 +12,14 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>712</height>
+    <width>860</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Customer Information Workbench</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
      <property name="margin" >
@@ -186,6 +186,29 @@ to be bound by its terms.</comment>
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="3" column="2" >
+          <widget class="QLabel" name="_salesrepLit" >
+           <property name="text" >
+            <string>Sales Rep:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3" >
+          <widget class="QLabel" name="_salesrep" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string>N/A</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -617,6 +640,32 @@ to be bound by its terms.</comment>
         <property name="verticalSpacing" >
          <number>0</number>
         </property>
+        <item row="1" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="5" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="_firstSaleDateLit" >
           <property name="text" >
@@ -715,19 +764,6 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item row="1" column="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="1" column="3" >
          <widget class="QLabel" name="_ytdSalesLit" >
           <property name="text" >
@@ -753,19 +789,6 @@ to be bound by its terms.</comment>
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
-        </item>
-        <item row="1" column="5" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item row="1" column="6" >
          <widget class="QLabel" name="_lateBalanceLit" >
@@ -885,33 +908,78 @@ to be bound by its terms.</comment>
        <property name="currentIndex" >
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_notesTab" >
+       <widget class="QWidget" name="_remarksTab" >
         <attribute name="title" >
-         <string>Notes</string>
+         <string>Remarks</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_3" >
          <item row="0" column="0" >
-          <widget class="QTextEdit" name="_notes" >
-           <property name="readOnly" >
-            <bool>true</bool>
+          <layout class="QHBoxLayout" name="horizontalLayout_3" >
+           <property name="spacing" >
+            <number>12</number>
            </property>
-          </widget>
+           <item>
+            <widget class="QRadioButton" name="_notesButton" >
+             <property name="text" >
+              <string>Notes</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_commentsButton" >
+             <property name="text" >
+              <string>Comments</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_commentsTab" >
-        <attribute name="title" >
-         <string>Comments</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_2" >
-         <item row="0" column="0" >
-          <widget class="Comments" name="_comment" >
-           <property name="enabled" >
-            <bool>false</bool>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_remarksStack" >
+           <property name="currentIndex" >
+            <number>0</number>
            </property>
-           <property name="type" >
-            <enum>Comments::Customer</enum>
-           </property>
+           <widget class="QWidget" name="_notesPage" >
+            <layout class="QGridLayout" name="gridLayout_15" >
+             <item row="0" column="0" >
+              <widget class="QTextEdit" name="_notes" >
+               <property name="readOnly" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_commentsPage" >
+            <layout class="QGridLayout" name="gridLayout_16" >
+             <item row="0" column="0" >
+              <widget class="Comments" name="_comment" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="type" >
+                <enum>Comments::Customer</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -1048,110 +1116,6 @@ to be bound by its terms.</comment>
            </widget>
            <widget class="QWidget" name="_returnsPage" />
           </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_salesOrdersTab" >
-        <attribute name="title" >
-         <string>Sales Orders</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_4" >
-         <item row="0" column="0" >
-          <widget class="XCheckBox" name="_orderShowclosed" >
-           <property name="text" >
-            <string>Show Closed</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>521</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0" colspan="2" >
-          <layout class="QHBoxLayout" >
-           <item>
-            <widget class="XTreeWidget" name="_order" />
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>5</number>
-               </property>
-               <item>
-                <widget class="QPushButton" name="_printOrder" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>&amp;Print</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_newOrder" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>New</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_editOrder" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Edit</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_viewOrder" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>View</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0" >
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
          </item>
         </layout>
        </widget>
@@ -1493,13 +1457,7 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_cust</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_tab</tabstop>
-  <tabstop>_comment</tabstop>
-  <tabstop>_order</tabstop>
-  <tabstop>_newOrder</tabstop>
-  <tabstop>_editOrder</tabstop>
-  <tabstop>_viewOrder</tabstop>
   <tabstop>_invoice</tabstop>
   <tabstop>_newInvoice</tabstop>
   <tabstop>_editInvoice</tabstop>
@@ -1515,22 +1473,6 @@ to be bound by its terms.</comment>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_orderShowclosed</sender>
-   <signal>clicked()</signal>
-   <receiver>_refresh</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>335</x>
-     <y>764</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>735</x>
-     <y>78</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_invoiceShowclosed</sender>
    <signal>clicked()</signal>

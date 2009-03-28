@@ -83,7 +83,7 @@ enum SetResponse contacts::set(const ParameterList& pParams)
   QVariant param;
   bool	   valid;
   
-  param = pParams.value("fillList", &valid);
+  param = pParams.value("run", &valid);
   if (valid)
     sFillList();
 

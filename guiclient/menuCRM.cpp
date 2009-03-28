@@ -285,7 +285,7 @@ void menuCRM::sContact()
 void menuCRM::sContacts()
 {
   ParameterList params;
-  params.append("fillList");
+  params.append("run");
   contacts* win = new contacts();
   win->set(params);
   omfgThis->handleNewWindow(win);
@@ -327,7 +327,7 @@ void menuCRM::sIncident()
 void menuCRM::sTodoList()
 {
   ParameterList params;
-  params.append("fillList");
+  params.append("run");
   todoList* win = new todoList();
   win->set(params);
   omfgThis->handleNewWindow(win);
@@ -415,7 +415,7 @@ void menuCRM::sNewOpportunity()
 void menuCRM::sOpportunities()
 {
   ParameterList params;
-  params.append("fillList");
+  params.append("run");
   opportunityList* win = new opportunityList();
   win->set(params);
   omfgThis->handleNewWindow(win);

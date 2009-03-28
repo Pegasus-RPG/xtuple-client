@@ -598,7 +598,7 @@ void menuSales::sNewQuote()
 void menuSales::sQuotes()
 {
   ParameterList params;
-  params.append("fillList");
+  params.append("run");
   quotes* win = new quotes();
   win->set(params);
   omfgThis->handleNewWindow(win);
