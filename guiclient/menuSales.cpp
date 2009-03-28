@@ -567,7 +567,11 @@ void menuSales::sNewSalesOrder()
 
 void menuSales::sOpenSalesOrders()
 {
-  omfgThis->handleNewWindow(new openSalesOrders());
+  ParameterList params;
+  params.append("run");
+  openSalesOrders* win = new openSalesOrders();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }
 
 void menuSales::sRescheduleSoLineItems()
@@ -733,7 +737,11 @@ void menuSales::sNewReturn()
 
 void menuSales::sOpenReturns()
 {
-  omfgThis->handleNewWindow(new openReturnAuthorizations());
+  ParameterList params;
+  params.append("run");
+  openReturnAuthorizations* win = new openReturnAuthorizations();
+  win->set(params);
+  omfgThis->handleNewWindow(win);
 }
 
 void menuSales::sReturnsWorkbench()

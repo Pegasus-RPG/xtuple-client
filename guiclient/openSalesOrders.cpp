@@ -35,8 +35,6 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   
   _cust->hide();
   _showClosed->hide();
-  _showClosed->setForgetful(true);
-  _showClosed->setChecked(false);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -44,7 +42,6 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_showClosed, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -71,7 +68,6 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  sFillList();
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
 
@@ -85,12 +81,27 @@ void openSalesOrders::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse openSalesOrders::set(const ParameterList& pParams)
+{
+  QVariant param;
+  bool	   valid;
+  
+  param = pParams.value("run", &valid);
+  if (valid)
+  {
+    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+    sFillList();
+  }
+
+  return NoError;
+}
+
 void openSalesOrders::setParams(ParameterList &params)
 {
   params.append("error", tr("Error"));
   if (_cust->isValid())
     params.append("cust_id", _cust->id());
-  if (_showClosed->isChecked())
+  if (_showClosed->isChecked() && _showClosed->isVisible())
     params.append("showClosed");
   if (_preferences->boolean("selectedSites") || _warehouse->isSelected())
     params.append("selectedSites");

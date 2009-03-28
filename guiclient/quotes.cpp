@@ -42,6 +42,7 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
   _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
@@ -93,7 +94,6 @@ enum SetResponse quotes::set(const ParameterList& pParams)
   if (valid)
   {
     connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
     sFillList();
   }

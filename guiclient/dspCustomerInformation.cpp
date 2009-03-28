@@ -46,8 +46,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 {
   setupUi(this);
 
- //_crmTab->setEnabled(false);
-  //_salesTab->setEnabled(false);
+  _crmTab->setEnabled(false);
+  _salesTab->setEnabled(false);
   
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListPage->layout()->addWidget(_todoList);
@@ -55,6 +55,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _todoList->findChild<QWidget*>("_usr")->hide();
   _todoList->findChild<QWidget*>("_startdateGroup")->hide();
   _todoList->findChild<QWidget*>("_duedateGroup")->hide();
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->hide();
   _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
   
   _contacts = new contacts(this, "contacts", Qt::Widget);
@@ -76,11 +79,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _quotes->findChild<QWidget*>("_warehouse")->hide();
   _quotes->findChild<QWidget*>("_quoteLit")->hide();
   _quotes->findChild<WarehouseGroup*>("_warehouse")->setAll();
-  _quotes->findChild<XCheckBox*>("_showExpired")->setForgetful(true);
-  _quotes->findChild<XCheckBox*>("_showExpired")->setChecked(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
-  _quotes->findChild<QWidget*>("_options")->hide();
+  _quotes->findChild<XCheckBox*>("_showProspects")->hide();
   
   _orders = new openSalesOrders(this, "_orders", Qt::Widget);
   _ordersPage->layout()->addWidget(_orders);
@@ -93,6 +94,15 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _orders->findChild<WarehouseGroup*>("_warehouse")->setAll();
   _orders->findChild<XCheckBox*>("_showClosed")->setForgetful(false);
   _orders->findChild<XCheckBox*>("_showClosed")->show();
+  
+  _returns = new openReturnAuthorizations(this, "_returns", Qt::Widget);
+  _returnsPage->layout()->addWidget(_returns);
+  _returns->findChild<QWidget*>("_close")->hide();
+  _returns->findChild<QWidget*>("_warehouse")->hide();
+  _returns->findChild<QWidget*>("_returnAuthorizationsLit")->hide();
+  _returns->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _returns->findChild<XCheckBox*>("_showClosed")->setForgetful(false);
+  _returns->findChild<XCheckBox*>("_showClosed")->show();
 
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -152,6 +162,10 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _invoice->addColumn(tr("Amount"),     _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
   _invoice->addColumn(tr("Balance"),    _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _invoice->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
+  
+  if (!_metrics->boolean("EnableReturnAuth"))
+    _returnsButton->hide();
+  
   if(_privileges->check("MaintainMiscInvoices"))
   {
     connect(_invoice, SIGNAL(valid(bool)), _editInvoice, SLOT(setEnabled(bool)));
@@ -334,6 +348,7 @@ void dspCustomerInformation::sPopulateCustInfo()
       _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
       _quotes->findChild<CustCluster*>("_cust")->setId(_cust->id());
       _orders->findChild<CustCluster*>("_cust")->setId(_cust->id());
+      _returns->findChild<CustCluster*>("_cust")->setId(_cust->id());
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -434,6 +449,7 @@ void dspCustomerInformation::sPopulate()
     _oplist->sFillList();
     _quotes->sFillList();
     _orders->sFillList();
+    _returns->sFillList();
   }
   else
   {
@@ -442,6 +458,7 @@ void dspCustomerInformation::sPopulate()
     _oplist->findChild<XTreeWidget*>("_list")->clear();
     _quotes->findChild<XTreeWidget*>("_quote")->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
+    _returns->findChild<XTreeWidget*>("_ra")->clear();
   }
 }
 

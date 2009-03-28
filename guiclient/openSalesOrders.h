@@ -29,6 +29,7 @@ public:
     virtual bool checkSitePrivs();
 
 public slots:
+    virtual enum SetResponse set(const ParameterList&);
     virtual void sPrint();
     virtual void sNew();
     virtual void sEdit();

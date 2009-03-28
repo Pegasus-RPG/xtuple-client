@@ -25,9 +25,11 @@ public:
     openReturnAuthorizations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~openReturnAuthorizations();
     
+    virtual void setParams(ParameterList &);
     virtual bool checkSitePrivs(int ordid);
 
 public slots:
+    virtual enum SetResponse set(const ParameterList&);
     virtual void sPrint();
     virtual void sNew();
     virtual void sEdit();

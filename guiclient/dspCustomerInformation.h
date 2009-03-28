@@ -19,6 +19,7 @@
 #include "opportunityList.h"
 #include "quotes.h"
 #include "openSalesOrders.h"
+#include "openReturnAuthorizations.h"
 
 #include <QStandardItemModel>
 #include <parameter.h>
@@ -84,6 +85,7 @@ protected:
     opportunityList *_oplist;
     quotes *_quotes;
     openSalesOrders *_orders;
+    openReturnAuthorizations *_returns;
 
 private:
     int _crmacctId;
