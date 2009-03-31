@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>664</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -202,7 +202,7 @@
          <attribute name="title" >
           <string>&amp;Customer</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_2" >
+         <layout class="QGridLayout" name="gridLayout_6" >
           <item row="0" column="0" >
            <layout class="QVBoxLayout" name="verticalLayout" >
             <item>
@@ -211,6 +211,9 @@
                <widget class="CustInfo" name="_cust" >
                 <property name="focusPolicy" >
                  <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="type" >
+                 <enum>CLineEdit::ActiveCustomers</enum>
                 </property>
                 <property name="fieldName" >
                  <string>customer_number</string>
@@ -319,59 +322,147 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5" >
+             <layout class="QHBoxLayout" name="horizontalLayout_8" >
               <item>
-               <widget class="QLabel" name="_custponumberLit" >
-                <property name="text" >
-                 <string>Purchase Order #:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
+               <layout class="QGridLayout" name="gridLayout_2" >
+                <item row="0" column="0" >
+                 <widget class="QLabel" name="_custponumberLit" >
+                  <property name="text" >
+                   <string>Purchase Order #:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" >
+                 <widget class="XLineEdit" name="_custponumber" >
+                  <property name="fieldName" >
+                   <string>cust_po_number</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2" >
+                 <widget class="QLabel" name="shipviaLit" >
+                  <property name="text" >
+                   <string>Ship Via:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3" >
+                 <layout class="QHBoxLayout" name="horizontalLayout_6" >
+                  <item>
+                   <widget class="XComboBox" name="_shipvia" >
+                    <property name="type" >
+                     <enum>XComboBox::ShipVias</enum>
+                    </property>
+                    <property name="fieldName" >
+                     <string>ship_via</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_7" >
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QLabel" name="_taxauthLit" >
+                  <property name="text" >
+                   <string>Tax Authority:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <layout class="QHBoxLayout" name="horizontalLayout_5" >
+                  <item>
+                   <widget class="XComboBox" name="_taxauth" >
+                    <property name="allowNull" >
+                     <bool>true</bool>
+                    </property>
+                    <property name="nullStr" >
+                     <string>None</string>
+                    </property>
+                    <property name="type" >
+                     <enum>XComboBox::TaxAuths</enum>
+                    </property>
+                    <property name="fieldName" >
+                     <string>tax_authority</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_6" >
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>38</width>
+                      <height>17</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="2" >
+                 <widget class="QLabel" name="_siteLite" >
+                  <property name="text" >
+                   <string>Site:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3" >
+                 <layout class="QHBoxLayout" name="horizontalLayout_7" >
+                  <item>
+                   <widget class="WComboBox" name="_site" >
+                    <property name="fieldName" >
+                     <string>site</string>
+                    </property>
+                    <property name="type" >
+                     <enum>WComboBox::Sold</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_9" >
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="XLineEdit" name="_custponumber" >
-                <property name="fieldName" >
-                 <string>cust_po_number</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_6" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="shipviaLit" >
-                <property name="text" >
-                 <string>Ship Via:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XComboBox" name="_shipvia" >
-                <property name="type" >
-                 <enum>XComboBox::ShipVias</enum>
-                </property>
-                <property name="fieldName" >
-                 <string>ship_via</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_7" >
+               <spacer name="horizontalSpacer_10" >
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -392,8 +483,8 @@
               </property>
               <property name="sizeHint" stdset="0" >
                <size>
-                <width>20</width>
-                <height>40</height>
+                <width>563</width>
+                <height>48</height>
                </size>
               </property>
              </spacer>
@@ -700,53 +791,58 @@
  <customwidgets>
   <customwidget>
    <class>AddressCluster</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>addresscluster.h</header>
   </customwidget>
   <customwidget>
    <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
+   <extends></extends>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>CustInfo</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>custcluster.h</header>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
    <class>Screen</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>WComboBox</class>
+   <extends></extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
-   <extends>QComboBox</extends>
+   <extends></extends>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLabel</class>
-   <extends>QLabel</extends>
+   <extends></extends>
    <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
+   <extends></extends>
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeView</class>
-   <extends>QTreeView</extends>
+   <extends></extends>
    <header>xtreeview.h</header>
   </customwidget>
  </customwidgets>
@@ -926,8 +1022,8 @@
      <y>317</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>197</x>
-     <y>122</y>
+     <x>160</x>
+     <y>111</y>
     </hint>
    </hints>
   </connection>
@@ -1024,6 +1120,38 @@
     <hint type="destinationlabel" >
      <x>424</x>
      <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_sale</sender>
+   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
+   <receiver>_taxauth</receiver>
+   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>336</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>163</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_sale</sender>
+   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
+   <receiver>_site</receiver>
+   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>336</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>354</x>
+     <y>310</y>
     </hint>
    </hints>
   </connection>
