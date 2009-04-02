@@ -45,6 +45,14 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _planningType->hide();
     _planningTypeLit->hide();
     _createPlannedTransfers->hide();
+
+    _orderGroupLit->hide();
+    _orderGroup->hide();
+    _orderGroupDaysLit->hide();
+    _orderGroupFirst->hide();
+    _mpsTimeFenceLit->hide();
+    _mpsTimeFence->hide();
+    _mpsTimeFenceDaysLit->hide();
   }
   else
   {
@@ -104,18 +112,6 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   }
   
   
-  //If not Manufacturing, hide inapplicable controls
-  if (_metrics->value("Application") != "Manufacturing")
-  {
-    _orderGroupLit->hide();
-    _orderGroup->hide();
-    _orderGroupDaysLit->hide();
-    _orderGroupFirst->hide();
-    _mpsTimeFenceLit->hide();
-    _mpsTimeFence->hide();
-    _mpsTimeFenceDaysLit->hide();
-  }
-
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
 }

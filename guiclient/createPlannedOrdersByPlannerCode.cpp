@@ -13,6 +13,8 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 #include "submitAction.h"
+#include <metasql.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a createPlannedOrdersByPlannerCode as a child of 'parent', with the
@@ -58,47 +60,11 @@ void createPlannedOrdersByPlannerCode::languageChange()
 
 void createPlannedOrdersByPlannerCode::sCreate()
 {
-  if (!_cutOffDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Cut Off Date"),
-                          tr( "You must enter a valid Cut Off Date before\n"
-                              "creating Planned Orders." ));
-    _cutOffDate->setFocus();
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
-
-  QString sql( "SELECT createPlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, FALSE) "
-               "FROM (SELECT CASE WHEN(item_type='M') THEN 1 "
-               "                  WHEN(item_type='F') THEN 2 "
-               "                  ELSE 3 "
-               "             END AS orderid, "
-               "             bomLevelByItem(item_id) AS levelid, "
-               "             warehous_sequence, itemsite_id "
-               "        FROM itemsite, item, plancode, whsinfo "
-               "       WHERE ( (itemsite_plancode_id=plancode_id)"
-               "         AND (itemsite_active)"
-               "         AND (item_active)"
-               "         AND (itemsite_planning_type='M')"
-               "         AND (itemsite_item_id=item_id)"
-               "         AND (itemsite_warehous_id=warehous_id) ");
-
-  if (_plannerCode->isSelected())
-    sql += " AND (plancode_id=:plancode_id)";
-  else if (_plannerCode->isPattern())
-    sql += " AND (plancode_code ~ :plancode_pattern)";
-
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY orderid, levelid, warehous_sequence) AS data; ";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.bindValue(":cutOffDate", _cutOffDate->date());
-  q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
+  MetaSQLQuery mql = mqlLoad("schedule", "create");
+  q = mql.toQuery(params);
   q.exec();
 
   accept();
@@ -107,31 +73,39 @@ void createPlannedOrdersByPlannerCode::sCreate()
 
 void createPlannedOrdersByPlannerCode::sSubmit()
 {
-  if (!_cutOffDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Cut Off Date"),
-                          tr( "You must enter a valid Cut Off Date before\n"
-                              "creating Planned Orders." ));
-    _cutOffDate->setFocus();
-    return;
-  }
-
   ParameterList params;
-
-  params.append("action_name", "RunMRP");
-
-  _plannerCode->appendValue(params);
-  _warehouse->appendValue(params); 
-  
-  params.append("cutoff_offset", QDate::currentDate().daysTo(_cutOffDate->date()));
-  
-  if (_deleteFirmed->isChecked())
-    params.append("DeleteFirmed");
+  if (! setParams(params))
+    return;
 
   submitAction newdlg(this, "", TRUE);
   newdlg.set(params);
 
   if (newdlg.exec() == XDialog::Accepted)
     accept();
-
 }
+
+bool createPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
+{
+  if (!_cutOffDate->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Cut Off Date"),
+                          tr( "You must enter a valid Cut Off Date before\n"
+                              "creating Planned Orders." ));
+    _cutOffDate->setFocus();
+    return false;
+  }
+
+  pParams.append("action_name", "RunMRP");
+
+  _plannerCode->appendValue(pParams);
+  _warehouse->appendValue(pParams); 
+  
+  pParams.append("cutOffDate", _cutOffDate->date());
+  pParams.append("cutoff_offset", QDate::currentDate().daysTo(_cutOffDate->date()));
+  
+  if (_deleteFirmed->isChecked())
+    pParams.append("deleteFirmed");
+
+  return true;
+}
+

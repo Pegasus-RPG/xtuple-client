@@ -36,6 +36,10 @@ releasePlannedOrdersByPlannerCode::releasePlannedOrdersByPlannerCode(QWidget* pa
     _submit->hide();
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
+  
+// TODO Always append to existing unreleased Transfer Orders
+  _appendTransferOrder->hide();
+  _appendTransferOrder->setChecked(TRUE);
 }
 
 /*

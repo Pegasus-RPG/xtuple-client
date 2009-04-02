@@ -24,6 +24,7 @@ class createPlannedOrdersByPlannerCode : public XDialog, public Ui::createPlanne
 public:
     createPlannedOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~createPlannedOrdersByPlannerCode();
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual void sSubmit();
