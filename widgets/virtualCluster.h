@@ -155,8 +155,8 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
     public slots:
         virtual void setId(const int);
+        virtual void setNumber(const QString&);
         inline virtual QString extraClause() const { return _extraClause; };
-        
 
     protected slots:
         virtual void clear();
@@ -172,7 +172,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sEllipses();
         virtual void sParse();
 
-        virtual void setNumber(const QString&);
         virtual void setTitles(const QString&, const QString& = 0);
         inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
         virtual void setTableAndColumnNames(const char* pTabName,
@@ -206,6 +205,8 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool    _hasName;
         bool    _strict;
         virtual void silentSetId(const int);
+        virtual void keyPressEvent(QKeyEvent *);
+
 };
 
 /*

@@ -80,7 +80,7 @@ class XTUPLEWIDGETS_EXPORT ContactSearch : public VirtualSearch
 class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 {
     Q_OBJECT
-    
+    Q_ENUMS   (Mode)
     Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible)
     Q_PROPERTY(bool     ownerVisible          READ ownerVisible                 WRITE setOwnerVisible)
     Q_PROPERTY(bool     ownerEnabled          READ ownerEnabled                 WRITE setOwnerEnabled)
@@ -116,6 +116,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(QString  fieldNameState        READ fieldNameState          	WRITE setFieldNameState)
     Q_PROPERTY(QString  fieldNamePostalCode   READ fieldNamePostalCode     	WRITE setFieldNamePostalCode)
     Q_PROPERTY(QString  fieldNameCountry      READ fieldNameCountry        	WRITE setFieldNameCountry)
+    Q_PROPERTY(Mode     mode                  READ mode                    WRITE setMode)
     Q_PROPERTY(QString	number		      READ number		        WRITE setNumber               DESIGNABLE false)
     Q_PROPERTY(QString  defaultText           READ defaultText                                                DESIGNABLE false)
 
@@ -127,6 +128,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	// AccountLimits may be ORed together
 	enum AccountLimits { Employee = 1,	Customer =  2,	Vendor     = 4,
 			     Partner  = 8,	Prospect = 16,	Competitor = 32};
+        enum Mode          { Edit, View, Select };
 
 	ContactCluster(QWidget*, const char* = 0);
         inline virtual AddressCluster* addressWidget() const { return _address; };
@@ -147,6 +149,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual bool    isValid()        const { return _valid; };
 	inline virtual QString label()	        const { return _label->text(); };
 	inline virtual bool    minimalLayout()  const { return _minimalLayout; };
+        Q_INVOKABLE virtual Mode    mode()      const { return _mode; };
 	inline virtual QString notes()	        const { return _notes; };
 	inline virtual bool    phonesVisible()  const { return _phone->isVisible(); };
 	inline virtual int     searchAcct()	const { return _searchAcctId; };
@@ -212,6 +215,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setLabel(const QString& p)  { _label->setText(p); _label->setHidden(_label->text().isEmpty()); };
 	inline virtual void setLast(const QString& p)	{ _last->setText(p); };
 	inline virtual void setMiddle(const QString& p)	{ _middle->setText(p); };
+	       virtual void setMode(const Mode p);
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	inline virtual void setPhone(const QString& p)	{ _phone->setText(p); };
 	inline virtual void setPhone2(const QString& p)	{ _phone2->setText(p); };
@@ -292,6 +296,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
         XLineEdit*      _change;
 	XLineEdit*	_number;
 	XComboBox*	_honorific;
+        Mode            _mode;
 	QLabel*		_numberLit;
 	QLabel*		_nameLit;
 	XLineEdit*	_first;

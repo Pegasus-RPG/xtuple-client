@@ -15,6 +15,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QPalette>
 #include <QScriptEngine>
 #include <QSqlDatabase>
 #include <QSqlDriver>
@@ -47,6 +48,9 @@ XTreeView::XTreeView(QWidget *parent) :
   header()->setContextMenuPolicy(Qt::CustomContextMenu);
   
   setAlternatingRowColors(true);
+  QPalette muted = palette();
+  muted.setColor(QPalette::AlternateBase, QColor(0xEE, 0xEE, 0xEE));
+  setPalette(muted);
 
   connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)),
                     SLOT(sShowHeaderMenu(const QPoint &)));
@@ -693,6 +697,7 @@ void XTreeView::setRelations()
     _fkeymap.insert("incdtpriority",  "incdtpriority_name");
     _fkeymap.insert("incdtresolution","incdtresolution_name");
     _fkeymap.insert("incdtseverity",  "incdtseverity_name");
+    _fkeymap.insert("invchead",    "invchead_invcnumber");
     _fkeymap.insert("ipshead",     "ipshead_name");
     _fkeymap.insert("item",        "item_number");
     _fkeymap.insert("itemalias",   "itemalias_number");
@@ -783,8 +788,12 @@ void XTreeView::setRelations()
       model->setRelation(i, QSqlRelation("curr_symbol", "curr_id", "curr_abbr"));
     else if (colname.endsWith("cust_id"))
       model->setRelation(i, QSqlRelation("custinfo", "cust_id", "cust_number"));
+    else if (colname.endsWith("shipto_id"))
+      model->setRelation(i, QSqlRelation("shiptoinfo","shipto_id","shipto_name"));
     else if (colname.endsWith("vend_id"))
       model->setRelation(i, QSqlRelation("vendinfo", "vend_id", "vend_number"));
+    else if (colname.endsWith("vendaddr_id"))
+      model->setRelation(i, QSqlRelation("vendaddrinfo","vendaddr_id","vendaddr_code"));
     else if (colname.endsWith("warehous_id"))
       model->setRelation(i, QSqlRelation("whsinfo", "warehous_id", "warehous_code"));
     else if (colname.endsWith("_id"))

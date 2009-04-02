@@ -212,6 +212,8 @@ void PlanOrdCluster::constructor()
   _statusLayout->addWidget(_status);
   _mainLayout->addLayout(_statusLayout);
 
+  setMinimumSize(6 * 50, 7 * 15);
+
 //  Make some internal connections
   connect(_number, SIGNAL(itemNumberChanged(const QString &)), _itemNumber, SLOT(setText(const QString &)));
   connect(_number, SIGNAL(uomChanged(const QString &)), _uom, SLOT(setText(const QString &)));

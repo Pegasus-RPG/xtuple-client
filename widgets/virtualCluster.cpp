@@ -349,6 +349,13 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
     emit parsed();
 }
 
+void VirtualClusterLineEdit::keyPressEvent(QKeyEvent * pEvent)
+{
+  if(pEvent->key() == Qt::Key_Tab)
+    sParse();
+  XLineEdit::keyPressEvent(pEvent);
+}
+
 void VirtualClusterLineEdit::setNumber(const QString& pNumber)
 {
     _parsed = false;

@@ -153,7 +153,7 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
     _grid->remove(_valueLocalWidget);
     _grid->expand(2, 2);
 
-    _currency = new XComboBox(this);
+    _currency = new XComboBox(this, "_currency");
     //_currency->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     _currency->setMaximumSize(MAXCURRWIDTH, MAXHEIGHT);
     _grid->addWidget(_currency, 0, 0);

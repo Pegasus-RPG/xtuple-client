@@ -204,6 +204,7 @@ void ContactCluster::init()
     setInfoVisible(false);	// TODO - remove this and implement Info button
     silentSetId(-1);
     setOwnerVisible(false);
+    _mode = Edit;
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
@@ -799,6 +800,9 @@ void ContactCluster::layout()
     _grid->addWidget(_address,		8, 0, 1, -1);
   }
 
+#if defined Q_WS_MAC
+  setMinimumSize(_grid->columnCount() * 50, _grid->rowCount() * 11);
+#endif
   _layoutDone = true;
 }
 
@@ -1289,4 +1293,18 @@ void ContactSearch::sFillList()
 //    }
 
     _listTab->populate(query);
+}
+
+void ContactCluster::setMode(Mode p)
+{
+  if (p == _mode)
+    return;
+  bool enabled = (p == Edit);
+
+  QList<QWidget *> widgets = findChildren<QWidget *>();
+  for (int i = 0; i < widgets.size(); i++)
+    widgets.at(i)->setEnabled(enabled);
+  if (p == Select)
+    _list->setEnabled(true);
+  _info->setEnabled(true);
 }

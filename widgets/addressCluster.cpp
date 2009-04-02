@@ -41,11 +41,11 @@ void AddressCluster::init()
     _cityLit       = new QLabel(tr("City:"), this);
     _city          = new XLineEdit(this);
     _stateLit      = new QLabel(tr("State:"));
-    _state         = new XComboBox(this);
+    _state         = new XComboBox(this, "_state");
     _postalcodeLit = new QLabel(tr("Postal Code:"));
     _postalcode    = new XLineEdit(this);
     _countryLit    = new QLabel(tr("Country:"));
-    _country       = new XComboBox(this);
+    _country       = new XComboBox(this, "_country");
     _active        = new QCheckBox(tr("Active"), this);
     _mapper        = new XDataWidgetMapper(this);
 
@@ -94,6 +94,10 @@ void AddressCluster::init()
     _grid->setColumnStretch(4, 0);
     _grid->setColumnStretch(5, 2);
 
+#if defined Q_WS_MAC
+    setMinimumSize(_grid->columnCount() * 60, _grid->rowCount() * 15);
+#endif
+
     connect(_list,      SIGNAL(clicked()), this, SLOT(sEllipses()));
     connect(_info,      SIGNAL(clicked()), this, SLOT(sInfo()));
     connect(_addr1,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
@@ -110,6 +114,7 @@ void AddressCluster::init()
     setActiveVisible(false);
     setInfoVisible(false); // TODO - remove this and implement Info button
     silentSetId(-1);
+    _mode = Edit;
 }
 
 AddressCluster::AddressCluster(QWidget* pParent, const char* pName) :
@@ -693,4 +698,18 @@ void AddressSearch::sFillList()
       return;
     }
 
+}
+
+void AddressCluster::setMode(Mode p)
+{
+  if (p == _mode)
+    return;
+  bool enabled = (p == Edit);
+
+  QList<QWidget *> widgets = findChildren<QWidget *>();
+  for (int i = 0; i < widgets.size(); i++)
+    widgets.at(i)->setEnabled(enabled);
+  if (p == Select)
+    _list->setEnabled(true);
+  _info->setEnabled(true);
 }

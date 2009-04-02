@@ -58,12 +58,16 @@ class XTUPLEWIDGETS_EXPORT ImageCluster : public VirtualCluster
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool numberVisible READ numberVisible WRITE setNumberVisible)
+
   public:
       ImageCluster(QWidget*, const char* = 0);
 
   public slots:
       virtual void clear();
       virtual void sRefresh();
+      virtual bool numberVisible()     const { return _number->isVisible(); };
+      virtual void setNumberVisible(const bool p);
 
   protected slots:
 

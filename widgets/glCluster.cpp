@@ -124,6 +124,9 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   _layoutMain->addWidget(_list);
 
   setLayout(_layoutMain);
+#ifdef Q_WS_MAC
+  setMinimumSize(250, 30);
+#endif
 
 //  Make some internal connections
   connect(_list, SIGNAL(clicked()), this, SLOT(sEllipses()));

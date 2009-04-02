@@ -77,6 +77,7 @@ class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
 class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
+    Q_ENUMS   (Mode)
     Q_PROPERTY(bool     activeVisible 	      READ activeVisible            WRITE setActiveVisible)
     Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange     WRITE setFieldNameAddrChange)
     Q_PROPERTY(QString  fieldNameNumber        READ fieldNameNumber         WRITE setFieldNameNumber)
@@ -88,6 +89,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
     Q_PROPERTY(QString  fieldNameState         READ fieldNameState          WRITE setFieldNameState)
     Q_PROPERTY(QString  fieldNamePostalCode    READ fieldNamePostalCode     WRITE setFieldNamePostalCode)
     Q_PROPERTY(QString  fieldNameCountry       READ fieldNameCountry        WRITE setFieldNameCountry)
+    Q_PROPERTY(Mode     mode                   READ mode                    WRITE setMode)
 
     friend class AddressInfo;
     friend class AddressList;
@@ -95,6 +97,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 
     public:
 	enum SaveFlags { CHECK = 0, CHANGEONE = 1, CHANGEALL = 2 }; 
+        enum Mode      { Edit, View, Select };
 
 	AddressCluster(QWidget*, const char* = 0);
 	
@@ -109,8 +112,9 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	Q_INVOKABLE virtual QString line2()   const { return _addr2->text(); }
 	Q_INVOKABLE virtual QString line3()   const { return _addr3->text(); }
 	Q_INVOKABLE virtual int     id()      const { return _id; }
+        Q_INVOKABLE virtual Mode    mode()    const { return _mode; };
 	inline virtual QString notes()	      const { return _notes; };
-        Q_INVOKABLE virtual QString number()       const { return QString(); };
+        Q_INVOKABLE virtual QString number()       const { return _number->text(); };
 	Q_INVOKABLE virtual QString postalCode()  const { return _postalcode->text(); }
 	Q_INVOKABLE virtual QString state()   const { return _state->currentText(); }
 	
@@ -138,6 +142,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual void setLine1(const QString& p)	{ _addr1->setText(p); };
 	inline virtual void setLine2(const QString& p)	{ _addr2->setText(p); };
 	inline virtual void setLine3(const QString& p)	{ _addr3->setText(p); };
+	       virtual void setMode(const Mode p);
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	virtual void setNumber(QString p);
         virtual void setNumber(const int)     {};
@@ -180,6 +185,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	XLineEdit*	_addr3;
 	QLabel*		_cityLit;
 	XLineEdit*	_city;
+        Mode            _mode;
 	QLabel*		_stateLit;
 	XComboBox*	_state;
 	QLabel*		_postalcodeLit;

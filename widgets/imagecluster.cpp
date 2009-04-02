@@ -72,6 +72,15 @@ void ImageCluster::sRefresh()
     qDebug("ImageCluster::sRefresh() returning");
 }
 
+void ImageCluster::setNumberVisible(const bool p)
+{
+  _number->setVisible(p);
+  _label->setVisible(!_label->text().trimmed().isEmpty() || p ||
+                     _list->isVisible() ||
+                     _info->isVisible() ||
+                     _name->isVisible());
+}
+
 ImageClusterLineEdit::ImageClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "image", "image_id", "image_name", "image_descrip", "image_data", 0, pName)
 {

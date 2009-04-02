@@ -109,7 +109,7 @@ QString XSqlTableModel::selectStatement() const
             // If there are duplicate field names they must be aliased
             if (fieldNames.value(rel.displayColumn()) > 1)
                 fList.append(QString::fromLatin1(" AS %1_%2")
-                               .arg(rel.tableName())
+                               .arg(relTableAlias)
                                .arg(rel.displayColumn()));
 
             fList.append(QLatin1Char(','));
