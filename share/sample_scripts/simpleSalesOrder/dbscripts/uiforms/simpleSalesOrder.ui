@@ -528,7 +528,7 @@
             <item>
              <widget class="QPushButton" name="_add" >
               <property name="text" >
-               <string>Add</string>
+               <string>&amp;Add</string>
               </property>
               <property name="default" >
                <bool>true</bool>
@@ -541,7 +541,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Remove</string>
+               <string>&amp;Remove</string>
               </property>
              </widget>
             </item>
@@ -791,58 +791,58 @@
  <customwidgets>
   <customwidget>
    <class>AddressCluster</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>addresscluster.h</header>
   </customwidget>
   <customwidget>
    <class>CurrCluster</class>
-   <extends></extends>
+   <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>CustInfo</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
    <class>Screen</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>screen.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
-   <extends></extends>
+   <extends>XComboBox</extends>
    <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLabel</class>
-   <extends></extends>
+   <extends>QLabel</extends>
    <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeView</class>
-   <extends></extends>
+   <extends>QTreeView</extends>
    <header>xtreeview.h</header>
   </customwidget>
  </customwidgets>

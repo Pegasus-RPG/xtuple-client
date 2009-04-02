@@ -1,0 +1,18 @@
+-- Group: simplesalesorder
+-- Name: validate
+-- Notes:
+
+SELECT DISTINCT 'Simple sales order ' ||
+  CASE
+    WHEN (cohead_curr_id != basecurrid()) THEN
+      'only supports orders in base currency'
+    WHEN (cohead_misc_accnt_id IS NOT NULL) THEN
+      'does not support miscellaneous charges'
+    WHEN (cohead_freight > 0 or cohead_calcfreight) THEN
+      'does not support freight calculations'
+    END || '. Please use the standard sales order window instead.'  AS message
+FROM cohead
+WHERE (cohead_number=CAST(<? value("number") ?> AS text)
+AND ((cohead_curr_id != basecurrid())
+OR (cohead_misc_accnt_id IS NOT NULL)
+OR (cohead_freight > 0 OR cohead_calcfreight)));

@@ -1,13 +1,14 @@
 // Define local variables
 var _linenumCol = 1;
-var _itemCol    = 2;	
+var _itemCol    = 2;
+var _statusCol	= 6;	
 var _qtyCol     = 7;
 var _priceCol   = 9;
 
 var _billAddrNo = "";
 var _linenumber = 1;
 var _populating = false;
-
+var _defDate	= new Date();
 var _extList = new Array();
 var _taxList = new Array();
 
@@ -74,6 +75,7 @@ _add.clicked.connect(add);
 _cancel.clicked.connect(cancel);
 _cust["newId(int)"].connect(handleButtons);
 _cust["newId(int)"].connect(populateCustomer);
+_item["newId(int)"].connect(itemCheck);
 _item["newId(int)"].connect(handleButtons);
 _item["newId(int)"].connect(itemPrice);
 _item["valid(bool)"].connect(_add["setEnabled(bool)"]);
@@ -93,7 +95,7 @@ _itemGroup.enabled = false;
 _qty.setValidator(toolbox.qtyVal());
 
 // Misc Defaults
-handleItem();
+_item.type = (ItemLineEdit.cSold | ItemLineEdit.cItemActive);
 
 // Define local functions
 function add()
@@ -101,9 +103,9 @@ function add()
   _saleitems.insert();
   _saleitem.clear();
   _saleitems.setValue(_saleitem.currentIndex(),_linenumCol,_linenumber);
-  _saleitems.setValue(_saleitem.currentIndex(),_taxCol,0);
   _itemGroup.enabled = true;
   _linenumber = _linenumber + 1;
+  _scheddate.date = _defDate;
   _item.setFocus();
 }
 
@@ -165,22 +167,6 @@ function extension()
   } 
 }
 
-function handleItem() 
-{
-  _item.setQuery("SELECT DISTINCT item_id, item_number, item_descrip1,"
-               + "                item_descrip2, uom_name, item_type,"
-               + "                item_config, item_upccode,"
-               + "                item_descrip1 || item_descrip2 AS itemdescrip "
-               + "FROM item "
-               + "   JOIN uom      ON (item_inv_uom_id=uom_id)"
-               + "   JOIN itemsite ON (item_id=itemsite_item_id) "
-               + "WHERE ((itemsite_warehous_id=" + _site.id() + ")"
-               + "   AND (item_active)"
-               + "   AND (item_sold) "
-               + "   AND (itemsite_sold)"
-               + "   AND (itemsite_active));");
-}
-
 function handleButtons()
 {
   var state = (_cust.id() != -1 && 
@@ -188,8 +174,28 @@ function handleButtons()
               (_saleitems.rowCountVisible() > 1 ||
                _item.number.length))
   _save.enabled = (state);
-  _site.enabled = (!state);
-  _taxauth.enabled = (!state);
+  _site.enabled = (!_saleitems.rowCountVisible());
+  _taxauth.enabled = (!_saleitems.rowCountVisible());
+}
+
+function itemCheck()
+{
+  if (_item.id() == -1)
+    return;
+
+  var params = new Object;
+  params.item_id = _item.id();
+  params.warehous_id = _site.id();
+  
+  data = toolbox.executeDbQuery("simplesalesorder","itemcheck",params);
+  if (data.first())
+    if (data.value("result"))
+      return;
+ 
+  var msg = "Selected item is invalid at site " + _site.text + ".";
+  toolbox.messageBox("critical", mywindow, mywindow.windowTitle, msg);
+  _item.setId(-1);
+  _item.setFocus();
 }
 
 function itemPrice()
@@ -273,7 +279,11 @@ function populateItems()
 {
   _saleitems.populate(_sale.currentIndex());
   _itemGroup.enabled = (_saleitems.rowCount());
-  _linenumber = _saleitems.rowCount() + 1;
+  _item.enabled = (!_saleitems.rowCount());
+  if (_saleitems.rowCount())
+    _linenumber = _saleitems.value(_saleitems.rowCount()-1,_linenumCol) - 0 + 1;
+  else
+    _linenumber = 1;
   recalcTotals();
 }
 
@@ -325,25 +335,29 @@ function recalcTotals()
 }
 
 function remove()
-{
+{try{
   var num = _saleitems.selectedValue(_linenumCol);
   var row = _saleitem.currentIndex();
   var idx = 0;
+  var params = new Object;
+
+  // Make sure we can do this
+  params.number = _number.text;
+  params.line_number = _saleitems.selectedValue(_linenumCol);
+  data = toolbox.executeDbQuery("simplesalesorder","removecheck",params);
+  if (data.first())
+  {
+    if (!data.value("result"))
+    {
+      msg = "Line item has shipping transaction activity and may not be removed."
+      toolbox.messageBox("critical", mywindow, mywindow.windowTitle, msg);
+      return;
+    }
+  }
 
   _itemGroup.enabled = false;
   _saleitem.clear();
   _saleitems.removeSelected();
-
-  // Renumber Rows
-  for (row; row < _saleitems.rowCount(); row++)
-  {
-    if (!_saleitems.isRowHidden(row))
-    {
-      _saleitems.setValue(row,_linenumCol,num);
-      num++;
-    }
-  }
-  _linenumber = num;
 
   // Select a valid row, otherwise enable/disable appropriate controls
   if (!_saleitems.rowCountVisible())
@@ -364,45 +378,42 @@ function remove()
     popualting = false;
   }
 }
+  catch (e)
+  {
+    toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
+    _saleitems.selectRow(currentRow);
+  }
+}
 
 function rowSelected(row)
 {
-  var currentRow = _saleitem.currentIndex(row);
-  if (row == currentRow)
-    return;
-
-  if (_itemGroup.enabled)
+  try
   {
-    if (_item.id() == -1)
-    {
-      _saleitems.selectRow(currentRow);
-      var msg = "You must select an item or remove the current line."
-      toolbox.messageBox("critical", mywindow, mywindow.windowTitle, msg);
+    var currentRow = _saleitem.currentIndex(row);
+    if (row == currentRow)
       return;
-    }
 
-    else if (_scheddate.date.length == 0)
+    if (_itemGroup.enabled)
     {
-      _saleitems.selectRow(currentRow);
-      var msg = "You must enter a valid scheduled date or remove the current line."
-      toolbox.messageBox("critical", mywindow, mywindow.windowTitle, msg);
-      return;
+      if (_item.isValid() == false)
+        throw "You must select an item or remove the current line."
+      else if (!_scheddate.date.toString().length)
+        throw "You must enter a valid scheduled date or remove the current line."
+      else if (!_qty.text.length)
+        throw "You must enter a valid quantity or remove the current line."
     }
-
-    else if (_qty.text.length == 0)
-    {
-      _saleitems.selectRow(currentRow);
-      var msg = "You must enter a valid quantity or remove the current line."
-      toolbox.messageBox("critical", mywindow, mywindow.windowTitle, msg);
-      return;
-    }
+ 
+    _populating = true;
+    _saleitem.setCurrentIndex(row);
+    _item.enabled = !_saleitems.value(row,_statusCol).length;
+    _itemGroup.enabled = (_saleitems.value(row,_statusCol) != "X");
+    _populating = false;
   }
-  else
-    _itemGroup.enabled = true;
-
-  _populating = true;
-  _saleitem.setCurrentIndex(row);
-  _populating = false;
+  catch (e)
+  {
+    toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
+    _saleitems.selectRow(currentRow);
+  }
 }
 
 function save()
