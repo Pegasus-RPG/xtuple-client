@@ -32,9 +32,9 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   setAllowNull(false);
   _nullStr  = "";
   _label    = 0;
-  
+
   _mapper = new XDataWidgetMapper(this);
-  
+
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
 #ifdef Q_WS_MAC
@@ -52,7 +52,7 @@ XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
   _lastId = -1;
   setAllowNull(false);
   _label = 0;
-  
+
   _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
@@ -89,20 +89,20 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
   disconnect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
   disconnect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
-  
+
   if (!_listTableName.isEmpty())
   {
     QString tableName="";
     if (_listSchemaName.length())
       tableName=_listSchemaName + ".";
     tableName+=_listTableName;
-    static_cast<XSqlTableModel*>(m->model())->setRelation(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName), 
+    static_cast<XSqlTableModel*>(m->model())->setRelation(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName),
                                  QSqlRelation(tableName, _listIdFieldName, _listDisplayFieldName));
-    
+
     QSqlTableModel *rel =static_cast<XSqlTableModel*>(m->model())->relationModel(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName));
     setModel(rel);
     setModelColumn(rel->fieldIndex(_listDisplayFieldName));
-  
+
     m->setItemDelegate(new QSqlRelationalDelegate(this));
     m->addMapping(this, _fieldName);
     return;
@@ -111,7 +111,7 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
     m->addMapping(this, _fieldName, "code", "currentDefault");
   else
     m->addMapping(this, _fieldName, "text", "text");
-    
+
   _mapper=m;
   connect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
   connect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
@@ -121,7 +121,7 @@ void XComboBox::setListSchemaName(QString p)
 {
   if (_listSchemaName == p)
     return;
-    
+
   if (!p.isEmpty())
     setType(Adhoc);
   _listSchemaName = p;
@@ -131,7 +131,7 @@ void XComboBox::setListTableName(QString p)
 {
   if (_listTableName == p)
     return;
-    
+
   _listTableName = p;
   if (!p.isEmpty())
     setType(Adhoc);
@@ -151,7 +151,7 @@ void XComboBox::setType(XComboBoxTypes pType)
 
   if (_x_metrics == 0)
     return;
-    
+
   // If we're in Designer, don't populate
   QObject *ancestor = this;
   bool designMode;
@@ -160,7 +160,7 @@ void XComboBox::setType(XComboBoxTypes pType)
     designMode = ancestor->inherits("xTupleDesigner");
     if (designMode)
       return;
-  } 
+  }
 
   XSqlQuery query;
 
@@ -565,7 +565,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                  " WHERE country_qt_number IS NOT NULL"
                  " ORDER BY country_name;");
       break;
-      
+
     case RegistrationTypes:
       query.exec("SELECT regtype_id, regtype_code, regtype_code "
                  "  FROM regtype"
@@ -584,6 +584,17 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY freightclass_code;" );
       break;
 
+   case TaxClasses:
+         query.exec( "SELECT taxclass_id, (taxclass_code || '-' || taxclass_descrip), taxclass_code  "
+                     "FROM taxclass "
+                     "ORDER BY taxclass_code;" );
+      break;
+
+   case TaxZones:
+         query.exec( "SELECT taxzone_id, (taxzone_code || '-' || taxzone_descrip), taxzone_code  "
+		                      "FROM taxzone "
+		                      "ORDER BY taxzone_code;" );
+     break;
   }
 
   populate(query);
@@ -671,10 +682,10 @@ void XComboBox::setCode(QString pString)
                  objectName().toAscii().data(), pString.toAscii().data(),
                  counter, _ids.count(), _lastId);
         setCurrentIndex(counter);
-        
+
         if (_ids.count() && _lastId!=_ids.at(counter))
           setId(_ids.at(counter));
-        
+
         return;
       }
     }
@@ -693,7 +704,7 @@ void XComboBox::setCode(QString pString)
              objectName().toAscii().data(), pString.toAscii().data(),
              currentItem());
   }
-  
+
   if (editable())
   {
     setId(-1);
@@ -773,7 +784,7 @@ void XComboBox::setText(const QString &pString)
 {
   if (pString == currentText())
     return;
-    
+
   if (count())
   {
     for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
@@ -870,7 +881,7 @@ void XComboBox::clear()
 
   if (_ids.count())
     _ids.clear();
-    
+
   if (_codes.count())
     _codes.clear();
 
@@ -1023,7 +1034,7 @@ void XComboBox::sHandleNewIndex(int pIndex)
     if (DEBUG)
       qDebug("%s::sHandleNewIndex() emitted %d",
              objectName().toAscii().data(), _lastId);
-    
+
     if (allowNull())
     {
       emit valid((pIndex != 0));
@@ -1059,7 +1070,7 @@ void XComboBox::updateMapperData()
     val = code();
   else
     val = currentText();
-    
+
   if (_mapper->model() &&
     _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != val)
   _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), val);
