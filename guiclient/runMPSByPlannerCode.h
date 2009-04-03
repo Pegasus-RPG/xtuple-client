@@ -22,6 +22,7 @@ class runMPSByPlannerCode : public XDialog, public Ui::runMPSByPlannerCode
   public:
     runMPSByPlannerCode(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~runMPSByPlannerCode();
+    virtual bool setParams(ParameterList&);
 
   public slots:
     virtual void sSubmit();

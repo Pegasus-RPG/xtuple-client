@@ -97,14 +97,14 @@ bool createPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
 
   pParams.append("action_name", "RunMRP");
 
+  pParams.append("MPS", QVariant(false));
+  pParams.append("planningType", "M");
   _plannerCode->appendValue(pParams);
   _warehouse->appendValue(pParams); 
   
   pParams.append("cutOffDate", _cutOffDate->date());
   pParams.append("cutoff_offset", QDate::currentDate().daysTo(_cutOffDate->date()));
-  
-  if (_deleteFirmed->isChecked())
-    pParams.append("deleteFirmed");
+  pParams.append("deleteFirmed", QVariant(_deleteFirmed->isChecked()));
 
   return true;
 }
