@@ -37,6 +37,7 @@ var _scheddate		= mywindow.findChild("_scheddate");
 var _shipto		= mywindow.findChild("_shipto");
 var _shipvia		= mywindow.findChild("_shipvia")
 var _site		= mywindow.findChild("_site");
+var _siteLit		= mywindow.findChild("_siteLit");
 var _subtotal   	= mywindow.findChild("_subtotal");
 var _tab		= mywindow.findChild("_tab");
 var _tax		= mywindow.findChild("_tax");
@@ -88,14 +89,16 @@ _salesrep["newID(int)"].connect(handleButtons);
 _save.clicked.connect(save);
 _unitPrice.valueChanged.connect(extension);
 
-// Disable until we have a line item to work with
-_itemGroup.enabled = false;
-
-// Set precision
-_qty.setValidator(toolbox.qtyVal());
-
 // Misc Defaults
-_item.type = (ItemLineEdit.cSold | ItemLineEdit.cItemActive);
+_itemGroup.enabled = false;
+_qty.setValidator(toolbox.qtyVal());
+_item.setType(ItemLineEdit.cSold | 
+	ItemLineEdit.cItemActive |
+	ItemLineEdit.cPurchased ^ 
+	ItemLineEdit.cManufactured ^  
+	ItemLineEdit.cReference);
+_site.setVisible(metrics.value("MultiWhs") == "t");
+_siteLit.setVisible(metrics.value("MultiWhs") == "t");
 
 // Define local functions
 function add()
@@ -162,7 +165,6 @@ function extension()
   }
   catch (e)
   {
-    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   } 
 }
@@ -174,8 +176,8 @@ function handleButtons()
               (_saleitems.rowCountVisible() > 1 ||
                _item.number.length))
   _save.enabled = (state);
-  _site.enabled = (!_saleitems.rowCountVisible());
-  _taxauth.enabled = (!_saleitems.rowCountVisible());
+  _site.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
+  _taxauth.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
 }
 
 function itemCheck()
@@ -247,7 +249,7 @@ function populate()
 }
 
 function populateCustomer()
-{
+{try{
   if (_populating)
     return;
 
@@ -257,21 +259,35 @@ function populateCustomer()
   var data = toolbox.executeDbQuery("simplesalesorder","fetchcustomer", params);
   if(data.first())
   {
-    _salesrep.setId(data.value("cust_salesrep_id"));
-    _billAddrNo = data.value("billto_addr_number");
-    _address.setNumber(data.value("shipto_addr_number"));
-    _taxauth.setId(data.value("cust_taxauth"));
-    _shipvia.text = (data.value("cust_shipvia"));
-    _site.setId(data.value("cust_preferred_warehous_id"));
+    _address.setLine1(data.value("addr_line1"));
+    _address.setLine2(data.value("addr_line2"));
+    _address.setLine3(data.value("addr_line3"));
+    _address.setCity(data.value("addr_city"));
+    _address.setState(data.value("addr_state"));
+    _address.setPostalCode(data.value("addr_postalcode"));
+    _address.setCountry(data.value("addr_country"));
+    _taxauth.code = data.value("taxauth");
+    _salesrep.code = data.value("salesrep");
+    _shipvia.code = data.value("shipvia");
+    _site.code = data.value("site");
   }
   else
   {
-    _salesrep.setId(-1);
-    _billAddrNo = "";
-    _address.setNumber("");
-    _taxauth.setId(-1);
-    _shipvia.text = "";
-    _site.setId(-1);
+    _address.setLine1("");
+    _address.setLine2("");
+    _address.setLine3("");
+    _address.setCity("");
+    _address.setState("");
+    _address.setPostalCode("");
+    _address.setCountry("");
+    _salesrep.code = "";
+    _taxauth.code = "";
+    _shipvia.code = "";
+  }
+  }
+  catch (e)
+  {
+    toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
 }
 
@@ -335,7 +351,7 @@ function recalcTotals()
 }
 
 function remove()
-{try{
+{
   var num = _saleitems.selectedValue(_linenumCol);
   var row = _saleitem.currentIndex();
   var idx = 0;
@@ -376,12 +392,6 @@ function remove()
     _saleitem.setCurrentIndex(idx);
     _saleitems.selectRow(idx);
     popualting = false;
-  }
-}
-  catch (e)
-  {
-    toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
-    _saleitems.selectRow(currentRow);
   }
 }
 
@@ -438,7 +448,6 @@ function save()
   catch (e)
   {
     toolbox.executeRollback();
-    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
   finally

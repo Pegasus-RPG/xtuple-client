@@ -423,7 +423,7 @@
                  </layout>
                 </item>
                 <item row="1" column="2" >
-                 <widget class="QLabel" name="_siteLite" >
+                 <widget class="QLabel" name="_siteLit" >
                   <property name="text" >
                    <string>Site:</string>
                   </property>

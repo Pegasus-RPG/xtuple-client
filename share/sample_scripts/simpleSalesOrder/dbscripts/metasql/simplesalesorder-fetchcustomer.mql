@@ -1,15 +1,26 @@
 -- Group: simplesalesorder
--- Name: customer
+-- Name: fetchcustomer
 -- Notes:
 
-SELECT COALESCE(salesrep_id,-1) AS cust_salesrep, cust_shipvia, 
-  cust_taxauth_id, cust_preferred_warehous_id,
-  COALESCE(cntct_addr_id,-1) AS billto_addr_id,
-  COALESCE(shipto_addr_id,-1) AS shipto_addr_id,
-  addr_line1, addr_line2, addr_line3, addr_city, addr_state,
-  addr_postalcode, addr_country, addr_number
+SELECT COALESCE(salesrep_number,'') AS salesrep, 
+  cust_shipvia AS shipvia, 
+  COALESCE(taxauth_code) AS taxauth, 
+  COALESCE(cw.warehous_code,pw.warehous_code,'') AS site,
+  COALESCE(sa.addr_line1, ba.addr_line1,'') AS addr_line1,
+  COALESCE(sa.addr_line2, ba.addr_line2,'') AS addr_line2,
+  COALESCE(sa.addr_line3, ba.addr_line3,'') AS addr_line3,
+  COALESCE(sa.addr_city, ba.addr_city,'') AS addr_city,
+  COALESCE(sa.addr_state, ba.addr_state,'') AS addr_state,
+  COALESCE(sa.addr_postalcode, ba.addr_postalcode,'') AS addr_postalcode,
+  COALESCE(sa.addr_country, ba.addr_country,'') AS addr_country
 FROM custinfo
+  JOIN salesrep ON (salesrep_id=cust_salesrep_id)
   LEFT OUTER JOIN shiptoinfo ON ((cust_id=shipto_cust_id)
                              AND (shipto_default))
+  LEFT OUTER JOIN addr sa ON (shipto_addr_id=sa.addr_id)
   LEFT OUTER JOIN cntct ON (cntct_id=cust_cntct_id)
+  LEFT OUTER JOIN addr ba ON (cntct_addr_id=ba.addr_id)
+  LEFT OUTER JOIN whsinfo cw ON (cust_preferred_warehous_id=cw.warehous_id)
+  LEFT OUTER JOIN whsinfo pw ON (fetchprefwarehousid()=pw.warehous_id)
+  LEFT OUTER JOIN taxauth ON (taxauth_id=cust_taxauth_id)
 WHERE (cust_id=<? value("cust_id") ?>);
