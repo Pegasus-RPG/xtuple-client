@@ -65,11 +65,11 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       OpportunityStages, OpportunitySources,    OpportunityTypes,
       PlannerCodes,	PoProjects,		ProductCategories,
       ProfitCenters,	ProjectCommentTypes,
-      ReasonCodes,	RegistrationTypes,      Reports,                
+      ReasonCodes,	RegistrationTypes,      Reports,
       SalesCategories,	SalesReps,		SalesRepsActive,
       ShipVias,		ShippingCharges,	ShippingForms,
       SiteTypes,    SoProjects,	Subaccounts,
-      TaxAuths,		TaxCodes,
+      TaxAuths,	  TaxClasses, 	  TaxCodes,	  TaxZones,
       TaxTypes,		Terms, 			UOMs,
       Users,		VendorCommentTypes,	VendorGroups,
       VendorTypes,	WoProjects,		WorkCenters
@@ -79,7 +79,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     void setType(XComboBoxTypes);
 
     void setCode(QString);
-    
+
 
     virtual bool      allowNull()            const  { return _allowNull; };
     virtual Defaults  defaultCode()                 { return _default;};
@@ -147,7 +147,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QList<int>          _ids;
     QList<QString>      _codes;
     QString             _nullStr;
-    
+
   private:
     enum Defaults       _default;
     QString             _fieldName;
