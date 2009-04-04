@@ -95,6 +95,8 @@ void transferOrders::setParams(ParameterList& params)
     QString status = QString(statusTypes[_statuses->currentIndex()]);
     params.append("tohead_status", status);
   }
+  else
+    params.append("excludeClosed");
   params.append("unreleased", tr("Unreleased"));
   params.append("open", tr("Open"));
   params.append("closed", tr("Closed"));

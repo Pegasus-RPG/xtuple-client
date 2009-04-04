@@ -234,7 +234,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // TODO: switch between visibility of Inter-Warehouse Transfer and Transfer Orders based on config param?
     { "menu",				tr("Transfer &Order"),	  (char*)transferOrderMenu,	mainMenu,	  true,	NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
     { "im.interWarehouseTransfer",	tr("&New..."),	  SLOT(sNewTransferOrder()),	transferOrderMenu, _privileges->check("MaintainTransferOrders"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
-    { "im.transferOrders",		tr("&List..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
+    { "im.transferOrders",		tr("&List Open..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
     { "separator",			NULL,					   NULL,				 transferOrderMenu,	true, NULL, NULL, true, NULL},
     { "im.releaseTransferOrders",		tr("&Release by Agent..."),	  SLOT(sReleaseTransferOrders()),	transferOrderMenu, (_privileges->check("ReleaseTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
 

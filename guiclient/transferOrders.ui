@@ -17,7 +17,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>List Transfer Orders</string>
+   <string>List Open Transfer Orders</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3" >
    <item row="0" column="0" >
@@ -104,11 +104,6 @@ to be bound by its terms.</comment>
                   <item>
                    <property name="text" >
                     <string>Open</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text" >
-                    <string>Closed</string>
                    </property>
                   </item>
                  </widget>
