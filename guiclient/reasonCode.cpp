@@ -13,6 +13,8 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 
+const char *_docTypes[] = { "ARCM", "ARDM", "RA" };
+
 /*
  *  Constructs a reasonCode as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -111,19 +113,22 @@ void reasonCode::sSave()
       _rsncodeid = q.value("rsncode_id").toInt();
 
     q.prepare( "INSERT INTO rsncode "
-               "(rsncode_id, rsncode_code, rsncode_descrip) "
+               "(rsncode_id, rsncode_code, rsncode_descrip, rsncode_doctype) "
                "VALUES "
-               "(:rsncode_id, :rsncode_code, :rsncode_descrip);" );
+               "(:rsncode_id, :rsncode_code, :rsncode_descrip, :rsncode_doctype);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE rsncode "
                "SET rsncode_code=:rsncode_code,"
-               "    rsncode_descrip=:rsncode_descrip "
+               "    rsncode_descrip=:rsncode_descrip,"
+               "    rsncode_doctype=:rsncode_doctype "
                "WHERE (rsncode_id=:rsncode_id);" );
 
   q.bindValue(":rsncode_id", _rsncodeid);
   q.bindValue(":rsncode_code", _code->text());
   q.bindValue(":rsncode_descrip", _description->text().trimmed());
+  if (!_allDocTypes->isChecked())
+    q.bindValue(":rsncode_doctype", _docTypes[_docType->currentIndex()]);
   q.exec();
 
   done(_rsncodeid);
@@ -152,7 +157,7 @@ void reasonCode::sCheck()
 
 void reasonCode::populate()
 {
-  q.prepare( "SELECT rsncode_code, rsncode_descrip "
+  q.prepare( "SELECT rsncode.* "
              "FROM rsncode "
              "WHERE (rsncode_id=:rsncode_id);" );
   q.bindValue(":rsncode_id", _rsncodeid);
@@ -161,5 +166,22 @@ void reasonCode::populate()
   {
     _code->setText(q.value("rsncode_code").toString());
     _description->setText(q.value("rsncode_descrip").toString());
+    if (q.value("rsncode_doctype").toString() == "ARCM")
+    {
+      _selectedDocType->setChecked(TRUE);
+      _docType->setCurrentIndex(0);
+    }
+    else if (q.value("rsncode_doctype").toString() == "ARDM")
+    {
+      _selectedDocType->setChecked(TRUE);
+      _docType->setCurrentIndex(1);
+    }
+    else if (q.value("rsncode_doctype").toString() == "RA")
+    {
+      _selectedDocType->setChecked(TRUE);
+      _docType->setCurrentIndex(2);
+    }
+    else
+      _allDocTypes->setChecked(TRUE);      
   }
 } 

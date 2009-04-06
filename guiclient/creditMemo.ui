@@ -326,7 +326,7 @@ to be bound by its terms.</comment>
               <bool>true</bool>
              </property>
              <property name="type" >
-              <enum>XComboBox::ReasonCodes</enum>
+              <enum>XComboBox::ARCMReasonCodes</enum>
              </property>
             </widget>
            </item>

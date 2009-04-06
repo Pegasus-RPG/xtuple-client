@@ -299,7 +299,7 @@ to be bound by its terms.</comment>
               </size>
              </property>
              <property name="type" >
-              <enum>XComboBox::ReasonCodes</enum>
+              <enum>XComboBox::ReturnReasonCodes</enum>
              </property>
             </widget>
            </item>

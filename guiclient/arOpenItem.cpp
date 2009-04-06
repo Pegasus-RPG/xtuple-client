@@ -76,11 +76,13 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
     {
       setWindowTitle(caption() + tr(" - Enter Misc. Credit Memo"));
       _docType->setCurrentIndex(0);
+      _rsnCode->setType(XComboBox::ARCMReasonCodes);
     }
     else if (param.toString() == "debitMemo")
     {
       setWindowTitle(caption() + tr(" - Enter Misc. Debit Memo"));
       _docType->setCurrentIndex(1);
+      _rsnCode->setType(XComboBox::ARDMReasonCodes);
     }
     else if (param.toString() == "invoice")
       _docType->setCurrentIndex(2);
