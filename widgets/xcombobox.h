@@ -51,6 +51,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       {
       Adhoc,
       APBankAccounts,	APTerms,		ARBankAccounts,
+      ARCMReasonCodes, ARDMReasonCodes,
       ARTerms,		AccountingPeriods, 	Agent,
       AllCommentTypes,	AllProjects,		CRMAccounts,
       ClassCodes,	Companies,		CostCategories,
@@ -64,8 +65,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       LocaleCountries,  LocaleLanguages,        LotSerialCommentTypes,
       OpportunityStages, OpportunitySources,    OpportunityTypes,
       PlannerCodes,	PoProjects,		ProductCategories,
-      ProfitCenters,	ProjectCommentTypes,
-      ReasonCodes,	RegistrationTypes,      Reports,
+      ProfitCenters,	ProjectCommentTypes, ReasonCodes,
+      RegistrationTypes,      Reports, ReturnReasonCodes,               
       SalesCategories,	SalesReps,		SalesRepsActive,
       ShipVias,		ShippingCharges,	ShippingForms,
       SiteTypes,    SoProjects,	Subaccounts,

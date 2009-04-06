@@ -444,6 +444,27 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY rsncode_code;" );
       break;
 
+    case ARCMReasonCodes:
+      query.exec( "SELECT rsncode_id, (rsncode_code || '-' || rsncode_descrip), rsncode_code"
+                  "  FROM rsncode "
+                  " WHERE ( (rsncode_doctype IS NULL) OR (rsncode_doctype='ARCM') ) "
+                  "ORDER BY rsncode_code;" );
+      break;
+
+    case ARDMReasonCodes:
+      query.exec( "SELECT rsncode_id, (rsncode_code || '-' || rsncode_descrip), rsncode_code"
+                  "  FROM rsncode "
+                  " WHERE ( (rsncode_doctype IS NULL) OR (rsncode_doctype='ARDM') ) "
+                  "ORDER BY rsncode_code;" );
+      break;
+
+    case ReturnReasonCodes:
+      query.exec( "SELECT rsncode_id, (rsncode_code || '-' || rsncode_descrip), rsncode_code"
+                  "  FROM rsncode "
+                  " WHERE ( (rsncode_doctype IS NULL) OR (rsncode_doctype='RA') ) "
+                  "ORDER BY rsncode_code;" );
+      break;
+
     case TaxCodes:
       query.exec( "SELECT tax_id, (tax_code || '-' || tax_descrip), tax_code"
                   "  FROM tax "
