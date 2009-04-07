@@ -113,6 +113,7 @@
 #include "accountingYearPeriods.h"
 #include "taxCodes.h"
 #include "taxTypes.h"
+#include "taxZones.h"
 #include "taxAuthorities.h"
 #include "searchForCRMAccount.h"
 #include "taxSelections.h"
@@ -416,6 +417,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "menu", tr("&Tax"), (char*)taxMenu, mainMenu,	true,	NULL, NULL, true, NULL },
     { "gl.searchForTaxAuth",	tr("&Search for Tax Authority..."), SLOT(sTaxAuthoritySearch()),	taxMenu,	(_privileges->check("MaintainTaxAuthorities") || _privileges->check("ViewTaxAuthorities")), NULL, NULL, true, NULL },
     { "gl.taxAuthorities",	tr("Tax &Authorities..."),	SLOT(sTaxAuthorities()),	taxMenu,	(_privileges->check("MaintainTaxAuthorities") || _privileges->check("ViewTaxAuthorities")), NULL, NULL, true, NULL },
+    { "gl.taxZones",		tr("Tax &Zones..."),		SLOT(sTaxZones()),		taxMenu,	(_privileges->check("MaintainTaxZones") || _privileges->check("ViewTaxZones")), NULL, NULL, true, NULL }, 
     { "gl.taxCodes",		tr("Tax &Codes..."),		SLOT(sTaxCodes()),		taxMenu,	(_privileges->check("MaintainTaxCodes") || _privileges->check("ViewTaxCodes")), NULL, NULL, true, NULL },
     { "gl.taxTypes",		tr("Tax &Types..."),		SLOT(sTaxTypes()),		taxMenu,	(_privileges->check("MaintainTaxTypes") || _privileges->check("ViewTaxTypes")), NULL, NULL, true, NULL },
     { "gl.taxSelections",	tr("Tax Se&lections..."),	SLOT(sTaxSelections()),		taxMenu,	(_privileges->check("MaintainTaxSel") || _privileges->check("ViewTaxSel")), NULL, NULL, true, NULL },
@@ -1067,6 +1069,12 @@ void menuAccounting::sTaxAuthoritySearch()
   searchForCRMAccount *newdlg = new searchForCRMAccount();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+
+void menuAccounting::sTaxZones()
+{
+  omfgThis->handleNewWindow(new taxZones());
 }
 
 void menuAccounting::sTaxCodes()

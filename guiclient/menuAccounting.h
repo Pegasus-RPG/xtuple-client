@@ -139,6 +139,7 @@ class menuAccounting : public QObject
     void sTaxCodes();
     void sTaxTypes();
     void sTaxAuthorities();
+	void sTaxZones();
     void sTaxAuthoritySearch();
     void sTaxSelections();
     void sTaxRegistrations();
