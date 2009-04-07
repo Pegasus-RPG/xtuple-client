@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>664</width>
-    <height>475</height>
+    <width>808</width>
+    <height>554</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -395,9 +395,6 @@
                    <widget class="XComboBox" name="_taxauth" >
                     <property name="allowNull" >
                      <bool>true</bool>
-                    </property>
-                    <property name="nullStr" >
-                     <string>None</string>
                     </property>
                     <property name="type" >
                      <enum>XComboBox::TaxAuths</enum>

@@ -1,13 +1,13 @@
 // Define Variables
-var _all	= mywindow.findChild("_all");
-var _close 	= mywindow.findChild("_close");
-var _edit 	= mywindow.findChild("_edit");
-var _new	= mywindow.findChild("_new");
-var _print 	= mywindow.findChild("_print");
-var _orders	= mywindow.findChild("_orders");
+var _all		= mywindow.findChild("_all");
+var _close 		= mywindow.findChild("_close");
+var _edit 		= mywindow.findChild("_edit");
+var _new		= mywindow.findChild("_new");
+var _print 		= mywindow.findChild("_print");
+var _orders		= mywindow.findChild("_orders");
 var _salesrep	= mywindow.findChild("_salesrep");
 var _selected	= mywindow.findChild("_selected");
-var _view  	= mywindow.findChild("_view");
+var _view  		= mywindow.findChild("_view");
 
 var _newMode 	= 0;
 var _editMode 	= 1;
@@ -68,14 +68,29 @@ function orderOpen(mode,number)
 {
   try
   {
+    // Make sure we can support the functionality here
+    if (mode == 0 && metrics.value("CONumberGeneration") != "O")
+      throw "Simple sales order requires that sales order numbering be set to "
+	+ "'Automatic, Allow Override' to create new orders."
+
+    if (metrics.value("CalculateFreight") == "t")
+      throw "Simple sales order does not support freight calculations.  Please "
+          	+ "use the standard sales order window or disable calculated freight " 		  	+ "values in Sales Configuration.";
+
+    var params = new Object;
+    params.number = number;
+    var data = toolbox.executeDbQuery("simplesalesorder","validate",params);
+    if (data.first())
+      throw data.value("message");
+
     var childwnd = toolbox.openWindow("simpleSalesOrder", mywindow, 0, 1);
-    var params   = new Object;
+    var wparams = new Object;
 
-    params.mode   = mode;
+    wparams.mode = mode;
     if (mode) // Edit or View
-      params.filter = "order_number='" + number + "'";
+      wparams.filter = "order_number='" + number + "'";
 
-    var tmp = toolbox.lastWindow().set(params);
+    var tmp = toolbox.lastWindow().set(wparams);
     var execval = childwnd.exec();
     if (execval)
       fillList();

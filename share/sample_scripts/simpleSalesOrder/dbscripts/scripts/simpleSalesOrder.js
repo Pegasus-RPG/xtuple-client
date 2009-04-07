@@ -8,7 +8,7 @@ var _priceCol   = 9;
 var _billAddrNo = "";
 var _linenumber = 1;
 var _populating = false;
-var _defDate	= new Date();
+var _defDate = new Date();
 var _extList = new Array();
 var _taxList = new Array();
 
@@ -17,31 +17,31 @@ var _editMode   = 1;
 var _viewMode   = 2;
 
 var _add		= mywindow.findChild("_add");
-var _address		= mywindow.findChild("_address");
+var _address	= mywindow.findChild("_address");
 var _cancel		= mywindow.findChild("_cancel");
-var _cust      		= mywindow.findChild("_cust");
-var _custTab		= mywindow.findChild("_custTab");
+var _cust      	= mywindow.findChild("_cust");
+var _custTab	= mywindow.findChild("_custTab");
 var _extendedPrice	= mywindow.findChild("_extendedPrice");
 var _item		= mywindow.findChild("_item");
 var _itemGroup    	= mywindow.findChild("_itemGroup");
-var _itemsTab		= mywindow.findChild("_itemsTab");
+var _itemsTab	= mywindow.findChild("_itemsTab");
 var _number		= mywindow.findChild("_number");
 var _qty		= mywindow.findChild("_qty");
 var _remove		= mywindow.findChild("_remove");
 var _sale		= mywindow.findChild("_sale");
-var _saleitem		= mywindow.findChild("_saleitem");
-var _saleitems		= mywindow.findChild("_saleitems");
-var _salesrep		= mywindow.findChild("_salesrep");
+var _saleitem	= mywindow.findChild("_saleitem");
+var _saleitems	= mywindow.findChild("_saleitems");
+var _salesrep	= mywindow.findChild("_salesrep");
 var _save		= mywindow.findChild("_save");
-var _scheddate		= mywindow.findChild("_scheddate");
+var _scheddate	= mywindow.findChild("_scheddate");
 var _shipto		= mywindow.findChild("_shipto");
-var _shipvia		= mywindow.findChild("_shipvia")
+var _shipvia	= mywindow.findChild("_shipvia")
 var _site		= mywindow.findChild("_site");
-var _siteLit		= mywindow.findChild("_siteLit");
+var _siteLit	= mywindow.findChild("_siteLit");
 var _subtotal   	= mywindow.findChild("_subtotal");
 var _tab		= mywindow.findChild("_tab");
 var _tax		= mywindow.findChild("_tax");
-var _taxauth		= mywindow.findChild("_taxauth");
+var _taxauth	= mywindow.findChild("_taxauth");
 var _total		= mywindow.findChild("_total");	
 var _unitPrice  	= mywindow.findChild("_unitPrice");
 
@@ -87,6 +87,7 @@ _saleitems["rowSelected(int)"].connect(rowSelected);
 _saleitems["valid(bool)"].connect(_remove["setEnabled(bool)"]);
 _salesrep["newID(int)"].connect(handleButtons);
 _save.clicked.connect(save);
+_taxauth["newID(int)"].connect(handleButtons);
 _unitPrice.valueChanged.connect(extension);
 
 // Misc Defaults
@@ -99,6 +100,7 @@ _item.setType(ItemLineEdit.cSold |
 	ItemLineEdit.cReference);
 _site.setVisible(metrics.value("MultiWhs") == "t");
 _siteLit.setVisible(metrics.value("MultiWhs") == "t");
+handleButtons();
 
 // Define local functions
 function add()
@@ -173,11 +175,13 @@ function handleButtons()
 {
   var state = (_cust.id() != -1 && 
                _salesrep.id() != -1 &&
+               _taxauth.id() != -1 &&
               (_saleitems.rowCountVisible() > 1 ||
                _item.number.length))
   _save.enabled = (state);
   _site.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
   _taxauth.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
+  _itemsTab.enabled = (_taxauth.id() != -1);
 }
 
 function itemCheck()
@@ -249,7 +253,7 @@ function populate()
 }
 
 function populateCustomer()
-{try{
+{
   if (_populating)
     return;
 
@@ -283,11 +287,6 @@ function populateCustomer()
     _salesrep.code = "";
     _taxauth.code = "";
     _shipvia.code = "";
-  }
-  }
-  catch (e)
-  {
-    toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
 }
 

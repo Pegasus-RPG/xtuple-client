@@ -4,7 +4,7 @@
 
 SELECT COALESCE(salesrep_number,'') AS salesrep, 
   cust_shipvia AS shipvia, 
-  COALESCE(taxauth_code) AS taxauth, 
+  taxauth_code AS taxauth, 
   COALESCE(cw.warehous_code,pw.warehous_code,'') AS site,
   COALESCE(sa.addr_line1, ba.addr_line1,'') AS addr_line1,
   COALESCE(sa.addr_line2, ba.addr_line2,'') AS addr_line2,
