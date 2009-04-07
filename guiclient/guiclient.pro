@@ -327,7 +327,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
                taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxDetail.ui                  \
-               taxBreakdown.ui                                                                        \
+               taxBreakdown.ui taxZones.ui taxZone.ui                                                 \
                taxRegistration.ui taxRegistrations.ui                                                 \
                taxSelection.ui taxSelections.ui                                                       \
                taxType.ui taxTypes.ui                                                                 \
@@ -654,7 +654,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                taxBreakdown.h                                                                         \
                taxRegistration.h taxRegistrations.h                                                   \
                taxSelection.h taxSelections.h                                                         \
-               taxType.h taxTypes.h                                                                   \
+               taxType.h taxTypes.h taxZones.h taxZone.h                                              \
                task.h thawItemSitesByClassCode.h                                                      \
                termses.h terms.h                                                                      \
                todoList.h todoItem.h todoListCalendar.h todoCalendarControl.h                         \
@@ -985,7 +985,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                taxBreakdown.cpp                                                                       \
                taxRegistration.cpp taxRegistrations.cpp                                               \
                taxSelection.cpp taxSelections.cpp                                                     \
-               taxType.cpp taxTypes.cpp                                                               \
+               taxType.cpp taxTypes.cpp taxZones.cpp taxZone.cpp                                      \
                task.cpp thawItemSitesByClassCode.cpp                                                  \
                termses.cpp terms.cpp                                                                  \
                todoList.cpp todoItem.cpp todoListCalendar.cpp todoCalendarControl.cpp                 \
