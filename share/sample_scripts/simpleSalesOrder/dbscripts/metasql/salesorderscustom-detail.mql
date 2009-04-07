@@ -2,9 +2,10 @@
 -- Name: detail
 -- Notes: 
 
-SELECT DISTINCT cohead_number::integer,cohead_custponumber, 
-  cust_name,  COALESCE(cust_number, :error) AS cust_number,
+SELECT DISTINCT cohead_number::integer, cohead_custponumber,
+  cohead_billtoname, cust_number,
   MIN(coitem_scheddate) AS scheddate,
+  formatDate(MIN(coitem_scheddate)) AS f_scheddate,
   CASE 
     WHEN (MIN(coitem_scheddate) < current_date) THEN
       'error'
@@ -22,5 +23,5 @@ WHERE(((coitem_status = 'O') OR (coitem_status IS NULL))
 <? endif ?> 
 ) 
 GROUP BY cohead_id, cohead_number, cohead_custponumber,
-  cust_number,cust_name
+  cohead_billtoname, cust_number
 ORDER BY cohead_number;

@@ -18,13 +18,14 @@ with (_orders)
 {
   addColumn("Order#",		75, 1, true, "cohead_number");
   addColumn("Customer#",	75, 1, true, "cust_number");
-  addColumn("Name",		-1, 1, true, "cust_name");
+  addColumn("Name",		-1, 1, true, "cohead_billtoname");
   addColumn("P/O#",		75, 1, true, "cohead_custponumber");
   addColumn("Sched. Date",	75, 1, true, "scheddate");
 }
 
 // Make connections
 _close.clicked.connect(mywindow, "close");
+_print.clicked.connect(printReport);
 
 _all["toggled(bool)"].connect(fillList);
 _salesrep["newID(int)"].connect(fillList);
@@ -40,11 +41,7 @@ function fillList()
 {
   try
   {
-    params = new Object();
-    if (_selected.checked)
-      params.salesrep_id = _salesrep.id();
-
-    data = toolbox.executeDbQuery("salesorderscustom","detail",params);
+    data = toolbox.executeDbQuery("salesorderscustom","detail",getParams());
     _orders.populate(data);
   }
   catch(e)
@@ -52,6 +49,14 @@ function fillList()
     print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
+}
+
+function getParams()
+{
+  params = new Object();
+  if (_selected.checked)
+    params.salesrep_id = _salesrep.id();
+  return params;
 }
 
 function orderEdit()
@@ -105,4 +110,9 @@ function orderOpen(mode,number)
 function orderView()
 {
   orderOpen(_viewMode,_orders.id());
+}
+
+function printReport()
+{
+  toolbox.printReport("ListOpenSalesOrdersBySalesrep", getParams());
 }
