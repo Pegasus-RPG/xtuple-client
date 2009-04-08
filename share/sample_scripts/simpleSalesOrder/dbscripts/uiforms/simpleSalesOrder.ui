@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
-    <height>554</height>
+    <width>892</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -750,6 +750,9 @@
                  <layout class="QHBoxLayout" name="horizontalLayout" >
                   <item>
                    <widget class="DLineEdit" name="_scheddate" >
+                    <property name="defaultDate" >
+                     <enum>XDateEdit::Current</enum>
+                    </property>
                     <property name="fieldName" >
                      <string>scheduled_date</string>
                     </property>

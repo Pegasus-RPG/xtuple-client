@@ -1,14 +1,13 @@
 // Define local variables
 var _linenumCol = 1;
 var _itemCol    = 2;
-var _statusCol	= 6;	
+var _statusCol  = 6;	
 var _qtyCol     = 7;
 var _priceCol   = 9;
 
 var _billAddrNo = "";
 var _linenumber = 1;
 var _populating = false;
-var _defDate = new Date();
 var _extList = new Array();
 var _taxList = new Array();
 
@@ -110,7 +109,6 @@ function add()
   _saleitems.setValue(_saleitem.currentIndex(),_linenumCol,_linenumber);
   _itemGroup.enabled = true;
   _linenumber = _linenumber + 1;
-  _scheddate.date = _defDate;
   _item.setFocus();
 }
 
@@ -121,9 +119,10 @@ function cancel()
     params = new Object;
     params.number = _number.text;
     toolbox.executeDbQuery("simplesalesorder","releasesonumber",params);
+    mydialog.accept();
   }
-  
-  mydialog.reject();
+  else
+    mydialog.reject();
 }
 
 function extension()
@@ -263,13 +262,7 @@ function populateCustomer()
   var data = toolbox.executeDbQuery("simplesalesorder","fetchcustomer", params);
   if(data.first())
   {
-    _address.setLine1(data.value("addr_line1"));
-    _address.setLine2(data.value("addr_line2"));
-    _address.setLine3(data.value("addr_line3"));
-    _address.setCity(data.value("addr_city"));
-    _address.setState(data.value("addr_state"));
-    _address.setPostalCode(data.value("addr_postalcode"));
-    _address.setCountry(data.value("addr_country"));
+    _address.setNumber(data.value("address_number"));
     _taxauth.code = data.value("taxauth");
     _salesrep.code = data.value("salesrep");
     _shipvia.code = data.value("shipvia");
@@ -277,13 +270,7 @@ function populateCustomer()
   }
   else
   {
-    _address.setLine1("");
-    _address.setLine2("");
-    _address.setLine3("");
-    _address.setCity("");
-    _address.setState("");
-    _address.setPostalCode("");
-    _address.setCountry("");
+    _address.setNumber("");
     _salesrep.code = "";
     _taxauth.code = "";
     _shipvia.code = "";

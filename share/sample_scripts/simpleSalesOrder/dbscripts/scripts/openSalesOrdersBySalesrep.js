@@ -74,9 +74,9 @@ function orderOpen(mode,number)
   try
   {
     // Make sure we can support the functionality here
-    if (mode == 0 && metrics.value("CONumberGeneration") != "O")
+    if (mode == 0 && metrics.value("CONumberGeneration") == "M")
       throw "Simple sales order requires that sales order numbering be set to "
-	+ "'Automatic, Allow Override' to create new orders."
+	+ "'Automatic' to create new orders."
 
     if (metrics.value("CalculateFreight") == "t")
       throw "Simple sales order does not support freight calculations.  Please "
