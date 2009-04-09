@@ -336,20 +336,20 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
       {
 	if (item->itemNumber().isEmpty())
 	{
-	  model->setData(index, new QVariant());
-	  model->setData(model->index(index.row(), ITEM_ID_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), new QVariant());
-	  model->setData(model->index(index.row(), WAREHOUS_ID_COL), new QVariant());
-	  model->setData(model->index(index.row(), WAREHOUS_CODE_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_ITEMSRC_ID_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_VEND_ITEM_NUMBER_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_VEND_ITEM_DESCRIP_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_VEND_UOM_COL), new QVariant());
-	  model->setData(model->index(index.row(), ITEMSRC_MINORDQTY_COL), new QVariant());
-	  model->setData(model->index(index.row(), ITEMSRC_MULTORDQTY_COL), new QVariant());
-	  model->setData(model->index(index.row(), ITEMSRC_INVVENDORUOMRATIO_COL), new QVariant());
-	  model->setData(model->index(index.row(), POITEM_INVVENDUOMRATIO_COL), new QVariant());
-	  model->setData(model->index(index.row(), EARLIESTDATE_COL), new QVariant());
+	  model->setData(index, QVariant());
+	  model->setData(model->index(index.row(), ITEM_ID_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), QVariant());
+	  model->setData(model->index(index.row(), WAREHOUS_ID_COL), QVariant());
+	  model->setData(model->index(index.row(), WAREHOUS_CODE_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_ITEMSRC_ID_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_VEND_ITEM_NUMBER_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_VEND_ITEM_DESCRIP_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_VEND_UOM_COL), QVariant());
+	  model->setData(model->index(index.row(), ITEMSRC_MINORDQTY_COL), QVariant());
+	  model->setData(model->index(index.row(), ITEMSRC_MULTORDQTY_COL), QVariant());
+	  model->setData(model->index(index.row(), ITEMSRC_INVVENDORUOMRATIO_COL), QVariant());
+	  model->setData(model->index(index.row(), POITEM_INVVENDUOMRATIO_COL), QVariant());
+	  model->setData(model->index(index.row(), EARLIESTDATE_COL), QVariant());
 	}
 	else
 	{
@@ -403,10 +403,10 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 			   "Please see your controller to correct this situation "
 			   "before continuing."));
 		model->setData(index, new QString());
-		model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), new QVariant());
-		model->setData(model->index(index.row(), WAREHOUS_ID_COL), new QVariant());
-		model->setData(model->index(index.row(), WAREHOUS_CODE_COL), new QString());
-		model->setData(index, new QString());
+		model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), QVariant());
+		model->setData(model->index(index.row(), WAREHOUS_ID_COL), QVariant());
+		model->setData(model->index(index.row(), WAREHOUS_CODE_COL), QString());
+		model->setData(index, QString());
 		hitError = true;
 		break;
 	      }
