@@ -34,6 +34,7 @@ var _salesrep	= mywindow.findChild("_salesrep");
 var _save		= mywindow.findChild("_save");
 var _scheddate	= mywindow.findChild("_scheddate");
 var _shipto		= mywindow.findChild("_shipto");
+var _shiptoGroup	= mywindow.findChild("_shiptoGroup");
 var _shipvia	= mywindow.findChild("_shipvia")
 var _site		= mywindow.findChild("_site");
 var _siteLit	= mywindow.findChild("_siteLit");
@@ -180,7 +181,9 @@ function handleButtons()
   _save.enabled = (state);
   _site.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
   _taxauth.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
-  _itemsTab.enabled = (_taxauth.id() != -1);
+  toolbox.tabSetTabEnabled(_tab, 
+		toolbox.tabTabIndex(_tab,_itemsTab),
+		_taxauth.id() != -1)
 }
 
 function itemCheck()
@@ -228,7 +231,6 @@ function itemPrice()
   }
   catch (e)
   {
-    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
 }
@@ -253,24 +255,26 @@ function populate()
 
 function populateCustomer()
 {
-  if (_populating)
-    return;
-
   var params = new Object;
   params.cust_id = _cust.id();
 
   var data = toolbox.executeDbQuery("simplesalesorder","fetchcustomer", params);
   if(data.first())
   {
+    _shiptoGroup.enabled = data.value("cust_ffshipto");
+    if (_populating)
+      return;
     _address.setNumber(data.value("address_number"));
     _taxauth.code = data.value("taxauth");
     _salesrep.code = data.value("salesrep");
     _shipvia.code = data.value("shipvia");
     _site.code = data.value("site");
   }
+  else if (_populating)
+    return;
   else
   {
-    _address.setNumber("");
+    _address.clear();
     _salesrep.code = "";
     _taxauth.code = "";
     _shipvia.code = "";
@@ -292,6 +296,7 @@ function populateItems()
 function prepare()
 {
   // Set header data
+  _address.clear();
   var data = toolbox.executeDbQuery("simplesalesorder", "fetchsonumber");
   if(data.first())
     _number.text = data.value("number");
@@ -313,7 +318,8 @@ function recalcTotals()
   _subtotal.clear();
   _tax.clear();
   _total.clear();
-
+  _extList = [];
+  _taxList = [];
   for (var i = 0 - 0; i < _saleitems.rowCount(); i++)
   {
     ext = _saleitems.value(i,_qtyCol) * 

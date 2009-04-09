@@ -57,9 +57,9 @@
   </loadcmd>
 
   <loadappscript file="scripts/openSalesOrdersBySalesrep.js"    name="openSalesOrdersBySalesrep"  order="0"/>
-  <loadappscript file="scripts/simpleSalesOrders.js"            name="simpleSalesOrder"           order="0"/>
+  <loadappscript file="scripts/simpleSalesOrder.js"            name="simpleSalesOrder"           order="0"/>
 
-  <loadappui file="uiforms/openSalesOrderBySalesrep.ui"         order="0" />
+  <loadappui file="uiforms/openSalesOrdersBySalesrep.ui"         order="0" />
   <loadappui file="uiforms/simpleSalesOrder.ui"                 order="0" />
 
   <loadmetasql file="metasql/salesorderscustom-detail.mql" />

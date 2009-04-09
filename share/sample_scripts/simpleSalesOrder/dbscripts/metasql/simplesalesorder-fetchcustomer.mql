@@ -6,7 +6,6 @@ SELECT COALESCE(salesrep_number,'') AS salesrep,
   cust_shipvia AS shipvia, 
   taxauth_code AS taxauth,
   cust_ffshipto,
-  COALESCE(sc.cntct_number,bc.cntct_number,'') AS contact_number,
   COALESCE(sa.addr_number,ba.addr_number,'') AS address_number,
   COALESCE(cw.warehous_code,pw.warehous_code,'') AS site
 FROM custinfo
