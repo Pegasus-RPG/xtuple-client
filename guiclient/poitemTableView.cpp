@@ -402,7 +402,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 			tr("<p>The selected item has no Std. Costing information. "
 			   "Please see your controller to correct this situation "
 			   "before continuing."));
-		model->setData(index, new QString());
+		model->setData(index, QString());
 		model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), QVariant());
 		model->setData(model->index(index.row(), WAREHOUS_ID_COL), QVariant());
 		model->setData(model->index(index.row(), WAREHOUS_CODE_COL), QString());

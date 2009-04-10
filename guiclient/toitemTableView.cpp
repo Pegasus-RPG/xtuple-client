@@ -291,9 +291,9 @@ void ToitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	}
 	if (hitError)
 	{
-	  model->setData(index, new QVariant(QVariant::String));
-	  model->setData(model->index(index.row(), TOITEM_ITEM_ID_COL), new QVariant(QVariant::Int));
-	  model->setData(model->index(index.row(), TOITEM_STDCOST_COL), new QVariant(QVariant::Double));
+	  model->setData(index, QVariant(QVariant::String));
+	  model->setData(model->index(index.row(), TOITEM_ITEM_ID_COL), QVariant(QVariant::Int));
+	  model->setData(model->index(index.row(), TOITEM_STDCOST_COL), QVariant(QVariant::Double));
 	}
       }
       break;
