@@ -88,13 +88,6 @@ void dspSummarizedSalesByCustomerByItem::sPrint()
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
 
-  if (_orderByItemNumber->isChecked())
-    params.append("orderByItemNumber");
-  else if (_orderByQtyVolume->isChecked())
-    params.append("orderByQtyVolume");
-  else if (_orderBySalesVolume->isChecked())
-    params.append("orderBySalesVolume");
-
   orReport report("SummarizedSalesHistoryByCustomerByItem", params);
   if (report.isValid())
     report.print();
@@ -135,13 +128,6 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
 
   sql += ") "
          "GROUP BY cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code ) AS data ";
-
-  if (_orderByItemNumber->isChecked())
-    sql += "ORDER BY item_number, warehous_code;";
-  else if (_orderByQtyVolume->isChecked())
-    sql += "ORDER BY totalunits DESC;";
-  else if (_orderBySalesVolume->isChecked())
-    sql += "ORDER BY totalsales DESC;";
 
   q.prepare(sql);
   _warehouse->bindValue(q);

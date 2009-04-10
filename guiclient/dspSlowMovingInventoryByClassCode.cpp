@@ -33,11 +33,6 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  _orderByGroupInt = new QButtonGroup(this);
-  _orderByGroupInt->addButton(_itemNumber);
-  _orderByGroupInt->addButton(_dateLastUsed);
-  _orderByGroupInt->addButton(_inventoryValue);
-
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
@@ -83,15 +78,6 @@ bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
 
-  if (_itemNumber->isChecked())
-    params.append("orderByItemNumber");
-
-  if (_dateLastUsed->isChecked())
-    params.append("orderByDateLastUsed");
-
-  if (_inventoryValue->isChecked())
-    params.append("orderByInventoryValue");
-
   if(_showValue->isChecked())
     params.append("showValue");
 
@@ -100,12 +86,6 @@ bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
 
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
-
-  if (_itemNumber->isChecked())
-    params.append("sortByItem");
-  else if (_dateLastUsed->isChecked())
-    params.append("sortByDate");
-
 
   return true;
 }
@@ -217,8 +197,6 @@ void dspSlowMovingInventoryByClassCode::sHandleValue(bool pShowValue)
 {
   _itemsite->setColumnHidden(6, !pShowValue);
   _itemsite->setColumnHidden(7, !pShowValue);
-
-  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspSlowMovingInventoryByClassCode::sFillList()
