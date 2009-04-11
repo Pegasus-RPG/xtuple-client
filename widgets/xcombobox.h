@@ -90,15 +90,15 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString           nullStr()              const  { return _nullStr; };
     void              setNullStr(const QString &);
 
-    bool              editable()             const;
-    void              setEditable(bool);
+    Q_INVOKABLE bool  editable()             const;
+    Q_INVOKABLE void  setEditable(bool);
 
-    inline            QLabel* label()        const  { return _label; };
-    void              setLabel(QLabel* pLab);
+    Q_INVOKABLE inline QLabel* label()        const  { return _label; };
+    Q_INVOKABLE void   setLabel(QLabel* pLab);
 
-    bool              isValid()              const;
+    Q_INVOKABLE bool isValid()              const;
     int               id(int)                const;
-    Q_INVOKABLE int               id()                   const;
+    Q_INVOKABLE int   id()                   const;
     QString           code()                 const;
     QString           fieldName()            const  { return _fieldName;            };
     QString           listDisplayFieldName() const  { return _listDisplayFieldName; };

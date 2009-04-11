@@ -66,14 +66,14 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
   public:
     UsernameCluster(QWidget*, const char* = 0);
 
-    inline int  id()      const { return _username->id();  }
+    Q_INVOKABLE inline int  id()      const { return _username->id();  }
 
-    inline const QString & username() const { return _username->username(); }
+    Q_INVOKABLE inline const QString & username() const { return _username->username(); }
 
-    inline bool isValid() const { return _username->_valid; }
+    Q_INVOKABLE inline bool isValid() const { return _username->_valid; }
 
-    inline UsernameLineEdit::Type type() const { return _username->type(); }
-    inline void setType(UsernameLineEdit::Type pType) { _username->setType(pType); }
+    Q_INVOKABLE inline UsernameLineEdit::Type type() const { return _username->type(); }
+    Q_INVOKABLE inline void setType(UsernameLineEdit::Type pType) { _username->setType(pType); }
 
     QString label() const;
 
