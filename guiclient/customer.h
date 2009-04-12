@@ -13,6 +13,14 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+
+#include "contacts.h"
+#include "todoList.h"
+#include "opportunityList.h"
+#include "quotes.h"
+#include "openSalesOrders.h"
+#include "openReturnAuthorizations.h"
+
 #include <QStandardItemModel>
 #include <parameter.h>
 
@@ -28,8 +36,10 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
+    virtual void currentTabChanged(int index);
     virtual void populate();
     virtual void sCheck();
+    virtual bool sCheckRequired();
     virtual void sDeleteCharacteristic();
     virtual void sDeleteShipto();
     virtual void sDeleteTaxreg();
@@ -49,6 +59,9 @@ public slots:
     virtual void sNewTaxreg();
     virtual void sPopulateCommission();
     virtual void sPopulateShiptoMenu( QMenu * menuThis );
+    virtual void sPopulateSummary();
+    virtual void sPrint();
+    virtual void sPrintStatement();
     virtual void sPrintShipto();
     virtual bool sSave( bool partial );
     virtual void sSave();
@@ -68,6 +81,13 @@ protected slots:
 
 protected:
     virtual void closeEvent(QCloseEvent*);
+    virtual void setValid(bool valid);
+    todoList *_todoList;
+    contacts *_contacts;
+    opportunityList *_oplist;
+    quotes *_quotes;
+    openSalesOrders *_orders;
+    openReturnAuthorizations *_returns;
 
 private:
     int _mode;

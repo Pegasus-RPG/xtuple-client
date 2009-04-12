@@ -46,7 +46,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   connect(_ra, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_showClosed, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_showClosed, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_expired, SIGNAL(clicked()), this, SLOT(sFillList()));
 
 //  statusBar()->hide();
@@ -114,6 +114,8 @@ void openReturnAuthorizations::setParams(ParameterList &params)
     params.append("showExpired");
   if (_showClosed->isChecked() && _showClosed->isVisible())
     params.append("showClosed");
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
   params.append("undefined", tr("Undefined"));
   params.append("credit", tr("Credit"));
   params.append("return", tr("Return"));

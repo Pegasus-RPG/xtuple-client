@@ -32,117 +32,205 @@
 customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
-    connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission()));
-    connect(_newShipto, SIGNAL(clicked()), this, SLOT(sNewShipto()));
-    connect(_editShipto, SIGNAL(clicked()), this, SLOT(sEditShipto()));
-    connect(_viewShipto, SIGNAL(clicked()), this, SLOT(sViewShipto()));
-    connect(_deleteShipto, SIGNAL(clicked()), this, SLOT(sDeleteShipto()));
-    connect(_shipto, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateShiptoMenu(QMenu*)));
-    connect(_printShipto, SIGNAL(clicked()), this, SLOT(sPrintShipto()));
-    connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
-    connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
-    connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
-    connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
-    connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
-    connect(_ediProfile, SIGNAL(activated(int)), this, SLOT(sProfileSelected()));
-    connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
-    connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
-    connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
-    connect(_deleteTaxreg, SIGNAL(clicked()), this, SLOT(sDeleteTaxreg()));
-    connect(_editTaxreg,   SIGNAL(clicked()), this, SLOT(sEditTaxreg()));
-    connect(_newTaxreg,    SIGNAL(clicked()), this, SLOT(sNewTaxreg()));
-    connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
-    connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
-    connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
-    connect(_soButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_invoiceButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_shiptoButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    
-    _custid = -1;
-    _crmacctid = -1;
-    _NumberGen = -1;
-
-    _sellingWarehouse->setId(-1);
-
-    _currency->setLabel(_currencyLit);
-    
-    _balanceMethod->insertItem(tr("Balance Forward"));
-    _balanceMethod->insertItem(tr("Open Items"));
-
-    _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
-    _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
-
-    _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
-    _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
-    _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
-    _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "shipto_address1");
-    _shipto->addColumn(tr("City, State, Zip"), -1, Qt::AlignLeft, true, "shipto_csz");
-
-    _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
-    _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
-    _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
-    _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
-    
-    _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft, true, "char_name");
-    _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft, true, "charass_value");
-
-    _defaultCommissionPrcnt->setValidator(omfgThis->percentVal());
-    _defaultDiscountPrcnt->setValidator(omfgThis->percentVal());
+  setupUi(this);
   
-    _custchar = new QStandardItemModel(0, 2, this);
-    _custchar->setHeaderData( 0, Qt::Horizontal, tr("Characteristc"), Qt::DisplayRole);
-    _custchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
-    _chartempl->setModel(_custchar);
-    CustCharacteristicDelegate * delegate = new CustCharacteristicDelegate(this);
-    _chartempl->setItemDelegate(delegate);
+  _todoList = new todoList(this, "todoList", Qt::Widget);
+  _todoListPage->layout()->addWidget(_todoList);
+  _todoList->findChild<QWidget*>("_close")->hide();
+  _todoList->findChild<QWidget*>("_usr")->hide();
+  _todoList->findChild<QWidget*>("_startdateGroup")->hide();
+  _todoList->findChild<QWidget*>("_duedateGroup")->hide();
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
+  _todoList->findChild<XCheckBox*>("_autoUpdate")->hide();
+  _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  
+  _contacts = new contacts(this, "contacts", Qt::Widget);
+  _contactsPage->layout()->addWidget(_contacts);
+  _contacts->findChild<QWidget*>("_close")->hide();
+  _contacts->findChild<QWidget*>("_activeOnly")->hide();
+  _contacts->findChild<QWidget*>("_contactsLit")->hide();
+  
+  _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
+  _opportunitiesPage->layout()->addWidget(_oplist);
+  _oplist->findChild<QWidget*>("_close")->hide();
+  _oplist->findChild<QWidget*>("_usr")->hide();
+  _oplist->findChild<QWidget*>("_dates")->hide();
+  _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  
+  _quotes = new quotes(this, "quotes", Qt::Widget);
+  _quotesPage->layout()->addWidget(_quotes);
+  _quotes->findChild<QWidget*>("_close")->hide();
+  _quotes->findChild<QWidget*>("_warehouse")->hide();
+  _quotes->findChild<QWidget*>("_quoteLit")->hide();
+  _quotes->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
+  _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
+  _quotes->findChild<XCheckBox*>("_showProspects")->hide();
+  
+  _orders = new openSalesOrders(this, "_orders", Qt::Widget);
+  _ordersPage->layout()->addWidget(_orders);
+  _orders->findChild<QWidget*>("_close")->hide();
+  _orders->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
+  _orders->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
+  _orders->findChild<XCheckBox*>("_autoUpdate")->hide();
+  _orders->findChild<QWidget*>("_warehouse")->hide();
+  _orders->findChild<QWidget*>("_salesOrdersLit")->hide();
+  _orders->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _orders->findChild<XCheckBox*>("_showClosed")->show();
+  
+  _returns = new openReturnAuthorizations(this, "_returns", Qt::Widget);
+  _returnsPage->layout()->addWidget(_returns);
+  _returns->findChild<QWidget*>("_close")->hide();
+  _returns->findChild<QWidget*>("_warehouse")->hide();
+  _returns->findChild<QWidget*>("_returnAuthorizationsLit")->hide();
+  _returns->findChild<WarehouseGroup*>("_warehouse")->setAll();
+  _returns->findChild<XCheckBox*>("_showClosed")->show();
 
-    key = omfgThis->_key;
-    if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
-    {
-      _tab->removePage(_tab->page(10));
-    }
-    
-    if (_metrics->boolean("EnableBatchManager"))
-    {
-      _ediProfile->append(-1, tr("No EDI"));
-      _ediProfile->append(0, tr("Custom Email"));
-    
-      _soEdiProfile->append(-1, tr("No EDI"));
-      _soEdiProfile->append(0, tr("Custom Email"));
-    
-      q.prepare("SELECT ediprofile_id, ediprofile_name"
-                "  FROM ediprofile, ediform"
-                " WHERE ((ediform_ediprofile_id=ediprofile_id)"
-                "   AND  (ediform_type='invoice')) "
-                "ORDER BY ediprofile_name; ");
-      q.exec();
-      while(q.next()) 
-      {
-        _ediProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-        _soEdiProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-      }
-    }
-    else
-      _tab->removePage(_tab->page(_tab->indexOf(_transmitTab)));
-    
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _sellingWarehouseLit->hide();
-      _sellingWarehouse->hide();
-    }
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
+  connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission()));
+  connect(_newShipto, SIGNAL(clicked()), this, SLOT(sNewShipto()));
+  connect(_editShipto, SIGNAL(clicked()), this, SLOT(sEditShipto()));
+  connect(_viewShipto, SIGNAL(clicked()), this, SLOT(sViewShipto()));
+  connect(_deleteShipto, SIGNAL(clicked()), this, SLOT(sDeleteShipto()));
+  connect(_shipto, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateShiptoMenu(QMenu*)));
+  connect(_printShipto, SIGNAL(clicked()), this, SLOT(sPrintShipto()));
+  connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
+  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
+  connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
+  connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
+  connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+  connect(_ediProfile, SIGNAL(activated(int)), this, SLOT(sProfileSelected()));
+  connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
+  connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
+  connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
+  connect(_deleteTaxreg, SIGNAL(clicked()), this, SLOT(sDeleteTaxreg()));
+  connect(_editTaxreg,   SIGNAL(clicked()), this, SLOT(sEditTaxreg()));
+  connect(_newTaxreg,    SIGNAL(clicked()), this, SLOT(sNewTaxreg()));
+  connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
+  connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
+  connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
+  connect(_soButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_invoiceButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_shiptoButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  
+  connect(_generalButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_termsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_taxButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_creditcardsButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
+  connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
+  connect(_terms, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
+  connect(_shipform, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
+  connect(_custtype, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
 
-    if(!_metrics->boolean("AutoCreditWarnLateCustomers"))
-      _warnLate->hide();
-    else
-      _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+  connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_opportunitiesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_summaryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_quotesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_ordersButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_returnsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
+  
+  QMenu * _printMenu = new QMenu;
+  _printMenu->addAction(tr("Customer Infomation"), this, SLOT(sPrint()));
+  _printMenu->addAction(tr("Statement"),      this, SLOT(sPrintStatement()));
+  _print->setMenu(_printMenu);
+  
+  _custid = -1;
+  _crmacctid = -1;
+  _NumberGen = -1;
+
+  _sellingWarehouse->setId(-1);
+
+  _currency->setLabel(_currencyLit);
+  
+  _balanceMethod->insertItem(tr("Balance Forward"));
+  _balanceMethod->insertItem(tr("Open Items"));
+
+  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
+  _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
+
+  _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
+  _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
+  _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
+  _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "shipto_address1");
+  _shipto->addColumn(tr("City, State, Zip"), -1, Qt::AlignLeft, true, "shipto_csz");
+
+  _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
+  _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
+  _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
+  _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
+  
+  _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft, true, "char_name");
+  _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft, true, "charass_value");
+
+  _defaultCommissionPrcnt->setValidator(omfgThis->percentVal());
+  _defaultDiscountPrcnt->setValidator(omfgThis->percentVal());
+
+  _custchar = new QStandardItemModel(0, 2, this);
+  _custchar->setHeaderData( 0, Qt::Horizontal, tr("Characteristc"), Qt::DisplayRole);
+  _custchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
+  _chartempl->setModel(_custchar);
+  CustCharacteristicDelegate * delegate = new CustCharacteristicDelegate(this);
+  _chartempl->setItemDelegate(delegate);
+
+  key = omfgThis->_key;
+  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+    _creditcardsButton->hide();
+    //_tab->removePage(_tab->page(10));
+  
+  if (_metrics->boolean("EnableBatchManager"))
+  {
+    _ediProfile->append(-1, tr("No EDI"));
+    _ediProfile->append(0, tr("Custom Email"));
+  
+    _soEdiProfile->append(-1, tr("No EDI"));
+    _soEdiProfile->append(0, tr("Custom Email"));
+  
+    q.prepare("SELECT ediprofile_id, ediprofile_name"
+              "  FROM ediprofile, ediform"
+              " WHERE ((ediform_ediprofile_id=ediprofile_id)"
+              "   AND  (ediform_type='invoice')) "
+              "ORDER BY ediprofile_name; ");
+    q.exec();
+    while(q.next()) 
+    {
+      _ediProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
+      _soEdiProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
+    }
+  }
+  else
+    _tab->removePage(_tab->page(_tab->indexOf(_transmitTab)));
+  
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _sellingWarehouseLit->hide();
+    _sellingWarehouse->hide();
+  }
+
+  if(!_metrics->boolean("AutoCreditWarnLateCustomers"))
+    _warnLate->hide();
+  else
+    _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+  
+  setValid(false);
+      
+  _backlog->setPrecision(omfgThis->moneyVal());
+  _lastYearSales->setPrecision(omfgThis->moneyVal());
+  _lateBalance->setPrecision(omfgThis->moneyVal());
+  _openBalance->setPrecision(omfgThis->moneyVal());
+  _ytdSales->setPrecision(omfgThis->moneyVal());
 }
 
 /*
@@ -333,6 +421,30 @@ enum SetResponse customer::set(const ParameterList &pParams)
   return NoError;
 }
 
+void customer::setValid(bool valid)
+{
+    _print->setEnabled(valid);
+    _shiptoPage->setEnabled(valid);
+    _taxPage->setEnabled(valid);
+    _creditcardsPage->setEnabled(valid);
+    _comments->setEnabled(valid);
+    _tab->setTabEnabled(_tab->indexOf(_documentsTab),valid);
+    _tab->setTabEnabled(_tab->indexOf(_crmTab),valid);
+    _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
+    _tab->setTabEnabled(_tab->indexOf(_receivablesTab),valid);
+    
+  if (!valid)
+  {
+    _documents->setId(-1);
+    _todoList->findChild<XTreeWidget*>("_todoList")->clear();
+    _contacts->findChild<XTreeWidget*>("_contacts")->clear();
+    _oplist->findChild<XTreeWidget*>("_list")->clear();
+    _quotes->findChild<XTreeWidget*>("_quote")->clear();
+    _orders->findChild<XTreeWidget*>("_so")->clear();
+    _returns->findChild<XTreeWidget*>("_ra")->clear();
+  }
+}
+
 // similar code in address, customer, shipto, vendor, vendorAddress
 int customer::saveContact(ContactCluster* pContact)
 {
@@ -422,14 +534,6 @@ bool customer::sSave(bool /*partial*/)
       QMessageBox::critical( this, tr("Select Default Shipping Form"),
                              tr("You must select a default Shipping Form for this Customer before continuing.") );
       _shipform->setFocus();
-      return false;
-    }
-
-    if (_salesrep->currentIndex() == -1)
-    {
-      QMessageBox::warning( this, tr("Select Sales Representative"),
-                            tr( "You must select a Sales Representative before adding this Customer." ));
-      _salesrep->setFocus();
       return false;
     }
 
@@ -622,6 +726,8 @@ bool customer::sSave(bool /*partial*/)
   
   if (_mode == cNew)
     _mode = cEdit;
+  
+  setValid(true);
   
   return true;
 }
@@ -829,6 +935,23 @@ void customer::sCheck()
         sLoadCrmAcct(q.value("cust_id").toInt());
     }
   }
+}
+
+bool customer::sCheckRequired()
+{
+    if ( ( _number->text().trimmed().length() == 0) ||
+         (_name->text().trimmed().length() == 0) ||
+         (_custtype->id() == -1) ||
+         (_terms->id() == -1) ||
+         (_salesrep->id() == -1) ||
+         (_shipform->id() == -1) ||
+         (_custid == -1) )
+    { 
+      setValid(false);
+      return false;
+    }
+    setValid(true);
+    return true;
 }
 
 void customer::sPrintShipto()
@@ -1148,6 +1271,8 @@ void customer::populate()
   cust.exec();
   if (cust.first())
   {
+    setValid(true);
+    
     _crmacctid = cust.value("crmacct_id").toInt();
 
     _number->setText(cust.value("cust_number"));
@@ -1240,15 +1365,133 @@ void customer::populate()
     _soEdiEmailHTML->setChecked(cust.value("cust_soediemailhtml").toBool());
 
     _comments->setId(_custid);
+    _documents->setId(_crmacctid);
+    
+    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
+    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
+    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
+    
+    _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
+    _orders->findChild<CustCluster*>("_cust")->setId(_custid);
+    _returns->findChild<CustCluster*>("_cust")->setId(_custid);
+    
+    _todoList->sFillList();
+    _contacts->sFillList();
+    _oplist->sFillList();
+    _quotes->sFillList();
+    _orders->sFillList();
+    _returns->sFillList();
+    
     sFillShiptoList();
     sFillTaxregList();
     sFillCharacteristicList();
     sFillCcardList();
+    sPopulateSummary();
+    return;
   }
   else if (cust.lastError().type() != QSqlError::NoError)
-  {
     systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+  setValid(false);
+  
+}
+
+void customer::sPopulateSummary()
+{
+  XSqlQuery query;
+  query.prepare( "SELECT MIN(cohist_invcdate) AS firstdate,"
+                 "       MAX(cohist_invcdate) AS lastdate "
+                 "FROM cohist "
+                 "WHERE (cohist_cust_id=:cust_id);" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+  {
+    _firstSaleDate->setDate(query.value("firstdate").toDate());
+    _lastSaleDate->setDate(query.value("lastdate").toDate());
+  }
+  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS lysales "
+                 "FROM cohist "
+                 "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
+                 "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
+                 " AND (cohist_cust_id=:cust_id) );" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+    _lastYearSales->setDouble(query.value("lysales").toDouble());
+
+  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS ytdsales "
+                 "FROM cohist "
+                 "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
+                 " AND (cohist_cust_id=:cust_id) );" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+    _ytdSales->setDouble(query.value("ytdsales").toDouble());
+
+  query.prepare( "SELECT COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+                 "                                   (coitem_price / coitem_price_invuomratio) ), 0 ) AS backlog "
+                 "FROM cohead, coitem, itemsite, item "
+                 "WHERE ( (coitem_cohead_id=cohead_id)"
+                 " AND (coitem_itemsite_id=itemsite_id)"
+                 " AND (itemsite_item_id=item_id)"
+                 " AND (coitem_status='O')"
+                 " AND (cohead_cust_id=:cust_id) );" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+    _backlog->setDouble(query.value("backlog").toDouble());
+
+  query.prepare( "SELECT COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
+                 "                                       ELSE ((aropen_amount - aropen_paid) * -1)"
+                 "                                   END ), 0 ) AS balance "
+                 "FROM aropen "
+                 "WHERE ( (aropen_open)"
+                 " AND (aropen_cust_id=:cust_id) );" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+    _openBalance->setDouble(query.value("balance").toDouble());
+
+  query.prepare( "SELECT noNeg( COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
+                 "                                      ELSE ((aropen_amount - aropen_paid) * -1)"
+                 "                                   END ), 0 ) ) AS balance "
+                 "FROM aropen "
+                 "WHERE ( (aropen_open)"
+                 " AND (aropen_duedate < CURRENT_DATE)"
+                 " AND (aropen_cust_id=:cust_id) );" );
+  query.bindValue(":cust_id", _custid);
+  query.exec();
+  if (query.first())
+    _lateBalance->setDouble(query.value("balance").toDouble());
+}
+
+void customer::sPrint()
+{
+  ParameterList params;
+  params.append("cust_id", _custid);
+
+  orReport report("CustomerInformation", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+}
+
+void customer::sPrintStatement()
+{
+  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+  q.bindValue(":cust_id", _custid);
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("cust_id", _custid);
+
+    orReport report(q.value("_reportname").toString(), params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
   }
 }
 
@@ -1409,6 +1652,15 @@ void customer::closeEvent(QCloseEvent *pEvent)
   XWidget::closeEvent(pEvent);
 }
 
+void customer::currentTabChanged(int index)
+{
+  if ( (index == _tab->indexOf(_crmTab) ||
+        index == _tab->indexOf(_salesTab) ||
+        index == _tab->indexOf(_receivablesTab)) &&
+        (_mode == cNew) )
+    sSave(true);
+}
+
 void customer::sHandleButtons()
 {
   if (_billingButton->isChecked())
@@ -1418,8 +1670,38 @@ void customer::sHandleButtons()
   else
     _addressStack->setCurrentIndex(2);
 
+  if (_notesButton->isChecked())
+    _remarksStack->setCurrentIndex(0);
+  else
+    _remarksStack->setCurrentIndex(1);
+    
+  if (_generalButton->isChecked())
+    _settingsStack->setCurrentIndex(0);
+  else if (_termsButton->isChecked())
+    _settingsStack->setCurrentIndex(1);
+  else if (_taxButton->isChecked())
+    _settingsStack->setCurrentIndex(2);
+  else
+    _settingsStack->setCurrentIndex(3);
+    
   if (_soButton->isChecked())
     _transmitStack->setCurrentIndex(0);
   else
     _transmitStack->setCurrentIndex(1);
+    
+  if (_contactsButton->isChecked())
+    _crmStack->setCurrentIndex(0);
+  else if (_todoListButton->isChecked())
+    _crmStack->setCurrentIndex(1);
+  else
+    _crmStack->setCurrentIndex(2);
+  
+  if (_summaryButton->isChecked())
+    _salesStack->setCurrentIndex(0);
+  else if (_quotesButton->isChecked())
+    _salesStack->setCurrentIndex(1);
+  else if (_ordersButton->isChecked())
+    _salesStack->setCurrentIndex(2);
+  else
+    _salesStack->setCurrentIndex(3);
 }

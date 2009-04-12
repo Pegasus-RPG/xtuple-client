@@ -56,6 +56,9 @@ to be bound by its terms.</comment>
            <property name="text" >
             <string>Show Closed</string>
            </property>
+           <property name="forgetful" >
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -321,6 +324,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
