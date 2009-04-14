@@ -50,8 +50,11 @@ taxRegistrations::taxRegistrations(QWidget* parent, const char* name, Qt::WFlags
     connect(_taxreg, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
+  _taxreg->addColumn(tr("Tax Zone"),  100,  Qt::AlignCenter,   true,  "taxzone_code"   );
   _taxreg->addColumn(tr("Tax Authority"),  100,  Qt::AlignCenter, true,  "taxauth_code" );
-  _taxreg->addColumn(tr("Registration #"),  -1,  Qt::AlignLeft,   true,  "taxreg_number"   );
+  _taxreg->addColumn(tr("Registration #"),  100,  Qt::AlignLeft,   true,  "taxreg_number"   );
+  _taxreg->addColumn(tr("Start Date"),  100,  Qt::AlignLeft,   true,  "taxreg_effective"   );
+  _taxreg->addColumn(tr("End Date"),  -1,  Qt::AlignLeft,   true,  "taxreg_expires"   );
 
   sFillList();
 }
@@ -123,11 +126,16 @@ void taxRegistrations::sDelete()
 
 void taxRegistrations::sFillList()
 {
-  q.prepare("SELECT taxreg_id, taxreg_taxauth_id, "
-            "       taxauth_code, taxreg_number "
-            "  FROM taxreg, taxauth "
-            " WHERE ((taxreg_rel_type IS NULL) "
-            "   AND  (taxreg_taxauth_id=taxauth_id));");
+  q.prepare("SELECT taxreg_id, taxreg_taxzone_id, taxreg_taxauth_id, "
+            "       CASE WHEN taxreg_taxzone_id ISNULL THEN '~Any~' "
+			"		ELSE taxzone_code "
+			"		END AS taxzone_code, "
+			"		taxauth_code, taxreg_number, "
+			"		taxreg_effective, taxreg_expires "
+            "  FROM taxreg LEFT OUTER JOIN taxauth ON (taxreg_taxauth_id = taxauth_id) "
+			"		LEFT OUTER JOIN taxzone ON (taxreg_taxzone_id = taxzone_id)"
+            " WHERE (taxreg_rel_type IS NULL)"
+			" ORDER BY taxzone_code, taxauth_code, taxreg_number;");
   q.exec();
   _taxreg->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)

@@ -128,11 +128,15 @@ to be bound by its terms.</comment>
         <layout class="QHBoxLayout" name="horizontalLayout_2" >
          <item>
           <widget class="XComboBox" name="_taxZone" >
-           <item>
-            <property name="text" >
-             <string>~Any~</string>
-            </property>
-           </item>
+           <property name="allowNull" >
+            <bool>true</bool>
+           </property>
+           <property name="nullStr" >
+            <string>~Any~</string>
+           </property>
+           <property name="type" >
+            <enum>XComboBox::TaxZones</enum>
+           </property>
           </widget>
          </item>
          <item>
@@ -247,7 +251,11 @@ to be bound by its terms.</comment>
        </property>
        <layout class="QGridLayout" name="gridLayout_5" >
         <item row="0" column="0" >
-         <widget class="DateCluster" name="_dates" />
+         <widget class="DateCluster" name="_dates" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -286,8 +294,11 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_cust</tabstop>
   <tabstop>_vend</tabstop>
+  <tabstop>_taxZone</tabstop>
   <tabstop>_taxauth</tabstop>
   <tabstop>_number</tabstop>
+  <tabstop>_dates</tabstop>
+  <tabstop>_notes</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
