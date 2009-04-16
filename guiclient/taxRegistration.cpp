@@ -111,11 +111,17 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
 
 void taxRegistration::sSave() 
 {
+ if( _dates->startDate() > _dates->endDate()) 
+	{
+	  QMessageBox::critical(this, tr("Incorrect Date Entry"),
+	   tr("The start date should be earlier than the end date.") );
+	  return;
+	}
   q.prepare("SELECT taxreg_id"
             "  FROM taxreg"
             " WHERE((taxreg_id!= :taxreg_id)"
             "   AND (taxreg_taxauth_id=:taxreg_taxauth_id)"
-            "   AND (COALESCE(taxreg_taxzone_id , 0)=:taxreg_taxzone_id)" 
+            "   AND (COALESCE(taxreg_taxzone_id , -1)=:taxreg_taxzone_id)" 
             "   AND (taxreg_number=:taxreg_number)");
   q.bindValue(":taxreg_id", _taxregid);
   q.bindValue(":taxreg_taxauth_id", _taxauth->id());
@@ -123,7 +129,7 @@ void taxRegistration::sSave()
   if (_taxZone->isValid())	
 	 q.bindValue(":taxreg_taxzone_id", _taxZone->id()); 
   else
-	 q.bindValue(":taxreg_taxzone_id", 0);
+	 q.bindValue(":taxreg_taxzone_id", -1);
   q.exec();
   if(q.first())
   {
@@ -132,13 +138,7 @@ void taxRegistration::sSave()
     _taxZone->setFocus();
     return;
   }
-	
-  if( _dates->startDate() > _dates->endDate()) 
-	{
-	  QMessageBox::critical(this, tr("Incorrect Date Entry"),
-	   tr("The start date should be earlier than the end date.") );
-	  return;
-	}
+
 
   if (cNew == _mode) 
   {
