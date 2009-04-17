@@ -72,7 +72,8 @@ void postCashReceipts::sPost()
 
   q.exec( "SELECT cashrcpt_id, cust_number "
           "FROM cashrcpt, cust "
-          "WHERE (cashrcpt_cust_id=cust_id);" );
+          "WHERE ( (NOT cashrcpt_posted)"
+          "  AND   (cashrcpt_cust_id=cust_id) );" );
   if (q.first())
   {
     int counter = 0;

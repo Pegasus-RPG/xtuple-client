@@ -77,39 +77,9 @@ void dspCashReceipts::languageChange()
 
 void dspCashReceipts::sPrint()
 {
-  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Select Customer"),
-                          tr("You must select a Customer whose A/R Applications you wish to view.") );
-    _cust->setFocus();
-    return;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
   ParameterList params;
-  _dates->appendValue(params);
-
-  if (_selectedCustomer->isChecked())
-    params.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    params.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    params.append("custtype_pattern", _customerType->text());
+  if (! setParams(params))
+    return;
 
   orReport report("CashReceipts", params);
   if (report.isValid())
@@ -120,57 +90,13 @@ void dspCashReceipts::sPrint()
 
 void dspCashReceipts::sFillList()
 {
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
   _arapply->clear();
 
-  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Select Customer"),
-                          tr("You must select a Customer whose Cash Receipts you wish to view.") );
-    _cust->setFocus();
-    return;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
   MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
-  ParameterList params;
-  _dates->appendValue(params);
-  params.append("creditMemo", tr("C/M"));
-  params.append("debitMemo", tr("D/M"));
-  params.append("cashdeposit", tr("Cash Deposit"));
-  params.append("invoice", tr("Invoice"));
-  params.append("cash", tr("C/R"));
-  params.append("check", tr("Check"));
-  params.append("certifiedCheck", tr("Cert. Check"));
-  params.append("masterCard", tr("M/C"));
-  params.append("visa", tr("Visa"));
-  params.append("americanExpress", tr("AmEx"));
-  params.append("discoverCard", tr("Discover"));
-  params.append("otherCreditCard", tr("Other C/C"));
-  params.append("cash", tr("Cash"));
-  params.append("wireTransfer", tr("Wire Trans."));
-  params.append("other", tr("Other"));
-  params.append("unapplied", tr("Cash Deposit"));
-  if (_selectedCustomer->isChecked())
-    params.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    params.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    params.append("custtype_pattern", _customerType->text());
   q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);
@@ -181,3 +107,56 @@ void dspCashReceipts::sFillList()
   }
 }
 
+bool dspCashReceipts::setParams(ParameterList &pParams)
+{
+  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Select Customer"),
+                          tr("You must select a Customer whose Cash Receipts you wish to view.") );
+    _cust->setFocus();
+    return false;
+  }
+
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("You must enter a valid Start Date.") );
+    _dates->setFocus();
+    return false;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("You must enter a valid End Date.") );
+    _dates->setFocus();
+    return false;
+  }
+  
+  _dates->appendValue(pParams);
+  pParams.append("creditMemo", tr("C/M"));
+  pParams.append("debitMemo", tr("D/M"));
+  pParams.append("cashdeposit", tr("Cash Deposit"));
+  pParams.append("invoice", tr("Invoice"));
+  pParams.append("cash", tr("C/R"));
+  pParams.append("check", tr("Check"));
+  pParams.append("certifiedCheck", tr("Cert. Check"));
+  pParams.append("masterCard", tr("M/C"));
+  pParams.append("visa", tr("Visa"));
+  pParams.append("americanExpress", tr("AmEx"));
+  pParams.append("discoverCard", tr("Discover"));
+  pParams.append("otherCreditCard", tr("Other C/C"));
+  pParams.append("cash", tr("Cash"));
+  pParams.append("wireTransfer", tr("Wire Trans."));
+  pParams.append("other", tr("Other"));
+  pParams.append("unapplied", tr("Cash Deposit"));
+  pParams.append("unposted", tr("Unposted"));
+  if (_selectedCustomer->isChecked())
+    pParams.append("cust_id", _cust->id());
+  else if (_selectedCustomerType->isChecked())
+    pParams.append("custtype_id", _customerTypes->id());
+  else if (_customerTypePattern->isChecked())
+    pParams.append("custtype_pattern", _customerType->text());
+    
+  return true;
+}

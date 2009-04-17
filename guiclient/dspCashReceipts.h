@@ -24,6 +24,7 @@ class dspCashReceipts : public XWidget, public Ui::dspCashReceipts
 public:
     dspCashReceipts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCashReceipts();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();
