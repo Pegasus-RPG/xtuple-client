@@ -44,7 +44,7 @@ dspDepositsRegister::dspDepositsRegister(QWidget* parent, const char* name, Qt::
   _gltrans->addColumn(tr("Credit to A/R"),    _moneyColumn,   Qt::AlignRight,  true,  "credit"  );
   _gltrans->addColumn(tr("Balance"),          _moneyColumn,   Qt::AlignRight,  true,  "balance"  );
   _gltrans->addColumn(tr("Currency"),      _currencyColumn,    Qt::AlignCenter, true,  "currAbbr"  );
-  _gltrans->addColumn(tr("Base Balance"),  _bigMoneyColumn,   Qt::AlignRight,  false, "base_balance"  );
+  _gltrans->addColumn(tr("Base Balance"),  _bigMoneyColumn,   Qt::AlignRight,  true, "base_balance"  );
 }
 
 /*
