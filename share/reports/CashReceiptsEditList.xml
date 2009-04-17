@@ -34,7 +34,8 @@
        bankaccnt_name
 FROM cashrcpt, bankaccnt, cust
 WHERE ( (cashrcpt_bankaccnt_id=bankaccnt_id)
- AND (cashrcpt_cust_id=cust_id) )
+  AND   (cashrcpt_cust_id=cust_id)
+  AND   (NOT cashrcpt_posted) )
 
 UNION
 SELECT cashrcpt_id, 2 AS orderBy,
@@ -50,7 +51,8 @@ SELECT cashrcpt_id, 2 AS orderBy,
        '' AS bankaccnt_name
 FROM cashrcptitem, cashrcpt, aropen
 WHERE ( (cashrcptitem_cashrcpt_id=cashrcpt_id)
- AND (cashrcptitem_aropen_id=aropen_id) )
+  AND   (cashrcptitem_aropen_id=aropen_id)
+  AND   (NOT cashrcpt_posted) )
 
 UNION
 SELECT cashrcpt_id, 3 AS orderBy,
@@ -66,7 +68,8 @@ SELECT cashrcpt_id, 3 AS orderBy,
        '' AS bankaccnt_name
 FROM cashrcptmisc, cashrcpt, accnt
 WHERE ( (cashrcptmisc_cashrcpt_id=cashrcpt_id)
- AND (cashrcptmisc_accnt_id=accnt_id) )
+  AND   (cashrcptmisc_accnt_id=accnt_id)
+  AND   (NOT cashrcpt_posted) )
 
 ORDER BY cashrcpt_id, orderBy;
 
