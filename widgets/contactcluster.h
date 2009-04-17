@@ -172,6 +172,13 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
         Q_INVOKABLE virtual QString webAddress()	const { return _webaddr->text(); };
         Q_INVOKABLE virtual QString suffix()		const { return _suffix->text(); };
         Q_INVOKABLE virtual QString middle()		const { return _middle->text(); };
+        Q_INVOKABLE virtual QString address1()          const { return _address->line1(); };
+        Q_INVOKABLE virtual QString address2()          const { return _address->line2(); };
+        Q_INVOKABLE virtual QString address3()          const { return _address->line3(); };
+        Q_INVOKABLE virtual QString city()              const { return _address->city(); };
+        Q_INVOKABLE virtual QString postalCode()        const { return _address->postalCode(); };
+        Q_INVOKABLE virtual QString state()             const { return _address->state(); };
+        Q_INVOKABLE virtual QString country()           const { return _address->country(); };
 
 	//Return Data Mapping values
   	virtual QString  fieldNameChange()        const { return _fieldNameChange; };
