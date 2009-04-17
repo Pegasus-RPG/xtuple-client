@@ -36,127 +36,10 @@
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT arapply_id,
-       1 AS type,
-       cust_number,
-       cust_name,
-       formatDate(arapply_postdate) AS f_postdate,
-       ( CASE WHEN (arapply_source_doctype='C') THEN text('C/M')
-              WHEN (arapply_fundstype='C') THEN text('Check')
-              WHEN (arapply_fundstype='T') THEN text('Certified Check')
-              WHEN (arapply_fundstype='M') THEN text('M/C')
-              WHEN (arapply_fundstype='V') THEN text('Visa')
-              WHEN (arapply_fundstype='A') THEN text('AmEx')
-              WHEN (arapply_fundstype='D') THEN text('Discover')
-              WHEN (arapply_fundstype='R') THEN text('Other C/C')
-              WHEN (arapply_fundstype='K') THEN text('C/R')
-              WHEN (arapply_fundstype='W') THEN text('Wire Trans.')
-              WHEN (arapply_fundstype='O') THEN text('Other')
-         END || ' ' ||
-         CASE WHEN (arapply_source_doctype='C') THEN TEXT(arapply_source_docnumber)
-              ELSE arapply_refnumber
-         END ) AS source,
-       ( CASE WHEN (arapply_target_doctype='D') THEN text('D/M')
-              WHEN (arapply_target_doctype='I') THEN text('Invoice')
-              ELSE text('Other')
-         END || ' ' || TEXT(arapply_target_docnumber) ) AS target,
-       formatMoney(arapply_applied) AS f_applied,
-       arapply_applied,
-       formatMoney(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)) AS f_base_applied,
-       currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS base_applied,
-       currConcat(arapply_curr_id) AS currAbbr,
-       arapply_postdate AS sortdate
-  FROM arapply, cust
- WHERE ( (arapply_cust_id=cust_id)
-   AND (arapply_postdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-   AND (arapply_source_doctype='K')
-
-&lt;? if exists("cust_id") ?>
-   AND (cust_id=&lt;? value("cust_id") ?>)
-&lt;? elseif exists("custtype_id") ?>
-   AND (cust_custtype_id=&lt;? value("custtype_id") ?>)
-&lt;? elseif exists("custtype_pattern") ?>
-   AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
-&lt;? endif ?>
- )
-
- UNION SELECT cashrcpt_id,
-       2 AS type,
-       cust_number,
-       cust_name,
-       formatDate(cashrcpt_distdate) AS f_postdate,
-       ( CASE WHEN (cashrcpt_fundstype='C') THEN text('Check')
-              WHEN (cashrcpt_fundstype='T') THEN text('Certified Check')
-              WHEN (cashrcpt_fundstype='M') THEN text('M/C')
-              WHEN (cashrcpt_fundstype='V') THEN text('Visa')
-              WHEN (cashrcpt_fundstype='A') THEN text('AmEx')
-              WHEN (cashrcpt_fundstype='D') THEN text('Discover')
-              WHEN (cashrcpt_fundstype='R') THEN text('Other C/C')
-              WHEN (cashrcpt_fundstype='K') THEN text('C/R')
-              WHEN (cashrcpt_fundstype='W') THEN text('Wire Trans.')
-              WHEN (cashrcpt_fundstype='O') THEN text('Other')
-         END || ' ' || cashrcpt_docnumber ) AS source,
-       text('') AS target,
-       formatMoney(cashrcpt_amount) AS f_applied,
-       cashrcpt_amount,
-       formatMoney(currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate)) AS f_base_applied,
-       currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate) AS base_applied,
-       currConcat(cashrcpt_curr_id) AS currAbbr,
-       cashrcpt_distdate AS sortdate
-  FROM cashrcpt, cust
- WHERE ( (cashrcpt_cust_id=cust_id)
-   AND (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-
-&lt;? if exists("cust_id") ?>
-   AND (cust_id=&lt;? value("cust_id") ?>)
-&lt;? elseif exists("custtype_id") ?>
-   AND (cust_custtype_id=&lt;? value("custtype_id") ?>)
-&lt;? elseif exists("custtype_pattern") ?>
-   AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
-&lt;? endif ?>
- )
-
- UNION SELECT aropen_id,
-       3 AS type,
-       cust_number,
-       cust_name,
-       formatDate(aropen_docdate) AS f_postdate,
-       ( CASE WHEN (substr(aropen_notes, 16, 1)='C') THEN text('Check')
-              WHEN (substr(aropen_notes, 16, 1)='T') THEN text('Certified Check')
-              WHEN (substr(aropen_notes, 16, 1)='M') THEN text('M/C')
-              WHEN (substr(aropen_notes, 16, 1)='V') THEN text('Visa')
-              WHEN (substr(aropen_notes, 16, 1)='A') THEN text('AmEx')
-              WHEN (substr(aropen_notes, 16, 1)='D') THEN text('Discover')
-              WHEN (substr(aropen_notes, 16, 1)='R') THEN text('Other C/C')
-              WHEN (substr(aropen_notes, 16, 1)='K') THEN text('C/R')
-              WHEN (substr(aropen_notes, 16, 1)='W') THEN text('Wire Trans.')
-              WHEN (substr(aropen_notes, 16, 1)='O') THEN text('Other')
-         END || ' ' ||
-         substr(aropen_notes, 18)) AS source,
-       TEXT('Unapplied') AS target,
-       formatMoney(aropen_amount) AS f_applied,
-       aropen_amount,
-       formatMoney(currtobase(aropen_curr_id,aropen_amount,aropen_docdate)) AS f_base_applied,
-       currtobase(aropen_curr_id,aropen_amount,aropen_docdate) AS base_applied,
-       currConcat(aropen_curr_id) AS currAbbr,
-       aropen_docdate AS sortdate
-  FROM aropen, cust
- WHERE ( (aropen_cust_id=cust_id)
-   AND (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-   AND (aropen_doctype='R')
-
-&lt;? if exists("cust_id") ?>
-   AND (cust_id=&lt;? value("cust_id") ?>)
-&lt;? elseif exists("custtype_id") ?>
-   AND (cust_custtype_id=&lt;? value("custtype_id") ?>)
-&lt;? elseif exists("custtype_pattern") ?>
-   AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
-&lt;? endif ?>
- )
-
-ORDER BY sortdate, source;</sql>
+  <mqlgroup>cashReceipts</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>146</height>
@@ -213,8 +96,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>465</x>
-    <y>125</y>
+    <x>410</x>
+    <y>126</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -325,8 +208,8 @@ ORDER BY sortdate, source;</sql>
   </field>
   <label>
    <rect>
-    <x>575</x>
-    <y>125</y>
+    <x>500</x>
+    <y>126</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -341,8 +224,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>250</x>
-    <y>125</y>
+    <x>210</x>
+    <y>126</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -357,8 +240,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>700</x>
-    <y>125</y>
+    <x>595</x>
+    <y>126</y>
     <width>45</width>
     <height>15</height>
    </rect>
@@ -389,8 +272,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>125</y>
+    <x>300</x>
+    <y>126</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -402,6 +285,22 @@ ORDER BY sortdate, source;</sql>
    <hcenter/>
    <vcenter/>
    <string>Source</string>
+  </label>
+  <label>
+   <rect>
+    <x>640</x>
+    <y>126</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Base Amount</string>
   </label>
  </rpthead>
  <pghead>
@@ -444,8 +343,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>5</y>
+    <x>295</x>
+    <y>4</y>
     <width>95</width>
     <height>15</height>
    </rect>
@@ -467,8 +366,8 @@ ORDER BY sortdate, source;</sql>
   </line>
   <label>
    <rect>
-    <x>480</x>
-    <y>5</y>
+    <x>420</x>
+    <y>4</y>
     <width>70</width>
     <height>15</height>
    </rect>
@@ -483,8 +382,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>700</x>
-    <y>6</y>
+    <x>595</x>
+    <y>4</y>
     <width>45</width>
     <height>15</height>
    </rect>
@@ -499,8 +398,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>580</x>
-    <y>5</y>
+    <x>495</x>
+    <y>4</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -515,8 +414,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <label>
    <rect>
-    <x>250</x>
-    <y>5</y>
+    <x>215</x>
+    <y>4</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -529,6 +428,22 @@ ORDER BY sortdate, source;</sql>
    <vcenter/>
    <string>Date</string>
   </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Base Amount</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -536,10 +451,10 @@ ORDER BY sortdate, source;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>18</height>
+   <height>20</height>
    <field>
     <rect>
-     <x>90</x>
+     <x>55</x>
      <y>0</y>
      <width>155</width>
      <height>15</height>
@@ -558,7 +473,7 @@ ORDER BY sortdate, source;</sql>
    </field>
    <field>
     <rect>
-     <x>250</x>
+     <x>215</x>
      <y>0</y>
      <width>65</width>
      <height>15</height>
@@ -577,9 +492,9 @@ ORDER BY sortdate, source;</sql>
    </field>
    <field>
     <rect>
-     <x>575</x>
+     <x>510</x>
      <y>0</y>
-     <width>100</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -596,7 +511,7 @@ ORDER BY sortdate, source;</sql>
    </field>
    <field>
     <rect>
-     <x>705</x>
+     <x>600</x>
      <y>0</y>
      <width>40</width>
      <height>15</height>
@@ -615,7 +530,7 @@ ORDER BY sortdate, source;</sql>
    </field>
    <field>
     <rect>
-     <x>450</x>
+     <x>400</x>
      <y>0</y>
      <width>110</width>
      <height>15</height>
@@ -636,7 +551,7 @@ ORDER BY sortdate, source;</sql>
     <rect>
      <x>5</x>
      <y>0</y>
-     <width>80</width>
+     <width>40</width>
      <height>15</height>
     </rect>
     <font>
@@ -653,7 +568,7 @@ ORDER BY sortdate, source;</sql>
    </field>
    <field>
     <rect>
-     <x>325</x>
+     <x>285</x>
      <y>0</y>
      <width>115</width>
      <height>15</height>
@@ -668,6 +583,25 @@ ORDER BY sortdate, source;</sql>
     <data>
      <query>detail</query>
      <column>source</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>645</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_base_applied</column>
     </data>
    </field>
   </detail>
@@ -692,8 +626,8 @@ ORDER BY sortdate, source;</sql>
   </label>
   <field>
    <rect>
-    <x>705</x>
-    <y>0</y>
+    <x>680</x>
+    <y>2</y>
     <width>40</width>
     <height>15</height>
    </rect>
@@ -745,4 +679,43 @@ ORDER BY sortdate, source;</sql>
    </data>
   </field>
  </pgfoot>
+ <rptfoot>
+  <height>100</height>
+  <field>
+   <rect>
+    <x>645</x>
+    <y>10</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>base_applied</column>
+   </data>
+   <tracktotal builtin="true" >qty</tracktotal>
+  </field>
+  <label>
+   <rect>
+    <x>535</x>
+    <y>10</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Base Amount</string>
+  </label>
+ </rptfoot>
 </report>
