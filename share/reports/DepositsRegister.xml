@@ -49,7 +49,8 @@
 --Balance:
        gltrans_amount * -1 as balance_amt,
 --AROPEN Amount
-       formatMoney(currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate)) AS f_aropen_bal
+       formatMoney(currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate)) AS f_aropen_bal,
+       currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate) AS aropen_bal
 
     FROM gltrans LEFT OUTER JOIN aropen ON ((text(gltrans_docnumber) = 'I-' || text(aropen_docnumber))
                                         AND (aropen_doctype='I')), accnt
@@ -1073,6 +1074,26 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <yend>6</yend>
    <weight>2</weight>
   </line>
+  <field>
+   <rect>
+    <x>790</x>
+    <y>25</y>
+    <width>75</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <top/>
+   <data>
+    <query>detail</query>
+    <column>aropen_bal</column>
+   </data>
+   <tracktotal builtin="true" >qty</tracktotal>
+  </field>
  </pgfoot>
  <pgfoot>
   <height>21</height>
