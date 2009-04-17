@@ -917,6 +917,9 @@ void initErrorLookupHash()
 			      "the amount distributed is greater than the "
 			      "amount received. You must correct this before "
 			      "you may post this Cash Receipt."),	0, "" },
+  { "postCashReceipt", -2, TR("The selected Cash Receipt cannot be posted as "
+			      "the amount received must be greater than zero. You must correct this before "
+			      "you may post this Cash Receipt."),	0, "" },
   { "postCashReceipt", -5, TR("The selected Cash Receipt cannot be posted as "
                                "the A/R Account cannot be determined. You must "
 			       "make an A/R Account Assignment for the "
