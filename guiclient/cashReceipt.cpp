@@ -204,6 +204,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _received->setEnabled(FALSE);
       _fundsType->setEnabled(FALSE);
       _docNumber->setEnabled(FALSE);
+      _docDate->setEnabled(FALSE);
       _bankaccnt->setEnabled(FALSE);
       _distDate->setEnabled(FALSE);
       _aropen->setEnabled(FALSE);
@@ -232,6 +233,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _received->setEnabled(FALSE);
       _fundsType->setEnabled(FALSE);
       _docNumber->setEnabled(FALSE);
+      _docDate->setEnabled(FALSE);
       _bankaccnt->setEnabled(FALSE);
       _distDate->setEnabled(FALSE);
     }
@@ -575,19 +577,20 @@ int to = -1, from = -1;
     q.prepare( "INSERT INTO cashrcpt "
                "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
                "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
-               "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_notes, "
-               "  cashrcpt_salescat_id ) "
+               "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
+               "  cashrcpt_notes, cashrcpt_salescat_id ) "
                "VALUES "
                "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
                "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
-               "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_notes, "
-               "  :cashrcpt_salescat_id );" );
+               "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
+               "  :cashrcpt_notes, :cashrcpt_salescat_id );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
 	       "    cashrcpt_amount=:cashrcpt_amount,"
 	       "    cashrcpt_fundstype=:cashrcpt_fundstype,"
 	       "    cashrcpt_docnumber=:cashrcpt_docnumber,"
+	       "    cashrcpt_docdate=:cashrcpt_docdate,"
 	       "    cashrcpt_bankaccnt_id=:cashrcpt_bankaccnt_id,"
 	       "    cashrcpt_distdate=:cashrcpt_distdate,"
 	       "    cashrcpt_notes=:cashrcpt_notes, "
@@ -604,6 +607,7 @@ int to = -1, from = -1;
     q.bindValue(":cashrcpt_amount", _received->localValue());
   q.bindValue(":cashrcpt_fundstype", fundsType);
   q.bindValue(":cashrcpt_docnumber", _docNumber->text());
+  q.bindValue(":cashrcpt_docdate", _docDate->date());
   q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
   q.bindValue(":cashrcpt_distdate", _distDate->date());
   q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
@@ -743,10 +747,7 @@ void cashReceipt::sUpdateBalance()
 
 void cashReceipt::populate()
 {
-  q.prepare( "SELECT cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id, "
-             "       cashrcpt_fundstype, cashrcpt_docnumber, cashrcpt_bankaccnt_id,"
-             "       cashrcpt_distdate, cashrcpt_notes, cashrcpt_salescat_id,"
-             "       cashrcpt_usecustdeposit "
+  q.prepare( "SELECT * "
              "FROM cashrcpt "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
   q.bindValue(":cashrcpt_id", _cashrcptid);
@@ -758,6 +759,7 @@ void cashReceipt::populate()
                    q.value("cashrcpt_curr_id").toInt(),
                    q.value("cashrcpt_distdate").toDate(), false);
     _docNumber->setText(q.value("cashrcpt_docnumber").toString());
+    _docDate->setDate(q.value("cashrcpt_docdate").toDate(), true);
     _bankaccnt->setId(q.value("cashrcpt_bankaccnt_id").toInt());
     _distDate->setDate(q.value("cashrcpt_distdate").toDate(), true);
     _notes->setText(q.value("cashrcpt_notes").toString());
