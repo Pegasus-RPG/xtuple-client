@@ -3,6 +3,15 @@
  <title>Sales History By Parameter List</title>
  <name>SalesHistoryByParameterList</name>
  <description></description>
+ <parameter default="25" active="true" listtype="static" type="string" name="custgrp_id" >
+  <description></description>
+ </parameter>
+ <parameter default="'01-01-2010'" active="true" listtype="static" type="string" name="endDate" >
+  <description></description>
+ </parameter>
+ <parameter default="'01-01-2000'" active="true" listtype="static" type="string" name="startDate" >
+  <description></description>
+ </parameter>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -92,7 +101,7 @@
 &lt;? elseif exists("custtype_pattern") ?>
    AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
 &lt;? elseif exists("custgrp_id") ?>
-   AND (cust_id IN (SELECT custgrpitem_cust_id FROM custgrpitem WHERE (custgrpitem_id=&lt;? value("custgrp_id") ?>)))
+   AND (cust_id IN (SELECT custgrpitem_cust_id FROM custgrpitem WHERE (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)))
 &lt;? elseif exists("custgrp_pattern") ?>
    AND (cust_id IN (SELECT custgrpitem_cust_id FROM custgrp, custgrpitem WHERE ((custgrpitem_custgrp_id=custgrp_id) AND (custgrp_name ~ &lt;? value("custgrp_pattern") ?>))))
 &lt;? elseif exists("custgrp") ?>
