@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "taxClasses.h"
+#include "taxclasses.h"
 
 #include <QVariant>
 #include <QMessageBox>

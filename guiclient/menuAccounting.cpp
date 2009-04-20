@@ -112,7 +112,7 @@
 #include "accountingPeriods.h"
 #include "accountingYearPeriods.h"
 #include "taxCodes.h"
-#include "taxClasses.h"
+#include "taxclasses.h"
 #include "taxTypes.h"
 #include "taxZones.h"
 #include "taxAuthorities.h"
