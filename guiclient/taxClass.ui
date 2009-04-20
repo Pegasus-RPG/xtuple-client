@@ -228,6 +228,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_taxClass</tabstop>
   <tabstop>_description</tabstop>
+  <tabstop>_seq</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

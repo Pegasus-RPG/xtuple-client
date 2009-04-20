@@ -112,6 +112,7 @@
 #include "accountingPeriods.h"
 #include "accountingYearPeriods.h"
 #include "taxCodes.h"
+#include "taxClasses.h"
 #include "taxTypes.h"
 #include "taxZones.h"
 #include "taxAuthorities.h"
@@ -418,6 +419,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.searchForTaxAuth",	tr("&Search for Tax Authority..."), SLOT(sTaxAuthoritySearch()),	taxMenu,	(_privileges->check("MaintainTaxAuthorities") || _privileges->check("ViewTaxAuthorities")), NULL, NULL, true, NULL },
     { "gl.taxAuthorities",	tr("Tax &Authorities..."),	SLOT(sTaxAuthorities()),	taxMenu,	(_privileges->check("MaintainTaxAuthorities") || _privileges->check("ViewTaxAuthorities")), NULL, NULL, true, NULL },
     { "gl.taxZones",		tr("Tax &Zones..."),		SLOT(sTaxZones()),		taxMenu,	(_privileges->check("MaintainTaxZones") || _privileges->check("ViewTaxZones")), NULL, NULL, true, NULL }, 
+	{ "gl.taxClasses",		tr("Tax &Classes..."),		SLOT(sTaxClasses()),		taxMenu,	(_privileges->check("MaintainTaxClasses") || _privileges->check("ViewTaxClasses")), NULL, NULL, true, NULL }, 
     { "gl.taxCodes",		tr("Tax &Codes..."),		SLOT(sTaxCodes()),		taxMenu,	(_privileges->check("MaintainTaxCodes") || _privileges->check("ViewTaxCodes")), NULL, NULL, true, NULL },
     { "gl.taxTypes",		tr("Tax &Types..."),		SLOT(sTaxTypes()),		taxMenu,	(_privileges->check("MaintainTaxTypes") || _privileges->check("ViewTaxTypes")), NULL, NULL, true, NULL },
     { "gl.taxSelections",	tr("Tax Se&lections..."),	SLOT(sTaxSelections()),		taxMenu,	(_privileges->check("MaintainTaxSel") || _privileges->check("ViewTaxSel")), NULL, NULL, true, NULL },
@@ -1075,6 +1077,11 @@ void menuAccounting::sTaxAuthoritySearch()
 void menuAccounting::sTaxZones()
 {
   omfgThis->handleNewWindow(new taxZones());
+}
+
+void menuAccounting::sTaxClasses()
+{
+  omfgThis->handleNewWindow(new taxClasses());
 }
 
 void menuAccounting::sTaxCodes()
