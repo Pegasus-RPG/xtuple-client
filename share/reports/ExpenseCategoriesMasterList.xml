@@ -4,24 +4,82 @@
  <name>ExpenseCategoriesMasterList</name>
  <description></description>
  <size>Letter</size>
- <portrait/>
+ <landscape/>
  <topmargin>50</topmargin>
  <bottommargin>50</bottommargin>
- <rightmargin>50</rightmargin>
- <leftmargin>50</leftmargin>
+ <rightmargin>28</rightmargin>
+ <leftmargin>28</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT expcat_id,
-       expcat_code,
-       expcat_descrip
-  FROM expcat
-ORDER BY expcat_code;</sql>
+  <sql>SELECT 
+  expcat_code,
+  expcat_descrip,
+          (SELECT
+                 accnt.accnt_company || '-' || 
+                 accnt.accnt_profit|| '-' || 
+                 accnt.accnt_number|| '-' || 
+                 accnt.accnt_sub || '   ' || 
+                 accnt_descrip
+           FROM 
+                 public.expcat, 
+                 public.accnt
+           WHERE 
+                 expcat.expcat_exp_accnt_id = accnt.accnt_id AND
+                 A.expcat_id = expcat_id
+           ) AS exp_accnt,
+
+  (SELECT
+                 accnt.accnt_company || '-' || 
+                 accnt.accnt_profit|| '-' || 
+                 accnt.accnt_number|| '-' || 
+                 accnt.accnt_sub || '   ' || 
+                 accnt_descrip
+           FROM 
+                 public.expcat, 
+                 public.accnt
+           WHERE 
+                 expcat.expcat_purchprice_accnt_id = accnt.accnt_id AND
+                 A.expcat_id = expcat_id
+           ) AS ppv_accnt,
+
+  (SELECT
+                 accnt.accnt_company || '-' || 
+                 accnt.accnt_profit|| '-' || 
+                 accnt.accnt_number|| '-' || 
+                 accnt.accnt_sub || '   ' || 
+                 accnt_descrip
+           FROM 
+                 public.expcat, 
+                 public.accnt
+           WHERE 
+                 expcat.expcat_liability_accnt_id = accnt.accnt_id AND
+                 A.expcat_id = expcat_id
+           ) AS poliab_accnt,
+
+  (SELECT
+                 accnt.accnt_company || '-' || 
+                 accnt.accnt_profit|| '-' || 
+                 accnt.accnt_number|| '-' || 
+                 accnt.accnt_sub || '   ' || 
+                 accnt_descrip
+           FROM 
+                 public.expcat, 
+                 public.accnt
+           WHERE 
+                 expcat.expcat_freight_accnt_id = accnt.accnt_id AND
+                 A.expcat_id = expcat_id
+           ) AS polinefrgt_accnt
+
+FROM 
+  expcat AS A
+ORDER BY expcat_code;
+</sql>
  </querysource>
  <rpthead>
-  <height>77</height>
+  <height>90</height>
   <label>
    <rect>
-    <x>175</x>
+    <x>260</x>
     <y>55</y>
     <width>80</width>
     <height>15</height>
@@ -36,16 +94,16 @@ ORDER BY expcat_code;</sql>
    <string>Description</string>
   </label>
   <line>
-   <xstart>5</xstart>
-   <ystart>70</ystart>
-   <xend>745</xend>
-   <yend>70</yend>
+   <xstart>6</xstart>
+   <ystart>85</ystart>
+   <xend>1036</xend>
+   <yend>85</yend>
    <weight>2</weight>
   </line>
   <label>
    <rect>
-    <x>295</x>
-    <y>10</y>
+    <x>535</x>
+    <y>11</y>
     <width>450</width>
     <height>38</height>
    </rect>
@@ -60,7 +118,7 @@ ORDER BY expcat_code;</sql>
   </label>
   <label>
    <rect>
-    <x>10</x>
+    <x>5</x>
     <y>55</y>
     <width>95</width>
     <height>15</height>
@@ -74,16 +132,80 @@ ORDER BY expcat_code;</sql>
    <vcenter/>
    <string>Code</string>
   </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>70</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Expense Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>70</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Purcahse Price Variance Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>520</x>
+    <y>70</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>P/O Liability Clearing Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>780</x>
+    <y>70</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>P/O Line Freight Account</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
   <height>7</height>
  </pghead>
  <pghead>
-  <height>22</height>
+  <height>33</height>
   <label>
    <rect>
-    <x>10</x>
+    <x>5</x>
     <y>0</y>
     <width>95</width>
     <height>15</height>
@@ -98,16 +220,16 @@ ORDER BY expcat_code;</sql>
    <string>Code</string>
   </label>
   <line>
-   <xstart>5</xstart>
-   <ystart>15</ystart>
-   <xend>745</xend>
-   <yend>15</yend>
+   <xstart>6</xstart>
+   <ystart>30</ystart>
+   <xend>1036</xend>
+   <yend>30</yend>
    <weight>2</weight>
   </line>
   <label>
    <rect>
-    <x>175</x>
-    <y>0</y>
+    <x>260</x>
+    <y>3</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -120,6 +242,70 @@ ORDER BY expcat_code;</sql>
    <vcenter/>
    <string>Description</string>
   </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Expense Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>15</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Purcahse Price Variance Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>520</x>
+    <y>15</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>P/O Liability Clearing Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>780</x>
+    <y>15</y>
+    <width>175</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>P/O Line Freight Account </string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -127,12 +313,12 @@ ORDER BY expcat_code;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>17</height>
+   <height>40</height>
    <field>
     <rect>
-     <x>175</x>
-     <y>0</y>
-     <width>565</width>
+     <x>260</x>
+     <y>-1</y>
+     <width>490</width>
      <height>15</height>
     </rect>
     <font>
@@ -149,9 +335,9 @@ ORDER BY expcat_code;</sql>
    </field>
    <field>
     <rect>
-     <x>10</x>
+     <x>5</x>
      <y>0</y>
-     <width>150</width>
+     <width>130</width>
      <height>15</height>
     </rect>
     <font>
@@ -166,6 +352,89 @@ ORDER BY expcat_code;</sql>
      <column>expcat_code</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>14</y>
+     <width>230</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>exp_accnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>260</x>
+     <y>14</y>
+     <width>240</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>ppv_accnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>520</x>
+     <y>14</y>
+     <width>230</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>poliab_accnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>780</x>
+     <y>14</y>
+     <width>230</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>polinefrgt_accnt</column>
+    </data>
+   </field>
+   <line>
+    <xstart>6</xstart>
+    <ystart>30</ystart>
+    <xend>1036</xend>
+    <yend>30</yend>
+    <weight>1</weight>
+   </line>
   </detail>
  </section>
  <pgfoot>
@@ -191,7 +460,7 @@ ORDER BY expcat_code;</sql>
   </field>
   <field>
    <rect>
-    <x>705</x>
+    <x>945</x>
     <y>0</y>
     <width>40</width>
     <height>15</height>
@@ -210,7 +479,7 @@ ORDER BY expcat_code;</sql>
   </field>
   <label>
    <rect>
-    <x>615</x>
+    <x>855</x>
     <y>0</y>
     <width>85</width>
     <height>15</height>
@@ -226,7 +495,7 @@ ORDER BY expcat_code;</sql>
   </label>
   <label>
    <rect>
-    <x>0</x>
+    <x>5</x>
     <y>0</y>
     <width>85</width>
     <height>15</height>
@@ -236,7 +505,7 @@ ORDER BY expcat_code;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
    <string>Report Date:</string>
   </label>
