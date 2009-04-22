@@ -641,7 +641,7 @@ void initErrorLookupHash()
 			   "S/O Credit Memos that refer to it."),	0, "" },
   { "deleteTax", -26,	TR("This Tax Code cannot be deleted as there are "
 			   "S/O Credit Memo Items that refer to it."),	0, "" },
-
+  
   { "deleteTaxAuthority", -1, TR("This Tax Authority cannot be deleted as "
 				 "there are Tax Selections for it. Change or "
 				 "delete those Tax Selections before deleting "
@@ -649,6 +649,14 @@ void initErrorLookupHash()
   { "deleteTaxAuthority", -7, TR("This Tax Authority cannot be deleted as "
 				 "Checks have been written to it."),	0, "" },
 
+  { "deleteTaxClass", -1,	TR("This Tax Class cannot be deleted as there are "
+			   "Tax Codes that refer to it."),	0, "" },
+  
+  { "deleteTaxZone", -1,	TR("This Tax Zone cannot be deleted as there are "
+			   "Tax Assignments that refer to it."),	0, "" },
+  { "deleteTaxZone", -2,	TR("This Tax Zone cannot be deleted as there are "
+			   "Tax Registrations that refer to it."),	0, "" },
+  
   { "deleteTo",	 -1,	TR("This Transfer Order cannot be deleted as line "
 			   "items for it have already been shipped."),	0, "" },
   { "deleteTo",	 -2,	TR("This Transfer Order cannot be deleted as line "
