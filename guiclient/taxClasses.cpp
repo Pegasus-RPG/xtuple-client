@@ -10,12 +10,14 @@
 
 #include "taxclasses.h"
 
+#include <QSqlError>
 #include <QVariant>
 #include <QMessageBox>
 //#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "taxClass.h"
+#include "storedProcErrorLookup.h"
 
 /*
  *  Constructs a taxClasses as a child of 'parent', with the
@@ -82,22 +84,22 @@ void taxClasses::sDelete()
   q.prepare("SELECT deletetaxclass(:tax_class_id) AS result;");
   q.bindValue(":tax_class_id", _taxclass->id());
   q.exec();
+
   if (q.first())
   {
-    if (q.value("result").toInt() < 0)
+    int returnVal = q.value("result").toInt();
+    if (returnVal < 0)
     {
-      QMessageBox::warning( this, tr("Cannot Delete Tax Class"),
-                            tr( "You cannot delete the selected Tax Class because there are currently items assigned to it.\n"
-                                "You must first re-assign these items before deleting the selected Tax Class." ) );
+      systemError(this, storedProcErrorLookup("deleteTaxClass", returnVal), __FILE__, __LINE__);
       return;
     }
-
-    sFillList(-1);
+	sFillList(-1);
   }
-  else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void taxClasses::sNew()
