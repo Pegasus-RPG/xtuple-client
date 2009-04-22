@@ -847,7 +847,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
                  "       itemsrc_manuf_name, "
                  "       itemsrc_manuf_item_number, "
                  "       itemsrc_manuf_item_descrip "
-                 "FROM pohead, itemsrc "
+                 "FROM itemsrc "
                  "WHERE (itemsrc_id=:itemsrc_id);" );
       src.bindValue(":itemsrc_id", pItemsrcid);
       src.exec();
