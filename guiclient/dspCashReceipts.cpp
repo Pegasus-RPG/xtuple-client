@@ -13,6 +13,7 @@
 #include <QVariant>
 //#include <QStatusBar>
 #include <QMessageBox>
+#include <QErrorMessage>
 #include <QWorkspace>
 #include <QSqlError>
 
@@ -96,8 +97,22 @@ void dspCashReceipts::sFillList()
 
   _arapply->clear();
 
-  MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
-  q = mql.toQuery(params);
+  if (_legacyDisplayType->isChecked())
+  {
+    MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
+    q = mql.toQuery(params);
+  }
+  else
+  {
+    QErrorMessage errorMessageDialog(this);
+//    errorMessageDialog.setWindowModality(Qt::WindowModal); 
+    errorMessageDialog.showMessage(
+      tr("This feature was introduced in version 3.3.\n"
+         "Cash Receipts prior to this version will not be displayed."));
+    MetaSQLQuery mql = mqlLoad("cashReceipts", "detailnew");
+    q = mql.toQuery(params);
+  }
+  
   if (q.first())
     _arapply->populate(q);
   else if (q.lastError().type() != QSqlError::NoError)
