@@ -92,21 +92,8 @@ void dspCashReceipts::sFillList()
 
   _arapply->clear();
 
-  if (_legacyDisplayType->isChecked())
-  {
-    MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
-    q = mql.toQuery(params);
-  }
-  else
-  { 
-    _upgradeWarn->showMessage(
-      tr("This feature was introduced in version 3.3.\n"
-         "Cash Receipts prior to this version will not be displayed."));
-
-    MetaSQLQuery mql = mqlLoad("cashReceipts", "detailnew");
-    q = mql.toQuery(params);
-  }
-  
+  MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
+  q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);
   else if (q.lastError().type() != QSqlError::NoError)
@@ -155,5 +142,19 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   pParams.append("unapplied", tr("Cash Deposit"));
   pParams.append("unposted", tr("Unposted"));
     
+  if (_legacyDisplayType->isChecked())
+  {
+    pParams.append("LegacyDisplayMode");
+  }
+  else
+  { 
+    if(_metrics->boolean("LegacyCashReceipts"))
+    {
+      _upgradeWarn->showMessage(
+        tr("This feature was introduced in version 3.3.0.  "
+           "Cash Receipts prior to this version will not be displayed."));
+    }
+  }
+  
   return true;
 }
