@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -13,309 +12,75 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>985</width>
-    <height>600</height>
+    <width>886</width>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Receivables Workbench</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
+    <layout class="QGridLayout" name="gridLayout" >
      <property name="margin" >
       <number>12</number>
      </property>
-     <property name="spacing" >
-      <number>12</number>
-     </property>
      <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout_3" >
        <item>
-        <widget class="QFrame" name="frame" >
-         <property name="frameShape" >
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow" >
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <layout class="QHBoxLayout" >
-              <property name="topMargin" >
-               <number>2</number>
-              </property>
-              <item>
-               <widget class="XComboBox" name="_select" >
-                <item>
-                 <property name="text" >
-                  <string>All Customers</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Select</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Customer Type</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Customer Type Pattern</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0" >
-               <size>
-                <width>20</width>
-                <height>16</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2" >
          <item>
-          <widget class="QStackedWidget" name="_selectStack" >
+          <widget class="CustomerSelector" name="_customerSelector" />
+         </item>
+         <item>
+          <spacer name="horizontalSpacer" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="_aropenTotalLit" >
+           <property name="text" >
+            <string>Total Open:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CurrCluster" name="_aropenTotal" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+            <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="currentIndex" >
-            <number>0</number>
+           <property name="localControl" >
+            <bool>false</bool>
            </property>
-           <widget class="QWidget" name="_all" />
-           <widget class="QWidget" name="_selectedVendor" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QVBoxLayout" >
-               <property name="topMargin" >
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="CustCluster" name="_cust" />
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="_selectedVendorType" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QHBoxLayout" >
-               <property name="topMargin" >
-                <number>3</number>
-               </property>
-               <item>
-                <widget class="XComboBox" name="_customerTypes" >
-                 <property name="enabled" >
-                  <bool>true</bool>
-                 </property>
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="type" >
-                  <enum>XComboBox::CustomerTypes</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0" >
-                <size>
-                 <width>20</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="_vendorTypePattern" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QHBoxLayout" >
-               <property name="topMargin" >
-                <number>3</number>
-               </property>
-               <item>
-                <widget class="XLineEdit" name="_customerType" >
-                 <property name="enabled" >
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0" >
-                <size>
-                 <width>20</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
+           <property name="allowNegative" >
+            <bool>true</bool>
+           </property>
+           <property name="currencyDisabled" >
+            <bool>true</bool>
+           </property>
+           <property name="currencyVisible" >
+            <bool>false</bool>
+           </property>
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame_2" >
-         <property name="frameShape" >
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow" >
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="QLabel" name="_aropenTotalLit" >
-                <property name="text" >
-                 <string>Total Open:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="CurrCluster" name="_aropenTotal" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="localControl" >
-                 <bool>false</bool>
-                </property>
-                <property name="allowNegative" >
-                 <bool>true</bool>
-                </property>
-                <property name="currencyDisabled" >
-                 <bool>true</bool>
-                </property>
-                <property name="currencyVisible" >
-                 <bool>false</bool>
-                </property>
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0" >
-               <size>
-                <width>132</width>
-                <height>22</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" >
@@ -970,9 +735,9 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustCluster</class>
+   <class>CustomerSelector</class>
    <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <header>customerselector.h</header>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
@@ -1007,7 +772,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_cust</tabstop>
   <tabstop>_cashrcpt</tabstop>
   <tabstop>_newCashrcpt</tabstop>
   <tabstop>_editCashrcpt</tabstop>
@@ -1024,7 +788,6 @@ to be bound by its terms.</comment>
   <tabstop>_postPreauth</tabstop>
   <tabstop>_voidPreauth</tabstop>
   <tabstop>_CCAmount</tabstop>
-  <tabstop>_aropenTotal</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
@@ -1110,38 +873,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_aropenTotal</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_CCAmount</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>682</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>580</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenTotal</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_CCAmount</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>682</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>580</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_preauth</sender>
    <signal>valid(bool)</signal>
    <receiver>_voidPreauth</receiver>
@@ -1154,22 +885,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel" >
      <x>751</x>
      <y>262</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_select</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>_selectStack</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>113</x>
-     <y>62</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>323</x>
-     <y>70</y>
     </hint>
    </hints>
   </connection>
@@ -1218,6 +933,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel" >
      <x>487</x>
      <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_aropenTotal</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_CCAmount</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>682</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>580</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_aropenTotal</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_CCAmount</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>682</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>580</x>
+     <y>298</y>
     </hint>
    </hints>
   </connection>

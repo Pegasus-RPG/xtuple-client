@@ -59,10 +59,10 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
           this, SLOT(sPopulateCashRcptMenu(QMenu*)));
   connect(_preauth, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
           this, SLOT(sPopulatePreauthMenu(QMenu*)));
-  connect(_select, SIGNAL(currentIndexChanged(int)), this, SLOT(sClear()));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sClear()));
-  connect(_customerTypes, SIGNAL(currentIndexChanged(int)), this, SLOT(sClear()));
-  connect(_customerType, SIGNAL(textChanged(QString)), this, SLOT(sClear()));
+  connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sClear()));
+  connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sClear()));
+  connect(_customerSelector, SIGNAL(newCustTypeId(int)), this, SLOT(sClear()));
+  connect(_customerSelector, SIGNAL(newTypePattern(QString)), this, SLOT(sClear()));
   connect(_searchDocNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged()));
   connect(_aropen, SIGNAL(valid(bool)), this, SLOT(sPopulateAropenButtonMenu()));
   
@@ -177,8 +177,7 @@ enum SetResponse arWorkBench::set( const ParameterList & pParams )
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
-    _select->setCurrentIndex(1);
-    _cust->setId(param.toInt());
+    _customerSelector->setCustId(param.toInt());
     sFillList();
   }
 
@@ -187,13 +186,7 @@ enum SetResponse arWorkBench::set( const ParameterList & pParams )
 
 bool arWorkBench::setParams(ParameterList &params)
 {
-  if (_select->currentIndex()==1)
-    params.append("cust_id", _cust->id());
-  else if (_select->currentIndex()==2)
-    params.append("custtype_id", _customerTypes->id());
-  else if (_select->currentIndex()==3)
-    params.append("custtype_pattern", _customerType->text());
-  
+  _customerSelector->appendValue(params);
   params.append("invoice", tr("Invoice"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
@@ -367,8 +360,8 @@ void arWorkBench::sNewAropenCM()
   ParameterList params;
   params.append("mode", "new");
   params.append("docType", "creditMemo");
-  if (_cust->isValid())
-    params.append("cust_id", _cust->id());
+  if (_customerSelector->isSelectedCust())
+    params.append("cust_id", _customerSelector->custId());
 
   arOpenItem newdlg(this, "", true);
   newdlg.set(params);
@@ -503,8 +496,8 @@ void arWorkBench::sNewCashrcpt()
   }
   else
   {
-    if (_select->currentIndex()==1 && _cust->isValid())
-      params.append("cust_id", _cust->id());
+    if (_customerSelector->isSelectedCust())
+      params.append("cust_id", _customerSelector->custId());
   }
 
   cashReceipt *newdlg = new cashReceipt();
