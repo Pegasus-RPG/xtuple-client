@@ -30,6 +30,7 @@ public:
 public slots:
     virtual void sPrint();
     virtual void sFillList();
+    virtual void sView();
     virtual void sReversePosted();
 
 protected slots:

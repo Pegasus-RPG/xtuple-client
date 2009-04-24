@@ -21,6 +21,7 @@
 
 #include <datecluster.h>
 #include <openreports.h>
+#include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
 
 /*
@@ -167,10 +168,23 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
 
   if( (_arapply->altId() == 0) && (_arapply->currentItem()->rawValue("target").toString() == "") )
   {
+    menuItem = pMenu->insertItem(tr("View Cash Receipt..."), this, SLOT(sView()), 0);
+
     menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
     if(!_privileges->check("ReversePostedCashReceipt"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
+}
+
+void dspCashReceipts::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("cashrcpt_id", _arapply->id());
+
+  cashReceipt *newdlg = new cashReceipt();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspCashReceipts::sReversePosted()
