@@ -11,7 +11,7 @@
 #ifndef XERRORMESSAGE_H
 #define XERRORMESSAGE_H
 
-#include <qdialog>
+#include <QDialog>
 #include "qcheckbox.h"
 #include "qlabel.h"
 #include "qtextedit.h"
