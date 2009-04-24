@@ -21,6 +21,7 @@
 
 #include <datecluster.h>
 #include <openreports.h>
+#include "storedProcErrorLookup.h"
 
 /*
  *  Constructs a dspCashReceipts as a child of 'parent', with the
@@ -38,6 +39,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_arapply, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -49,7 +51,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter, true,  "target" );
   _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight,  true,  "applied"  );
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
-  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true, "base_applied"  );
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
 
   _upgradeWarn = new XErrorMessage(this);
 }
@@ -95,7 +97,7 @@ void dspCashReceipts::sFillList()
   MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
   q = mql.toQuery(params);
   if (q.first())
-    _arapply->populate(q);
+    _arapply->populate(q, true);
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -158,3 +160,39 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   
   return true;
 }
+
+void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
+{
+  int menuItem;
+
+  if( (_arapply->altId() == 0) && (_arapply->currentItem()->rawValue("target").toString() == "") )
+  {
+    menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
+    if(!_privileges->check("ReversePostedCashReceipt"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
+}
+
+void dspCashReceipts::sReversePosted()
+{
+  q.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
+  q.bindValue(":cashrcpt_id", _arapply->id());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("reverseCashReceipt", result),
+                       __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
+}
+

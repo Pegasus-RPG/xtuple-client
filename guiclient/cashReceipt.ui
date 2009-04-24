@@ -889,6 +889,7 @@ to be bound by its terms.</comment>
   <tabstop>_balCustomerDeposit</tabstop>
   <tabstop>_fundsType</tabstop>
   <tabstop>_docNumber</tabstop>
+  <tabstop>_docDate</tabstop>
   <tabstop>_bankaccnt</tabstop>
   <tabstop>_distDate</tabstop>
   <tabstop>_altAccnt</tabstop>

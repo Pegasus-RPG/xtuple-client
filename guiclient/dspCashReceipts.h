@@ -30,9 +30,11 @@ public:
 public slots:
     virtual void sPrint();
     virtual void sFillList();
+    virtual void sReversePosted();
 
 protected slots:
     virtual void languageChange();
+    virtual void sPopulateMenu(QMenu *);
   
 private:
     XErrorMessage *_upgradeWarn;
