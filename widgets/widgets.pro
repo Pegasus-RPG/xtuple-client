@@ -42,6 +42,7 @@ HEADERS += \
            plugins/currclusterplugin.h \
            plugins/currdisplayplugin.h \
            plugins/custclusterplugin.h \
+           plugins/customerselectorplugin.h \
            plugins/custinfoplugin.h \
            plugins/dateclusterplugin.h \
            plugins/deptclusterplugin.h \
@@ -109,6 +110,7 @@ SOURCES    += widgets.cpp \
               xlistbox.cpp \
               cmCluster.cpp \
               custCluster.cpp \
+              customerselector.cpp \
               itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
               woCluster.cpp woList.cpp \
@@ -161,6 +163,7 @@ HEADERS    += widgets.h \
               xlistbox.h \
               cmcluster.h \
               custcluster.h \
+              customerselector.h \
               itemcluster.h itemList.h itemSearch.h itemAliasList.h \
               warehouseCluster.h warehousegroup.h \
               woCluster.h woList.h \
@@ -209,6 +212,7 @@ HEADERS    += widgets.h \
               xsqlrelationaldelegate.h \
 
 FORMS += accountSearch.ui \
+         customerselector.ui \
          documents.ui \
          imageview.ui \
          imageAssignment.ui \
