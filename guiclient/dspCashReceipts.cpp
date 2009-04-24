@@ -13,7 +13,6 @@
 #include <QVariant>
 //#include <QStatusBar>
 #include <QMessageBox>
-#include <QErrorMessage>
 #include <QWorkspace>
 #include <QSqlError>
 
@@ -36,16 +35,12 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
 //  (void)statusBar();
 
   // signals and slots connections
-  connect(_selectedCustomerType, SIGNAL(toggled(bool)), _customerTypes, SLOT(setEnabled(bool)));
-  connect(_customerTypePattern, SIGNAL(toggled(bool)), _customerType, SLOT(setEnabled(bool)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_selectedCustomer, SIGNAL(toggled(bool)), _cust, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _customerTypes->setType(XComboBox::CustomerTypes);
   
   _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter, true,  "cust_number" );
   _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
@@ -56,7 +51,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
   _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true, "base_applied"  );
 
-  _allCustomers->setFocus();
+  _upgradeWarn = new XErrorMessage(this);
 }
 
 /*
@@ -103,12 +98,11 @@ void dspCashReceipts::sFillList()
     q = mql.toQuery(params);
   }
   else
-  {
-    QErrorMessage errorMessageDialog(this);
-//    errorMessageDialog.setWindowModality(Qt::WindowModal); 
-    errorMessageDialog.showMessage(
+  { 
+    _upgradeWarn->showMessage(
       tr("This feature was introduced in version 3.3.\n"
          "Cash Receipts prior to this version will not be displayed."));
+
     MetaSQLQuery mql = mqlLoad("cashReceipts", "detailnew");
     q = mql.toQuery(params);
   }
@@ -120,18 +114,11 @@ void dspCashReceipts::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
 }
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
 {
-  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Select Customer"),
-                          tr("You must select a Customer whose Cash Receipts you wish to view.") );
-    _cust->setFocus();
-    return false;
-  }
-
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
@@ -147,7 +134,8 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
     _dates->setFocus();
     return false;
   }
-  
+
+  _customerSelector->appendValue(pParams);
   _dates->appendValue(pParams);
   pParams.append("creditMemo", tr("C/M"));
   pParams.append("debitMemo", tr("D/M"));
@@ -166,12 +154,6 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   pParams.append("other", tr("Other"));
   pParams.append("unapplied", tr("Cash Deposit"));
   pParams.append("unposted", tr("Unposted"));
-  if (_selectedCustomer->isChecked())
-    pParams.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    pParams.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    pParams.append("custtype_pattern", _customerType->text());
     
   return true;
 }

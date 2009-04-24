@@ -14,6 +14,7 @@
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
+#include "xerrormessage.h"
 
 #include "ui_dspCashReceipts.h"
 
@@ -32,6 +33,9 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+  
+private:
+    XErrorMessage *_upgradeWarn;
 
 };
 

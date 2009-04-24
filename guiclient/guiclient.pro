@@ -692,7 +692,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h                                                                        \
-               idleShutdown.h xdateinputdialog.h xsltMap.h                                            \
+               idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
                xTupleDesigner.h xTupleDesignerActions.h                                               \
 
 
@@ -1023,7 +1023,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
                jsHighlighter.cpp                                                                      \
-               idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
+               idleShutdown.cpp xdateinputdialog.cpp xerrormessage.cpp xsltMap.cpp                    \
                xTupleDesigner.cpp xTupleDesignerActions.cpp                                           \
 
 QT += xml sql script network

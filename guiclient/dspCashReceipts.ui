@@ -12,306 +12,189 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>811</width>
-    <height>403</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Cash Receipts by Customer</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
+  <layout class="QGridLayout" name="gridLayout_6" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout_5" >
+     <property name="margin" >
+      <number>12</number>
      </property>
-     <item>
-      <widget class="QGroupBox" name="_customerTypeGroup" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title" >
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <property name="margin" >
-         <number>5</number>
-        </property>
-        <item>
-         <widget class="QRadioButton" name="_allCustomers" >
-          <property name="text" >
-           <string>All Customers</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_selectedCustomer" >
-            <property name="text" >
-             <string>Selected Customer:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="CustInfo" name="_cust" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0" >
-               <size>
-                <width>41</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_selectedCustomerType" >
-            <property name="text" >
-             <string>Selected Customer Type:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XComboBox" name="_customerTypes" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_customerTypePattern" >
-            <property name="text" >
-             <string>Customer Type Pattern:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XLineEdit" name="_customerType" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
+     <property name="spacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QHBoxLayout" name="horizontalLayout" >
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="DateCluster" name="_dates" />
+        <layout class="QGridLayout" name="gridLayout_4" >
+         <item row="0" column="0" colspan="2" >
+          <widget class="CustomerSelector" name="_customerSelector" />
          </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="displayTypeGroup" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title" >
-          <string>Display Type</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item row="0" column="0" >
-           <layout class="QVBoxLayout" name="verticalLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="displayTypeGroup" >
+           <property name="title" >
+            <string>Display By</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="1" column="0" >
              <widget class="QRadioButton" name="_newDisplayType" >
               <property name="text" >
-               <string>Cash Receipt Detail</string>
+               <string>Cash Receipts</string>
               </property>
               <property name="checked" >
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" >
-              <property name="spacing" >
-               <number>5</number>
+            <item row="0" column="0" >
+             <widget class="QRadioButton" name="_legacyDisplayType" >
+              <property name="text" >
+               <string>Applications</string>
               </property>
-              <item>
-               <widget class="QRadioButton" name="_legacyDisplayType" >
-                <property name="text" >
-                 <string>A/R Applications</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
-          <string>&amp;Close</string>
-         </property>
-         <property name="autoDefault" >
-          <bool>false</bool>
-         </property>
-         <property name="default" >
-          <bool>false</bool>
-         </property>
-        </widget>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QGroupBox" name="groupBox" >
+           <property name="title" >
+            <string>Distribution</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="0" >
+             <widget class="DateCluster" name="_dates" />
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="_query" >
-         <property name="text" >
-          <string>&amp;Query</string>
-         </property>
-         <property name="autoDefault" >
-          <bool>true</bool>
-         </property>
-         <property name="default" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_print" >
-         <property name="text" >
-          <string>&amp;Print</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
+        <spacer name="horizontalSpacer" >
          <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Preferred</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0" >
           <size>
-           <width>20</width>
+           <width>0</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Close</string>
+           </property>
+           <property name="autoDefault" >
+            <bool>false</bool>
+           </property>
+           <property name="default" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_query" >
+           <property name="text" >
+            <string>&amp;Query</string>
+           </property>
+           <property name="autoDefault" >
+            <bool>true</bool>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print" >
+           <property name="text" >
+            <string>&amp;Print</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
+     <item row="1" column="0" >
+      <widget class="QFrame" name="_frame" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
        </property>
-       <item>
-        <widget class="QLabel" name="_arapplyLit" >
-         <property name="text" >
-          <string>Cash Receipts:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XTreeWidget" name="_arapply" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>100</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
+       <property name="frameShape" >
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="_arapplyLit" >
+          <property name="text" >
+           <string>Cash Receipts:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="XTreeWidget" name="_arapply" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -321,25 +204,14 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustomerSelector</class>
    <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <header>customerselector.h</header>
   </customwidget>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -349,13 +221,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_allCustomers</tabstop>
-  <tabstop>_selectedCustomer</tabstop>
-  <tabstop>_cust</tabstop>
-  <tabstop>_selectedCustomerType</tabstop>
-  <tabstop>_customerTypes</tabstop>
-  <tabstop>_customerTypePattern</tabstop>
-  <tabstop>_customerType</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_arapply</tabstop>
   <tabstop>_query</tabstop>
@@ -365,58 +230,10 @@ to be bound by its terms.</comment>
  <resources/>
  <connections>
   <connection>
-   <sender>_selectedCustomerType</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_customerTypes</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_customerTypePattern</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_customerType</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>dspCashReceipts</receiver>
    <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedCustomer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_cust</receiver>
-   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
