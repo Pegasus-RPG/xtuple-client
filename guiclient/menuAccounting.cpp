@@ -74,7 +74,6 @@
 #include "dspCashReceipts.h"
 #include "dspARApplications.h"
 #include "dspInvoiceInformation.h"
-#include "dspAROpenItemsByCustomer.h"
 #include "dspAROpenItems.h"
 #include "dspTimePhasedOpenARItems.h"
 #include "dspInvoiceRegister.h"
@@ -333,7 +332,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.dspInvoiceInformation", tr("&Invoice Information..."), SLOT(sDspInvoiceInformation()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL },
     { "ar.dspOpenItems", tr("&Open Receivables..."), SLOT(sDspAROpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
-    { "ar.dspOpenItemsByCustomer", tr("Open Receivables by &Customer..."), SLOT(sDspAROpenItemsByCustomer()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "ar.dspARAging", tr("A&ging..."), SLOT(sDspTimePhasedOpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), new QPixmap(":/images/arAging.png"), toolBar, true , tr("Receivables Aging") },
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL }, 
     { "ar.dspInvoiceRegister", tr("In&voice Register..."), SLOT(sDspInvoiceRegister()), arReportsMenu, _privileges->check("ViewInvoiceRegister"), NULL, NULL, true , NULL },
@@ -870,11 +868,6 @@ void menuAccounting::sRptCheckJournal()
   printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void menuAccounting::sDspAROpenItemsByCustomer()
-{
-  omfgThis->handleNewWindow(new dspAROpenItemsByCustomer());
 }
 
 void menuAccounting::sDspAROpenItems()

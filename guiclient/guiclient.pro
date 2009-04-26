@@ -108,7 +108,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                distributeBreederProduction.ui                         distributeInventory.ui          \
                distributeToLocation.ui                                                                \
                dspAllocations.ui dspAPApplications.ui                                                 \
-               dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui                                  \
+               dspAPOpenItemsByVendor.ui                                                              \
                dspAROpenItems.ui                                                                      \
                dspARApplications.ui dspBacklogByCustomer.ui dspBacklogByParameterList.ui              \
                dspBacklogByItem.ui dspBacklogBySalesOrder.ui                                          \
@@ -429,7 +429,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                distributeBreederProduction.h                        distributeInventory.h             \
                distributeToLocation.h                                                                 \
                dspAllocations.h dspAPApplications.h                                                   \
-               dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h                                    \
+               dspAPOpenItemsByVendor.h                                                               \
                dspAROpenItems.h                                                                       \
                dspARApplications.h dspBacklogByCustomer.h dspBacklogByParameterList.h                 \
                dspBacklogByItem.h dspBacklogBySalesOrder.h                                            \
@@ -759,7 +759,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                distributeBreederProduction.cpp                          distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
                dspAllocations.cpp dspAPApplications.cpp                                               \
-               dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp                                \
+               dspAPOpenItemsByVendor.cpp                                                             \
                dspAROpenItems.cpp                                                                     \
                dspARApplications.cpp dspBacklogByCustomer.cpp dspBacklogByParameterList.cpp           \
                dspBacklogByItem.cpp dspBacklogBySalesOrder.cpp                                        \

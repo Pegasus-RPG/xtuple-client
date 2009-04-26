@@ -25,7 +25,7 @@
 #include <datecluster.h>
 
 #include "printStatementByCustomer.h"
-#include "dspAROpenItemsByCustomer.h"
+#include "dspAROpenItems.h"
 #include "submitReport.h"
 
 dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -41,12 +41,9 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
   connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_submit, SIGNAL(clicked()),     this, SLOT(sSubmit()));
 
-  _customerTypes->setType(XComboBox::CustomerTypes);
   
   _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
   _aropen->addColumn(tr("Customer"), 180,          Qt::AlignLeft, true, "araging_cust_name" );
-
-  _allCustomers->setFocus();
   
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
@@ -86,12 +83,7 @@ bool dspTimePhasedOpenARItems::setParams(ParameterList &params)
     return false;
   }
 
-  if (_selectedCustomer->isChecked())
-    params.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    params.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    params.append("custtype_pattern", _customerType->text());
+  _customerSelector->appendValue(params);
 
   if(_custom->isChecked())
   {
@@ -193,7 +185,7 @@ void dspTimePhasedOpenARItems::sViewOpenItems()
   params.append("run");
   params.append("asofDate", _asOf->date());
 
-  dspAROpenItemsByCustomer *newdlg = new dspAROpenItemsByCustomer();
+  dspAROpenItems *newdlg = new dspAROpenItems();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

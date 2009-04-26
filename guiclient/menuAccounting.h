@@ -97,7 +97,6 @@ class menuAccounting : public QObject
     void sDspCashReceipts();
     void sDspARApplications();
     void sDspInvoiceInformation();
-    void sDspAROpenItemsByCustomer();
     void sDspAROpenItems();
     void sDspTimePhasedOpenItems();
     void sDspInvoiceRegister();

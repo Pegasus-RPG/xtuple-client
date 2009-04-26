@@ -34,6 +34,7 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _arapply->addColumn(tr("Type"),            _dateColumn, Qt::AlignCenter,true, "doctype");
   _arapply->addColumn(tr("Doc. #"),                   -1, Qt::AlignLeft,  true, "docnumber");
   _arapply->addColumn(tr("Apply Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
+  _arapply->addColumn(tr("Dist. Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_distdate");
   _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "arapply_applied");
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "baseapplied");
@@ -472,7 +473,7 @@ void arOpenItem::populate()
                  "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
                  "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
                  "            ELSE :other"
-                 "       END AS docnumber,"
+                 "       END AS docnumber, arapply_distdate,"
                  "       arapply_postdate, arapply_applied, "
                  "       currConcat(arapply_curr_id) AS currabbr,"
                  "       currToBase(arapply_curr_id, arapply_applied, arapply_postdate) AS baseapplied,"
