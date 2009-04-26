@@ -43,14 +43,14 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     virtual int            custTypeId() { return _customerTypes->id(); }
 
     inline bool isAll()          { return _select->currentIndex() == All; }
-    inline bool isSelectedVend() { return _select->currentIndex() == Selected; }
+    inline bool isSelectedCust() { return _select->currentIndex() == Selected; }
     inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
     inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
     virtual bool isValid();
 
   public slots:
-    virtual void setVendId(int p);
-    virtual void setVendTypeId(int p);
+    virtual void setCustId(int p);
+    virtual void setCustTypeId(int p);
     virtual void setTypePattern(const QString &p);
     virtual void setState(int p) { setState((CustomerSelectorState)p); }
     virtual void setState(enum CustomerSelectorState p);
@@ -58,8 +58,8 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
   signals:
     void newTypePattern(QString);
     void newState(int);
-    void newVendId(int);
-    void newVendTypeId(int);
+    void newCustId(int);
+    void newCustTypeId(int);
     void updated();
 
   protected slots:

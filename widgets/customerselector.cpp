@@ -27,9 +27,9 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(updated()));
   connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(newState(int)));
   connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(updated()));
-  connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(newVendId(int)));
+  connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(newCustId(int)));
   connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(updated()));
-  connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(newVendTypeId(int)));
+  connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(newCustTypeId(int)));
   connect(_customerType,   SIGNAL(editingFinished()), this, SIGNAL(updated()));
   connect(_customerType,   SIGNAL(editingFinished()), this, SLOT(sTypePatternFinished()));
   connect(_customerType,SIGNAL(textChanged(QString)), this, SIGNAL(newTypePattern(QString)));
@@ -105,13 +105,13 @@ bool CustomerSelector::isValid()
   return false;
 }
 
-void CustomerSelector::setVendId(int p)
+void CustomerSelector::setCustId(int p)
 {
   _cust->setId(p);
   setState(Selected);
 }
 
-void CustomerSelector::setVendTypeId(int p)
+void CustomerSelector::setCustTypeId(int p)
 {
   _customerTypes->setId(p);
   setState(SelectedType);
@@ -145,7 +145,7 @@ void CustomerSelector::synchronize(CustomerSelector *p)
 {
   connect(this, SIGNAL(newTypePattern(QString)), p, SLOT(setTypePattern(QString)));
   connect(this, SIGNAL(newState(int)),           p, SLOT(setState(int)));
-  connect(this, SIGNAL(newVendId(int)),          p, SLOT(setVendId(int)));
-  connect(this, SIGNAL(newVendTypeId(int)),      p, SLOT(setVendTypeId(int)));
+  connect(this, SIGNAL(newCustId(int)),          p, SLOT(setCustId(int)));
+  connect(this, SIGNAL(newCustTypeId(int)),      p, SLOT(setCustTypeId(int)));
   p->hide();
 }
