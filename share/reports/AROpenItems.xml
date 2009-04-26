@@ -12,6 +12,23 @@
  <querysource>
   <name>head</name>
   <sql>SELECT 
+formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
+&lt;? if exists("creditsOnly") ?>
+  'Credits Only' AS type,
+&lt;? elseif exists("debitsOnly") ?>
+  'Debits Only' AS type,
+&lt;? else ?>
+  'Debits and Credits' AS type,
+&lt;? endif ?>
+&lt;? if exists("cust_id") ?>
+  (SELECT cust_name FROM custinfo WHERE cust_id=&lt;? value("cust_id") ?>) AS selection,
+&lt;? elseif exists("custtype_id") ?>
+  (SELECT custtype_code FROM custtype WHERE custtype_id=&lt;? value("custtype_id") ?>) AS selection,
+&lt;? elseif exists("custtype_pattern") ?>
+  ('Customer Type pattern = ' || &lt;? value("custtype_pattern") ?>) AS selection,
+&lt;? else ?>
+  'All Customers' AS selection,
+&lt;? endif ?>
 &lt;? if exists("startDate") ?>
       'Start Doc Date:' AS start_label,
       'End Doc Date:' AS end_label,
@@ -21,7 +38,12 @@
 &lt;? endif ?>
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
-       currConcat(baseCurrId()) AS baseAbbr;</sql>
+       currConcat(baseCurrId()) AS baseAbbr,
+&lt;? if exists("incidentsOnly") ?>
+  'Yes' AS incidentsOnly
+&lt;? else ?>
+  'No' AS incidentsOnly
+&lt;? endif ?>;</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -32,20 +54,39 @@
        formatDate(aropen_docdate) AS f_docdate,
        formatDate(aropen_duedate) AS f_duedate,
        formatMoney(aropen_amount) AS f_amount,
-       formatMoney(aropen_paid) AS f_paid,
-       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney((aropen_amount - aropen_paid) * -1)
-            WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(aropen_amount - aropen_paid)
-            ELSE formatMoney(aropen_amount - aropen_paid)
-       END AS f_balance,
-       currToBase(aropen_curr_id,
-           CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
-                WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)
-                ELSE (aropen_amount - aropen_paid)
-           END, CURRENT_DATE) AS base_balance,
+       formatMoney((COALESCE(SUM(arapply_target_paid),0) *
+        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END)) AS f_paid,
+       (((aropen_amount-aropen_paid+COALESCE(SUM(arapply_target_paid),0))) *
+        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END) AS f_balance,
+       (((aropen_amount-aropen_paid+COALESCE(SUM(arapply_target_paid),0)))/round(aropen_curr_rate,5) *
+        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END) AS base_balance,
        currConcat(aropen_curr_id) AS currAbbr,
        cust_number, cust_name
-  FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
- WHERE ((aropen_open)
+FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
+            LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id)
+            LEFT OUTER JOIN arapply ON (((aropen_id=arapply_source_aropen_id)
+                             OR (aropen_id=arapply_target_aropen_id))
+                     AND (arapply_distdate>COALESCE(&lt;? value("asofDate") ?>,current_date)))
+WHERE ((COALESCE(aropen_closedate, date &lt;? value ("asofDate") ?> + integer '1', current_date + 1) > COALESCE(&lt;? value("asofDate") ?>, current_date)) 
+  AND   (aropen_docdate &lt;= COALESCE(&lt;? value ("asofDate") ?>,current_date))
+&lt;? if not exists("showClosed") ?>
+  AND (aropen_open)
+&lt;? endif ?>
+&lt;? if exists("debitsOnly") ?>
+  AND   (NOT aropen_doctype IN ('C', 'R'))
+&lt;? endif ?>
+&lt;? if exists("creditsOnly") ?>
+  AND   (aropen_doctype IN ('C', 'R'))
+&lt;? endif ?>
+&lt;? if exists("cust_id") ?>
+  AND   (aropen_cust_id=&lt;? value("cust_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("custtype_id") ?>
+  AND   (custtype_id=&lt;? value("custtype_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("custtype_pattern") ?>
+  AND   (custtype_code~&lt;? value("custtype_pattern") ?>)
+&lt;? endif ?>
 &lt;? if exists("startDate") ?>
   AND   (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? endif ?>
@@ -55,7 +96,16 @@
 &lt;? if exists("endDueDate") ?>
   AND   (aropen_duedate &lt;= &lt;? value("endDueDate") ?>)
 &lt;? endif ?>
-       )
+&lt;? if exists("incidentsOnly") ?>
+  AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
+&lt;? endif ?>
+      )
+  GROUP BY aropen_id,
+           aropen_docdate,          aropen_duedate,         aropen_doctype,         
+           aropen_docnumber,        aropen_amount,          aropen_ordernumber,
+           aropen_paid,             aropen_open,
+           aropen_curr_id,          aropen_closedate,       aropen_curr_rate,
+           cust_number,              cust_name
 ORDER BY aropen_docnumber;</sql>
  </querysource>
  <rpthead>
@@ -78,8 +128,8 @@ ORDER BY aropen_docnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>5</y>
+    <x>345.951</x>
+    <y>11.3379</y>
     <width>400</width>
     <height>40</height>
    </rect>
@@ -90,7 +140,7 @@ ORDER BY aropen_docnumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>A/R Open Items</string>
+   <string>Open Receivables</string>
   </label>
   <label>
    <rect>
@@ -174,10 +224,10 @@ ORDER BY aropen_docnumber;</sql>
   </label>
   <field>
    <rect>
-    <x>550</x>
-    <y>85</y>
+    <x>514</x>
+    <y>69.7785</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -273,10 +323,10 @@ ORDER BY aropen_docnumber;</sql>
   </label>
   <field>
    <rect>
-    <x>550</x>
-    <y>65</y>
+    <x>514</x>
+    <y>52.6662</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -299,17 +349,17 @@ ORDER BY aropen_docnumber;</sql>
   </line>
   <field>
    <rect>
-    <x>442</x>
-    <y>62</y>
+    <x>410</x>
+    <y>52.6662</y>
     <width>100</width>
-    <height>25</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
    <data>
     <query>head</query>
@@ -318,23 +368,163 @@ ORDER BY aropen_docnumber;</sql>
   </field>
   <field>
    <rect>
-    <x>446</x>
-    <y>82</y>
+    <x>410.317</x>
+    <y>69.7785</y>
     <width>100</width>
-    <height>25</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
    <data>
     <query>head</query>
     <column>end_label</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>141.375</x>
+    <y>71.046</y>
+    <width>200</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>type</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>142</x>
+    <y>53.8</y>
+    <width>250</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>selection</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>141.375</x>
+    <y>88.4798</y>
+    <width>200</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>incidentsOnly</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>514.049</x>
+    <y>86.8907</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>asOfDate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>34.8028</x>
+    <y>53.9338</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Selection:</string>
+  </label>
+  <label>
+   <rect>
+    <x>35.1592</x>
+    <y>71.0142</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Type:</string>
+  </label>
+  <label>
+   <rect>
+    <x>34.8631</x>
+    <y>88.4015</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Incidents Only:</string>
+  </label>
+  <label>
+   <rect>
+    <x>410.477</x>
+    <y>86.8907</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>As Of Date:</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
