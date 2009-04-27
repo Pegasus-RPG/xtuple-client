@@ -45,68 +45,10 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   'No' AS incidentsOnly
 &lt;? endif ?>;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT aropen_id,
-       aropen_doctype,
-       aropen_docnumber,
-       aropen_ordernumber,
-       formatDate(aropen_docdate) AS f_docdate,
-       formatDate(aropen_duedate) AS f_duedate,
-       formatMoney(aropen_amount) AS f_amount,
-       formatMoney((COALESCE(SUM(arapply_target_paid),0) *
-        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END)) AS f_paid,
-       (((aropen_amount-aropen_paid+COALESCE(SUM(arapply_target_paid),0))) *
-        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END) AS f_balance,
-       (((aropen_amount-aropen_paid+COALESCE(SUM(arapply_target_paid),0)))/round(aropen_curr_rate,5) *
-        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END) AS base_balance,
-       currConcat(aropen_curr_id) AS currAbbr,
-       cust_number, cust_name
-FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
-            LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id)
-            LEFT OUTER JOIN arapply ON (((aropen_id=arapply_source_aropen_id)
-                             OR (aropen_id=arapply_target_aropen_id))
-                     AND (arapply_distdate>COALESCE(&lt;? value("asofDate") ?>,current_date)))
-WHERE ((COALESCE(aropen_closedate, date &lt;? value ("asofDate") ?> + integer '1', current_date + 1) > COALESCE(&lt;? value("asofDate") ?>, current_date)) 
-  AND   (aropen_docdate &lt;= COALESCE(&lt;? value ("asofDate") ?>,current_date))
-&lt;? if not exists("showClosed") ?>
-  AND (aropen_open)
-&lt;? endif ?>
-&lt;? if exists("debitsOnly") ?>
-  AND   (NOT aropen_doctype IN ('C', 'R'))
-&lt;? endif ?>
-&lt;? if exists("creditsOnly") ?>
-  AND   (aropen_doctype IN ('C', 'R'))
-&lt;? endif ?>
-&lt;? if exists("cust_id") ?>
-  AND   (aropen_cust_id=&lt;? value("cust_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("custtype_id") ?>
-  AND   (custtype_id=&lt;? value("custtype_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("custtype_pattern") ?>
-  AND   (custtype_code~&lt;? value("custtype_pattern") ?>)
-&lt;? endif ?>
-&lt;? if exists("startDate") ?>
-  AND   (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? endif ?>
-&lt;? if exists("startDueDate") ?>
-  AND   (aropen_duedate >= &lt;? value("startDueDate") ?>)
-&lt;? endif ?>
-&lt;? if exists("endDueDate") ?>
-  AND   (aropen_duedate &lt;= &lt;? value("endDueDate") ?>)
-&lt;? endif ?>
-&lt;? if exists("incidentsOnly") ?>
-  AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
-&lt;? endif ?>
-      )
-  GROUP BY aropen_id,
-           aropen_docdate,          aropen_duedate,         aropen_doctype,         
-           aropen_docnumber,        aropen_amount,          aropen_ordernumber,
-           aropen_paid,             aropen_open,
-           aropen_curr_id,          aropen_closedate,       aropen_curr_rate,
-           cust_number,              cust_name
-ORDER BY aropen_docnumber;</sql>
+  <mqlgroup>arOpenItems</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>181</height>
@@ -144,7 +86,7 @@ ORDER BY aropen_docnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>60</x>
+    <x>85</x>
     <y>155</y>
     <width>100</width>
     <height>15</height>
@@ -156,7 +98,7 @@ ORDER BY aropen_docnumber;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Invoice (I) #</string>
+   <string>Document #</string>
   </label>
   <label>
    <rect>
@@ -189,38 +131,6 @@ ORDER BY aropen_docnumber;</sql>
    <hcenter/>
    <vcenter/>
    <string>Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>140</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Credit Memo# (C) </string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>125</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Debit Memo# (D) </string>
   </label>
   <field>
    <rect>
@@ -763,9 +673,9 @@ ORDER BY aropen_docnumber;</sql>
    </field>
    <field>
     <rect>
-     <x>60</x>
+     <x>85</x>
      <y>0</y>
-     <width>100</width>
+     <width>77</width>
      <height>15</height>
     </rect>
     <font>
@@ -777,7 +687,7 @@ ORDER BY aropen_docnumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>aropen_docnumber</column>
+     <column>docnumber</column>
     </data>
    </field>
    <field>
@@ -839,9 +749,9 @@ ORDER BY aropen_docnumber;</sql>
    </field>
    <field>
     <rect>
-     <x>5</x>
+     <x>4.20281</x>
      <y>0</y>
-     <width>50</width>
+     <width>78.9286</width>
      <height>15</height>
     </rect>
     <font>
@@ -853,7 +763,7 @@ ORDER BY aropen_docnumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>aropen_doctype</column>
+     <column>doctype</column>
     </data>
    </field>
    <field>
@@ -877,7 +787,7 @@ ORDER BY aropen_docnumber;</sql>
    </field>
    <field>
     <rect>
-     <x>160</x>
+     <x>164</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
