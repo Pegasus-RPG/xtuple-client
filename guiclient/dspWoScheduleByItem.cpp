@@ -54,10 +54,8 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
   _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
-  _dates->setStartCaption(tr("Start W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _dates->setEndCaption(tr("End W/O Start Date:"));
 
   _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
   _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
@@ -110,11 +108,6 @@ bool dspWoScheduleByItem::setParams(ParameterList &pParams)
 
   if (_showOnlyTopLevel->isChecked())
     pParams.append("showOnlyTopLevel");
-
-  if (_sortByStartDate->isChecked())
-    pParams.append("sortByStartDate");
-  else
-    pParams.append("sortByDueDate");
 
   return true;
 }
@@ -552,12 +545,7 @@ void dspWoScheduleByItem::sFillList()
 	       "<? endif ?>"
 	       ") "
 	       "ORDER BY "
-	       "<? if exists(\"sortByStartDate\") ?>"
-	       "	wo_startdate,"
-	       "<? elseif exists(\"sortByDueDate\") ?>"
-	       "	wo_duedate,"
-	       "<? endif ?>"
-	       " wo_number, wo_subnumber" );
+	       " wo_startdate, wo_number, wo_subnumber" );
 
   MetaSQLQuery mql(sql);
   ParameterList params;

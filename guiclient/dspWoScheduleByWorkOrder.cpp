@@ -52,14 +52,12 @@ dspWoScheduleByWorkOrder::dspWoScheduleByWorkOrder(QWidget* parent, const char* 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
-  _dates->setStartCaption(tr("Start W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _dates->setEndCaption(tr("End W/O Start Date:"));
-
+  
   _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
   _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
-  _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter, true,  "wo_priority" );
+  _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter, false,  "wo_priority" );
   _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
   _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
   _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
@@ -126,11 +124,6 @@ bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
 
   if (_showOnlyTopLevel->isChecked())
     pParams.append("showOnlyTopLevel");
-
-  if (_sortByStartDate->isChecked())
-    pParams.append("sortByStartDate");
-  else
-    pParams.append("sortByDueDate");
 
   return true;
 }
@@ -570,12 +563,7 @@ void dspWoScheduleByWorkOrder::sFillList()
 	       "<? endif ?>"
 	       ") "
 	       "ORDER BY "
-	       "<? if exists(\"sortByStartDate\") ?>"
-	       "	wo_startdate,"
-	       "<? elseif exists(\"sortByDueDate\") ?>"
-	       "	wo_duedate,"
-	       "<? endif ?>"
-	       " wo_number, wo_subnumber" );
+	       " wo_startdate, wo_number, wo_subnumber" );
 
   MetaSQLQuery mql(sql);
   ParameterList params;

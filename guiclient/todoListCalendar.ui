@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -13,7 +12,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
+    <width>800</width>
     <height>329</height>
    </rect>
   </property>
@@ -45,6 +44,9 @@ to be bound by its terms.</comment>
         <widget class="ParameterGroup" name="_usr" >
          <property name="focusPolicy" >
           <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="fixedSize" >
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -134,6 +136,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

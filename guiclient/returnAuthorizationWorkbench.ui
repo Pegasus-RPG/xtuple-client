@@ -12,8 +12,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>601</width>
-    <height>529</height>
+    <width>839</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -28,6 +28,9 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>12</number>
+     </property>
      <property name="spacing" >
       <number>12</number>
      </property>
@@ -64,6 +67,9 @@ to be bound by its terms.</comment>
       <widget class="ParameterGroup" name="_parameter" >
        <property name="title" >
         <string/>
+       </property>
+       <property name="fixedSize" >
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -365,9 +371,6 @@ to be bound by its terms.</comment>
          </property>
          <item row="3" column="0" colspan="2" >
           <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>6</number>
-           </property>
            <property name="margin" >
             <number>5</number>
            </property>
@@ -509,9 +512,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="0" column="0" colspan="2" >
           <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>6</number>
-           </property>
            <property name="margin" >
             <number>5</number>
            </property>
