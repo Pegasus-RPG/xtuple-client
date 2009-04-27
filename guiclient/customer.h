@@ -20,6 +20,8 @@
 #include "quotes.h"
 #include "openSalesOrders.h"
 #include "openReturnAuthorizations.h"
+#include "dsparopenitems.h"
+#include "dspcashreceipts.h"
 
 #include <QStandardItemModel>
 #include <parameter.h>
@@ -88,6 +90,8 @@ protected:
     quotes *_quotes;
     openSalesOrders *_orders;
     openReturnAuthorizations *_returns;
+    dspAROpenItems *_aritems;
+    dspCashReceipts *_cashreceipts;
 
 private:
     int _mode;

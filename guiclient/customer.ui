@@ -34,13 +34,6 @@ to be bound by its terms.</comment>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <widget class="QLabel" name="_numberLit" >
-           <property name="font" >
-            <font>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text" >
             <string>Customer #:</string>
            </property>
@@ -56,13 +49,6 @@ to be bound by its terms.</comment>
            </item>
            <item>
             <widget class="QLabel" name="_custtypeLit" >
-             <property name="font" >
-              <font>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-              </font>
-             </property>
              <property name="text" >
               <string>Customer Type:</string>
              </property>
@@ -85,13 +71,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="1" column="0" >
           <widget class="QLabel" name="_nameLit" >
-           <property name="font" >
-            <font>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text" >
             <string>Customer Name:</string>
            </property>
@@ -526,9 +505,7 @@ to be bound by its terms.</comment>
                      <widget class="QLabel" name="_salesrepLit" >
                       <property name="font" >
                        <font>
-                        <weight>75</weight>
                         <italic>false</italic>
-                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text" >
@@ -629,9 +606,7 @@ to be bound by its terms.</comment>
                      <widget class="QLabel" name="_defaultShipVia" >
                       <property name="font" >
                        <font>
-                        <weight>75</weight>
                         <italic>false</italic>
-                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text" >
@@ -679,9 +654,7 @@ to be bound by its terms.</comment>
                      <widget class="QLabel" name="_defaultBOLFormatLit" >
                       <property name="font" >
                        <font>
-                        <weight>75</weight>
                         <italic>false</italic>
-                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text" >
@@ -729,9 +702,7 @@ to be bound by its terms.</comment>
                      <widget class="QLabel" name="_shipchrgLit" >
                       <property name="font" >
                        <font>
-                        <weight>75</weight>
                         <italic>false</italic>
-                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text" >
@@ -962,6 +933,16 @@ to be bound by its terms.</comment>
                         <property name="allowNull" >
                          <bool>true</bool>
                         </property>
+                        <item>
+                         <property name="text" >
+                          <string/>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text" >
+                          <string/>
+                         </property>
+                        </item>
                         <item>
                          <property name="text" >
                           <string/>
@@ -2834,7 +2815,7 @@ to be bound by its terms.</comment>
             <number>12</number>
            </property>
            <item>
-            <widget class="QRadioButton" name="_openItemsButton" >
+            <widget class="QRadioButton" name="_aritemsButton" >
              <property name="text" >
               <string>Items</string>
              </property>
@@ -2844,16 +2825,9 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_receiptsButton" >
+            <widget class="QRadioButton" name="_cashreceiptsButton" >
              <property name="text" >
               <string>Receipts</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_historyButton" >
-             <property name="text" >
-              <string>History</string>
              </property>
             </widget>
            </item>
@@ -2873,18 +2847,15 @@ to be bound by its terms.</comment>
           </layout>
          </item>
          <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_recievablesStack" >
+          <widget class="QStackedWidget" name="_receivablesStack" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="_quotesPage_2" >
+           <widget class="QWidget" name="_aritemsPage" >
             <layout class="QGridLayout" name="gridLayout_18" />
            </widget>
-           <widget class="QWidget" name="_ordersPage_2" >
+           <widget class="QWidget" name="_cashreceiptsPage" >
             <layout class="QGridLayout" name="gridLayout_19" />
-           </widget>
-           <widget class="QWidget" name="_returnsPage_2" >
-            <layout class="QGridLayout" name="gridLayout_20" />
            </widget>
           </widget>
          </item>
@@ -3041,9 +3012,8 @@ to be bound by its terms.</comment>
   <tabstop>_quotesButton</tabstop>
   <tabstop>_ordersButton</tabstop>
   <tabstop>_returnsButton</tabstop>
-  <tabstop>_openItemsButton</tabstop>
-  <tabstop>_receiptsButton</tabstop>
-  <tabstop>_historyButton</tabstop>
+  <tabstop>_aritemsButton</tabstop>
+  <tabstop>_cashreceiptsButton</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>

@@ -12,7 +12,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
+    <width>800</width>
     <height>600</height>
    </rect>
   </property>
@@ -28,151 +28,175 @@ to be bound by its terms.</comment>
      <property name="spacing" >
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QGridLayout" name="gridLayout_4" >
-       <item row="0" column="0" colspan="3" >
-        <widget class="CRMAcctCluster" name="_crmAccount" />
-       </item>
-       <item row="1" column="0" >
-        <widget class="ParameterGroup" name="_usr" >
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="fixedSize" >
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QGroupBox" name="_startdateGroup" >
-         <property name="title" >
-          <string>Only Start Dates Between </string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3" >
-          <item row="0" column="0" >
-           <widget class="DateCluster" name="_startDates" >
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="2" >
-        <widget class="QGroupBox" name="_duedateGroup" >
-         <property name="title" >
-          <string>Only Due Dates Between </string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout" >
-          <item row="0" column="0" >
-           <widget class="DateCluster" name="_dueDates" >
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="3" >
-        <widget class="QGroupBox" name="_showGroup" >
-         <property name="title" >
-          <string>Show</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2" >
-          <item row="0" column="0" >
-           <layout class="QHBoxLayout" name="horizontalLayout" >
-            <property name="spacing" >
-             <number>12</number>
-            </property>
-            <item>
-             <widget class="XCheckBox" name="_todolist" >
-              <property name="text" >
-               <string>To-Do List</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
+     <item row="0" column="0" colspan="2" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4" >
+         <item row="0" column="0" colspan="2" >
+          <widget class="CRMAcctCluster" name="_crmAccount" />
+         </item>
+         <item row="1" column="0" colspan="2" >
+          <widget class="ParameterGroup" name="_usr" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="fixedSize" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QGroupBox" name="_startdateGroup" >
+           <property name="title" >
+            <string>Only Start Dates Between </string>
+           </property>
+           <property name="checkable" >
+            <bool>true</bool>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="0" >
+             <widget class="DateCluster" name="_startDates" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_incidents" >
-              <property name="text" >
-               <string>Incidents</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_projects" >
-              <property name="text" >
-               <string>Projects</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_completed" >
-              <property name="text" >
-               <string>Completed</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer" >
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0" >
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QGroupBox" name="_duedateGroup" >
+           <property name="title" >
+            <string>Only Due Dates Between </string>
+           </property>
+           <property name="checkable" >
+            <bool>true</bool>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="0" >
+             <widget class="DateCluster" name="_dueDates" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2" >
+          <widget class="QGroupBox" name="_showGroup" >
+           <property name="title" >
+            <string>Show</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" name="horizontalLayout" >
+              <property name="spacing" >
+               <number>12</number>
+              </property>
+              <item>
+               <widget class="XCheckBox" name="_todolist" >
+                <property name="text" >
+                 <string>To-Do List</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_incidents" >
+                <property name="text" >
+                 <string>Incidents</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_projects" >
+                <property name="text" >
+                 <string>Projects</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_completed" >
+                <property name="text" >
+                 <string>Completed</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
-      </layout>
-     </item>
-     <item row="0" column="1" >
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
-          <string>Close</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer" >
+        <spacer name="horizontalSpacer_2" >
          <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0" >
           <size>
-           <width>20</width>
-           <height>0</height>
+           <width>0</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>Close</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print" >
+           <property name="text" >
+            <string>Print</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer" >
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -257,13 +281,6 @@ to be bound by its terms.</comment>
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_print" >
-           <property name="text" >
-            <string>Print</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="_new" >
            <property name="text" >
             <string>New</string>
@@ -338,10 +355,10 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_usr</tabstop>
   <tabstop>_incidents</tabstop>
   <tabstop>_dueDates</tabstop>
   <tabstop>_todoList</tabstop>

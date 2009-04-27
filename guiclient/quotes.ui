@@ -19,9 +19,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>List Quotes</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
+  <layout class="QGridLayout" name="gridLayout_3" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
+    <layout class="QGridLayout" name="gridLayout_2" >
      <property name="margin" >
       <number>12</number>
      </property>
@@ -48,6 +48,52 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QGroupBox" name="_showGroup" >
+           <property name="title" >
+            <string>Show</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" name="horizontalLayout" >
+              <property name="spacing" >
+               <number>12</number>
+              </property>
+              <item>
+               <widget class="XCheckBox" name="_showExpired" >
+                <property name="text" >
+                 <string>Expired</string>
+                </property>
+                <property name="forgetful" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_showProspects" >
+                <property name="text" >
+                 <string>Quotes For Prospects</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -61,7 +107,7 @@ to be bound by its terms.</comment>
          <property name="sizeHint" stdset="0" >
           <size>
            <width>0</width>
-           <height>0</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -99,43 +145,6 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item row="1" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
-       <property name="spacing" >
-        <number>12</number>
-       </property>
-       <item>
-        <widget class="XCheckBox" name="_showExpired" >
-         <property name="text" >
-          <string>Show Expired</string>
-         </property>
-         <property name="forgetful" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XCheckBox" name="_showProspects" >
-         <property name="text" >
-          <string>Show Quotes For Prospects</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="0" >
       <widget class="QFrame" name="frame" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >

@@ -86,6 +86,23 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _returns->findChild<QWidget*>("_returnAuthorizationsLit")->hide();
   _returns->findChild<WarehouseGroup*>("_warehouse")->setAll();
   _returns->findChild<XCheckBox*>("_showClosed")->show();
+  
+  _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
+  _aritemsPage->layout()->addWidget(_aritems);
+  _aritems->findChild<QWidget*>("_close")->hide();
+  _aritems->findChild<QWidget*>("_customerSelector")->hide();
+  _aritems->findChild<QWidget*>("_dateGroup")->hide();
+  _aritems->findChild<QWidget*>("_basisGroup")->hide();
+  _aritems->findChild<QWidget*>("_asofGroup")->hide();
+  _aritems->findChild<QWidget*>("_incidentsOnly")->hide();
+  _aritems->findChild<QWidget*>("_unposted")->show();
+  _aritems->findChild<XCheckBox*>("_closed")->show();
+  
+  _cashreceipts = new dspCashReceipts(this, "_cashreceipts", Qt::Widget);
+  _cashreceiptsPage->layout()->addWidget(_cashreceipts);
+  _cashreceipts->findChild<QWidget*>("_close")->hide();
+  _cashreceipts->findChild<QWidget*>("_customerSelector")->hide();
+  _cashreceipts->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -139,6 +156,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_quotesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_ordersButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_returnsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_aritemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_cashreceiptsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
   
   QMenu * _printMenu = new QMenu;
@@ -442,6 +461,8 @@ void customer::setValid(bool valid)
     _quotes->findChild<XTreeWidget*>("_quote")->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
+    _aritems->findChild<XTreeWidget*>("_aropen")->clear();
+    _cashreceipts->findChild<XTreeWidget*>("_arapply")->clear();
   }
 }
 
@@ -1374,6 +1395,8 @@ void customer::populate()
     _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
     _orders->findChild<CustCluster*>("_cust")->setId(_custid);
     _returns->findChild<CustCluster*>("_cust")->setId(_custid);
+    _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
+    _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     
     _todoList->sFillList();
     _contacts->sFillList();
@@ -1381,6 +1404,8 @@ void customer::populate()
     _quotes->sFillList();
     _orders->sFillList();
     _returns->sFillList();
+    _aritems->sFillList();
+    _cashreceipts->sFillList();
     
     sFillShiptoList();
     sFillTaxregList();
@@ -1704,4 +1729,9 @@ void customer::sHandleButtons()
     _salesStack->setCurrentIndex(2);
   else
     _salesStack->setCurrentIndex(3);
+    
+  if (_aritemsButton->isChecked())
+    _receivablesStack->setCurrentIndex(0);
+  else
+    _receivablesStack->setCurrentIndex(1);
 }

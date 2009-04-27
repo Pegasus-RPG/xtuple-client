@@ -52,7 +52,7 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="QGroupBox" name="groupBox" >
+          <widget class="QGroupBox" name="_basisGroup" >
            <property name="title" >
             <string>Date Range Basis</string>
            </property>
@@ -152,6 +152,16 @@ to be bound by its terms.</comment>
                </widget>
               </item>
               <item>
+               <widget class="XCheckBox" name="_unposted" >
+                <property name="text" >
+                 <string>Unposted</string>
+                </property>
+                <property name="forgetful" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="XCheckBox" name="_closed" >
                 <property name="text" >
                  <string>Closed</string>
@@ -192,7 +202,7 @@ to be bound by its terms.</comment>
          <property name="sizeHint" stdset="0" >
           <size>
            <width>38</width>
-           <height>166</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -237,7 +247,7 @@ to be bound by its terms.</comment>
            <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -282,7 +292,7 @@ to be bound by its terms.</comment>
            </size>
           </property>
           <property name="text" >
-           <string>Open Receivables</string>
+           <string>Receivables</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignVCenter</set>

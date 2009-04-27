@@ -45,18 +45,21 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
     baseBalanceTitle = tr("Balance\n(in %1)").arg(CurrDisplay::baseCurrAbbr());
 
   _aropen->setRootIsDecorated(TRUE);
-  _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,  true, "doctype");
-  _aropen->addColumn(tr("Doc. #"),       _orderColumn, Qt::AlignLeft,  true, "aropen_docnumber");
-  _aropen->addColumn(tr("Cust./Assign To"),_itemColumn, Qt::AlignLeft,  true, "cust_number");
-  _aropen->addColumn(tr("Name/Desc."),             -1, Qt::AlignLeft,  true, "cust_name");
-  _aropen->addColumn(tr("Order/Incident"),_itemColumn, Qt::AlignRight, false, "aropen_ordernumber");
-  _aropen->addColumn(tr("Doc. Date"),     _dateColumn, Qt::AlignCenter,false, "aropen_docdate");
-  _aropen->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
-  _aropen->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight, false, "aropen_amount");
-  _aropen->addColumn(tr("Paid"),      _bigMoneyColumn, Qt::AlignRight, false, "applied");
-  _aropen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight, true, "balance");
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  true, "currAbbr");
-  _aropen->addColumn(baseBalanceTitle,_bigMoneyColumn, Qt::AlignRight, true, "base_balance");
+  _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,   true,  "doctype");
+  _aropen->addColumn(tr("Posted"),          _ynColumn, Qt::AlignCenter, false, "posted");
+  _aropen->addColumn(tr("Recurring"),       _ynColumn, Qt::AlignCenter, false, "recurring");
+  _aropen->addColumn(tr("Open"),            _ynColumn, Qt::AlignCenter, false, "open");
+  _aropen->addColumn(tr("Doc. #"),       _orderColumn, Qt::AlignLeft,   true,  "docnumber");
+  _aropen->addColumn(tr("Cust./Assign To"),_itemColumn, Qt::AlignLeft,  true,  "cust_number");
+  _aropen->addColumn(tr("Name/Desc."),             -1, Qt::AlignLeft,   true,  "cust_name");
+  _aropen->addColumn(tr("Order/Incident"),_itemColumn, Qt::AlignRight,  false, "ordernumber");
+  _aropen->addColumn(tr("Doc. Date"),     _dateColumn, Qt::AlignCenter, false, "docdate");
+  _aropen->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignCenter, true,  "aropen_duedate");
+  _aropen->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight,  false, "amount");
+  _aropen->addColumn(tr("Paid"),      _bigMoneyColumn, Qt::AlignRight,  false, "paid");
+  _aropen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight,  true,  "balance");
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
+  _aropen->addColumn(baseBalanceTitle,_bigMoneyColumn, Qt::AlignRight,  true,  "base_balance");
 
   if (omfgThis->singleCurrency())
   {
@@ -65,6 +68,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   _asOf->setDate(omfgThis->dbDate(), true);
+  _unposted->hide();
   _closed->hide();
 }
 
@@ -278,7 +282,9 @@ bool dspAROpenItems::setParams(ParameterList &params)
     params.append("debitsOnly");
   else if (_credits->isChecked())
     params.append("creditsOnly");
-  if (_closed->isChecked());
+  if (_unposted->isChecked())
+    params.append("showUnposted");
+  if (_closed->isChecked())
     params.append("showClosed");
   return true;
 }
@@ -310,4 +316,5 @@ void dspAROpenItems::sFillList()
     return;
   }
 }
+
 
