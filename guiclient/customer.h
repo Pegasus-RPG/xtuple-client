@@ -20,8 +20,8 @@
 #include "quotes.h"
 #include "openSalesOrders.h"
 #include "openReturnAuthorizations.h"
-#include "dsparopenitems.h"
-#include "dspcashreceipts.h"
+#include "dspAROpenItems.h"
+#include "dspCashReceipts.h"
 
 #include <QStandardItemModel>
 #include <parameter.h>
