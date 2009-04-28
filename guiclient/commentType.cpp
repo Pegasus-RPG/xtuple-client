@@ -14,6 +14,8 @@
 #include <QVariant>
 #include <QSqlError>
 
+#include "storedProcErrorLookup.h"
+
 commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -21,6 +23,22 @@ commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
+  connect(_addAll, SIGNAL(clicked()), this, SLOT(sAddAll()));
+  connect(_revoke, SIGNAL(clicked()), this, SLOT(sRevoke()));
+  connect(_revokeAll, SIGNAL(clicked()), this, SLOT(sRevokeAll()));
+  connect(_module, SIGNAL(activated(const QString&)), this, SLOT(sModuleSelected(const QString&)));
+  connect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
+  connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
+
+  _available->addColumn("Available Sources", -1, Qt::AlignLeft);
+  _granted->addColumn("Granted Sources", -1, Qt::AlignLeft);
+  
+  q.exec( "SELECT DISTINCT source_module "
+          "FROM source "
+          "ORDER BY source_module;" );
+  while (q.next())
+    _module->insertItem(q.value("source_module").toString());
 }
 
 commentType::~commentType()
@@ -49,7 +67,21 @@ enum SetResponse commentType::set(const ParameterList &pParams)
   if (valid)
   {
     if (param.toString() == "new")
+    {
       _mode = cNew;
+      q.exec("SELECT NEXTVAL('cmnttype_cmnttype_id_seq') AS cmnttype_id");
+      if (q.first())
+        _cmnttypeid = q.value("cmnttype_id").toInt();
+      else
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__) );
+      }
+
+      _module->setCurrentIndex(0);
+      sModuleSelected(_module->text(0));
+    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
@@ -84,17 +116,6 @@ void commentType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('cmnttype_cmnttype_id_seq') AS cmnttype_id");
-    if (q.first())
-      _cmnttypeid = q.value("cmnttype_id").toInt();
-    else
-    {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
-
     q.prepare( "INSERT INTO cmnttype "
                "( cmnttype_id, cmnttype_name, cmnttype_descrip ) "
                "VALUES "
@@ -102,7 +123,8 @@ void commentType::sSave()
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE cmnttype "
-               "SET cmnttype_name=:cmnttype_name, cmnttype_descrip=:cmnttype_descrip "
+               "SET cmnttype_name=:cmnttype_name,"
+               "    cmnttype_descrip=:cmnttype_descrip "
                "WHERE (cmnttype_id=:cmnttype_id);" );
 
   q.bindValue(":cmnttype_id", _cmnttypeid);
@@ -136,7 +158,7 @@ void commentType::sCheck()
 
 void commentType::populate()
 {
-  q.prepare( "SELECT cmnttype_name, cmnttype_descrip "
+  q.prepare( "SELECT * "
              "FROM cmnttype "
              "WHERE (cmnttype_id=:cmnttype_id);" );
   q.bindValue(":cmnttype_id", _cmnttypeid);
@@ -145,5 +167,157 @@ void commentType::populate()
   {
     _name->setText(q.value("cmnttype_name"));
     _description->setText(q.value("cmnttype_descrip"));
+    
+    q.prepare( "SELECT source_module "
+               "FROM cmnttypesource, source "
+               "WHERE ( (cmnttypesource_source_id=source_id)"
+               " AND (cmnttypesource_cmnttype_id=:cmnttype_id) ) "
+               "ORDER BY source_module "
+               "LIMIT 1;" );
+    q.bindValue(":cmnttype_id", _cmnttypeid);
+    q.exec();
+    if (q.first())
+    {
+      for (int counter = 0; counter < _module->count(); counter++)
+      {
+        if (_module->text(counter) == q.value("source_module").toString())
+        {
+          _module->setCurrentIndex(counter);
+          sModuleSelected(_module->text(counter));
+        }
+      }
+    }
+    else
+    {
+      _module->setCurrentIndex(0);
+      sModuleSelected(_module->text(0));
+    }
   }
 }
+
+void commentType::sModuleSelected(const QString &pModule)
+{
+  XTreeWidgetItem *granted = NULL;
+  XTreeWidgetItem *available = NULL;
+
+  _available->clear();
+  _granted->clear();
+
+  XSqlQuery sources;
+  sources.prepare( "SELECT source_id, source_descrip "
+                   "FROM source "
+                   "WHERE (source_module=:source_module) "
+                   "ORDER BY source_descrip;" );
+  sources.bindValue(":source_module", pModule);
+  sources.exec();
+  if (sources.first())
+  {
+    granted = NULL;
+    available = NULL;
+
+//  Insert each source into either the available or granted list
+    XSqlQuery cmnttypesource;
+    cmnttypesource.prepare( "SELECT source_id "
+                            "FROM source, cmnttypesource "
+                            "WHERE ( (cmnttypesource_source_id=source_id)"
+                            " AND (cmnttypesource_cmnttype_id=:cmnttype_id)"
+                            " AND (source_module=:source_module) );" );
+    cmnttypesource.bindValue(":cmnttype_id", _cmnttypeid);
+    cmnttypesource.bindValue(":source_module", _module->currentText());
+    cmnttypesource.exec();
+
+    do
+    {
+      if (cmnttypesource.findFirst("source_id", sources.value("source_id").toInt()) == -1)
+        available = new XTreeWidgetItem(_available, available, sources.value("source_id").toInt(), sources.value("source_descrip"));
+      else
+      {
+        granted = new XTreeWidgetItem(_granted, granted, sources.value("source_id").toInt(), sources.value("source_descrip"));
+      }
+    }
+    while (sources.next());
+  }
+}
+
+void commentType::sAdd()
+{
+  q.prepare("SELECT grantCmnttypeSource(:cmnttype_id, :source_id) AS result;");
+  q.bindValue(":cmnttype_id", _cmnttypeid);
+  q.bindValue(":source_id", _available->id());
+  q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sModuleSelected(_module->currentText());
+}
+
+void commentType::sAddAll()
+{
+  q.prepare("SELECT grantAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
+  q.bindValue(":cmnttype_id", _cmnttypeid);
+  q.bindValue(":module", _module->currentText());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("grantAllModuleCmnttypeSource", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sModuleSelected(_module->currentText());
+}
+
+void commentType::sRevoke()
+{
+  q.prepare("SELECT revokeCmnttypeSource(:cmnttype_id, :source_id) AS result;");
+  q.bindValue(":cmnttype_id", _cmnttypeid);
+  q.bindValue(":source_id", _granted->id());
+  q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sModuleSelected(_module->currentText());
+}
+
+void commentType::sRevokeAll()
+{
+  q.prepare("SELECT revokeAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
+  q.bindValue(":cmnttype_id", _cmnttypeid);
+  q.bindValue(":module", _module->currentText());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("revokeAllModuleCmnttypeSource", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sModuleSelected(_module->currentText());
+}
+

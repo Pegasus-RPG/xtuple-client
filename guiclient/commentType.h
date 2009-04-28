@@ -34,12 +34,16 @@ protected slots:
 
     virtual void sSave();
     virtual void sCheck();
+    virtual void sModuleSelected( const QString & pModule );
+    virtual void sAdd();
+    virtual void sAddAll();
+    virtual void sRevoke();
+    virtual void sRevokeAll();
 
 
 private:
     int _cmnttypeid;
     int _mode;
-
 };
 
 #endif // COMMENTTYPE_H

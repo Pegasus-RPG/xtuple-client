@@ -126,6 +126,11 @@ void commentTypes::sDelete()
   }
   else
   {
+    q.prepare( "DELETE FROM cmnttypesource "
+               "WHERE (cmnttypesource_cmnttype_id=:cmnttype_id);" );
+    q.bindValue(":cmnttype_id", _cmnttype->id());
+    q.exec();
+
     q.prepare( "DELETE FROM cmnttype "
                "WHERE (cmnttype_id=:cmnttype_id);" );
     q.bindValue(":cmnttype_id", _cmnttype->id());
