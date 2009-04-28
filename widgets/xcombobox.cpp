@@ -373,38 +373,259 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY subaccnt_number;" );
       break;
 
-    case CustomerCommentTypes:
+    case AddressCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
-                  "FROM cmnttype "
-                  "WHERE (strpos(cmnttype_usedin, 'C')>0)"
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='ADDR')"
                   "ORDER BY cmnttype_name;" );
       break;
 
-    case VendorCommentTypes:
+    case BBOMHeadCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
-                  "FROM cmnttype "
-                  "WHERE (strpos(cmnttype_usedin, 'V')>0)"
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BBH')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case BBOMItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BBI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case BOMHeadCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BMH')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case BOMItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BMI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case BOOHeadCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BOH')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case BOOItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='BOI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case CRMAccountCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='CRMA')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case ContactCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='T')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case CustomerCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='C')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case EmployeeCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='EMP')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case IncidentCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='INCDT')"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case ItemCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
-                  "FROM cmnttype "
-                  "WHERE (strpos(cmnttype_usedin, 'I')>0)"
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='I')"
                   "ORDER BY cmnttype_name;" );
       break;
 
-    case ProjectCommentTypes:
+    case ItemSiteCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
-                  "FROM cmnttype "
-                  "WHERE (strpos(cmnttype_usedin, 'J')>0)"
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='IS')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case ItemSourceCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='IR')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case LocationCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='L')"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case LotSerialCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
-                  "FROM cmnttype "
-                  "WHERE (strpos(cmnttype_usedin, 'L')>0)"
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='LS')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case OpportunityCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='OPP')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case ProjectCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='J')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case PurchaseOrderCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='P')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case PurchaseOrderItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='PI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case ReturnAuthCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='RA')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case ReturnAuthItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='RI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case QuoteCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='Q')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case QuoteItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='QI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case SalesOrderCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='S')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case SalesOrderItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='SI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case TransferOrderCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='TO')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case TransferOrderItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='TI')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case VendorCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='V')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case WarehouseCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='WH')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case WorkOrderCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='W')"
                   "ORDER BY cmnttype_name;" );
       break;
 

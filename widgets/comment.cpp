@@ -280,6 +280,102 @@ void comment::set(ParameterList &pParams)
     _source = (enum Comments::CommentSources)param.toInt();
     switch (_source)
     {
+      case Comments::Address:
+        _cmnttype->setType(XComboBox::AddressCommentTypes);
+        break;
+      case Comments::BBOMHead:
+        _cmnttype->setType(XComboBox::BBOMHeadCommentTypes);
+        break;
+      case Comments::BBOMItem:
+        _cmnttype->setType(XComboBox::BBOMItemCommentTypes);
+        break;
+      case Comments::BOMHead:
+        _cmnttype->setType(XComboBox::BOMHeadCommentTypes);
+        break;
+      case Comments::BOMItem:
+        _cmnttype->setType(XComboBox::BOMItemCommentTypes);
+        break;
+      case Comments::BOOHead:
+        _cmnttype->setType(XComboBox::BOOHeadCommentTypes);
+        break;
+      case Comments::BOOItem:
+        _cmnttype->setType(XComboBox::BOOItemCommentTypes);
+        break;
+      case Comments::CRMAccount:
+        _cmnttype->setType(XComboBox::CRMAccountCommentTypes);
+        break;
+      case Comments::Contact:
+        _cmnttype->setType(XComboBox::ContactCommentTypes);
+        break;
+      case Comments::Customer:
+        _cmnttype->setType(XComboBox::CustomerCommentTypes);
+        break;
+      case Comments::Employee:
+        _cmnttype->setType(XComboBox::EmployeeCommentTypes);
+        break;
+      case Comments::Incident:
+        _cmnttype->setType(XComboBox::IncidentCommentTypes);
+        break;
+      case Comments::Item:
+        _cmnttype->setType(XComboBox::ItemCommentTypes);
+        break;
+      case Comments::ItemSite:
+        _cmnttype->setType(XComboBox::ItemSiteCommentTypes);
+        break;
+      case Comments::ItemSource:
+        _cmnttype->setType(XComboBox::ItemSourceCommentTypes);
+        break;
+      case Comments::Location:
+        _cmnttype->setType(XComboBox::LocationCommentTypes);
+        break;
+      case Comments::LotSerial:
+        _cmnttype->setType(XComboBox::LotSerialCommentTypes);
+        break;
+      case Comments::Opportunity:
+        _cmnttype->setType(XComboBox::OpportunityCommentTypes);
+        break;
+      case Comments::Project:
+        _cmnttype->setType(XComboBox::ProjectCommentTypes);
+        break;
+      case Comments::PurchaseOrder:
+        _cmnttype->setType(XComboBox::PurchaseOrderCommentTypes);
+        break;
+      case Comments::PurchaseOrderItem:
+        _cmnttype->setType(XComboBox::PurchaseOrderItemCommentTypes);
+        break;
+      case Comments::ReturnAuth:
+        _cmnttype->setType(XComboBox::ReturnAuthCommentTypes);
+        break;
+      case Comments::ReturnAuthItem:
+        _cmnttype->setType(XComboBox::ReturnAuthItemCommentTypes);
+        break;
+      case Comments::Quote:
+        _cmnttype->setType(XComboBox::QuoteCommentTypes);
+        break;
+      case Comments::QuoteItem:
+        _cmnttype->setType(XComboBox::QuoteItemCommentTypes);
+        break;
+      case Comments::SalesOrder:
+        _cmnttype->setType(XComboBox::SalesOrderCommentTypes);
+        break;
+      case Comments::SalesOrderItem:
+        _cmnttype->setType(XComboBox::SalesOrderItemCommentTypes);
+        break;
+      case Comments::TransferOrder:
+        _cmnttype->setType(XComboBox::TransferOrderCommentTypes);
+        break;
+      case Comments::TransferOrderItem:
+        _cmnttype->setType(XComboBox::TransferOrderItemCommentTypes);
+        break;
+      case Comments::Vendor:
+        _cmnttype->setType(XComboBox::VendorCommentTypes);
+        break;
+      case Comments::Warehouse:
+        _cmnttype->setType(XComboBox::WarehouseCommentTypes);
+        break;
+      case Comments::WorkOrder:
+        _cmnttype->setType(XComboBox::WorkOrderCommentTypes);
+        break;
       default:
         _cmnttype->setType(XComboBox::AllCommentTypes);
         break;
