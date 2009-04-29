@@ -14,6 +14,8 @@
 #include <QSqlError>
 #include <QVariant>
 
+const char *_charTypes[] = { "B", "C", "D", "I", "N", "T", "S" };
+
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -37,6 +39,10 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+  
+// Temporarily hide this control until ready to deploy
+  _type->hide();
+  _typeLit->hide();
 
   param = pParams.value("char_id", &valid);
   if (valid)
@@ -51,13 +57,17 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     if (param.toString() == "new")
       _mode = cNew;
     else if (param.toString() == "edit")
+    {
       _mode = cEdit;
+      _type->setEnabled(FALSE);
+    }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
       _name->setEnabled(FALSE);
       _useGroup->setEnabled(FALSE);
+      _type->setEnabled(FALSE);
 
       _items->setEnabled(FALSE);
       _customers->setEnabled(FALSE);
@@ -113,30 +123,31 @@ void characteristic::sSave()
 
     q.prepare( "INSERT INTO char "
                "( char_id, char_name, char_items, char_customers, "
-	       "  char_contacts, char_crmaccounts, char_addresses, "
-	       "  char_options, char_opportunity,"
+               "  char_contacts, char_crmaccounts, char_addresses, "
+               "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
-               "  char_notes ) "
+               "  char_notes, char_type ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
-	       "  :char_contacts, :char_crmaccounts, :char_addresses, "
-	       "  :char_options, :char_opportunity,"
+               "  :char_contacts, :char_crmaccounts, :char_addresses, "
+               "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
-               "  :char_notes );" );
+               "  :char_notes, :char_type );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE char "
                "SET char_name=:char_name, char_items=:char_items, "
-	       "    char_customers=:char_customers, "
-	       "    char_contacts=:char_contacts, "
-	       "    char_crmaccounts=:char_crmaccounts, "
-	       "    char_addresses=:char_addresses, "
-	       "    char_options=:char_options,"
+               "    char_customers=:char_customers, "
+               "    char_contacts=:char_contacts, "
+               "    char_crmaccounts=:char_crmaccounts, "
+               "    char_addresses=:char_addresses, "
+               "    char_options=:char_options,"
                "    char_attributes=:char_attributes, "
                "    char_opportunity=:char_opportunity,"
-	       "    char_lotserial=:char_lotserial,"
+               "    char_lotserial=:char_lotserial,"
                "    char_employees=:char_employees,"
-               "    char_notes=:char_notes "
+               "    char_notes=:char_notes,"
+               "    char_type=:char_type "
                "WHERE (char_id=:char_id);" );
 
   q.bindValue(":char_id", _charid);
@@ -152,6 +163,7 @@ void characteristic::sSave()
   q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
   q.bindValue(":char_notes",       _description->toPlainText().trimmed());
+  q.bindValue(":char_type",        _charTypes[_type->currentItem()]);
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -202,6 +214,10 @@ void characteristic::populate()
     _opportunity->setChecked(q.value("char_opportunity").toBool());
     _employees->setChecked(q.value("char_employees").toBool());
     _description->setText(q.value("char_notes").toString());
+    QString type = q.value("char_type").toString();
+    for (int counter = 0; counter < _type->count(); counter++)
+      if (type == _charTypes[counter])
+        _type->setCurrentItem(counter);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
