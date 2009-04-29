@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>477</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -127,7 +127,17 @@
          <item row="3" column="1" >
           <layout class="QHBoxLayout" name="horizontalLayout_5" >
            <item>
-            <widget class="XComboBox" name="xcomboBox_2" />
+            <widget class="XComboBox" name="_taxClass" >
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="nullStr" >
+              <string>None</string>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::TaxClasses</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="_basisLit" >
@@ -141,11 +151,15 @@
            </item>
            <item>
             <widget class="XComboBox" name="_basis" >
-             <item>
-              <property name="text" >
-               <string>Base Price</string>
-              </property>
-             </item>
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="nullStr" >
+              <string>Base Price</string>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::TaxCodes</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -186,7 +200,17 @@
          <item row="4" column="1" >
           <layout class="QHBoxLayout" name="horizontalLayout_4" >
            <item>
-            <widget class="XComboBox" name="_taxauth" />
+            <widget class="XComboBox" name="_taxauth" >
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="nullStr" >
+              <string>None</string>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::TaxAuths</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_3" >
@@ -306,56 +330,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout" >
             <item>
-             <widget class="XTreeWidget" name="_taxitems" >
-              <column>
-               <property name="text" >
-                <string>Amount</string>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>UOM</string>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Effective</string>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Expires</string>
-               </property>
-              </column>
-              <item>
-               <property name="text" >
-                <string>0.7</string>
-               </property>
-               <property name="text" >
-                <string>Percent</string>
-               </property>
-               <property name="text" >
-                <string>09-Sept-2008</string>
-               </property>
-               <property name="text" >
-                <string>Never</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>0.5</string>
-               </property>
-               <property name="text" >
-                <string>Percent</string>
-               </property>
-               <property name="text" >
-                <string>Always</string>
-               </property>
-               <property name="text" >
-                <string>09-Sept-2008</string>
-               </property>
-              </item>
-             </widget>
+             <widget class="XTreeWidget" name="_taxitems" />
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2" >
@@ -371,6 +346,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="_edit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>Edit</string>
                 </property>
@@ -378,6 +356,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="_view" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>View</string>
                 </property>
@@ -385,13 +366,19 @@
               </item>
               <item>
                <widget class="QPushButton" name="_expire" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>Expire</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton" >
+               <widget class="QPushButton" name="_delete" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>Delete</string>
                 </property>
@@ -464,7 +451,7 @@
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>taxCode</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>775</x>

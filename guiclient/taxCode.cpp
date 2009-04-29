@@ -9,9 +9,14 @@
  */
 
 #include "taxCode.h"
+#include <QCloseEvent>
+#include <QMenu>
 #include <QDoubleValidator>
 #include <QVariant>
 #include <QMessageBox>
+#include <metasql.h>
+#include <QSqlError>
+#include "taxCodeRate.h"
 
 /*
  *  Constructs a taxCode as a child of 'parent', with the
@@ -25,15 +30,50 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  /* Comment until new code
-  // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave())); 
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck())); 
+  connect(_taxClass, SIGNAL(newID(int)), this, SLOT(populateBasis()));
+  connect(_taxitems, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew())); 
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit())); 
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire())); 
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   
-  _taxRateA->setValidator(omfgThis->percentVal());
-  _taxRateB->setValidator(omfgThis->percentVal());
-  _taxRateC->setValidator(omfgThis->percentVal());
-  */
+  _taxitems->addColumn(tr("Effective"), _dateColumn, Qt::AlignLeft, true, "effective" );
+  _taxitems->addColumn(tr("Expires"), _dateColumn, Qt::AlignLeft, true, "expires" );
+  _taxitems->addColumn(tr("Percent"), 70, Qt::AlignLeft, true, "taxrate_percent" );
+  _taxitems->addColumn(tr("Amount"), 70, Qt::AlignLeft, true, "taxrate_amount" );
+  _taxitems->addColumn(tr("Currency"), -1, Qt::AlignLeft, true, "curr_name" );
+  sFillList(); 
+}
+
+void taxCode::populateBasis()
+{
+  _basis->clear();
+
+  QString sql(" SELECT tax_id, tax_code || '-' || tax_descrip, tax_code" 
+   			  " FROM tax"
+			  " WHERE ( tax_taxclass_id = "
+			  " <? value(\"taxclass_id\") ?>);"); 
+
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  params.append("taxclass_id", _taxClass->id()); 
+  XSqlQuery taxbasis = mql.toQuery(params); 
+  _basis->populate(taxbasis);
+} 
+
+void taxCode::sPopulateMenu(QMenu *menuThis)
+{
+  menuThis->insertItem(tr("View"), this, SLOT(sView()), 0);
+  
+  if ((_mode == cNew) || (_mode == cEdit))
+  {
+    menuThis->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
+    menuThis->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);
+    menuThis->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+  }
 }
 
 /*
@@ -53,14 +93,136 @@ void taxCode::languageChange()
   retranslateUi(this);
 }
 
+void taxCode::sNew() 
+{
+  
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("tax_id", _taxid);
+  taxCodeRate newdlg(this, "", TRUE); 
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void taxCode::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("tax_id", _taxid); 
+  params.append("taxrate_id", _taxitems->id());
+
+  taxCodeRate newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void taxCode::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("taxrate_id", _taxitems->id());
+
+  taxCodeRate newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void taxCode::sDelete()
+{
+  if (QMessageBox::question(this, tr("Delete Tax Code Rate?"),
+			      tr("<p>Are you sure you want to delete this "
+				 "Tax Code Rate ?"),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare( " DELETE FROM taxrate "
+               " WHERE (taxrate_id=:taxrate_id);");
+                
+    q.bindValue(":taxrate_id", _taxitems->id());
+    q.exec();
+
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    sFillList();
+  }
+}
+
+
+void taxCode::sFillList()
+{
+  _taxitems->clear();
+
+
+  MetaSQLQuery mql( " SELECT taxrate_id, "
+                 "       CASE WHEN (taxrate_effective = startOfTime()) THEN NULL "
+                 "            ELSE taxrate_effective END AS effective, "
+                 "       CASE WHEN (taxrate_expires = endOfTime()) THEN NULL "
+                 "            ELSE taxrate_expires END AS expires, "
+                 "       <? literal (\"always\") ?> AS effective_xtnullrole, "
+                 "       <? literal (\"never\") ?>  AS expires_xtnullrole, "
+				 "       (taxrate_percent * 100) as taxrate_percent, taxrate_amount, curr_name, "
+				 " CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
+                 "	    WHEN (taxrate_effective >= CURRENT_DATE) THEN 'emphasis'"
+                 "      END AS qtforegroundrole "
+				 " FROM taxrate LEFT OUTER JOIN curr_symbol "
+				 "       ON (taxrate_curr_id = curr_id) "
+				 " WHERE taxrate_tax_id = <? value(\"tax_id\") ?> "
+				 " ORDER BY taxrate_id, taxrate_effective, taxrate_expires, "
+				 " taxrate_percent, taxrate_amount; " );
+
+  ParameterList params;
+  setParams(params);
+  q = mql.toQuery(params);
+   
+  _taxitems->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+
+void taxCode::sExpire()
+{
+  q.prepare( "select taxrate_id "
+             "FROM taxrate  "
+             "WHERE (taxrate_id=:taxitems_id AND (taxrate_expires <= CURRENT_DATE "
+			 " OR taxrate_effective > CURRENT_DATE));" );
+  q.bindValue(":taxitems_id", _taxitems->id());
+  q.exec();
+  if(q.first())  
+  {
+    QMessageBox::information(this, tr("Expired Tax Rate"),
+    tr("Cannot expire this Tax Code. It is already expired or is a Future Rate.") );
+ 	return;
+  }
+  else
+  {
+    q.prepare( "UPDATE taxrate "
+               "SET taxrate_expires=CURRENT_DATE "
+               "WHERE (taxrate_id=:taxitems_id);" );
+    q.bindValue(":taxitems_id", _taxitems->id());
+    q.exec();
+    sFillList();
+  }
+}
+
 enum SetResponse taxCode::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
 
-  /* comment until new code
-  param = pParams.value("tax_id", &valid);
-  if (valid)
+  param = pParams.value("tax_id", &valid); 
+  if (valid) 
   {
     _taxid = param.toInt();
     populate();
@@ -69,142 +231,92 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
   param = pParams.value("mode", &valid);
   if (valid)
   {
-    if (param.toString() == "new")
+    connect(_taxitems, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+    if ( (param.toString() == "new") || (param.toString() == "edit") )
+    {
+      connect(_taxitems, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      connect(_taxitems, SIGNAL(valid(bool)), _expire, SLOT(setEnabled(bool)));
+      connect(_taxitems, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+      connect(_taxitems, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    }
+  
+    if (param.toString() == "new") 
     {
       _mode = cNew;
       _code->setFocus();
+	  initTaxCode(); 
+	  populateBasis();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _description->setFocus();
+
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
       _code->setEnabled(FALSE);
       _description->setEnabled(FALSE);
-      _taxRateA->setEnabled(FALSE);
-      _taxRateB->setEnabled(FALSE);
-      _taxRateC->setEnabled(FALSE);
-      _cumulative->setEnabled(FALSE);
-      _accountA->setReadOnly(TRUE);
-      _accountB->setReadOnly(TRUE);
-      _accountC->setReadOnly(TRUE);
+      _account->setReadOnly(TRUE); 
       _close->setText(tr("&Close"));
-      _save->hide();
+	  _taxClass->setEnabled(FALSE);
+	  _taxauth->setEnabled(FALSE);
+	  _basis->setEnabled(FALSE);
+      _save->hide(); 
       _close->setFocus();
+	  _new->setEnabled(FALSE);
+      _edit->setEnabled(FALSE);
+      _expire->setEnabled(FALSE);
+      _delete->setEnabled(FALSE);
     }
-  }
-  */ 
+  }  
   return NoError;
 }
 
 void taxCode::sSave()
 {
-  /* Comment until new code
   if(_code->text().trimmed().isEmpty())
   {
-    QMessageBox::warning( this, tr("No Tax Name Code"),
-                          tr("You must specify a name code for this Tax.") );
+    QMessageBox::warning( this, tr("No Tax Code"),
+                          tr("You must specify a Code for this Tax.") );
+    _code->setFocus();
+    return;
+  }
+  q.prepare("SELECT tax_id"
+            "  FROM tax"
+            " WHERE((tax_id!= :tax_id)"
+		    " AND (tax_code=:tax_code));");
+  q.bindValue(":tax_code", _code->text().trimmed());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Tax Code"),
+      tr("A Tax Code already exists for the parameters specified.") );
     _code->setFocus();
     return;
   }
 
-  double ratea = (_taxRateA->toDouble() / 100.0);
-  double rateb = (_taxRateB->toDouble() / 100.0);
-  double ratec = (_taxRateC->toDouble() / 100.0);
-  int accounta = _accountA->id();
-  int accountb = _accountB->id();
-  int accountc = _accountC->id();
-
-  if(ratea != 0.0)
-  {
-    if (!_accountA->isValid())
-    {
-      QMessageBox::warning( this, tr("Select G/L Accout"),
-                            tr("You must select a G/L Account for this Tax.") );
-      _accountA->setFocus();
-      return;
-    }
-  }
-  else
-    accounta = -1;
-
-  if(rateb != 0.0)
-  {
-    if (!_accountB->isValid())
-    {
-      QMessageBox::warning( this, tr("Select G/L Account"),
-                            tr("You must select a G/L Account for this Tax.") );
-      _accountB->setFocus();
-      return;
-    }
-  }
-  else
-    accountb = -1;
-
-  if(ratec != 0.0)
-  {
-    if (!_accountC->isValid())
-    {
-      QMessageBox::warning( this, tr("Select G/L Account"),
-                            tr("You must select a G/L Account for this Tax.") );
-      _accountC->setFocus();
-      return;
-    }
-  }
-  else
-    accountc = -1;
-
-  if (_mode == cNew)
-  {
-    q.exec("SELECT NEXTVAL('tax_tax_id_seq') AS _tax_id;");
-    if (q.first())
-      _taxid = q.value("_tax_id").toInt();
-    else
-    {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
-
-    q.prepare( "INSERT INTO tax "
-               "( tax_id, tax_code, tax_descrip, tax_ratea,"
-               "  tax_sales_accnt_id, tax_cumulative,"
-               "  tax_rateb, tax_salesb_accnt_id,"
-               "  tax_ratec, tax_salesc_accnt_id ) "
-               "VALUES "
-               "( :tax_id, :tax_code, :tax_descrip, :tax_ratea,"
-               "  :tax_sales_accnt_id, :tax_cumulative,"
-               "  :tax_rateb, :tax_salesb_accnt_id,"
-               "  :tax_ratec, :tax_Salesc_accnt_id );" );
-  }
-  else
-    q.prepare( "UPDATE tax "
-               "SET tax_code=:tax_code, tax_descrip=:tax_descrip,"
-               "    tax_ratea=:tax_ratea,"
-               "    tax_sales_accnt_id=:tax_sales_accnt_id,"
-               "    tax_rateb=:tax_rateb,"
-               "    tax_salesb_accnt_id=:tax_salesb_accnt_id,"
-               "    tax_ratec=:tax_ratec,"
-               "    tax_salesc_accnt_id=:tax_salesc_accnt_id,"
-               "    tax_cumulative=:tax_cumulative "
-               "WHERE (tax_id=:tax_id);" );
-
-  q.bindValue(":tax_id", _taxid);
+  q.prepare( "UPDATE tax "
+             "SET tax_code=:tax_code, tax_descrip=:tax_descrip,"
+             "    tax_sales_accnt_id=:tax_sales_accnt_id,"
+             "    tax_taxclass_id=:tax_taxclass_id,"
+             "    tax_taxauth_id=:tax_taxauth_id,"
+             "    tax_basis_tax_id=:tax_basis_tax_id "
+             "WHERE (tax_id=:tax_id);" );
+  
   q.bindValue(":tax_code", _code->text().trimmed());
   q.bindValue(":tax_descrip", _description->text());
-  q.bindValue(":tax_ratea", ratea);
-  q.bindValue(":tax_rateb", rateb);
-  q.bindValue(":tax_ratec", ratec);
-  q.bindValue(":tax_sales_accnt_id", accounta);
-  q.bindValue(":tax_salesb_accnt_id", accountb);
-  q.bindValue(":tax_salesc_accnt_id", accountc);
-  q.bindValue(":tax_cumulative", QVariant(_cumulative->isChecked()));
+  if(_account->isValid())
+     q.bindValue(":tax_sales_accnt_id", _account->id());
+  if(_taxauth->isValid())
+    q.bindValue(":tax_taxauth_id", _taxauth->id());
+  if(_taxClass->isValid())
+    q.bindValue(":tax_taxclass_id", _taxClass->id());
+  if(_basis->isValid())
+    q.bindValue(":tax_basis_tax_id", _basis->id());
+  q.bindValue(":tax_id", _taxid); 
   q.exec();
-  */
   done (_taxid);
 }
 
@@ -229,17 +341,14 @@ void taxCode::sCheck()
   }
 }
 
-void taxCode::populate()
+void taxCode::populate() 
 {
-  /* Comment until new code
+ 
   q.prepare( "SELECT tax_code, tax_descrip,"
-             "       tax_ratea * 100 AS ratea,"
              "       tax_sales_accnt_id,"
-             "       tax_rateb * 100 AS rateb,"
-             "       tax_salesb_accnt_id,"
-             "       tax_ratec * 100 AS ratec,"
-             "       tax_salesc_accnt_id,"
-             "       tax_cumulative "
+             "       tax_taxclass_id,"
+             "       tax_taxauth_id,"
+             "       tax_basis_tax_id "
              "FROM tax "
              "WHERE (tax_id=:tax_id);" );
   q.bindValue(":tax_id", _taxid);
@@ -248,14 +357,66 @@ void taxCode::populate()
   {
     _code->setText(q.value("tax_code").toString());
     _description->setText(q.value("tax_descrip").toString());
-    _taxRateA->setText(q.value("ratea").toDouble());
-    _accountA->setId(q.value("tax_sales_accnt_id").toInt());
-    _taxRateB->setText(q.value("rateb").toDouble());
-    _accountB->setId(q.value("tax_salesb_accnt_id").toInt());
-    _taxRateC->setText(q.value("ratec").toDouble());
-    _accountC->setId(q.value("tax_salesc_accnt_id").toInt());
-    _cumulative->setChecked(q.value("tax_cumulative").toBool());
+    _account->setId(q.value("tax_sales_accnt_id").toInt());
+	_taxClass->setId(q.value("tax_taxclass_id").toInt());
+	_taxauth->setId(q.value("tax_taxauth_id").toInt()); 
+    _basis->setId(q.value("tax_basis_tax_id").toInt());
   }
-  */
+  
+  sFillList();
 }
 
+void taxCode::initTaxCode()
+{
+  q.exec("SELECT NEXTVAL('tax_tax_id_seq') AS tax_id;");
+  if (q.first())
+    _taxid = q.value("tax_id").toInt();
+  else
+  {
+    systemError(this, tr("A System Error occurred at %1::%2.")
+                  .arg(__FILE__)
+                  .arg(__LINE__) );
+    return;
+  }
+
+  q.prepare( "INSERT INTO tax( tax_id) VALUES ( :tax_id );");
+  q.bindValue(":tax_id", _taxid);
+  q.exec();
+}
+
+void taxCode::closeEvent(QCloseEvent *pEvent)
+{
+  if ((_mode == cNew) && (_taxid != -1))
+  {
+    if (_taxitems->topLevelItemCount() > 0 &&
+        QMessageBox::question(this, tr("Delete Tax Code?"),
+			      tr("<p>Are you sure you want to delete this "
+				 "Tax Code and all of its associated "
+				 "Tax Rates?"),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    {
+      pEvent->ignore();
+      return;
+    }
+
+    q.prepare( " DELETE FROM taxrate "
+               " WHERE (taxrate_tax_id=:tax_id);");
+                
+    q.bindValue(":tax_id", _taxid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  XDialog::closeEvent(pEvent);
+}
+
+bool taxCode::setParams(ParameterList &pParams)
+{
+  pParams.append("tax_id",      _taxid);
+  pParams.append("always",      tr("'Always'"));
+  pParams.append("never",       tr("'Never'"));
+
+  return true;
+}

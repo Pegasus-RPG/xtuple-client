@@ -103,25 +103,32 @@ void taxCodes::sView()
 
 void taxCodes::sDelete()
 {
-  q.prepare("SELECT deleteTax(:tax_id) AS result;");
-  q.bindValue(":tax_id", _tax->id());
-  q.exec();
-  if (q.first())
+  if(QMessageBox::question(this, tr("Delete Tax Code?"),
+			      tr("<p>Are you sure you want to delete this Tax Code "
+				 "along with its associated Tax Code Rates?"),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    q.prepare("SELECT deleteTax(:tax_id) AS result;");
+    q.bindValue(":tax_id", _tax->id());
+    q.exec();
+    if (q.first())
     {
-      systemError(this, storedProcErrorLookup("deleteTax", result),
-		  __FILE__, __LINE__);
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteTax", result),
+	    	  __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  sFillList();
 }
 
 void taxCodes::sFillList()

@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>_taxCodeRate</class>
- <widget class="QDialog" name="_taxCodeRate" >
+ <class>taxCodeRate</class>
+ <widget class="QDialog" name="taxCodeRate" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -226,5 +226,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>taxCodeRate</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>414</x>
+     <y>34</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>335</x>
+     <y>37</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

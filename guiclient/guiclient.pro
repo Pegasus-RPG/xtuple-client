@@ -108,7 +108,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                distributeBreederProduction.ui                         distributeInventory.ui          \
                distributeToLocation.ui                                                                \
                dspAllocations.ui dspAPApplications.ui                                                 \
-               dspAPOpenItemsByVendor.ui                                                              \
+               dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui                                  \
                dspAROpenItems.ui                                                                      \
                dspARApplications.ui dspBacklogByCustomer.ui dspBacklogByParameterList.ui              \
                dspBacklogByItem.ui dspBacklogBySalesOrder.ui                                          \
@@ -326,7 +326,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
                syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
-               taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxDetail.ui                  \
+               taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxCodeRate.ui taxDetail.ui   \
                taxBreakdown.ui taxZones.ui taxZone.ui taxClass.ui taxClasses.ui                       \
                taxRegistration.ui taxRegistrations.ui                                                 \
                taxSelection.ui taxSelections.ui                                                       \
@@ -429,7 +429,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                distributeBreederProduction.h                        distributeInventory.h             \
                distributeToLocation.h                                                                 \
                dspAllocations.h dspAPApplications.h                                                   \
-               dspAPOpenItemsByVendor.h                                                               \
+               dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h                                    \
                dspAROpenItems.h                                                                       \
                dspARApplications.h dspBacklogByCustomer.h dspBacklogByParameterList.h                 \
                dspBacklogByItem.h dspBacklogBySalesOrder.h                                            \
@@ -650,7 +650,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
                syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
-               taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxDetail.h                       \
+               taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h taxDetail.h         \
                taxBreakdown.h                                                                         \
                taxRegistration.h taxRegistrations.h                                                   \
                taxSelection.h taxSelections.h                                                         \
@@ -692,7 +692,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h                                                                        \
-               idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
+               idleShutdown.h xdateinputdialog.h xsltMap.h                                            \
                xTupleDesigner.h xTupleDesignerActions.h                                               \
 
 
@@ -759,7 +759,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                distributeBreederProduction.cpp                          distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
                dspAllocations.cpp dspAPApplications.cpp                                               \
-               dspAPOpenItemsByVendor.cpp                                                             \
+               dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp                                \
                dspAROpenItems.cpp                                                                     \
                dspARApplications.cpp dspBacklogByCustomer.cpp dspBacklogByParameterList.cpp           \
                dspBacklogByItem.cpp dspBacklogBySalesOrder.cpp                                        \
@@ -981,8 +981,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
                syncCompanies.cpp                                                                      \
                systemMessage.cpp                                                                      \
-               taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp taxDetail.cpp             \
-               taxBreakdown.cpp                                                                       \
+               taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp taxCodeRate.cpp           \
+               taxDetail.cpp taxBreakdown.cpp                                                         \
                taxRegistration.cpp taxRegistrations.cpp                                               \
                taxSelection.cpp taxSelections.cpp                                                     \
                taxType.cpp taxTypes.cpp taxZones.cpp taxZone.cpp taxClass.cpp taxClasses.cpp          \
@@ -1023,7 +1023,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
                jsHighlighter.cpp                                                                      \
-               idleShutdown.cpp xdateinputdialog.cpp xerrormessage.cpp xsltMap.cpp                    \
+               idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
                xTupleDesigner.cpp xTupleDesignerActions.cpp                                           \
 
 QT += xml sql script network
