@@ -348,7 +348,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
   _listTab->setColumnCount(0);
 
-  _addressLit	    = new QLabel(tr("Primary Contact Address:"),this, "_addressLit");
+  _addressLit	    = new QLabel(tr("Primary Contact Address:"),this);
   _searchStreet	    = new XCheckBox(tr("Street Address"), this);
   _searchCity	    = new XCheckBox(tr("City"),this);
   _searchState	    = new XCheckBox(tr("State"),this);
@@ -356,10 +356,11 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _searchCountry    = new XCheckBox(tr("Country"),this);
   _searchContact    = new XCheckBox(tr("Contact Name"),this);
   _searchPhone	    = new XCheckBox(tr("Contact Phone #"),this);
-  _showInactive	    = new QCheckBox(tr("Show Inactive"),this, "_showInactive");
+  _showInactive	    = new QCheckBox(tr("Show Inactive"),this);
   _searchCombo      = new XCheckBox(tr("Search Combo"),this);
   _comboCombo       = new XComboBox(this, "_comboCombo");
   
+  _addressLit->setObjectName("_addressLit");
   _searchStreet->setObjectName("_searchStreet");
   _searchCity->setObjectName("_searchCity");
   _searchState->setObjectName("_searchState");
@@ -367,12 +368,14 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _searchCountry->setObjectName("_searchCountry");
   _searchContact->setObjectName("_searchContact");
   _searchPhone->setObjectName("_searchPhone");
+  _showInactive->setObjectName("_showInactive");
   _searchCombo->setObjectName("_searchCombo");
 
   selectorsLyt->removeWidget(_searchName);
   selectorsLyt->removeWidget(_searchNumber);
-  selectorsLyt->addWidget(new QLabel(tr("Search through:"), this, "_searchLit"),
-						0, 0);
+  QLabel * lbl = new QLabel(tr("Search through:"), this);
+  lbl->setObjectName("_searchLit");
+  selectorsLyt->addWidget(lbl,                  0, 0);
   selectorsLyt->addWidget(_searchNumber,	1, 0);
   selectorsLyt->addWidget(_searchName,		2, 0);
   selectorsLyt->addWidget(_searchContact,	1, 1);

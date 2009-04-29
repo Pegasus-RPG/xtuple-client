@@ -24,8 +24,10 @@
 #define DEBUG false
 
 XComboBox::XComboBox(QWidget *pParent, const char *pName) :
-  QComboBox(pParent, pName)
+  QComboBox(pParent)
 {
+  if(pName)
+    setObjectName(pName);
   _default  = First;
   _type     = Adhoc;
   _lastId   = -1;
@@ -45,8 +47,11 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
 }
 
 XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
-  QComboBox(pEditable, pParent, pName)
+  QComboBox(pParent)
 {
+  if(pName)
+    setObjectName(pName);
+  setEditable(pEditable);
   _default  = First;
   _type = Adhoc;
   _lastId = -1;

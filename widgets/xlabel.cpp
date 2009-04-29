@@ -18,8 +18,10 @@
 #define DEBUG false
 
 XLabel::XLabel(QWidget *parent, const char *name) :
-  QLabel(parent, name)
+  QLabel(parent)
 {
+  if(name)
+    setObjectName(name);
   _fieldName = "";
   _precision = 0;
 }

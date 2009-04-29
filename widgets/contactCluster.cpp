@@ -53,14 +53,16 @@ void ContactCluster::init()
     _titleBox->setSpacing(2);
 
     _change             = new XLineEdit(this);
-    _numberLit		= new QLabel(tr("Number:"), this, "_numberLit");
+    _numberLit		= new QLabel(tr("Number:"), this);
+    _numberLit->setObjectName("_numberLit");
     _number		= new XLineEdit(this, "_number");
     
     _change->hide();
     _number->hide();
     _numberLit->hide();
     
-    _nameLit		= new QLabel(tr("Name:"), this, "_nameLit");
+    _nameLit		= new QLabel(tr("Name:"), this);
+    _nameLit->setObjectName("_nameLit");
     _honorific		= new XComboBox(this, "_honorific");
     _first		= new XLineEdit(this, "_first");
     _middle		= new XLineEdit(this, "_middle");
@@ -68,10 +70,12 @@ void ContactCluster::init()
     _last		= new XLineEdit(this, "_last");
     _suffix		= new XLineEdit(this, "_suffix");
     _suffix->setFixedWidth(30);
-    _initialsLit	= new QLabel(tr("Initials:"), this, "_initialsLit");
+    _initialsLit	= new QLabel(tr("Initials:"), this);
+    _initialsLit->setObjectName("_initialsLit");
     _initials		= new XLineEdit(this, "_initials");
     _initials->setFixedWidth(_initials->size().width() / 3);
-    _titleLit		= new QLabel(tr("Job Title:"), this, "_titleLit");
+    _titleLit		= new QLabel(tr("Job Title:"), this);
+    _titleLit->setObjectName("_titleLit");
     _title		= new XLineEdit(this, "_title");
     
     _mapper		= new XDataWidgetMapper(this);
@@ -94,7 +98,8 @@ void ContactCluster::init()
 
     _buttonBox 		= new QGridLayout;
     _crmAcct		= new CRMAcctCluster(this, "_crmAcct");
-    _active		= new QCheckBox(tr("Active"), this, "_active");
+    _active		= new QCheckBox(tr("Active"), this);
+    _active->setObjectName("_active");
     _owner              = new UsernameCluster(this, "_owner");
 
     _buttonBox->addWidget(_active,	0, 0, Qt::AlignTop);
@@ -102,15 +107,20 @@ void ContactCluster::init()
     _buttonBox->addWidget(_owner, 	0, 2, Qt::AlignTop);
 
 
-    _phoneLit		= new QLabel(tr("Voice:"), this, "_phoneLit");
+    _phoneLit		= new QLabel(tr("Voice:"), this);
+    _phoneLit->setObjectName("_phoneLit");
     _phone		= new XLineEdit(this, "_phone");
-    _phone2Lit		= new QLabel(tr("Alternate:"), this, "_phone2Lit");
+    _phone2Lit		= new QLabel(tr("Alternate:"), this);
+    _phone2Lit->setObjectName("_phone2Lit");
     _phone2		= new XLineEdit(this, "_phone2");
-    _faxLit		= new QLabel(tr("Fax:"), this, "_faxLit");
+    _faxLit		= new QLabel(tr("Fax:"), this);
+    _faxLit->setObjectName("_faxLit");
     _fax		= new XLineEdit(this, "_fax");
-    _emailLit		= new QLabel(tr("E-Mail:"), this, "_emailLit");
+    _emailLit		= new QLabel(tr("E-Mail:"), this);
+    _emailLit->setObjectName("_emailLit");
     _email		= new XLineEdit(this, "_email");
-    _webaddrLit		= new QLabel(tr("Web:"), this, "_webaddrLit");
+    _webaddrLit		= new QLabel(tr("Web:"), this);
+    _webaddrLit->setObjectName("_webaddrLit");
     _webaddr		= new XLineEdit(this, "_webaddr");
     _address		= new AddressCluster(this, "_address");
 
@@ -119,7 +129,7 @@ void ContactCluster::init()
 #endif    
 
     QPalette p = _email->palette();
-    p.setColor(QColorGroup::Text, Qt::blue);
+    p.setColor(QPalette::Text, Qt::blue);
     _email->setPalette(p);
     _webaddr->setPalette(p);
     
@@ -302,7 +312,7 @@ void ContactCluster::findDuplicates()
 			    tr("Could not instantiate a Search Dialog"));
     }
   }
-  else if (r.lastError().type() != QSqlError::None)
+  else if (r.lastError().type() != QSqlError::NoError)
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                         .arg(__FILE__)
                                         .arg(__LINE__),
@@ -389,7 +399,7 @@ void ContactCluster::silentSetId(const int pId)
 
           _ignoreSignals = false;
       }
-      else if (idQ.lastError().type() != QSqlError::None)
+      else if (idQ.lastError().type() != QSqlError::NoError)
           QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                         .arg(__FILE__)
                                         .arg(__LINE__),
@@ -913,7 +923,7 @@ void ContactCluster::sInfo()
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				      .arg(__FILE__)
 				      .arg(__LINE__),
-			      tr("%1::sInfo() not yet defined").arg(className()));
+			      tr("%1::sInfo() not yet defined").arg(metaObject()->className()));
 }
 
 void ContactCluster::sList()

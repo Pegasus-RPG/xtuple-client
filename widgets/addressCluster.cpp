@@ -401,7 +401,7 @@ void AddressCluster::sInfo()
   QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                          .arg(__FILE__)
                          .arg(__LINE__),
-                          tr("%1::sInfo() not yet defined").arg(className()));
+                          tr("%1::sInfo() not yet defined").arg(metaObject()->className()));
 }
 
 void AddressCluster::sList()

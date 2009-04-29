@@ -19,8 +19,10 @@
 #include "format.h"
 
 XLineEdit::XLineEdit(QWidget *parent, const char *name) :
-  QLineEdit(parent, name)
+  QLineEdit(parent)
 {
+  if(name)
+    setObjectName(name);
   setAcceptDrops(FALSE);
 
 #ifdef Q_WS_MAC
@@ -120,7 +122,7 @@ void XLineEdit::mousePressEvent(QMouseEvent *event)
 
 void XLineEdit::keyPressEvent(QKeyEvent *event)
 {
-  if (event->state() == Qt::ControlModifier)
+  if (event->modifiers() == Qt::ControlModifier)
   {
     if (event->key() == Qt::Key_L)
     {
