@@ -618,30 +618,10 @@ void initErrorLookupHash()
 			       					 0, "" },
 
   { "deleteTax", -10,	TR("This Tax Code cannot be deleted as there are "
-			   "Tax Selections that refer to it. Change those "
-			   "Tax Selections before trying to delete this "
+			   "Tax Assignments that refer to it. Change those "
+			   "Tax Assignments before trying to delete this "
 			   "Tax Code."),				0, "" },
-  { "deleteTax", -13,	TR("This Tax Code cannot be deleted as there are "
-			   "Vouchers that refer to it."),		0, "" },
-  { "deleteTax", -14,	TR("This Tax Code cannot be deleted as there are "
-			   "Voucher Items that refer to it."),		0, "" },
-  { "deleteTax", -18,	TR("This Tax Code cannot be deleted as there are "
-			   "Quote Items that refer to it."),		0, "" },
-  { "deleteTax", -20,	TR("This Tax Code cannot be deleted as there are "
-			   "Sales Order Items that refer to it."),	0, "" },
-  { "deleteTax", -21,	TR("This Tax Code cannot be deleted as there are "
-			   "Billing Selections that refer to it."),	0, "" },
-  { "deleteTax", -22,	TR("This Tax Code cannot be deleted as there are "
-			   "Billing Selection Items that refer to it."),0, "" },
-  { "deleteTax", -23,	TR("This Tax Code cannot be deleted as there are "
-			   "Invoices that refer to it."),		0, "" },
-  { "deleteTax", -24,	TR("This Tax Code cannot be deleted as there are "
-			   "Invoice Items that refer to it."),		0, "" },
-  { "deleteTax", -25,	TR("This Tax Code cannot be deleted as there are "
-			   "S/O Credit Memos that refer to it."),	0, "" },
-  { "deleteTax", -26,	TR("This Tax Code cannot be deleted as there are "
-			   "S/O Credit Memo Items that refer to it."),	0, "" },
-  
+    
   { "deleteTaxAuthority", -1, TR("This Tax Authority cannot be deleted as "
 				 "there are Tax Selections for it. Change or "
 				 "delete those Tax Selections before deleting "
