@@ -13,6 +13,9 @@
 #include <QWidget>
 #include <QtScript>
 
+#include <parameter.h>
+#include <guiclient.h>
+
 class XWidgetPrivate;
 
 class XWidget : public QWidget
@@ -23,6 +26,9 @@ class XWidget : public QWidget
     XWidget(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags = 0);
     ~XWidget();
+
+  public slots:
+    virtual SetResponse set( const ParameterList & pParams );
 
   protected:
     void closeEvent(QCloseEvent * event);

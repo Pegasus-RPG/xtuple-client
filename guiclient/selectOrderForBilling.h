@@ -26,7 +26,7 @@ public:
     ~selectOrderForBilling();
 
 public slots:
-    virtual void set( const ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
 
     virtual void clear();
     virtual void recalculateTax();

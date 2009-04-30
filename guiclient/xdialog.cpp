@@ -179,3 +179,9 @@ void XDialog::setRememberSize(bool b)
   if(_private && _private->_rememberSize)
     _private->_rememberSize->setChecked(b);
 }
+
+SetResponse XDialog::set(const ParameterList & /*pParams*/)
+{
+  return NoError;
+}
+

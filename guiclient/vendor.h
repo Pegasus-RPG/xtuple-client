@@ -26,7 +26,7 @@ public:
     ~vendor();
 
 public slots:
-    virtual void set(const ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams );
     virtual int  saveContact(ContactCluster*);
     virtual void sSave();
     virtual void sCheck();

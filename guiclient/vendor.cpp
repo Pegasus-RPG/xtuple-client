@@ -97,7 +97,7 @@ void vendor::languageChange()
   retranslateUi(this);
 }
 
-void vendor::set(const ParameterList &pParams)
+SetResponse vendor::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -245,6 +245,8 @@ void vendor::set(const ParameterList &pParams)
     _next->hide();
     _previous->hide();
   }
+
+  return NoError;
 }
 
 // similar code in address, customer, shipto, vendor, vendorAddress, warehouse

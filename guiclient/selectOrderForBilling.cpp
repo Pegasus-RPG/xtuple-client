@@ -104,7 +104,7 @@ void selectOrderForBilling::languageChange()
   retranslateUi(this);
 }
 
-void selectOrderForBilling::set(const ParameterList &pParams)
+SetResponse selectOrderForBilling::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -135,6 +135,8 @@ void selectOrderForBilling::set(const ParameterList &pParams)
       _save->setFocus();
     }
   }
+
+  return NoError;
 }
 
 void selectOrderForBilling::clear()

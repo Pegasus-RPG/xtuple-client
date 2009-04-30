@@ -13,6 +13,9 @@
 #include <QDialog>
 #include <QtScript>
 
+#include <parameter.h>
+#include <guiclient.h>
+
 class XDialogPrivate;
 
 class XDialog : public QDialog
@@ -25,6 +28,7 @@ class XDialog : public QDialog
     virtual ~XDialog();
 
   public slots:
+    virtual SetResponse set(const ParameterList &);
     virtual void done(int);
     void setRememberPos(bool);
     void setRememberSize(bool);

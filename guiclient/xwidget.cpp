@@ -174,3 +174,8 @@ void XWidget::showEvent(QShowEvent *event)
   }
   QWidget::showEvent(event);
 }
+
+SetResponse XWidget::set( const ParameterList & /*pParams*/ )
+{
+  return NoError;
+}
