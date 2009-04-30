@@ -77,6 +77,7 @@
 #include "scripttoolbox.h"
 
 #include "setupscriptapi.h"
+#include "getscreen.h"
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
@@ -216,7 +217,7 @@ class xTupleCustInfoAction : public CustInfoAction
       if(w && w->isModal())
       {
     	params.append("modal");
-        dspCustomerInformation * newdlg = new dspCustomerInformation(w, Qt::Window);
+        dspCustomerInformation * newdlg = new dspCustomerInformation(w, 0, Qt::Window);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
       }
@@ -1426,3 +1427,9 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   setupScriptApi(engine);
 }
+
+QWidget * createScreen(const QString & classname, QWidget * parent, Qt::WindowFlags wflags, const char * name)
+{
+  return xtGetScreen(classname, parent, wflags, name);
+}
+

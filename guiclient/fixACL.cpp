@@ -22,8 +22,8 @@ bool fixACL::userHasPriv(const int /* ignored */)
   return _privileges->check("fixACL");
 }
 
-fixACL::fixACL(QWidget* parent, Qt::WindowFlags fl)
-    : XWidget(parent, fl)
+fixACL::fixACL(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

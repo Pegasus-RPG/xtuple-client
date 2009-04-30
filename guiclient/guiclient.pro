@@ -693,7 +693,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
-               xTupleDesigner.h xTupleDesignerActions.h                                               \
+               xTupleDesigner.h xTupleDesignerActions.h getscreen.h getscreen_classlist.h getscreen_headerlist.h \
 
 
 SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collectMetrics.cpp          \
@@ -1024,7 +1024,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp xerrormessage.cpp                \
                jsHighlighter.cpp                                                                      \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
-               xTupleDesigner.cpp xTupleDesignerActions.cpp                                           \
+               xTupleDesigner.cpp xTupleDesignerActions.cpp getscreen.cpp                             \
 
 QT += xml sql script network
 QT += webkit

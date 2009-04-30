@@ -20,7 +20,7 @@ class employee : public XDialog, public Ui::employee
   Q_OBJECT
   
   public:
-    employee(QWidget* = 0, Qt::WindowFlags = 0);
+    employee(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
     ~employee();
 
     static bool userHasPriv(const int = cView);

@@ -41,8 +41,8 @@
 #include "getGLDistDate.h"
 #include "storedProcErrorLookup.h"
 
-dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
-    : XWidget (parent, fl)
+dspCustomerInformation::dspCustomerInformation(QWidget* parent, const char * name, Qt::WFlags fl)
+    : XWidget (parent, name, fl)
 {
   setupUi(this);
 

@@ -22,7 +22,7 @@ class importXML : public XWidget, public Ui::importXML
   Q_OBJECT
   
   public:
-    importXML(QWidget* = 0, Qt::WindowFlags = 0);
+    importXML(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
     ~importXML();
 
     static bool userHasPriv();

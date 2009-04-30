@@ -22,7 +22,7 @@ class adjustmentTrans : public XWidget, public Ui::adjustmentTrans
     Q_OBJECT
 
 public:
-    adjustmentTrans(QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    adjustmentTrans(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = Qt::Window);
     ~adjustmentTrans();
 
 public slots:

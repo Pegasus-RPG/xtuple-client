@@ -22,7 +22,7 @@ class fixACL : public XWidget, public Ui::fixACL
     Q_OBJECT
 
 public:
-    fixACL(QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    fixACL(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = Qt::Window);
     ~fixACL();
     static bool userHasPriv(const int = 0);
 

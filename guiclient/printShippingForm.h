@@ -21,7 +21,7 @@ class printShippingForm : public XDialog, public Ui::printShippingForm
     Q_OBJECT
 
 public:
-    printShippingForm(QWidget* parent = 0, Qt::WindowFlags fl = 0);
+    printShippingForm(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = 0);
     ~printShippingForm();
 
 public slots:

@@ -24,7 +24,7 @@ class todoListCalendar : public XWidget, public Ui::todoListCalendar
   Q_OBJECT
 
   public:
-    todoListCalendar(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    todoListCalendar(QWidget* parent = 0, const char * = 0, Qt::WindowFlags f = 0);
 
     virtual SetResponse	set(const ParameterList&);
     void setParams(ParameterList &);

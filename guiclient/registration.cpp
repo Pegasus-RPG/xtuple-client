@@ -16,8 +16,8 @@
 #include "guiclient.h"
 #include <xtsettings.h>
 
-registration::registration(QWidget* parent, Qt::WindowFlags fl)
-    : XDialog(parent, fl)
+registration::registration(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XDialog(parent, name, fl)
 {
   setupUi(this);
 

@@ -21,7 +21,7 @@ class registration : public XDialog, public Ui::registration
     Q_OBJECT
 
 public:
-  registration(QWidget* parent = 0, Qt::WindowFlags fl = Qt::Dialog);
+  registration(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = Qt::Dialog);
   ~registration();
 
 public slots:

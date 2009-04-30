@@ -22,7 +22,7 @@ class fixSerial : public XWidget, public Ui::fixSerial
     Q_OBJECT
 
 public:
-    fixSerial(QWidget* parent = 0, Qt::WindowFlags fl = Qt::Window);
+    fixSerial(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = Qt::Window);
     ~fixSerial();
 
 public slots:

@@ -19,8 +19,8 @@
 
 #include "storedProcErrorLookup.h"
 
-user::user(QWidget* parent, Qt::WindowFlags fl)
-  : XDialog(parent, fl)
+user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
+  : XDialog(parent, name, fl)
 {
   _inTransaction = false;
   setupUi(this);

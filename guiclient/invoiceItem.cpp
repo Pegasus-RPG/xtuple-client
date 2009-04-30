@@ -19,8 +19,8 @@
 #include "priceList.h"
 #include "taxDetail.h"
 
-invoiceItem::invoiceItem(QWidget* parent, Qt::WindowFlags fl)
-    : XDialog(parent, fl)
+invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XDialog(parent, name, fl)
 {
   setupUi(this);
 

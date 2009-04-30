@@ -34,8 +34,8 @@ int xsltMap::exec()
   }
 }
 
-xsltMap::xsltMap(QWidget* parent, Qt::WFlags fl)
-    : XDialog(parent, fl)
+xsltMap::xsltMap(QWidget* parent, const char * name, Qt::WFlags fl)
+    : XDialog(parent, name, fl)
 {
   setupUi(this);
 

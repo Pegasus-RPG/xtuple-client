@@ -22,7 +22,7 @@ class invoiceItem : public XDialog, public Ui::invoiceItem
     Q_OBJECT
 
 public:
-    invoiceItem(QWidget* = 0, Qt::WindowFlags = 0);
+    invoiceItem(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
     ~invoiceItem();
 
     virtual void populate();

@@ -65,8 +65,8 @@ void importXML::setVisible(bool visible)
     XWidget::setVisible(true);
 }
 
-importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
-    : XWidget(parent, fl)
+importXML::importXML(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

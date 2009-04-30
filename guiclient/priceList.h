@@ -21,7 +21,7 @@ class priceList : public XDialog, public Ui::priceList
     Q_OBJECT
 
 public:
-    priceList(QWidget* parent = 0, Qt::WindowFlags fl = 0);
+    priceList(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = 0);
     ~priceList();
 
     double _selectedPrice;

@@ -19,8 +19,8 @@
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
 
-adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
-    : XWidget(parent, fl)
+adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

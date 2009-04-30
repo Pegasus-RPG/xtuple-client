@@ -26,8 +26,8 @@ void errorLogListener::initialize()
   listener = new errorLogListener();
 }
 
-errorLog::errorLog(QWidget* parent, Qt::WFlags flags)
-    : XWidget(parent, flags)
+errorLog::errorLog(QWidget* parent, const char * name, Qt::WFlags flags)
+    : XWidget(parent, name, flags)
 {
   setupUi(this);
 

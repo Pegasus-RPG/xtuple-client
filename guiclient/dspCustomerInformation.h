@@ -31,7 +31,7 @@ class dspCustomerInformation : public XWidget, public Ui::dspCustomerInformation
     Q_OBJECT
 
 public:
-    dspCustomerInformation(QWidget* parent = 0, Qt::WFlags f = 0);
+    dspCustomerInformation(QWidget* parent = 0, const char * = 0, Qt::WFlags f = 0);
     ~dspCustomerInformation();
 
     virtual SetResponse set( const ParameterList & pParams );

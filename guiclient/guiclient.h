@@ -277,6 +277,8 @@ class GUIClient : public QMainWindow
     void sNewErrorMessage();
     void setWindowTitle();
 
+    QWidget * createScreen(const QString &, QWidget *, Qt::WindowFlags = 0, const char * = 0);
+
   signals:
     void tick();
 

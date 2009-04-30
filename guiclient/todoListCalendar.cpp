@@ -23,8 +23,8 @@
 #include "todoItem.h"
 #include "dspCustomerInformation.h"
 
-todoListCalendar::todoListCalendar(QWidget* parent, Qt::WindowFlags f)
-  : XWidget(parent, f)
+todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::WindowFlags f)
+  : XWidget(parent, name, f)
 {
   setupUi(this);
 

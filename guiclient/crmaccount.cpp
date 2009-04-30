@@ -1109,7 +1109,7 @@ void crmaccount::sCustomerInfo()
   ParameterList params;
   params.append("cust_id", _custId);
 
-  dspCustomerInformation *newdlg = new dspCustomerInformation(this, Qt::Window);
+  dspCustomerInformation *newdlg = new dspCustomerInformation(this, 0, Qt::Window);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

@@ -69,8 +69,8 @@ void employee::setVisible(bool visible)
     XDialog::setVisible(true);
 }
 
-employee::employee(QWidget* parent, Qt::WindowFlags fl)
-    : XDialog(parent, fl)
+employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
+    : XDialog(parent, name, fl)
 {
   setupUi(this);
 

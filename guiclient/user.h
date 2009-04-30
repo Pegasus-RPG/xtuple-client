@@ -21,7 +21,7 @@ class user : public XDialog, public Ui::user
     Q_OBJECT
 
 public:
-    user(QWidget* parent = 0, Qt::WindowFlags fl = 0);
+    user(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = 0);
     ~user();
     bool save();
 
