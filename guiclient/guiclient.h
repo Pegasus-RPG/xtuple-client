@@ -225,6 +225,8 @@ class GUIClient : public QMainWindow
     QWidget * myActiveWindow();
 
     void loadScriptGlobals(QScriptEngine * engine);
+    Q_INVOKABLE QWidget * createScreen(const QString &, QWidget *, int = 0, const char * = 0);
+
 
   public slots:
     void sReportError(const QString &);
@@ -276,8 +278,6 @@ class GUIClient : public QMainWindow
 
     void sNewErrorMessage();
     void setWindowTitle();
-
-    QWidget * createScreen(const QString &, QWidget *, Qt::WindowFlags = 0, const char * = 0);
 
   signals:
     void tick();

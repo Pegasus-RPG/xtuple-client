@@ -1428,8 +1428,8 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   setupScriptApi(engine);
 }
 
-QWidget * createScreen(const QString & classname, QWidget * parent, Qt::WindowFlags wflags, const char * name)
+QWidget * GUIClient::createScreen(const QString & classname, QWidget * parent, int wflags, const char * name)
 {
-  return xtGetScreen(classname, parent, wflags, name);
+  return xtGetScreen(classname, parent, (Qt::WindowFlags)wflags, name);
 }
 
