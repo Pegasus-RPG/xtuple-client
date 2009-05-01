@@ -167,7 +167,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 		   << "xtrunningrole"	   << "xtrunninginit"
 		   << "xtgrouprunningrole" << "xttotalrole"
                    << "xtnumericrole"      << "xtnullrole"
-                   << "xtidrole"           << "xthiddenrole";
+                   << "xtidrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
@@ -202,6 +202,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           setIndentation(10);
         else
           setIndentation(0);
+
+        int defaultScale = decimalPlaces("");
 
 	do
 	{
@@ -265,15 +267,16 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             }
             QVariantMap userrole;
             QVariant    rawValue = pQuery.value(role->value("qteditrole").toString());
-            QString     nullValue = "";
-            if (role->contains("xtnullrole"))
-              nullValue = pQuery.value(role->value("xtnullrole").toString()).toString();
             userrole.insert("raw", rawValue);
 
             // TODO: this isn't necessary for all columns so do less often?
-            int scale = decimalPlaces(role->contains("xtnumericrole") ?
-                                      pQuery.value(role->value("xtnumericrole").toString()).toString() :
-                                      "");
+            int scale = defaultScale;
+            QString numericrole = "";
+            if (role->contains("xtnumericrole"))
+            {
+              numericrole = pQuery.value(role->value("xtnumericrole").toString()).toString();
+              scale = decimalPlaces(numericrole);
+            }
             userrole.insert("scale", scale);
 
 	    /* if qtdisplayrole IS NULL then let the raw value shine through.
@@ -283,7 +286,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	    if (role->contains("qtdisplayrole") &&
 		! pQuery.value(role->value("qtdisplayrole").toString()).isNull())
             {
-              /* this might not handle PostgreSQL NUMEICs properly
+              /* this might not handle PostgreSQL NUMERICs properly
                  but at least it will try to handle INTEGERs and DOUBLEs
                  and it will avoid formatting sales order numbers with decimal
                  and group separators
@@ -298,21 +301,32 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                 last->setData(col, Qt::DisplayRole, field.value().toString());
             }
             else if (role->contains("xtnumericrole") &&
-                     ((pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent") ||
-                      (pQuery.value(role->value("xtnumericrole").toString()).toString() == "scrap")))
+                     ((numericrole == "percent") ||
+                      (numericrole == "scrap")))
             {
-	      last->setData(col, Qt::DisplayRole,
-                            rawValue.isNull() ?  nullValue :
-                            QLocale().toString(rawValue.toDouble() * 100.0,
-                                               'f', scale));
+              if (rawValue.isNull())
+                last->setData(col, Qt::DisplayRole,
+                              role->contains("xtnullrole") ?
+                              pQuery.value(role->value("xtnullrole").toString()).toString() :
+                              "");
+              else
+                last->setData(col, Qt::DisplayRole,
+                              QLocale().toString(rawValue.toDouble() * 100.0,
+                                                 'f', scale));
             }
             else if (rawValue.type() == QVariant::Double ||
                      role->contains("xtnumericrole"))
             {
-	      last->setData(col, Qt::DisplayRole,
-                            rawValue.isNull() ? nullValue :
-                            QLocale().toString(rawValue.toDouble(), 'f', scale));
-            }
+              if (rawValue.isNull())
+                last->setData(col, Qt::DisplayRole,
+                              role->contains("xtnullrole") ?
+                              pQuery.value(role->value("xtnullrole").toString()).toString() :
+                              "");
+              else
+                last->setData(col, Qt::DisplayRole,
+                              QLocale().toString(rawValue.toDouble(),
+                                                 'f', scale));
+              }
             else if (rawValue.type() == QVariant::Bool && ! rawValue.isNull())
             {
 	      last->setData(col, Qt::DisplayRole,
@@ -320,8 +334,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             }
             else
             {
-              last->setData(col, Qt::EditRole,
-                            rawValue.isNull() ? nullValue : rawValue);
+              if (rawValue.isNull())
+                last->setData(col, Qt::EditRole,
+                              pQuery.value(role->value("xtnullrole").toString()).toString());
+              else
+                last->setData(col, Qt::EditRole, rawValue);
             }
 
             if (indent)
