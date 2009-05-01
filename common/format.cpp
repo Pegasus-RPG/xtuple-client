@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include <string.h>
+
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -45,11 +47,11 @@ static int salespricescale = MONEYSCALE + SALESPRICEEXTRASCALE;
 static int uomratioscale   = UOMRATIOSCALE;
 static int weightscale     = WEIGHTSCALE;
 
+static bool loadedLocales = false;
+
 static bool loadLocale()
 {
-  static bool firstTime = true;
-
-  if (firstTime)
+  if (! loadedLocales)
   {
     XSqlQuery localeq("SELECT * "
 		     "FROM usr, locale LEFT OUTER JOIN"
@@ -100,7 +102,7 @@ static bool loadLocale()
                             localeq.lastError().databaseText());
       return false;
     }
-    firstTime = false;
+    loadedLocales = true;
   }
   return true;
 }
@@ -108,20 +110,30 @@ static bool loadLocale()
 int decimalPlaces(QString pName)
 {
   int returnVal = MONEYSCALE;
-  loadLocale();
+  if (! loadedLocales)
+    loadLocale();
 
-  if (pName.contains(QRegExp("^[0-9]+$"))) returnVal = pName.toInt();
-  else if (pName == "cost")       returnVal = costscale;
-  else if (pName == "extprice")   returnVal = extpricescale;
-  else if (pName == "percent")    returnVal = percentscale;
-  else if (pName == "purchprice") returnVal = purchpricescale;
-  else if (pName == "qty")        returnVal = qtyscale;
-  else if (pName == "qtyper")     returnVal = qtyperscale;
-  else if (pName == "salesprice") returnVal = salespricescale;
-  else if (pName == "uomratio")   returnVal = uomratioscale;
-  else if (pName == "weight")     returnVal = weightscale;
-  else if (pName.startsWith("curr"))
-    returnVal = currvalscale;  // TODO: change this to currency-specific value?
+  char *ptr = pName.toAscii().data();
+  // the following order is based on the relative frequencies of usage
+  // for xtnumericrole in the .cpp and .mql files except for the final
+  // else, which ranked 7th overall
+  if (strcmp(ptr, "qty"))             returnVal = qtyscale;
+  else if (strncmp(ptr, "curr", 4))   returnVal = currvalscale;  // TODO: change this to currency-specific value?
+  else if (strcmp(ptr, "percent"))    returnVal = percentscale;
+  else if (strcmp(ptr, "cost"))       returnVal = costscale;
+  else if (strcmp(ptr, "qtyper"))     returnVal = qtyperscale;
+  else if (strcmp(ptr, "salesprice")) returnVal = salespricescale;
+  else if (strcmp(ptr, "purchprice")) returnVal = purchpricescale;
+  else if (strcmp(ptr, "uomratio"))   returnVal = uomratioscale;
+  else if (strcmp(ptr, "extprice"))   returnVal = extpricescale;
+  else if (strcmp(ptr, "weight"))     returnVal = weightscale;
+  else
+  {
+    bool ok = false;
+    returnVal = pName.toInt(&ok);
+    if (!ok)
+      returnVal = MONEYSCALE;
+  }
 
   return returnVal;
 }
