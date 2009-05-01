@@ -34,7 +34,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   setupUi(this);
   
   _cust->hide();
-  _showClosed->hide();
+  _showGroup->hide();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));

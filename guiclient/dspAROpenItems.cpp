@@ -22,6 +22,7 @@
 #include <currcluster.h>
 
 #include "arOpenItem.h"
+#include "creditMemo.h"
 #include "dspInvoiceInformation.h"
 #include "invoice.h"
 #include "incident.h"
@@ -124,20 +125,31 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 
   if (((XTreeWidgetItem *)pItem)->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privileges->check("EditAROpenItem"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-    
-    XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
+    if (((XTreeWidgetItem *)pItem)->id() > 0)
     {
-      if (item->text(0) == "Invoice")
-      {
-        pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
-        pMenu->insertItem(tr("View Invoice Details..."), this, SLOT(sViewInvoiceDetails()), 0);
-      }
+      menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+      if (!_privileges->check("EditAROpenItem"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+
+      pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
     }
+
+    if (((XTreeWidgetItem *)pItem)->altId() == 0)
+    {
+      pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+      pMenu->insertItem(tr("View Invoice Details..."), this, SLOT(sViewInvoiceDetails()), 0);
+    }
+    else if (((XTreeWidgetItem *)pItem)->id() == 1 && ((XTreeWidgetItem *)pItem)->id("source_id") != -1)
+    {
+      pMenu->insertItem(tr("Edit Credit Memo..."), this, SLOT(sEditCreditMemo()), 0);
+      if (!_privileges->check("MaintainCreditMemo"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+
+      pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+      if (!_privileges->check("MaintainCreditMemo") && !_privileges->check("ViewCreditMemo"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+    }
+
     
    pMenu->insertSeparator();
 
@@ -183,35 +195,43 @@ void dspAROpenItems::sView()
     sFillList();
 }
 
+void dspAROpenItems::sEditCreditMemo()
+{
+  ParameterList params;
+  params.append("cmhead_id", _aropen->id("source_id"));
+  params.append("mode", "edit");
+  creditMemo* newdlg = new creditMemo();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspAROpenItems::sViewCreditMemo()
+{
+  ParameterList params;
+  params.append("cmhead_id", _aropen->id("source_id"));
+  params.append("mode", "view");
+  creditMemo* newdlg = new creditMemo();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void dspAROpenItems::sViewInvoice()
 {
-  q.prepare("SELECT aropen_docnumber FROM aropen WHERE (aropen_id=:aropen_id);");
-  q.bindValue(":aropen_id", _aropen->id());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("invoiceNumber", q.value("aropen_docnumber"));
-    dspInvoiceInformation* newdlg = new dspInvoiceInformation();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
+  ParameterList params;
+  params.append("invoiceNumber", _aropen->id("source_number"));
+  dspInvoiceInformation* newdlg = new dspInvoiceInformation();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspAROpenItems::sViewInvoiceDetails()
 {
-  q.prepare("SELECT invchead_id FROM aropen, invchead WHERE ((aropen_id=:aropen_id) AND (invchead_invcnumber=aropen_docnumber));");
-  q.bindValue(":aropen_id", _aropen->id());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("invchead_id", q.value("invchead_id"));
-    params.append("mode", "view");
-    invoice* newdlg = new invoice();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
+  ParameterList params;
+  params.append("invchead_id", _aropen->id("source_id"));
+  params.append("mode", "view");
+  invoice* newdlg = new invoice();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspAROpenItems::sIncident()

@@ -96,8 +96,8 @@ to be bound by its terms.</comment>
          </property>
          <property name="sizeHint" stdset="0" >
           <size>
-           <width>13</width>
-           <height>235</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>

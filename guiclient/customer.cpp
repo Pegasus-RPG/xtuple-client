@@ -77,7 +77,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->findChild<QWidget*>("_warehouse")->hide();
   _orders->findChild<QWidget*>("_salesOrdersLit")->hide();
   _orders->findChild<WarehouseGroup*>("_warehouse")->setAll();
-  _orders->findChild<XCheckBox*>("_showClosed")->show();
+  _orders->findChild<QWidget*>("_showGroup")->show();
   
   _returns = new openReturnAuthorizations(this, "_returns", Qt::Widget);
   _returnsPage->layout()->addWidget(_returns);

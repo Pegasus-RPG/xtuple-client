@@ -30,7 +30,9 @@ public slots:
     virtual bool setParams(ParameterList &);
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *pItem );
     virtual void sEdit();
+    virtual void sEditCreditMemo();
     virtual void sView();
+    virtual void sViewCreditMemo();
     virtual void sViewInvoice();
     virtual void sViewInvoiceDetails();
     virtual void sIncident();
