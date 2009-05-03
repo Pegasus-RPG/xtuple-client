@@ -19,9 +19,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Inventory Availability by Source Vendor</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5" >
+  <layout class="QGridLayout" name="gridLayout_6" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_4" >
+    <layout class="QGridLayout" name="gridLayout_5" >
      <property name="margin" >
       <number>12</number>
      </property>
@@ -29,158 +29,23 @@ to be bound by its terms.</comment>
       <number>12</number>
      </property>
      <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_5" >
+      <layout class="QHBoxLayout" name="horizontalLayout" >
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3" >
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <item>
-            <widget class="QGroupBox" name="_vendorGroup" >
-             <property name="title" >
-              <string/>
-             </property>
-             <layout class="QGridLayout" name="gridLayout" >
-              <item row="0" column="0" colspan="2" >
-               <layout class="QHBoxLayout" name="horizontalLayout" >
-                <item>
-                 <widget class="QRadioButton" name="_allVendors" >
-                  <property name="text" >
-                   <string>All Vendors</string>
-                  </property>
-                  <property name="checked" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer" >
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QRadioButton" name="_selectedVendor" >
-                <property name="text" >
-                 <string>Selected:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1" colspan="2" >
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="VendorInfo" name="_vend" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::MinimumExpanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>0</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="0" colspan="2" >
-               <widget class="QRadioButton" name="_selectedVendorType" >
-                <property name="text" >
-                 <string>Selected Vendor Type:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2" >
-               <layout class="QHBoxLayout" >
-                <item>
-                 <widget class="XComboBox" name="_vendorTypes" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="3" column="0" colspan="2" >
-               <widget class="QRadioButton" name="_vendorTypePattern" >
-                <property name="text" >
-                 <string>Vendor Type Pattern:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2" >
-               <widget class="XLineEdit" name="_vendorType" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="WarehouseGroup" name="_warehouse" >
-             <property name="title" >
-              <string/>
-             </property>
-             <property name="fixedSize" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+        <layout class="QGridLayout" name="gridLayout_4" >
+         <item row="0" column="0" colspan="2" >
+          <widget class="VendorGroup" name="_vendorGroup" />
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4" >
-           <item>
-            <widget class="QGroupBox" name="_showByGroup" >
-             <property name="title" >
-              <string>Show Availability as of:</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_2" >
-              <item row="0" column="0" colspan="4" >
-               <layout class="QHBoxLayout" name="horizontalLayout_2" >
-                <item>
+         <item rowspan="2" row="1" column="0" >
+          <widget class="QGroupBox" name="_showByGroup" >
+           <property name="title" >
+            <string>Show Availability as of:</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2" >
+            <item row="0" column="0" >
+             <layout class="QVBoxLayout" name="verticalLayout_3" >
+              <item>
+               <layout class="QGridLayout" name="gridLayout" >
+                <item row="0" column="0" colspan="4" >
                  <widget class="QRadioButton" name="_leadTime" >
                   <property name="text" >
                    <string>Item Site Lead Time</string>
@@ -190,236 +55,253 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <spacer name="horizontalSpacer_2" >
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
+                <item row="0" column="4" >
+                 <widget class="QLabel" name="label" >
+                  <property name="text" >
+                   <string/>
                   </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
+                 </widget>
                 </item>
-               </layout>
-              </item>
-              <item row="1" column="0" colspan="3" >
-               <widget class="QRadioButton" name="_byDays" >
-                <property name="enabled" >
-                 <bool>true</bool>
-                </property>
-                <property name="text" >
-                 <string>Look Ahead Days:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3" >
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QSpinBox" name="_days" >
+                <item row="1" column="0" colspan="3" >
+                 <widget class="QRadioButton" name="_byDays" >
                   <property name="enabled" >
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
-                  <property name="minimum" >
+                  <property name="text" >
+                   <string>Look Ahead Days:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3" colspan="2" >
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
                    <number>0</number>
                   </property>
-                  <property name="maximum" >
-                   <number>1000</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::MinimumExpanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>26</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="0" colspan="2" >
-               <widget class="QRadioButton" name="_byDate" >
-                <property name="text" >
-                 <string>Cutoff Date:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2" colspan="2" >
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="DLineEdit" name="_date" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::MinimumExpanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="3" column="0" >
-               <widget class="QRadioButton" name="_byDates" >
-                <property name="text" >
-                 <string>Dates:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1" colspan="3" >
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="DLineEdit" name="_startDate" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_toLit" >
-                  <property name="text" >
-                   <string>to</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="DLineEdit" name="_endDate" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="_showGroup" >
-             <property name="title" >
-              <string>Show</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_3" >
-              <item row="0" column="0" >
-               <layout class="QVBoxLayout" name="verticalLayout_2" >
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout" >
                   <item>
-                   <widget class="XCheckBox" name="_showReorder" >
-                    <property name="text" >
-                     <string>Reorder Exceptions</string>
+                   <widget class="QSpinBox" name="_days" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                    <property name="minimum" >
+                     <number>0</number>
+                    </property>
+                    <property name="maximum" >
+                     <number>1000</number>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" >
-                    <property name="spacing" >
-                     <number>0</number>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
                     </property>
-                    <item>
-                     <spacer>
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType" >
-                       <enum>QSizePolicy::Preferred</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0" >
-                       <size>
-                        <width>20</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item>
-                     <widget class="XCheckBox" name="_ignoreReorderAtZero" >
-                      <property name="enabled" >
-                       <bool>false</bool>
-                      </property>
-                      <property name="text" >
-                       <string>Ignore Reorder at 0</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer>
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType" >
-                       <enum>QSizePolicy::Expanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0" >
-                       <size>
-                        <width>0</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>26</width>
+                      <height>10</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="2" column="0" colspan="2" >
+                 <widget class="QRadioButton" name="_byDate" >
+                  <property name="text" >
+                   <string>Cutoff Date:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2" colspan="3" >
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="DLineEdit" name="_date" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
-                   <widget class="XCheckBox" name="_showShortages" >
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="3" column="0" >
+                 <widget class="QRadioButton" name="_byDates" >
+                  <property name="text" >
+                   <string>Dates:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1" colspan="4" >
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="DLineEdit" name="_startDate" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="_toLit" >
                     <property name="text" >
-                     <string>Shortages</string>
+                     <string>to</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="DLineEdit" name="_endDate" >
+                    <property name="enabled" >
+                     <bool>false</bool>
                     </property>
                    </widget>
                   </item>
                  </layout>
                 </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QGroupBox" name="_showGroup" >
+           <property name="title" >
+            <string>Show</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="0" >
+             <layout class="QVBoxLayout" name="verticalLayout_2" >
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout" >
                 <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Vertical</enum>
+                 <widget class="XCheckBox" name="_showReorder" >
+                  <property name="text" >
+                   <string>Reorder Exceptions</string>
                   </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>20</width>
-                    <height>0</height>
-                   </size>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>0</number>
                   </property>
-                 </spacer>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Preferred</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="XCheckBox" name="_ignoreReorderAtZero" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                     <string>Ignore Reorder at 0</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="XCheckBox" name="_showShortages" >
+                  <property name="text" >
+                   <string>Shortages</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="WarehouseGroup" name="_warehouse" >
+           <property name="title" >
+            <string/>
+           </property>
+           <property name="fixedSize" >
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -549,9 +431,9 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>VendorInfo</class>
+   <class>VendorGroup</class>
    <extends>QWidget</extends>
-   <header>vendorinfo.h</header>
+   <header>vendorgroup.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
@@ -564,30 +446,12 @@ to be bound by its terms.</comment>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_allVendors</tabstop>
-  <tabstop>_selectedVendor</tabstop>
-  <tabstop>_vend</tabstop>
-  <tabstop>_selectedVendorType</tabstop>
-  <tabstop>_vendorTypes</tabstop>
-  <tabstop>_vendorTypePattern</tabstop>
-  <tabstop>_vendorType</tabstop>
   <tabstop>_leadTime</tabstop>
   <tabstop>_byDays</tabstop>
   <tabstop>_days</tabstop>
@@ -675,54 +539,6 @@ to be bound by its terms.</comment>
    <sender>_byDates</sender>
    <signal>toggled(bool)</signal>
    <receiver>_endDate</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedVendor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vend</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedVendorType</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vendorTypes</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendorTypePattern</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vendorType</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

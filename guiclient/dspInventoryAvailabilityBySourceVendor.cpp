@@ -34,12 +34,6 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
 {
   setupUi(this);
 
-  _vendorGroupInt = new QButtonGroup(this);
-  _vendorGroupInt->addButton(_allVendors);
-  _vendorGroupInt->addButton(_selectedVendor);
-  _vendorGroupInt->addButton(_selectedVendorType);
-  _vendorGroupInt->addButton(_vendorTypePattern);
-
   _showByGroupInt = new QButtonGroup(this);
   _showByGroupInt->addButton(_leadTime);
   _showByGroupInt->addButton(_byDays);
@@ -50,8 +44,6 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
-
-  _vendorTypes->setType(XComboBox::VendorTypes);
 
   _availability->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignLeft,  true, "vend_number");
   _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
@@ -127,15 +119,9 @@ bool dspInventoryAvailabilityBySourceVendor::setParams(ParameterList &params)
   if (_preferences->boolean("ListNumericItemNumbersFirst"))
     params.append("ListNumericItemNumbersFirst");
 
-  _warehouse->appendValue(params);
-
   params.append("byVend");
-  if (_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
-  else if (_selectedVendorType->isChecked())
-    params.append("vendtype_id", _vendorTypes->id());
-  else if (_vendorTypePattern->isChecked())
-    params.append("vendtype_pattern", _vendorType->text());
+  _warehouse->appendValue(params);
+  _vendorGroup->appendValue(params);
 
   if (_leadTime->isChecked())
     params.append("byLeadTime");

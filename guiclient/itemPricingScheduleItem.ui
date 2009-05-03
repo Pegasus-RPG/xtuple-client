@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -23,22 +22,10 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
@@ -87,7 +74,7 @@ to be bound by its terms.</comment>
             <property name="sizeType" >
              <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>16</width>
               <height>20</height>
@@ -131,7 +118,7 @@ to be bound by its terms.</comment>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>81</width>
              <height>16</height>
@@ -176,7 +163,7 @@ to be bound by its terms.</comment>
              <property name="sizeType" >
               <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>20</width>
                <height>20</height>
@@ -228,7 +215,7 @@ to be bound by its terms.</comment>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
-                       <property name="sizeHint" >
+                       <property name="sizeHint" stdset="0" >
                         <size>
                          <width>40</width>
                          <height>20</height>
@@ -251,7 +238,7 @@ to be bound by its terms.</comment>
                        <property name="sizeType" >
                         <enum>QSizePolicy::Expanding</enum>
                        </property>
-                       <property name="sizeHint" >
+                       <property name="sizeHint" stdset="0" >
                         <size>
                          <width>20</width>
                          <height>20</height>
@@ -310,7 +297,7 @@ to be bound by its terms.</comment>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
-                       <property name="sizeHint" >
+                       <property name="sizeHint" stdset="0" >
                         <size>
                          <width>40</width>
                          <height>20</height>
@@ -346,7 +333,7 @@ to be bound by its terms.</comment>
                        <property name="sizeType" >
                         <enum>QSizePolicy::Expanding</enum>
                        </property>
-                       <property name="sizeHint" >
+                       <property name="sizeHint" stdset="0" >
                         <size>
                          <width>20</width>
                          <height>20</height>
@@ -425,10 +412,7 @@ to be bound by its terms.</comment>
                    </property>
                    <item>
                     <layout class="QGridLayout" >
-                     <property name="horizontalSpacing" >
-                      <number>5</number>
-                     </property>
-                     <property name="verticalSpacing" >
+                     <property name="spacing" >
                       <number>5</number>
                      </property>
                      <item row="1" column="0" >
@@ -551,7 +535,7 @@ to be bound by its terms.</comment>
                      <property name="sizeType" >
                       <enum>QSizePolicy::Expanding</enum>
                      </property>
-                     <property name="sizeHint" >
+                     <property name="sizeHint" stdset="0" >
                       <size>
                        <width>30</width>
                        <height>20</height>
@@ -568,7 +552,7 @@ to be bound by its terms.</comment>
                  <property name="orientation" >
                   <enum>Qt::Vertical</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>40</height>
@@ -614,7 +598,7 @@ to be bound by its terms.</comment>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>40</height>
@@ -659,7 +643,7 @@ to be bound by its terms.</comment>
                 <property name="sizeType" >
                  <enum>QSizePolicy::Expanding</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>151</width>
                   <height>20</height>
@@ -711,7 +695,7 @@ to be bound by its terms.</comment>
                 <property name="sizeType" >
                  <enum>QSizePolicy::Expanding</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>91</width>
                   <height>16</height>
@@ -754,7 +738,7 @@ to be bound by its terms.</comment>
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -775,7 +759,7 @@ to be bound by its terms.</comment>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>497</width>
              <height>111</height>
@@ -854,7 +838,7 @@ to be bound by its terms.</comment>
                       <property name="orientation" >
                        <enum>Qt::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" >
+                      <property name="sizeHint" stdset="0" >
                        <size>
                         <width>40</width>
                         <height>20</height>
@@ -894,7 +878,7 @@ to be bound by its terms.</comment>
                       <property name="orientation" >
                        <enum>Qt::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" >
+                      <property name="sizeHint" stdset="0" >
                        <size>
                         <width>16</width>
                         <height>26</height>
@@ -938,6 +922,9 @@ to be bound by its terms.</comment>
                  <property name="title" >
                   <string>From</string>
                  </property>
+                 <property name="fixedSize" >
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="1" colspan="2" >
@@ -973,7 +960,7 @@ to be bound by its terms.</comment>
                       <property name="orientation" >
                        <enum>Qt::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" >
+                      <property name="sizeHint" stdset="0" >
                        <size>
                         <width>40</width>
                         <height>20</height>
@@ -1019,7 +1006,7 @@ to be bound by its terms.</comment>
                       <property name="orientation" >
                        <enum>Qt::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" >
+                      <property name="sizeHint" stdset="0" >
                        <size>
                         <width>40</width>
                         <height>20</height>
@@ -1065,7 +1052,7 @@ to be bound by its terms.</comment>
                       <property name="orientation" >
                        <enum>Qt::Horizontal</enum>
                       </property>
-                      <property name="sizeHint" >
+                      <property name="sizeHint" stdset="0" >
                        <size>
                         <width>40</width>
                         <height>20</height>
@@ -1085,7 +1072,7 @@ to be bound by its terms.</comment>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>0</height>
@@ -1100,7 +1087,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -1156,11 +1143,13 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
