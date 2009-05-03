@@ -32,7 +32,7 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   if(pName)
     setObjectName(pName);
 
-  _fixed = false;
+  _fixed = true;
   _selectedGroup = new QWidget(this);
   QButtonGroup * buttonGroup = new QButtonGroup(this);
   
@@ -71,7 +71,7 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   else
   {
     _site->hide();
-    setFixedSize(true);
+    setFixedSize(false);
   }
 
   connect(_selected, SIGNAL(toggled(bool)), _warehouses, SLOT(setEnabled(bool)));

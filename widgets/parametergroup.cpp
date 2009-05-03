@@ -25,7 +25,7 @@
 ParameterGroup::ParameterGroup(QWidget *pParent, const char *pName) :
   QGroupBox(pParent)
 {
-  _fixed = false;
+  _fixed = true;
   
   if(pName)
     setObjectName(pName);
@@ -52,7 +52,7 @@ ParameterGroup::ParameterGroup(QWidget *pParent, const char *pName) :
   
   _buttonGroup = new QButtonGroup(this);
   
-  setFixedSize(true);
+  setFixedSize(false);
 
   connect(_selected, SIGNAL(toggled(bool)), _items, SLOT(setEnabled(bool)));
   connect(_usePattern, SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
