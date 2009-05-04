@@ -283,6 +283,13 @@ void taxCode::sSave()
     _code->setFocus();
     return;
   }
+  if (!_account->isValid())
+   {
+     QMessageBox::warning( this, tr("Select G/L Accout"),
+                            tr("You must select a G/L Account for this Tax.") );
+     _account->setFocus();
+      return;
+   }
   q.prepare("SELECT tax_id"
             "  FROM tax"
             " WHERE((tax_id!= :tax_id)"
