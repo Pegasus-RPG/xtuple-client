@@ -110,7 +110,7 @@
    </font>
    <left/>
    <vcenter/>
-   <string>User</string>
+   <string>Assigned To</string>
   </label>
   <field>
    <rect>
@@ -568,7 +568,7 @@
    </font>
    <left/>
    <vcenter/>
-   <string>User</string>
+   <string>Assigned To</string>
   </label>
   <label>
    <rect>
