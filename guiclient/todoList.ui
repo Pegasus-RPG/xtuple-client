@@ -19,9 +19,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>To-Do List</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7" >
+  <layout class="QGridLayout" name="gridLayout_8" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_6" >
+    <layout class="QGridLayout" name="gridLayout_7" >
      <property name="margin" >
       <number>12</number>
      </property>
@@ -31,11 +31,40 @@ to be bound by its terms.</comment>
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" name="horizontalLayout_2" >
        <item>
-        <layout class="QGridLayout" name="gridLayout_4" >
-         <item row="0" column="0" colspan="2" >
+        <layout class="QGridLayout" name="gridLayout_6" >
+         <property name="spacing" >
+          <number>12</number>
+         </property>
+         <item row="0" column="0" colspan="3" >
           <widget class="CRMAcctCluster" name="_crmAccount" />
          </item>
-         <item row="1" column="0" colspan="2" >
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="_contextGroup" >
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4" >
+            <item row="0" column="0" >
+             <widget class="QRadioButton" name="_assignedTo" >
+              <property name="text" >
+               <string>Assigned to</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QRadioButton" name="_ownedBy" >
+              <property name="text" >
+               <string>Owned by</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2" >
           <widget class="ParameterGroup" name="_usr" >
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>
@@ -45,7 +74,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
+         <item row="2" column="0" colspan="2" >
           <widget class="QGroupBox" name="_startdateGroup" >
            <property name="title" >
             <string>Only Start Dates Between </string>
@@ -67,7 +96,7 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="2" column="1" >
+         <item row="2" column="2" >
           <widget class="QGroupBox" name="_duedateGroup" >
            <property name="title" >
             <string>Only Due Dates Between </string>
@@ -89,7 +118,7 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2" >
+         <item row="3" column="0" colspan="3" >
           <widget class="QGroupBox" name="_showGroup" >
            <property name="title" >
             <string>Show</string>

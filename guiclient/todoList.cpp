@@ -75,19 +75,21 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_startdateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_assignedTo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_ownedBy, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  _todoList->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
+  _todoList->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
   _todoList->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
   _todoList->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "usr");
   _todoList->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _todoList->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _todoList->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
-  _todoList->addColumn(tr("Start Date"),_dateColumn, Qt::AlignLeft,   false, "start");
+  _todoList->addColumn(tr("Start Date"),_dateColumn,  Qt::AlignLeft,   false, "start");
   _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
-  _todoList->addColumn(tr("Parent#"),   _orderColumn,  Qt::AlignLeft,  true, "number");
-  _todoList->addColumn(tr("Customer#"),  _orderColumn, Qt::AlignLeft,   false, "cust");
-  _todoList->addColumn(tr("Account#"), _orderColumn,  Qt::AlignLeft,   true, "crmacct_number");
+  _todoList->addColumn(tr("Parent#"),  _orderColumn,  Qt::AlignLeft,   true, "number");
+  _todoList->addColumn(tr("Customer#"),_orderColumn,  Qt::AlignLeft,   false, "cust");
+  _todoList->addColumn(tr("Account#"), _orderColumn,  Qt::AlignLeft,   false, "crmacct_number");
   _todoList->addColumn(tr("Account Name"),      100,  Qt::AlignLeft,   true, "crmacct_name");
   _todoList->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
@@ -382,7 +384,14 @@ void todoList::setParams(ParameterList &params)
     params.append("incidents");
   if (_projects->isChecked())
     params.append("projects");
+  
+    
+  if (_assignedTo->isChecked())
+    params.append("assignedTo");
+  else
+    params.append("ownedBy");  
   _usr->appendValue(params);
+  
   if (_duedateGroup->isChecked())
   {
     params.append("dueStartDate", _dueDates->startDate());
