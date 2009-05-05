@@ -9,61 +9,18 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT incdt_id,
-       incdt_number,
-       crmacct_name,
-       CASE WHEN(incdt_status='N') THEN &lt;? value("new") ?>
-            WHEN(incdt_status='F') THEN &lt;? value("feedback") ?>
-            WHEN(incdt_status='C') THEN &lt;? value("confirmed") ?>
-            WHEN(incdt_status='A') THEN &lt;? value("assigned") ?>
-            WHEN(incdt_status='R') THEN &lt;? value("resolved") ?>
-            WHEN(incdt_status='L') THEN &lt;? value("closed") ?>
-            ELSE incdt_status
-       END AS incdt_status,
-       incdt_assigned_username,
-       incdt_summary,
-       incdt_descrip,
-       DATE(incdt_timestamp) AS incdt_timestamp,
-       incdtseverity_name,
-       incdtpriority_name
-  FROM (crmacct JOIN incdt ON (crmacct_id=incdt_crmacct_id)
-        LEFT OUTER JOIN incdtseverity ON (incdt_incdtseverity_id = incdtseverity_id))
-        LEFT OUTER JOIN incdtpriority ON (incdt_incdtpriority_id = incdtpriority_id)
- WHERE (true
- &lt;? if exists("username") ?> 
- AND (incdt_assigned_username = &lt;? value("username") ?>)  
- &lt;? elseif exists("usr_pattern") ?> 
- AND (incdt_assigned_username ~* &lt;? value("usr_pattern") ?>)
- &lt;? endif ?>
- AND (incdt_status IN ('' 
-   &lt;? if exists("isnew") ?>,           'N' &lt;? endif ?>
-   &lt;? if exists("isfeedback") ?>,      'F' &lt;? endif ?>
-   &lt;? if exists("isconfirmed") ?>,     'C' &lt;? endif ?>
-   &lt;? if exists("isassigned") ?>,      'A' &lt;? endif ?>
-   &lt;? if exists("isresolved") ?>,      'R' &lt;? endif ?> 
-   &lt;? if exists("isclosed") ?>,        'L' &lt;? endif ?> 
- )) 
- &lt;? if exists("pattern") ?> 
- AND ((incdt_summary ~* &lt;? value("pattern") ?>)
-  OR  (incdt_descrip ~* &lt;? value("pattern") ?>)
-  OR  (incdt_id IN (SELECT comment_source_id
-            FROM comment
-            WHERE ((comment_source='INCDT') AND (comment_text ~* &lt;? value("pattern") ?>)))))
- &lt;? endif ?>
- AND (incdt_timestamp BETWEEN &lt;? value("startDate") ?>
-                          AND &lt;? value("endDate") ?>) 
-) ORDER BY incdt_number; 
-</sql>
+  <mqlgroup>incidents</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>username</name>
   <sql>SELECT
   &lt;? if exists("username") ?>
-    &lt;? value("username") ?>
+    &lt;? value("username") ?> AS usr
   &lt;? elseif exists("usr_pattern") ?>
-    &lt;? value("usr_pattern") ?>
+    &lt;? value("usr_pattern") ?> AS usr
   &lt;? else ?>
     'ALL' AS usr
   &lt;? endif ?>
@@ -80,8 +37,8 @@
   </line>
   <field>
    <rect>
-    <x>300</x>
-    <y>60</y>
+    <x>307.651</x>
+    <y>61</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -99,8 +56,8 @@
   </field>
   <field>
    <rect>
-    <x>135</x>
-    <y>45</y>
+    <x>157</x>
+    <y>44.2028</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -150,8 +107,8 @@
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>45</y>
+    <x>26</x>
+    <y>44</y>
     <width>125</width>
     <height>15</height>
    </rect>
@@ -230,9 +187,9 @@
   </label>
   <label>
    <rect>
-    <x>5</x>
+    <x>7</x>
     <y>60</y>
-    <width>125</width>
+    <width>145</width>
     <height>15</height>
    </rect>
    <font>
@@ -246,8 +203,8 @@
   </label>
   <field>
    <rect>
-    <x>135</x>
-    <y>60</y>
+    <x>157</x>
+    <y>61</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -297,9 +254,9 @@
   </label>
   <label>
    <rect>
-    <x>240</x>
+    <x>260.406</x>
     <y>60</y>
-    <width>50</width>
+    <width>31.5906</width>
     <height>15</height>
    </rect>
    <font>
