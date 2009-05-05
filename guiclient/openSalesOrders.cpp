@@ -466,7 +466,8 @@ void openSalesOrders::sFillList()
                "         cohead_billto_cntct_first_name, cohead_billto_cntct_middle,"
                "         cohead_billto_cntct_last_name, cohead_billto_cntct_suffix,"
                "         cohead_billto_cntct_phone, cohead_billto_cntct_title,"
-               "         cohead_billto_cntct_fax, cohead_billto_cntct_email "
+               "         cohead_billto_cntct_fax, cohead_billto_cntct_email, "
+               "         cohead_taxtype_id, cohead_taxzone_id "
 	       "ORDER BY cohead_number " );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
