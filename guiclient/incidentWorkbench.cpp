@@ -17,6 +17,7 @@
 
 #include "guiclient.h"
 #include "incident.h"
+#include "mqlutil.h"
 
 incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -31,16 +32,16 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   connect(_reset,	SIGNAL(clicked()),	this,	SLOT(sReset()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
-  _incdt->addColumn(tr("Number"),      _itemColumn, Qt::AlignLeft, true, "incdt_number" );
+  _incdt->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
+  _incdt->addColumn(tr("Created"),     _dateColumn, Qt::AlignLeft, true, "incdt_timestamp" );
   _incdt->addColumn(tr("Account"),     _itemColumn, Qt::AlignLeft, true, "crmacct_name" );
   _incdt->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft, true, "incdt_status" );
   _incdt->addColumn(tr("Assigned To"), _userColumn, Qt::AlignLeft, true, "incdt_assigned_username" ); 
+  _incdt->addColumn(tr("Owner"),       _userColumn, Qt::AlignLeft, true, "incdt_owner_username" );
   _incdt->addColumn(tr("Summary"),     -1,          Qt::AlignLeft, true, "incdt_summary" );
 
   _createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _createdDates->setStartCaption(tr("First Creation Date:"));
-  _createdDates->setEndCaption(tr("Last Creation Date:"));
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -50,7 +51,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
     _statusAssigned->setChecked(true);
   }
 
-  _assignedTo->setType(ParameterGroup::User);
+  _user->setType(ParameterGroup::User);
 }
 
 incidentWorkbench::~incidentWorkbench()
@@ -119,7 +120,11 @@ void incidentWorkbench::setParams(ParameterList & params)
   params.append("resolved",	tr("Resolved"));
   params.append("closed",	tr("Closed"));
 
-  _assignedTo->appendValue(params);
+  if (_assignedTo->isChecked())
+    params.append("assignedTo");
+  else
+    params.append("ownedBy"); 
+  _user->appendValue(params);
 
   if(_statusNew->isChecked())
     params.append("isnew");
@@ -142,50 +147,9 @@ void incidentWorkbench::setParams(ParameterList & params)
 
 void incidentWorkbench::sFillList()
 {
-  QString sql="SELECT incdt_id,"
-              "       incdt_number,"
-	      "       crmacct_name,"
-              "       CASE WHEN(incdt_status='N') THEN <? value(\"new\") ?>"
-              "            WHEN(incdt_status='F') THEN <? value(\"feedback\") ?>"
-              "            WHEN(incdt_status='C') THEN <? value(\"confirmed\") ?>"
-              "            WHEN(incdt_status='A') THEN <? value(\"assigned\") ?>"
-              "            WHEN(incdt_status='R') THEN <? value(\"resolved\") ?>"
-              "            WHEN(incdt_status='L') THEN <? value(\"closed\") ?>"
-              "            ELSE incdt_status"
-              "       END,"
-              "       incdt_assigned_username,"
-              "       incdt_summary "
-              "  FROM incdt, crmacct"
-              " WHERE ((incdt_crmacct_id=crmacct_id)"
-	      " <? if exists(\"username\") ?> "
-	      " AND (incdt_assigned_username = <? value(\"username\") ?>) "
-	      " <? elseif exists(\"usr_pattern\") ?> "
-	      " AND (incdt_assigned_username ~* <? value(\"usr_pattern\") ?>) "
-	      " <? endif ?>"
-	      " AND (incdt_status IN ('' "
-	      "   <? if exists(\"isnew\") ?>,		'N' <? endif ?> "
-	      "   <? if exists(\"isfeedback\") ?>,	'F' <? endif ?> "
-	      "   <? if exists(\"isconfirmed\") ?>,	'C' <? endif ?> "
-	      "   <? if exists(\"isassigned\") ?>,	'A' <? endif ?> "
-	      "   <? if exists(\"isresolved\") ?>,	'R' <? endif ?> "
-	      "   <? if exists(\"isclosed\") ?>,	'L' <? endif ?> "
-	      " ))"
-	      " <? if exists(\"pattern\") ?> "
-	      " AND ((incdt_summary ~* <? value(\"pattern\") ?>)"
-	      "  OR  (incdt_descrip ~* <? value(\"pattern\") ?>)"
-	      "  OR  (incdt_id IN (SELECT comment_source_id"
-	      "             FROM comment"
-	      "            WHERE((comment_source='INCDT')"
-              "              AND (comment_text ~* <? value(\"pattern\") ?>)))))"
-	      " <? endif ?>"
-	      " AND (incdt_timestamp BETWEEN <? value(\"startDate\") ?> "
-	      "				 AND <? value(\"endDate\") ?>) "
-	      ") ORDER BY incdt_number; ";
-
+  MetaSQLQuery mql = mqlLoad("incidents", "detail");
   ParameterList params;
   setParams(params);
-
-  MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
 
   _incdt->populate(q);
