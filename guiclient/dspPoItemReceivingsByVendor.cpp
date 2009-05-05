@@ -262,7 +262,7 @@ bool dspPoItemReceivingsByVendor::recvHasValue()
     valq.exec();
     if (valq.first())
       hasValue = true;
-    else if (valq.lastError().type() != QSqlError::None)
+    else if (valq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, valq.lastError().databaseText(), __FILE__, __LINE__);
       return false;

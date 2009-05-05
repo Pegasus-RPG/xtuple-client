@@ -40,7 +40,7 @@ class menuSystem : public QObject
   public slots:
     void sPrepareWindowMenu();
     void sHideWindowMenu();
-    void sActivateWindow(int);
+    void sActivateWindow();
     void sCloseAll();
     void sCloseActive();
     void sRememberPositionToggle();

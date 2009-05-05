@@ -1231,7 +1231,7 @@ void itemSite::populate()
 
     _updates = TRUE;
   }
-  else if (itemsite.lastError().type() != QSqlError::None)
+  else if (itemsite.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
     return;

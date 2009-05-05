@@ -53,8 +53,9 @@
 #include "menuCRM.h"
 
 menuCRM::menuCRM(GUIClient *Pparent) :
-  QObject(Pparent, "crmModule")
+  QObject(Pparent)
 {
+  setObjectName("crmModule");
   parent = Pparent;
   
   toolBar = new QToolBar(tr("CRM Tools"));
@@ -171,11 +172,14 @@ menuCRM::menuCRM(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(crmMenu, "CRM");
-  parent->menuBar()->insertItem(tr("&CRM"), crmMenu);
+  QAction * m = parent->menuBar()->addMenu(crmMenu);
+  if(m)
+    m->setText(tr("&CRM"));
 }
   
 void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -184,7 +188,9 @@ void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

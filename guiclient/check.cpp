@@ -96,7 +96,7 @@ void check::sPopulate()
     _notes->setPlainText(q.value("checkhead_notes").toString());
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -147,7 +147,7 @@ void check::sFillList()
     params.append("curr_id", _amount->id());
     q = mql.toQuery(params);
     _items->populate(q, true);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

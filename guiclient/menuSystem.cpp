@@ -87,8 +87,9 @@
 extern QString __path;
 
 menuSystem::menuSystem(GUIClient *Pparent) :
- QObject(Pparent, "sysModule")
+ QObject(Pparent)
 {
+  setObjectName("sysModule");
   parent = Pparent;
 
   errorLogListener::initialize();
@@ -135,7 +136,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   _rememberSize = new Action( parent, "window.rememberSizeToggle", tr("Remember Size"), this, SLOT(sRememberSizeToggle()), windowMenu, true);
   _rememberSize->setCheckable(true);
 
-  parent->menuBar()->insertItem(tr("&Window"),  windowMenu );
+  QAction * m = parent->menuBar()->addMenu(windowMenu );
+  if(m)
+    m->setText(tr("&Window"));
   connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(sPrepareWindowMenu()));
   connect(windowMenu, SIGNAL(aboutToHide()), this, SLOT(sHideWindowMenu()));
   
@@ -225,7 +228,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
   parent->populateCustomMenu(systemMenu, "System");
-  parent->menuBar()->insertItem(tr("S&ystem"), systemMenu);
+  m = parent->menuBar()->addMenu(systemMenu);
+  if(m)
+    m->setText(tr("S&ystem"));
 
   // Community
   communityMenu = new QMenu();
@@ -244,7 +249,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "community.translation", tr("&Translation Portal"),          SLOT(sCommunityTranslation()), communityMenu, true, NULL, NULL, true },
   };
   addActionsToMenu(community, sizeof(community) / sizeof(community[0]));
-  parent->menuBar()->insertItem(tr("C&ommunity"), communityMenu);
+  m = parent->menuBar()->addMenu(communityMenu);
+  if(m)
+    m->setText(tr("C&ommunity"));
 
   //  Help
   helpMenu = new QMenu();
@@ -257,11 +264,14 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   };
   addActionsToMenu(help, sizeof(help) / sizeof(help[0]));
 
-  parent->menuBar()->insertItem(tr("&Help"),   helpMenu   );
+  m = parent->menuBar()->addMenu(helpMenu);
+  if(m)
+    m->setText(tr("&Help"));
 }
 
 void menuSystem::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -270,7 +280,9 @@ void menuSystem::addActionsToMenu(actionProperties acts[], unsigned int numElems
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {
@@ -350,11 +362,16 @@ void menuSystem::sPrepareWindowMenu()
     windowMenu->insertSeparator();
   }
 
+  QAction * m = 0;
   for (int cursor = 0; cursor < windows.count(); cursor++)
   {
-    int menuId = windowMenu->insertItem(windows.at(cursor)->caption(), this, SLOT(sActivateWindow(int)));
-    windowMenu->setItemParameter(menuId, cursor);
-    windowMenu->setItemChecked(menuId, (activeWindow == windows.at(cursor)));
+    m = windowMenu->addAction(windows.at(cursor)->caption(), this, SLOT(sActivateWindow()));
+    if(m)
+    {
+      m->setData(cursor);
+      m->setCheckable(true);
+      m->setChecked((activeWindow == windows.at(cursor)));
+    }
   }
 }
 
@@ -366,8 +383,12 @@ void menuSystem::sHideWindowMenu()
   closeAll->setEnabled(true);
 }
 
-void menuSystem::sActivateWindow(int intWindowid)
+void menuSystem::sActivateWindow()
 {
+  int intWindowid = -1;
+  QAction * m = qobject_cast<QAction*>(sender());
+  if(m)
+    intWindowid = m->data().toInt();
   QWidgetList windows = parent->workspace()->windowList();
   if(omfgThis->showTopLevel())
     windows = omfgThis->windowList();

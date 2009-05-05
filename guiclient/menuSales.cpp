@@ -158,8 +158,9 @@
 #include "menuSales.h"
 
 menuSales::menuSales(GUIClient *pParent) :
-  QObject(pParent, "soModule")
+  QObject(pParent)
 {
+  setObjectName("soModule");
   parent = pParent;
 
   toolBar = new QToolBar(tr("Sales Tools"));
@@ -501,11 +502,14 @@ menuSales::menuSales(GUIClient *pParent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Sales");
-  parent->menuBar()->insertItem(tr("&Sales"), mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  if(m)
+    m->setText(tr("&Sales"));
 }
 
 void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -514,7 +518,9 @@ void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

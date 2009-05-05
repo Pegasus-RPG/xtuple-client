@@ -152,7 +152,7 @@ void updateReorderLevels::sUpdate()
 
     MetaSQLQuery mql = mqlLoad("updateReorderLevels", method);
     q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -219,7 +219,7 @@ void updateReorderLevels::sPost()
     params.append("itemsite_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("itemsite_reorderlevel",((XTreeWidgetItem*)(selected[i]))->text(7));
     q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

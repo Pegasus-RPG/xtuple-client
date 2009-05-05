@@ -47,7 +47,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
       _useCompanyIdOrigin->setText(q.value("name").toString());
       _defaultOrigin->setText(q.value("number").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     if (omfgThis->_key.isEmpty())
@@ -138,7 +138,7 @@ void bankAccount::sCheck()
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -378,7 +378,7 @@ void bankAccount::sSave()
     q.bindValue(":bankaccnt_type", "C");
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -438,7 +438,7 @@ void bankAccount::populate()
     else if (q.value("bankaccnt_type").toString() == "C")
       _type->setCurrentIndex(1);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

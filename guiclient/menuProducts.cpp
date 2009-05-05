@@ -90,8 +90,10 @@
 #include "menuProducts.h"
 
 menuProducts::menuProducts(GUIClient *Pparent) :
- QObject(Pparent, "productMenu")
+ QObject(Pparent)
 {
+  setObjectName("productMenu");
+
   parent = Pparent;
 
   toolBar = new QToolBar(tr("Products Tools"));
@@ -280,11 +282,14 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Products");
-  parent->menuBar()->insertItem(tr("&Products"), mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  if(m)
+    m->setText(tr("&Products"));
 }
 
 void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -293,7 +298,9 @@ void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numEle
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

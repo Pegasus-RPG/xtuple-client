@@ -804,7 +804,7 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
     }
     _lastWindow = window;
   }
-  else if (screenq.lastError().type() != QSqlError::None)
+  else if (screenq.lastError().type() != QSqlError::NoError)
   {
     systemError(0, screenq.lastError().databaseText(), __FILE__, __LINE__);
     return 0;

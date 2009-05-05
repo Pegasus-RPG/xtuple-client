@@ -463,7 +463,7 @@ int main(int argc, char *argv[])
   if (omfgThis->_singleWindow.isEmpty())
   {
     omfgThis->show();
-    app.setMainWidget(omfgThis);
+    //app.setMainWidget(omfgThis);
   }
   // keep this synchronized with GUIClient and user.ui.h
   else if (omfgThis->_singleWindow == "woTimeClock")
@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
     params.append("captive");
     newdlg->set(params);
     newdlg->show();
-    app.setMainWidget(newdlg);
+    //app.setMainWidget(newdlg);
   }
 
   if(!omfgThis->singleCurrency())

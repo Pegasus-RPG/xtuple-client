@@ -321,7 +321,7 @@ void plannedOrder::populate()
       _fromWarehouse->setId(planord.value("supplywarehousid").toInt());
     }
   }
-  else if (planord.lastError().type() != QSqlError::None)
+  else if (planord.lastError().type() != QSqlError::NoError)
   {
     systemError(this, planord.lastError().databaseText(), __FILE__, __LINE__);
     return;

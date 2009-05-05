@@ -258,7 +258,7 @@ void vendorWorkBench::sPopulate()
     _lastPurchase->setDate(q.value("maxpodate").toDate());
     _backlog->setDouble(q.value("backlog").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -278,7 +278,7 @@ void vendorWorkBench::sPopulate()
   q = purchbydate.toQuery(params);
   if (q.first())
     _lastYearsPurchases->setDouble(q.value("purchases").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -291,7 +291,7 @@ void vendorWorkBench::sPopulate()
   q = purchbydate.toQuery(ytdparams);
   if (q.first())
     _ytdPurchases->setDouble(q.value("purchases").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -306,7 +306,7 @@ void vendorWorkBench::sPopulate()
   q = balm.toQuery(params);
   if (q.first())
     _openBalance->setDouble(q.value("balance").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -30,7 +30,10 @@
  * zero to make the TimeoutHandler Active.
  */
 TimeoutHandler::TimeoutHandler(QObject* parent, const char* name)
-  : QObject(parent, name), _timer(this) {
+  : QObject(parent), _timer(this) {
+    if(name)
+      setObjectName(name);
+
     _timeoutValue = 0; // 0ms (disabled)
     // this will keep track of our elapsed time
     _lastEvent.start();

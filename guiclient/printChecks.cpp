@@ -414,7 +414,7 @@ void printChecks::sCreateACH()
       achfile.write("\n");
     } while (q.next());
     achfile.close();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       releasenum.exec();
       achfile.remove();
@@ -434,7 +434,7 @@ void printChecks::sCreateACH()
                      "WHERE (checkhead_ach_batch=:checkhead_ach_batch);");
       clearq.bindValue(":checkhead_ach_batch", batch);
       clearq.exec();
-      if (clearq.lastError().type() != QSqlError::None)
+      if (clearq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, clearq.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -442,7 +442,7 @@ void printChecks::sCreateACH()
     }
     sHandleBankAccount(_bankaccnt->id());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -88,8 +88,9 @@
 #include "menuManufacture.h"
 
 menuManufacture::menuManufacture(GUIClient *Pparent) :
-  QObject(Pparent, "poModule")
+  QObject(Pparent)
 {
+  setObjectName("woModule");
   parent = Pparent;
 
   toolBar = new QToolBar(tr("Manufacture Tools"));
@@ -288,11 +289,14 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Manufacture");
-  parent->menuBar()->insertItem(tr("&Manufacture"), mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  if(m)
+    m->setText(tr("&Manufacture"));
 }
 
 void menuManufacture::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -301,7 +305,9 @@ void menuManufacture::addActionsToMenu(actionProperties acts[], unsigned int num
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

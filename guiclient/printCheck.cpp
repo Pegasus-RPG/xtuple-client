@@ -422,7 +422,7 @@ void printCheck::sCreateACH()
       achfile.write("\n");
     } while (q.next());
     achfile.close();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       releasenum.exec();
       achfile.remove();
@@ -442,14 +442,14 @@ void printCheck::sCreateACH()
                      "WHERE (checkhead_id=:checkhead_id);");
       clearq.bindValue(":checkhead_id", _check->id());
       clearq.exec();
-      if (clearq.lastError().type() != QSqlError::None)
+      if (clearq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, clearq.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -474,7 +474,7 @@ void printCheck::sEnableCreateACH()
     q.exec();
     if (q.first())
       _createACH->setEnabled(q.value("achenabled").toBool());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

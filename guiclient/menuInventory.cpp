@@ -139,8 +139,9 @@
 #include "menuInventory.h"
 
 menuInventory::menuInventory(GUIClient *Pparent) :
-  QObject(Pparent, "imModule")
+  QObject(Pparent)
 {
+  setObjectName("imModule");
   parent = Pparent;
 
   toolBar = new QToolBar(tr("Inventory Tools"));
@@ -489,7 +490,9 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 #endif
 
   parent->populateCustomMenu(mainMenu, "Inventory");
-  parent->menuBar()->insertItem(tr("&Inventory"), mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  if(m)
+    m->setText(tr("&Inventory"));
 
 //  Create connections to the module specific inputManager SIGNALS
   parent->inputManager()->notify(cBCLocationContents, this, this, SLOT(sCatchLocationContents(int)));
@@ -498,6 +501,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
 void menuInventory::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -506,7 +510,9 @@ void menuInventory::addActionsToMenu(actionProperties acts[], unsigned int numEl
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

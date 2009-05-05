@@ -88,8 +88,9 @@
 #include "menuPurchase.h"
 
 menuPurchase::menuPurchase(GUIClient *Pparent) :
-  QObject(Pparent, "poModule")
+  QObject(Pparent)
 {
+  setObjectName("poModule");
   parent = Pparent;
 
   toolBar = new QToolBar(tr("Purchase Tools"));
@@ -267,11 +268,14 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Purchase");
-  parent->menuBar()->insertItem(tr("P&urchase"), mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  if(m)
+    m->setText(tr("P&urchase"));
 }
 
 void menuPurchase::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 {
+  QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
     if (! acts[i].visible)
@@ -280,7 +284,9 @@ void menuPurchase::addActionsToMenu(actionProperties acts[], unsigned int numEle
     }
     else if (acts[i].actionName == QString("menu"))
     {
-      acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
+      m = acts[i].menu->addMenu((QMenu*)(acts[i].slot));
+      if(m)
+        m->setText(acts[i].actionTitle);
     }
     else if (acts[i].actionName == QString("separator"))
     {

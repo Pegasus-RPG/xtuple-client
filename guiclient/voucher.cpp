@@ -413,7 +413,7 @@ void voucher::sDistributeLine()
                     storedProcErrorLookup("distributeVoucherLine", result),
                     __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -479,7 +479,7 @@ void voucher::sDistributeAll()
                     storedProcErrorLookup("distributeVoucherLine", result),
                     __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -607,7 +607,7 @@ void voucher::sFillList()
     q.bindValue(":open", tr("Open"));
     q.exec();
     _poitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -638,7 +638,7 @@ void voucher::sFillMiscList()
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     _miscDistrib->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -662,7 +662,7 @@ void voucher::sPopulatePoInfo()
     _terms->setId(q.value("pohead_terms_id").toInt());
     _amountToDistribute->setId(q.value("pohead_curr_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -687,7 +687,7 @@ void voucher::sPopulateDistributed()
       _amountDistributed->setLocalValue(q.value("distrib").toDouble());
       sPopulateBalanceDue();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -746,7 +746,7 @@ void voucher::populate()
     sFillMiscList();
     sPopulateDistributed();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

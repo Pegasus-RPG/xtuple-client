@@ -1010,9 +1010,9 @@ int systemError(QWidget *pParent, const QString &pMessage, const QString &pFileN
 void message(const QString &pMessage, int pTimeout)
 {
   if (pTimeout == 0)
-    omfgThis->statusBar()->message(pMessage);
+    omfgThis->statusBar()->showMessage(pMessage);
   else
-    omfgThis->statusBar()->message(pMessage, pTimeout);
+    omfgThis->statusBar()->showMessage(pMessage, pTimeout);
 
   qApp->processEvents();
 }
@@ -1076,7 +1076,7 @@ void GUIClient::sCustomCommand()
     q.prepare("SELECT cmd_executable"
               "  FROM cmd"
               " WHERE(cmd_id=:cmd_id);");
-    q.bindValue(":cmd_id", it.data());
+    q.bindValue(":cmd_id", it.value());
     q.exec();
     q.first();
     QString cmd = q.value("cmd_executable").toString();
@@ -1090,16 +1090,16 @@ void GUIClient::sCustomCommand()
                 "  FROM cmdarg"
                 " WHERE (cmdarg_cmd_id=:cmd_id)"
                 " ORDER BY cmdarg_order; ");
-      q.bindValue(":cmd_id", it.data());
+      q.bindValue(":cmd_id", it.value());
       q.exec();
       while(q.next())
       {
         cmd = q.value("argument").toString();
-        if(cmd.startsWith("uiformtype=", false))
+        if(cmd.startsWith("uiformtype=", Qt::CaseInsensitive))
           asDialog = (cmd.right(cmd.length() - 11).toLower() == "dialog");
-        else if(cmd.startsWith("uiform=", false))
+        else if(cmd.startsWith("uiform=", Qt::CaseInsensitive))
           asName = cmd.right(cmd.length() - 7);
-        else if (cmd.startsWith("-param=", false))
+        else if (cmd.startsWith("-param=", Qt::CaseInsensitive))
         {
 // Taken from OpenRPT/renderapp with slight modifications
           QString str = cmd.right(cmd.length() - 7);
@@ -1108,7 +1108,7 @@ void GUIClient::sCustomCommand()
           QString type;
           QString value;
           QVariant var;
-          int sep = str.find('=');
+          int sep = str.indexOf('=');
           if(sep == -1)
             name = str;
           else
@@ -1117,7 +1117,7 @@ void GUIClient::sCustomCommand()
             value = str.right(str.length() - (sep + 1));
           }
           str = name;
-          sep = str.find(':');
+          sep = str.indexOf(':');
           if(sep != -1)
           {
             name = str.left(sep);
@@ -1206,7 +1206,7 @@ void GUIClient::sCustomCommand()
                 "  FROM cmdarg"
                 " WHERE (cmdarg_cmd_id=:cmd_id)"
                 " ORDER BY base, ord; ");
-      q.bindValue(":cmd_id", it.data());
+      q.bindValue(":cmd_id", it.value());
       q.exec();
       if (q.first())
       {
@@ -1232,7 +1232,8 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
   const char *b = getenv("BROWSER");
   QStringList browser;
   if(b) {
-    browser = QStringList::split(':', b);
+    QString t(b);
+    browser = t.split(':', QString::SkipEmptyParts);
   }
 #if defined(Q_OS_MACX)
   browser.append("/usr/bin/open");
@@ -1340,7 +1341,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   if(_showTopLevel || wIsModal)
   {
     _windowList.append(w);
-    w->setWindowFlags(Qt::WDestructiveClose);
+    w->setAttribute(Qt::WA_DeleteOnClose);
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);
     if (mw)
       mw->statusBar()->show();

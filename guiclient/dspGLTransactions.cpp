@@ -190,7 +190,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
         beginning   = begq.value("trialbal_beginning").toDouble();
         periodStart = begq.value("period_start").toDate();
       }
-      else if (begq.lastError().type() != QSqlError::None)
+      else if (begq.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, begq.lastError().databaseText(), __FILE__, __LINE__);
 	return false;
@@ -210,7 +210,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
       glq.exec();
       if (glq.first())
         beginning   += glq.value("glamount").toDouble();
-      else if (glq.lastError().type() != QSqlError::None)
+      else if (glq.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, glq.lastError().databaseText(), __FILE__, __LINE__);
 	return false;

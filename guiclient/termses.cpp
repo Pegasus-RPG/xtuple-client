@@ -94,7 +94,7 @@ void termses::sDelete()
                               "you may delete the selected Terms Code." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -114,7 +114,7 @@ void termses::sDelete()
                               "may delete the selected Terms Code." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

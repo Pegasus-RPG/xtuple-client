@@ -102,7 +102,7 @@ void dspAPApplications::sViewCheck()
         return;
       }
     }
-    else if (countq.lastError().type() != QSqlError::None)
+    else if (countq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, countq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -119,7 +119,7 @@ void dspAPApplications::sViewCheck()
     chkq.exec();
     if (chkq.first())
       checkid = chkq.value("checkhead_id").toInt();
-    else if (chkq.lastError().type() != QSqlError::None)
+    else if (chkq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, chkq.lastError().databaseText(), __FILE__, __LINE__);
       return;
