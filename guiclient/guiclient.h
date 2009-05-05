@@ -138,6 +138,21 @@ class Action : public QAction
             const QPixmap &, QWidget *,
             const QString &); 
 
+    Action( QWidget *, const char *, const QString &,
+            QObject *, const char *,
+            QWidget *, const QString & );
+
+    Action( QWidget *, const char *, const QString &,
+            QObject *, const char *,
+            QWidget *, const QString &,
+            const QPixmap &, QWidget *);  
+            
+    Action( QWidget *, const char *, const QString &,
+            QObject *, const char *,
+            QWidget *, const QString &,
+            const QPixmap &, QWidget *,
+            const QString &); 
+
     inline const QString name()        { return _name;        };
     inline const QString displayName() { return _displayName; };
     inline const QString toolTip() { return _toolTip; };

@@ -115,6 +115,25 @@ static int __intervalCount = 0;
 
 void collectMetrics();
 
+static void __menuEvaluate(QAction * act)
+{
+  if(!act) return;
+  QString privs = act->data().toString();
+  if(privs == "true")
+    act->setEnabled(true);
+  else if(privs == "false")
+    act->setEnabled(false);
+  else if(!privs.isEmpty())
+  {
+    bool enable = false;
+    // TODO: add code here to go through the privs listed
+    QStringList privlist = privs.split(' ', QString::SkipEmptyParts);
+    for (int i = 0; i < privlist.size(); ++i)
+      enable = enable || _privileges->check(privlist.at(i));
+    act->setEnabled(enable);
+  }
+}
+
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled ) :
@@ -148,25 +167,8 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QPixmap &pIcon, QWidget *pToolBar ) :
  QAction(pDisplayName, pParent)
 {
-  setObjectName(pName);
-  _name = pName;
-  _displayName = pDisplayName;
+  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  QString hotkey = _preferences->parent(pName);
-  if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
-  {
-    _hotkeyList << hotkey;
-    setShortcutContext(Qt::ApplicationShortcut);
-    if (hotkey.left(1) == "C")
-      setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
-
-    else if (hotkey.left(1) == "F")
-      setShortcut(hotkey);
-  }
-
-  connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
-  setEnabled(pEnabled);
-  pAddTo->addAction(this);
   setIconSet(QIcon(pIcon));
   addTo(pToolBar);
 }
@@ -178,12 +180,26 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QString &pToolTip ) :
  QAction(pDisplayName, pParent)
 {
+  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+
+  _toolTip = pToolTip;
+
+  setIconSet(QIcon(pIcon));
+  addTo(pToolBar);
+  setToolTip(_toolTip);
+}
+
+Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled ) :
+ QAction(pDisplayName, pParent)
+{
   setObjectName(pName);
   _name = pName;
   _displayName = pDisplayName;
-  _toolTip = pToolTip;
 
-  QString hotkey = _preferences->parent(pName);
+  QString hotkey;
+  hotkey = _preferences->parent(pName);
   if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
   {
     _hotkeyList << hotkey;
@@ -196,8 +212,37 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   }
 
   connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
-  setEnabled(pEnabled);
+  //setEnabled(pEnabled);
   pAddTo->addAction(this);
+
+  if(!pEnabled.isEmpty())
+    setData(pEnabled);
+  __menuEvaluate(this);
+}
+
+Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled,
+                const QPixmap &pIcon, QWidget *pToolBar ) :
+ QAction(pDisplayName, pParent)
+{
+  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+
+  setIconSet(QIcon(pIcon));
+  addTo(pToolBar);
+}
+
+Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled,
+                const QPixmap &pIcon, QWidget *pToolBar,
+                const QString &pToolTip ) :
+ QAction(pDisplayName, pParent)
+{
+  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+
+  _toolTip = pToolTip;
+
   setIconSet(QIcon(pIcon));
   addTo(pToolBar);
   setToolTip(_toolTip);
@@ -1053,10 +1098,10 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
       customMenu->setObjectName("menu." + module.toLower() + ".custom");
     }
 
-    bool allowed = true;
+    QString allowed = "true";
     QString privname = qry.value("cmd_privname").toString();
     if(!privname.isEmpty())
-      allowed = _privileges->check("Custom"+privname);
+      allowed = "Custom"+privname;
 
     Action * action = new Action( this, QString("custom.")+qry.value("cmd_name").toString(), qry.value("cmd_title").toString(),
       this, SLOT(sCustomCommand()), customMenu, allowed);
