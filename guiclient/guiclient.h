@@ -240,8 +240,6 @@ class GUIClient : public QMainWindow
     QWidget * myActiveWindow();
 
     void loadScriptGlobals(QScriptEngine * engine);
-    Q_INVOKABLE QWidget * createScreen(const QString &, QWidget *, int = 0, const char * = 0);
-
 
   public slots:
     void sReportError(const QString &);

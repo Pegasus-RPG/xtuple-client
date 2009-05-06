@@ -77,7 +77,6 @@
 #include "scripttoolbox.h"
 
 #include "setupscriptapi.h"
-#include "getscreen.h"
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
@@ -115,6 +114,23 @@ static int __intervalCount = 0;
 
 void collectMetrics();
 
+// #name is a special check like calling a function
+// @name:mode is a class call to static method userHasPriv(mode)
+//     where mode is one of new edit view
+static bool __privCheck(const QString & privname)
+{
+  if(privname == "#superuser")
+  {
+    XSqlQuery su;
+    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
+    if (su.first())
+      return su.value("rolsuper").toBool();
+    else
+      return false;
+  }
+  return _privileges->check(privname);
+}
+
 static void __menuEvaluate(QAction * act)
 {
   if(!act) return;
@@ -126,10 +142,20 @@ static void __menuEvaluate(QAction * act)
   else if(!privs.isEmpty())
   {
     bool enable = false;
-    // TODO: add code here to go through the privs listed
     QStringList privlist = privs.split(' ', QString::SkipEmptyParts);
     for (int i = 0; i < privlist.size(); ++i)
-      enable = enable || _privileges->check(privlist.at(i));
+    {
+      bool tb = true;
+      QStringList privandlist = privlist.at(i).split('+', QString::SkipEmptyParts);
+      if(privandlist.size() > 1)
+      {
+        for(int ii = 0; ii < privandlist.size(); ++ii)
+          tb = tb && __privCheck(privandlist.at(ii));
+      }
+      else
+        tb = enable || __privCheck(privlist.at(i));
+      enable = enable || tb;
+    }
     act->setEnabled(enable);
   }
 }
@@ -1472,10 +1498,5 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   engine->globalObject().setProperty("privileges", privilegesval);
 
   setupScriptApi(engine);
-}
-
-QWidget * GUIClient::createScreen(const QString & classname, QWidget * parent, int wflags, const char * name)
-{
-  return xtGetScreen(classname, parent, (Qt::WindowFlags)wflags, name);
 }
 

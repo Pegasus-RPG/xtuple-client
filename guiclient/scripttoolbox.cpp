@@ -44,6 +44,7 @@
 #include "xmainwindow.h"
 #include "xtreewidget.h"
 #include "xuiloader.h"
+#include "getscreen.h"
 
 QWidget *ScriptToolbox::_lastWindow = 0;
 
@@ -736,7 +737,14 @@ void ScriptToolbox::setLastWindow(QWidget * lw)
 
 QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModality modality, Qt::WindowFlags flags)
 {
-  QWidget *returnVal = 0;
+  QWidget *returnVal = xtGetScreen(name, parent, flags, 0);
+
+  if(returnVal)
+  {
+    omfgThis->handleNewWindow(returnVal);
+    _lastWindow = returnVal;
+    return returnVal;
+  }
 
   XSqlQuery screenq;
   screenq.prepare("SELECT * "

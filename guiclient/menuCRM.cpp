@@ -95,77 +95,77 @@ menuCRM::menuCRM(GUIClient *Pparent) :
 
   actionProperties acts[] = {
     // CRM | Incident
-    { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	_privileges->check("AddIncidents") || _privileges->check("MaintainIncidents"), NULL, NULL, true , NULL },
-    { "separator",		NULL,				NULL,			incidentMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	_privileges->check("ViewIncidents") || _privileges->check("MaintainIncidents"), new QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
+    { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	"AddIncidents MaintainIncidents", NULL, NULL, true , NULL },
+    { "separator",		NULL,				NULL,			incidentMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", new QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
 
     // CRM / To Do
-    { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	_privileges->check("MaintainPersonalTodoList"), NULL, NULL, true	, NULL },
-    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"),new QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
-    { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"), NULL, NULL, true, NULL},
+    { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	"MaintainPersonalTodoList", NULL, NULL, true	, NULL },
+    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", new QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
+    { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", NULL, NULL, true, NULL},
 
     //  Project
-    { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu,true, NULL, NULL, true	, NULL },
-    { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, _privileges->check("MaintainProjects"), NULL, NULL, true , NULL },
-    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, _privileges->check("ViewProjects"), new QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
+    { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu, "true", NULL, NULL, true	, NULL },
+    { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, "MaintainProjects", NULL, NULL, true , NULL },
+    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewProjects", new QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
     
     // Opportunity
-    { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
-    { "crm.newOpportunity", tr("&New..."), SLOT(sNewOpportunity()), opportunityMenu, _privileges->check("MaintainOpportunities"), NULL, NULL, true , NULL },
-    { "crm.listOpportunity", tr("&List..."), SLOT(sOpportunities()), opportunityMenu, (_privileges->check("MaintainOpportunities") || _privileges->check("ViewOpportunities")), NULL, NULL, true , NULL },
+    { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
+    { "crm.newOpportunity", tr("&New..."), SLOT(sNewOpportunity()), opportunityMenu, "MaintainOpportunities", NULL, NULL, true , NULL },
+    { "crm.listOpportunity", tr("&List..."), SLOT(sOpportunities()), opportunityMenu, "MaintainOpportunities ViewOpportunities", NULL, NULL, true , NULL },
 
-    { "separator",		NULL,				NULL,			crmMenu,	true, NULL, NULL, true	, NULL },
+    { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
     // Reports
-    { "menu",				tr("&Reports"),		(char*)reportsMenu,			crmMenu,	true, NULL, NULL, true	, NULL },
+    { "menu",				tr("&Reports"),		(char*)reportsMenu,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
-    { "pm.dspOrderActivityByProject", tr("Order &Activity by Project..."), SLOT(sDspOrderActivityByProject()), reportsMenu, _privileges->check("ViewProjects"), NULL, NULL, true , NULL },
-    { "separator",		NULL,				NULL,			reportsMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.dspIncidentsByCRMAccount",		tr("&Incidents by CRM Account..."),		SLOT(sDspIncidentsByCRMAccount()),		reportsMenu,	_privileges->check("ViewCRMAccounts") && _privileges->check("ViewIncidents") && _privileges->check("ViewOtherTodoLists"), NULL, NULL, true	, NULL },
-    { "crm.dspTodoByUserAndIncident",		tr("&To-Do List Items by User and Incident..."),		SLOT(sDspTodoByUserAndIncident()),		reportsMenu,	_privileges->check("MaintainOtherTodoLists") || _privileges->check("ViewOtherTodoLists"), NULL, NULL, true	, NULL },
-    { "separator",		NULL,				NULL,			crmMenu,	true, NULL, NULL, true	, NULL },
+    { "pm.dspOrderActivityByProject", tr("Order &Activity by Project..."), SLOT(sDspOrderActivityByProject()), reportsMenu, "ViewProjects", NULL, NULL, true , NULL },
+    { "separator",		NULL,				NULL,			reportsMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.dspIncidentsByCRMAccount",		tr("&Incidents by CRM Account..."),		SLOT(sDspIncidentsByCRMAccount()),		reportsMenu,	"ViewCRMAccounts+ViewIncidents+ViewOtherTodoLists", NULL, NULL, true	, NULL },
+    { "crm.dspTodoByUserAndIncident",		tr("&To-Do List Items by User and Incident..."),		SLOT(sDspTodoByUserAndIncident()),		reportsMenu,	"MaintainOtherTodoLists ViewOtherTodoLists", NULL, NULL, true	, NULL },
+    { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
     
     // CRM | Account
-    { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
-    { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	_privileges->check("MaintainCRMAccounts"), NULL, NULL, true , NULL },
-    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"),new QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
-    { "crm.crmaccountsearch",	tr("&Search..."),SLOT(sSearchForCRMAccount()),accountsMenu,	_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"), NULL, NULL, true , NULL },
+    { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
+    { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	"MaintainCRMAccounts", NULL, NULL, true , NULL },
+    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", new QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
+    { "crm.crmaccountsearch",	tr("&Search..."),SLOT(sSearchForCRMAccount()),accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", NULL, NULL, true , NULL },
       
     // CRM | Contact
-    { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
-    { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	_privileges->check("MaintainContacts"), NULL, NULL, true	, NULL },
-    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	_privileges->check("MaintainContacts") || _privileges->check("ViewContacts"),new QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
-    { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	_privileges->check("MaintainContacts") || _privileges->check("ViewContacts"), NULL, NULL, true	, NULL },
+    { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
+    { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	"MaintainContacts", NULL, NULL, true	, NULL },
+    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainContacts ViewContacts", new QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
+    { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	"MaintainContacts ViewContacts", NULL, NULL, true	, NULL },
     
     // CRM | Address
-    { "menu",		tr("A&ddress"),		(char*)addressMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
-    { "crm.address",	tr("&New..."),		SLOT(sAddress()),	addressMenu,	_privileges->check("MaintainAddresses"), NULL, NULL, true	, NULL },
-    { "crm.addresses",	tr("&List..."),	SLOT(sAddresses()),	addressMenu,	_privileges->check("MaintainAddresses") || _privileges->check("ViewAddresses"), NULL, NULL, true , NULL },
+    { "menu",		tr("A&ddress"),		(char*)addressMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
+    { "crm.address",	tr("&New..."),		SLOT(sAddress()),	addressMenu,	"MaintainAddresses", NULL, NULL, true	, NULL },
+    { "crm.addresses",	tr("&List..."),	SLOT(sAddresses()),	addressMenu,	"MaintainAddresses ViewAddresses", NULL, NULL, true , NULL },
 
-    { "separator",		NULL,				NULL,			crmMenu,	true, NULL, NULL, true	, NULL },
+    { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
     // Master Information
-    { "menu",			tr("&Master Information"),		(char*)masterMenu,		crmMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.honorifics",		tr("&Titles..."),			SLOT(sHonorifics()),		masterMenu,	_privileges->check("MaintainTitles") || _privileges->check("ViewTitles"), NULL, NULL, true	, NULL },
+    { "menu",			tr("&Master Information"),		(char*)masterMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.honorifics",		tr("&Titles..."),			SLOT(sHonorifics()),		masterMenu,	"MaintainTitles ViewTitles", NULL, NULL, true	, NULL },
    
-    { "menu",			tr("&Incident"),		(char*)masterIncdMenu,		masterMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.incidentCategories",	tr("&Categories..."),		SLOT(sIncidentCategories()),	masterIncdMenu,	_privileges->check("MaintainIncidentCategories"), NULL, NULL, true , NULL },
-    { "crm.incidentSeverities",	tr("&Severities..."),		SLOT(sIncidentSeverities()),	masterIncdMenu,	_privileges->check("MaintainIncidentSeverities"), NULL, NULL, true , NULL },
-    { "crm.incidentResolutions", tr("&Resolutions..."),		SLOT(sIncidentResolutions()),	masterIncdMenu,	_privileges->check("MaintainIncidentResolutions"), NULL, NULL, true , NULL },
+    { "menu",			tr("&Incident"),		(char*)masterIncdMenu,		masterMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.incidentCategories",	tr("&Categories..."),		SLOT(sIncidentCategories()),	masterIncdMenu,	"MaintainIncidentCategories", NULL, NULL, true , NULL },
+    { "crm.incidentSeverities",	tr("&Severities..."),		SLOT(sIncidentSeverities()),	masterIncdMenu,	"MaintainIncidentSeverities", NULL, NULL, true , NULL },
+    { "crm.incidentResolutions", tr("&Resolutions..."),		SLOT(sIncidentResolutions()),	masterIncdMenu,	"MaintainIncidentResolutions", NULL, NULL, true , NULL },
 
-    { "menu",			tr("&Opportunity"),		(char*)masterOppMenu,		masterMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.opportunitySources",	tr("&Sources..."),		SLOT(sOpportunitySources()),	masterOppMenu,	_privileges->check("MaintainOpportunitySources"), NULL, NULL, true , NULL },
-    { "crm.opportunityStages",	tr("St&ages..."),		SLOT(sOpportunityStages()),	masterOppMenu,	_privileges->check("MaintainOpportunityStages"), NULL, NULL, true , NULL },
-    { "crm.opportunityTypes",	tr("&Types..."),		SLOT(sOpportunityTypes()),	masterOppMenu,	_privileges->check("MaintainOpportunityTypes"), NULL, NULL, true , NULL },
+    { "menu",			tr("&Opportunity"),		(char*)masterOppMenu,		masterMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.opportunitySources",	tr("&Sources..."),		SLOT(sOpportunitySources()),	masterOppMenu,	"MaintainOpportunitySources", NULL, NULL, true , NULL },
+    { "crm.opportunityStages",	tr("St&ages..."),		SLOT(sOpportunityStages()),	masterOppMenu,	"MaintainOpportunityStages", NULL, NULL, true , NULL },
+    { "crm.opportunityTypes",	tr("&Types..."),		SLOT(sOpportunityTypes()),	masterOppMenu,	"MaintainOpportunityTypes", NULL, NULL, true , NULL },
 
-    { "crm.incidentPriorities",	tr("&Priorities..."),		SLOT(sIncidentPriorities()),	masterMenu,	_privileges->check("MaintainIncidentPriorities"), NULL, NULL, true , NULL },
-    { "crm.characteristics",	tr("C&haracteristics..."),		SLOT(sCharacteristics()),	masterMenu,	_privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
+    { "crm.incidentPriorities",	tr("&Priorities..."),		SLOT(sIncidentPriorities()),	masterMenu,	"MaintainIncidentPriorities", NULL, NULL, true , NULL },
+    { "crm.characteristics",	tr("C&haracteristics..."),		SLOT(sCharacteristics()),	masterMenu,	"MaintainCharacteristics ViewCharacteristics", NULL, NULL, true , NULL },
 
     //Utilities
-    { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	true, NULL, NULL, true	, NULL },
-    { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	_privileges->check("EditOwner"), NULL, NULL, true, NULL }
+    { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
+    { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL }
 
   };
 
@@ -196,7 +196,7 @@ void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
     {
       acts[i].menu->addSeparator();
     }
-    else if ((acts[i].toolBar != NULL) && (acts[i].toolBar != NULL))
+    else if ((acts[i].toolBar != NULL) && (!acts[i].toolTip.isEmpty()))
     {
       parent->actions.append( new Action( parent,
 					  acts[i].actionName,
