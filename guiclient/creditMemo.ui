@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -13,7 +12,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>987</width>
     <height>600</height>
    </rect>
   </property>
@@ -23,22 +22,10 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
@@ -46,16 +33,7 @@ to be bound by its terms.</comment>
        <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -66,7 +44,7 @@ to be bound by its terms.</comment>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>212</width>
            <height>20</height>
@@ -79,16 +57,7 @@ to be bound by its terms.</comment>
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
          <item>
@@ -208,7 +177,7 @@ to be bound by its terms.</comment>
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>20</height>
@@ -345,30 +314,12 @@ to be bound by its terms.</comment>
              <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin" >
               <number>0</number>
              </property>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -419,7 +370,7 @@ to be bound by its terms.</comment>
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>20</height>
@@ -464,7 +415,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>0</width>
                <height>20</height>
@@ -477,7 +428,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>0</width>
                <height>20</height>
@@ -490,7 +441,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>0</width>
                <height>20</height>
@@ -516,16 +467,7 @@ to be bound by its terms.</comment>
                <property name="spacing" >
                 <number>0</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -539,7 +481,7 @@ to be bound by its terms.</comment>
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>32</height>
@@ -598,16 +540,7 @@ to be bound by its terms.</comment>
                <property name="spacing" >
                 <number>5</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -648,7 +581,7 @@ to be bound by its terms.</comment>
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>32</height>
@@ -728,7 +661,7 @@ to be bound by its terms.</comment>
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>0</width>
                  <height>20</height>
@@ -748,7 +681,7 @@ to be bound by its terms.</comment>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>16</height>
@@ -807,16 +740,7 @@ to be bound by its terms.</comment>
                <property name="spacing" >
                 <number>0</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -825,7 +749,7 @@ to be bound by its terms.</comment>
                   <bool>false</bool>
                  </property>
                  <property name="text" >
-                  <string>&amp;New Item...</string>
+                  <string>&amp;New</string>
                  </property>
                 </widget>
                </item>
@@ -835,7 +759,7 @@ to be bound by its terms.</comment>
                   <bool>false</bool>
                  </property>
                  <property name="text" >
-                  <string>&amp;Edit Item...</string>
+                  <string>&amp;Edit</string>
                  </property>
                 </widget>
                </item>
@@ -845,7 +769,7 @@ to be bound by its terms.</comment>
                   <bool>false</bool>
                  </property>
                  <property name="text" >
-                  <string>&amp;Delete Item</string>
+                  <string>&amp;Delete</string>
                  </property>
                 </widget>
                </item>
@@ -857,7 +781,7 @@ to be bound by its terms.</comment>
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>20</height>
@@ -874,7 +798,7 @@ to be bound by its terms.</comment>
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>16</width>
                    <height>20</height>
@@ -908,7 +832,7 @@ to be bound by its terms.</comment>
                      <property name="orientation" >
                       <enum>Qt::Horizontal</enum>
                      </property>
-                     <property name="sizeHint" >
+                     <property name="sizeHint" stdset="0" >
                       <size>
                        <width>40</width>
                        <height>20</height>
@@ -926,7 +850,7 @@ to be bound by its terms.</comment>
                    <property name="sizeType" >
                     <enum>QSizePolicy::Expanding</enum>
                    </property>
-                   <property name="sizeHint" >
+                   <property name="sizeHint" stdset="0" >
                     <size>
                      <width>41</width>
                      <height>20</height>
@@ -1083,16 +1007,7 @@ to be bound by its terms.</comment>
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>5</number>
          </property>
          <item>
@@ -1160,6 +1075,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XURLLabel</class>

@@ -96,7 +96,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems->findChild<QWidget*>("_basisGroup")->hide();
   _aritems->findChild<QWidget*>("_asofGroup")->hide();
   _aritems->findChild<QWidget*>("_incidentsOnly")->hide();
-  _aritems->findChild<QWidget*>("_unposted")->show();
   _aritems->findChild<XCheckBox*>("_closed")->show();
   
   _cashreceipts = new dspCashReceipts(this, "_cashreceipts", Qt::Widget);
