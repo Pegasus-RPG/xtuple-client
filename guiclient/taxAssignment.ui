@@ -48,7 +48,17 @@
          <item row="0" column="1" >
           <layout class="QHBoxLayout" name="horizontalLayout_2" >
            <item>
-            <widget class="XComboBox" name="_taxZone" />
+            <widget class="XComboBox" name="_taxZone" >
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="nullStr" >
+              <string>Any</string>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::TaxZones</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_2" >
@@ -68,7 +78,17 @@
          <item row="1" column="1" >
           <layout class="QHBoxLayout" name="horizontalLayout_5" >
            <item>
-            <widget class="XComboBox" name="_taxType" />
+            <widget class="XComboBox" name="_taxType" >
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="nullStr" >
+              <string>Any</string>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::TaxTypes</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_5" >
@@ -166,11 +186,11 @@
         <item row="0" column="0" >
          <layout class="QGridLayout" name="gridLayout" >
           <item row="0" column="0" >
-           <widget class="XTreeWidget" name="_taxsel" >
+           <widget class="XTreeWidget" name="_taxCodeOption" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
               <horstretch>0</horstretch>
-              <verstretch>5</verstretch>
+              <verstretch>0</verstretch>
              </sizepolicy>
             </property>
            </widget>
@@ -182,6 +202,9 @@
             </property>
             <item>
              <widget class="QPushButton" name="_add" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Add-></string>
               </property>
@@ -213,7 +236,7 @@
            </layout>
           </item>
           <item row="0" column="2" >
-           <widget class="XTreeWidget" name="_taxsel_2" >
+           <widget class="XTreeWidget" name="_taxCodeSelected" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
               <horstretch>0</horstretch>
@@ -245,5 +268,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>taxAssignment</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>353</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>302</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -116,7 +116,7 @@
 #include "taxZones.h"
 #include "taxAuthorities.h"
 #include "searchForCRMAccount.h"
-#include "taxSelections.h"
+#include "taxAssignments.h"
 #include "taxRegistrations.h"
 
 #include "reconcileBankaccount.h"
@@ -421,7 +421,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
 	{ "gl.taxClasses",		tr("Tax &Classes..."),		SLOT(sTaxClasses()),		taxMenu,	(_privileges->check("MaintainTaxClasses") || _privileges->check("ViewTaxClasses")), NULL, NULL, true, NULL }, 
     { "gl.taxCodes",		tr("Tax &Codes..."),		SLOT(sTaxCodes()),		taxMenu,	(_privileges->check("MaintainTaxCodes") || _privileges->check("ViewTaxCodes")), NULL, NULL, true, NULL },
     { "gl.taxTypes",		tr("Tax &Types..."),		SLOT(sTaxTypes()),		taxMenu,	(_privileges->check("MaintainTaxTypes") || _privileges->check("ViewTaxTypes")), NULL, NULL, true, NULL },
-    { "gl.taxSelections",	tr("Tax Se&lections..."),	SLOT(sTaxSelections()),		taxMenu,	(_privileges->check("MaintainTaxSel") || _privileges->check("ViewTaxSel")), NULL, NULL, true, NULL },
+    { "gl.taxAssignments",	tr("Tax Assi&gnments..."),	SLOT(sTaxAssignments()),		taxMenu,	(_privileges->check("MaintainTaxAssignments") || _privileges->check("ViewTaxAssignments")), NULL, NULL, true, NULL },
     { "gl.taxRegistatrions",	tr("Tax &Registrations..."),	SLOT(sTaxRegistrations()),	taxMenu,	_privileges->check("MaintainChartOfAccounts"),   NULL, NULL, true, NULL },
     
     { "separator",		  NULL,					NULL,					mainMenu,		true,					       NULL, NULL, true, NULL },
@@ -1093,9 +1093,9 @@ void menuAccounting::sTaxTypes()
   omfgThis->handleNewWindow(new taxTypes());
 }
 
-void menuAccounting::sTaxSelections()
+void menuAccounting::sTaxAssignments()
 {
-  omfgThis->handleNewWindow(new taxSelections());
+  omfgThis->handleNewWindow(new taxAssignments());
 }
 
 void menuAccounting::sTaxRegistrations()

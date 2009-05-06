@@ -141,7 +141,7 @@ class menuAccounting : public QObject
 	void sTaxZones();
 	void sTaxClasses();
     void sTaxAuthoritySearch();
-    void sTaxSelections();
+    void sTaxAssignments();
     void sTaxRegistrations();
 
     void sReconcileBankaccount();

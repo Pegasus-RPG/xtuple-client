@@ -6,8 +6,8 @@ It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
- <class>taxAssignements</class>
- <widget class="QWidget" name="taxAssignements" >
+ <class>taxAssignments</class>
+ <widget class="QWidget" name="taxAssignments" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -97,14 +97,15 @@ to be bound by its terms.</comment>
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
-                <property name="type" >
-                 <enum>XComboBox::TaxAuths</enum>
+                <property name="allowNull" >
+                 <bool>true</bool>
                 </property>
-                <item>
-                 <property name="text" >
-                  <string>Gujarat</string>
-                 </property>
-                </item>
+                <property name="nullStr" >
+                 <string>Any</string>
+                </property>
+                <property name="type" >
+                 <enum>XComboBox::TaxZones</enum>
+                </property>
                </widget>
               </item>
               <item>
@@ -184,24 +185,15 @@ to be bound by its terms.</comment>
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
-                <property name="type" >
-                 <enum>XComboBox::TaxAuths</enum>
+                <property name="allowNull" >
+                 <bool>true</bool>
                 </property>
-                <item>
-                 <property name="text" >
-                  <string>Domestic Food</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Imported Food</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Service</string>
-                 </property>
-                </item>
+                <property name="nullStr" >
+                 <string>Any</string>
+                </property>
+                <property name="type" >
+                 <enum>XComboBox::TaxTypes</enum>
+                </property>
                </widget>
               </item>
               <item>
@@ -314,7 +306,7 @@ to be bound by its terms.</comment>
              <number>0</number>
             </property>
             <item>
-             <widget class="XTreeWidget" name="_taxsel" >
+             <widget class="XTreeWidget" name="_taxass" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
@@ -413,7 +405,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>taxAssignements</receiver>
+   <receiver>taxAssignments</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
