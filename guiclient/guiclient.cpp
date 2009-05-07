@@ -232,7 +232,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   setToolTip(_toolTip);
 }
 
-void Action::init( QWidget *pParent, const char *pName, const QString &pDisplayName,
+void Action::init( QWidget *, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, const QString & pEnabled )
 {
@@ -569,87 +569,89 @@ void GUIClient::setWindowTitle()
 
 void GUIClient::initMenuBar()
 {
+  static bool firstRun = true;
+
   qApp->setOverrideCursor(Qt::WaitCursor);
-  menuBar()->clear();
-  _hotkeyList.clear();
 
-  QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(this);
-  while(!toolbars.isEmpty())
-    delete toolbars.takeFirst();
-
-  if (_preferences->boolean("ShowPDMenu"))
+  if(!firstRun)
   {
+    for(int i = 0; i < actions.size(); ++i)
+    {
+      __menuEvaluate(actions.at(i));
+    }
+  }
+  else
+  {
+    menuBar()->clear();
+    _hotkeyList.clear();
+
+    QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(this);
+    while(!toolbars.isEmpty())
+      delete toolbars.takeFirst();
+  
     _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     productsMenu = new menuProducts(this);
-  }
-      
-  if (_preferences->boolean("ShowIMMenu"))
-  {
+        
     _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     inventoryMenu = new menuInventory(this);
-  }
-      
-  if ( (_metrics->value("Application") == "Manufacturing")
-    || (_metrics->value("Application") == "Standard") )
-  if (_metrics->boolean("MultiWhs"))
-  {
-    if (_preferences->boolean("ShowMSMenu"))
+        
+    if ( (_metrics->value("Application") == "Manufacturing")
+      || (_metrics->value("Application") == "Standard") )
     {
       _splash->showMessage(tr("Initializing the Scheduling Module"), SplashTextAlignment, SplashTextColor);
       qApp->processEvents();
       scheduleMenu = new menuSchedule(this);
     }
-  }
-  
-  if (_preferences->boolean("ShowPOMenu"))
-  {
+    
     _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     purchaseMenu = new menuPurchase(this);
-  }
-  
-  if (_preferences->boolean("ShowWOMenu"))
-  {
+    
     _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     manufactureMenu = new menuManufacture(this);
-  }
-  
-  if (_preferences->boolean("ShowCRMMenu"))
-  {
+    
     _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     crmMenu = new menuCRM(this);
-  }
-  
-  if (_preferences->boolean("ShowSOMenu"))
-  {
+    
     _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     salesMenu = new menuSales(this);
-  }
-      
-  if (_preferences->boolean("ShowGLMenu"))
-  {
+        
     _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     accountingMenu = new menuAccounting(this);
-  }
+    
+    _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    systemMenu = new menuSystem(this);
   
-  _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
-  qApp->processEvents();
-  systemMenu = new menuSystem(this);
-
-  restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
-
-  toolbars = qFindChildren<QToolBar *>(this);
-  for (int i = 0; i < toolbars.size(); ++i)
-  {
-    toolbars.at(i)->show();
+    restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
+  
+    toolbars = qFindChildren<QToolBar *>(this);
+    for (int i = 0; i < toolbars.size(); ++i)
+    {
+      toolbars.at(i)->show();
+    }
   }
 
+  findChild<QMenu*>("menu.prod")->menuAction()->setVisible(_preferences->boolean("ShowPDMenu"));
+  findChild<QMenu*>("menu.im")->menuAction()->setVisible(_preferences->boolean("ShowIMMenu"));
+  if ( (_metrics->value("Application") == "Manufacturing")
+    || (_metrics->value("Application") == "Standard") )
+  {
+    findChild<QMenu*>("menu.sched")->menuAction()->setVisible(_metrics->boolean("MultiWhs") && _preferences->boolean("ShowMSMenu"));
+  }
+  findChild<QMenu*>("menu.purch")->menuAction()->setVisible(_preferences->boolean("ShowPOMenu"));
+  findChild<QMenu*>("menu.manu")->menuAction()->setVisible(_preferences->boolean("ShowWOMenu"));
+  findChild<QMenu*>("menu.crm")->menuAction()->setVisible(_preferences->boolean("ShowCRMMenu"));
+  findChild<QMenu*>("menu.sales")->menuAction()->setVisible(_preferences->boolean("ShowSOMenu"));
+  findChild<QMenu*>("menu.accnt")->menuAction()->setVisible(_preferences->boolean("ShowGLMenu"));
+
+  firstRun = false;
   qApp->restoreOverrideCursor();
 }
 
