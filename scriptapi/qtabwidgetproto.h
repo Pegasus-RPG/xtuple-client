@@ -30,27 +30,35 @@ class QTabWidgetProto : public QObject, public QScriptable
   public:
     QTabWidgetProto(QObject *parent);
 
-    Q_INVOKABLE int      addTab(QWidget * page, const QString &label);
-    Q_INVOKABLE int      addTab(QWidget * page, const QIcon &icon, const QString &label);
+    Q_INVOKABLE int      addTab(QWidget *page, const QString &label);
+    Q_INVOKABLE int      addTab(QWidget *page, const QIcon &icon, const QString &label);
     Q_INVOKABLE void     clear();
     Q_INVOKABLE QWidget *cornerWidget(int corner = 1) const;
     Q_INVOKABLE int      count() const;
     Q_INVOKABLE int      currentIndex() const;
     Q_INVOKABLE QWidget *currentWidget() const;
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE bool     documentMode() const;
+#endif
     Q_INVOKABLE int      elideMode() const;
     Q_INVOKABLE QSize    iconSize() const;
     Q_INVOKABLE int      indexOf(QWidget *w) const;
     Q_INVOKABLE int      insertTab(int index, QWidget *page, const QString &label);
     Q_INVOKABLE int      insertTab(int index, QWidget *page, const QIcon &icon, const QString & label);
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE bool     isMovable() const;
+#endif
     Q_INVOKABLE bool     isTabEnabled(int index) const;
     Q_INVOKABLE void     removeTab(int index);
     Q_INVOKABLE void     setCornerWidget(QWidget *widget, int corner = 1);
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE void     setDocumentMode(bool set);
+#endif
     Q_INVOKABLE void     setElideMode(int);
     Q_INVOKABLE void     setIconSize(const QSize &size);
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE void     setMovable(bool movable);
+#endif
     Q_INVOKABLE void     setTabEnabled(int index, bool enable);
     Q_INVOKABLE void     setTabIcon(int index, const QIcon &icon);
     Q_INVOKABLE void     setTabPosition(int position);
@@ -58,7 +66,9 @@ class QTabWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE void     setTabText(int index, const QString &label);
     Q_INVOKABLE void     setTabToolTip(int index, const QString &tip);
     Q_INVOKABLE void     setTabWhatsThis(int index, const QString &text);
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE void     setTabsClosable(bool closeable);
+#endif
     Q_INVOKABLE void     setUsesScrollButtons(bool useButtons);
     Q_INVOKABLE QIcon    tabIcon(int index) const;
     Q_INVOKABLE int      tabPosition() const;
@@ -66,7 +76,9 @@ class QTabWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE QString  tabText(int index) const;
     Q_INVOKABLE QString  tabToolTip(int index) const;
     Q_INVOKABLE QString  tabWhatsThis(int index) const;
+#if QT_VERSION >= 0x040500
     Q_INVOKABLE bool     tabsClosable() const;
+#endif
     Q_INVOKABLE bool     usesScrollButtons() const;
     Q_INVOKABLE QWidget *widget(int index) const;
 

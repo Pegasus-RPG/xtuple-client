@@ -93,6 +93,7 @@ QWidget *QTabWidgetProto::currentWidget() const
   return 0;
 }
 
+#if QT_VERSION >= 0x040500
 bool QTabWidgetProto::documentMode() const
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
@@ -100,6 +101,7 @@ bool QTabWidgetProto::documentMode() const
     return item->documentMode();
   return false;
 }
+#endif
 
 int QTabWidgetProto::elideMode() const
 {
@@ -141,6 +143,7 @@ int QTabWidgetProto::insertTab(int index, QWidget *page, const QIcon &icon, cons
   return 0;
 }
 
+#if QT_VERSION >= 0x040500
 bool QTabWidgetProto::isMovable() const
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
@@ -148,6 +151,7 @@ bool QTabWidgetProto::isMovable() const
     return item->isMovable();
   return false;
 }
+#endif
 
 bool QTabWidgetProto::isTabEnabled(int index) const
 {
@@ -171,12 +175,14 @@ void QTabWidgetProto::setCornerWidget(QWidget *widget, int corner)
     item->setCornerWidget(widget, (Qt::Corner)corner);
 }
 
+#if QT_VERSION >= 0x040500
 void QTabWidgetProto::setDocumentMode(bool set)
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
   if (item)
     item->setDocumentMode(set);
 }
+#endif
 
 void QTabWidgetProto::setElideMode(int mode)
 {
@@ -192,12 +198,14 @@ void QTabWidgetProto::setIconSize(const QSize &size)
     item->setIconSize(size);
 }
 
+#if QT_VERSION >= 0x040500
 void QTabWidgetProto::setMovable(bool movable)
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
   if (item)
     item->setMovable(movable);
 }
+#endif
 
 void QTabWidgetProto::setTabEnabled(int index, bool enable)
 {
@@ -248,12 +256,14 @@ void QTabWidgetProto::setTabWhatsThis(int index, const QString &text)
     item->setTabWhatsThis(index, text);
 }
 
+#if QT_VERSION >= 0x040500
 void QTabWidgetProto::setTabsClosable(bool closeable)
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
   if (item)
     item->setTabsClosable(closeable);
 }
+#endif
 
 void QTabWidgetProto::setUsesScrollButtons(bool useButtons)
 {
@@ -310,6 +320,7 @@ QString QTabWidgetProto::tabWhatsThis(int index) const
   return QString();
 }
 
+#if QT_VERSION >= 0x040500
 bool QTabWidgetProto::tabsClosable() const
 {
   QTabWidget *item = qscriptvalue_cast<QTabWidget*>(thisObject());
@@ -317,6 +328,7 @@ bool QTabWidgetProto::tabsClosable() const
     return item->tabsClosable();
   return false;
 }
+#endif
 
 bool QTabWidgetProto::usesScrollButtons() const
 {
