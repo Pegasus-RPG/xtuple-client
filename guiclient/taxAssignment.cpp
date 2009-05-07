@@ -22,8 +22,8 @@ taxAssignment::taxAssignment(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
-  _taxCodeOption->addColumn(tr("Tax Code"),	 100,  Qt::AlignLeft,   true,  "taxcode_option"  );
-  _taxCodeSelected->addColumn(tr("Tax Code"),	 100,  Qt::AlignLeft,   true,  "taxcode_selected"  );
+  _taxCodeOption->addColumn(tr("Tax Code"),	 -1,  Qt::AlignLeft,   true,  "taxcode_option"  );
+  _taxCodeSelected->addColumn(tr("Tax Code"),	 -1,  Qt::AlignLeft,   true,  "taxcode_selected"  );
 
   connect(_taxCodeOption, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
   connect(_taxCodeSelected, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
