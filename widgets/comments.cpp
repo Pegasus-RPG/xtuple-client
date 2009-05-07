@@ -52,6 +52,8 @@ const Comments::CommentMap Comments::_commentMap[] =
     CommentMap( QuoteItem,         "QI"  ),
     CommentMap( SalesOrder,        "S"   ),
     CommentMap( SalesOrderItem,    "SI"  ),
+    CommentMap( Task,              "TA"  ),
+    CommentMap( TodoItem,          "TD"  ),
     CommentMap( TransferOrder,     "TO"  ),
     CommentMap( TransferOrderItem, "TI"  ),
     CommentMap( Vendor,            "V"   ),

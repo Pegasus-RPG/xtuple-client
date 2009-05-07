@@ -46,8 +46,8 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
       Opportunity,
       Project,		PurchaseOrder,	PurchaseOrderItem,
       ReturnAuth, ReturnAuthItem, Quote, QuoteItem,
-      SalesOrder,	SalesOrderItem,
-      TransferOrder,	TransferOrderItem,
+      SalesOrder,	SalesOrderItem, Task,
+      TodoItem,      TransferOrder,	TransferOrderItem,
       Vendor,
       Warehouse,	WorkOrder
     };

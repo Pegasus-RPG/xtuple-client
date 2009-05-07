@@ -63,6 +63,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       {
         _todoitemid = q.value("todoitem_id").toInt();
         _alarms->setId(_todoitemid);
+	_comments->setId(_todoitemid);
       }
 
       _name->setFocus();
@@ -104,6 +105,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _alarms->setReadOnly(TRUE);
+      _comments->setReadOnly(true);
 
       _close->setText(tr("&Close"));
       _save->hide();
@@ -264,6 +266,7 @@ void todoItem::sPopulate()
     }
 
     _alarms->setId(_todoitemid);
+    _comments->setId(_todoitemid);
 
   }
   else if (q.lastError().type() != QSqlError::NoError)

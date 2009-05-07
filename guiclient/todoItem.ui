@@ -544,6 +544,20 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_commentsTab" >
+        <attribute name="title" >
+         <string>Comments</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item row="0" column="0" >
+          <widget class="Comments" name="_comments" >
+           <property name="type" >
+            <enum>Comments::TodoItem</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -555,6 +569,11 @@ to be bound by its terms.</comment>
    <class>Alarms</class>
    <extends>QWidget</extends>
    <header>alarms.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
   </customwidget>
   <customwidget>
    <class>CRMAcctCluster</class>

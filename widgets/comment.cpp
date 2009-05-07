@@ -266,6 +266,22 @@ void comment::set(ParameterList &pParams)
     _targetId = param.toInt();
   }
 
+  param = pParams.value("todoitem_id", &valid);
+  if (valid)
+  {
+    _source = Comments::TodoItem;
+    _cmnttype->setType(XComboBox::TodoItemCommentTypes);
+    _targetId = param.toInt();
+  }
+
+  param = pParams.value("prjtask_id", &valid);
+  if (valid)
+  {
+    _source = Comments::Task;
+    _cmnttype->setType(XComboBox::TaskCommentTypes);
+    _targetId = param.toInt();
+  }
+
   param = pParams.value("addr_id", &valid);
   if (valid)
   {
@@ -360,6 +376,12 @@ void comment::set(ParameterList &pParams)
         break;
       case Comments::SalesOrderItem:
         _cmnttype->setType(XComboBox::SalesOrderItemCommentTypes);
+        break;
+      case Comments::Task:
+        _cmnttype->setType(XComboBox::TaskCommentTypes);
+        break;
+      case Comments::TodoItem:
+        _cmnttype->setType(XComboBox::TodoItemCommentTypes);
         break;
       case Comments::TransferOrder:
         _cmnttype->setType(XComboBox::TransferOrderCommentTypes);

@@ -111,6 +111,7 @@ enum SetResponse task::set(const ParameterList &pParams)
       }
 
       _alarms->setId(_prjtaskid);
+      _comments->setId(_prjtaskid);
     }
     if (param.toString() == "edit")
     {
@@ -177,6 +178,7 @@ void task::populate()
     _actualExp->setText(formatCost(q.value("prjtask_exp_actual").toDouble()));
 
     _alarms->setId(_prjtaskid);
+    _comments->setId(_prjtaskid);    
     sHoursAdjusted();
     sExpensesAdjusted();
 

@@ -594,6 +594,22 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY cmnttype_name;" );
       break;
 
+    case TaskCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='TA')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
+    case TodoItemCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='TD')"
+                  "ORDER BY cmnttype_name;" );
+      break;
+
     case TransferOrderCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
