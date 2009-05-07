@@ -39,9 +39,12 @@
 #include "qdomnotationproto.h"
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
+#include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qsqldatabaseproto.h"
+#include "qstackedwidgetproto.h"
+#include "qtabwidgetproto.h"
 #include "qurlproto.h"
 #include "ralineeditsetup.h"
 #include "revisionlineeditsetup.h"
@@ -64,7 +67,6 @@
 
 void setupScriptApi(QScriptEngine *engine)
 {
-
   setupAddressCluster(engine);
   setupAlarms(engine);
   setupCLineEdit(engine);
@@ -96,10 +98,13 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomNotationProto(engine);
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
+  setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQSqlDatabaseProto(engine);
+  setupQStackedWidgetProto(engine);
+  setupQTabWidgetProto(engine);
   setupQUrlProto(engine);
   setupRaLineEdit(engine);
   setupRevisionLineEdit(engine);

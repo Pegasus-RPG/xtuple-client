@@ -34,9 +34,12 @@ HEADERS +=  setupscriptapi.h                    \
             qdomnotationproto.h                 \
             qdomprocessinginstructionproto.h    \
             qdomtextproto.h                     \
+            qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
             qnetworkrequestproto.h              \
             qsqldatabaseproto.h                 \
+            qstackedwidgetproto.h               \
+            qtabwidgetproto.h                   \
             qurlproto.h                         \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
@@ -88,9 +91,12 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdomnotationproto.cpp               \
             qdomprocessinginstructionproto.cpp  \
             qdomtextproto.cpp                   \
+            qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \
             qnetworkrequestproto.cpp            \
             qsqldatabaseproto.cpp               \
+            qstackedwidgetproto.cpp             \
+            qtabwidgetproto.cpp                 \
             qurlproto.cpp                       \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \
