@@ -95,7 +95,7 @@ void AddressCluster::init()
     _grid->setColumnStretch(5, 2);
 
 #if defined Q_WS_MAC
-    setMinimumSize(_grid->columnCount() * 60, _grid->rowCount() * 15);
+    setMinimumSize(543, 132);
 #endif
 
     connect(_list,      SIGNAL(clicked()), this, SLOT(sEllipses()));
