@@ -161,6 +161,11 @@ class Action : public QAction
     QString _name;
     QString _displayName;
     QString _toolTip;
+
+  private:
+    void init( QWidget *, const char *, const QString &,
+               QObject *, const char *,
+               QWidget *, const QString & );
 };
 
 class ActionSet : public QList<Action *>

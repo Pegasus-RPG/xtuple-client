@@ -27,7 +27,7 @@ class menuManufacture : public QObject
     const QString	actionTitle;
     const char*		slot;
     QMenu*		menu;
-    bool		priv;
+    QString		priv;
     QPixmap*		pixmap;
     QToolBar*		toolBar;
     bool		visible;

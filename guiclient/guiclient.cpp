@@ -165,26 +165,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 QWidget *pAddTo, bool pEnabled ) :
  QAction(pDisplayName, pParent)
 {
-  setObjectName(pName);
-  _name = pName;
-  _displayName = pDisplayName;
-
-  QString hotkey;
-  hotkey = _preferences->parent(pName);
-  if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
-  {
-    _hotkeyList << hotkey;
-    setShortcutContext(Qt::ApplicationShortcut);
-    if (hotkey.left(1) == "C")
-      setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
-
-    else if (hotkey.left(1) == "F")
-      setShortcut(hotkey);
-  }
-
-  connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
-  setEnabled(pEnabled);
-  pAddTo->addAction(this);
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
@@ -193,7 +174,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QPixmap &pIcon, QWidget *pToolBar ) :
  QAction(pDisplayName, pParent)
 {
-  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
   setIconSet(QIcon(pIcon));
   addTo(pToolBar);
@@ -206,7 +187,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QString &pToolTip ) :
  QAction(pDisplayName, pParent)
 {
-  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
   _toolTip = pToolTip;
 
@@ -219,6 +200,41 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, const QString & pEnabled ) :
  QAction(pDisplayName, pParent)
+{
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+}
+
+Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled,
+                const QPixmap &pIcon, QWidget *pToolBar ) :
+ QAction(pDisplayName, pParent)
+{
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+
+  setIconSet(QIcon(pIcon));
+  addTo(pToolBar);
+}
+
+Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled,
+                const QPixmap &pIcon, QWidget *pToolBar,
+                const QString &pToolTip ) :
+ QAction(pDisplayName, pParent)
+{
+  init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
+
+  _toolTip = pToolTip;
+
+  setIconSet(QIcon(pIcon));
+  addTo(pToolBar);
+  setToolTip(_toolTip);
+}
+
+void Action::init( QWidget *pParent, const char *pName, const QString &pDisplayName,
+                QObject *pTarget, const char *pActivateSlot,
+                QWidget *pAddTo, const QString & pEnabled )
 {
   setObjectName(pName);
   _name = pName;
@@ -244,34 +260,6 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   if(!pEnabled.isEmpty())
     setData(pEnabled);
   __menuEvaluate(this);
-}
-
-Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
-                QObject *pTarget, const char *pActivateSlot,
-                QWidget *pAddTo, const QString & pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar ) :
- QAction(pDisplayName, pParent)
-{
-  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
-
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
-}
-
-Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
-                QObject *pTarget, const char *pActivateSlot,
-                QWidget *pAddTo, const QString & pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar,
-                const QString &pToolTip ) :
- QAction(pDisplayName, pParent)
-{
-  Action(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
-
-  _toolTip = pToolTip;
-
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
-  setToolTip(_toolTip);
 }
 
 class xTupleCustInfoAction : public CustInfoAction
