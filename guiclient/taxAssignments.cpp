@@ -104,7 +104,8 @@ void taxAssignments::sView()
 
 void taxAssignments::sDelete()
 {
-  q.prepare("DELETE FROM taxass WHERE ((taxass_taxzone_id=:taxzone_id) AND (taxass_taxtype_id=:taxtype_id));");
+  q.prepare("DELETE FROM taxass WHERE ((COALESCE(taxass_taxzone_id, -1) = :taxzone_id) "
+            "AND (COALESCE(taxass_taxtype_id, -1) = :taxtype_id));");
   q.bindValue(":taxzone_id", _taxass->id());
   q.bindValue(":taxtype_id", _taxass->altId());
   q.exec();
@@ -131,9 +132,9 @@ void taxAssignments::sFillList()
   QString sql("SELECT taxassign_taxzone_id, taxassign_taxtype_id, taxassign_level AS xtindentrole, "
               "COALESCE(taxassign_zone_code, '~Any~') AS taxassign_zone_code, "
 		      "COALESCE(taxassign_type_descrip, '~Any~') AS taxassign_type_descrip, "
-			  "taxassign_taxclass_code, taxassign_taxclass_sequence "
-		      "FROM taxassignments(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>);");
-
+			  "taxassign_taxclass_code, taxassign_taxclass_sequence, COALESCE(taxassign_taxclass_sequence, -1) AS dummy_seq "
+		      "FROM taxassignments(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>) "
+			  "ORDER BY taxassign_taxzone_id, taxassign_taxtype_id, dummy_seq, xtindentrole;");
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _taxass->populate(q, true);
