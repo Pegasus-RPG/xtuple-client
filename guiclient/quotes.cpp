@@ -46,7 +46,7 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
   _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
-  _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft,  true, "quhead_custponumber");
+  _quote->addColumn(tr("P/O Number"), -1,           Qt::AlignLeft,  true, "quhead_custponumber");
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter,true, "quhead_quotedate");
   _quote->addColumn(tr("Expires"),    _dateColumn,  Qt::AlignCenter,true, "quhead_expire");
   _quote->setSelectionMode(QAbstractItemView::ExtendedSelection);

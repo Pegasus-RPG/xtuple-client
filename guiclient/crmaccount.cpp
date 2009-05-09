@@ -44,11 +44,15 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->findChild<QWidget*>("_startdateGroup")->hide();
   _todoList->findChild<QWidget*>("_duedateGroup")->hide();
   _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
+  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
   
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _allPage->layout()->addWidget(_contacts);
   _contacts->findChild<QWidget*>("_close")->hide();
   _contacts->findChild<QWidget*>("_activeOnly")->hide();
+  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_number");
+  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_name");
   
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
@@ -56,6 +60,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->findChild<QWidget*>("_usr")->hide();
   _oplist->findChild<QWidget*>("_dates")->hide();
   _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 

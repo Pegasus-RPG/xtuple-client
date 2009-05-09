@@ -56,7 +56,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   _ra->addColumn(tr("Customer"),         -1,           Qt::AlignLeft,   true,  "rahead_billtoname"   );
   _ra->addColumn(tr("Disposition"),      _itemColumn,  Qt::AlignLeft,   true,  "disposition"   );
   _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter, true,  "rahead_authdate" );
-  _ra->addColumn(tr("Expires"),          _dateColumn,  Qt::AlignCenter, true,  "rahead_expiredate" );
+  _ra->addColumn(tr("Expires"),          -1,           Qt::AlignCenter, true,  "rahead_expiredate" );
   
   if (_privileges->check("MaintainReturns"))
   {

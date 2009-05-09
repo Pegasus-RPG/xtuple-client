@@ -19,16 +19,19 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Open Receivables</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7" >
+  <layout class="QGridLayout" name="gridLayout_8" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_5" >
+    <layout class="QGridLayout" name="gridLayout_7" >
      <property name="margin" >
       <number>12</number>
      </property>
+     <property name="spacing" >
+      <number>12</number>
+     </property>
      <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout_3" >
        <item>
-        <layout class="QGridLayout" name="gridLayout_4" >
+        <layout class="QGridLayout" name="gridLayout_6" >
          <item row="0" column="0" colspan="2" >
           <widget class="CustomerSelector" name="_customerSelector" />
          </item>
@@ -39,6 +42,43 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" name="gridLayout" >
             <item row="0" column="0" >
+             <layout class="QHBoxLayout" name="horizontalLayout" >
+              <property name="spacing" >
+               <number>12</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="_docDate" >
+                <property name="text" >
+                 <string>Document</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_dueDate" >
+                <property name="text" >
+                 <string>Due</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0" >
              <widget class="DateCluster" name="_dates" >
               <property name="focusPolicy" >
                <enum>Qt::StrongFocus</enum>
@@ -49,25 +89,62 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="QGroupBox" name="_basisGroup" >
+          <widget class="QGroupBox" name="_showGroup" >
            <property name="title" >
-            <string>Date Range Basis</string>
+            <string>Show</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout" >
-            <item>
-             <widget class="QRadioButton" name="_docDate" >
+           <layout class="QGridLayout" name="gridLayout_4" >
+            <item row="0" column="0" >
+             <widget class="QRadioButton" name="_debits" >
               <property name="text" >
-               <string>Doc Date</string>
+               <string>Debits</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="XCheckBox" name="_incidentsOnly" >
+              <property name="text" >
+               <string>Only Items with Incidents</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QRadioButton" name="_credits" >
+              <property name="text" >
+               <string>Credits</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="XCheckBox" name="_unposted" >
+              <property name="text" >
+               <string>Unposted</string>
+              </property>
+              <property name="forgetful" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QRadioButton" name="_both" >
+              <property name="text" >
+               <string>Both</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="_dueDate" >
+            <item row="2" column="1" >
+             <widget class="XCheckBox" name="_closed" >
               <property name="text" >
-               <string>Due Date</string>
+               <string>Closed</string>
+              </property>
+              <property name="checked" >
+               <bool>false</bool>
+              </property>
+              <property name="forgetful" >
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -102,86 +179,6 @@ to be bound by its terms.</comment>
                </size>
               </property>
              </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2" >
-          <widget class="QGroupBox" name="_showGroup" >
-           <property name="title" >
-            <string>Show</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6" >
-            <item row="0" column="0" >
-             <layout class="QHBoxLayout" name="horizontalLayout_3" >
-              <property name="spacing" >
-               <number>12</number>
-              </property>
-              <item>
-               <widget class="QRadioButton" name="_debits" >
-                <property name="text" >
-                 <string>Debits</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_credits" >
-                <property name="text" >
-                 <string>Credits</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_both" >
-                <property name="text" >
-                 <string>Both</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_unposted" >
-                <property name="text" >
-                 <string>Unposted</string>
-                </property>
-                <property name="forgetful" >
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_incidentsOnly" >
-                <property name="text" >
-                 <string>Only Items with Incidents</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_closed" >
-                <property name="text" >
-                 <string>Closed</string>
-                </property>
-                <property name="forgetful" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
             </item>
            </layout>
           </widget>
@@ -310,8 +307,11 @@ to be bound by its terms.</comment>
               </property>
               <item>
                <widget class="QPushButton" name="_printItem" >
-                <property name="enabled" >
-                 <bool>false</bool>
+                <property name="minimumSize" >
+                 <size>
+                  <width>90</width>
+                  <height>0</height>
+                 </size>
                 </property>
                 <property name="text" >
                  <string>&amp;Print</string>
@@ -330,9 +330,6 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <widget class="QPushButton" name="_edit" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
                 <property name="text" >
                  <string>&amp;Edit</string>
                 </property>
@@ -340,9 +337,6 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <widget class="QPushButton" name="_view" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
                 <property name="text" >
                  <string>&amp;View</string>
                 </property>
@@ -366,9 +360,6 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <widget class="QPushButton" name="_post" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
                 <property name="text" >
                  <string>Post</string>
                 </property>
@@ -378,6 +369,13 @@ to be bound by its terms.</comment>
                <widget class="QPushButton" name="_apply" >
                 <property name="text" >
                  <string>&amp;Apply</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_refund" >
+                <property name="text" >
+                 <string>Refund</string>
                 </property>
                </widget>
               </item>

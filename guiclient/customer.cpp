@@ -45,12 +45,16 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
   _todoList->findChild<XCheckBox*>("_autoUpdate")->hide();
   _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
+  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
   
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _contactsPage->layout()->addWidget(_contacts);
   _contacts->findChild<QWidget*>("_close")->hide();
   _contacts->findChild<QWidget*>("_activeOnly")->hide();
   _contacts->findChild<QWidget*>("_contactsLit")->hide();
+  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_number");
+  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_name");
   
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _opportunitiesPage->layout()->addWidget(_oplist);
@@ -58,6 +62,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->findChild<QWidget*>("_usr")->hide();
   _oplist->findChild<QWidget*>("_dates")->hide();
   _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
   
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
@@ -68,6 +73,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
   _quotes->findChild<XCheckBox*>("_showProspects")->hide();
+  _quotes->findChild<XTreeWidget*>("_quote")->hideColumn("quhead_billtoname");
   
   _orders = new openSalesOrders(this, "_orders", Qt::Widget);
   _ordersPage->layout()->addWidget(_orders);
@@ -79,6 +85,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->findChild<QWidget*>("_salesOrdersLit")->hide();
   _orders->findChild<WarehouseGroup*>("_warehouse")->setAll();
   _orders->findChild<QWidget*>("_showGroup")->show();
+  _orders->findChild<XTreeWidget*>("_so")->hideColumn("cust_number");
+  _orders->findChild<XTreeWidget*>("_so")->hideColumn("cohead_billtoname");
   
   _returns = new openReturnAuthorizations(this, "_returns", Qt::Widget);
   _returnsPage->layout()->addWidget(_returns);
@@ -87,22 +95,25 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _returns->findChild<QWidget*>("_returnAuthorizationsLit")->hide();
   _returns->findChild<WarehouseGroup*>("_warehouse")->setAll();
   _returns->findChild<XCheckBox*>("_showClosed")->show();
+  _returns->findChild<XTreeWidget*>("_ra")->hideColumn("custnumber");
+  _returns->findChild<XTreeWidget*>("_ra")->hideColumn("rahead_billtoname");
   
   _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
   _aritemsPage->layout()->addWidget(_aritems);
   _aritems->findChild<QWidget*>("_close")->hide();
   _aritems->findChild<QWidget*>("_customerSelector")->hide();
-  _aritems->findChild<QWidget*>("_dateGroup")->hide();
-  _aritems->findChild<QWidget*>("_basisGroup")->hide();
   _aritems->findChild<QWidget*>("_asofGroup")->hide();
-  _aritems->findChild<QWidget*>("_incidentsOnly")->hide();
   _aritems->findChild<XCheckBox*>("_closed")->show();
+  _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_number");
+  _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_name");
   
   _cashreceipts = new dspCashReceipts(this, "_cashreceipts", Qt::Widget);
   _cashreceiptsPage->layout()->addWidget(_cashreceipts);
   _cashreceipts->findChild<QWidget*>("_close")->hide();
   _cashreceipts->findChild<QWidget*>("_customerSelector")->hide();
   _cashreceipts->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
+  _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_number");
+  _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_name");
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -450,7 +461,7 @@ void customer::setValid(bool valid)
     _tab->setTabEnabled(_tab->indexOf(_documentsTab),valid);
     _tab->setTabEnabled(_tab->indexOf(_crmTab),valid);
     _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
-    _tab->setTabEnabled(_tab->indexOf(_receivablesTab),valid);
+    _tab->setTabEnabled(_tab->indexOf(_accountingTab),valid);
     
   if (!valid)
   {
@@ -1681,7 +1692,7 @@ void customer::currentTabChanged(int index)
 {
   if ( (index == _tab->indexOf(_crmTab) ||
         index == _tab->indexOf(_salesTab) ||
-        index == _tab->indexOf(_receivablesTab)) &&
+        index == _tab->indexOf(_accountingTab)) &&
         (_mode == cNew) )
     sSave(true);
 }

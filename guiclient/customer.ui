@@ -1088,6 +1088,16 @@ to be bound by its terms.</comment>
                           <string/>
                          </property>
                         </item>
+                        <item>
+                         <property name="text" >
+                          <string/>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text" >
+                          <string/>
+                         </property>
+                        </item>
                        </widget>
                       </item>
                       <item>
@@ -1857,6 +1867,497 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_crmTab" >
+        <attribute name="title" >
+         <string>CRM</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_8" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_contactsButton" >
+             <property name="text" >
+              <string>Contacts</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_todoListButton" >
+             <property name="text" >
+              <string>To-Do List</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_opportunitiesButton" >
+             <property name="text" >
+              <string>Opportunties</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_crmStack" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_contactsPage" >
+            <layout class="QGridLayout" name="gridLayout_10" />
+           </widget>
+           <widget class="QWidget" name="_todoListPage" >
+            <layout class="QGridLayout" name="gridLayout_9" />
+           </widget>
+           <widget class="QWidget" name="_opportunitiesPage" >
+            <layout class="QGridLayout" name="gridLayout_11" />
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_salesTab" >
+        <attribute name="title" >
+         <string>Sales</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_17" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout_2" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_summaryButton" >
+             <property name="text" >
+              <string>Summary</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_quotesButton" >
+             <property name="text" >
+              <string>Quotes</string>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_ordersButton" >
+             <property name="text" >
+              <string>Orders</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_returnsButton" >
+             <property name="text" >
+              <string>Returns</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_salesStack" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_summaryPage" >
+            <layout class="QGridLayout" name="gridLayout_23" >
+             <item row="0" column="0" >
+              <widget class="QGroupBox" name="groupBox_2" >
+               <property name="title" >
+                <string/>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_24" >
+                <item row="0" column="0" >
+                 <layout class="QHBoxLayout" name="horizontalLayout_4" >
+                  <item>
+                   <layout class="QVBoxLayout" name="verticalLayout_2" >
+                    <item>
+                     <layout class="QGridLayout" name="gridLayout_22" >
+                      <item row="0" column="0" >
+                       <widget class="QLabel" name="_firstSaleDateLit" >
+                        <property name="text" >
+                         <string>First Sales Date:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1" >
+                       <widget class="DLineEdit" name="_firstSaleDate" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy" >
+                         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" >
+                       <widget class="QLabel" name="_lastSaleDateLit" >
+                        <property name="text" >
+                         <string>Last Sales Date:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" >
+                       <widget class="DLineEdit" name="_lastSaleDate" >
+                        <property name="enabled" >
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy" >
+                         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0" >
+                       <widget class="QLabel" name="_backlogLit" >
+                        <property name="text" >
+                         <string>Backlog:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" >
+                       <widget class="XLabel" name="_backlog" >
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0" >
+                       <widget class="QLabel" name="_lastYearSalesLit" >
+                        <property name="text" >
+                         <string>Last Year Sales:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" >
+                       <widget class="XLabel" name="_lastYearSales" >
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0" >
+                       <widget class="QLabel" name="_ytdSalesLit" >
+                        <property name="text" >
+                         <string>Year To Date Sales:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="1" >
+                       <widget class="XLabel" name="_ytdSales" >
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="0" >
+                       <widget class="QLabel" name="_openBalanceLit" >
+                        <property name="text" >
+                         <string>Open Balance:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1" >
+                       <widget class="XLabel" name="_openBalance" >
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="0" >
+                       <widget class="QLabel" name="_lateBalanceLit" >
+                        <property name="text" >
+                         <string>Late Balance:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="1" >
+                       <widget class="XLabel" name="_lateBalance" >
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer" >
+                      <property name="orientation" >
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0" >
+                       <size>
+                        <width>20</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_4" >
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_quotesPage" >
+            <layout class="QGridLayout" name="gridLayout_13" />
+           </widget>
+           <widget class="QWidget" name="_ordersPage" >
+            <layout class="QGridLayout" name="gridLayout_14" />
+           </widget>
+           <widget class="QWidget" name="_returnsPage" >
+            <layout class="QGridLayout" name="gridLayout_12" />
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_accountingTab" >
+        <attribute name="title" >
+         <string>Accounting</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_21" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout_5" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_aritemsButton" >
+             <property name="text" >
+              <string>Receivables</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_cashreceiptsButton" >
+             <property name="text" >
+              <string>Cash Receipts</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_receivablesStack" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_aritemsPage" >
+            <layout class="QGridLayout" name="gridLayout_18" />
+           </widget>
+           <widget class="QWidget" name="_cashreceiptsPage" >
+            <layout class="QGridLayout" name="gridLayout_19" />
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_tabRemarks" >
+        <attribute name="title" >
+         <string>Remarks</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" name="horizontalLayout_3" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_notesButton" >
+             <property name="text" >
+              <string>Notes</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_commentsButton" >
+             <property name="text" >
+              <string>Comments</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_remarksStack" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_notesPage" >
+            <layout class="QGridLayout" name="gridLayout_15" >
+             <item row="0" column="0" >
+              <widget class="QTextEdit" name="_notes" >
+               <property name="readOnly" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_commentsPage" >
+            <layout class="QGridLayout" name="gridLayout_16" >
+             <item row="0" column="0" >
+              <widget class="Comments" name="_comments" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="type" >
+                <enum>Comments::Customer</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_documentsTab" >
+        <attribute name="title" >
+         <string>Documents</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_26" >
+         <item row="0" column="0" >
+          <widget class="Documents" name="_documents" >
+           <property name="type" >
+            <enum>Documents::CRMAccount</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_transmitTab" >
         <attribute name="title" >
          <string>Transmission</string>
@@ -2365,497 +2866,6 @@ to be bound by its terms.</comment>
               </widget>
              </item>
             </layout>
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_tabRemarks" >
-        <attribute name="title" >
-         <string>Remarks</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_notesButton" >
-             <property name="text" >
-              <string>Notes</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_commentsButton" >
-             <property name="text" >
-              <string>Comments</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_remarksStack" >
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="_notesPage" >
-            <layout class="QGridLayout" name="gridLayout_15" >
-             <item row="0" column="0" >
-              <widget class="QTextEdit" name="_notes" >
-               <property name="readOnly" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="_commentsPage" >
-            <layout class="QGridLayout" name="gridLayout_16" >
-             <item row="0" column="0" >
-              <widget class="Comments" name="_comments" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="type" >
-                <enum>Comments::Customer</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_documentsTab" >
-        <attribute name="title" >
-         <string>Documents</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_26" >
-         <item row="0" column="0" >
-          <widget class="Documents" name="_documents" >
-           <property name="type" >
-            <enum>Documents::CRMAccount</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_crmTab" >
-        <attribute name="title" >
-         <string>CRM</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_8" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_contactsButton" >
-             <property name="text" >
-              <string>Contacts</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_todoListButton" >
-             <property name="text" >
-              <string>To-Do List</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_opportunitiesButton" >
-             <property name="text" >
-              <string>Opportunties</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_crmStack" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="_contactsPage" >
-            <layout class="QGridLayout" name="gridLayout_10" />
-           </widget>
-           <widget class="QWidget" name="_todoListPage" >
-            <layout class="QGridLayout" name="gridLayout_9" />
-           </widget>
-           <widget class="QWidget" name="_opportunitiesPage" >
-            <layout class="QGridLayout" name="gridLayout_11" />
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_salesTab" >
-        <attribute name="title" >
-         <string>Sales</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_17" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_2" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_summaryButton" >
-             <property name="text" >
-              <string>Summary</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_quotesButton" >
-             <property name="text" >
-              <string>Quotes</string>
-             </property>
-             <property name="checked" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_ordersButton" >
-             <property name="text" >
-              <string>Orders</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_returnsButton" >
-             <property name="text" >
-              <string>Returns</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_salesStack" >
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="_summaryPage" >
-            <layout class="QGridLayout" name="gridLayout_23" >
-             <item row="0" column="0" >
-              <widget class="QGroupBox" name="groupBox_2" >
-               <property name="title" >
-                <string/>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_24" >
-                <item row="0" column="0" >
-                 <layout class="QHBoxLayout" name="horizontalLayout_4" >
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_2" >
-                    <item>
-                     <layout class="QGridLayout" name="gridLayout_22" >
-                      <item row="0" column="0" >
-                       <widget class="QLabel" name="_firstSaleDateLit" >
-                        <property name="text" >
-                         <string>First Sales Date:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1" >
-                       <widget class="DLineEdit" name="_firstSaleDate" >
-                        <property name="enabled" >
-                         <bool>false</bool>
-                        </property>
-                        <property name="sizePolicy" >
-                         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0" >
-                       <widget class="QLabel" name="_lastSaleDateLit" >
-                        <property name="text" >
-                         <string>Last Sales Date:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1" >
-                       <widget class="DLineEdit" name="_lastSaleDate" >
-                        <property name="enabled" >
-                         <bool>false</bool>
-                        </property>
-                        <property name="sizePolicy" >
-                         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0" >
-                       <widget class="QLabel" name="_backlogLit" >
-                        <property name="text" >
-                         <string>Backlog:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1" >
-                       <widget class="XLabel" name="_backlog" >
-                        <property name="text" >
-                         <string/>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="0" >
-                       <widget class="QLabel" name="_lastYearSalesLit" >
-                        <property name="text" >
-                         <string>Last Year Sales:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="1" >
-                       <widget class="XLabel" name="_lastYearSales" >
-                        <property name="text" >
-                         <string/>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0" >
-                       <widget class="QLabel" name="_ytdSalesLit" >
-                        <property name="text" >
-                         <string>Year To Date Sales:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1" >
-                       <widget class="XLabel" name="_ytdSales" >
-                        <property name="text" >
-                         <string/>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="0" >
-                       <widget class="QLabel" name="_openBalanceLit" >
-                        <property name="text" >
-                         <string>Open Balance:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="1" >
-                       <widget class="XLabel" name="_openBalance" >
-                        <property name="text" >
-                         <string/>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="0" >
-                       <widget class="QLabel" name="_lateBalanceLit" >
-                        <property name="text" >
-                         <string>Late Balance:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="1" >
-                       <widget class="XLabel" name="_lateBalance" >
-                        <property name="text" >
-                         <string/>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <spacer name="verticalSpacer" >
-                      <property name="orientation" >
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0" >
-                       <size>
-                        <width>20</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_4" >
-                    <property name="orientation" >
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0" >
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="_quotesPage" >
-            <layout class="QGridLayout" name="gridLayout_13" />
-           </widget>
-           <widget class="QWidget" name="_ordersPage" >
-            <layout class="QGridLayout" name="gridLayout_14" />
-           </widget>
-           <widget class="QWidget" name="_returnsPage" >
-            <layout class="QGridLayout" name="gridLayout_12" />
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_receivablesTab" >
-        <attribute name="title" >
-         <string>Receivables</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_21" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_5" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_aritemsButton" >
-             <property name="text" >
-              <string>Items</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_cashreceiptsButton" >
-             <property name="text" >
-              <string>Receipts</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_receivablesStack" >
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="_aritemsPage" >
-            <layout class="QGridLayout" name="gridLayout_18" />
-           </widget>
-           <widget class="QWidget" name="_cashreceiptsPage" >
-            <layout class="QGridLayout" name="gridLayout_19" />
            </widget>
           </widget>
          </item>
