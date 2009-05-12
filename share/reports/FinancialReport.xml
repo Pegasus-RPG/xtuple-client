@@ -136,13 +136,13 @@ SELECT period_id, period_start, formatperiodname(period_id,&lt;? value("interval
    AND  (flrpt_username=CURRENT_USER)
    AND  (flrpt_interval=&lt;? value("interval") ?>)
 &lt;? if not exists("showzeros") ?>
-   AND ((flrpt_beginning &lt;> formatMoney(0)) 
-    OR (flrpt_debits &lt;> formatMoney(0))
-    OR (flrpt_credits &lt;> formatMoney(0))
-    OR (flrpt_ending &lt;> formatMoney(0))
-    OR (flrpt_budget &lt;> formatMoney(0))
-    OR (flrpt_diff &lt;> formatMoney(0))
-    OR (flrpt_custom &lt;> formatMoney(0)))
+   AND ((flrpt_beginning &lt;> 0) 
+    OR (flrpt_debits &lt;> 0)
+    OR (flrpt_credits &lt;> 0)
+    OR (flrpt_ending &lt;> 0)
+    OR (flrpt_budget &lt;> 0)
+    OR (flrpt_diff &lt;> 0)
+    OR (flrpt_custom &lt;> 0))
 &lt;? endif ?>
    AND  (period_id IN (
 &lt;? foreach("period_id_list") ?>
