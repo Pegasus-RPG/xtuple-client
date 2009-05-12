@@ -741,7 +741,8 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
 
   if(returnVal)
   {
-    omfgThis->handleNewWindow(returnVal);
+    if(!returnVal->inherits("QDialog"))
+      omfgThis->handleNewWindow(returnVal);
     _lastWindow = returnVal;
     return returnVal;
   }
