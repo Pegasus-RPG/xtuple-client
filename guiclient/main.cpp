@@ -310,15 +310,28 @@ int main(int argc, char *argv[])
     if (!langq.value("locale_lang_file").toString().isEmpty())
       files << langq.value("locale_lang_file").toString();
 
+    QString langext;
     if (!langq.value("lang_abbr2").toString().isEmpty() && 
         !langq.value("country_abbr").toString().isEmpty())
     {
-      files << "xTuple." + langq.value("lang_abbr2").toString() + "_" +
-               langq.value("country_abbr").toString().toLower();
+      langext = langq.value("lang_abbr2").toString() + "_" +
+                langq.value("country_abbr").toString().toLower();
     }
     else if (!langq.value("lang_abbr2").toString().isEmpty())
     {
-      files << "xTuple." + langq.value("lang_abbr2").toString();
+      langext = langq.value("lang_abbr2").toString();
+    }
+
+    if(!langext.isEmpty())
+    {
+      files << "xTuple." + langext;
+      files << "openrpt." + langext;
+
+      XSqlQuery pkglist("SELECT pkghead_name FROM pkghead WHERE packageIsEnabled(pkghead_name);");
+      while(pkglist.next())
+      {
+        files << pkglist.value("pkghead_name").toString() + "." + langext;
+      }
     }
 
     if (files.size() > 0)
