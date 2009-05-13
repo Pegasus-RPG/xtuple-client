@@ -10,11 +10,11 @@ function query()
                                 +"    OR (cntct_phone2 = <? value(\"search\") ?>))", params);
   if(!qry.first())
   {
-    mywindow.findChild("_firstname").text = "n/a";
-    mywindow.findChild("_lastname").text = "n/a";
-    mywindow.findChild("_number").text = "n/a";
+    mywindow.findChild("_firstname").text = qsTr("n/a");
+    mywindow.findChild("_lastname").text = qsTr("n/a");
+    mywindow.findChild("_number").text = qsTr("n/a");
 
-    toolbox.messageBox("warning", mywindow, "No Results", "No results were found matching your criteria.");
+    toolbox.messageBox("warning", mywindow, qsTr("No Results"), qsTr("No results were found matching your criteria."));
     return;
   }
 

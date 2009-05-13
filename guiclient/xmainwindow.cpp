@@ -193,7 +193,7 @@ void XMainWindow::showEvent(QShowEvent *event)
           _private->_engine->globalObject().setProperty("mywindow", mywindow);
         }
   
-        QScriptValue result = _private->_engine->evaluate(script);
+        QScriptValue result = _private->_engine->evaluate(script, objectName());
         if (_private->_engine->hasUncaughtException())
         {
           int line = _private->_engine->uncaughtExceptionLineNumber();

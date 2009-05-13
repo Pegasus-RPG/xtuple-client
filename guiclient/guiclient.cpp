@@ -699,7 +699,7 @@ void GUIClient::showEvent(QShowEvent *event)
           loadScriptGlobals(engine);
         }
   
-        QScriptValue result = engine->evaluate(script);
+        QScriptValue result = engine->evaluate(script, "initMenu");
         if (engine->hasUncaughtException())
         {
           int line = engine->uncaughtExceptionLineNumber();
@@ -1459,6 +1459,8 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 {
   if(!engine)
     return;
+
+  engine->installTranslatorFunctions();
 
   qScriptRegisterMetaType(engine, ParameterListtoScriptValue, ParameterListfromScriptValue);
   qScriptRegisterMetaType(engine, XSqlQuerytoScriptValue, XSqlQueryfromScriptValue);
