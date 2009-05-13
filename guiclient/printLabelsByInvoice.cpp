@@ -10,58 +10,40 @@
 
 #include "printLabelsByInvoice.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
 #include "guiclient.h"
 
-/*
- *  Constructs a printLabelsByInvoice as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printLabelsByInvoice::printLabelsByInvoice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sParseInvoiceNumber()));
-    connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sParseInvoiceNumber()));
+  connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateLabel()));
+  connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printLabelsByInvoice::~printLabelsByInvoice()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printLabelsByInvoice::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void printLabelsByInvoice::init()
-{
   _invcheadid = -1;
 
   _report->populate( "SELECT labelform_id, labelform_name "
                      "FROM labelform "
                      "ORDER BY labelform_name;" );
+}
+
+printLabelsByInvoice::~printLabelsByInvoice()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void printLabelsByInvoice::languageChange()
+{
+  retranslateUi(this);
 }
 
 void printLabelsByInvoice::sPrint()
@@ -126,3 +108,19 @@ void printLabelsByInvoice::sSetToMin(int pValue)
 {
   _to->setMinValue(pValue);
 }
+
+void printLabelsByInvoice::sPopulateLabel()
+{
+  XSqlQuery label;
+  label.prepare("SELECT cohead_labelform_id "
+                "FROM cohead,invchead "
+                "WHERE (invchead_invcnumber=:invoiceNumber) "
+                "AND (invchead_ordernumber=cohead_number);");
+  label.bindValue(":invoiceNumber", _invoiceNumber->text());
+  label.exec();
+  if(label.first())
+  {
+    _report->setId(label.value("cohead_labelform_id").toInt());
+  }
+}
+

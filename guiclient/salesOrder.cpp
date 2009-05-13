@@ -65,6 +65,10 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   sCheckValidContacts();
+
+  _shippingLabel->populate( "SELECT labelform_id, labelform_name "                                                        
+                            "FROM labelform "                                                                                    
+                            "ORDER BY labelform_name;" );
   
   connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
   connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
@@ -334,6 +338,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _shipVia->setEnabled(FALSE);
       _shippingCharges->setEnabled(FALSE);
       _shippingForm->setEnabled(FALSE);
+      _shippingLabel->setEnabled(FALSE);
       _miscCharge->setEnabled(FALSE);
       _miscChargeDescription->setEnabled(FALSE);
       _miscChargeAccount->setReadOnly(TRUE);
@@ -452,6 +457,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _shippingChargesLit->hide();
     _shippingForm->hide();
     _shippingFormLit->hide();
+    _shippingLabel->hide();
+    _shippingLabelLit->hide();
     _printSO->hide();
 
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
@@ -751,6 +758,7 @@ bool salesOrder::save(bool partial)
                "    cohead_prj_id=:prj_id,"
                "    cohead_curr_id = :curr_id,"
                "    cohead_shipcomplete=:cohead_shipcomplete,"
+               "    cohead_labelform_id=:labelform_id,"
                "    cohead_shipto_cntct_id=:shipto_cntct_id,"
                "    cohead_shipto_cntct_honorific=:shipto_cntct_honorific,"
                "    cohead_shipto_cntct_first_name=:shipto_cntct_first_name,"
@@ -796,6 +804,7 @@ bool salesOrder::save(bool partial)
                "    cohead_prj_id,"
                "    cohead_curr_id,"
                "    cohead_shipcomplete,"
+               "    cohead_labelform_id,"
                "    cohead_shipto_cntct_id,"
                "    cohead_shipto_cntct_honorific,"
                "    cohead_shipto_cntct_first_name,"
@@ -838,6 +847,7 @@ bool salesOrder::save(bool partial)
                "    :prj_id,"
                "    :curr_id,"
                "    :shipcomplete,"
+               "    :labelform_id,"
                "    :shipto_cntct_id,"
                "    :shipto_cntct_honorific,"
                "    :shipto_cntct_first_name,"
@@ -1046,6 +1056,8 @@ bool salesOrder::save(bool partial)
     q.bindValue(":terms_id", _terms->id());
   q.bindValue(":shipchrg_id", _shippingCharges->id());
   q.bindValue(":shipform_id", _shippingForm->id());
+  if(_shippingLabel->id() != -1)
+    q.bindValue(":labelform_id", _shippingLabel->id());
   q.bindValue(":freight", _freight->localValue());
   q.bindValue(":calcfreight", _calcfreight);
   q.bindValue(":commission", (_commission->toDouble() / 100.0));
@@ -1611,7 +1623,7 @@ void salesOrder::populateShipto(int pShiptoid)
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxauth_id, -1) AS shipto_taxauth_id,"
-                    "       shipto_salesrep_id, shipto_commission AS commission "
+                    "       shipto_salesrep_id, shipto_commission AS commission, shipto_labelform_id "
                     "FROM shiptoinfo LEFT OUTER JOIN "
                     "     cntct ON (shipto_cntct_id = cntct_id) "
                     "WHERE (shipto_id=:shipto_id);" );
@@ -1627,6 +1639,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shipToCntct->setId(shipto.value("shipto_cntct_id").toInt());
       _shippingCharges->setId(shipto.value("shipto_shipchrg_id").toInt());
       _shippingForm->setId(shipto.value("shipto_shipform_id").toInt());
+      _shippingLabel->setId(shipto.value("shipto_labelform_id").toInt());
       _salesRep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble() * 100);
       _shipVia->setText(shipto.value("shipto_shipvia"));
@@ -2206,6 +2219,7 @@ void salesOrder::populate()
       _shippingComments->setText(so.value("cohead_shipcomments").toString());
       _shippingCharges->setId(so.value("cohead_shipchrg_id").toInt());
       _shippingForm->setId(so.value("cohead_shipform_id").toInt());
+      _shippingLabel->setId(so.value("cohead_labelform_id").toInt());
       
       _calcfreight = so.value("cohead_calcfreight").toBool();
 // Auto calculated _freight is populated in sFillItemList
@@ -3161,6 +3175,7 @@ void salesOrder::setViewMode()
   _shipVia->setEnabled(FALSE);
   _shippingCharges->setEnabled(FALSE);
   _shippingForm->setEnabled(FALSE);
+  _shippingLabel->setEnabled(FALSE);
   _miscCharge->setEnabled(FALSE);
   _miscChargeDescription->setEnabled(FALSE);
   _miscChargeAccount->setReadOnly(TRUE);
@@ -4145,8 +4160,8 @@ void salesOrder::sHandleMore()
   _shipDate->setVisible(_more->isChecked());
   _packDateLit->setVisible(_more->isChecked());
   _packDate->setVisible(_more->isChecked());
-  
- if (ISORDER(_mode))
+
+  if (ISORDER(_mode))
   {
     _fromQuote->setVisible(_more->isChecked());
     _fromQuoteLit->setVisible(_more->isChecked());
@@ -4154,6 +4169,8 @@ void salesOrder::sHandleMore()
     _shippingChargesLit->setVisible(_more->isChecked());
     _shippingForm->setVisible(_more->isChecked());
     _shippingFormLit->setVisible(_more->isChecked());
+    _shippingLabel->setVisible(_more->isChecked());
+    _shippingLabelLit->setVisible(_more->isChecked());
   }
   else
   {

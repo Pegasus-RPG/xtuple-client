@@ -10,58 +10,40 @@
 
 #include "printLabelsBySo.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
 #include "guiclient.h"
 
-/*
- *  Constructs a printLabelsBySo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printLabelsBySo::printLabelsBySo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_so, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_so, SIGNAL(valid(bool)), this, SLOT(sPopulateLabel()));
+  connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printLabelsBySo::~printLabelsBySo()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printLabelsBySo::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void printLabelsBySo::init()
-{
   _so->setType(cSoOpen | cSoClosed);
 
   _report->populate( "SELECT labelform_id, labelform_name "
                      "FROM labelform "
                      "ORDER BY labelform_name;" );
+}
+
+printLabelsBySo::~printLabelsBySo()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void printLabelsBySo::languageChange()
+{
+  retranslateUi(this);
 }
 
 void printLabelsBySo::sPrint()
@@ -101,3 +83,18 @@ void printLabelsBySo::sSetToMin(int pValue)
 {
   _to->setMinValue(pValue);
 }
+
+void printLabelsBySo::sPopulateLabel()
+{
+  XSqlQuery label;
+  label.prepare("SELECT cohead_labelform_id "
+                "FROM cohead "
+                "WHERE (cohead_id=:so_id);");
+  label.bindValue(":so_id", _so->id());
+  label.exec();
+  if(label.first())
+  {
+    _report->setId(label.value("cohead_labelform_id").toInt());
+  }
+}
+

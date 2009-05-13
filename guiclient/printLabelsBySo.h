@@ -22,11 +22,10 @@ public:
     printLabelsBySo(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printLabelsBySo();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
     virtual void sSetToMin( int pValue );
+    virtual void sPopulateLabel();
 
 protected slots:
     virtual void languageChange();
