@@ -510,7 +510,7 @@ void invoice::sSave()
 	     "WHERE (invchead_id=:invchead_id);" );
 
   q.bindValue(":invchead_id",			_invcheadid);
-  q.bindValue(":invchead_invcnumber",		_invoiceNumber->text().toInt());
+  q.bindValue(":invchead_invcnumber",		_invoiceNumber->text());
   q.bindValue(":invchead_cust_id",		_cust->id());
   q.bindValue(":invchead_invcdate",		_invoiceDate->date());
   q.bindValue(":invchead_shipdate",		_shipDate->date());

@@ -89,7 +89,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
-  bool     restrict = FALSE;
+  bool     vrestrict = FALSE;
 
   param = pParams.value("cmhead_id", &valid);
   if (valid)
@@ -135,7 +135,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _invoiceNumber = param.toInt();
 
       if (_metrics->boolean("RestrictCreditMemos"))
-        restrict = TRUE;
+        vrestrict = TRUE;
     }
   }
 
@@ -217,7 +217,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
     }
   }
 
-  if (restrict)
+  if (vrestrict)
     _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                               "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                               "                item_active, item_config, item_type, uom_name "
@@ -225,7 +225,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
                               "WHERE ( (invcitem_invchead_id=invchead_id)"
                               " AND (invcitem_item_id=item_id)"
                               " AND (item_inv_uom_id=uom_id)"
-                              " AND (invchead_invcnumber=%1) ) "
+                              " AND (invchead_invcnumber='%1') ) "
                               "ORDER BY item_number" )
                      .arg(_invoiceNumber) );
   else
@@ -414,7 +414,7 @@ void creditMemoItem::sPopulateItemInfo()
 		    "                  invcitem_price / invcitem_price_invuomratio, invchead_invcdate) AS invcitem_price_local "
                     "FROM invchead, invcitem "
                     "WHERE ( (invcitem_invchead_id=invchead_id)"
-                    " AND (invchead_invcnumber=:invoiceNumber::TEXT)"
+                    " AND (invchead_invcnumber=text(:invoiceNumber))"
                     " AND (invcitem_item_id=:item_id) ) "
                     "LIMIT 1;" );
     cmitem.bindValue(":invoiceNumber", _invoiceNumber);

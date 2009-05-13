@@ -120,7 +120,7 @@ void printInvoices::sPrint()
         {
           invoiceNumber = local.value("invoicenumber").toInt();
           local.prepare( "UPDATE invchead "
-                         "SET invchead_invcnumber=:invoicenumber "
+                         "SET invchead_invcnumber=text(:invoicenumber) "
                          "WHERE (invchead_id=:invchead_id);" );
           local.bindValue(":invoicenumber", invoiceNumber);
           local.bindValue(":invchead_id", invoices.value("invchead_id").toInt());

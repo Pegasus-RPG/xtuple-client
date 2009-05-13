@@ -623,7 +623,7 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
     query.prepare( "SELECT invchead_salesrep_id, invchead_shipto_id, "
 		   "   invchead_curr_id "
                    "FROM invchead "
-                   "WHERE (invchead_invcnumber=:invcnumber);" );
+                   "WHERE (invchead_invcnumber=text(:invcnumber));" );
     query.bindValue(":invcnumber", pInvoiceNumber);
     query.exec();
     if (query.first())
