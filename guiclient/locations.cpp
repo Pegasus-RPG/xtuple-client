@@ -154,8 +154,7 @@ void locations::sDelete()
         break;
 
       case -4:
-        msg = tr("<p>The selected Location cannot be delete as there has been Inventory Transaction History posted against it. "
-                 "You may edit the selected Location and set its status to inactive.</p>" );
+        msg = tr("<p>The selected Location cannot be deleted as there has been Inventory Transaction History posted against it.</p> " );
         break;
     }
     if (! msg.isEmpty())
