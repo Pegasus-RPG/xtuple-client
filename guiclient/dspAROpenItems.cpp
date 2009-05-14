@@ -1266,3 +1266,4 @@ void dspAROpenItems::sClosedToggled(bool checked)
   else
     _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
 }
+
