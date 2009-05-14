@@ -52,6 +52,7 @@ XTreeView::XTreeView(QWidget *parent) :
   muted.setColor(QPalette::AlternateBase, QColor(0xEE, 0xEE, 0xEE));
   setPalette(muted);
 
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(sShowMenu(const QPoint &)));
   connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)),
                     SLOT(sShowHeaderMenu(const QPoint &)));
   connect(header(), SIGNAL(sectionResized(int, int, int)),
@@ -114,6 +115,31 @@ QString XTreeView::columnNameFromLogicalIndex(const int logicalIndex) const
   }
   return QString();
 }
+
+void XTreeView::sShowMenu(const QPoint &pntThis)
+{
+  QModelIndex item = indexAt(pntThis);
+  if (item.isValid())
+  {
+    _menu->clear();
+    emit populateMenu(_menu, item);
+
+    bool disableExport = FALSE;
+    if(_x_preferences)
+      disableExport = (_x_preferences->value("DisableExportContents")=="t");
+    if(!disableExport)
+    {
+      if (_menu->count())
+        _menu->insertSeparator();
+
+      _menu->insertItem(tr("Export Contents..."),  this, SLOT(sExport()));
+    }
+
+    if(_menu->count())
+      _menu->popup(mapToGlobal(pntThis));
+  }
+}
+
 
 void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 {

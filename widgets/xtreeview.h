@@ -60,12 +60,14 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       virtual void setSchemaName(QString p)                   { _schemaName = p;            };
       virtual void setTableName(QString p)                    { _tableName = p;             };
       virtual void setValue(int row, int column, QVariant value);
+      virtual void sShowMenu(const QPoint &);
 
     signals:
       void  newModel(XSqlTableModel *model);
       void  rowSelected(int);
       void  valid(bool);
       void  saved();
+      void  populateMenu(QMenu *, QModelIndex);
       
     protected:
       virtual void resizeEvent(QResizeEvent*);
