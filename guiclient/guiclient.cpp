@@ -1460,7 +1460,9 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   if(!engine)
     return;
 
+#if QT_VERSION >= 0x040500
   engine->installTranslatorFunctions();
+#endif
 
   qScriptRegisterMetaType(engine, ParameterListtoScriptValue, ParameterListfromScriptValue);
   qScriptRegisterMetaType(engine, XSqlQuerytoScriptValue, XSqlQueryfromScriptValue);
