@@ -39,6 +39,8 @@ public slots:
     virtual void sFillList();
     virtual void sPost();
     virtual void sSelectLocation();
+    virtual void sPopulateDefaultSelector();
+    virtual void sChangeDefaultLocation();
 
 protected slots:
     virtual void languageChange();
@@ -48,6 +50,7 @@ private:
     int		_itemlocdistid;
     int		_mode;
     bool	_trapClose;
+    int         _itemsite_id;
 
 };
 

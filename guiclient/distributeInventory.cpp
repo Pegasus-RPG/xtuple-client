@@ -77,6 +77,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   }
 
   _itemlocdistid = -1;
+
 }
 
 distributeInventory::~distributeInventory()
@@ -119,9 +120,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           if(query.first())
           {
             itemlocSeries = query.value("_itemloc_series").toInt();
-            query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,"
-                           "                       itemlocdist_source_type,itemlocdist_source_id,itemlocdist_id,"
-                           "                       :qty,:expiration,:warranty)"
+            query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,'I',itemlocdist_id,:qty,:expiration,:warranty)"
                            "FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);"
                            
@@ -241,6 +240,7 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
   {
     _itemlocdistid = param.toInt();
     populate();
+    sPopulateDefaultSelector();
   }
 
   return NoError;
@@ -314,7 +314,6 @@ void distributeInventory::sSelectLocation()
     sFillList();
 }
 
-
 void distributeInventory::sPost()
 {
   if (_qtyRemaining->toDouble() != 0.0)
@@ -347,6 +346,11 @@ void distributeInventory::sDefault()
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
   sFillList();
+  //prevent default from been changed after default distribute
+  //stopping the operator from thinking the inventory has been posted
+  //to the new default
+  _locations->setEnabled(false);
+
 }
 
 void distributeInventory::sDefaultAndPost()
@@ -404,7 +408,13 @@ void distributeInventory::sFillList()
                  "       'qty' AS qty_xtnumericrole,"
                  "       'qty' AS qtytagged_xtnumericrole,"
                  "       'qty' AS balance_xtnumericrole,"
-                 "       CASE WHEN expired THEN 'error' END AS qtforegroundrole "
+                 "       CASE WHEN expired THEN 'error' END AS qtforegroundrole, "
+                 "       CASE WHEN expired THEN 'error' "
+                 "            WHEN defaultlocation AND expired = false THEN 'altemphasis' "
+                 "       ELSE null END AS defaultlocation_qtforegroundrole, "
+                 "       CASE WHEN expired THEN 'error' "
+                 "            WHEN qty > 0 AND expired = false THEN 'altemphasis' "
+                 "       ELSE null END AS qty_qtforegroundrole "
                  "FROM (" 
 		 "<? if exists(\"cNoIncludeLotSerial\") ?>"
 		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
@@ -588,4 +598,96 @@ void distributeInventory::sBcChanged(const QString p)
 {
   _post->setDefault(p.isEmpty());
   _bcDistribute->setDefault(! p.isEmpty());
+}
+
+void distributeInventory::sPopulateDefaultSelector()
+{
+   XSqlQuery query;
+   query.prepare(" SELECT itemsite_id, itemsite_loccntrl, itemsite_location_id"
+                 "  FROM itemsite, itemlocdist"
+                 "  WHERE (itemsite_id=itemlocdist_itemsite_id)"
+                 "    AND (itemlocdist_id=:itemlocdist_id)");
+   query.bindValue(":itemlocdist_id", _itemlocdistid);
+   query.exec();
+   if(query.first())
+   {
+      _itemsite_id = query.value("itemsite_id").toInt();
+      if(_itemsite_id > -1
+         && query.value("itemsite_loccntrl").toBool()
+         && query.value("itemsite_location_id").toInt() != -1)
+        {
+            _locationDefaultLit->show();
+            _locations->show();
+            XSqlQuery loclist;
+            loclist.prepare( " SELECT location_id, formatLocationName(location_id) AS locationname "
+                           " FROM location "
+                           " WHERE ( (location_warehous_id=:warehous_id)"
+                           "   AND (NOT location_restrict) ) "
+                           " UNION SELECT location_id, formatLocationName(location_id) AS locationname "
+                           "  FROM location, locitem, itemsite"
+                           "  WHERE ( (location_warehous_id=:warehous_id)"
+                           "    AND (location_restrict)"
+                           "    AND (locitem_location_id=location_id)"
+                           "    AND (locitem_item_id=itemsite_item_id)"
+                           "    AND (itemsite_id=:itemsite_id))"
+                           " ORDER BY locationname;" );
+            loclist.bindValue(":warehous_id", _warehouse->id());
+            loclist.bindValue(":itemsite_id", _itemsite_id);
+            loclist.exec();
+            _locations->populate(loclist);
+            if (!loclist.first())
+            {
+                _locationDefaultLit->hide();
+                _locations->hide();
+            }
+            else
+            {
+               //Allow default location update with correct privileges
+               if (_privileges->check("MaintainItemSites"))
+                   _locations->setEnabled(true);
+               else
+                   _locations->setEnabled(false);
+
+               XSqlQuery dfltLocation;
+               dfltLocation.prepare( " SELECT itemsite_location_id"
+                                     " FROM itemsite"
+                                     " WHERE (itemsite_id=:itemsite_id)");
+              dfltLocation.bindValue(":itemsite_id", _itemsite_id);
+              dfltLocation.exec();
+              if (!dfltLocation.first())
+                 _locations->setId(-1);
+              else
+                 _locations->setId(dfltLocation.value("itemsite_location_id").toInt());
+
+              connect(_locations,   SIGNAL(newID(int)),    this, SLOT(sChangeDefaultLocation()));
+            }
+        }
+        else
+        {
+          _locationDefaultLit->hide();
+          _locations->hide();
+        }
+    }
+    else
+    {
+       _locationDefaultLit->hide();
+       _locations->hide();
+    }
+}
+
+void distributeInventory::sChangeDefaultLocation()
+{
+   XSqlQuery query;
+   query.prepare( " UPDATE itemsite"
+                  " SET itemsite_location_id=:itemsite_location_id"
+                  " WHERE (itemsite_id=:itemsite_id);" );
+   query.bindValue(":itemsite_location_id", _locations->id());
+   query.bindValue(":itemsite_id", _itemsite_id);
+   query.exec();
+   sFillList();
+   if (query.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
 }
