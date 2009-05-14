@@ -31,6 +31,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sReceive();
+    virtual void sDetermineToReceiveInv();
 
 protected slots:
     virtual void languageChange();

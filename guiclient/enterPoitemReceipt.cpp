@@ -28,11 +28,13 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   setupUi(this);
 
   connect(_receive, SIGNAL(clicked()), this, SLOT(sReceive()));
+  connect(_toReceive, SIGNAL(lostFocus()), this, SLOT(sDetermineToReceiveInv()));
 
   _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
   _ordered->setPrecision(omfgThis->qtyVal());
   _received->setPrecision(omfgThis->qtyVal());
   _returned->setPrecision(omfgThis->qtyVal());
+  _toReceiveInv->setPrecision(omfgThis->qtyVal());
 
   _toReceive->setValidator(omfgThis->qtyVal());
   _toReceive->setFocus();
@@ -334,4 +336,9 @@ void enterPoitemReceipt::sReceive()
 
   omfgThis->sPurchaseOrderReceiptsUpdated();
   accept();
+}
+
+void enterPoitemReceipt::sDetermineToReceiveInv()
+{
+    _toReceiveInv->setDouble(_invVendorUOMRatio->toDouble() * _toReceive->toDouble());
 }
