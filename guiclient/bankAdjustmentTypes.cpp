@@ -46,7 +46,7 @@ bankAdjustmentTypes::bankAdjustmentTypes(QWidget* parent, const char* name, Qt::
   }
 
   _bankadjtype->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "bankadjtype_name");
-  _bankadjtype->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "bankadjtype_name");
+  _bankadjtype->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "bankadjtype_descrip");
     
   sFillList();
 }
