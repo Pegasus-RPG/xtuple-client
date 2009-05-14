@@ -24,6 +24,7 @@ public:
 
 public slots:
     virtual void sUpdate();
+    virtual void sHandleCharPrice();
 
 protected slots:
     virtual void languageChange();

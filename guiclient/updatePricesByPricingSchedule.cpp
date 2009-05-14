@@ -15,43 +15,30 @@
 #include <QValidator>
 #include "guiclient.h"
 
-/*
- *  Constructs a updatePricesByPricingSchedule as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 updatePricesByPricingSchedule::updatePricesByPricingSchedule(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-  setupUi(this);
-
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-  connect(_ipshead, SIGNAL(currentIndexChanged(int)), this, SLOT(sIPSChanged()));
-
-  _ipshead->populate( "SELECT ipshead_id, (ipshead_name || '-' || ipshead_descrip) "
-                      "FROM ipshead "
-                      "ORDER BY ipshead_name;" );
-
-  _updateBy->setValidator(new QDoubleValidator(-100, 9999, 2, _updateBy));
+    setupUi(this);
+    
+    
+    // signals and slots connections
+    connect(_close,   SIGNAL(clicked()), this, SLOT(reject()));
+    connect(_update,  SIGNAL(clicked()), this, SLOT(sUpdate()));
+    connect(_value,   SIGNAL(clicked()), this, SLOT(sHandleCharPrice()));
+    connect(_percent, SIGNAL(clicked()), this, SLOT(sHandleCharPrice()));
+    
+    _ipshead->populate( "SELECT ipshead_id, (ipshead_name || '-' || ipshead_descrip) "
+                        "FROM ipshead "
+                        "ORDER BY ipshead_name;" );
+    
+    _updateBy->setValidator(new QDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 updatePricesByPricingSchedule::~updatePricesByPricingSchedule()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void updatePricesByPricingSchedule::languageChange()
 {
     retranslateUi(this);
@@ -60,65 +47,44 @@ void updatePricesByPricingSchedule::languageChange()
 
 void updatePricesByPricingSchedule::sUpdate()
 {
-  if (!_ipshead->isValid())
-  {
-    QMessageBox::critical( this, tr( "Select Pricing Schedule to Update"),
-                           tr("You must select a Pricing Schedule to update.") );
-    _ipshead->setFocus();
-    return;
-  }
-
-  if (_updateBy->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Enter a Update Value"),
-                           tr("You must indicate the value to update the selected Pricing Schedule.") );
-    _updateBy->setFocus();
-    return;
-  }
-
-  if (_value->isChecked())
-  {
-    q.prepare( "SELECT updatePrice(ipsitem_id, 'V' ,:value) "
-               "FROM ipsitem "
-               "WHERE (ipsitem_ipshead_id=:ipshead_id);" );
-    q.bindValue(":value", _updateBy->toDouble());
-    q.bindValue(":ipshead_id", _ipshead->id());
-  }
-  else
-  {
-    q.prepare( "SELECT updatePrice(ipsitem_id, 'P' ,:rate) "
-               "FROM ipsitem "
-               "WHERE (ipsitem_ipshead_id=:ipshead_id);" );
-    q.bindValue(":rate", (1.0 + (_updateBy->toDouble() / 100.0)));
-    q.bindValue(":ipshead_id", _ipshead->id());
-  }
-
-  q.exec();
-
-/*
-  q.prepare( "UPDATE ipsprodcat"
-             "   SET ipsprodcat_discntprcnt = ipsprodcat_discntprcnt - :rate"
-             " WHERE (ipsprodcat_ipshead_id=:ipshead_id);");
-  q.bindValue(":rate", (_updateBy->toDouble() / 100.0));
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
-*/
-
-  accept();
+    if (!_ipshead->isValid())
+    {
+        QMessageBox::critical( this, tr( "Select Pricing Schedule to Update"),
+                               tr("You must select a Pricing Schedule to update.") );
+        _ipshead->setFocus();
+        return;
+    }
+    
+    if (_updateBy->toDouble() == 0.0)
+    {
+        QMessageBox::critical( this, tr("Enter an Update Value"),
+                               tr("You must provide a value to update the selected Pricing Schedule.") );
+        _updateBy->setFocus();
+        return;
+    }
+    
+     q.prepare( "SELECT updatePricesByPricingSchedule(:ipshead_id, :type, :value, :updateCharPrices);" );
+     q.bindValue(":ipshead_id", _ipshead->id());
+     q.bindValue(":value", _updateBy->toDouble());
+     
+    if (_value->isChecked())
+    {
+        q.bindValue(":type", "V");
+        q.bindValue(":updateCharPrices", false);       
+    }
+    else
+    {
+        q.bindValue(":type", "P");
+        q.bindValue(":updateCharPrices", _updateCharPrices->isChecked());
+    }
+    
+    q.exec();
+    
+    accept();
 }
 
-void updatePricesByPricingSchedule::sIPSChanged()
+void updatePricesByPricingSchedule::sHandleCharPrice()
 {
-/*
-  q.prepare( "SELECT curr_symbol, curr_name "
-             "FROM curr_symbol "
-             "LEFT OUTER JOIN ipshead ON (ipshead_id=:ipshead_id) "
-             "WHERE curr_id = ipshead_curr_id ");
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
-  if(q.first())
-  _value->setText(q.value("curr_symbol").toString()+" - "+q.value("curr_name").toString());
-*/
-
+    // Only enable update char prices for percentage updates.
+    _updateCharPrices->setEnabled( _percent->isChecked() );
 }
-
