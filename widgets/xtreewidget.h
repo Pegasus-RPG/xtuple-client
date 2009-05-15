@@ -180,6 +180,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void hideColumn(const QString &);
     void showColumn(int colnum) { QTreeWidget::showColumn(colnum); };
     void showColumn(const QString &);
+    void sExport();
+    void sCopyVisibleToClipboard();
+    void sCopyRowToClipboard();
+    void sCopyCellToClipboard();
 
   signals:
     void  valid(bool);
@@ -226,7 +230,6 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void sItemSelected(QTreeWidgetItem *, int);
     void sShowMenu(const QPoint &);
     void sShowHeaderMenu(const QPoint &);
-    void sExport();
     //void sStartDrag(QTreeWidgetItem *, int);
     void sColumnSizeChanged(int, int, int);
     void sResetWidth();
