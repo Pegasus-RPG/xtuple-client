@@ -106,7 +106,8 @@ void images::sDelete()
 
 void images::sFillList()
 {
-  q.exec("SELECT image.*, LENGTH(image_data) AS image_size, "
+  // Do not select image_data into the list
+  q.exec("SELECT image_id, image_name, image_descrip, LENGTH(image_data) AS image_size, "
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
          "  FROM image, pg_class, pg_namespace "
