@@ -205,7 +205,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft, true, "charass_value");
 
   _defaultCommissionPrcnt->setValidator(omfgThis->percentVal());
-  _defaultDiscountPrcnt->setValidator(omfgThis->percentVal());
+  _defaultDiscountPrcnt->setValidator(omfgThis->negPercentVal());
 
   _custchar = new QStandardItemModel(0, 2, this);
   _custchar->setHeaderData( 0, Qt::Horizontal, tr("Characteristc"), Qt::DisplayRole);

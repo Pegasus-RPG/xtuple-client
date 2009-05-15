@@ -203,6 +203,7 @@ class GUIClient : public QMainWindow
     inline QDoubleValidator *qtyPerVal()   { return _qtyPerVal;    }
     inline QDoubleValidator *scrapVal()    { return _scrapVal;     } 
     inline QDoubleValidator *percentVal()  { return _percentVal;   }
+    inline QDoubleValidator *negPercentVal()  { return _negPercentVal;   }
     inline QDoubleValidator *moneyVal()    { return _moneyVal;     }
     inline QDoubleValidator *negMoneyVal() { return _negMoneyVal;  }
     inline QDoubleValidator *priceVal()    { return _priceVal;     }
@@ -381,6 +382,7 @@ class GUIClient : public QMainWindow
     QDoubleValidator *_qtyPerVal;
     QDoubleValidator *_scrapVal;
     QDoubleValidator *_percentVal;
+    QDoubleValidator *_negPercentVal;
     QDoubleValidator *_moneyVal;
     QDoubleValidator *_negMoneyVal;
     QDoubleValidator *_priceVal;
