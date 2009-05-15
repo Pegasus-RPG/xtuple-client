@@ -597,6 +597,7 @@ to be bound by its terms.</comment>
   <tabstop>_number</tabstop>
   <tabstop>_status</tabstop>
   <tabstop>_name</tabstop>
+  <tabstop>_descrip</tabstop>
   <tabstop>_owner</tabstop>
   <tabstop>_assignedTo</tabstop>
   <tabstop>_tab</tabstop>
@@ -608,7 +609,6 @@ to be bound by its terms.</comment>
   <tabstop>_assigned</tabstop>
   <tabstop>_started</tabstop>
   <tabstop>_completed</tabstop>
-  <tabstop>_descrip</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
