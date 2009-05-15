@@ -738,6 +738,7 @@
 #include "vendorAddressList.h"
 #include "vendor.h"
 #include "vendors.h"
+#include "vendorPriceList.h"
 #include "vendorType.h"
 #include "vendorTypes.h"
 #include "vendorWorkBench.h"

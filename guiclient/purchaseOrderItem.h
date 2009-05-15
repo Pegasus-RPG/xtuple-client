@@ -42,6 +42,7 @@ protected slots:
     virtual void sInventoryItemToggled( bool yes );
     virtual void sVendorItemNumberList();
     virtual void sHandleButtons();
+    virtual void sVendorListPrices();
 
 
 private:

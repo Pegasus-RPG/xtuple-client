@@ -352,7 +352,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateReorderLevels.ui   							      \
                users.ui user.ui userList.ui userPreferences.ui                                        \
                userCostingElement.ui costingElements.ui                                               \
-               vendor.ui vendors.ui vendorWorkBench.ui                                                \
+               vendor.ui vendors.ui vendorWorkBench.ui vendorPriceList.ui                             \
                vendorAddress.ui vendorAddressList.ui                                                  \
                vendorType.ui vendorTypes.ui viewCheckRun.ui voidChecks.ui                             \
                voucher.ui voucheringEditList.ui voucherItemDistrib.ui voucherItem.ui                  \
@@ -678,7 +678,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                updateReorderLevels.h								      \
                users.h user.h userList.h userPreferences.h                                            \
                userCostingElement.h costingElements.h                                                 \
-               vendor.h vendors.h vendorWorkBench.h                                                   \
+               vendor.h vendors.h vendorWorkBench.h vendorPriceList.h                                 \
                vendorAddress.h vendorAddressList.h                                                    \
                vendorType.h vendorTypes.h viewCheckRun.h voidChecks.h                                 \
                voucher.h voucheringEditList.h voucherItemDistrib.h voucherItem.h                      \
@@ -1009,7 +1009,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                updateReorderLevels.cpp								      \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
                userCostingElement.cpp costingElements.cpp                                             \
-               version.cpp vendor.cpp vendors.cpp vendorWorkBench.cpp                                 \
+               version.cpp vendor.cpp vendors.cpp vendorWorkBench.cpp vendorPriceList.cpp             \
                vendorAddress.cpp vendorAddressList.cpp                                                \
                vendorType.cpp vendorTypes.cpp viewCheckRun.cpp voidChecks.cpp                         \
                voucher.cpp voucheringEditList.cpp voucherItemDistrib.cpp voucherItem.cpp              \

@@ -16,6 +16,7 @@
 
 #include "itemCharacteristicDelegate.h"
 #include "itemSourceSearch.h"
+#include "vendorPriceList.h"
 
 purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -34,6 +35,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_ordered, SIGNAL(lostFocus()), this, SLOT(sUpdateVendorQty()));
   connect(_vendorItemNumberList, SIGNAL(clicked()), this, SLOT(sVendorItemNumberList()));
   connect(_notesButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_listPrices, SIGNAL(clicked()), this, SLOT(sVendorListPrices()));
 
   _parentwo = -1;
   _parentso = -1;
@@ -991,5 +993,19 @@ void purchaseOrderItem::sHandleButtons()
     _remarksStack->setCurrentIndex(0);
   else
     _remarksStack->setCurrentIndex(1);
+}
+
+void purchaseOrderItem::sVendorListPrices()
+{
+  ParameterList params;
+  params.append("itemsrc_id", _itemsrcid);
+  params.append("qty", _ordered->toDouble());
+  vendorPriceList newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if ( (newdlg.exec() == XDialog::Accepted))
+  {
+    _ordered->setDouble(newdlg._selectedQty);
+    sDeterminePrice();
+  }
 }
 
