@@ -36,6 +36,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
 
   _terms->setType(XComboBox::APTerms);
+  _vendor->setType(__activeVendors);
 
   _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
@@ -99,6 +100,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _dueDate->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
+      _vendor->setType(__allVendors);
       _invoiceNum->setEnabled(FALSE);
       _reference->setEnabled(FALSE);
       _miscDistrib->setEnabled(FALSE);
