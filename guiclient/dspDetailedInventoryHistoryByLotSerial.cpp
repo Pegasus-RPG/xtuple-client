@@ -244,7 +244,8 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
     trace="N";
 
   q.prepare( "SELECT * FROM lshist(:itemid,:warehouseid,:lotserial,:pattern,:transType,:startDate,:endDate,:trace,1); ");
-  _dates->bindValue(q);
+  if (_dateGroup->isChecked())
+    _dates->bindValue(q);
   if (_item->isValid())
     q.bindValue(":itemid", _item->id());
   if (_warehouse->isSelected())
