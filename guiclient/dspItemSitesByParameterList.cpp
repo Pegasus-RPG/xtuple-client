@@ -48,6 +48,8 @@ dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const 
   _itemsite->addColumn(tr("Loc. Cntrl."),   _dateColumn,  Qt::AlignCenter, true,  "loccntrl" );
   _itemsite->addColumn(tr("Cntrl. Meth."),  _dateColumn,  Qt::AlignCenter, true,  "controlmethod" );
   _itemsite->addColumn(tr("Sold Ranking"),  _dateColumn,  Qt::AlignCenter, true,  "soldranking" );
+  _itemsite->addColumn(tr("ABC Class"),     _dateColumn,  Qt::AlignCenter, true,  "itemsite_abcclass" );
+  _itemsite->addColumn(tr("Cycle Cnt."),    _dateColumn,  Qt::AlignCenter, true,  "itemsite_cyclecountfreq" );
   _itemsite->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter, true,  "datelastcount" );
   _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter, true,  "datelastused" );
 }
@@ -287,6 +289,7 @@ void dspItemSitesByParameterList::sFillList()
                "      CASE WHEN (itemsite_datelastused=startOfTime()) THEN NULL"
                "           ELSE itemsite_datelastused"
                "      END AS datelastused,"
+               "      itemsite_abcclass, itemsite_cyclecountfreq,"
                "      'qty' AS itemsite_qtyonhand_xtnumericrole,"
                "      'Never' AS datelastcount_xtnullrole,"
                "      'Never' AS datelastused_xtnullrole "
