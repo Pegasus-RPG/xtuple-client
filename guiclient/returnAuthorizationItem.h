@@ -34,7 +34,10 @@ public slots:
     void populate();
     void sCalculateDiscountPrcnt();
     void sCalculateFromDiscount();
+    void sCalculateSaleDiscountPrcnt();
+    void sCalculateSaleFromDiscount();
     void sListPrices();
+    void sSaleListPrices();
     void sLookupTax();
     void sLookupTaxCode();
     void sPriceGroup();
@@ -59,6 +62,7 @@ protected slots:
     bool sSave();
     void sSaveClicked();
     void sCalculateExtendedPrice();
+    void sCalculateSaleExtendedPrice();
     void updatePriceInfo();
     void rejectEvent();
 

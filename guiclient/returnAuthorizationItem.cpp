@@ -27,6 +27,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
 
 #ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
+  _saleListPrices->setMaximumWidth(25);
 #endif
 
   _mode = cNew;
@@ -45,42 +46,48 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _preferredWarehousid = -1;
   _preferredShipWarehousid = -1;
   _status = "O";
+  _creditmethod = "";
   _qtycredited = 0;
   _soldQty = 0;
   _coitemid = -1;
   _crmacctid = -1;
 
-  connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
-  connect(_item,          SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
-  connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sPopulateItemsiteInfo()));
-  connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sPopulateItemsiteInfo()));
-  connect(_listPrices,    SIGNAL(clicked()),      this, SLOT(sListPrices()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
-  connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
-  connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
-  connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOrderInfo()));
-  connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
-  connect(_save,          SIGNAL(clicked()),      this, SLOT(sSaveClicked()));
-  connect(_taxCode,       SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_taxType,       SIGNAL(newID(int)),     this, SLOT(sLookupTaxCode()));
-  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sPopulateOrderInfo()));
-  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
-  connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
-  connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
-  connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
-  connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
-  connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
-  connect(this, SIGNAL(rejected()), this, SLOT(rejectEvent()));
-  connect(_authLotSerial, SIGNAL(toggled(bool)), _qtyUOM, SLOT(setDisabled(bool)));
+  connect(_discountFromSale,     SIGNAL(lostFocus()),                    this, SLOT(sCalculateFromDiscount()));
+  connect(_saleDiscountFromSale, SIGNAL(lostFocus()),                    this, SLOT(sCalculateSaleFromDiscount()));
+  connect(_extendedPrice,        SIGNAL(valueChanged()),                 this, SLOT(sLookupTax()));
+  connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
+  connect(_item,                 SIGNAL(privateIdChanged(int)),          this, SLOT(sPopulateItemsiteInfo()));
+  connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
+  connect(_listPrices,           SIGNAL(clicked()),                      this, SLOT(sListPrices()));
+  connect(_saleListPrices,       SIGNAL(clicked()),                      this, SLOT(sSaleListPrices()));
+  connect(_netUnitPrice,         SIGNAL(valueChanged()),                 this, SLOT(sCalculateDiscountPrcnt()));
+  connect(_netUnitPrice,         SIGNAL(valueChanged()),                 this, SLOT(sCalculateExtendedPrice()));
+  connect(_netUnitPrice,         SIGNAL(idChanged(int)),                 this, SLOT(sPriceGroup()));
+  connect(_saleNetUnitPrice,     SIGNAL(valueChanged()),                 this, SLOT(sCalculateSaleDiscountPrcnt()));
+  connect(_saleNetUnitPrice,     SIGNAL(valueChanged()),                 this, SLOT(sCalculateSaleExtendedPrice()));
+  connect(_qtyAuth,              SIGNAL(textChanged(const QString&)),    this, SLOT(sCalculateExtendedPrice()));
+  connect(_qtyAuth,              SIGNAL(textChanged(const QString&)),    this, SLOT(sCalculateSaleExtendedPrice()));
+  connect(_qtyAuth,              SIGNAL(textChanged(const QString&)),    this, SLOT(sPopulateOrderInfo()));
+  connect(_qtyAuth,              SIGNAL(textChanged(const QString&)),    this, SLOT(sCalcWoUnitCost()));
+  connect(_save,                 SIGNAL(clicked()),                      this, SLOT(sSaveClicked()));
+  connect(_taxCode,              SIGNAL(newID(int)),                     this, SLOT(sLookupTax()));
+  connect(_taxLit,               SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_taxType,              SIGNAL(newID(int)),                     this, SLOT(sLookupTaxCode()));
+  connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sQtyUOMChanged()));
+  connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sPopulateOrderInfo()));
+  connect(_pricingUOM,           SIGNAL(newID(int)),                     this, SLOT(sPriceUOMChanged()));
+  connect(_disposition,          SIGNAL(currentIndexChanged(int)),       this, SLOT(sDispositionChanged()));
+  connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sDetermineAvailability()));
+  connect(_scheduledDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sDetermineAvailability()));
+  connect(_qtyAuth,              SIGNAL(lostFocus()),                    this, SLOT(sDetermineAvailability()));
+  connect(_createOrder,          SIGNAL(toggled(bool)),                  this, SLOT(sHandleWo(bool)));
+  connect(_showAvailability,     SIGNAL(toggled(bool)),                  this, SLOT(sDetermineAvailability()));
+  connect(this,                  SIGNAL(rejected()),                     this, SLOT(rejectEvent()));
+  connect(_authLotSerial,        SIGNAL(toggled(bool)),                  _qtyUOM, SLOT(setDisabled(bool)));
       
-  connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
-  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
-  connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+  connect(_new,                  SIGNAL(clicked()),	                     this, SLOT(sNew()));
+  connect(_edit,	               SIGNAL(clicked()),	                     this, SLOT(sEdit()));
+  connect(_delete,	             SIGNAL(clicked()),	                     this, SLOT(sDelete()));
     
   _raitemls->addColumn(tr("Lot/Serial"),  -1,           Qt::AlignLeft , true, "ls_number"  );
   _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight, true, "lsreg_expiredate"  );
@@ -90,7 +97,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
 
   _orderQty->setValidator(omfgThis->qtyVal());
   _qtyAuth->setValidator(omfgThis->qtyVal());
-  _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
+  _discountFromSale->setValidator(omfgThis->negPercentVal());
+  _saleDiscountFromSale->setValidator(omfgThis->negPercentVal());
   _taxType->setEnabled(_privileges->check("OverrideTax"));
   _taxCode->setEnabled(_privileges->check("OverrideTax"));
   _availabilityGroup->setEnabled(_showAvailability->isChecked());
@@ -163,6 +171,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _shiptoid = q.value("rahead_shipto_id").toInt();
       _netUnitPrice->setId(q.value("rahead_curr_id").toInt());
       _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
+      _saleNetUnitPrice->setId(q.value("rahead_curr_id").toInt());
+      _saleNetUnitPrice->setEffective(q.value("rahead_authdate").toDate());
       _preferredWarehousid = q.value("prefwhs").toInt();
       _creditmethod = q.value("rahead_creditmethod").toString();
       _crmacctid = q.value("crmacct_id").toInt();
@@ -196,6 +206,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _mode = cNew;
       
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+      connect(_saleDiscountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateSaleFromDiscount()));
 
       q.prepare( "SELECT (COALESCE(MAX(raitem_linenumber), 0) + 1) AS n_linenumber "
                  "FROM raitem "
@@ -218,15 +229,15 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       if (q.first())
       {
 
-        if (q.value("rahead_disposition").toString() == "C")
+        if (q.value("rahead_disposition").toString() == "C") // credit
           sDispositionChanged();
-        else if (q.value("rahead_disposition").toString() == "R")
+        else if (q.value("rahead_disposition").toString() == "R") // return
           _disposition->setCurrentIndex(1);
-        else if (q.value("rahead_disposition").toString() == "P")
+        else if (q.value("rahead_disposition").toString() == "P") // replace
           _disposition->setCurrentIndex(2);
-        else if (q.value("rahead_disposition").toString() == "V")
+        else if (q.value("rahead_disposition").toString() == "V")  // service
           _disposition->setCurrentIndex(3);
-        else if (q.value("rahead_disposition").toString() == "M")
+        else if (q.value("rahead_disposition").toString() == "M")  // ship
           _disposition->setCurrentIndex(4);
       }
       else if (q.lastError().type() == QSqlError::NoError)
@@ -262,6 +273,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _qtyAuth->setFocus();
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+      connect(_saleDiscountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateSaleFromDiscount()));
  
       _save->setFocus();
     }
@@ -276,9 +288,13 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _qtyAuth->setEnabled(FALSE);
       _qtyUOM->setEnabled(FALSE);
       _netUnitPrice->setEnabled(FALSE);
+      _saleNetUnitPrice->setEnabled(FALSE);
       _listPrices->setEnabled(FALSE);
+      _saleListPrices->setEnabled(FALSE);
       _pricingUOM->setEnabled(FALSE);
+      _salePricingUOM->setEnabled(FALSE);
       _discountFromSale->setEnabled(FALSE);
+      _saleDiscountFromSale->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _taxType->setEnabled(FALSE);
       _taxCode->setEnabled(FALSE);
@@ -316,6 +332,7 @@ void returnAuthorizationItem::sSaveClicked()
 
 bool returnAuthorizationItem::sSave()
 { 
+  // credit, return, replace, service, ship
   const char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
   
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
@@ -357,15 +374,16 @@ bool returnAuthorizationItem::sSave()
                "  raitem_price_uom_id, raitem_price_invuomratio,"
                "  raitem_unitprice, raitem_tax_id,raitem_taxtype_id, "
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id, "
-               "  raitem_scheddate, raitem_warranty, raitem_coitem_itemsite_id) "
+               "  raitem_scheddate, raitem_warranty, raitem_coitem_itemsite_id, "
+               "  raitem_saleprice ) "
                "SELECT :raitem_id, :rahead_id, :raitem_linenumber, rcv.itemsite_id,"
                "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
                "       :raitem_unitprice, :raitem_tax_id, :raitem_taxtype_id, "
                "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id, "
-               "       :raitem_scheddate, :raitem_warranty, "
-               "       shp.itemsite_id "
+               "       :raitem_scheddate, :raitem_warranty, shp.itemsite_id, "
+               "       :raitem_saleprice "
                "FROM itemsite rcv "
                "  LEFT OUTER JOIN itemsite shp ON "
                "        (shp.itemsite_item_id=rcv.itemsite_item_id) "
@@ -388,7 +406,8 @@ bool returnAuthorizationItem::sSave()
                "    raitem_rsncode_id=:raitem_rsncode_id, "
                "    raitem_cos_accnt_id=:raitem_cos_accnt_id, "
                "    raitem_scheddate=:raitem_scheddate, "
-               "    raitem_warranty=:raitem_warranty "
+               "    raitem_warranty=:raitem_warranty, "
+               "    raitem_saleprice=:raitem_saleprice "
                "WHERE (raitem_id=:raitem_id);" );
 
   q.bindValue(":raitem_id", _raitemid);
@@ -411,12 +430,13 @@ bool returnAuthorizationItem::sSave()
     q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
-  if (_disposition->currentIndex() >= 2)
+  if (_disposition->currentIndex() >= 2) // replace, service, or ship
     q.bindValue(":shipWhs_id", _shipWhs->id());
   if (_altcosAccntid->id() != -1)
     q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
   q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked()));
+  q.bindValue(":raitem_saleprice", _saleNetUnitPrice->localValue());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -495,7 +515,7 @@ bool returnAuthorizationItem::sSave()
     }
   }
   //If this save has resulted in a link to an shipping S/O, we need to signal that
-  if (_disposition->currentIndex() > 1)
+  if (_disposition->currentIndex() > 1) // replace, service, or ship
   {
     XSqlQuery so;
     so.prepare("SELECT raitem_new_coitem_id, cohead_number, "
@@ -599,12 +619,13 @@ void returnAuthorizationItem::sPopulateItemInfo()
   uom.exec();
   _qtyUOM->populate(uom);
   _pricingUOM->populate(uom);
+  _salePricingUOM->populate(uom);
 
   XSqlQuery item;
   item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
-                "       iteminvpricerat(item_id) AS iteminvpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
+                "       iteminvpricerat(item_id) AS iteminvpricerat,"
                 "       item_listprice, "
-                "       stdCost(item_id) AS f_cost,"
+                "       stdCost(item_id) AS stdcost,"
                 "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
@@ -616,11 +637,12 @@ void returnAuthorizationItem::sPopulateItemInfo()
     _priceRatio = item.value("iteminvpricerat").toDouble();
     _qtyUOM->setId(item.value("item_inv_uom_id").toInt());
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
+    _salePricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
     _invuomid = item.value("item_inv_uom_id").toInt();
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
-	_unitCost->setBaseValue(item.value("f_cost").toDouble());
+    _unitCost->setBaseValue(item.value("stdcost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt()); 
   }
   else if (item.lastError().type() != QSqlError::NoError)
@@ -723,7 +745,10 @@ void returnAuthorizationItem::populate()
                  "       rcv.itemsite_warehous_id AS itemsite_warehous_id, "
                  "       shp.itemsite_warehous_id AS shipWhs_id, "
                  "       qtyToReceive('RA', raitem_id) AS qtytorcv, "
-                 "       crmacct_id "
+                 "       crmacct_id, "
+                 "       nc.coitem_price AS saleprice, "
+                 "       nch.cohead_curr_id AS salecurrid, "
+                 "       nch.cohead_orderdate AS saledate "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
                  "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
@@ -754,20 +779,23 @@ void returnAuthorizationItem::populate()
       _newSoNumber->hide();
       _newSoLineNumber->hide();
     }
-    if (raitem.value("raitem_disposition").toString() == "C")
+    if (raitem.value("raitem_disposition").toString() == "C") // credit
       sDispositionChanged();
-    else if (raitem.value("raitem_disposition").toString() == "R")
+    else if (raitem.value("raitem_disposition").toString() == "R") // return
       _disposition->setCurrentIndex(1);
-    else if (raitem.value("raitem_disposition").toString() == "P")
+    else if (raitem.value("raitem_disposition").toString() == "P") // replace
       _disposition->setCurrentIndex(2);
-    else if (raitem.value("raitem_disposition").toString() == "V")
+    else if (raitem.value("raitem_disposition").toString() == "V") // service
       _disposition->setCurrentIndex(3);
-    else if (raitem.value("raitem_disposition").toString() == "S")
+    else if (raitem.value("raitem_disposition").toString() == "S") // ship
       _disposition->setCurrentIndex(4);
 	  _orderId = raitem.value("coitem_order_id").toInt();
     _netUnitPrice->setId(raitem.value("rahead_curr_id").toInt());
     _netUnitPrice->setEffective(raitem.value("rahead_authdate").toDate());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
+    _saleNetUnitPrice->setId(raitem.value("salecurrid").toInt());
+    _saleNetUnitPrice->setEffective(raitem.value("saledate").toDate());
+    _saleNetUnitPrice->setLocalValue(raitem.value("saleprice").toDouble());
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
@@ -806,6 +834,7 @@ void returnAuthorizationItem::populate()
       _soldQty=raitem.value("qtysold").toDouble();
       _qtyUOM->setEnabled(FALSE);
       _pricingUOM->setEnabled(FALSE);
+      _salePricingUOM->setEnabled(FALSE);
       _salePrice->setId(raitem.value("rahead_curr_id").toInt());
       _salePrice->setEffective(raitem.value("rahead_authdate").toDate());
       _salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
@@ -919,6 +948,38 @@ void returnAuthorizationItem::sPriceGroup()
     _priceGroup->setTitle(tr("In %1:").arg(_netUnitPrice->currAbbr())); 
 }
 
+void returnAuthorizationItem::sCalculateSaleExtendedPrice()
+{
+  _saleExtendedPrice->setLocalValue(((_qtyAuth->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _saleNetUnitPrice->localValue());
+}
+
+void returnAuthorizationItem::sCalculateSaleDiscountPrcnt()
+{
+  double unitPrice = _saleNetUnitPrice->localValue();
+
+  if (unitPrice == 0.0)
+  {
+    _saleDiscountFromSale->setText("N/A");
+  }
+  else
+  {
+    if (_listPrice->isZero())
+      _saleDiscountFromSale->setText("N/A");
+    else
+      _saleDiscountFromSale->setDouble((1 - (unitPrice / _listPrice->localValue())) * 100 );
+  }
+}
+
+void returnAuthorizationItem::sCalculateSaleFromDiscount()
+{
+  double discount = _saleDiscountFromSale->toDouble() / 100.0;
+
+  if (_listPrice->isZero())
+    _saleDiscountFromSale->setText(tr("N/A"));
+  else
+    _saleNetUnitPrice->setLocalValue(_listPrice->localValue() - (_listPrice->localValue() * discount));
+}
+
 void returnAuthorizationItem::sListPrices()
 {
   q.prepare( "SELECT formatSalesPrice(currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective)) AS price"
@@ -1010,6 +1071,101 @@ void returnAuthorizationItem::sListPrices()
     {
       _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceRatio / _priceinvuomratio));
       sCalculateDiscountPrcnt();
+    }
+  }
+}
+
+void returnAuthorizationItem::sSaleListPrices()
+{
+  q.prepare( "SELECT formatSalesPrice(currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective)) AS price"
+             "       FROM ipsass, ipshead, ipsprice "
+             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (ipsass_cust_id=:cust_id)"
+             "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) = 0)"
+             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1) ) )"
+
+             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       FROM ipsass, ipshead, ipsprice "
+             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (ipsass_shipto_id=:shipto_id)"
+             "        AND (ipsass_shipto_id != -1)"
+             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             
+             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       FROM ipsass, ipshead, ipsprice, cust "
+             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (ipsass_custtype_id=cust_custtype_id)"
+             "        AND (cust_id=:cust_id)"
+             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             
+             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       FROM ipsass, ipshead, ipsprice, custtype, cust "
+             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (coalesce(length(ipsass_custtype_pattern), 0) > 0)"
+             "        AND (custtype_code ~ ipsass_custtype_pattern)"
+             "        AND (cust_custtype_id=custtype_id)"
+             "        AND (cust_id=:cust_id)"
+             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
+             
+             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       FROM ipsass, ipshead, ipsprice, shipto "
+             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (shipto_id=:shipto_id)"
+             "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0)"
+             "        AND (shipto_num ~ ipsass_shipto_pattern)"
+             "        AND (ipsass_cust_id=:cust_id)"
+             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+
+             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       FROM sale, ipshead, ipsprice "
+             "       WHERE ((sale_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_ipshead_id=ipshead_id)"
+             "        AND (ipsprice_item_id=:item_id)"
+             "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
+
+             "       UNION SELECT formatSalesPrice(item_listprice - (item_listprice * cust_discntprcnt)) AS price "
+             "       FROM item, cust "
+             "       WHERE ( (item_sold)"
+             "        AND (NOT item_exclusive)"
+             "        AND (item_id=:item_id)"
+             "        AND (cust_id=:cust_id) );");
+  q.bindValue(":item_id", _item->id());
+  q.bindValue(":cust_id", _custid);
+  q.bindValue(":shipto_id", _shiptoid);
+  q.bindValue(":curr_id", _saleNetUnitPrice->id());
+  q.bindValue(":effective", _saleNetUnitPrice->effective());
+  q.exec();
+  if (q.size() == 1)
+  {
+    q.first();
+    _saleNetUnitPrice->setLocalValue(q.value("price").toDouble() * (_priceRatio / _priceinvuomratio));
+  }
+  else
+  {
+    ParameterList params;
+    params.append("cust_id", _custid);
+    params.append("shipto_id", _shiptoid);
+    params.append("item_id", _item->id());
+    // don't params.append("qty", ...) as we don't know how many were purchased
+    params.append("curr_id", _saleNetUnitPrice->id());
+    params.append("effective", _saleNetUnitPrice->effective());
+
+    priceList newdlg(this);
+    newdlg.set(params);
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      _saleNetUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceRatio / _priceinvuomratio));
+      sCalculateSaleDiscountPrcnt();
     }
   }
 }
@@ -1118,10 +1274,16 @@ void returnAuthorizationItem::sQtyUOMChanged()
   {
     _pricingUOM->setId(_qtyUOM->id());
     _pricingUOM->setEnabled(false);
+    _salePricingUOM->setId(_qtyUOM->id());
+    _salePricingUOM->setEnabled(false);
   }
   else
+  {
     _pricingUOM->setEnabled(true);
+    _salePricingUOM->setEnabled(true);
+  }
   sCalculateExtendedPrice(); 
+  sCalculateSaleExtendedPrice(); 
 }
 
 void returnAuthorizationItem::sPriceUOMChanged()
@@ -1165,7 +1327,7 @@ void returnAuthorizationItem::updatePriceInfo()
 
 void returnAuthorizationItem::sDispositionChanged()
 {
-  if ( (_disposition->currentIndex() == 3) && 
+  if ( (_disposition->currentIndex() == 3) && // service
           (_item->id() != -1) &&
 	  (_item->itemType() != "J") )
   {
@@ -1176,7 +1338,7 @@ void returnAuthorizationItem::sDispositionChanged()
 	return;
   }
 
-  if ( (_disposition->currentIndex() < 2) && 
+  if ( (_disposition->currentIndex() < 2) && // credit or return
 	  (_orderId != -1) )
   {
     QMessageBox::warning( this, tr("Cannot change Disposition"),
@@ -1187,14 +1349,14 @@ void returnAuthorizationItem::sDispositionChanged()
 	return;
   }
 
-  if ( (_mode == cNew) && (_disposition->currentIndex() == 3) )                     
+  if ( (_mode == cNew) && (_disposition->currentIndex() == 3) ) // service                     
       _item->addExtraClause( QString("(item_type = 'J') AND (NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
   else if (_mode == cNew)                     
       _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
-  else if (_disposition->currentIndex() == 3)                     
+  else if (_disposition->currentIndex() == 3) // service                     
       _item->addExtraClause( QString("(item_type = 'J')") );
 
-  if (_disposition->currentIndex() > 2)
+  if (_disposition->currentIndex() > 2) // service or ship
   {
     _netUnitPrice->setLocalValue(0);
     _netUnitPrice->setEnabled(FALSE);
@@ -1210,13 +1372,17 @@ void returnAuthorizationItem::sDispositionChanged()
     _discountFromSale->setEnabled(TRUE);
   } 
   
-  if (_disposition->currentIndex() >= 2)
+  if (_disposition->currentIndex() >= 2) // replace, service, or ship
   {
     _tab->setTabEnabled(_tab->indexOf(_supply),TRUE);
     _scheduledDate->setEnabled(TRUE);
     _altcosAccntid->setEnabled(TRUE);
     _shipWhsLit->setVisible(TRUE);
     _shipWhs->setVisible(TRUE);
+    _saleNetUnitPrice->setEnabled(TRUE);
+    _saleListPrices->setEnabled(TRUE);
+    _salePricingUOM->setEnabled(TRUE);
+    _saleDiscountFromSale->setEnabled(TRUE);
   }
   else
   {
@@ -1226,6 +1392,11 @@ void returnAuthorizationItem::sDispositionChanged()
     _altcosAccntid->setEnabled(TRUE);
     _shipWhsLit->setVisible(FALSE);
     _shipWhs->setVisible(FALSE);
+    _saleNetUnitPrice->setLocalValue(0);
+    _saleNetUnitPrice->setEnabled(FALSE);
+    _saleListPrices->setEnabled(FALSE);
+    _salePricingUOM->setEnabled(FALSE);
+    _saleDiscountFromSale->setEnabled(FALSE);
   } 
 
   if (_creditmethod == "N")
@@ -1415,10 +1586,10 @@ void returnAuthorizationItem::sCalcWoUnitCost()
   if (_item->itemType() == "J" && _orderId > -1 && _qtyAuth->toDouble() != 0)
   {
     q.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
-		      "FROM wo,raitem "
-			  "WHERE ((wo_ordtype='S') "
-			  "AND (wo_ordid=raitem_new_coitem_id) "
-			  "AND (raitem_id=:raitem_id));");
+              "FROM wo,raitem "
+              "WHERE ((wo_ordtype='S') "
+              "  AND  (wo_ordid=raitem_new_coitem_id) "
+              "  AND  (raitem_id=:raitem_id));");
 	q.bindValue(":raitem_id", _raitemid);
 	q.exec();
 	if (q.first())
@@ -1487,8 +1658,7 @@ void returnAuthorizationItem::sDelete()
   QList<QTreeWidgetItem*> selected = _raitemls->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-        QString sql ( "DELETE FROM raitemls "
-			"WHERE (raitemls_id=:raitemls_id);" );
+        QString sql ( "DELETE FROM raitemls WHERE (raitemls_id=:raitemls_id);" );
         q.prepare(sql);
         q.bindValue(":raitemls_id",  ((XTreeWidgetItem*)(selected[i]))->id());
         q.exec();
@@ -1504,22 +1674,22 @@ void returnAuthorizationItem::sDelete()
 void returnAuthorizationItem::sFillList()
 { 
   q.prepare("SELECT raitemls_id,ls_id,ls_number, "
-		" MAX(lsreg_expiredate) AS lsreg_expiredate, "
-                " COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS raitemls_qtyregistered, "
-                " raitemls_qtyauthorized, raitemls_qtyreceived, "
-                "  'qty' AS raitemls_qtyregistered_xtnumericrole, "
-                "  'qty' AS raitemls_qtyauthorized_xtnumericrole, "
-                "  'qty' AS raitemls_qtyreceived_xtnumericrole "
-		"FROM raitemls "
-		"  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id) "
-                "                       AND (lsreg_crmacct_id=:crmacct_id), "
-		"  ls, raitem "
-		"WHERE ((raitemls_raitem_id=raitem_id) "
-                "AND (raitem_id=:raitem_id) "
-		"AND (raitemls_ls_id=ls_id) ) "
-                "GROUP BY raitemls_id,ls_id,ls_number,raitemls_qtyauthorized,"
-                "  raitemls_qtyreceived "
-                "ORDER BY ls_number;" );
+            "       MAX(lsreg_expiredate) AS lsreg_expiredate, "
+            "       COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS raitemls_qtyregistered, "
+            "       raitemls_qtyauthorized, raitemls_qtyreceived, "
+            "      'qty' AS raitemls_qtyregistered_xtnumericrole, "
+            "      'qty' AS raitemls_qtyauthorized_xtnumericrole, "
+            "      'qty' AS raitemls_qtyreceived_xtnumericrole "
+            "FROM raitemls "
+            "  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id) "
+            "                       AND (lsreg_crmacct_id=:crmacct_id), "
+            "  ls, raitem "
+            "WHERE ( (raitemls_raitem_id=raitem_id) "
+            "  AND   (raitem_id=:raitem_id) "
+            "  AND   (raitemls_ls_id=ls_id) ) "
+            "GROUP BY raitemls_id,ls_id,ls_number,raitemls_qtyauthorized,"
+            "         raitemls_qtyreceived "
+            "ORDER BY ls_number;" );
   q.bindValue(":raitem_id", _raitemid);
   q.bindValue(":crmacct_id", _crmacctid);
   q.bindValue(":na", tr("N/A"));

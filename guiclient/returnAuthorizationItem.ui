@@ -851,7 +851,7 @@ to be bound by its terms.</comment>
              <item>
               <layout class="QGridLayout" name="_3" >
                <item row="0" column="0" >
-                <widget class="QLabel" name="_discountFromSalePrcntLit_2" >
+                <widget class="QLabel" name="_saleDiscountFromSalePrcntLit" >
                  <property name="text" >
                   <string>Discount %:</string>
                  </property>
@@ -918,7 +918,7 @@ to be bound by its terms.</comment>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="_listPrices_2" >
+                  <widget class="QPushButton" name="_saleListPrices" >
                    <property name="enabled" >
                     <bool>false</bool>
                    </property>
@@ -971,7 +971,7 @@ to be bound by its terms.</comment>
                <item row="2" column="1" >
                 <layout class="QHBoxLayout" name="_6" >
                  <item>
-                  <widget class="XComboBox" name="_saleSalePricingUOM" >
+                  <widget class="XComboBox" name="_salePricingUOM" >
                    <property name="focusPolicy" >
                     <enum>Qt::WheelFocus</enum>
                    </property>
