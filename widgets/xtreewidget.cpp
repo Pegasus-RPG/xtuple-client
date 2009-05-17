@@ -12,6 +12,8 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QAbstractItemView>
+#include <QClipboard>
 #include <QDate>
 #include <QDateTime>
 #include <QDrag>
@@ -24,8 +26,14 @@
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlRecord>
-#include <QClipboard>
-#include <QAbstractItemView>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextDocumentWriter>
+#include <QTextEdit>
+#include <QTextTable>
+#include <QTextTableCell>
+#include <QTextTableFormat>
 
 #include "xtsettings.h"
 #include "xsqlquery.h"
@@ -873,9 +881,10 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
       if (_menu->count())
         _menu->insertSeparator();
 
-      _menu->insertItem(tr("Copy Cell To Clipboard..."),  this, SLOT(sCopyCellToClipboard()));                        
-      _menu->insertItem(tr("Copy Row To Clipboard..."),  this, SLOT(sCopyRowToClipboard()));                          
-      _menu->insertItem(tr("Copy All To Clipboard..."),  this, SLOT(sCopyVisibleToClipboard()));
+      _menu->insertItem(tr("Copy All"),  this, SLOT(sCopyVisibleToClipboard()));
+      _menu->insertItem(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));  
+      _menu->insertItem(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));                                                
+      _menu->insertSeparator();
       _menu->insertItem(tr("Export Contents..."),  this, SLOT(sExport()));
     }
 
@@ -934,48 +943,40 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
 
 void XTreeWidget::sExport()
 {
-  QString filename = QFileDialog::getSaveFileName(this, tr("Export Save Filename"), QString::null, "*.txt");
-  if (!filename.isEmpty())
+  QString path = xtsettingsValue(_settingsName + "/exportPath").toString();
+  QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path, 
+                     tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)")));
+    
+  if (!fi.filePath().isEmpty())
   {
-    QFileInfo fi(filename);
+    QTextDocument *doc = new QTextDocument();
+    QTextDocumentWriter writer;
     if(fi.suffix().isEmpty())
-      filename += ".txt";
-
-    QString line;
-    QFile   fileExport(filename);
-    int     counter;
-
-    if (fileExport.open(QIODevice::WriteOnly))
+      fi.setFile(fi.filePath() += ".txt");
+    xtsettingsSetValue(_settingsName + "/exportPath", fi.path());
+    writer.setFileName(fi.filePath());
+    
+    if (fi.suffix() == "txt")
     {
-      QTreeWidgetItem * header = headerItem();
-      for (counter = 0; counter < header->columnCount(); counter++)
-      {
-        line = header->text(counter) + "\t";
-        fileExport.writeBlock(line, line.length());
-      }
-      fileExport.writeBlock("\n", 1);
-
-      XTreeWidgetItem * item = topLevelItem(0);
-      if(item)
-      {
-        QModelIndex idx = indexFromItem(item);
-        while(idx.isValid())
-        {
-          item = (XTreeWidgetItem*)itemFromIndex(idx);
-          if(item)
-          {
-            for (counter = 0; counter < item->columnCount(); counter++)
-            {
-              line = item->text(counter) + "\t";
-              fileExport.writeBlock(line, line.length());
-            }
-            fileExport.writeBlock("\n", 1);
-          }
-          idx = indexBelow(idx);
-        }
-      }
+      doc->setPlainText(toTxt());
+      writer.setFormat("plaintext");
     }
-    fileExport.close();
+    else if (fi.suffix() == "csv")
+    {
+      doc->setPlainText(toCsv());
+      writer.setFormat("plaintext");
+    }
+    else if (fi.suffix() == "odt")
+    {
+      doc->setHtml(toHtml());
+      writer.setFormat("odf");
+    }
+    else if (fi.suffix() == "html")
+    {
+      doc->setHtml(toHtml());
+      writer.setFormat("HTML");
+    }
+    writer.write(doc);
   }
 }
 
@@ -1383,22 +1384,103 @@ double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
   for (int i = 0; i < childCount(); i++)
     total += child(i)->totalForItem(pcol, pset);
   return total;
+}                                                                                                                   
+                                                                                                                        
+void XTreeWidget::sCopyRowToClipboard()                                                                                 
+{                             
+  QMimeData *mime = new QMimeData(); 
+  QClipboard * clipboard = QApplication::clipboard();  
+  QTextDocument *doc = new QTextDocument();
+  QTextCursor *cursor = new QTextCursor(doc);  
+  QTextTableFormat tableFormat;    
+  QTextTableCell cell;  
+  QTextCharFormat format;
+  QString color;
+  QString font;
+  XTreeWidgetItem * item = currentItem();
+  int  counter;
+  int  colcnt = 0;
+                                                     
+  cursor->insertTable(1, 1,tableFormat);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+  if(item)                                                                                                         
+  {                                                                                                                                                                                                                   
+    for (counter = 0; counter < item->columnCount(); counter++)                                                    
+    {                       
+      if(!QTreeWidget::isColumnHidden(counter))                                                                    
+      {             
+        colcnt++;
+        if (colcnt > 1)   
+        {      
+          cursor->currentTable()->appendColumns(1); 
+          cursor->movePosition(QTextCursor::NextCell);  
+        }   
+        cell = cursor->currentTable()->cellAt(cursor->position()); 
+        format = cell.format(); 
+        color = item->data(counter,Qt::BackgroundRole).toString();
+        if (!color.isEmpty())
+          format.setBackground(namedColor(color)); 
+        color = item->data(counter,Qt::ForegroundRole).toString();
+        if (!color.isEmpty())
+          format.setForeground(namedColor(color));
+        font = item->data(counter,Qt::FontRole).toString();
+        if (!font.isEmpty())
+          format.setFont(QFont(font));
+        cell.setFormat(format);            
+        cursor->insertText(item->text(counter));                                                                                                                                            
+      }                                                                                                            
+    } 
+    mime->setHtml(doc->toHtml());            
+    clipboard->setMimeData(mime);      
+  }                                                                                                                                                                                                      
+}
+
+void XTreeWidget::sCopyCellToClipboard()
+{
+  QTextEdit text;  
+  QMimeData *mime = new QMimeData();   
+  QTreeWidgetItem* item = currentItem();
+  QClipboard * clipboard = QApplication::clipboard();
+  QString color;
+  QString font;
+  int column = currentColumn();
+
+  if(column > -1)
+  {
+     color = item->data(column,Qt::BackgroundRole).toString();
+     if (!color.isEmpty())
+        text.setTextBackgroundColor(namedColor(color)); 
+     color = item->data(column,Qt::ForegroundRole).toString();
+     if (!color.isEmpty())
+        text.setTextColor(namedColor(color));
+     font = item->data(column,Qt::FontRole).toString();
+     if (!font.isEmpty())
+        text.setFont(QFont(font));
+     text.setText(item->text(column));
+     mime->setHtml(text.toHtml());            
+     clipboard->setMimeData(mime) ; 
+  }
 }
 
 void XTreeWidget::sCopyVisibleToClipboard()                                                                             
+{          
+  QMimeData *mime = new QMimeData();                                                                                                                                                                                                       
+  QClipboard * clipboard = QApplication::clipboard();                                                                   
+    
+  mime->setHtml(toHtml());            
+  clipboard->setMimeData(mime);                                                                                                                                                                                                                                                                                                             
+}    
+
+QString XTreeWidget::toTxt() const                                                                            
 {                                                                                                                       
   QString line;                                                                                                         
-  QString opText;                                                                                                       
-  QClipboard * clipboard = QApplication::clipboard();                                                                   
+  QString opText;                                                                                                                                                                          
   int     counter;                                                                                                      
                                                                                                                         
   QTreeWidgetItem * header = headerItem();                                                                              
   for (counter = 0; counter < header->columnCount(); counter++)                                                         
   {                                                                                                                     
-    if(!QTreeWidget::isColumnHidden(counter))                                                                           
-    {                                                                                                                   
-      line = line + header->text(counter) + "\t";                                                                       
-    }                                                                                                                   
+    if(!QTreeWidget::isColumnHidden(counter))                                                                                                                                                                                              
+      line = line + header->text(counter).replace("\n"," ") + "\t";                                                                                                                                                                                         
   }                                                                                                                     
   opText = line + "\n";                                                                                                 
                                                                                                                         
@@ -1414,46 +1496,140 @@ void XTreeWidget::sCopyVisibleToClipboard()
          line = "";                                                                                                     
          for (counter = 0; counter < item->columnCount(); counter++)                                                    
          {                                                                                                              
+           if(!QTreeWidget::isColumnHidden(counter))                                                                                                                                                                                
+             line = line + item->text(counter) + "\t";                                                                                                          
+         }                                                                                                              
+       }                                                                                                                
+       opText = opText + line + "\n";                                                                                   
+       idx = indexBelow(idx);                                                                                           
+    }                                                                                                                                                                                                          
+  }    
+   return opText;    
+} 
+
+QString XTreeWidget::toCsv() const                                                                      
+{                                                                                                                       
+  QString line;                                                                                                         
+  QString opText;                                                                                                                                                                        
+  int  counter;             
+  int  colcount = 0;  
+                                                                                                                        
+  QTreeWidgetItem * header = headerItem();                                                                              
+  for (counter = 0; counter < header->columnCount(); counter++)                                                         
+  {                                                                                                                     
+    if(!QTreeWidget::isColumnHidden(counter))                                                                           
+    {                            
+      if (colcount)
+        line = line + ",";   
+      line = line + header->text(counter).replace("\"","\"\"").replace("\n"," "); 
+      colcount++;      
+    }                                                                                                                   
+  }                                                                                                                     
+  opText = line + "\n";                                                                                                 
+                                                                                                                        
+  XTreeWidgetItem * item = topLevelItem(0);                                                                             
+  if(item)                                                                                                              
+  {                                                                                                                     
+    QModelIndex idx = indexFromItem(item);                                                                              
+    while(idx.isValid())                                                                                                
+    {                 
+       colcount = 0;    
+       item = (XTreeWidgetItem*)itemFromIndex(idx);                                                                     
+       if(item)                                                                                                         
+       {                                                                                                                
+         line = "";                                                                                                     
+         for (counter = 0; counter < item->columnCount(); counter++)                                                    
+         {                                                                                                              
            if(!QTreeWidget::isColumnHidden(counter))                                                                    
-           {                                                                                                            
-             line = line + item->text(counter) + "\t";                                                                  
+           {          
+             if (colcount)
+               line = line + ",";   
+             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
+               line = line + "\"";             
+             line = line + item->text(counter).replace("\"","\"\"");
+             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
+               line = line + "\"";  
+             colcount++;             
            }                                                                                                            
          }                                                                                                              
        }                                                                                                                
        opText = opText + line + "\n";                                                                                   
        idx = indexBelow(idx);                                                                                           
-    }                                                                                                                   
-    clipboard->setText(opText);                                                                                         
-  }                                                                                                                     
-}                                                                                                                       
-                                                                                                                        
-                                                                                                                        
-void XTreeWidget::sCopyRowToClipboard()                                                                                 
-{                                                                                                                       
-  QString line;                                                                                                         
-  QTreeWidgetItem* item = currentItem();                                                                                
-  QClipboard * clipboard = QApplication::clipboard();                                                                   
-                                                                                                                        
-  line = "";                                                                                                            
-  for(int counter = 0; counter < item->columnCount(); counter++)
-  {
-    if(!QTreeWidget::isColumnHidden(counter))
-    {
-       line = line + item->text(counter) + "\t";
-    }
-  }
-  clipboard->setText(line);
+    }                                                                                                                                                                                                          
+  }    
+   return opText;    
 }
 
-void XTreeWidget::sCopyCellToClipboard()
-{
-  QTreeWidgetItem* item = currentItem();
-  QClipboard * clipboard = QApplication::clipboard();
-  int column = currentColumn();
-  QString text = item->text(column);
-  if(column > -1)
-  {
-    clipboard->setText(text);
-  }
-}
+QString XTreeWidget::toHtml() const                                                                           
+{                                                                                                                       
+  QTextDocument *doc = new QTextDocument();
+  QTextCursor *cursor = new QTextCursor(doc);  
+  QTextTableFormat tableFormat;    
+  QTextTableCell cell;  
+  QTextCharFormat format;
+  QString color;
+  QString font;
+  int  counter;
+  int  colcnt = 0;
+                                                   
+  tableFormat.setHeaderRowCount(1);
+                                                                            
+  QTreeWidgetItem * header = headerItem();   
+  cursor->insertTable(1, 1,tableFormat);                                                                        
+  for (counter = 0; counter < header->columnCount(); counter++)                                                         
+  {                                                                                                                     
+    if(!QTreeWidget::isColumnHidden(counter))                                                                           
+    {      
+      colcnt++;
+      if (colcnt > 1)   
+      {      
+        cursor->currentTable()->appendColumns(1); 
+        cursor->movePosition(QTextCursor::NextCell);  
+      }    
+      cell = cursor->currentTable()->cellAt(cursor->position()); 
+      format = cell.format(); 
+      format.setBackground(Qt::lightGray); 
+      cell.setFormat(format); 
+      cursor->insertText(header->text(counter));  
+    }                                                                                                                   
+  }                                                                                                                                                                                                                     
+                                                                                                                        
+  XTreeWidgetItem * item = topLevelItem(0);                                                                             
+  if(item)                                                                                                              
+  {                                                                                                                     
+    QModelIndex idx = indexFromItem(item);                                                                              
+    while(idx.isValid())                                                                                                
+    {                                                                                                                   
+       item = (XTreeWidgetItem*)itemFromIndex(idx);                                                                     
+       if(item)                                                                                                         
+       {                                                                                                                
+         cursor->currentTable()->appendRows(1);
+         cursor->movePosition(QTextCursor::PreviousRow);
+         cursor->movePosition(QTextCursor::NextCell);                                                                                                    
+         for (counter = 0; counter < item->columnCount(); counter++)                                                    
+         {                       
+           if(!QTreeWidget::isColumnHidden(counter))                                                                    
+           {                    
+             cell = cursor->currentTable()->cellAt(cursor->position()); 
+             format = cell.format(); 
+             color = item->data(counter,Qt::BackgroundRole).toString();
+             if (!color.isEmpty())
+               format.setBackground(namedColor(color)); 
+             color = item->data(counter,Qt::ForegroundRole).toString();
+             if (!color.isEmpty())
+               format.setForeground(namedColor(color));
+             font = item->data(counter,Qt::FontRole).toString();
+             if (!font.isEmpty())
+               format.setFont(QFont(font));
+             cell.setFormat(format);            
+             cursor->insertText(item->text(counter));
+             cursor->movePosition(QTextCursor::NextCell);                                                                                                                                            
+           }                                                                                                            
+         }                                                                                                              
+       }                                                                                                                                                                                                   
+       idx = indexBelow(idx);                                                                                           
+    }                                                                                                           
+  }    
+  return doc->toHtml();    
+}    
 

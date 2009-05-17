@@ -143,7 +143,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   public:
     XTreeWidget(QWidget *);
     ~XTreeWidget();
-
+    
     Q_INVOKABLE void populate(XSqlQuery, bool = FALSE);
     Q_INVOKABLE void populate(XSqlQuery, int, bool = FALSE);
     void populate(const QString &, bool = FALSE);
@@ -169,6 +169,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     Q_INVOKABLE XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     Q_INVOKABLE XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
+   
+    Q_INVOKABLE QString toTxt() const;
+    Q_INVOKABLE QString toCsv() const;
+    Q_INVOKABLE QString toHtml() const;
 
     static  bool itemAsc(const QVariant &, const QVariant &);
     static  bool itemDesc(const QVariant &, const QVariant &);
