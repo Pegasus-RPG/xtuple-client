@@ -74,6 +74,7 @@
        formatQty(noNeg(qtyonhand - allocated)) AS f_unallocated,
        formatQty(noNeg(allocated)) AS f_allocated,
        formatQty(ordered) AS f_ordered,
+       formatQty(requests) AS f_requests,
        formatQty(reorderlevel) AS f_reorderlevel,
        (qtyonhand - allocated + ordered) AS available,
        formatQty(qtyonhand - allocated + ordered) AS f_available
@@ -83,16 +84,20 @@
                itemsite_qtyonhand AS qtyonhand,
 &lt;? if exists("byDays") ?>
                qtyAllocated(itemsite_id, &lt;? value("byDays") ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value("byDays") ?>) AS ordered
+               qtyOrdered(itemsite_id, &lt;? value("byDays") ?>) AS ordered,
+               qtypr(itemsite_id, &lt;? value("byDays") ?>) AS requests
 &lt;? elseif exists("byDate") ?>
                qtyAllocated(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS allocated,
-               qtyOrdered(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS ordered
+               qtyOrdered(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS ordered,
+               qtypr(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS requests
 &lt;? elseif exists("byDates") ?>
                qtyAllocated(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS ordered
+               qtyOrdered(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS ordered,
+               qtypr(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS requests
 &lt;? else ?>
                qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,
-               qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered
+               qtyOrdered(itemsite_id,   itemsite_leadtime) AS ordered, 
+               qtypr(itemsite_id,   itemsite_leadtime) AS requests
 &lt;? endif ?>
           FROM itemsite, item, warehous
          WHERE ((itemsite_active)
@@ -169,7 +174,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
   <label>
    <rect>
     <x>10</x>
-    <y>185</y>
+    <y>178</y>
     <width>35</width>
     <height>15</height>
    </rect>
@@ -240,7 +245,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
   <label>
    <rect>
     <x>65</x>
-    <y>185</y>
+    <y>178</y>
     <width>106</width>
     <height>15</height>
    </rect>
@@ -291,7 +296,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
   <label>
    <rect>
     <x>330</x>
-    <y>185</y>
+    <y>178</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -306,8 +311,8 @@ ORDER BY item_number, warehous_code DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>434</x>
-    <y>185</y>
+    <x>431</x>
+    <y>178</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -358,7 +363,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
   <label>
    <rect>
     <x>540</x>
-    <y>185</y>
+    <y>178</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -374,7 +379,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
   <label>
    <rect>
     <x>645</x>
-    <y>185</y>
+    <y>178</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -421,6 +426,22 @@ ORDER BY item_number, warehous_code DESC;</sql>
    <right/>
    <vcenter/>
    <string>Site:</string>
+  </label>
+  <label>
+   <rect>
+    <x>540</x>
+    <y>189</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>PO Requests</string>
   </label>
  </rpthead>
  <pghead>
@@ -616,7 +637,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -635,7 +656,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -673,7 +694,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -711,7 +732,7 @@ ORDER BY item_number, warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -785,16 +806,16 @@ ORDER BY item_number, warehous_code DESC;</sql>
    <field>
     <rect>
      <x>434</x>
-     <y>15</y>
+     <y>30</y>
      <width>100</width>
-     <height>15</height>
+     <height>16</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -804,7 +825,26 @@ ORDER BY item_number, warehous_code DESC;</sql>
    <field>
     <rect>
      <x>540</x>
-     <y>15</y>
+     <y>31</y>
+     <width>100</width>
+     <height>12</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_reorderlevel</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>14</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -813,11 +853,11 @@ ORDER BY item_number, warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_reorderlevel</column>
+     <column>f_requests</column>
     </data>
    </field>
   </detail>

@@ -57,6 +57,7 @@ dspInventoryAvailabilityByParameterList::dspInventoryAvailabilityByParameterList
   _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
   _availability->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
   _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("PO Requests"),  _qtyColumn,  Qt::AlignRight, true, "requests");
   _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
   _availability->addColumn(tr("OUT Level."),   _qtyColumn,  Qt::AlignRight, false, "outlevel");
   _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
