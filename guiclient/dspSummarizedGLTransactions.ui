@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -20,168 +19,180 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Summarized General Ledger Transactions</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QGridLayout" name="gridLayout_4" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="leftMargin" >
+    <layout class="QGridLayout" name="gridLayout_3" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
        <item>
-        <widget class="QGroupBox" name="_sourceGroup" >
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="2" >
-           <widget class="QRadioButton" name="_allSources" >
-            <property name="text" >
-             <string>All Sources</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="_selectedSource" >
-            <property name="text" >
-             <string>Selected Source:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <layout class="QHBoxLayout" >
-            <item>
-             <widget class="XComboBox" name="_source" >
-              <property name="enabled" >
-               <bool>false</bool>
+        <layout class="QGridLayout" name="gridLayout_2" >
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="_sourceGroup" >
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" colspan="2" >
+             <widget class="QRadioButton" name="_allSources" >
+              <property name="text" >
+               <string>All Sources</string>
               </property>
-              <item>
-               <property name="text" >
-                <string>A/P</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>A/R</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>G/L</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>I/M</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>P/D</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>P/O</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>S/O</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>S/R</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>W/O</string>
-               </property>
-              </item>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
+            <item row="1" column="0" >
+             <widget class="QRadioButton" name="_selectedSource" >
+              <property name="text" >
+               <string>Selected Source:</string>
               </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XComboBox" name="_source" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <item>
+                 <property name="text" >
+                  <string>A/P</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>A/R</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>G/L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>I/M</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>P/D</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>P/O</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>S/O</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>S/R</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>W/O</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="_dateGroup" >
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="DateCluster" name="_dates" />
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="_showGroup" >
-         <property name="title" >
-          <string>Transactions</string>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QRadioButton" name="_allTransactions" >
-            <property name="text" >
-             <string>All</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="_unpostedTransactions" >
-            <property name="text" >
-             <string>Unposted</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QRadioButton" name="_postedTransactions" >
-            <property name="text" >
-             <string>Posted</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QGroupBox" name="_dateGroup" >
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="DateCluster" name="_dates" />
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2" >
+          <widget class="QGroupBox" name="_showGroup" >
+           <property name="title" >
+            <string>Transactions</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" name="horizontalLayout" >
+              <property name="spacing" >
+               <number>12</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="_allTransactions" >
+                <property name="text" >
+                 <string>All</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_postedTransactions" >
+                <property name="text" >
+                 <string>Posted</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_unpostedTransactions" >
+                <property name="text" >
+                 <string>Unposted</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" >
@@ -196,7 +207,7 @@ to be bound by its terms.</comment>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>20</height>
@@ -241,7 +252,7 @@ to be bound by its terms.</comment>
              <property name="orientation" >
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>20</width>
                <height>0</height>
@@ -273,16 +284,7 @@ to be bound by its terms.</comment>
         <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
@@ -326,7 +328,6 @@ to be bound by its terms.</comment>
   <tabstop>_selectedSource</tabstop>
   <tabstop>_source</tabstop>
   <tabstop>_dates</tabstop>
-  <tabstop>_allTransactions</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_gltrans</tabstop>
   <tabstop>_print</tabstop>
