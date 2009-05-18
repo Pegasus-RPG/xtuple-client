@@ -475,8 +475,9 @@ int main(int argc, char *argv[])
 
   if (omfgThis->_singleWindow.isEmpty())
   {
+    omfgThis->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(omfgThis, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
     omfgThis->show();
-    //app.setMainWidget(omfgThis);
   }
   // keep this synchronized with GUIClient and user.ui.h
   else if (omfgThis->_singleWindow == "woTimeClock")
@@ -485,8 +486,9 @@ int main(int argc, char *argv[])
     ParameterList params;
     params.append("captive");
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(omfgThis, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
     newdlg->show();
-    //app.setMainWidget(newdlg);
   }
 
   if(!omfgThis->singleCurrency())
