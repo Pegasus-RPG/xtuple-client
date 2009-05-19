@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,105 +8,105 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>databaseInformation</class>
- <widget class="QDialog" name="databaseInformation" >
-  <property name="geometry" >
+ <widget class="QDialog" name="databaseInformation">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
+    <width>555</width>
     <height>463</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Database Information</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_descriptionLit" >
-         <property name="text" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="_descriptionLit">
+         <property name="text">
           <string>Database &amp;Description:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_description</cstring>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="XLineEdit" name="_description" />
+       <item row="0" column="1">
+        <widget class="XLineEdit" name="_description"/>
        </item>
-       <item row="1" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+       <item row="1" column="0">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_applicationLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_applicationLit">
+           <property name="text">
             <string>Application:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_serverLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_serverLit">
+           <property name="text">
             <string>Server Address:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_nameLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_nameLit">
+           <property name="text">
             <string>Database Name:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_versionLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_versionLit">
+           <property name="text">
             <string>Database Version:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+       <item row="1" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_application" >
-           <property name="text" >
+          <widget class="QLabel" name="_application">
+           <property name="text">
             <string/>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_server" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <widget class="QLabel" name="_server">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -113,9 +114,9 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_name" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <widget class="QLabel" name="_name">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -123,39 +124,39 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout">
            <item>
-            <widget class="QLabel" name="_version" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+            <widget class="QLabel" name="_version">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text" >
+             <property name="text">
               <string/>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_patchLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_patchLit">
+             <property name="text">
               <string>Patch:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_patch" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+            <widget class="QLabel" name="_patch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text" >
+             <property name="text">
               <string/>
              </property>
             </widget>
@@ -164,67 +165,67 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="2" column="1" >
-        <layout class="QHBoxLayout" >
+       <item row="2" column="1">
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QSpinBox" name="_interval" >
-           <property name="minimum" >
+          <widget class="QSpinBox" name="_interval">
+           <property name="minimum">
             <number>1</number>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <number>999</number>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_minutesLit" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <widget class="QLabel" name="_minutesLit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>minutes</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="3" column="1" >
-        <widget class="QCheckBox" name="_disallowMismatchClient" >
-         <property name="text" >
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="_disallowMismatchClient">
+         <property name="text">
           <string>Disallow mismatched client versions</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1" >
-        <layout class="QHBoxLayout" name="horizontalLayout" >
+       <item row="5" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QComboBox" name="_access" >
+          <widget class="QComboBox" name="_access">
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Active Users Only</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Admin Users Only (Maintenance Mode)</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>Any Users not Inactive</string>
             </property>
            </item>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>0</width>
              <height>20</height>
@@ -234,63 +235,70 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="4" column="0" >
-        <widget class="QLabel" name="_accessLit" >
-         <property name="text" >
+       <item row="5" column="0">
+        <widget class="QLabel" name="_accessLit">
+         <property name="text">
           <string>Access Mode:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_access</cstring>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_intervalLit" >
-         <property name="text" >
+       <item row="2" column="0">
+        <widget class="QLabel" name="_intervalLit">
+         <property name="text">
           <string>Auto Update Signal &amp;Interval:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_interval</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="_verboseCommentList">
+         <property name="text">
+          <string>Show Comments as Verbose Text List</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
-       <property name="margin" >
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>5</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>&amp;Cancel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_save" >
-           <property name="text" >
+          <widget class="QPushButton" name="_save">
+           <property name="text">
             <string>&amp;Save</string>
            </property>
-           <property name="default" >
+           <property name="default">
             <bool>true</bool>
            </property>
           </widget>
@@ -299,13 +307,13 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>0</height>
@@ -318,90 +326,90 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
+     <layout class="QVBoxLayout">
+      <property name="spacing">
        <number>0</number>
       </property>
-      <property name="margin" >
+      <property name="margin">
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_commentsLit" >
-        <property name="text" >
+       <widget class="QLabel" name="_commentsLit">
+        <property name="text">
          <string>C&amp;omments:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>_comments</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QTextEdit" name="_comments" />
+       <widget class="QTextEdit" name="_comments"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin" >
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
+      <layout class="QHBoxLayout">
+       <property name="spacing">
         <number>7</number>
        </property>
-       <property name="margin" >
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>5</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_numOfDatabaseUsersLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_numOfDatabaseUsersLit">
+             <property name="text">
               <string>Number of Database Users:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_numOfServerUsersLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_numOfServerUsersLit">
+             <property name="text">
               <string>Number of Server Users:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
@@ -409,41 +417,41 @@ to be bound by its terms.</comment>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_numOfDatabaseUsers" >
-             <property name="minimumSize" >
+            <widget class="QLabel" name="_numOfDatabaseUsers">
+             <property name="minimumSize">
               <size>
                <width>40</width>
                <height>0</height>
               </size>
              </property>
-             <property name="text" >
+             <property name="text">
               <string/>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_numOfServerUsers" >
-             <property name="minimumSize" >
+            <widget class="QLabel" name="_numOfServerUsers">
+             <property name="minimumSize">
               <size>
                <width>40</width>
                <height>0</height>
               </size>
              </property>
-             <property name="text" >
+             <property name="text">
               <string/>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
@@ -453,22 +461,22 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -477,35 +485,35 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
+          <layout class="QHBoxLayout">
+           <property name="spacing">
             <number>5</number>
            </property>
-           <property name="margin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_numOfServerLicensesLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_numOfServerLicensesLit">
+             <property name="text">
               <string>Number of Server Licenses:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_numOfServerLicencesLit" >
-             <property name="minimumSize" >
+            <widget class="QLabel" name="_numOfServerLicencesLit">
+             <property name="minimumSize">
               <size>
                <width>40</width>
                <height>0</height>
               </size>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Open</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
@@ -518,13 +526,13 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>105</width>
          <height>16</height>
@@ -536,7 +544,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -548,12 +556,13 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_description</tabstop>
-  <tabstop>_interval</tabstop>
   <tabstop>_disallowMismatchClient</tabstop>
+  <tabstop>_interval</tabstop>
+  <tabstop>_verboseCommentList</tabstop>
   <tabstop>_access</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_comments</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -563,11 +572,11 @@ to be bound by its terms.</comment>
    <receiver>databaseInformation</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>455</x>
      <y>32</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

@@ -16,7 +16,9 @@
 #include "xtreewidget.h"
 
 class QPushButton;
+class QTextBrowser;
 class XTreeWidget;
+class Comment;
 
 class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 {
@@ -26,7 +28,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 
   Q_PROPERTY(CommentSources type READ type WRITE setType)
 
-  friend class Comment;
+  friend class comment;
 
   public:
     Comments(QWidget *, const char * = 0);
@@ -72,10 +74,13 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     void setType(enum CommentSources);
     void setId(int);
     void setReadOnly(bool);
+    void setVerboseCommentList(bool);
 
     void sNew();
     void sView();
     void refresh();
+
+    void anchorClicked(const QUrl &);
     
   signals:
     void commentAdded();
@@ -84,7 +89,9 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     enum CommentSources _source;
     int                 _sourceid;
     QList<QVariant> _commentIDList;
+    bool _verboseCommentList;
 
+    QTextBrowser *_browser;
     XTreeWidget *_comment;
     QPushButton *_newComment;
     QPushButton *_viewComment;

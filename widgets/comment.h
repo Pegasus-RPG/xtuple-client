@@ -31,7 +31,7 @@ class XTUPLEWIDGETS_EXPORT comment : public QDialog
     friend class Comments;
 
   public:
-    comment(QWidget * = 0, const char * = 0, bool = FALSE, Qt::WFlags = 0);
+    comment(QWidget * = 0, const char * = 0, bool = FALSE, Qt::WindowFlags = 0);
 
     XComboBox* _cmnttype;
     QTextEdit* _comment;
@@ -39,6 +39,8 @@ class XTUPLEWIDGETS_EXPORT comment : public QDialog
     QPushButton* _save;
     QPushButton* _next;
     QPushButton* _prev;
+    QPushButton* _more;
+    Comments* _comments;
 
   public slots:
     virtual void set( ParameterList & pParams );

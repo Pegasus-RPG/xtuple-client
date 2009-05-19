@@ -31,10 +31,14 @@
 #define cEdit 2
 #define cView 3
 
-comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) :
-  QDialog( parent, name, modal, fl )
+comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl ) :
+  QDialog( parent, fl )
 {
+  if(name)
+    setObjectName(name);
   setWindowTitle(tr("Comment"));
+  if(modal)
+    setWindowModality(Qt::WindowModal);
 
   _commentid = -1;
   _targetId = -1;
@@ -43,7 +47,8 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   if (!name)
     setObjectName("comment");
 
-  QHBoxLayout *commentLayout = new QHBoxLayout( this, 5, 7, "commentLayout"); 
+  QVBoxLayout *moreLayout = new QVBoxLayout(this, 5, 7, "moreLayout");
+  QHBoxLayout *commentLayout = new QHBoxLayout( 0, 5, 7, "commentLayout"); 
   QVBoxLayout *layout11  = new QVBoxLayout( 0, 0, 5, "layout11"); 
   QHBoxLayout *layout9   = new QHBoxLayout( 0, 0, 0, "layout9"); 
   QBoxLayout *layout8    = new QHBoxLayout( 0, 0, 5, "layout8"); 
@@ -80,7 +85,21 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   Layout181->addLayout( Layout180 );
   QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
   Layout181->addItem( spacer_2 );
+
+  _more = new QPushButton(tr("Show &More"), this, "_more");
+  _more->setCheckable(true);
+  Layout181->addWidget(_more);
+
   commentLayout->addLayout( Layout181 );
+
+  moreLayout->addLayout(commentLayout);
+
+  _comments = new Comments(this, "_comments");
+  _comments->setReadOnly(true);
+  _comments->_newComment->setVisible(false);
+  _comments->setVerboseCommentList(true);
+  _comments->setVisible(false);
+  moreLayout->addWidget(_comments);
 
   resize( QSize(524, 270).expandedTo(minimumSizeHint()) );
   //clearWState( WState_Polished );
@@ -90,6 +109,7 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_next, SIGNAL(clicked()), this, SLOT(sNextComment()));
   connect(_prev, SIGNAL(clicked()), this, SLOT(sPrevComment()));
+  connect(_more, SIGNAL(toggled(bool)), _comments, SLOT(setVisible(bool)));
 
 // tab order
   setTabOrder( _cmnttype, _comment );
@@ -406,7 +426,12 @@ void comment::set(ParameterList &pParams)
 
   param = pParams.value("source_id", &valid);
   if (valid)
+  {
     _targetId = param.toInt();
+  }
+
+  _comments->setType(_source);
+  _comments->setId(_targetId);
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -428,6 +453,7 @@ void comment::set(ParameterList &pParams)
       _comment->setReadOnly(TRUE);
       _save->hide();
       _close->setText(tr("&Close"));
+      _more->hide();
 
       _close->setFocus();
     }

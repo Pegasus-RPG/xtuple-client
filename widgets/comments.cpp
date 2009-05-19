@@ -14,6 +14,9 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QList>
+#include <QTextBrowser>
+#include <QDesktopServices>
+#include <QDebug>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -67,6 +70,10 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _source = Uninitialized;
   _sourceid = -1;
 
+  _verboseCommentList = false;
+  if(_x_metrics)
+    _verboseCommentList = _x_metrics->boolean("VerboseCommentList");
+
   QHBoxLayout *main = new QHBoxLayout(this);
   main->setMargin(0);
   main->setSpacing(7);
@@ -84,6 +91,12 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
   _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
   main->addWidget(_comment);
+
+  _browser = new QTextBrowser(this);
+  _browser->setObjectName("_browser");
+  _browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  _browser->setOpenLinks(false);
+  main->addWidget(_browser);
 
   _newComment = new QPushButton(tr("New"), buttons, "_newComment");
   buttonsLayout->addWidget(_newComment);
@@ -103,8 +116,11 @@ Comments::Comments(QWidget *pParent, const char *name) :
   connect(_viewComment, SIGNAL(clicked()), this, SLOT( sView()));
   connect(_comment, SIGNAL(valid(bool)), _viewComment, SLOT(setEnabled(bool)));
   connect(_comment, SIGNAL(itemSelected(int)), _viewComment, SLOT(animateClick()));
+  connect(_browser, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 
   setFocusProxy(_comment);
+
+  setVerboseCommentList(_verboseCommentList);
 }
 
 void Comments::setType(enum CommentSources pSource)
@@ -147,6 +163,8 @@ void Comments::sView()
 {
   ParameterList params;
   params.append("mode", "view");
+  params.append("sourceType", _source);
+  params.append("source_id", _sourceid);
   params.append("comment_id", _comment->id());
   params.append("commentIDList", _commentIDList);
 
@@ -157,6 +175,7 @@ void Comments::sView()
 
 void Comments::refresh()
 {
+  _browser->document()->clear();
   if(-1 == _sourceid)
   {
     _comment->clear();
@@ -171,7 +190,8 @@ void Comments::refresh()
                      "            ELSE :none"
                      "       END AS type,"
                      "       comment_user,"
-                     "       firstLine(detag(comment_text)) AS first "
+                     "       firstLine(detag(comment_text)) AS first,"
+                     "       comment_text "
                      "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      "WHERE ( (comment_source=:source)"
                      " AND (comment_source_id=:sourceid) ) "
@@ -185,7 +205,8 @@ void Comments::refresh()
                      "            ELSE :none"
                      "       END AS type,"
                      "       comment_user,"
-                     "       firstLine(detag(comment_text)) AS first "
+                     "       firstLine(detag(comment_text)) AS first,"
+                     "       comment_text "
                      "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:source)"
                      "   AND (comment_source_id=:sourceid) ) "
@@ -194,7 +215,8 @@ void Comments::refresh()
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)) "
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_text "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceCust)"
                      "   AND (crmacct_id=:sourceid)"
@@ -204,7 +226,8 @@ void Comments::refresh()
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)) "
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_text "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceVend)"
                      "   AND (crmacct_id=:sourceid)"
@@ -214,7 +237,8 @@ void Comments::refresh()
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)) "
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_text "
                      "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceContact)"
                      "   AND (cntct_crmacct_id=:sourceid)"
@@ -229,12 +253,46 @@ void Comments::refresh()
   comment.bindValue(":sourceid", _sourceid);
   comment.exec();
 
+  QString lclHtml = "<body>";
+  QRegExp br("\r?\n");
   _commentIDList.clear();
   while(comment.next())
   {
     _commentIDList.push_back(comment.value("comment_id").toInt());
+    lclHtml += comment.value("comment_date").toDateTime().toString();
+    lclHtml += " ";
+    lclHtml += comment.value("type").toString();
+    lclHtml += " ";
+    lclHtml += comment.value("comment_user").toString();
+    lclHtml += "<p>\n<blockquote>";
+    lclHtml += comment.value("comment_text").toString().replace(br,"<br>\n");
+    lclHtml += "</pre></blockquote>\n<hr>\n";
   }
+  lclHtml += "</body>";
 
+  _browser->document()->setHtml(lclHtml);
   comment.first();
   _comment->populate(comment);
 }
+
+void Comments::setVerboseCommentList(bool vcl)
+{
+  _verboseCommentList = vcl;
+  _comment->setVisible(!vcl);
+  _viewComment->setVisible(!vcl);
+  _browser->setVisible(vcl);
+}
+
+void Comments::anchorClicked(const QUrl & url)
+{
+  if(url.host().isEmpty() && url.path() == "edit")
+  {
+    int cid = url.queryItemValue("id").toInt();
+    // TODO check that the user has edit privs for this item
+  }
+  else
+  {
+    QDesktopServices::openUrl(url);
+  }
+}
+
