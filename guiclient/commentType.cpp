@@ -94,6 +94,7 @@ enum SetResponse commentType::set(const ParameterList &pParams)
 
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
+      _editable->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -117,19 +118,21 @@ void commentType::sSave()
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO cmnttype "
-               "( cmnttype_id, cmnttype_name, cmnttype_descrip ) "
+               "( cmnttype_id, cmnttype_name, cmnttype_descrip, cmnttype_editable ) "
                "VALUES "
-               "( :cmnttype_id, :cmnttype_name, :cmnttype_descrip );" );
+               "( :cmnttype_id, :cmnttype_name, :cmnttype_descrip, :cmnttype_editable );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE cmnttype "
                "SET cmnttype_name=:cmnttype_name,"
-               "    cmnttype_descrip=:cmnttype_descrip "
+               "    cmnttype_descrip=:cmnttype_descrip,"
+               "    cmnttype_editable=:cmnttype_editable "
                "WHERE (cmnttype_id=:cmnttype_id);" );
 
   q.bindValue(":cmnttype_id", _cmnttypeid);
   q.bindValue(":cmnttype_name", _name->text());
   q.bindValue(":cmnttype_descrip", _description->text());
+  q.bindValue(":cmnttype_editable", _editable->isChecked());
   q.exec();
 
   done(_cmnttypeid);
@@ -167,6 +170,7 @@ void commentType::populate()
   {
     _name->setText(q.value("cmnttype_name"));
     _description->setText(q.value("cmnttype_descrip"));
+    _editable->setChecked(q.value("cmnttype_editable").toBool());
     
     q.prepare( "SELECT source_module "
                "FROM cmnttypesource, source "
