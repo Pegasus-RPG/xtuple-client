@@ -171,15 +171,24 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-	  _transType = cNew;
+      _transType = cNew;
+
+      q.exec("SELECT fetchCashRcptNumber() AS number;");
+      if (q.first())
+        _number->setText(q.value("number").toString());
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
 
       q.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
       if (q.first())
         _cashrcptid = q.value("cashrcpt_id").toInt();
       else if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
 
       _distDate->setDate(omfgThis->dbDate(), true);
@@ -451,6 +460,15 @@ void cashReceipt::close()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+
+    q.prepare("SELECT releaseCashRcptNumber(:number);");
+    q.bindValue(":number", _number->text().toInt());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   XWidget::close();
@@ -579,12 +597,12 @@ int to = -1, from = -1;
                "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
                "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
-               "  cashrcpt_notes, cashrcpt_salescat_id ) "
+               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number ) "
                "VALUES "
                "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
                "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
-               "  :cashrcpt_notes, :cashrcpt_salescat_id );" );
+               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -601,6 +619,7 @@ int to = -1, from = -1;
 	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
+  q.bindValue(":cashrcpt_number", _number->text());
   q.bindValue(":cashrcpt_cust_id", _cust->id());
   if (_received->id() != _bankaccnt_curr_id)
     q.bindValue(":cashrcpt_amount", convertedAmount);
@@ -758,6 +777,7 @@ void cashReceipt::populate()
   if (q.first())
   {
     _cust->setId(q.value("cashrcpt_cust_id").toInt());
+    _number->setText(q.value("cashrcpt_number").toString());
     _received->set(q.value("cashrcpt_amount").toDouble(),
                    q.value("cashrcpt_curr_id").toInt(),
                    q.value("cashrcpt_distdate").toDate(), false);

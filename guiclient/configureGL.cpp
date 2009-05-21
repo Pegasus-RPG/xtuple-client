@@ -68,10 +68,17 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
     
   // AR
   _nextARMemoNumber->setValidator(omfgThis->orderVal());
+  _nextCashRcptNumber->setValidator(omfgThis->orderVal());
 
   q.exec("SELECT currentARMemoNumber() AS result;");
   if (q.first())
     _nextARMemoNumber->setText(q.value("result"));
+  else if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+  q.exec("SELECT currentCashRcptNumber() AS result;");
+  if (q.first())
+    _nextCashRcptNumber->setText(q.value("result"));
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
@@ -239,6 +246,15 @@ void configureGL::sSave()
   // AR
   q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
   q.bindValue(":armemo_number", _nextARMemoNumber->text().toInt());
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  q.prepare("SELECT setNextCashRcptNumber(:cashrcpt_number) AS result;");
+  q.bindValue(":cashrcpt_number", _nextCashRcptNumber->text().toInt());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {

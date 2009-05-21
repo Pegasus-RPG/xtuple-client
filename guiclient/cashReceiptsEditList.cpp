@@ -36,6 +36,7 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
   connect(_post,   SIGNAL(clicked()), this, SLOT(sPost()));
 
+  _cashrcpt->addColumn(tr("Number"),           _orderColumn, Qt::AlignLeft,  true, "cashrcpt_number");
   _cashrcpt->addColumn(tr("Cust. #"),       _bigMoneyColumn, Qt::AlignLeft,  true, "cust_number");                                                                
   _cashrcpt->addColumn(tr("Name"),                       -1, Qt::AlignLeft,  true, "cust_name"); 
   _cashrcpt->addColumn(tr("Check/Doc. #"),     _orderColumn, Qt::AlignLeft,  true, "cashrcpt_docnumber");

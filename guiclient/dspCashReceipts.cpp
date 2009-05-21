@@ -52,10 +52,12 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _dates->setStartDate(QDate().currentDate().addDays(-90));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   
-  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft, true,  "source" );
+  _arapply->addColumn(tr("Number"),      _orderColumn,    Qt::AlignCenter, true,  "cashrcpt_number" );
+  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "source" );
   _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter, true,  "cust_number" );
   _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _arapply->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "posted" );
+  _arapply->addColumn(tr("Voided"),      _ynColumn,       Qt::AlignCenter, true,  "voided" );
   _arapply->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter, true,  "postdate" );
   _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter, true,  "target" );
   _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight,  true,  "applied"  );
@@ -155,13 +157,16 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   pParams.append("other", tr("Other"));
   pParams.append("unapplied", tr("Customer Deposit"));
   pParams.append("unposted", tr("Unposted"));
+  pParams.append("voided", tr("Voided"));
     
   if (_applications->isChecked())
   {
+    _arapply->hideColumn("cashrcpt_number");
     pParams.append("LegacyDisplayMode");
   }
   else
   { 
+    _arapply->showColumn("cashrcpt_number");
     if(_metrics->boolean("LegacyCashReceipts"))
     {
       _upgradeWarn->showMessage(
@@ -179,7 +184,7 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
   if (_arapply->id() > -1)
   {
     // Cash Receipt              
-    if (!_arapply->currentItem()->rawValue("posted").toBool())
+    if (!_arapply->currentItem()->rawValue("posted").toBool() && !_arapply->currentItem()->rawValue("voided").toBool())
     {
       menuItem = pMenu->insertItem(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
       pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
@@ -187,17 +192,20 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
 
     pMenu->insertItem(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
-      
-    if (!_arapply->currentItem()->rawValue("posted").toBool())
-    {   
-      menuItem = pMenu->insertItem(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("PostCashReceipts"));
+
+    if (!_arapply->currentItem()->rawValue("voided").toBool())
+    {      
+      if (!_arapply->currentItem()->rawValue("posted").toBool())
+      {   
+        menuItem = pMenu->insertItem(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()), 0);
+        pMenu->setItemEnabled(menuItem, _privileges->check("PostCashReceipts"));
+      }
+      else
+      {
+        menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
+        pMenu->setItemEnabled(menuItem, _privileges->check("ReversePostedCashReceipt"));
+      }
     }
-    else
-    {
-      menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("ReversePostedCashReceipt"));
-    } 
 
     // Open Item
     if (_arapply->currentItem()->id("target") > -1 )
@@ -348,8 +356,13 @@ void dspCashReceipts::sHandleButtons(bool valid)
   if (valid && _arapply->id() > -1)
   {
     // Handle Edit Button
-    // Cash Receipt              
-    if (!_arapply->currentItem()->rawValue("posted").toBool())
+    // Cash Receipt
+    if (_arapply->currentItem()->rawValue("voided").toBool())
+    {
+      _post->hide();
+      _reverse->hide();
+    }
+    else if (!_arapply->currentItem()->rawValue("posted").toBool())
     {
       editMenu->insertItem(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
       editMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
