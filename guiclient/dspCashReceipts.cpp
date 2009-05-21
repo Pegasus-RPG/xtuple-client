@@ -21,7 +21,7 @@
 
 #include <datecluster.h>
 #include <openreports.h>
-#include "aropenitem.h"
+#include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
 
