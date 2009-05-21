@@ -52,11 +52,11 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _dates->setStartDate(QDate().currentDate().addDays(-90));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   
+  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft, true,  "source" );
   _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter, true,  "cust_number" );
   _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _arapply->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "posted" );
   _arapply->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter, true,  "postdate" );
-  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignCenter, true,  "source" );
   _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter, true,  "target" );
   _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight,  true,  "applied"  );
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );

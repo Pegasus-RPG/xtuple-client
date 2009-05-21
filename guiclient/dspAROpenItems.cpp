@@ -63,7 +63,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 
   QString baseBalanceTitle(tr("Balance"));
   if (! omfgThis->singleCurrency())
-    baseBalanceTitle = tr("Balance\n(in %1)").arg(CurrDisplay::baseCurrAbbr());
+    baseBalanceTitle = tr("Balance (in %1)").arg(CurrDisplay::baseCurrAbbr());
 
   _aropen->setRootIsDecorated(TRUE);
   _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,   true,  "doctype");
