@@ -140,6 +140,8 @@ void openReturnAuthorizations::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  if (_cust->isValid())
+    params.append("cust_id",_cust->id());
 
   returnAuthorization *newdlg = new returnAuthorization();
   newdlg->set(params);

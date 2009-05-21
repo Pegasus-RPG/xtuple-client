@@ -122,7 +122,7 @@ void openSalesOrders::sPrint()
 
 void openSalesOrders::sNew()
 {
-  salesOrder::newSalesOrder(-1);
+  salesOrder::newSalesOrder(_cust->id());
 }
 
 void openSalesOrders::sEdit()
