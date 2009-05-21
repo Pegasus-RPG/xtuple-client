@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,37 +8,37 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>arWorkBench</class>
- <widget class="QWidget" name="arWorkBench" >
-  <property name="geometry" >
+ <widget class="QWidget" name="arWorkBench">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>886</width>
-    <height>613</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Receivables Workbench</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="margin">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="CustomerSelector" name="_customerSelector" />
+          <widget class="CustomerSelector" name="_customerSelector"/>
          </item>
          <item>
-          <spacer name="horizontalSpacer" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -45,71 +46,36 @@ to be bound by its terms.</comment>
            </property>
           </spacer>
          </item>
-         <item>
-          <widget class="QLabel" name="_aropenTotalLit" >
-           <property name="text" >
-            <string>Total Open:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="CurrCluster" name="_aropenTotal" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="localControl" >
-            <bool>false</bool>
-           </property>
-           <property name="allowNegative" >
-            <bool>true</bool>
-           </property>
-           <property name="currencyDisabled" >
-            <bool>true</bool>
-           </property>
-           <property name="currencyVisible" >
-            <bool>false</bool>
-           </property>
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>&amp;Close</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_query" >
-           <property name="text" >
+          <widget class="QPushButton" name="_query">
+           <property name="text">
             <string>&amp;Query</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::MinimumExpanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -121,43 +87,57 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QTabWidget" name="_tab" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <item row="1" column="0">
+      <widget class="QTabWidget" name="_tab">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="currentIndex" >
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_receivablesTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_receivablesTab">
+        <attribute name="title">
          <string>Receivables</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>12</number>
+           </property>
            <item>
-            <widget class="XLabel" name="_findLit" >
-             <property name="text" >
-              <string>Find Document #:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <widget class="QRadioButton" name="_debits">
+             <property name="text">
+              <string>Debits</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="XLineEdit" name="_searchDocNum" />
+            <widget class="QRadioButton" name="_credits">
+             <property name="text">
+              <string>Credits</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <spacer>
-             <property name="orientation" >
+            <widget class="QRadioButton" name="_both">
+             <property name="text">
+              <string>Both</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
                <height>20</height>
@@ -166,57 +146,94 @@ to be bound by its terms.</comment>
             </spacer>
            </item>
            <item>
-            <widget class="XLabel" name="_selectDateLit" >
-             <property name="text" >
-              <string>Due Date:</string>
+            <widget class="QPushButton" name="_print">
+             <property name="text">
+              <string>&amp;Print</string>
              </property>
-             <property name="alignment" >
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout">
+           <item>
+            <widget class="XLabel" name="_findLit">
+             <property name="text">
+              <string>Find Document #:</string>
+             </property>
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="XComboBox" name="_selectDate" >
+            <widget class="XLineEdit" name="_searchDocNum"/>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="XLabel" name="_selectDateLit">
+             <property name="text">
+              <string>Due Date:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XComboBox" name="_selectDate">
              <item>
-              <property name="text" >
+              <property name="text">
                <string>All</string>
               </property>
              </item>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>On or Before</string>
               </property>
              </item>
              <item>
-              <property name="text" >
+              <property name="text">
                <string>Between</string>
               </property>
              </item>
             </widget>
            </item>
            <item>
-            <widget class="QStackedWidget" name="_duedateStack" >
-             <property name="currentIndex" >
+            <widget class="QStackedWidget" name="_duedateStack">
+             <property name="currentIndex">
               <number>0</number>
              </property>
-             <widget class="QWidget" name="_allPage" />
-             <widget class="QWidget" name="_olderThanPage" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <layout class="QHBoxLayout" >
+             <widget class="QWidget" name="_allPage"/>
+             <widget class="QWidget" name="_olderThanPage">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout">
                  <item>
-                  <widget class="DLineEdit" name="_onOrBeforeDate" >
-                   <property name="enabled" >
+                  <widget class="DLineEdit" name="_onOrBeforeDate">
+                   <property name="enabled">
                     <bool>true</bool>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <spacer>
-                   <property name="orientation" >
+                   <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
-                   <property name="sizeHint" stdset="0" >
+                   <property name="sizeHint" stdset="0">
                     <size>
                      <width>40</width>
                      <height>20</height>
@@ -228,20 +245,20 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="_betweenPage" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="DLineEdit" name="_startDate" />
+             <widget class="QWidget" name="_betweenPage">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="DLineEdit" name="_startDate"/>
                </item>
-               <item row="0" column="1" >
-                <widget class="XLabel" name="_andLit" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="XLabel" name="_andLit">
+                 <property name="text">
                   <string>and</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2" >
-                <widget class="DLineEdit" name="_endDate" />
+               <item row="0" column="2">
+                <widget class="DLineEdit" name="_endDate"/>
                </item>
               </layout>
              </widget>
@@ -249,10 +266,10 @@ to be bound by its terms.</comment>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
                <height>20</height>
@@ -262,268 +279,90 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="1" column="0" >
-          <widget class="QFrame" name="_aropenFrame" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <item row="2" column="0">
+          <widget class="QFrame" name="_aropenFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
-           <property name="frameShape" >
+           <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
            </property>
-           <property name="frameShadow" >
+           <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" >
-            <property name="margin" >
+           <layout class="QGridLayout">
+            <property name="margin">
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="spacing">
              <number>0</number>
             </property>
-            <item row="0" column="0" >
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="XTreeWidget" name="_aropen" />
-              </item>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <layout class="QVBoxLayout" >
-                  <property name="spacing" >
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QPushButton" name="_editAropen" >
-                    <property name="enabled" >
-                     <bool>false</bool>
-                    </property>
-                    <property name="text" >
-                     <string>Edit</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="_viewAropen" >
-                    <property name="enabled" >
-                     <bool>false</bool>
-                    </property>
-                    <property name="text" >
-                     <string>View</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>20</width>
-                    <height>21</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
            </layout>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_creditsTab" >
-        <attribute name="title" >
-         <string>Credits</string>
-        </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout" >
-         <item>
-          <widget class="XTreeWidget" name="_aropenCM" />
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5" >
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_4" >
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_3" >
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout" >
-                 <property name="spacing" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QPushButton" name="_newAropenCM" >
-                   <property name="enabled" >
-                    <bool>true</bool>
-                   </property>
-                   <property name="text" >
-                    <string>New</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="_editAropenCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>Edit</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="_viewAropenCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>View</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Preferred</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0" >
-                  <size>
-                   <width>71</width>
-                   <height>13</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_2" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QPushButton" name="_applyAropenCM" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Apply</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_ccRefundCM" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Refund</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>83</width>
-               <height>108</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_cashRecptTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_cashRecptTab">
+        <attribute name="title">
          <string>Cash Receipts</string>
         </attribute>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="XTreeWidget" name="_cashrcpt" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <widget class="XTreeWidget" name="_cashrcpt">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>1</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="selectionMode" >
+           <property name="selectionMode">
             <enum>QAbstractItemView::ExtendedSelection</enum>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
+          <layout class="QVBoxLayout">
            <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
+            <layout class="QVBoxLayout">
+             <property name="spacing">
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="_newCashrcpt" >
-               <property name="text" >
+              <widget class="QPushButton" name="_newCashrcpt">
+               <property name="text">
                 <string>New</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_editCashrcpt" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_editCashrcpt">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Edit</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_viewCashrcpt" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_viewCashrcpt">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>View</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_deleteCashrcpt" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_deleteCashrcpt">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Delete</string>
                </property>
               </widget>
@@ -531,26 +370,26 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QPushButton" name="_postCashrcpt" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_postCashrcpt">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Post</string>
                </property>
               </widget>
              </item>
              <item>
               <spacer>
-               <property name="orientation" >
+               <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeType" >
+               <property name="sizeType">
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" stdset="0" >
+               <property name="sizeHint" stdset="0">
                 <size>
                  <width>82</width>
                  <height>41</height>
@@ -564,29 +403,29 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_creditCardTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_creditCardTab">
+        <attribute name="title">
          <string>Credit Card</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" colspan="4" >
-          <layout class="QHBoxLayout" >
+        <layout class="QGridLayout">
+         <item row="0" column="0" colspan="4">
+          <layout class="QHBoxLayout">
            <item>
-            <widget class="XCheckBox" name="_showExpired" >
-             <property name="text" >
+            <widget class="XCheckBox" name="_showExpired">
+             <property name="text">
               <string>Show Expired</string>
              </property>
             </widget>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
                <height>20</height>
@@ -595,25 +434,25 @@ to be bound by its terms.</comment>
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="_validDaysLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_validDaysLit">
+             <property name="text">
               <string>Valid Days:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="_validDays" >
-             <property name="maximum" >
+            <widget class="QSpinBox" name="_validDays">
+             <property name="maximum">
               <number>30</number>
              </property>
             </widget>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>281</width>
                <height>20</height>
@@ -623,25 +462,25 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item rowspan="3" row="1" column="0" >
-          <widget class="XTreeWidget" name="_preauth" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <item row="1" column="0" rowspan="3">
+          <widget class="XTreeWidget" name="_preauth">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>1</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
           </widget>
          </item>
-         <item row="1" column="2" >
+         <item row="1" column="2">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>10</height>
@@ -649,68 +488,68 @@ to be bound by its terms.</comment>
            </property>
           </spacer>
          </item>
-         <item row="1" column="3" >
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+         <item row="1" column="3">
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_postPreauth" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_postPreauth">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Post</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_voidPreauth" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_voidPreauth">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Void</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item row="2" column="1" >
-          <widget class="QLabel" name="_CCAmountLit" >
-           <property name="text" >
+         <item row="2" column="1">
+          <widget class="QLabel" name="_CCAmountLit">
+           <property name="text">
             <string>Amount:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item row="2" column="2" colspan="2" >
-          <widget class="CurrCluster" name="_CCAmount" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+         <item row="2" column="2" colspan="2">
+          <widget class="CurrCluster" name="_CCAmount">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="localControl" >
+           <property name="localControl">
             <bool>false</bool>
            </property>
-           <property name="enabled" >
+           <property name="enabled">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="3" column="2" >
+         <item row="3" column="2">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>119</width>
              <height>201</height>
@@ -726,12 +565,17 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
@@ -764,11 +608,13 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -778,12 +624,6 @@ to be bound by its terms.</comment>
   <tabstop>_viewCashrcpt</tabstop>
   <tabstop>_deleteCashrcpt</tabstop>
   <tabstop>_postCashrcpt</tabstop>
-  <tabstop>_aropenCM</tabstop>
-  <tabstop>_editAropenCM</tabstop>
-  <tabstop>_viewAropenCM</tabstop>
-  <tabstop>_aropen</tabstop>
-  <tabstop>_editAropen</tabstop>
-  <tabstop>_viewAropen</tabstop>
   <tabstop>_preauth</tabstop>
   <tabstop>_postPreauth</tabstop>
   <tabstop>_voidPreauth</tabstop>
@@ -798,45 +638,13 @@ to be bound by its terms.</comment>
    <receiver>arWorkBench</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>717</x>
      <y>46</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropen</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewAropen</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>56</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>757</x>
-     <y>279</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenCM</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewAropenCM</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>388</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>487</x>
-     <y>421</y>
     </hint>
    </hints>
   </connection>
@@ -846,11 +654,11 @@ to be bound by its terms.</comment>
    <receiver>_viewCashrcpt</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>388</x>
      <y>421</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>388</x>
      <y>421</y>
     </hint>
@@ -862,11 +670,11 @@ to be bound by its terms.</comment>
    <receiver>_postPreauth</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>388</x>
      <y>421</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>709</x>
      <y>238</y>
     </hint>
@@ -878,11 +686,11 @@ to be bound by its terms.</comment>
    <receiver>_voidPreauth</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>388</x>
      <y>450</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>751</x>
      <y>262</y>
     </hint>
@@ -894,77 +702,13 @@ to be bound by its terms.</comment>
    <receiver>_duedateStack</receiver>
    <slot>setCurrentIndex(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>372</x>
      <y>189</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>592</x>
      <y>188</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenCM</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_ccRefundCM</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>487</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>487</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenCM</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_applyAropenCM</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>487</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>487</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenTotal</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_CCAmount</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>682</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>580</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_aropenTotal</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_CCAmount</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>682</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>580</x>
-     <y>298</y>
     </hint>
    </hints>
   </connection>

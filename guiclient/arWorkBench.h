@@ -20,6 +20,8 @@
 
 #include "ui_arWorkBench.h"
 
+#include "dspAROpenItems.h"
+
 class arWorkBench : public XWidget, public Ui::arWorkBench
 {
     Q_OBJECT
@@ -32,40 +34,24 @@ public:
 
 public slots:
     virtual bool setParams(ParameterList &params);
-    virtual void sApplyAropenCM();
-    virtual void sCCRefundCM();
     virtual void sDeleteCashrcpt();
-    virtual void sEditAropen();
-    virtual void sNewAropenCM();
-    virtual void sEditAropenCM();
-    virtual void sEditAropenOnlyCM();
     virtual void sEditCashrcpt();
-    virtual void sFillAropenCMList();
-    virtual void sFillAropenList();
     virtual void sFillCashrcptList();
     virtual void sFillList();
     virtual void sFillPreauthList();
     virtual void sNewCashrcpt();
-    virtual void sPopulateAropenCMMenu(QMenu*);
-    virtual void sPopulateAropenMenu(QMenu*);
     virtual void sPopulateCashRcptMenu(QMenu*);
     virtual void sPopulatePreauthMenu(QMenu*);
     virtual void sPostCashrcpt();
     virtual void sPostPreauth();
-    virtual void sViewAropen();
-    virtual void sViewInvoice();
-    virtual void sViewInvoiceDetails();
-    virtual void sViewAropenCM();
-    virtual void sViewAropenOnlyCM();
     virtual void sViewCashrcpt();
     virtual void sVoidPreauth();
     virtual void sgetCCAmount();
     virtual void sClear();
     virtual void sSearchDocNumChanged();
-    virtual void sPopulateAropenButtonMenu();
-    virtual void sIncident();
-    virtual void sViewIncident();
-    virtual void sEditIncident();
+    
+protected:
+    dspAROpenItems *_aritems;
     
 protected slots:
     virtual void languageChange();

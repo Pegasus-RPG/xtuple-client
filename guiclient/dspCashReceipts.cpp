@@ -354,14 +354,12 @@ void dspCashReceipts::sHandleButtons(bool valid)
       editMenu->insertItem(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
       editMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
         
-      _reverse->hide();
-      _post->show();
+      _reverse->setEnabled(false);
       _post->setEnabled(_privileges->check("PostCashReceipts"));
     }
     else
     {
-      _post->hide();
-      _reverse->show();
+      _post->setEnabled(false);
       _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt"));
     } 
         
@@ -392,7 +390,7 @@ void dspCashReceipts::sHandleButtons(bool valid)
   {
     _edit->setEnabled(false);
     _view->setEnabled(false);
-    _post->hide();
-    _reverse->hide();
+    _post->setEnabled(false);
+    _reverse->setEnabled(false);
   }
 }
