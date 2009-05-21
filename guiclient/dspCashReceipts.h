@@ -28,9 +28,15 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
+    virtual void sEditAropen();
+    virtual void sEditCashrcpt();
     virtual void sFillList();
-    virtual void sView();
+    virtual void sHandleButtons(bool);
+    virtual void sNewCashrcpt();
+    virtual void sPostCashrcpt();
+    virtual void sPrint();
+    virtual void sViewAropen();
+    virtual void sViewCashrcpt();
     virtual void sReversePosted();
 
 protected slots:

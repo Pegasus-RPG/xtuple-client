@@ -62,6 +62,7 @@ private:
     bool    _ccEdit;
     QString _origFunds;
     bool    _overapplied;
+    bool    _posted;
 
 };
 

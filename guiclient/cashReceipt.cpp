@@ -140,6 +140,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _overapplied = false;
   _cashrcptid = -1;
+  _posted = false;
 }
 
 cashReceipt::~cashReceipt()
@@ -663,6 +664,8 @@ void cashReceipt::sFillApplyList()
     params.append("cust_id",     _cust->id());
     params.append("debitMemo",   tr("Debit Memo"));
     params.append("invoice",     tr("Invoice"));
+    if (_posted)
+       params.append("posted", true);
     XSqlQuery apply;
     apply = mql.toQuery(params);
     _aropen->populate(apply, true);
@@ -763,6 +766,7 @@ void cashReceipt::populate()
     _bankaccnt->setId(q.value("cashrcpt_bankaccnt_id").toInt());
     _distDate->setDate(q.value("cashrcpt_distdate").toDate(), true);
     _notes->setText(q.value("cashrcpt_notes").toString());
+    _posted = q.value("cashrcpt_posted").toBool();
     if(q.value("cashrcpt_salescat_id").toInt() != -1)
     {
       _altAccnt->setChecked(TRUE);
