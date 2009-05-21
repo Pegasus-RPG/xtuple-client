@@ -40,6 +40,7 @@ public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void currentTabChanged(int index);
     virtual void populate();
+    virtual void sCancel();
     virtual void sCheck();
     virtual bool sCheckRequired();
     virtual void sDeleteCharacteristic();
@@ -101,6 +102,7 @@ private:
     QString _cachedNumber;
     QString key;
     bool _notice;
+    bool _autoSaved;
     QStandardItemModel * _custchar;
 
 };

@@ -115,6 +115,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_number");
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_name");
 
+  connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
@@ -179,6 +180,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _custid = -1;
   _crmacctid = -1;
   _NumberGen = -1;
+  _autoSaved = false;
 
   _sellingWarehouse->setId(-1);
 
@@ -760,12 +762,15 @@ bool customer::sSave(bool /*partial*/)
     _mode = cEdit;
   
   setValid(true);
+  populate();
+  omfgThis->sCustomersUpdated(_custid, TRUE);
+  _autoSaved = true;
   
   return true;
 }
    
 void customer::sSave()
-{
+{                          
   if (! q.exec("BEGIN"))
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1745,4 +1750,14 @@ void customer::sHandleButtons()
     _receivablesStack->setCurrentIndex(0);
   else
     _receivablesStack->setCurrentIndex(1);
+}
+
+void customer::sCancel()
+{
+  if (_autoSaved)
+      QMessageBox::information( this, tr("Customer Saved"),
+                           tr("The customer record was automatically "
+                           "saved to the database. The committed changes"
+                           "will not be cancelled.") );
+  close();
 }

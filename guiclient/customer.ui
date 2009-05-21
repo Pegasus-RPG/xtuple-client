@@ -2931,6 +2931,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -3038,38 +3039,6 @@ to be bound by its terms.</comment>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>customer</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>757</x>
-     <y>34</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_usesPOs</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_blanketPos</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>110</x>
-     <y>143</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>110</x>
-     <y>143</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_taxreg</sender>
    <signal>valid(bool)</signal>
