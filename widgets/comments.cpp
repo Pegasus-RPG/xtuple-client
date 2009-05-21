@@ -105,6 +105,10 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _viewComment->setEnabled(FALSE);
   buttonsLayout->addWidget(_viewComment);
 
+  _editComment = new QPushButton(tr("Edit"), buttons, "_editComment");
+  _editComment->setEnabled(false);
+  buttonsLayout->addWidget(_editComment);
+
   QSpacerItem *_buttonSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
   buttonsLayout->addItem(_buttonSpacer);
   buttons->setLayout(buttonsLayout);
@@ -114,7 +118,8 @@ Comments::Comments(QWidget *pParent, const char *name) :
 
   connect(_newComment, SIGNAL(clicked()), this, SLOT( sNew()));
   connect(_viewComment, SIGNAL(clicked()), this, SLOT( sView()));
-  connect(_comment, SIGNAL(valid(bool)), _viewComment, SLOT(setEnabled(bool)));
+  connect(_editComment, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_comment, SIGNAL(valid(bool)), this, SLOT(sCheckButtonPriv(bool)));
   connect(_comment, SIGNAL(itemSelected(int)), _viewComment, SLOT(animateClick()));
   connect(_browser, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 
@@ -171,6 +176,21 @@ void Comments::sView()
   comment newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void Comments::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("sourceType", _source);
+  params.append("source_id", _sourceid);
+  params.append("comment_id", _comment->id());
+  params.append("commentIDList", _commentIDList);
+
+  comment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+  refresh();
 }
 
 void Comments::refresh()
@@ -258,12 +278,19 @@ void Comments::refresh()
   _commentIDList.clear();
   while(comment.next())
   {
-    _commentIDList.push_back(comment.value("comment_id").toInt());
+    int cid = comment.value("comment_id").toInt();
+    _commentIDList.push_back(cid);
     lclHtml += comment.value("comment_date").toDateTime().toString();
     lclHtml += " ";
     lclHtml += comment.value("type").toString();
     lclHtml += " ";
     lclHtml += comment.value("comment_user").toString();
+    if(userCanEdit(cid))
+    {
+      lclHtml += " <a href=\"edit?id=";
+      lclHtml += QString::number(cid);
+      lclHtml += "\">edit</a>";
+    }
     lclHtml += "<p>\n<blockquote>";
     lclHtml += comment.value("comment_text").toString().replace(br,"<br>\n");
     lclHtml += "</pre></blockquote>\n<hr>\n";
@@ -280,6 +307,7 @@ void Comments::setVerboseCommentList(bool vcl)
   _verboseCommentList = vcl;
   _comment->setVisible(!vcl);
   _viewComment->setVisible(!vcl);
+  _editComment->setVisible(!vcl);
   _browser->setVisible(vcl);
 }
 
@@ -288,7 +316,20 @@ void Comments::anchorClicked(const QUrl & url)
   if(url.host().isEmpty() && url.path() == "edit")
   {
     int cid = url.queryItemValue("id").toInt();
-    // TODO check that the user has edit privs for this item
+    if(userCanEdit(cid))
+    {
+      ParameterList params;
+      params.append("mode", "edit");
+      params.append("sourceType", _source);
+      params.append("source_id", _sourceid);
+      params.append("comment_id", cid);
+      params.append("commentIDList", _commentIDList);
+
+      comment newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+      refresh();
+    }
   }
   else
   {
@@ -296,3 +337,31 @@ void Comments::anchorClicked(const QUrl & url)
   }
 }
 
+void Comments::sCheckButtonPriv(bool pValid)
+{
+  _viewComment->setEnabled(pValid);
+  if(pValid)
+  {
+    _editComment->setEnabled(userCanEdit(_comment->id()));
+  }
+  else
+    _editComment->setEnabled(false);
+}
+
+bool Comments::userCanEdit(int id)
+{
+  XSqlQuery query;
+  query.prepare("SELECT COALESCE(cmnttype_editable,false) AS editable, comment_user=CURRENT_USER AS self"
+                "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id)"
+                " WHERE(comment_id=:comment_id);");
+  query.bindValue(":comment_id", id);
+  query.exec();
+  if(query.first() && query.value("editable").toBool())
+  {
+    if(_x_privileges && _x_privileges->check("EditOthersComments"))
+      return true;
+    if(_x_privileges && _x_privileges->check("EditOwnComments") && query.value("self").toBool())
+      return true;
+  }
+  return false;
+}

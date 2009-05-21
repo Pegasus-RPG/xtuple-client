@@ -70,6 +70,8 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     };
     static const struct CommentMap _commentMap[]; // see comments.cpp for init
 
+    bool userCanEdit(int);
+
   public slots:
     void setType(enum CommentSources);
     void setId(int);
@@ -78,10 +80,12 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 
     void sNew();
     void sView();
+    void sEdit();
     void refresh();
 
     void anchorClicked(const QUrl &);
-    
+    void sCheckButtonPriv(bool); 
+
   signals:
     void commentAdded();
 
@@ -95,6 +99,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     XTreeWidget *_comment;
     QPushButton *_newComment;
     QPushButton *_viewComment;
+    QPushButton *_editComment;
 };
 
 #endif
