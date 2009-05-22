@@ -264,7 +264,7 @@ void scriptEditor::sExport()
                                                   lastSaveDir +
                                                   QDir::separator() +
                                                   _name->text().trimmed() +
-                                                  ".script",
+                                                  ".js",
                                                   tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
