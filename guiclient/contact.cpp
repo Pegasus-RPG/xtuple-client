@@ -724,7 +724,7 @@ void contact::sHandleValidUse(bool valid)
 
   disconnect(_uses, SIGNAL(itemSelected(int)), _editUse, SLOT(animateClick()));
   disconnect(_uses, SIGNAL(itemSelected(int)), _viewUse, SLOT(animateClick()));
-  if (editPriv)
+  if (_mode != cView && editPriv)
   {
     _detachUse->setEnabled(valid);
     _editUse->setEnabled(valid);
