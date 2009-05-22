@@ -331,7 +331,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
       _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
       _terms->setId(_metrics->value("DefaultTerms").toInt());
-      _taxauth->setCurrentIndex(-1);
+      _taxzone->setCurrentIndex(-1);
       _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
       _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
       _custtype->setId(_metrics->value("DefaultCustType").toInt());
@@ -402,7 +402,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _creditStatusGroup->setEnabled(FALSE);
       _autoUpdateStatus->setEnabled(FALSE);
       _autoHoldOrders->setEnabled(FALSE);
-      _taxauth->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _sellingWarehouse->setEnabled(FALSE);
       _salesrep->setEnabled(FALSE);
       _defaultCommissionPrcnt->setEnabled(FALSE);
@@ -609,7 +609,7 @@ bool customer::sSave(bool /*partial*/)
                "       cust_shipchrg_id=:cust_shipchrg_id, cust_shipform_id=:cust_shipform_id,"
                "       cust_terms_id=:cust_terms_id,"
                "       cust_discntprcnt=:cust_discntprcnt,"
-               "       cust_taxauth_id=:cust_taxauth_id, "
+               "       cust_taxzone_id=:cust_taxzone_id, "
                "       cust_active=:cust_active, cust_usespos=:cust_usespos,"
                "       cust_blanketpos=:cust_blanketpos, cust_comments=:cust_comments,"
                "       cust_emaildelivery=:cust_emaildelivery, cust_ediemail=:cust_ediemail,"
@@ -640,7 +640,7 @@ bool customer::sSave(bool /*partial*/)
                "  cust_commprcnt, cust_partialship,"
                "  cust_shipvia,"
                "  cust_shipchrg_id, cust_shipform_id, cust_terms_id,"
-               "  cust_discntprcnt, cust_taxauth_id, "
+               "  cust_discntprcnt, cust_taxzone_id, "
                "  cust_active, cust_usespos, cust_blanketpos, cust_comments,"
                "  cust_emaildelivery, cust_ediemail, cust_edisubject,"
                "  cust_edifilename, cust_ediemailbody, cust_edicc, "
@@ -662,7 +662,7 @@ bool customer::sSave(bool /*partial*/)
                "  :cust_commprcnt, :cust_partialship,"
                "  :cust_shipvia,"
                "  :cust_shipchrg_id, :cust_shipform_id, :cust_terms_id,"
-               "  :cust_discntprcnt, :cust_taxauth_id,"
+               "  :cust_discntprcnt, :cust_taxzone_id,"
                "  :cust_active, :cust_usespos, :cust_blanketpos, :cust_comments,"
                "  :cust_emaildelivery, :cust_ediemail, :cust_edisubject,"
                "  :cust_edifilename, :cust_ediemailbody, :cust_edicc,"
@@ -706,8 +706,8 @@ bool customer::sSave(bool /*partial*/)
   q.bindValue(":cust_terms_id", _terms->id());
   q.bindValue(":cust_discntprcnt", (_defaultDiscountPrcnt->toDouble() / 100.0));
 
-  if (_taxauth->isValid())
-    q.bindValue(":cust_taxauth_id", _taxauth->id());
+  if (_taxzone->isValid())
+    q.bindValue(":cust_taxzone_id", _taxzone->id());
 
   q.bindValue(":cust_shipvia", _shipvia->currentText());
   q.bindValue(":cust_shipchrg_id", _shipchrg->id());
@@ -1340,7 +1340,7 @@ void customer::populate()
     _salesrep->setId(cust.value("cust_salesrep_id").toInt());
     _defaultCommissionPrcnt->setDouble(cust.value("cust_commprcnt").toDouble() * 100);
     _terms->setId(cust.value("cust_terms_id").toInt());
-    _taxauth->setId(cust.value("cust_taxauth_id").toInt());
+    _taxzone->setId(cust.value("cust_taxzone_id").toInt());
     _shipform->setId(cust.value("cust_shipform_id").toInt());
     _shipchrg->setId(cust.value("cust_shipchrg_id").toInt());
     _shipvia->setText(cust.value("cust_shipvia").toString());
@@ -1650,7 +1650,7 @@ void customer::sLoadProspect(int prospectId)
     _number->setText(q.value("prospect_number").toString());
     _name->setText(q.value("prospect_name").toString());
     _active->setChecked(q.value("prospect_active").toBool());
-    _taxauth->setId(q.value("prospect_taxauth_id").toInt());
+    _taxzone->setId(q.value("prospect_taxzone_id").toInt());
     _notes->setText(q.value("prospect_comments").toString());
     _billCntct->setId(q.value("prospect_cntct_id").toInt());
   }

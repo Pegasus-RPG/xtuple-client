@@ -35,6 +35,7 @@ public slots:
     virtual void reset();
     virtual void sPopulateDueDate();
     virtual void sPrintOnPost(int temp_id);
+    virtual void sCalculateTax();
 
 protected slots:
     virtual void languageChange();

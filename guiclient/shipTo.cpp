@@ -95,7 +95,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _mode = cNew;
 
       XSqlQuery cust;
-      cust.prepare( "SELECT cust_number, cust_name, cust_taxauth_id, "
+      cust.prepare( "SELECT cust_number, cust_name, cust_taxzone_id, "
                  "       cust_salesrep_id, cust_shipform_id, cust_shipvia, "
                  "       crmacct_id "
                  "FROM custinfo "
@@ -109,7 +109,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
         _custName->setText(cust.value("cust_name").toString());
         _salesRep->setId(cust.value("cust_salesrep_id").toInt());
         _shipform->setId(cust.value("cust_shipform_id").toInt());
-        _taxauth->setId(cust.value("cust_taxauth_id").toInt());
+        _taxzone->setId(cust.value("cust_taxzone_id").toInt());
         _contact->setSearchAcct(cust.value("crmacct_id").toInt());
 
 	//  Handle the free-form Ship Via
@@ -155,7 +155,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _salesRep->setEnabled(FALSE);
       _commission->setEnabled(FALSE);
       _shipZone->setEnabled(FALSE);
-      _taxauth->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);
       _shipform->setEnabled(FALSE);
       _shipchrg->setEnabled(FALSE);
@@ -271,14 +271,14 @@ void shipTo::sSave()
                "( shipto_id, shipto_cust_id, shipto_active, shipto_default,"
                "  shipto_num, shipto_name, shipto_cntct_id, shipto_commission,"
                "  shipto_comments, shipto_shipcomments,"
-               "  shipto_taxauth_id, shipto_salesrep_id, shipto_shipzone_id,"
+               "  shipto_taxzone_id, shipto_salesrep_id, shipto_shipzone_id,"
                "  shipto_shipvia, shipto_shipform_id, shipto_shipchrg_id, "
 	       "  shipto_ediprofile_id, shipto_addr_id, shipto_labelform_id ) "
                "VALUES "
                "( :shipto_id, :shipto_cust_id, :shipto_active, :shipto_default,"
                "  :shipto_num, :shipto_name, :shipto_cntct_id, :shipto_commission,"
                "  :shipto_comments, :shipto_shipcomments,"
-               "  :shipto_taxauth_id, :shipto_salesrep_id, :shipto_shipzone_id,"
+               "  :shipto_taxzone_id, :shipto_salesrep_id, :shipto_shipzone_id,"
                "  :shipto_shipvia, :shipto_shipform_id, :shipto_shipchrg_id, "
 	       "  :shipto_ediprofile_id , :shipto_addr_id, :shipto_labelform_id );" );
   }
@@ -288,7 +288,7 @@ void shipTo::sSave()
                "    shipto_name=:shipto_name, shipto_cntct_id=:shipto_cntct_id,"
                "    shipto_commission=:shipto_commission,"
                "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
-               "    shipto_taxauth_id=:shipto_taxauth_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
+               "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
                "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id, shipto_shipchrg_id=:shipto_shipchrg_id,"
                "    shipto_ediprofile_id=:shipto_ediprofile_id,"
 	       "    shipto_addr_id=:shipto_addr_id,"
@@ -309,8 +309,8 @@ void shipTo::sSave()
   q.bindValue(":shipto_comments", _comments->toPlainText());
   q.bindValue(":shipto_shipcomments", _shippingComments->toPlainText());
   q.bindValue(":shipto_shipvia", _shipVia->currentText());
-  if (_taxauth->isValid())
-    q.bindValue(":shipto_taxauth_id",  _taxauth->id());
+  if (_taxzone->isValid())
+    q.bindValue(":shipto_taxzone_id",  _taxzone->id());
   if (_salesRep->id() != -1)
     q.bindValue(":shipto_salesrep_id", _salesRep->id());
   if (_shipZone->isValid())
@@ -342,7 +342,7 @@ void shipTo::populate()
              "       shipto_num, shipto_name, shipto_cntct_id,"
              "       shipto_shipvia, shipto_commission,"
              "       shipto_comments, shipto_shipcomments,"
-             "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxauth_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
+             "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxzone_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
              "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id,"
 	     "       shipto_ediprofile_id, shipto_addr_id, shipto_labelform_id,"
              "       crmacct_id "
@@ -366,7 +366,7 @@ void shipTo::populate()
     _contact->setSearchAcct(q.value("crmacct_id").toInt());
     _comments->setText(q.value("shipto_comments").toString());
     _shippingComments->setText(q.value("shipto_shipcomments").toString());
-    _taxauth->setId(q.value("shipto_taxauth_id").toInt());
+    _taxzone->setId(q.value("shipto_taxzone_id").toInt());
     _shipZone->setId(q.value("shipto_shipzone_id").toInt());
     _shipform->setId(q.value("shipto_shipform_id").toInt());
     _shipchrg->setId(q.value("shipto_shipchrg_id").toInt());

@@ -682,7 +682,17 @@ to be bound by its terms.</comment>
                <item row="0" column="1" >
                 <layout class="QHBoxLayout" name="horizontalLayout_3" >
                  <item>
-                  <widget class="XComboBox" name="_taxZone" />
+                  <widget class="XComboBox" name="_taxZone">
+                   <property name="allowNull">
+                    <bool>true</bool>
+                   </property>
+                   <property name="nullStr">
+                    <string>None</string>
+                   </property>
+                   <property name="type">
+                    <enum>XComboBox::TaxZones</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer_3" >
@@ -700,7 +710,7 @@ to be bound by its terms.</comment>
                 </layout>
                </item>
                <item row="1" column="0" >
-                <widget class="QLabel" name="_taxtypeLit" >
+                <widget class="QLabel" name="_taxTypeLit" >
                  <property name="text" >
                   <string>Tax Type:</string>
                  </property>
@@ -712,7 +722,17 @@ to be bound by its terms.</comment>
                <item row="1" column="1" >
                 <layout class="QHBoxLayout" name="horizontalLayout_4" >
                  <item>
-                  <widget class="XComboBox" name="_taxtype" />
+                  <widget class="XComboBox" name="_taxType">
+                   <property name="allowNull">
+                    <bool>true</bool>
+                   </property>
+                   <property name="nullStr">
+                    <string>None</string>
+                   </property>
+                   <property name="type">
+                    <enum>XComboBox::TaxTypes</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer_4" >

@@ -1671,9 +1671,9 @@ to be bound by its terms.</comment>
                 <number>5</number>
                </property>
                <item>
-                <widget class="QLabel" name="_taxauthLit">
+                <widget class="QLabel" name="_taxzoneLit">
                  <property name="text">
-                  <string>Default Tax Authority:</string>
+                  <string>Default Tax Zone:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1681,12 +1681,12 @@ to be bound by its terms.</comment>
                 </widget>
                </item>
                <item>
-                <widget class="XComboBox" name="_taxauth">
+                <widget class="XComboBox" name="_taxzone">
                  <property name="allowNull">
                   <bool>true</bool>
                  </property>
                  <property name="type">
-                  <enum>XComboBox::TaxAuths</enum>
+                  <enum>XComboBox::TaxZones</enum>
                  </property>
                 </widget>
                </item>
@@ -2985,7 +2985,7 @@ to be bound by its terms.</comment>
   <tabstop>_warnLate</tabstop>
   <tabstop>_graceDays</tabstop>
   <tabstop>_taxButton</tabstop>
-  <tabstop>_taxauth</tabstop>
+  <tabstop>_taxzone</tabstop>
   <tabstop>_taxreg</tabstop>
   <tabstop>_newTaxreg</tabstop>
   <tabstop>_editTaxreg</tabstop>

@@ -23,11 +23,16 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustInfo(int)));
-  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
-  connect(_docDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
+  connect(_save,           SIGNAL(clicked()),                 this, SLOT(sSave()));
+  connect(_close,          SIGNAL(clicked()),                 this, SLOT(sClose()));
+  connect(_cust,           SIGNAL(newId(int)),                this, SLOT(sPopulateCustInfo(int)));
+  connect(_terms,          SIGNAL(newID(int)),                this, SLOT(sPopulateDueDate()));
+  connect(_docDate,        SIGNAL(newDate(const QDate&)),     this, SLOT(sPopulateDueDate()));
+  connect(_taxZone,        SIGNAL(newID(int)),                this, SLOT(sCalculateTax()));
+  connect(_taxType,        SIGNAL(newID(int)),                this, SLOT(sCalculateTax()));
+  connect(_docDate,        SIGNAL(newDate(const QDate&)),     this, SLOT(sCalculateTax()));
+  connect(_amount,         SIGNAL(idChanged(int)),            this, SLOT(sCalculateTax()));
+  connect(_amount,         SIGNAL(valueLocalChanged(double)), this, SLOT(sCalculateTax()));
 
   _last = -1;
 
@@ -372,8 +377,8 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
   if ( (pCustid != -1) && (_mode == cNew) )
   {
     XSqlQuery c;
-    c.prepare( "SELECT cust_terms_id, cust_salesrep_id, cust_curr_id "
-               "FROM cust "
+    c.prepare( "SELECT cust_terms_id, cust_salesrep_id, cust_curr_id, cust_taxzone_id "
+               "FROM custinfo "
                "WHERE (cust_id=:cust_id);" );
     c.bindValue(":cust_id", pCustid);
     c.exec();
@@ -382,6 +387,7 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
       _terms->setId(c.value("cust_terms_id").toInt());
       _salesrep->setId(c.value("cust_salesrep_id").toInt());
       _amount->setId(c.value("cust_curr_id").toInt());
+      _taxZone->setId(c.value("cust_taxzone_id").toInt());
     }
     else if (c.lastError().type() != QSqlError::NoError)
     {
@@ -402,7 +408,7 @@ void arOpenItem::populate()
              "       aropen_terms_id, aropen_salesrep_id,"
              "       aropen_commission_due,"
              "       aropen_notes, aropen_rsncode_id, aropen_salescat_id, "
-	     "       aropen_accnt_id, aropen_curr_id "
+             "       aropen_accnt_id, aropen_curr_id "
              "FROM aropen "
              "WHERE (aropen_id=:aropen_id);" );
   q.bindValue(":aropen_id", _aropenid);
@@ -570,6 +576,22 @@ void arOpenItem::sPopulateDueDate()
     q.exec();
     if (q.first())
       _dueDate->setDate(q.value("duedate").toDate());
+  }
+}
+
+void arOpenItem::sCalculateTax()
+{
+  if ( (_taxZone->isValid()) && (_taxType->isValid()) && (_docDate->isValid()) && (!_amount->isZero()) )
+  {
+    q.prepare("SELECT calculateTaxBasis(:taxzone, :taxtype, :docdate, :curr, :amount) AS basis;");
+    q.bindValue(":taxzone", _taxZone->id());
+    q.bindValue(":taxtype", _taxType->id());
+    q.bindValue(":docDate", _docDate->date());
+    q.bindValue(":curr",    _amount->id());
+    q.bindValue(":amount",  _amount->localValue());
+    q.exec();
+    if (q.first())
+      _tax->setBaseValue(q.value("basis").toDouble());
   }
 }
 
