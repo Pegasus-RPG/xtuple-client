@@ -73,8 +73,8 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
   connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_extendedPrice,   SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));
-  connect(_taxcode, SIGNAL(newID(int)), this, SLOT(sLookupTax()));
-  connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sLookupTaxCode()));
+  connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sLookupTax()));
+  //connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sLookupTaxCode()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_inventoryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButton()));
@@ -119,7 +119,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
   _discountFromCust->setValidator(new QDoubleValidator(-9999, 100, 2, this));
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
-  _taxcode->setEnabled(_privileges->check("OverrideTax"));
+ 
 
   _availability->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "seqnumber");
   _availability->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
@@ -176,7 +176,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
   _overridePoPrice->hide();
   _overridePoPriceLit->hide();
 
-  _taxauthid = -1;
+  _taxzoneid = -1;
   _initialMode = -1;
 
   sPriceGroup();
@@ -219,9 +219,9 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
   else
     _soheadid = -1;
 
-  param = pParams.value("taxauth_id", &valid);
+  param = pParams.value("taxzone_id", &valid);
   if (valid)
-    _taxauthid = param.toInt();
+    _taxzoneid = param.toInt();
 
   param = pParams.value("cust_id", &valid);
   if (valid)
@@ -467,7 +467,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     _notes->setEnabled(!viewMode);
     _comments->setReadOnly(viewMode);
     _taxtype->setEnabled(!viewMode);
-    _taxcode->setEnabled(!viewMode);
     _itemcharView->setEnabled(!viewMode);
     _promisedDate->setEnabled(!viewMode);
     _qtyUOM->setEnabled(!viewMode);
@@ -792,7 +791,7 @@ void salesOrderItem::sSave()
                "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
                "  coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
-                   "  coitem_prcost, coitem_tax_id, coitem_cos_accnt_id, coitem_warranty ) "
+                   "  coitem_prcost, coitem_taxtype_id, coitem_cos_accnt_id, coitem_warranty ) "
                "SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
@@ -800,7 +799,7 @@ void salesOrderItem::sSave()
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
                "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
-                           "       :soitem_prcost, :soitem_tax_id, :soitem_cos_accnt_id, :soitem_warranty "
+                           "       :soitem_prcost, :soitem_taxtype_id, :soitem_cos_accnt_id, :soitem_warranty "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -823,8 +822,8 @@ void salesOrderItem::sSave()
     if(_sub->isChecked())
       q.bindValue(":soitem_substitute_item_id", _subItem->id());
     q.bindValue(":warehous_id", _warehouse->id());
-    if (_taxcode->isValid())
-      q.bindValue(":soitem_tax_id", _taxcode->id());
+    if (_taxtype->isValid())
+      q.bindValue(":soitem_taxtype_id", _taxtype->id());
         if (_altCosAccnt->isValid())
           q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
         q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
@@ -846,7 +845,7 @@ void salesOrderItem::sSave()
                "    coitem_order_type=:soitem_order_type,"
                "    coitem_order_id=:soitem_order_id, coitem_substitute_item_id=:soitem_substitute_item_id,"
                "    coitem_prcost=:soitem_prcost,"
-               "    coitem_tax_id=:soitem_tax_id, "
+               "    coitem_taxtype_id=:soitem_taxtype_id, "
                "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
                "    coitem_warranty=:soitem_warranty "
                "WHERE (coitem_id=:soitem_id);" );
@@ -871,8 +870,8 @@ void salesOrderItem::sSave()
     q.bindValue(":soitem_id", _soitemid);
     if(_sub->isChecked())
       q.bindValue(":soitem_substitute_item_id", _subItem->id());
-    if (_taxcode->isValid())
-      q.bindValue(":soitem_tax_id", _taxcode->id());
+    if (_taxtype->isValid())
+      q.bindValue(":soitem_taxtype_id", _taxtype->id());
     if (_altCosAccnt->isValid())
       q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
     q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
@@ -1087,7 +1086,7 @@ void salesOrderItem::sSave()
                "  quitem_unitcost, quitem_custprice, quitem_price,"
                "  quitem_price_uom_id, quitem_price_invuomratio,"
                "  quitem_custpn, quitem_memo, quitem_createorder, "
-               "  quitem_order_warehous_id, quitem_prcost, quitem_tax_id ) "
+               "  quitem_order_warehous_id, quitem_prcost, quitem_taxtype_id ) "
                "VALUES(:quitem_id, :quitem_quhead_id, :quitem_linenumber,"
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
                "       :item_id, :quitem_scheddate, :quitem_promdate, :quitem_qtyord,"
@@ -1095,7 +1094,7 @@ void salesOrderItem::sSave()
                "       stdCost(:item_id), :quitem_custprice, :quitem_price,"
                "       :price_uom_id, :price_invuomratio,"
                "       :quitem_custpn, :quitem_memo, :quitem_createorder, "
-               "       :quitem_order_warehous_id, :quitem_prcost, :quitem_tax_id);" );
+               "       :quitem_order_warehous_id, :quitem_prcost, :quitem_taxtype_id);" );
     q.bindValue(":quitem_id", _soitemid);
     q.bindValue(":quitem_quhead_id", _soheadid);
     q.bindValue(":quitem_linenumber", _lineNumber->text().toInt());
@@ -1115,8 +1114,8 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":item_id", _item->id());
     q.bindValue(":warehous_id", _warehouse->id());
-    if (_taxcode->isValid())
-      q.bindValue(":quitem_tax_id", _taxcode->id());
+    if (_taxtype->isValid())
+      q.bindValue(":quitem_taxtype_id", _taxtype->id());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1136,7 +1135,7 @@ void salesOrderItem::sSave()
                "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:price_invuomratio,"
                "    quitem_memo=:quitem_memo, quitem_createorder=:quitem_createorder,"
                "    quitem_order_warehous_id=:quitem_order_warehous_id,"
-               "    quitem_prcost=:quitem_prcost, quitem_tax_id=:quitem_tax_id "
+               "    quitem_prcost=:quitem_prcost, quitem_taxtype_id=:quitem_taxtype_id "
                "WHERE (quitem_id=:quitem_id);" );
     q.bindValue(":quitem_scheddate", _scheduledDate->date());
     q.bindValue(":quitem_promdate", promiseDate);
@@ -1151,8 +1150,8 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_order_warehous_id", _supplyWarehouse->id());
     q.bindValue(":quitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":quitem_id", _soitemid);
-    if (_taxcode->isValid())
-      q.bindValue(":quitem_tax_id", _taxcode->id());
+    if (_taxtype->isValid())
+      q.bindValue(":quitem_taxtype_id", _taxtype->id());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1587,11 +1586,11 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
                "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, item_fractional,"
                "       stdcost(item_id) AS f_unitcost,"
-               "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
+               "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
-    q.bindValue(":taxauth", _taxauthid);
+    q.bindValue(":taxzone", _taxzoneid);
     q.exec();
     if (q.first())
     {
@@ -2183,17 +2182,17 @@ void salesOrderItem::populate()
 
   ParameterList qparams;
 
-  QString sql("SELECT taxauth_id, "
+  QString sql("SELECT taxzone_id, "
               "<? if exists(\"isSalesOrder\") ?>"
               "       cohead_curr_id AS curr_id "
-              "FROM cohead, coitem, taxauth "
-              "WHERE ((cohead_taxauth_id=taxauth_id)"
+              "FROM cohead, coitem, taxzone "
+              "WHERE ((cohead_taxzone_id=taxzone_id)"
               "  AND  (cohead_id=coitem_cohead_id)"
               "  AND  (coitem_id=<? value(\"id\") ?>))"
               "<? else ?>"
               "       quhead_curr_id AS curr_id "
-              "FROM quhead, quitem, taxauth "
-              "WHERE ((quhead_taxauth_id=taxauth_id)"
+              "FROM quhead, quitem, taxzone "
+              "WHERE ((quhead_taxzone_id=taxzone_id)"
               "  AND  (quhead_id=quitem_quhead_id)"
               "  AND  (quitem_id=<? value(\"id\") ?>))"
               "<? endif ?>"
@@ -2204,7 +2203,7 @@ void salesOrderItem::populate()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(qparams);
   if (q.first())
-    _taxauthid = q.value("taxauth_id").toInt();
+    _taxzoneid = q.value("taxzone_id").toInt();
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -2236,8 +2235,7 @@ void salesOrderItem::populate()
         "       (SELECT COALESCE(SUM(coship_qty), 0)"
         "          FROM coship"
         "         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
-        "       coitem_tax_id,"
-        "       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id, "
+        "       coitem_taxtype_id,"
         "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale "
         "FROM coitem, warehous, itemsite, item, uom, cohead, locale "
         "LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER) "
@@ -2272,8 +2270,7 @@ void salesOrderItem::populate()
         "       quitem_promdate AS promdate,"
         "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
         "       0 AS coship_qty,"
-        "       quitem_tax_id AS coitem_tax_id,"
-        "       getItemTaxType(item_id, quhead_taxauth_id) AS coitem_taxtype_id, locale_qty_scale"
+        "       quitem_taxtype_id AS coitem_taxtype_id, locale_qty_scale"
         "  FROM item, uom, quhead, locale LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER), quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
         " WHERE ( (quitem_item_id=item_id)"
         "   AND   (item_inv_uom_id=uom_id)"
@@ -2305,7 +2302,6 @@ void salesOrderItem::populate()
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
     // do tax stuff before _qtyOrdered so signal cascade has data to work with
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
-    _taxcode->setId(item.value("coitem_tax_id").toInt());
     _orderId = item.value("coitem_order_id").toInt();
     _orderQtyChanged = item.value("qtyord").toDouble();
     _qtyOrdered->setDouble(_orderQtyChanged, item.value("locale_qty_scale").toInt());
@@ -2724,47 +2720,22 @@ void salesOrderItem::sCancel()
   _canceling = false;
 }
 
-void salesOrderItem::sLookupTaxCode()
-{
-  XSqlQuery taxq;
-  taxq.prepare("SELECT tax_ratea, tax_rateb, tax_ratec, tax_id "
-               "FROM tax "
-               "WHERE (tax_id=getTaxSelection(:auth, :type));");
-  taxq.bindValue(":auth",    _taxauthid);
-  taxq.bindValue(":type",    _taxtype->id());
-  taxq.exec();
-  if (taxq.first())
-  {
-    _taxcode->setId(taxq.value("tax_id").toInt());
-    _cachedPctA = taxq.value("tax_ratea").toDouble();
-    _cachedPctB = taxq.value("tax_rateb").toDouble();
-    _cachedPctC = taxq.value("tax_ratec").toDouble();
-  }
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else
-    _taxcode->setId(-1);
-}
-
 void salesOrderItem::sLookupTax()
 {
   XSqlQuery calcq;
-  calcq.prepare("SELECT calculateTax(:tax_id, :ext, 0, 'A') AS valA,"
-                "               calculateTax(:tax_id, :ext, 0, 'B') AS valB,"
-                "               calculateTax(:tax_id, :ext, 0, 'C') AS valC;");
+  calcq.prepare("SELECT calculateTax(:taxzone_id, :taxtype_id, :date, :curr_id, :ext ) AS val");
 
-  calcq.bindValue(":tax_id",  _taxcode->id());
+  calcq.bindValue(":taxzone_id",  _taxzoneid);
+  calcq.bindValue(":taxtype_id",  _taxtype->id());
+  calcq.bindValue(":date",  _netUnitPrice->effective());
+  calcq.bindValue(":curr_id",  _netUnitPrice->id());
   calcq.bindValue(":ext",     _extendedPrice->localValue());
+
   calcq.exec();
   if (calcq.first())
   {
-    _cachedRateA= calcq.value("valA").toDouble();
-    _cachedRateB= calcq.value("valB").toDouble();
-    _cachedRateC= calcq.value("valC").toDouble();
-    _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
+    _cachedRate= calcq.value("val").toDouble();
+    _tax->setLocalValue(_cachedRate );
   }
   else if (calcq.lastError().type() != QSqlError::NoError)
   {
@@ -2777,35 +2748,22 @@ void salesOrderItem::sTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("tax_id",   _taxcode->id());
-  params.append("curr_id",  _tax->id());
-  params.append("valueA",   _cachedRateA);
-  params.append("valueB",   _cachedRateB);
-  params.append("valueC",   _cachedRateC);
-  params.append("pctA",     _cachedPctA);
-  params.append("pctB",     _cachedPctB);
-  params.append("pctC",     _cachedPctC);
-  params.append("subtotal", CurrDisplay::convert(_extendedPrice->id(), _tax->id(),
-                                                 _extendedPrice->localValue(),
-                                                 _extendedPrice->effective()));
-  if(cView == _mode || cViewQuote == _mode)
+  params.append("taxzone_id",   _taxzoneid);
+  params.append("taxtype_id",  _taxtype->id());
+  params.append("date", _netUnitPrice->effective());
+  params.append("curr_id",   _netUnitPrice->id());
+  params.append("subtotal",    _extendedPrice->localValue());
+ 
+  if (_mode == cView)
     params.append("readOnly");
 
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
-    _cachedRateA = newdlg.amountA();
-    _cachedRateB = newdlg.amountB();
-    _cachedRateC = newdlg.amountC();
-    _cachedPctA  = newdlg.pctA();
-    _cachedPctB  = newdlg.pctB();
-    _cachedPctC  = newdlg.pctC();
-
-    if (_taxcode->id() != newdlg.tax())
-      _taxcode->setId(newdlg.tax());
-
-    _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
+    if (_taxtype->id() != newdlg.taxtype())
+      _taxtype->setId(newdlg.taxtype());
   }
 }
+
 
 void salesOrderItem::sQtyUOMChanged()
 {

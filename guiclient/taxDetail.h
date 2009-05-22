@@ -31,6 +31,7 @@ public:
     virtual double pctB()	const;
     virtual double pctC()	const;
     virtual int    tax()	const;
+	virtual int    taxtype()	const;
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -50,7 +51,11 @@ protected:
     bool	_blankDetailDescriptions;
     bool	_readonly;
     double	_taxCodeInitialized;
-
+	int     _taxzoneId;
+	int		_orderid;
+    QString	_ordertype;
+	QString _displayType;
+   
 protected slots:
     virtual void languageChange();
 };

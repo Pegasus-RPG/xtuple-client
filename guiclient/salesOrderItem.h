@@ -53,7 +53,7 @@ public slots:
     virtual void sChanged();
     virtual void sCancel();
     virtual void sLookupTax();
-    virtual void sLookupTaxCode();
+//    virtual void sLookupTaxCode();
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
@@ -93,13 +93,9 @@ private:
     bool _invIsFractional;
     bool _updateItemsite;
     double _orderQtyChanged;
-    double	_cachedPctA;
-    double	_cachedPctB;
-    double	_cachedPctC;
-    double	_cachedRateA;
-    double	_cachedRateB;
-    double	_cachedRateC;
-    int		_taxauthid;
+    double	_cachedPct;
+    double	_cachedRate;
+    int		_taxzoneid;
     QStandardItemModel * _itemchar;
     int _invuomid;
     double _qtyinvuomratio;

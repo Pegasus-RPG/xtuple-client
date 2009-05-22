@@ -253,32 +253,17 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"         adjTax, adjPcta, adjPctb, adjPctc, adja, adjb, adjc;"
 	"<? elseif exists(\"cohead_id\") ?>"
 	"  SELECT cohead_number AS number,"
-	"         cohead_taxauth_id AS taxauth_id,"
+	"         cohead_taxzone_id AS taxzone_id,"
 	"         cohead_curr_id AS curr_id,"
 	"         cohead_curr_id AS tax_curr_id,"
 	"         cohead_orderdate AS date,"
 	"         SUM(ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),"
 	"                    2)) AS line,"
-	"         SUM(ROUND((calculateTax(coitem_tax_id,"
-	"                        (ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price /"
-	"                        coitem_price_invuomratio), 2)), 0, 'A')), 2)) AS linea,"
-	"         SUM(ROUND((calculateTax(coitem_tax_id,"
-	"                        (ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price /"
-	"                        coitem_price_invuomratio), 2)), 0, 'B')), 2)) AS lineb,"
-	"         SUM(ROUND((calculateTax(coitem_tax_id,"
-	"                        (ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price /"
-	"                        coitem_price_invuomratio), 2)), 0, 'C')), 2)) AS linec,"
+	"         SUM(ROUND(calculateTax(cohead_taxzone_id, coitem_taxtype_id, cohead_orderdate, cohead_curr_id, ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price /"
+	"                        coitem_price_invuomratio), 2)),2)) as total_tax, "  
 	"         cohead_freight AS freight,"
-	"         tax_id AS freightTax,"
-	"         tax_ratea AS freightPcta,"
-	"         tax_rateb AS freightPctb,"
-	"         tax_ratec AS freightPctc,"
-	"         ROUND(calculateTax(tax_id, ROUND(cohead_freight, 2),"
-	"                         0, 'A'), 2) AS freighta,"
-	"         ROUND(calculateTax(tax_id, ROUND(cohead_freight, 2),"
-	"                         0, 'B'), 2) AS freightb,"
-	"         ROUND(calculateTax(tax_id, ROUND(cohead_freight, 2),"
-	"                         0, 'C'), 2) AS freightc,"
+	"         taxtype_id AS freightTax,"
+	"         ROUND(calculateTax(cohead_taxzone_id, getfreighttaxtypeid(), cohead_orderdate, cohead_curr_id, cohead_freight), 2) AS freighttaxamt, "
 	"         NULL AS adjTax,"
 	"         NULL AS adjPcta,"
 	"         NULL AS adjPctb,"
@@ -287,43 +272,27 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"         NULL AS adjb,"
 	"         NULL AS adjc"
 	"  FROM coitem, item, itemsite, cohead LEFT OUTER JOIN"
-	"       taxauth ON (cohead_taxauth_id=taxauth_id) LEFT OUTER JOIN"
-	"       tax ON (tax_id=getFreightTaxSelection(taxauth_id))"
+	"       taxzone ON (cohead_taxzone_id=taxzone_id) LEFT OUTER JOIN"
+	"       taxtype ON (taxtype_id=getFreightTaxTypeId())"
 	"  WHERE ((coitem_cohead_id=<? value(\"cohead_id\") ?>)"
 	"    AND  (coitem_cohead_id=cohead_id)"
 	"    AND  (coitem_itemsite_id=itemsite_id)"
 	"    AND  (itemsite_item_id=item_id))"
-	"  GROUP BY number, cohead_taxauth_id, curr_id, tax_curr_id,"
-	"         date, freight, freightTax,"
-	"         freightPcta, freightPctb, freightPctc;"
+	"  GROUP BY number, cohead_taxzone_id, curr_id, tax_curr_id,"
+	"         date, freight, freightTax,freighttaxamt;"
 	"<? elseif exists(\"quhead_id\") ?>"
 	"  SELECT quhead_number AS number,"
-	"         quhead_taxauth_id AS taxauth_id,"
+	"         quhead_taxzone_id AS taxzone_id,"
 	"         quhead_curr_id AS curr_id,"
 	"         quhead_curr_id AS tax_curr_id,"
 	"         quhead_quotedate AS date,"
 	"         SUM(ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),"
 	"                    2)) AS line,"
-	"         SUM(ROUND((calculateTax(quitem_tax_id,"
-	"                        (ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price /"
-	"                        quitem_price_invuomratio), 2)), 0, 'A')), 2)) AS linea,"
-	"         SUM(ROUND((calculateTax(quitem_tax_id,"
-	"                        (ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price /"
-	"                        quitem_price_invuomratio), 2)), 0, 'B')), 2)) AS lineb,"
-	"         SUM(ROUND((calculateTax(quitem_tax_id,"
-	"                        (ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price /"
-	"                        quitem_price_invuomratio), 2)), 0, 'C')), 2)) AS linec,"
+    "         SUM(ROUND(calculateTax(quhead_taxzone_id, quitem_taxtype_id, quhead_quotedate, quhead_curr_id, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price /"
+	"                        quitem_price_invuomratio), 2)),2)) as total_tax, " 
 	"         quhead_freight AS freight,"
-	"         tax_id AS freightTax,"
-	"         tax_ratea AS freightPcta,"
-	"         tax_rateb AS freightPctb,"
-	"         tax_ratec AS freightPctc,"
-	"         ROUND(calculateTax(tax_id, ROUND(quhead_freight, 2),"
-	"                         0, 'A'), 2) AS freighta,"
-	"         ROUND(calculateTax(tax_id, ROUND(quhead_freight, 2),"
-	"                         0, 'B'), 2) AS freightb,"
-	"         ROUND(calculateTax(tax_id, ROUND(quhead_freight, 2),"
-	"                         0, 'C'), 2) AS freightc,"
+	"         taxtype_id AS freightTax,"
+	"         ROUND(calculateTax(quhead_taxzone_id, getfreighttaxtypeid(), quhead_quotedate, quhead_curr_id, quhead_freight), 2) AS freighttaxamt, "
 	"         NULL AS adjTax,"
 	"         NULL AS adjPcta,"
 	"         NULL AS adjPctb,"
@@ -332,15 +301,13 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"         NULL AS adjb,"
 	"         NULL AS adjc"
 	"  FROM quitem, item, quhead LEFT OUTER JOIN"
-	"       taxauth ON (quhead_taxauth_id=taxauth_id) LEFT OUTER JOIN"
-	"       tax ON (tax_id=getFreightTaxSelection(taxauth_id))"
+	"       taxzone ON (quhead_taxzone_id=taxzone_id) LEFT OUTER JOIN"
+	"       taxtype ON (taxtype_id=getFreightTaxTypeId())"
 	"  WHERE ((quitem_quhead_id=<? value(\"quhead_id\") ?>)"
 	"    AND  (quitem_quhead_id=quhead_id)"
 	"    AND  (quitem_item_id=item_id))"
-	"  GROUP BY number, quhead_taxauth_id, curr_id, tax_curr_id,"
-	"         date, freight, freightTax,"
-	"         freightPcta, freightPctb, freightPctc;"
-
+	"  GROUP BY number, quhead_taxzone_id, curr_id, tax_curr_id,"
+	"         date, freight, freightTax,freighttaxamt;"
 	"<? elseif exists(\"rahead_id\") ?>"
 	"  SELECT rahead_number AS number,"
 	"         rahead_taxauth_id AS taxauth_id,"
@@ -431,23 +398,36 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 
     // now the rest
     _document->setText(q.value("number").toString());
-    _taxauth->setId(q.value("taxauth_id").toInt());
+    _taxzone->setId(q.value("taxzone_id").toInt());
     _line->setLocalValue(q.value("line").toDouble());
     _freight->setLocalValue(q.value("freight").toDouble());
     _pretax->setLocalValue(_line->localValue() + _freight->localValue());
 
-    _taxCache.setLine(q.value("linea").toDouble(),
+    
+	if(_ordertype == "S"  || _ordertype == "Q")
+      _taxCache.setLine(q.value("total_tax").toDouble(), 0.0, 0.0);
+    else
+	  _taxCache.setLine(q.value("linea").toDouble(),
 		      q.value("lineb").toDouble(),
 		      q.value("linec").toDouble());
 
+   
     _taxCache.setFreightId(q.value("freightTax").toInt());
-    _taxCache.setFreightPct(q.value("freightPcta").toDouble(),
+   
+   if(_ordertype != "S"  && _ordertype != "Q") 
+   {
+       _taxCache.setFreightPct(q.value("freightPcta").toDouble(),
 			    q.value("freightPctb").toDouble(),
 			    q.value("freightPctc").toDouble());
-    _taxCache.setFreight(q.value("freighta").toDouble(),
+       _taxCache.setFreight(q.value("freighta").toDouble(),
 			 q.value("freightb").toDouble(),
 			 q.value("freightc").toDouble());
-
+   }
+    
+	else
+	 _taxCache.setFreight(q.value("freighttaxamt").toDouble(),
+			 0,
+			 0);
     _taxCache.setAdjId(q.value("adjTax").toInt());
     _taxCache.setAdjPct(q.value("adjPcta").toDouble(),
 			q.value("adjPctb").toDouble(),
@@ -607,6 +587,24 @@ void taxBreakdown::sFreightTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
+
+  if (_ordertype == "S" || _ordertype == "Q")
+  {
+   params.append("taxzone_id",  _taxzone->id());
+   params.append("taxtype_id",  _taxCache.freightId());
+   params.append("curr_id", _taxcurrency->id());
+   params.append("date",    _freight->effective());
+   params.append("subtotal",CurrDisplay::convert(_freight->id(),
+						_taxcurrency->id(),
+						_freight->localValue(),
+						_freight->effective()));
+   params.append("readOnly");
+   if (newdlg.set(params) == NoError) 
+	   newdlg.exec();
+     
+ }
+ else 
+{	 
   params.append("curr_id", _taxcurrency->id());
   params.append("tax_id",  _taxCache.freightId());
   params.append("valueA",  _taxCache.freight(0));
@@ -621,6 +619,8 @@ void taxBreakdown::sFreightTaxDetail()
 						_freight->localValue(),
 						_freight->effective()));
 
+
+
   // s/o and quote don't have a place to store changes
   if (_ordertype == "S" || _ordertype == "Q" || cView == _mode)
     params.append("readOnly");
@@ -633,15 +633,27 @@ void taxBreakdown::sFreightTaxDetail()
     sRecalc();
   }
 }
+}
 
 void taxBreakdown::sLineTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
   params.append("curr_id", _taxcurrency->id());
+
+
+ if (_ordertype == "S" || _ordertype == "Q")
+ {
+   params.append("order_type", _ordertype);
+   params.append("order_id", _orderid);
+   params.append("display_type", "L");
+ }
+ else
+ {
   params.append("valueA",  _taxCache.line(0));
   params.append("valueB",  _taxCache.line(1));
   params.append("valueC",  _taxCache.line(2));
+ } 
   params.append("date",    _line->effective());
   params.append("subtotal",CurrDisplay::convert(_line->id(),
 						_taxcurrency->id(),
@@ -657,10 +669,21 @@ void taxBreakdown::sTotalTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
+
+
   params.append("curr_id", _taxcurrency->id());
+ if (_ordertype == "S" || _ordertype == "Q")
+ {
+   params.append("order_type", _ordertype);
+   params.append("order_id", _orderid);
+    params.append("display_type", "T");
+ }
+ else
+ {
   params.append("valueA",  _taxCache.total(0));
   params.append("valueB",  _taxCache.total(1));
   params.append("valueC",  _taxCache.total(2));
+ }
   params.append("date",    _total->effective());
   params.append("subtotal",CurrDisplay::convert(_pretax->id(),
 						_taxcurrency->id(),

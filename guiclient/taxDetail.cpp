@@ -12,13 +12,23 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include "metasql.h"
 
 taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
 
-    /* comment out until new code is written
+    _taxcodes->addColumn(tr("Code"),	 -1,  Qt::AlignLeft,   true,  "taxdetail_tax_code");
+    _taxcodes->addColumn(tr("Description"),      100,  Qt::AlignLeft,   true,  "taxdetail_tax_descrip");
+    _taxcodes->addColumn(tr("Amount"),      100,  Qt::AlignLeft,   true,  "taxdetail_tax");
+    _taxcodes->addColumn(tr("Sequence"),      100,  Qt::AlignLeft,   true,  "taxdetail_taxclass_sequence");
+    _taxcodes->setIndentation(10);
+
+    connect(_cancel,	SIGNAL(clicked()),	this, SLOT(sCancel()));
+	//connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
+	connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sPopulate()));
+	/* comment out until new code is written
     connect(_amountA,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
     connect(_amountB,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
     connect(_amountC,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
@@ -36,7 +46,7 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     _prcntC->setPrecision(omfgThis->percentVal());
     
     */
-    sCalculateTotal();
+    //sCalculateTotal();
 }
 
 taxDetail::~taxDetail()
@@ -54,6 +64,54 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
   QVariant param;
   bool     valid;
   
+   _readonly = pParams.inList("readOnly");
+
+   param = pParams.value("taxzone_id", &valid);
+   if (valid)
+	   _taxzoneId = param.toInt();
+
+   param = pParams.value("taxtype_id", &valid);
+   if (valid)
+   	   _taxType->setId(param.toInt());
+   else
+    clear();
+
+   param = pParams.value("date", &valid);
+   if (valid)
+       _subtotal->setEffective(param.toDate());
+
+   param = pParams.value("subtotal", &valid);
+   if (valid)
+	   _subtotal->setLocalValue(param.toDouble());
+    
+   param = pParams.value("curr_id", &valid);
+   if (valid)
+	   _subtotal->setId(param.toInt());
+
+   param = pParams.value("order_id", &valid);
+   if (valid)
+    _orderid = param.toInt();
+
+   param = pParams.value("order_type", &valid);
+   if (valid)
+    _ordertype = param.toString();
+
+    param = pParams.value("display_type", &valid);
+   if (valid)
+    _displayType = param.toString();
+	
+   sPopulate();
+   //sCalculateTax();
+
+   if (_readonly)
+  {
+    _taxType->setEnabled(FALSE);
+    _save->hide();
+    _cancel->setText(tr("&Close"));
+  }
+
+
+
   /* comment out until new code is written
   _readonly = pParams.inList("readOnly") ||
 	(!pParams.inList("readOnly") && !_privileges->check("OverrideTax"));
@@ -149,10 +207,9 @@ void taxDetail::sCancel()
     _amountC->setLocalValue(_cCache);
     _prcntA->setText(QString::number(_aPctCache));
     _prcntB->setText(QString::number(_bPctCache));
-    _prcntC->setText(QString::number(_cPctCache));
+    _prcntC->setText(QString::number(_cPctCache));*/
     reject();
-   */
-}
+ }
 
 void taxDetail::sCalculateTotal()
 {
@@ -194,8 +251,71 @@ int taxDetail::tax() const
   //return _taxCode->id();
 }
 
+
+int taxDetail::taxtype() const
+{
+  return _taxType->id();
+} 
+
 void taxDetail::sCalculateTax()
 {
+ 
+  /*ParameterList params;
+  
+  if(_ordertype == "S" || _ordertype == "Q")
+  {
+   params.append("order_id", _orderid);
+   params.append("order_type", _ordertype);
+   QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
+              "taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole "
+              "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>);");
+    MetaSQLQuery mql(sql);
+   q = mql.toQuery(params);
+  
+   _taxcodes->clear();
+   _taxcodes->populate(q);
+   if (q.lastError().type() != QSqlError::NoError)
+   {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+   }
+
+  }
+  else
+  { 
+   params.append("taxzone_id", _taxzoneId);  
+   params.append("taxtype_id", _taxType->id());
+   params.append("date", _subtotal->effective());
+   params.append("subtotal", _subtotal->localValue());
+   params.append("curr_id", _subtotal->id());
+  
+
+   QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
+              "taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole "
+              "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
+			  " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
+			  " <? value(\"subtotal\") ?>) "
+			  "UNION ALL "
+			  "SELECT -1 AS taxdetail_tax_id, 'Total' AS taxdetail_tax_code, NULL AS taxdetail_tax_descrip, "
+			  "(select calculateTax(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
+			  " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
+			  " <? value(\"subtotal\") ?>)) AS taxdetail_tax, NULL AS taxdetail_taxclass_sequence, "
+			  "0 AS  xtindentrole;"); 
+			  //"ORDER BY taxassign_taxzone_id, taxassign_taxtype_id, dummy_seq, xtindentrole;");
+  
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  //_taxcodes->populate("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole FROM calculateTaxDetail(2, 3, current_date, 300, 3) ");
+  _taxcodes->clear();
+  _taxcodes->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }*/
+ 
+
+
   /* comment out until new code is written
   XSqlQuery calcq;
   calcq.prepare("SELECT calculateTax(:tax_id, :subtotal, 0, 'A') AS ratea,"
@@ -251,10 +371,82 @@ void taxDetail::clear()
   _amountB->setEnabled(false);
   _amountC->setEnabled(false);
   */
+   _taxType->setNullStr(tr("Unspecified"));
 }
 
 void taxDetail::sPopulate()
 {
+  XSqlQuery popq;
+
+  popq.prepare("SELECT taxtype_descrip from taxtype where taxtype_id=:taxtype_id;");
+  popq.bindValue(":taxtype_id", _taxType->id());
+  popq.exec();
+  if(popq.first())
+	_descrip->setText(popq.value("taxtype_descrip").toString());
+  else
+    _descrip->setText("Unspecified");
+
+
+  ParameterList params;
+
+   if(_ordertype == "S" || _ordertype == "Q")
+  {
+   params.append("order_id", _orderid);
+   params.append("order_type", _ordertype);
+   params.append("display_type", _displayType);
+   QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
+              "sum(taxdetail_tax) as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole "
+              "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
+			  "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;");
+    MetaSQLQuery mql(sql);
+   q = mql.toQuery(params);
+  
+   _taxcodes->clear();
+   _taxcodes->populate(q);
+   if (q.lastError().type() != QSqlError::NoError)
+   {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+   }
+
+  }
+  else
+  {
+  
+   params.append("taxzone_id", _taxzoneId);  
+   params.append("taxtype_id", _taxType->id());
+   params.append("date", _subtotal->effective());
+   params.append("subtotal", _subtotal->localValue());
+   params.append("curr_id", _subtotal->id());
+  
+
+   QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
+              "taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole "
+              "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
+			  " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
+			  " <? value(\"subtotal\") ?>) "
+			  "UNION ALL "
+			  "SELECT -1 AS taxdetail_tax_id, 'Total' AS taxdetail_tax_code, NULL AS taxdetail_tax_descrip, "
+			  "(select calculateTax(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
+			  " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
+			  " <? value(\"subtotal\") ?>)) AS taxdetail_tax, NULL AS taxdetail_taxclass_sequence, "
+			  "0 AS  xtindentrole;"); 
+			  //"ORDER BY taxassign_taxzone_id, taxassign_taxtype_id, dummy_seq, xtindentrole;");
+  
+   MetaSQLQuery mql(sql);
+   q = mql.toQuery(params);
+  //_taxcodes->populate("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole FROM calculateTaxDetail(2, 3, current_date, 300, 3) ");
+   _taxcodes->clear();
+   _taxcodes->populate(q);
+   if (q.lastError().type() != QSqlError::NoError)
+   {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+   }
+  }
+
+
+
   /* comment out until new code is written
   clear();
   XSqlQuery popq;

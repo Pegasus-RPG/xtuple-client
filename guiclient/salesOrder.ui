@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>641</height>
+    <width>984</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -360,9 +360,9 @@ to be bound by its terms.</comment>
             <widget class="DLineEdit" name="_packDate"/>
            </item>
            <item row="3" column="2">
-            <widget class="QLabel" name="_taxAuthLit">
+            <widget class="QLabel" name="_taxZoneLit">
              <property name="text">
-              <string>Tax Authority:</string>
+              <string>Tax Zone:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -373,7 +373,7 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item row="3" column="3">
-            <widget class="XComboBox" name="_taxAuth">
+            <widget class="XComboBox" name="_taxZone">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -393,7 +393,7 @@ to be bound by its terms.</comment>
               <string>None</string>
              </property>
              <property name="type">
-              <enum>XComboBox::TaxAuths</enum>
+              <enum>XComboBox::TaxZones</enum>
              </property>
             </widget>
            </item>
@@ -1935,7 +1935,6 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XURLLabel</class>
@@ -1950,7 +1949,7 @@ to be bound by its terms.</comment>
   <tabstop>_terms</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
-  <tabstop>_taxAuth</tabstop>
+  <tabstop>_taxZone</tabstop>
   <tabstop>_shipComplete</tabstop>
   <tabstop>_printSO</tabstop>
   <tabstop>_warehouse</tabstop>

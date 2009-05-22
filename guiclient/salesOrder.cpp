@@ -65,10 +65,6 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   sCheckValidContacts();
-
-  _shippingLabel->populate( "SELECT labelform_id, labelform_name "                                                        
-                            "FROM labelform "                                                                                    
-                            "ORDER BY labelform_name;" );
   
   connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
   connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
@@ -97,7 +93,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_showCanceled, SIGNAL(toggled(bool)), this, SLOT(sFillItemList()));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
-  connect(_taxAuth,        SIGNAL(newID(int)),        this, SLOT(sTaxAuthChanged()));
+  connect(_taxZone,        SIGNAL(newID(int)),        this, SLOT(sTaxZoneChanged()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_freightLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sFreightDetail()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -131,14 +127,13 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _calcfreight = false;
   _freightCache = 0;
-  _freighttaxid = -1;
-  _taxauthidCache = -1;
-  _custtaxauthid = -1;
+  _freighttaxtypeid = -1;
+  _taxzoneidCache = -1;
+  _custtaxzoneid = -1;
   for (unsigned i = Line; i <= Total; i++)
   {
-    _taxCache[A][i] = 0;
-    _taxCache[B][i] = 0;
-    _taxCache[C][i] = 0;
+    _taxCache[i] = 0;
+
   }
 
   _amountOutstanding = 0.0;
@@ -330,7 +325,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _warehouse->setEnabled(FALSE);
       _salesRep->setEnabled(FALSE);
       _commission->setEnabled(FALSE);
-      _taxAuth->setEnabled(FALSE);
+      _taxZone->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
       _origin->setEnabled(FALSE);
@@ -338,7 +333,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _shipVia->setEnabled(FALSE);
       _shippingCharges->setEnabled(FALSE);
       _shippingForm->setEnabled(FALSE);
-      _shippingLabel->setEnabled(FALSE);
       _miscCharge->setEnabled(FALSE);
       _miscChargeDescription->setEnabled(FALSE);
       _miscChargeAccount->setReadOnly(TRUE);
@@ -457,8 +451,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _shippingChargesLit->hide();
     _shippingForm->hide();
     _shippingFormLit->hide();
-    _shippingLabel->hide();
-    _shippingLabelLit->hide();
     _printSO->hide();
 
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
@@ -748,7 +740,7 @@ bool salesOrder::save(bool partial)
                "    cohead_shiptocountry=:shiptocountry,"
                "    cohead_orderdate=:orderdate, cohead_packdate=:packdate,"
                "    cohead_salesrep_id=:salesrep_id, cohead_commission=:commission,"
-               "    cohead_taxauth_id=:taxauth_id, cohead_terms_id=:terms_id, cohead_origin=:origin,"
+               "    cohead_taxzone_id=:taxzone_id, cohead_terms_id=:terms_id, cohead_origin=:origin,"
                "    cohead_fob=:fob, cohead_shipvia=:shipvia, cohead_warehous_id=:warehous_id,"
                "    cohead_freight=:freight, cohead_calcfreight=:calcfreight,"
                "    cohead_misc=:misc, cohead_misc_accnt_id=:misc_accnt_id, cohead_misc_descrip=:misc_descrip,"
@@ -758,7 +750,6 @@ bool salesOrder::save(bool partial)
                "    cohead_prj_id=:prj_id,"
                "    cohead_curr_id = :curr_id,"
                "    cohead_shipcomplete=:cohead_shipcomplete,"
-               "    cohead_labelform_id=:labelform_id,"
                "    cohead_shipto_cntct_id=:shipto_cntct_id,"
                "    cohead_shipto_cntct_honorific=:shipto_cntct_honorific,"
                "    cohead_shipto_cntct_first_name=:shipto_cntct_first_name,"
@@ -794,7 +785,7 @@ bool salesOrder::save(bool partial)
                "    cohead_shiptocountry,"
                "    cohead_orderdate, cohead_packdate,"
                "    cohead_salesrep_id, cohead_commission,"
-               "    cohead_taxauth_id, cohead_terms_id, cohead_origin,"
+               "    cohead_taxzone_id, cohead_terms_id, cohead_origin,"
                "    cohead_fob, cohead_shipvia, cohead_warehous_id,"
                "    cohead_freight, cohead_calcfreight,"
                "    cohead_misc, cohead_misc_accnt_id, cohead_misc_descrip,"
@@ -804,7 +795,6 @@ bool salesOrder::save(bool partial)
                "    cohead_prj_id,"
                "    cohead_curr_id,"
                "    cohead_shipcomplete,"
-               "    cohead_labelform_id,"
                "    cohead_shipto_cntct_id,"
                "    cohead_shipto_cntct_honorific,"
                "    cohead_shipto_cntct_first_name,"
@@ -837,7 +827,7 @@ bool salesOrder::save(bool partial)
                "    :shiptocountry,"
                "    :orderdate, :packdate,"
                "    :salesrep_id, :commission,"
-               "    :taxauth_id, :terms_id, :origin,"
+               "    :taxzone_id, :terms_id, :origin,"
                "    :fob, :shipvia, :warehous_id,"
                "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
@@ -846,8 +836,7 @@ bool salesOrder::save(bool partial)
                "    :shipchrg_id, :shipform_id,"
                "    :prj_id,"
                "    :curr_id,"
-               "    :shipcomplete,"
-               "    :labelform_id,"
+               "    :cohead_shipcomplete,"
                "    :shipto_cntct_id,"
                "    :shipto_cntct_honorific,"
                "    :shipto_cntct_first_name,"
@@ -881,7 +870,7 @@ bool salesOrder::save(bool partial)
                "    quhead_shiptocountry=:shiptocountry,"
                "    quhead_quotedate=:orderdate, quhead_packdate=:packdate,"
                "    quhead_salesrep_id=:salesrep_id, quhead_commission=:commission,"
-               "    quhead_taxauth_id=:taxauth_id, quhead_terms_id=:terms_id,"
+               "    quhead_taxzone_id=:taxzone_id, quhead_terms_id=:terms_id,"
                "    quhead_origin=:origin, quhead_shipvia=:shipvia, quhead_fob=:fob,"
                "    quhead_freight=:freight, quhead_calcfreight=:calcfreight,"
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
@@ -923,7 +912,7 @@ bool salesOrder::save(bool partial)
                "    quhead_shiptocountry,"
                "    quhead_quotedate, quhead_packdate,"
                "    quhead_salesrep_id, quhead_commission,"
-               "    quhead_taxauth_id, quhead_terms_id,"
+               "    quhead_taxzone_id, quhead_terms_id,"
                "    quhead_origin, quhead_shipvia, quhead_fob,"
                "    quhead_freight, quhead_calcfreight,"
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
@@ -963,7 +952,7 @@ bool salesOrder::save(bool partial)
                "    :shiptocountry,"
                "    :orderdate, :packdate,"
                "    :salesrep_id, :commission,"
-               "    :taxauth_id, :terms_id,"
+               "    :taxzone_id, :terms_id,"
                "    :origin, :shipvia, :fob,"
                "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
@@ -1050,14 +1039,12 @@ bool salesOrder::save(bool partial)
 
   if (_salesRep->id() != -1)
     q.bindValue(":salesrep_id", _salesRep->id());
-  if (_taxAuth->isValid())
-    q.bindValue(":taxauth_id", _taxAuth->id());
+  if (_taxZone->isValid())
+    q.bindValue(":taxzone_id", _taxZone->id());
   if (_terms->id() != -1)
     q.bindValue(":terms_id", _terms->id());
   q.bindValue(":shipchrg_id", _shippingCharges->id());
   q.bindValue(":shipform_id", _shippingForm->id());
-  if(_shippingLabel->id() != -1)
-    q.bindValue(":labelform_id", _shippingLabel->id());
   q.bindValue(":freight", _freight->localValue());
   q.bindValue(":calcfreight", _calcfreight);
   q.bindValue(":commission", (_commission->toDouble() / 100.0));
@@ -1433,7 +1420,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
                 "       cust_commprcnt AS commission,"
                 "       cust_creditstatus, cust_terms_id,"
-                "       cust_taxauth_id, cust_cntct_id,"
+                "       cust_taxzone_id, cust_cntct_id,"
                 "       cust_ffshipto, cust_ffbillto, cust_usespos,"
                 "       cust_blanketpos, cust_shipvia,"
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
@@ -1451,7 +1438,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipform_id,"
                 "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
-                "       prospect_taxauth_id AS cust_taxauth_id, prospect_cntct_id AS cust_cntct_id, "
+                "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
                 "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
@@ -1518,7 +1505,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _shippingForm->setId(cust.value("cust_shipform_id").toInt());
       _commission->setDouble(cust.value("commission").toDouble() * 100);
       _terms->setId(cust.value("cust_terms_id").toInt());
-      _custtaxauthid = cust.value("cust_taxauth_id").toInt();
+      _custtaxzoneid = cust.value("cust_taxzone_id").toInt();
       _custEmail = cust.value("cust_soemaildelivery").toBool();
 
       _billToCntct->setId(cust.value("cust_cntct_id").toInt());
@@ -1527,7 +1514,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         _shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
 
       if (ISNEW(_mode))
-        _taxAuth->setId(cust.value("cust_taxauth_id").toInt());
+        _taxZone->setId(cust.value("cust_taxzone_id").toInt());
       _shipVia->setText(cust.value("cust_shipvia"));
 
       _orderCurrency->setId(cust.value("cust_curr_id").toInt());
@@ -1566,9 +1553,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _salesRep->setCurrentIndex(-1);
     _commission->clear();
     _terms->setCurrentIndex(-1);
-    _taxAuth->setCurrentIndex(-1);
-    _taxauthidCache = -1;
-    _custtaxauthid        = -1;
+    _taxZone->setCurrentIndex(-1);
+    _taxzoneidCache = -1;
+    _custtaxzoneid        = -1;
 
     _shipToNumber->clear();
     _shipToName->clear();
@@ -1622,8 +1609,8 @@ void salesOrder::populateShipto(int pShiptoid)
                     "       cntct_phone, shipto_cntct_id,"
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
-                    "       COALESCE(shipto_taxauth_id, -1) AS shipto_taxauth_id,"
-                    "       shipto_salesrep_id, shipto_commission AS commission, shipto_labelform_id "
+                    "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
+                    "       shipto_salesrep_id, shipto_commission AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
                     "     cntct ON (shipto_cntct_id = cntct_id) "
                     "WHERE (shipto_id=:shipto_id);" );
@@ -1639,12 +1626,11 @@ void salesOrder::populateShipto(int pShiptoid)
       _shipToCntct->setId(shipto.value("shipto_cntct_id").toInt());
       _shippingCharges->setId(shipto.value("shipto_shipchrg_id").toInt());
       _shippingForm->setId(shipto.value("shipto_shipform_id").toInt());
-      _shippingLabel->setId(shipto.value("shipto_labelform_id").toInt());
       _salesRep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble() * 100);
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
-      _taxAuth->setId(shipto.value("shipto_taxauth_id").toInt());
+      _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
 
       _ignoreSignals = FALSE;
     }
@@ -1696,7 +1682,7 @@ void salesOrder::sNew()
   params.append("orderNumber", _orderNumber->text().toInt());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
-  params.append("taxauth_id", _taxAuth->id());
+  params.append("taxzone_id", _taxZone->id());
   if (_warehouse->id() != -1)
     params.append("warehous_id", _warehouse->id());  
 
@@ -1730,7 +1716,7 @@ void salesOrder::sCopyToShipto()
   }
 
   _shipToCntct->setId(_billToCntct->id());
-  _taxAuth->setId(_custtaxauthid);
+  _taxZone->setId(_custtaxzoneid);
 }
 
 void salesOrder::sEdit()
@@ -2070,7 +2056,7 @@ void salesOrder::populate()
     so.prepare( "SELECT cohead.*,"
                 "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id,"
                 "       cohead_commission AS commission,"
-                "       COALESCE(cohead_taxauth_id,-1) AS cohead_taxauth_id,"
+                "       COALESCE(cohead_taxzone_id,-1) AS cohead_taxzone_id,"
                 "       COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id,"
@@ -2101,8 +2087,8 @@ void salesOrder::populate()
       _warehouse->setId(so.value("cohead_warehous_id").toInt());
       _salesRep->setId(so.value("cohead_salesrep_id").toInt());
       _commission->setDouble(so.value("commission").toDouble() * 100);
-      _taxauthidCache = so.value("cohead_taxauth_id").toInt();
-      _taxAuth->setId(so.value("cohead_taxauth_id").toInt());
+      _taxzoneidCache = so.value("cohead_taxzone_id").toInt();
+      _taxZone->setId(so.value("cohead_taxzone_id").toInt());
       _terms->setId(so.value("cohead_terms_id").toInt());
       _orderCurrency->setId(so.value("cohead_curr_id").toInt());
       _project->setId(so.value("cohead_prj_id").toInt());
@@ -2219,7 +2205,6 @@ void salesOrder::populate()
       _shippingComments->setText(so.value("cohead_shipcomments").toString());
       _shippingCharges->setId(so.value("cohead_shipchrg_id").toInt());
       _shippingForm->setId(so.value("cohead_shipform_id").toInt());
-      _shippingLabel->setId(so.value("cohead_labelform_id").toInt());
       
       _calcfreight = so.value("cohead_calcfreight").toBool();
 // Auto calculated _freight is populated in sFillItemList
@@ -2263,7 +2248,7 @@ void salesOrder::populate()
     qu.prepare( "SELECT quhead.*,"
                 "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
                 "       quhead_commission AS commission,"
-                "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id,"
+                "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id "
                 "FROM quhead, custinfo "
@@ -2273,7 +2258,7 @@ void salesOrder::populate()
                 "SELECT quhead.*,"
                 "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
                 "       quhead_commission AS commission,"
-                "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id,"
+                "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id "
                 "FROM quhead, prospect "
@@ -2300,8 +2285,8 @@ void salesOrder::populate()
       _warehouse->setId(qu.value("quhead_warehous_id").toInt());
       _salesRep->setId(qu.value("quhead_salesrep_id").toInt());
       _commission->setDouble(qu.value("commission").toDouble() * 100);
-      _taxauthidCache = qu.value("quhead_taxauth_id").toInt();
-      _taxAuth->setId(qu.value("quhead_taxauth_id").toInt());
+      _taxzoneidCache = qu.value("quhead_taxzone_id").toInt();
+      _taxZone->setId(qu.value("quhead_taxzone_id").toInt());
       _terms->setId(qu.value("quhead_terms_id").toInt());
       _orderCurrency->setId(qu.value("quhead_curr_id").toInt());
       _project->setId(qu.value("quhead_prj_id").toInt());
@@ -2856,9 +2841,9 @@ void salesOrder::clear()
   _shipToAddr->setId(-1);
   _billToName->clear();
   _shipToName->clear();
-  _taxAuth->setCurrentIndex(-1);
-  _taxauthidCache = -1;
-  _custtaxauthid        = -1;
+  _taxZone->setCurrentIndex(-1);
+  _taxzoneidCache = -1;
+  _custtaxzoneid        = -1;
   _terms->setCurrentIndex(-1);
   _origin->setCurrentIndex(0);
   _shipVia->setCurrentIndex(-1);
@@ -3065,17 +3050,17 @@ void salesOrder::sTaxDetail()
   if (! ISVIEW(_mode))
   {
     if (ISORDER(_mode))
-      taxq.prepare("UPDATE cohead SET cohead_taxauth_id=:taxauth, "
+      taxq.prepare("UPDATE cohead SET cohead_taxzone_id=:taxzone_id, "
                     "  cohead_freight=:freight,"
                     "  cohead_orderdate=:date "
                     "WHERE (cohead_id=:head_id);");
     else
-      taxq.prepare("UPDATE quhead SET quhead_taxauth_id=:taxauth, "
+      taxq.prepare("UPDATE quhead SET quhead_taxzone_id=:taxzone_id, "
                     "  quhead_freight=:freight,"
                     "  quhead_quotedate=:date "
                     "WHERE (quhead_id=:head_id);");
-    if (_taxAuth->isValid())
-      taxq.bindValue(":taxauth",        _taxAuth->id());
+    if (_taxZone->isValid())
+      taxq.bindValue(":taxzone_id",        _taxZone->id());
     taxq.bindValue(":freight",        _freight->localValue());
     taxq.bindValue(":date",        _orderDate->date());
     taxq.bindValue(":head_id", _soheadid);
@@ -3168,14 +3153,13 @@ void salesOrder::setViewMode()
   _warehouse->setEnabled(FALSE);
   _salesRep->setEnabled(FALSE);
   _commission->setEnabled(FALSE);
-  _taxAuth->setEnabled(FALSE);
+  _taxZone->setEnabled(FALSE);
   _terms->setEnabled(FALSE);
   _origin->setEnabled(FALSE);
   _fob->setEnabled(FALSE);
   _shipVia->setEnabled(FALSE);
   _shippingCharges->setEnabled(FALSE);
   _shippingForm->setEnabled(FALSE);
-  _shippingLabel->setEnabled(FALSE);
   _miscCharge->setEnabled(FALSE);
   _miscChargeDescription->setEnabled(FALSE);
   _miscChargeAccount->setReadOnly(TRUE);
@@ -3509,7 +3493,7 @@ void salesOrder::sAuthorizeCC()
   int returnVal = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
 				      _CCAmount->localValue(),
 				      _tax->localValue(),
-				      (_tax->isZero() && _taxAuth->id() == -1),
+				      (_tax->isZero() && _taxZone->id() == -1),
 				      _freight->localValue(), 0,
 				      _CCAmount->id(),
 				      sonumber, ponumber, ccpayid,
@@ -3563,7 +3547,7 @@ void salesOrder::sChargeCC()
   int returnVal    = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
 				      _CCAmount->localValue(),
 				      _tax->localValue(),
-				      (_tax->isZero() && _taxAuth->id() == -1),
+				      (_tax->isZero() && _taxZone->id() == -1),
 				      _freight->localValue(), 0,
 				      _CCAmount->id(),
 				      ordernum, refnum, ccpayid,
@@ -3873,29 +3857,27 @@ void salesOrder::recalculateTax()
 
   //  Determine the line item tax
   if (ISORDER(_mode))
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2), 0, 'A'), 2)) AS itemtaxa,"
-                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2), 0, 'B'), 2)) AS itemtaxb,"
-                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2), 0, 'C'), 2)) AS itemtaxc "
+    itemq.prepare( "SELECT SUM(ROUND(calculateTax(:taxZone_id,coitem_taxtype_id,:orderDate,:orderCurrency,ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2)),2)) AS itemtax "
                    "FROM coitem, itemsite, item "
                    "WHERE ((coitem_cohead_id=:head_id)"
                    "  AND  (coitem_status != 'X')"
                    "  AND  (coitem_itemsite_id=itemsite_id)"
                    "  AND  (itemsite_item_id=item_id));" );
   else // ISQUOTE(_mode)
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio), 2), 0, 'A'), 2)) AS itemtaxa,"
-                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio), 2), 0, 'B'), 2)) AS itemtaxb,"
-                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio), 2), 0, 'C'), 2)) AS itemtaxc "
+    itemq.prepare( "SELECT SUM(ROUND(calculateTax(:taxZone_id,quitem_taxtype_id,:orderDate,:orderCurrency, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio), 2)),2)) AS itemtax "
                    "FROM quitem, item "
                    "WHERE ((quitem_quhead_id=:head_id)"
                    "  AND  (quitem_item_id=item_id));" );
 
   itemq.bindValue(":head_id", _soheadid);
+  itemq.bindValue(":taxZone_id", _taxZone->id());
+  itemq.bindValue(":orderDate",_orderDate->date());
+  itemq.bindValue(":orderCurrency",_orderCurrency->id());
   itemq.exec();
   if (itemq.first())
   {
-    _taxCache[A][Line] = itemq.value("itemtaxa").toDouble();
-    _taxCache[B][Line] = itemq.value("itemtaxb").toDouble();
-    _taxCache[C][Line] = itemq.value("itemtaxc").toDouble();
+    _taxCache[Line] = itemq.value("itemtax").toDouble();
+
   }
   else if (itemq.lastError().type() != QSqlError::NoError)
   {
@@ -3905,17 +3887,17 @@ void salesOrder::recalculateTax()
 
   //  Determine the freight tax
   XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-                   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-                   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
-  freightq.bindValue(":tax_id", _freighttaxid);
+  freightq.prepare("SELECT calculateTax(:taxZone_id,:taxtype_id,:orderDate,:orderCurrency, :freight) AS freight;");
+  freightq.bindValue(":taxtype_id", _freighttaxtypeid);
   freightq.bindValue(":freight", _freight->localValue());
+  freightq.bindValue(":taxZone_id", _taxZone->id());
+  freightq.bindValue(":orderDate",_orderDate->date());
+  freightq.bindValue(":orderCurrency",_orderCurrency->id());
   freightq.exec();
   if (freightq.first())
   {
-    _taxCache[A][Freight] = freightq.value("freighta").toDouble();
-    _taxCache[B][Freight] = freightq.value("freightb").toDouble();
-    _taxCache[C][Freight] = freightq.value("freightc").toDouble();
+    _taxCache[Freight] = freightq.value("freight").toDouble();
+
   }
   else if (freightq.lastError().type() != QSqlError::NoError)
   {
@@ -3923,55 +3905,52 @@ void salesOrder::recalculateTax()
     return;
   }
 
-  _taxCache[A][Total] = _taxCache[A][Line] + _taxCache[A][Freight] + _taxCache[A][Adj];
-  _taxCache[B][Total] = _taxCache[B][Line] + _taxCache[B][Freight] + _taxCache[B][Adj];
-  _taxCache[C][Total] = _taxCache[C][Line] + _taxCache[C][Freight] + _taxCache[C][Adj];
+  _taxCache[Total] = _taxCache[Line] + _taxCache[Freight] + _taxCache[Adj];
 
-  _tax->setLocalValue(_taxCache[A][Total] + _taxCache[B][Total] + _taxCache[C][Total]);
+  _tax->setLocalValue(_taxCache[Total]);
   sCalculateTotal();
 }
 
-void salesOrder::sTaxAuthChanged()
+void salesOrder::sTaxZoneChanged()
 {
-  XSqlQuery taxauthq;
-  if ( (_taxAuth->id() != _taxauthidCache) && !(((_mode == cNew) || (_mode == cNewQuote)) && !_saved) )
+  XSqlQuery taxzoneq;
+  if ( (_taxZone->id() != _taxzoneidCache) && !(((_mode == cNew) || (_mode == cNewQuote)) && !_saved) )
   {
     if (ISORDER(_mode))
-      taxauthq.prepare("SELECT changeSOTaxAuth(:head_id, :taxauth_id) AS result;");
+      taxzoneq.prepare("SELECT changeSOTaxZone(:head_id, :taxzone_id) AS result;");
     else
-      taxauthq.prepare("SELECT changeQuoteTaxAuth(:head_id, :taxauth_id) AS result;");
-    taxauthq.bindValue(":head_id", _soheadid);
-    taxauthq.bindValue(":taxauth_id", _taxAuth->id());
-    taxauthq.exec();
-    if (taxauthq.first())
+      taxzoneq.prepare("SELECT changeQuoteTaxZone(:head_id, :taxzone_id) AS result;");
+    taxzoneq.bindValue(":head_id", _soheadid);
+    taxzoneq.bindValue(":taxzone_id", _taxZone->id());
+    taxzoneq.exec();
+    if (taxzoneq.first())
     {
-      int result = taxauthq.value("result").toInt();
+      int result = taxzoneq.value("result").toInt();
       if (result < 0)
       {
-        _taxAuth->setId(_taxauthidCache);
+        _taxZone->setId(_taxzoneidCache);
         systemError(this,
-                    storedProcErrorLookup(ISORDER(_mode) ? "changeSOTaxAuth" : "changeQuoteTaxAuth", result),
+                    storedProcErrorLookup(ISORDER(_mode) ? "changeSOTaxZone" : "changeQuoteTaxZone", result),
                     __FILE__, __LINE__);
         return;
       }
     }
-    else if (taxauthq.lastError().type() != QSqlError::NoError)
+    else if (taxzoneq.lastError().type() != QSqlError::NoError)
     {
-      _taxAuth->setId(_taxauthidCache);
-      systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
+      _taxZone->setId(_taxzoneidCache);
+      systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
       return; 
     }
-    _taxauthidCache = _taxAuth->id();
+    _taxzoneidCache = _taxZone->id();
   }
 
-  taxauthq.prepare("SELECT COALESCE(getFreightTaxSelection(:taxauth), -1) AS result;");
-  taxauthq.bindValue(":taxauth", _taxAuth->id());
-  taxauthq.exec();
-  if (taxauthq.first())
-    _freighttaxid = taxauthq.value("result").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::NoError)
+  taxzoneq.prepare("SELECT COALESCE(getfreighttaxtypeid(), -1) AS result;");
+  taxzoneq.exec();
+  if (taxzoneq.first())
+    _freighttaxtypeid = taxzoneq.value("result").toInt();
+  else if (taxzoneq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -4154,14 +4133,14 @@ void salesOrder::sHandleMore()
   _commissionLit->setVisible(_more->isChecked());
   _commission->setVisible(_more->isChecked());
   _commissionPrcntLit->setVisible(_more->isChecked());
-  _taxAuthLit->setVisible(_more->isChecked());
-  _taxAuth->setVisible(_more->isChecked());
+  _taxZoneLit->setVisible(_more->isChecked());
+  _taxZone->setVisible(_more->isChecked());
   _shipDateLit->setVisible(_more->isChecked());
   _shipDate->setVisible(_more->isChecked());
   _packDateLit->setVisible(_more->isChecked());
   _packDate->setVisible(_more->isChecked());
-
-  if (ISORDER(_mode))
+  
+ if (ISORDER(_mode))
   {
     _fromQuote->setVisible(_more->isChecked());
     _fromQuoteLit->setVisible(_more->isChecked());
@@ -4169,8 +4148,6 @@ void salesOrder::sHandleMore()
     _shippingChargesLit->setVisible(_more->isChecked());
     _shippingForm->setVisible(_more->isChecked());
     _shippingFormLit->setVisible(_more->isChecked());
-    _shippingLabel->setVisible(_more->isChecked());
-    _shippingLabelLit->setVisible(_more->isChecked());
   }
   else
   {

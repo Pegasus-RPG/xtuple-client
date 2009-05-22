@@ -63,7 +63,7 @@ public slots:
     virtual void sFreightChanged();
     virtual void sHandleShipchrg( int pShipchrgid );
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
-    virtual void sTaxAuthChanged();
+    virtual void sTaxZoneChanged();
     virtual void sTaxDetail();
     virtual void sFreightDetail();
     virtual void setFreeFormShipto( bool pFreeForm );
@@ -118,13 +118,13 @@ private:
     int _mode;
     int _numSelected;
     int _originalPrjid;
-    int _custtaxauthid;
-    int _freighttaxid;
-    int _taxauthidCache;
+    int _custtaxzoneid;
+    int _freighttaxtypeid;
+    int _taxzoneidCache;
 
-    enum Rate { A = 0, B = 1, C = 2 };
+    //enum Rate { A = 0, B = 1, C = 2 };
     enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
-    double _taxCache[3][4];	// [Rate] vs. [Part]
+    double _taxCache[4];	// [Rate] vs. [Part]
 
     bool _custEmail;
 

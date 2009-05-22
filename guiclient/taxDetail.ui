@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>taxDetail</class>
- <widget class="QDialog" name="taxDetail" >
-  <property name="geometry" >
+ <widget class="QDialog" name="taxDetail">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,51 +17,52 @@ to be bound by its terms.</comment>
     <height>346</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Tax Detail</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_3" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <layout class="QGridLayout" name="gridLayout_2" >
-           <item row="0" column="0" >
-            <widget class="XLabel" name="_taxTypeLit" >
-             <property name="text" >
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="XLabel" name="_taxTypeLit">
+             <property name="text">
               <string>Tax Type:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
-           <item row="0" column="1" >
-            <layout class="QHBoxLayout" name="horizontalLayout_2" >
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="XComboBox" name="_taxType" >
-               <item>
-                <property name="text" >
-                 <string>Unspecified</string>
-                </property>
-               </item>
+              <widget class="XComboBox" name="_taxType">
+               <property name="allowNull">
+                <bool>true</bool>
+               </property>
+               <property name="type">
+                <enum>XComboBox::TaxTypes</enum>
+               </property>
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_2" >
-               <property name="orientation" >
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
-               <property name="sizeHint" stdset="0" >
+               <property name="sizeHint" stdset="0">
                 <size>
                  <width>40</width>
                  <height>20</height>
@@ -70,36 +72,36 @@ to be bound by its terms.</comment>
              </item>
             </layout>
            </item>
-           <item row="2" column="0" >
-            <widget class="XLabel" name="_subtotalLit" >
-             <property name="text" >
+           <item row="2" column="0">
+            <widget class="XLabel" name="_subtotalLit">
+             <property name="text">
               <string>Taxable Amount:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
-           <item row="2" column="1" >
-            <widget class="CurrCluster" name="_subtotal" >
-             <property name="enabled" >
+           <item row="2" column="1">
+            <widget class="CurrCluster" name="_subtotal">
+             <property name="enabled">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1" >
-            <widget class="QLabel" name="_descrip" >
-             <property name="text" >
-              <string>Unspecified</string>
+           <item row="1" column="1">
+            <widget class="QLabel" name="_descrip">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="1" column="0" >
-            <widget class="XLabel" name="_descripLit" >
-             <property name="text" >
+           <item row="1" column="0">
+            <widget class="XLabel" name="_descripLit">
+             <property name="text">
               <string>Description:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
@@ -108,10 +110,10 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>305</width>
              <height>0</height>
@@ -122,11 +124,11 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>13</width>
            <height>57</height>
@@ -135,25 +137,25 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_cancel" >
-             <property name="text" >
+            <widget class="QPushButton" name="_cancel">
+             <property name="text">
               <string>&amp;Cancel</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_save" >
-             <property name="text" >
+            <widget class="QPushButton" name="_save">
+             <property name="text">
               <string>&amp;Save</string>
              </property>
             </widget>
@@ -162,13 +164,13 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -180,146 +182,41 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QFrame" name="_frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+     <item row="1" column="0">
+      <widget class="QFrame" name="_frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="gridLayout" >
-        <property name="margin" >
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="margin">
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="0" >
-         <layout class="QVBoxLayout" name="verticalLayout" >
-          <property name="spacing" >
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
+           <widget class="QLabel" name="label_2">
+            <property name="text">
              <string>Tax Codes</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="XTreeWidget" name="_taxcodes" >
-            <column>
-             <property name="text" >
-              <string>Code</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Description</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Amount $</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Sequence</string>
-             </property>
-            </column>
-            <item>
-             <property name="text" >
-              <string>ED</string>
-             </property>
-             <property name="text" >
-              <string>Education</string>
-             </property>
-             <property name="text" >
-              <string>5</string>
-             </property>
-             <property name="text" >
-              <string>1</string>
-             </property>
-             <item>
-              <property name="text" >
-               <string>EC</string>
-              </property>
-              <property name="text" >
-               <string>Education Cess</string>
-              </property>
-              <property name="text" >
-               <string>.25</string>
-              </property>
-              <property name="text" >
-               <string/>
-              </property>
-              <item>
-               <property name="text" >
-                <string>HEC</string>
-               </property>
-               <property name="text" >
-                <string>Higher Education Cess</string>
-               </property>
-               <property name="text" >
-                <string>.2</string>
-               </property>
-               <property name="text" >
-                <string/>
-               </property>
-              </item>
-             </item>
-            </item>
-            <item>
-             <property name="text" >
-              <string>VAT</string>
-             </property>
-             <property name="text" >
-              <string>Value Added Tax</string>
-             </property>
-             <property name="text" >
-              <string>4.00</string>
-             </property>
-             <property name="text" >
-              <string>2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Octroi</string>
-             </property>
-             <property name="text" >
-              <string>Local sales tax</string>
-             </property>
-             <property name="text" >
-              <string>2</string>
-             </property>
-             <property name="text" >
-              <string>3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Total</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <property name="text" >
-              <string>11.45</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-            </item>
-           </widget>
+           <widget class="XTreeWidget" name="_taxcodes"/>
           </item>
          </layout>
         </item>
@@ -330,12 +227,17 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
@@ -367,11 +269,11 @@ to be bound by its terms.</comment>
    <receiver>taxDetail</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
