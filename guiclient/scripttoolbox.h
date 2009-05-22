@@ -182,8 +182,9 @@ class ScriptToolbox : public QObject
                               int ccId = 0,
                               bool ccActive = true );
     QObject *getCreditCardProcessor();
-    
 
+    QString storedProcErrorLookup(const QString proc, const int result);
+    
   private:
     QScriptEngine * _engine;
     static QWidget * _lastWindow;

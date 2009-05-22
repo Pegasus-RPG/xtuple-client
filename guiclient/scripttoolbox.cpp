@@ -40,6 +40,7 @@
 #include "creditcardprocessor.h"
 #include "mqlutil.h"
 #include "scriptquery.h"
+#include "storedProcErrorLookup.h"
 #include "xdialog.h"
 #include "xmainwindow.h"
 #include "xtreewidget.h"
@@ -1040,4 +1041,9 @@ QString scriptHandleIncludes(QString source)
   }
 
   return returnVal;
+}
+
+QString ScriptToolbox::storedProcErrorLookup(const QString proc, const int result)
+{
+  return storedProcErrorLookup(proc, result);
 }
