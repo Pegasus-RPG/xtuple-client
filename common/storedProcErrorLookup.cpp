@@ -46,12 +46,12 @@ void initErrorLookupHash()
   { "changeInvoiceTaxAuth", -1, TR("This Invoice was not found."),	0, "" },
   { "changeInvoiceTaxAuth", -2, TR("This Tax Authority was not found."),0, "" },
 
-  { "changeQuoteTaxAuth", -1, TR("This Quote was not found."),		0, "" },
-  { "changeQuoteTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
+  { "changeQuoteTaxZone", -1, TR("This Quote was not found."),		0, "" },
+ // { "changeQuoteTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
 
-  { "changeSOTaxAuth", -1, TR("This Sales Order was not found."),	0, "" },
-  { "changeSOTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
-  { "changeTOTaxAuth", -1, TR("This Transfer Order was not found."),	0, "" },
+  { "changeSOTaxZone", -1, TR("This Sales Order was not found."),	0, "" },
+ // { "changeSOTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
+  { "changeTOTax", -1, TR("This Transfer Order was not found."),	0, "" },
   { "changeTOTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
 
   { "closeAccountingPeriod", -1, TR("The selected Accounting Period cannot be "
