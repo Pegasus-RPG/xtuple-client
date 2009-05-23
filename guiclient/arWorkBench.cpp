@@ -18,14 +18,8 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
-#include "arOpenItem.h"
-#include "applyARCreditMemo.h"
 #include "cashReceipt.h"
-#include "creditMemo.h"
 #include "creditcardprocessor.h"
-#include "dspInvoiceInformation.h"
-#include "incident.h"
-#include "invoice.h"
 #include "storedProcErrorLookup.h"
 #include "xtreewidget.h"
 
@@ -46,20 +40,26 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
   _aritems->findChild<QWidget*>("_showGroup")->hide();
   _aritems->findChild<QRadioButton*>("_dueDate")->click();
-
+  
+  _cctrans = new dspCreditCardTransactions(this, "_cctrans", Qt::Widget);
+  _creditCardTab->layout()->addWidget(_cctrans);
+  _cctrans->findChild<QWidget*>("_close")->hide();
+  _cctrans->findChild<QWidget*>("_customerSelector")->hide();
+  _cctrans->findChild<QWidget*>("_query")->hide();
+  _cctrans->findChild<QWidget*>("_alltrans")->hide();
+  _cctrans->findChild<QWidget*>("_pending")->hide();
+  _cctrans->findChild<QWidget*>("_processed")->hide();
+  _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("type");
+  _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("status");
+  
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_newCashrcpt, SIGNAL(clicked()), this, SLOT(sNewCashrcpt()));
   connect(_editCashrcpt, SIGNAL(clicked()), this, SLOT(sEditCashrcpt()));
   connect(_viewCashrcpt, SIGNAL(clicked()), this, SLOT(sViewCashrcpt()));
   connect(_deleteCashrcpt, SIGNAL(clicked()), this, SLOT(sDeleteCashrcpt()));
   connect(_postCashrcpt, SIGNAL(clicked()), this, SLOT(sPostCashrcpt()));
-  connect(_preauth, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(sgetCCAmount()));
-  connect(_postPreauth, SIGNAL(clicked()), this, SLOT(sPostPreauth()));
-  connect(_voidPreauth, SIGNAL(clicked()), this, SLOT(sVoidPreauth()));
   connect(_cashrcpt, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
           this, SLOT(sPopulateCashRcptMenu(QMenu*)));
-  connect(_preauth, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
-          this, SLOT(sPopulatePreauthMenu(QMenu*)));
   connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), this, SLOT(sClear()));
@@ -72,6 +72,14 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustTypeId(int)));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), 
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setTypePattern(QString)));
+  connect(_customerSelector, SIGNAL(newState(int)), 
+          _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setState(int)));
+  connect(_customerSelector, SIGNAL(newCustId(int)), 
+          _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustId(int)));
+  connect(_customerSelector, SIGNAL(newCustTypeId(int)), 
+          _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustTypeId(int)));
+  connect(_customerSelector, SIGNAL(newTypePattern(QString)), 
+          _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setTypePattern(QString)));
   connect(_debits, SIGNAL(clicked()), 
           _aritems->findChild<QRadioButton*>("_debits"), SLOT(click()));
   connect(_credits, SIGNAL(clicked()), 
@@ -90,12 +98,6 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashrcpt->addColumn(tr("Amount"),        _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
   _cashrcpt->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   
-  _preauth->addColumn(tr("Cust. #"), _bigMoneyColumn, Qt::AlignLeft,  true, "cust_number");                                                                
-  _preauth->addColumn(tr("Name"),                 -1, Qt::AlignLeft,  true, "cust_name");
-  _preauth->addColumn(tr("Order-Seq."),           -1, Qt::AlignRight, true, "ordnum" );
-  _preauth->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "ccpay_amount");
-  _preauth->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
-  
   if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _editCashrcpt, SLOT(setEnabled(bool)));
@@ -113,19 +115,9 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
 
   if (omfgThis->singleCurrency())
-  {
     _cashrcpt->hideColumn(2);
-    _preauth->hideColumn(2);
-  }
 
-  if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
-  {
-    if (_metrics->value("CCValidDays").toInt())
-      _validDays->setValue(_metrics->value("CCValidDays").toInt());
-    else
-      _validDays->setValue(7);
-  }
-  else
+  if (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
     _tab->removeTab(_tab->indexOf(_creditCardTab));
 }
 
@@ -169,9 +161,7 @@ bool arWorkBench::setParams(ParameterList &params)
 
 
 void arWorkBench::sFillList()
-{
-  _CCAmount->clear();
-  
+{ 
   if (_selectDate->currentIndex()==0)
   {
     _aritems->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -192,14 +182,14 @@ void arWorkBench::sFillList()
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
   _aritems->sFillList();
   sFillCashrcptList();
-  sFillPreauthList();
+  _cctrans->sFillList();
 }
 
 void arWorkBench::sClear()
 {
   _aritems->findChild<XTreeWidget*>("_aropen")->clear();
   _cashrcpt->clear();
-  _preauth->clear();
+  _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
 }
 
 void arWorkBench::sFillCashrcptList()
@@ -219,18 +209,6 @@ void arWorkBench::sFillCashrcptList()
   params.append("other", tr("Other"));
   q = mql.toQuery(params);
   _cashrcpt->populate(q);
-}
-
-void arWorkBench::sFillPreauthList()
-{    
-  MetaSQLQuery mql = mqlLoad("preauthCreditCard", "detail");
-  ParameterList params;
-  setParams(params);
-  if (!_showExpired->isChecked())
-    params.append("validOnly");
-  params.append("ccValidDays", _validDays->value());
-  q = mql.toQuery(params);
-  _preauth->populate(q);
 }
 
 void arWorkBench::sNewCashrcpt()
@@ -333,120 +311,6 @@ void arWorkBench::sPostCashrcpt()
   sFillList();
 }
 
-void arWorkBench::sgetCCAmount()
-{
-  q.prepare("SELECT ccpay_amount, ccpay_curr_id "
-             "FROM ccpay "
-             " WHERE (ccpay_id = :ccpay_id);");
-  q.bindValue(":ccpay_id", _preauth->id());
-  if (q.exec() && q.first())
-  {
-    /* _CCAmount->id() defaults to customer's currency
-       if CC payment is in either customer's currency or base
-       set _CCAmount appropriately
-       but handle it if it somehow happens to be in a 3rd currency
-     */
-    int ccpayCurrId = q.value("ccpay_curr_id").toInt(); 
-    if (ccpayCurrId == _CCAmount->baseId())
-      _CCAmount->setBaseValue(q.value("ccpay_amount").toDouble());
-    else if (ccpayCurrId != _CCAmount->id())
-    {
-      _CCAmount->setId(ccpayCurrId);
-      _CCAmount->setLocalValue(q.value("ccpay_amount").toDouble());
-    }
-    else
-      _CCAmount->setLocalValue(q.value("ccpay_amount").toDouble());
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-  else
-  {
-    _CCAmount->clear();
-  }
-}
-
-void arWorkBench::sPostPreauth()
-{
-  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-  if (! cardproc)
-  {
-    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-                          CreditCardProcessor::errorMsg());
-    return;
-  }
-  if (! cardproc->errorMsg().isEmpty())
-  {
-    QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
-    _CCAmount->setFocus();
-    return;
-  }
-
-  _postPreauth->setEnabled(false);
-  _voidPreauth->setEnabled(false);
-  int ccpayid   = _preauth->id();
-  QString ordernum;
-  int returnVal = cardproc->chargePreauthorized(-2,
-						_CCAmount->localValue(),
-						_CCAmount->id(),
-						ordernum, ordernum, ccpayid);
-  if (returnVal < 0)
-    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-			  cardproc->errorMsg());
-  else if (returnVal > 0)
-    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
-			 cardproc->errorMsg());
-  else if (! cardproc->errorMsg().isEmpty())
-    QMessageBox::information(this, tr("Credit Card Processing Note"),
-			 cardproc->errorMsg());
-  else
-    _CCAmount->clear();
-
-  sFillList();
-  
-  _voidPreauth->setEnabled(true);
-  _postPreauth->setEnabled(true);
-}
-
-void arWorkBench::sVoidPreauth()
-{
-  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-  if (! cardproc)
-  {
-    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-                          CreditCardProcessor::errorMsg());
-    return;
-  }
-
-  if (! cardproc->errorMsg().isEmpty())
-  {
-    QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
-    _CCAmount->setFocus();
-    return;
-  }
-
-  _postPreauth->setEnabled(false);
-  _voidPreauth->setEnabled(false);
-  int ccpayid   = _preauth->id();
-  QString ordernum;
-  int returnVal = cardproc->voidPrevious(ccpayid);
-  if (returnVal < 0)
-    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-			  cardproc->errorMsg());
-  else if (returnVal > 0)
-    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
-			 cardproc->errorMsg());
-  else if (! cardproc->errorMsg().isEmpty())
-    QMessageBox::information(this, tr("Credit Card Processing Note"),
-			 cardproc->errorMsg());
-  else
-    _CCAmount->clear();
-
-  sFillList();
-
-  _voidPreauth->setEnabled(true);
-  _postPreauth->setEnabled(true);
-}
-
 void arWorkBench::sPopulateCashRcptMenu(QMenu *pMenu)
 {
   int menuItem;
@@ -469,14 +333,6 @@ void arWorkBench::sPopulateCashRcptMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem(tr("Post Cash Receipt..."), this, SLOT(sPostCashrcpt()), 0);
   if (! _privileges->check("PostCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
-}
-
-void arWorkBench::sPopulatePreauthMenu(QMenu*)
-{
-  /*
-  id = ccpay_id
-  column 0 = ccpay_order_number || ccpay_order_number_seq
-  */
 }
 
 void arWorkBench::sSearchDocNumChanged()

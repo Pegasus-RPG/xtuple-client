@@ -114,6 +114,13 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashreceipts->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_number");
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_name");
+  
+  _cctrans = new dspCreditCardTransactions(this, "_cctrans", Qt::Widget);
+  _cctransPage->layout()->addWidget(_cctrans);
+  _cctrans->findChild<QWidget*>("_close")->hide();
+  _cctrans->findChild<QWidget*>("_customerSelector")->hide();
+  _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_number");
+  _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_name");
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -169,6 +176,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_ordersButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_returnsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_aritemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_cctransButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_cashreceiptsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
   
@@ -218,8 +226,10 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
   key = omfgThis->_key;
   if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+  {
     _creditcardsButton->hide();
-    //_tab->removePage(_tab->page(10));
+    _cctransButton->hide();
+  }
   
   if (_metrics->boolean("EnableBatchManager"))
   {
@@ -255,6 +265,13 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _warnLate->hide();
   else
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+  
+  if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
+    _quotesButton->setEnabled(false);
+  if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
+    _ordersButton->setEnabled(false);
+  if (!_privileges->check("MaintainReturns") && !_privileges->check("ViewReturns"))
+    _returnsButton->setEnabled(false);  
   
   setValid(false);
       
@@ -426,6 +443,10 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _currency->setEnabled(FALSE);
       _partialShipments->setEnabled(FALSE);
       _save->hide();
+      _newCC->setEnabled(false);
+      _editCC->setEnabled(false);
+      _upCC->setEnabled(false);
+      _downCC->setEnabled(false);
 
       connect(_shipto, SIGNAL(itemSelected(int)), _viewShipto, SLOT(animateClick()));
       connect(_cc, SIGNAL(itemSelected(int)), _viewCC, SLOT(animateClick()));
@@ -455,16 +476,52 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
 void customer::setValid(bool valid)
 {
-    _print->setEnabled(valid);
-    _shiptoPage->setEnabled(valid);
-    _taxPage->setEnabled(valid);
-    _creditcardsPage->setEnabled(valid);
-    _comments->setEnabled(valid);
-    _tab->setTabEnabled(_tab->indexOf(_documentsTab),valid);
-    _tab->setTabEnabled(_tab->indexOf(_crmTab),valid);
-    _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
-    _tab->setTabEnabled(_tab->indexOf(_accountingTab),valid);
+  _print->setEnabled(valid);
+  _shiptoPage->setEnabled(valid);
+  _taxPage->setEnabled(valid);
+  _creditcardsPage->setEnabled(valid);
+  _comments->setEnabled(valid);
+  _tab->setTabEnabled(_tab->indexOf(_documentsTab),valid);
+  _tab->setTabEnabled(_tab->indexOf(_crmTab),valid);
+  _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
+  _tab->setTabEnabled(_tab->indexOf(_accountingTab),valid);
     
+  if (!_privileges->check("MaintainContacts") && !_privileges->check("ViewContacts"))
+  {
+    _contactsButton->setEnabled(false);
+    _todoListButton->setChecked(true);
+    sHandleButtons();
+  }
+  if (!_privileges->check("MaintainOtherTodoLists") && !_privileges->check("ViewOtherTodoLists"))
+  {
+    _todoListButton->setEnabled(false);
+    if (_todoListButton->isChecked())
+    {
+      _opportunitiesButton->setChecked(true);
+      sHandleButtons();
+    }
+  }
+  if (!_privileges->check("MaintainOpportunities") && !_privileges->check("ViewOpportunities"))
+  {
+    if (_opportunitiesButton->isChecked()){
+      _tab->setTabEnabled(_tab->indexOf(_crmTab),false);}
+    else
+      _opportunitiesButton->setEnabled(false);
+  }  
+    
+  if (!_privileges->check("EditAROpenItems") && !_privileges->check("ViewAROpenItems"))
+  {
+    if (_cctransButton->isHidden())
+      _tab->setTabEnabled(_tab->indexOf(_accountingTab),false);
+    else
+    {
+      _aritemsButton->setEnabled(false);
+      _cashreceiptsButton->setEnabled(false);
+      _cctransButton->setChecked(true);
+      sHandleButtons();
+    }
+  }
+   
   if (!valid)
   {
     _documents->setId(-1);
@@ -476,6 +533,7 @@ void customer::setValid(bool valid)
     _returns->findChild<XTreeWidget*>("_ra")->clear();
     _aritems->findChild<XTreeWidget*>("_aropen")->clear();
     _cashreceipts->findChild<XTreeWidget*>("_arapply")->clear();
+    _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
   }
 }
 
@@ -1413,6 +1471,7 @@ void customer::populate()
     _returns->findChild<CustCluster*>("_cust")->setId(_custid);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
+    _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     
     _todoList->sFillList();
     _contacts->sFillList();
@@ -1422,6 +1481,7 @@ void customer::populate()
     _returns->sFillList();
     _aritems->sFillList();
     _cashreceipts->sFillList();
+    _cctrans->sFillList();
     
     sFillShiptoList();
     sFillTaxregList();
@@ -1748,8 +1808,10 @@ void customer::sHandleButtons()
     
   if (_aritemsButton->isChecked())
     _receivablesStack->setCurrentIndex(0);
-  else
+  else if (_cashreceiptsButton->isChecked())
     _receivablesStack->setCurrentIndex(1);
+  else
+    _receivablesStack->setCurrentIndex(2);
 }
 
 void customer::sCancel()

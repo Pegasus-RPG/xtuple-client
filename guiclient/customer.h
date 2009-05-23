@@ -22,6 +22,7 @@
 #include "openReturnAuthorizations.h"
 #include "dspAROpenItems.h"
 #include "dspCashReceipts.h"
+#include "dspCreditCardTransactions.h"
 
 #include <QStandardItemModel>
 #include <parameter.h>
@@ -93,6 +94,7 @@ protected:
     openReturnAuthorizations *_returns;
     dspAROpenItems *_aritems;
     dspCashReceipts *_cashreceipts;
+    dspCreditCardTransactions *_cctrans;
 
 private:
     int _mode;

@@ -56,6 +56,7 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
 
     if (_privileges->check("MaintainContacts"))
     {
+      _attach->setEnabled(true);
       connect(_contacts, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(valid(bool)), _detach, SLOT(setEnabled(bool)));

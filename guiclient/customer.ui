@@ -488,7 +488,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0">
           <widget class="QStackedWidget" name="_settingsStack">
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="_generalPage">
             <layout class="QGridLayout" name="gridLayout_7">
@@ -1715,7 +1715,7 @@ to be bound by its terms.</comment>
              <item row="0" column="1">
               <layout class="QVBoxLayout">
                <property name="spacing">
-                <number>5</number>
+                <number>0</number>
                </property>
                <item>
                 <widget class="QPushButton" name="_newCC">
@@ -2240,6 +2240,13 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
+            <widget class="QRadioButton" name="_cctransButton">
+             <property name="text">
+              <string>Credit Cards</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -2264,6 +2271,9 @@ to be bound by its terms.</comment>
            </widget>
            <widget class="QWidget" name="_cashreceiptsPage">
             <layout class="QGridLayout" name="gridLayout_19"/>
+           </widget>
+           <widget class="QWidget" name="_cctransPage">
+            <layout class="QGridLayout" name="gridLayout_20"/>
            </widget>
           </widget>
          </item>

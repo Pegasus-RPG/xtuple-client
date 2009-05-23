@@ -407,157 +407,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Credit Card</string>
         </attribute>
-        <layout class="QGridLayout">
-         <item row="0" column="0" colspan="4">
-          <layout class="QHBoxLayout">
-           <item>
-            <widget class="XCheckBox" name="_showExpired">
-             <property name="text">
-              <string>Show Expired</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="_validDaysLit">
-             <property name="text">
-              <string>Valid Days:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="_validDays">
-             <property name="maximum">
-              <number>30</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>281</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" rowspan="3">
-          <widget class="XTreeWidget" name="_preauth">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>10</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="3">
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_postPreauth">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Post</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_voidPreauth">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Void</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="_CCAmountLit">
-           <property name="text">
-            <string>Amount:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2" colspan="2">
-          <widget class="CurrCluster" name="_CCAmount">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="localControl">
-            <bool>false</bool>
-           </property>
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="2">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>119</width>
-             <height>201</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <layout class="QGridLayout"/>
        </widget>
       </widget>
      </item>
@@ -569,16 +419,6 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrDisplay</class>
-   <extends>QWidget</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>CustomerSelector</class>
    <extends>QWidget</extends>
    <header>customerselector.h</header>
@@ -588,11 +428,6 @@ to be bound by its terms.</comment>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -624,10 +459,6 @@ to be bound by its terms.</comment>
   <tabstop>_viewCashrcpt</tabstop>
   <tabstop>_deleteCashrcpt</tabstop>
   <tabstop>_postCashrcpt</tabstop>
-  <tabstop>_preauth</tabstop>
-  <tabstop>_postPreauth</tabstop>
-  <tabstop>_voidPreauth</tabstop>
-  <tabstop>_CCAmount</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
@@ -661,38 +492,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>388</x>
      <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_preauth</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_postPreauth</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>388</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>709</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_preauth</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_voidPreauth</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>388</x>
-     <y>450</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>751</x>
-     <y>262</y>
     </hint>
    </hints>
   </connection>

@@ -21,6 +21,7 @@
 #include "ui_arWorkBench.h"
 
 #include "dspAROpenItems.h"
+#include "dspCreditCardTransactions.h"
 
 class arWorkBench : public XWidget, public Ui::arWorkBench
 {
@@ -38,20 +39,16 @@ public slots:
     virtual void sEditCashrcpt();
     virtual void sFillCashrcptList();
     virtual void sFillList();
-    virtual void sFillPreauthList();
     virtual void sNewCashrcpt();
     virtual void sPopulateCashRcptMenu(QMenu*);
-    virtual void sPopulatePreauthMenu(QMenu*);
     virtual void sPostCashrcpt();
-    virtual void sPostPreauth();
     virtual void sViewCashrcpt();
-    virtual void sVoidPreauth();
-    virtual void sgetCCAmount();
     virtual void sClear();
     virtual void sSearchDocNumChanged();
     
 protected:
     dspAROpenItems *_aritems;
+    dspCreditCardTransactions *_cctrans;
     
 protected slots:
     virtual void languageChange();
