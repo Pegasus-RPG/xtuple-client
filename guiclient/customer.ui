@@ -488,7 +488,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0">
           <widget class="QStackedWidget" name="_settingsStack">
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="_generalPage">
             <layout class="QGridLayout" name="gridLayout_7">

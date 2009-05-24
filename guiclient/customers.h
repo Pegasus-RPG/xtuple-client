@@ -30,7 +30,6 @@ public slots:
     virtual void sReassignCustomerType();
     virtual void sView();
     virtual void sDelete();
-    virtual void sDspCustomerInformation();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sFillList( int pCustid, bool pLocal );
 

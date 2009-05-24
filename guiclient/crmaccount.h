@@ -56,7 +56,6 @@ protected slots:
     virtual void sTaxAuth();
     virtual void sUpdateRelationships();
     virtual void sVendor();
-    virtual void sCustomerInfo();
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
     virtual void sCheckNumber();

@@ -126,7 +126,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspCostedSingleLevelBOM.ui dspCostedSummarizedBOM.ui dspCostedIndentedBOM.ui           \
                dspCountSlipsByWarehouse.ui dspCountSlipEditList.ui dspCountTagEditList.ui             \
                dspCountTagsByItem.ui dspCountTagsByWarehouse.ui dspCountTagsByClassCode.ui            \
-               dspCustomerARHistory.ui dspCustomerInformation.ui dspCustomerInformationExport.ui      \
+               dspCustomerARHistory.ui dspCustomerInformationExport.ui                                \
                dspCustomersByCharacteristic.ui dspCustomersByCustomerType.ui                          \
                dspInvoiceRegister.ui                                                                  \
                dspDetailedInventoryHistoryByLocation.ui dspDetailedInventoryHistoryByLotSerial.ui     \
@@ -447,7 +447,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspCountSlipsByWarehouse.h dspCountSlipEditList.h dspCountTagEditList.h                \
                dspCountTagsByItem.h dspCountTagsByWarehouse.h dspCountTagsByClassCode.h               \
                dspCreditCardTransactions.h                                                            \
-               dspCustomerARHistory.h dspCustomerInformation.h dspCustomerInformationExport.h         \
+               dspCustomerARHistory.h dspCustomerInformationExport.h         \
                dspCustomersByCharacteristic.h dspCustomersByCustomerType.h                            \
                dspDetailedInventoryHistoryByLocation.h dspDetailedInventoryHistoryByLotSerial.h       \
                dspDepositsRegister.h                                                                  \
@@ -778,7 +778,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspCountSlipsByWarehouse.cpp dspCountSlipEditList.cpp dspCountTagEditList.cpp          \
                dspCountTagsByItem.cpp dspCountTagsByWarehouse.cpp dspCountTagsByClassCode.cpp         \
                dspCreditCardTransactions.cpp                                                          \
-               dspCustomerARHistory.cpp dspCustomerInformation.cpp dspCustomerInformationExport.cpp   \
+               dspCustomerARHistory.cpp dspCustomerInformationExport.cpp                              \
                dspCustomersByCharacteristic.cpp dspCustomersByCustomerType.cpp                        \
                dspInvoiceRegister.cpp                                                                 \
                dspDetailedInventoryHistoryByLocation.cpp dspDetailedInventoryHistoryByLotSerial.cpp   \

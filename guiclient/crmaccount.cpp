@@ -24,7 +24,6 @@
 #include "taxAuthority.h"
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
-#include "dspCustomerInformation.h"
 #include "vendorWorkBench.h"
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
@@ -70,26 +69,21 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
   connect(_contacts,            SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
-//  connect(_deleteOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistDelete()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_editCharacteristic,	SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
-//  connect(_editOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistEdit()));
   connect(_editReg,		SIGNAL(clicked()), this, SLOT(sEditReg()));
   connect(_newCharacteristic,	SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
-//  connect(_newOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistNew()));
   connect(_newReg,		SIGNAL(clicked()), this, SLOT(sNewReg()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,	SIGNAL(clicked()), this, SLOT(sProspect()));
   connect(_save,		SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_taxauthButton,	SIGNAL(clicked()), this, SLOT(sTaxAuth()));
-//  connect(_viewOpportunity,	SIGNAL(clicked()), this, SLOT(sOplistView()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
-//  connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
@@ -796,25 +790,18 @@ void crmaccount::sPopulate()
     _secondary->setSearchAcct(_crmacctId);
     _owner->setUsername(q.value("crmacct_owner_username").toString());
 
-    if (_custId > 0)
-    {
-      _customer->setChecked(true);
-      _customerButton->setText("Customer");
-      disconnect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
-      
-      QMenu * customerMenu = new QMenu;
-      if (_mode == cEdit)
-        customerMenu->addAction(tr("Edit..."), this, SLOT(sCustomer()));
-      else
-        customerMenu->addAction(tr("View..."), this, SLOT(sCustomer()));
-      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
-      _customerButton->setMenu(customerMenu);
-    }
-
     _customer->setDisabled(_customer->isChecked());
     _prospect->setChecked(_prospectId > 0);
     _prospect->setDisabled(_customer->isChecked());
     _taxauth->setChecked(_taxauthId > 0);
+    
+    if (_custId > 0)
+    {
+      _customer->setChecked(true);
+      if (_privileges->check("MaintainCustomerMasters") || 
+          _privileges->check("ViewCustomerMasters") )
+        _customerButton->setEnabled(true);
+    }
     if (_vendId > 0)
     {
       _vendor->setChecked(true);
@@ -886,7 +873,7 @@ void crmaccount::sCustomer()
   else
   {
     params.append("cust_id",_custId);
-    params.append("mode",		  (_mode == cView) ? "view" : "edit");
+    params.append("mode",		  (!_privileges->check("MaintainCustomerMasters")) ? "view" : "edit");
   }
 
   customer *newdlg = new customer(this);
@@ -1108,16 +1095,6 @@ void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
   ci->set(pParams);
   //newdlg.exec();
   omfgThis->handleNewWindow(ci);
-}
-
-void crmaccount::sCustomerInfo()
-{
-  ParameterList params;
-  params.append("cust_id", _custId);
-
-  dspCustomerInformation *newdlg = new dspCustomerInformation(this, 0, Qt::Window);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void crmaccount::sVendorInfo()

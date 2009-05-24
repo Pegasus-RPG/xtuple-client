@@ -71,7 +71,7 @@
 #include "custcluster.h"
 #include "crmacctcluster.h"
 #include "crmaccount.h"
-#include "dspCustomerInformation.h"
+#include "customer.h"
 
 #include "splashconst.h"
 #include "scripttoolbox.h"
@@ -275,14 +275,18 @@ class xTupleCustInfoAction : public CustInfoAction
         w = w->parentWidget();
       if(w && w->isModal())
       {
-    	params.append("modal");
-        dspCustomerInformation * newdlg = new dspCustomerInformation(w, 0, Qt::Window);
+    	  params.append("modal");
+        if (_privileges->check("ViewCustomerMasters"))
+          params.append("mode","edit");
+        else
+          params.append("mode","view");
+        customer * newdlg = new customer(w, 0, Qt::Window);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
       }
       else
       {
-        dspCustomerInformation * newdlg = new dspCustomerInformation();
+        customer * newdlg = new customer();
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
       }

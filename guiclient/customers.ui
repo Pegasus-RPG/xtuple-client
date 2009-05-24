@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>customers</class>
- <widget class="QWidget" name="customers" >
-  <property name="geometry" >
+ <widget class="QWidget" name="customers">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,26 +17,26 @@ to be bound by its terms.</comment>
     <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>List Customers</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -44,92 +45,82 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
+        <widget class="QPushButton" name="_close">
+         <property name="text">
           <string>&amp;Close</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
-       <property name="spacing" >
+     <item row="1" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_customersLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_customersLit">
+         <property name="text">
           <string>Customers:</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" >
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="XTreeWidget" name="_cust" />
+          <widget class="XTreeWidget" name="_cust"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_new" >
-             <property name="text" >
+            <widget class="QPushButton" name="_new">
+             <property name="text">
               <string>&amp;New</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_edit" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_edit">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>&amp;Edit</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_view" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_view">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>&amp;View</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_delete" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_delete">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>&amp;Delete</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_workbench" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="text" >
-              <string>&amp;Workbench</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>67</width>
                <height>158</height>
@@ -147,7 +138,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -173,11 +164,11 @@ to be bound by its terms.</comment>
    <receiver>customers</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>657</x>
      <y>26</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -189,11 +180,11 @@ to be bound by its terms.</comment>
    <receiver>_view</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>495</x>
      <y>58</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>666</x>
      <y>111</y>
     </hint>
