@@ -21,7 +21,7 @@
 #include "todoCalendarControl.h"
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
-#include "dspCustomerInformation.h"
+#include "customer.h"
 
 todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::WindowFlags f)
   : XWidget(parent, name, f)
@@ -183,7 +183,9 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
 
   if (! _list->currentItem()->text(9).isEmpty())
   {
-    menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
+    menuItem = pMenu->insertItem(tr("Edit Customer"), this, SLOT(sEditCustomer()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
+    menuItem = pMenu->insertItem(tr("View Customer"), this, SLOT(sViewCustomer()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
   }
 }
@@ -250,7 +252,7 @@ void todoListCalendar::sDelete()
   }
 }
 
-void todoListCalendar::sCustomerInfo()
+void todoListCalendar::sEditCustomer()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
@@ -259,8 +261,29 @@ void todoListCalendar::sCustomerInfo()
   {
     ParameterList params;
     params.append("cust_id", cust.value("cust_id").toInt());
+    params.append("mode","edit");
 
-    dspCustomerInformation *newdlg = new dspCustomerInformation();
+    customer *newdlg = new customer();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (cust.lastError().type() != QSqlError::NoError)
+    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+
+}
+
+void todoListCalendar::sViewCustomer()
+{
+  XSqlQuery cust;
+  cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
+  cust.bindValue(":number", _list->currentItem()->text(9));
+  if (cust.exec() && cust.first())
+  {
+    ParameterList params;
+    params.append("cust_id", cust.value("cust_id").toInt());
+    params.append("mode","view");
+
+    customer *newdlg = new customer();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

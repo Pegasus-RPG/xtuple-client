@@ -32,19 +32,20 @@ class todoList : public XWidget, public Ui::todoList
     virtual void	sDelete();
     virtual void	sEdit();
     virtual void	sEditIncident();
-    virtual void        sEditTask();
-    virtual void        sEditProject();
-    virtual void	sCustomerInfo();
+    virtual void  sEditTask();
+    virtual void  sEditProject();
+    virtual void	sEditCustomer();
     virtual void	sFillList();
     virtual void	sHandleAutoUpdate(bool);
     virtual void	sNew();
-    virtual void        sNewIncdt();
+    virtual void  sNewIncdt();
     virtual void	sPopulateMenu(QMenu*);
     virtual void	sPrint();
     virtual void	sView();
+    virtual void  sViewCustomer();
     virtual void	sViewIncident();
-    virtual void        sViewTask();
-    virtual void        sViewProject();
+    virtual void  sViewTask();
+    virtual void  sViewProject();
     virtual void 	setParams(ParameterList &);
 
   private:

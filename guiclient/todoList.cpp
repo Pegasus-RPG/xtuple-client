@@ -13,7 +13,7 @@
 #include "mqlutil.h"
 #include "todoItem.h"
 #include "incident.h"
-#include "dspCustomerInformation.h"
+#include "customer.h"
 #include "project.h"
 #include "storedProcErrorLookup.h"
 #include "task.h"
@@ -181,8 +181,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
   if (!_todoList->currentItem()->text(10).isEmpty())
   {
     pMenu->addSeparator();
-    menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
+    menuItem = pMenu->insertItem(tr("Edit Customer"), this, SLOT(sEditCustomer()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters"));
+    menuItem = pMenu->insertItem(tr("View Customer"), this, SLOT(sViewCustomer()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewCustomerMasters"));
   }
 }
 
@@ -581,7 +583,7 @@ void todoList::sViewTask()
   newdlg.exec();
 }
 
-void todoList::sCustomerInfo()
+void todoList::sEditCustomer()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
@@ -590,14 +592,33 @@ void todoList::sCustomerInfo()
   {
     ParameterList params;
     params.append("cust_id", cust.value("cust_id").toInt());
+    params.append("mode","edit");
 
-    dspCustomerInformation *newdlg = new dspCustomerInformation();
+    customer *newdlg = new customer();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
   else if (cust.lastError().type() != QSqlError::NoError)
     systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+}
 
+void todoList::sViewCustomer()
+{
+  XSqlQuery cust;
+  cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
+  cust.bindValue(":number", _todoList->currentItem()->text(10));
+  if (cust.exec() && cust.first())
+  {
+    ParameterList params;
+    params.append("cust_id", cust.value("cust_id").toInt());
+    params.append("mode","view");
+
+    customer *newdlg = new customer();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (cust.lastError().type() != QSqlError::NoError)
+    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 

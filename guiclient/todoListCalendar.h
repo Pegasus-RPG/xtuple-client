@@ -37,7 +37,8 @@ class todoListCalendar : public XWidget, public Ui::todoListCalendar
     void sEdit();
     void sView();
     void sDelete();
-    void sCustomerInfo();
+    void sEditCustomer();
+    void sViewCustomer();
 
   protected:
     void resizeEvent(QResizeEvent*);

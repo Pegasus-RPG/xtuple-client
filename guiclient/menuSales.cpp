@@ -76,7 +76,6 @@
 #include "dspQuotesByItem.h"
 #include "dspCustomersByCustomerType.h"
 #include "dspCustomersByCharacteristic.h"
-#include "dspCustomerInformation.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "dspInventoryAvailabilityByCustomerType.h"
@@ -436,9 +435,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.enterNewCustomer", tr("&New..."),	SLOT(sNewCustomer()), customerMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
     { "so.customers", tr("&List..."),	SLOT(sCustomers()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-    { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-    { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.dspCustomerInformation",   tr("&Workbench..."),	SLOT(sDspCustomerInformation()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters", new QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Information Workbench") },
+    { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	new QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Search") },
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
     { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, "MaintainCustomerTypes ViewCustomerTypes",	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, "MaintainCustomerGroups ViewCustomerGroups",	NULL, NULL, true, NULL },
@@ -826,12 +823,6 @@ void menuSales::sDspCustomersByCusttype()
 void menuSales::sDspCustomersByCharacteristic()
 {
   omfgThis->handleNewWindow(new dspCustomersByCharacteristic());
-}
-
-void menuSales::sDspCustomerInformation()
-{
-  // see notes on Mantis bug 4024 for explanation of why this is a modal dialog
-  omfgThis->handleNewWindow(new dspCustomerInformation());
 }
 
 void menuSales::sDspSalesOrderStatus()

@@ -99,7 +99,6 @@ class menuSales : public QObject
     void sDspReservations();
     void sDspCustomersByCusttype();
     void sDspCustomersByCharacteristic();
-    void sDspCustomerInformation();
     void sDspSalesOrderStatus();
     void sDspBacklogByItem();
     void sDspBacklogBySalesOrder();
