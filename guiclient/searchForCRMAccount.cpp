@@ -17,14 +17,11 @@
 #include <metasql.h>
 #include <parameter.h>
 
-//#include "competitor.h"
 #include "crmaccount.h"
 #include "customer.h"
-//#include "partner.h"
 #include "prospect.h"
 #include "taxAuthority.h"
 #include "vendor.h"
-#include "dspCustomerInformation.h"
 
 searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -32,7 +29,6 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   setupUi(this);
 
   connect(_edit,	 SIGNAL(clicked()),	this, SLOT(sEdit()));
-  connect(_workbench,	 SIGNAL(clicked()),	this, SLOT(sDspCustomerInformation()));
   connect(_search,	 SIGNAL(lostFocus()),	this, SLOT(sFillList()));
   connect(_searchStreet, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchCity,   SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
@@ -43,6 +39,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   connect(_searchName,	 SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchNumber, SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchPhone,	 SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
+  connect(_searchEmail,	 SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_showInactive, SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchCombo,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_comboCombo,   SIGNAL(newID(int)),    this, SLOT(sFillList()));
@@ -54,6 +51,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   _crmacct->addColumn(tr("First"),       50, Qt::AlignLeft  , true, "cntct_first_name" );
   _crmacct->addColumn(tr("Last"),        -1, Qt::AlignLeft  , true, "cntct_last_name" );
   _crmacct->addColumn(tr("Phone"),      100, Qt::AlignLeft  , true, "cntct_phone" );
+  _crmacct->addColumn(tr("Email"),      100, Qt::AlignLeft  , true, "cntct_email" );
   _crmacct->addColumn(tr("Address"),     -1, Qt::AlignLeft  , true, "addr_line1" );
   _crmacct->addColumn(tr("City"),        75, Qt::AlignLeft  , true, "addr_city" );
   _crmacct->addColumn(tr("State"),       50, Qt::AlignLeft  , true, "addr_state" );
@@ -66,7 +64,6 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   if (_editpriv)
   {
     connect(_crmacct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_crmacct, SIGNAL(valid(bool)), _workbench, SLOT(setEnabled(bool)));
     connect(_crmacct, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
   else if (_viewpriv)
@@ -75,7 +72,6 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   _subtype = CRMAcctLineEdit::Crmacct;
   _searchCombo->setVisible(FALSE);
   _comboCombo->setVisible(FALSE);
-	_workbench->setVisible(FALSE);
 }
 
 searchForCRMAccount::~searchForCRMAccount()
@@ -128,9 +124,9 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 	_searchName->setText(tr("Customer Name"));
 	_searchContact->setText(tr("Billing Contact Name"));
 	_searchPhone->setText(tr("Billing Contact Phone #"));
+  _searchEmail->setText(tr("Billing Contact Email"));
 	_addressLit->setText(tr("Billing Contact Address:"));
 	_showInactive->setText(tr("Show Inactive Customers"));
-	_workbench->setVisible(true);
 	updateSignal = SIGNAL(customersUpdated(int, bool));
       }
       else if (param == "prospect")
@@ -154,6 +150,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 	_searchName->setText(tr("Tax Authority Name"));
 	_searchContact->setVisible(false);
 	_searchPhone->setVisible(false);
+  _searchEmail->setVisible(false);
 	_addressLit->setText(tr("Tax Authority Address:"));
 	_showInactive->setText(tr("Show Inactive Tax Authorities"));
 	_crmacct->hideColumn(2);
@@ -277,18 +274,6 @@ void searchForCRMAccount::sView()
   openSubwindow("view");
 }
 
-void searchForCRMAccount::sDspCustomerInformation()
-{
-  ParameterList params;
-  params.append("cust_id", _crmacct->id());
-
-  // see notes on Mantis bug 4024 for explanation of why this is a modal dialog
-  dspCustomerInformation *newdlg = new dspCustomerInformation();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-
 void searchForCRMAccount::sFillList()
 {
   if (_search->text().trimmed().length() == 0)
@@ -393,6 +378,9 @@ void searchForCRMAccount::sFillList()
 	"   OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
 	"             cntct_fax) ~ <? value(\"searchString\") ?>)"
 	"<? endif ?>"
+	"<? if exists(\"searchEmail\") ?>"
+	"   OR (cntct_email ~* <? value(\"searchString\") ?>)"
+	"<? endif ?>"
 	"<? if exists(\"searchStreetAddr\") ?>"
 	"   OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
 	"             addr_line3) ~ <? value(\"searchString\") ?>)"
@@ -460,6 +448,9 @@ void searchForCRMAccount::sFillList()
 
     if (_searchPhone->isChecked())
       params.append("searchPhone");
+ 
+    if (_searchEmail->isChecked())
+      params.append("searchEmail");
   }
 
   if (_searchStreet->isChecked())

@@ -33,7 +33,6 @@ public slots:
     virtual void	sFillList();
     virtual void	sPopulateMenu(QMenu * pMenu);
     virtual void	sView();
-    virtual void  sDspCustomerInformation();
 
 protected slots:
     virtual void languageChange();
