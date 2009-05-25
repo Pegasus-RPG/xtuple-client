@@ -30,17 +30,9 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 {
   setupUi(this);
 
-  _codeGroup = new QButtonGroup(this);
-  _codeGroup->addButton(_cust);
-  _codeGroup->addButton(_custtype);
-  _custInfo->hide();
-  _parameter->setType(ParameterGroup::CustomerType);
-
-//  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-//  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
-  connect(_queryReview, SIGNAL(clicked()), this, SLOT(sFillListReview()));
-  connect(_queryDue, SIGNAL(clicked()), this, SLOT(sFillListDue()));
+  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateReviewMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateDueMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillLists()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
@@ -53,27 +45,28 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListReview()));
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListDue()));
 
-  _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft,   true, "rahead_number"   );
-  _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft,   true, "cust_name"  );
+  _ra->addColumn(tr("Auth. #"),      _orderColumn,    Qt::AlignLeft,   true, "rahead_number"   );
+  _ra->addColumn(tr("Customer"),     _bigMoneyColumn, Qt::AlignLeft,   true, "cust_name"  );
   _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight,  true, "rahead_authdate"  );
   _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight,  true, "rahead_expiredate"  );
   _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight,  true, "disposition"  );
   _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight,  true, "creditmethod"  );
-  _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter, true, "awaiting" );
+  _ra->addColumn(tr("Awaiting"),     -1,              Qt::AlignCenter, true, "awaiting" );
 
-  _radue->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft, true, "rahead_number"   );
-  _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft, true, "cust_name"   );
+  _radue->addColumn(tr("Auth. #"),      _orderColumn,    Qt::AlignLeft, true, "rahead_number"   );
+  _radue->addColumn(tr("Customer"),     _bigMoneyColumn, Qt::AlignLeft, true, "cust_name"   );
   _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight,true, "rahead_authdate");
   _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,true, "amount"  );
   _radue->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignRight,true, "currency"  );
   _radue->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()),
-					_moneyColumn,    Qt::AlignRight,true, "baseamount"  );
-  _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight,true, "creditmethod"  );
+					_bigMoneyColumn,    Qt::AlignRight,true, "baseamount"  );
+  _radue->addColumn(tr("Credit By"),    -1,              Qt::AlignRight,true, "creditmethod"  );
 
   if (!_privileges->check("MaintainReturns"))
   {
-    _edit->hide();
-    _editdue->hide();
+    _new->setEnabled(false);
+    _edit->setEnabled(false);
+    _editdue->setEnabled(false);
   }
 
   if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
@@ -111,10 +104,7 @@ void returnAuthorizationWorkbench::sPrint()
 {
   ParameterList params;
 
-  if ((_cust->isChecked()))
-    params.append("cust_id", _custInfo->id());
-  else
-    _parameter->appendValue(params);
+  _customerSelector->appendValue(params);
 
   if(_expired->isChecked())
     params.append("showExpired");
@@ -144,6 +134,8 @@ void returnAuthorizationWorkbench::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  if (_customerSelector->isSelectedCust())
+    params.append("cust_id", _customerSelector->custId());
 
   returnAuthorization *newdlg = new returnAuthorization();
   newdlg->set(params);
@@ -223,10 +215,10 @@ void returnAuthorizationWorkbench::sHandleButton()
 {
   _process->setEnabled(((_radue->altId() == 1 && _privileges->check("MaintainCreditMemos")) ||
 	   (_radue->altId() == 2 && _privileges->check("MaintainPayments") && 
-                                _privileges->check("MaintainCreditMemos") && 
-								_privileges->check("PostARDocuments")) ||
+                              _privileges->check("MaintainCreditMemos") && 
+								              _privileges->check("PostARDocuments")) ||
 	   (_radue->altId() == 3 && _privileges->check("ProcessCreditCards") &&
-				    _privileges->check("PostARDocuments") &&
+				                      _privileges->check("PostARDocuments") &&
 	                            _privileges->check("MaintainCreditMemos"))));   
 
   if (_radue->altId() > 1)
@@ -363,10 +355,7 @@ void returnAuthorizationWorkbench::sProcess()
 
 void returnAuthorizationWorkbench::setParams(ParameterList &params)
 {
-  if (_cust->isChecked())
-    params.append("cust_id", _custInfo->id());
-  else
-    _parameter->appendValue(params);
+  _customerSelector->appendValue(params);
 
   params.append("credit",     tr("Credit"));
   params.append("return",     tr("Return"));
@@ -385,16 +374,23 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
   _dates->appendValue(params);
 }
 
-void returnAuthorizationWorkbench::sFillListReview()
-{ 
-  _ra->clear();
-  if (_cust->isChecked() && !_custInfo->isValid())
+void returnAuthorizationWorkbench::sFillLists()
+{
+  if (_customerSelector->isSelectedCust() && _customerSelector->custId() == -1)
   {
     QMessageBox::information( this, tr("Customer not selected"),
 			      tr("<p>Please select a customer.") );
-    _custInfo->setFocus();
+    _customerSelector->setFocus();
     return;
   }
+  
+  sFillListReview();
+  sFillListDue();
+}
+
+void returnAuthorizationWorkbench::sFillListReview()
+{ 
+  _ra->clear();
 
   //Fill Review List
   if (_closed->isChecked() && !_dates->allValid())
@@ -479,7 +475,10 @@ void returnAuthorizationWorkbench::sFillListReview()
 			  "  WHEN raitem_disposition = 'S' THEN "
 			  "    :ship "
 			  "  ELSE '' "
-			  "END AS awaiting "
+			  "END AS awaiting, "
+        "CASE WHEN (rahead_expiredate < current_date) THEN "
+        "  'error' "
+        "END AS rahead_expiredate_qtforegroundrole "
 			  "FROM rahead "
 			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
 			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id), "
@@ -491,11 +490,11 @@ void returnAuthorizationWorkbench::sFillListReview()
                           "                      JOIN site() ON (warehous_id=itemsite_warehous_id)"
                           "          WHERE (raitem_rahead_id=rahead_id)) > 0)" );
     
-    if ((_cust->isChecked()))
+    if ((_customerSelector->isSelectedCust()))
 	  sql += " AND (cust_id=:cust_id) ";
-    else if (_parameter->isSelected())
+    else if (_customerSelector->isSelectedType())
 	  sql += " AND (custtype_id=:custtype_id) ";
-    else if (_parameter->isPattern())
+    else if (_customerSelector->isTypePattern())
 	  sql += " AND (custtype_code ~ :custtype_pattern) ";
 
 	if (!_expired->isChecked())
@@ -548,8 +547,9 @@ void returnAuthorizationWorkbench::sFillListReview()
     
 	XSqlQuery ra;
 	ra.prepare(sql);
-        _parameter->bindValue(ra);
-	ra.bindValue(":cust_id", _custInfo->id());
+	ra.bindValue(":cust_id", _customerSelector->custId());
+	ra.bindValue(":custtype_id", _customerSelector->custTypeId());
+	ra.bindValue(":custtype_code", _customerSelector->typePattern());
 	ra.bindValue(":undefined",tr("Undefined"));
 	ra.bindValue(":credit",tr("Credit"));
 	ra.bindValue(":return",tr("Return"));
@@ -580,13 +580,6 @@ void returnAuthorizationWorkbench::sFillListReview()
 void returnAuthorizationWorkbench::sFillListDue()
 { 
   _radue->clear();
-  if (_cust->isChecked() && !_custInfo->isValid())
-  {
-    QMessageBox::information( this, tr("Customer not selected"),
-			      tr("<p>Please select a customer.") );
-    _custInfo->setFocus();
-    return;
-  }
 
   //Fill Due Credit List
   if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
@@ -664,21 +657,6 @@ void returnAuthorizationWorkbench::sFillListDue()
   }
 }
 
-
-void returnAuthorizationWorkbench::sParameterTypeChanged()
-{
-  if(_cust->isChecked())
-  {
-    _parameter->hide();
-	_custInfo->show();
-  }
-  else //if(_custtype->isChecked())
-  {
-    _parameter->show();
-	_custInfo->hide();
-  }
-}
-
 bool returnAuthorizationWorkbench::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
@@ -699,5 +677,35 @@ bool returnAuthorizationWorkbench::checkSitePrivs(int orderid)
     }
   }
   return true;
+}
+
+void returnAuthorizationWorkbench::sPopulateReviewMenu(QMenu *pMenu, QTreeWidgetItem * pSelected)
+{
+  int menuItem;
+
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  pMenu->setItemEnabled(menuItem, _privileges->check("MaintainReturns"));
+
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+}
+
+void returnAuthorizationWorkbench::sPopulateDueMenu(QMenu *pMenu, QTreeWidgetItem * pSelected)
+{
+  int menuItem;
+
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditDue()), 0);
+  pMenu->setItemEnabled(menuItem, _privileges->check("MaintainReturns"));
+
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewDue()), 0);
+  
+  menuItem = pMenu->insertItem(tr("Process..."), this, SLOT(sProcess()), 0);
+  pMenu->setItemEnabled(menuItem, 
+     (_radue->altId() == 1 && _privileges->check("MaintainCreditMemos")) ||
+	   (_radue->altId() == 2 && _privileges->check("MaintainPayments") && 
+                              _privileges->check("MaintainCreditMemos") && 
+								              _privileges->check("PostARDocuments")) ||
+	   (_radue->altId() == 3 && _privileges->check("ProcessCreditCards") &&
+				                      _privileges->check("PostARDocuments") &&
+	                            _privileges->check("MaintainCreditMemos")));
 }
 

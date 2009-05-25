@@ -37,17 +37,15 @@ public slots:
     virtual void sViewDue();
     virtual void sProcess();
     virtual void sHandleButton();
+    virtual void sFillLists();
     virtual void sFillListReview();
     virtual void sFillListDue();
-    virtual void sParameterTypeChanged();
-   // virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateReviewMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateDueMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
 
 protected slots:
     virtual void languageChange();
     virtual void setParams(ParameterList&);
-
-private:
-    QButtonGroup* _codeGroup;
 
 };
 

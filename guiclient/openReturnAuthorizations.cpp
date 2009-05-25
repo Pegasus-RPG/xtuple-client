@@ -34,9 +34,6 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
 {
   setupUi(this);
 
-  _cust->hide();
-  _showClosed->hide();
-
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -46,7 +43,6 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   connect(_ra, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_showClosed, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_expired, SIGNAL(clicked()), this, SLOT(sFillList()));
 
 //  statusBar()->hide();
@@ -112,10 +108,6 @@ void openReturnAuthorizations::setParams(ParameterList &params)
   _warehouse->appendValue(params);
   if(_expired->isChecked())
     params.append("showExpired");
-  if (_showClosed->isChecked() && _showClosed->isVisible())
-    params.append("showClosed");
-  if (_cust->isValid())
-    params.append("cust_id", _cust->id());
   params.append("undefined", tr("Undefined"));
   params.append("credit", tr("Credit"));
   params.append("return", tr("Return"));
@@ -140,8 +132,6 @@ void openReturnAuthorizations::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
-  if (_cust->isValid())
-    params.append("cust_id",_cust->id());
 
   returnAuthorization *newdlg = new returnAuthorization();
   newdlg->set(params);
