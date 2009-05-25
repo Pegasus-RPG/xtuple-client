@@ -1693,7 +1693,7 @@ void customer::sFillList()
     else if (_returnsButton->isChecked())
       _returns->sFillLists();
   }
-  else if (_tab->currentIndex() == _tab->indexOf(_crmTab))
+  else if (_tab->currentIndex() == _tab->indexOf(_accountingTab))
   {
     if (_aritemsButton->isChecked())
       _aritems->sFillList();
