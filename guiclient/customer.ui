@@ -191,7 +191,7 @@ to be bound by its terms.</comment>
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tabAddresses">
+       <widget class="QWidget" name="_addressTab">
         <attribute name="title">
          <string>Addresses</string>
         </attribute>
@@ -1776,7 +1776,7 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabCharacteristics">
+       <widget class="QWidget" name="_characteristicsTab">
         <attribute name="title">
          <string>Characteristics</string>
         </attribute>

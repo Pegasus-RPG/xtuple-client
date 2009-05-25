@@ -88,15 +88,12 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->findChild<XTreeWidget*>("_so")->hideColumn("cust_number");
   _orders->findChild<XTreeWidget*>("_so")->hideColumn("cohead_billtoname");
   
-  _returns = new openReturnAuthorizations(this, "_returns", Qt::Widget);
+  _returns = new returnAuthorizationWorkbench(this, "_returns", Qt::Widget);
   _returnsPage->layout()->addWidget(_returns);
   _returns->findChild<QWidget*>("_close")->hide();
-  _returns->findChild<QWidget*>("_warehouse")->hide();
-  _returns->findChild<QWidget*>("_returnAuthorizationsLit")->hide();
-  _returns->findChild<WarehouseGroup*>("_warehouse")->setAll();
-  _returns->findChild<XCheckBox*>("_showClosed")->show();
-  _returns->findChild<XTreeWidget*>("_ra")->hideColumn("custnumber");
-  _returns->findChild<XTreeWidget*>("_ra")->hideColumn("rahead_billtoname");
+  _returns->findChild<QWidget*>("_customerSelector")->hide();
+  _returns->findChild<XTreeWidget*>("_ra")->hideColumn("cust_name");
+  _returns->findChild<XTreeWidget*>("_radue")->hideColumn("cust_name");
   
   _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
   _aritemsPage->layout()->addWidget(_aritems);
@@ -272,6 +269,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _ordersButton->setEnabled(false);
   if (!_privileges->check("MaintainReturns") && !_privileges->check("ViewReturns"))
     _returnsButton->setEnabled(false);  
+  if (!_metrics->boolean("EnableReturnAuth"))
+    _returnsButton->hide(); 
   
   setValid(false);
       
@@ -531,6 +530,7 @@ void customer::setValid(bool valid)
     _quotes->findChild<XTreeWidget*>("_quote")->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
+    _returns->findChild<XTreeWidget*>("_radue")->clear();
     _aritems->findChild<XTreeWidget*>("_aropen")->clear();
     _cashreceipts->findChild<XTreeWidget*>("_arapply")->clear();
     _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
@@ -1468,26 +1468,12 @@ void customer::populate()
     
     _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
     _orders->findChild<CustCluster*>("_cust")->setId(_custid);
-    _returns->findChild<CustCluster*>("_cust")->setId(_custid);
+    _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     
-    _todoList->sFillList();
-    _contacts->sFillList();
-    _oplist->sFillList();
-    _quotes->sFillList();
-    _orders->sFillList();
-    _returns->sFillList();
-    _aritems->sFillList();
-    _cashreceipts->sFillList();
-    _cctrans->sFillList();
-    
-    sFillShiptoList();
-    sFillTaxregList();
-    sFillCharacteristicList();
-    sFillCcardList();
-    sPopulateSummary();
+    sFillList();
     return;
   }
   else if (cust.lastError().type() != QSqlError::NoError)
@@ -1671,6 +1657,53 @@ void customer::sMoveDown()
 
 }
 
+void customer::sFillList()
+{
+  if (_tab->currentIndex() == _tab->indexOf(_addressTab))
+  {
+    if (_shiptoButton->isChecked())
+      sFillShiptoList();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_settingsTab))
+  {
+    if (_taxButton->isChecked())
+      sFillTaxregList();
+    else if (_creditcardsButton->isChecked())
+      sFillCcardList();  
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_characteristicsTab))
+     sFillCharacteristicList();
+  else if (_tab->currentIndex() == _tab->indexOf(_crmTab))
+  {
+    if (_contactsButton->isChecked())
+      _contacts->sFillList();
+    else if (_todoListButton->isChecked())
+      _todoList->sFillList();
+    else if (_opportunitiesButton->isChecked())
+      _oplist->sFillList();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_salesTab))
+  {
+    if (_summaryButton->isChecked())
+      sPopulateSummary();
+    else if (_quotesButton->isChecked())
+      _quotes->sFillList();
+    else if (_ordersButton->isChecked())
+      _orders->sFillList();
+    else if (_returnsButton->isChecked())
+      _returns->sFillLists();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_crmTab))
+  {
+    if (_aritemsButton->isChecked())
+      _aritems->sFillList();
+    else if (_cashreceiptsButton->isChecked())
+      _cashreceipts->sFillList();
+    else if (_cctransButton->isChecked())
+      _cctrans->sFillList();
+  }  
+}
+
 void customer::sFillCcardList()
 {
   key = omfgThis->_key;
@@ -1760,6 +1793,8 @@ void customer::currentTabChanged(int index)
         index == _tab->indexOf(_accountingTab)) &&
         (_mode == cNew) )
     sSave(true);
+  else
+    sFillList();
 }
 
 void customer::sHandleButtons()
@@ -1812,6 +1847,8 @@ void customer::sHandleButtons()
     _receivablesStack->setCurrentIndex(1);
   else
     _receivablesStack->setCurrentIndex(2);
+    
+  sFillList();
 }
 
 void customer::sCancel()

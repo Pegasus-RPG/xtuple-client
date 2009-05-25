@@ -19,7 +19,7 @@
 #include "opportunityList.h"
 #include "quotes.h"
 #include "openSalesOrders.h"
-#include "openReturnAuthorizations.h"
+#include "returnAuthorizationWorkbench.h"
 #include "dspAROpenItems.h"
 #include "dspCashReceipts.h"
 #include "dspCreditCardTransactions.h"
@@ -51,6 +51,7 @@ public slots:
     virtual void sEditCreditCard();
     virtual void sEditShipto();
     virtual void sEditTaxreg();
+    virtual void sFillList();
     virtual void sFillCcardList();
     virtual void sFillCharacteristicList();
     virtual void sFillShiptoList();
@@ -91,7 +92,7 @@ protected:
     opportunityList *_oplist;
     quotes *_quotes;
     openSalesOrders *_orders;
-    openReturnAuthorizations *_returns;
+    returnAuthorizationWorkbench *_returns;
     dspAROpenItems *_aritems;
     dspCashReceipts *_cashreceipts;
     dspCreditCardTransactions *_cctrans;
