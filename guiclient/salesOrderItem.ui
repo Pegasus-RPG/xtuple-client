@@ -1592,24 +1592,7 @@ to be bound by its terms.</comment>
               </item>
              </layout>
             </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout">
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="XURLLabel" name="_taxLit">
               <property name="text">
                <string>Tax:</string>
@@ -1622,27 +1605,14 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="CurrCluster" name="_tax">
               <property name="enabled">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="4" column="0">
+            <item row="2" column="0">
              <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
