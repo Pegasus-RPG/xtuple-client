@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>885</width>
-    <height>742</height>
+    <width>729</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -371,18 +371,18 @@ to be bound by its terms.</comment>
              <item row="3" column="0">
               <widget class="QCheckBox" name="_mandatoryNotes">
                <property name="text">
-                <string>Enforce mandatory notes for Manual G/L Entries</string>
+                <string>Enforce mandatory notes for Manual Journal Entries</string>
                </property>
               </widget>
              </item>
              <item row="4" column="0">
               <widget class="QCheckBox" name="_manualGlaccnt">
                <property name="text">
-                <string>Allow manual entry of G/L Account Numbers</string>
+                <string>Allow manual entry of Account Numbers</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="6" column="0">
               <layout class="QHBoxLayout">
                <item>
                 <widget class="QLabel" name="_taxauthLit">
@@ -425,7 +425,7 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </item>
-             <item row="6" column="0">
+             <item row="7" column="0">
               <layout class="QGridLayout">
                <item row="0" column="0">
                 <widget class="QLabel" name="_yearendLit">
@@ -477,7 +477,7 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </item>
-             <item row="7" column="0">
+             <item row="8" column="0">
               <layout class="QHBoxLayout">
                <item>
                 <widget class="QGroupBox" name="_exchangeRateSense">
@@ -519,6 +519,13 @@ to be bound by its terms.</comment>
                 </spacer>
                </item>
               </layout>
+             </item>
+             <item row="5" column="0">
+              <widget class="QCheckBox" name="_manualFwdUpdate">
+               <property name="text">
+                <string>Manual Forward Update Trial Balances</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -772,7 +779,7 @@ to be bound by its terms.</comment>
            <property name="sizeHint" stdset="0">
             <size>
              <width>571</width>
-             <height>391</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -1134,8 +1141,8 @@ to be bound by its terms.</comment>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>575</width>
-             <height>31</height>
+             <width>20</width>
+             <height>0</height>
             </size>
            </property>
           </spacer>

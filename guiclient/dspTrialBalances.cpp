@@ -50,6 +50,39 @@ dspTrialBalances::~dspTrialBalances()
   // no need to delete child widgets, Qt does it all for us
 }
 
+bool dspTrialBalances::sAutoForwardUpdate()
+{
+  QString sql( "SELECT MIN(forwardUpdateTrialBalance(trialbal_id)) AS result "
+               "FROM trialbal, accnt, period "
+               "WHERE ( (trialbal_accnt_id=accnt_id)"
+               " AND (trialbal_period_id=period_id)"
+	             "<? if exists(\"accnt_id\") ?>"
+	             " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
+	             "<? endif ?>"
+               " AND (trialbal_dirty) "
+	             ");" );
+
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  return true;
+}
+
 void dspTrialBalances::languageChange()
 {
   retranslateUi(this);
@@ -58,12 +91,13 @@ void dspTrialBalances::languageChange()
 void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
+  menuItem = pMenu->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
 
-  menuItem = pMenu->insertItem(tr("View G/L Transactions..."), this, SLOT(sViewTransactions()), 0);
-
-  pMenu->insertSeparator();
-
-  menuItem = pMenu->insertItem(tr("Forward Update"), this, SLOT(sForwardUpdate()), 0);
+  if (_metrics->boolean("ManualForwardUpdate"))
+  {
+    pMenu->insertSeparator();
+    menuItem = pMenu->insertItem(tr("Forward Update"), this, SLOT(sForwardUpdate()), 0);
+  }
 }
 
 void dspTrialBalances::sViewTransactions()
@@ -116,6 +150,12 @@ void dspTrialBalances::setParams(ParameterList & params)
 
 void dspTrialBalances::sPrint()
 {
+  if (!_metrics->boolean("ManualForwardUpdate"))
+  {
+    if (!sAutoForwardUpdate())
+      return;
+  }
+  
   ParameterList params;
   setParams(params);
 
@@ -128,6 +168,12 @@ void dspTrialBalances::sPrint()
 
 void dspTrialBalances::sFillList()
 {
+  if (!_metrics->boolean("ManualForwardUpdate"))
+  {
+    if (!sAutoForwardUpdate())
+      return;
+  }
+  
   QString sql( "SELECT accnt_id, period_id, accnt_descrip, trialbal_dirty,"
                "       period_start, period_end,"
                "       formatGLAccount(accnt_id) AS account,"

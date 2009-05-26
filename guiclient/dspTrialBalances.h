@@ -26,6 +26,7 @@ public:
     ~dspTrialBalances();
 
 public slots:
+    virtual bool sAutoForwardUpdate();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
     virtual void sViewTransactions();
     virtual void sForwardUpdate();

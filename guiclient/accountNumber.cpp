@@ -51,6 +51,8 @@ accountNumber::accountNumber(QWidget* parent, const char* name, bool modal, Qt::
     _sub->hide();
     _sep3Lit->hide();
   }
+  if (!_metrics->boolean("ManualForwardUpdate"))
+    _forwardUpdate->hide();
 }
 
 accountNumber::~accountNumber()
