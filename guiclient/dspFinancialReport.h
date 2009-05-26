@@ -48,7 +48,9 @@ protected slots:
     virtual void sExpanded( QTreeWidgetItem * item );
     virtual void sReportChanged(int);
 
-
+protected:
+    virtual bool forwardUpdate();
+    
 private:
     int _mode;
     QMap<int, QString> _columnLabels;

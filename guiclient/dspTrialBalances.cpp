@@ -50,39 +50,6 @@ dspTrialBalances::~dspTrialBalances()
   // no need to delete child widgets, Qt does it all for us
 }
 
-bool dspTrialBalances::sAutoForwardUpdate()
-{
-  QString sql( "SELECT MIN(forwardUpdateTrialBalance(trialbal_id)) AS result "
-               "FROM trialbal, accnt, period "
-               "WHERE ( (trialbal_accnt_id=accnt_id)"
-               " AND (trialbal_period_id=period_id)"
-	             "<? if exists(\"accnt_id\") ?>"
-	             " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
-	             "<? endif ?>"
-               " AND (trialbal_dirty) "
-	             ");" );
-
-  ParameterList params;
-  setParams(params);
-  MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
-      return false;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-  return true;
-}
-
 void dspTrialBalances::languageChange()
 {
   retranslateUi(this);
@@ -152,7 +119,7 @@ void dspTrialBalances::sPrint()
 {
   if (!_metrics->boolean("ManualForwardUpdate"))
   {
-    if (!sAutoForwardUpdate())
+    if (!forwardUpdate())
       return;
   }
   
@@ -170,7 +137,7 @@ void dspTrialBalances::sFillList()
 {
   if (!_metrics->boolean("ManualForwardUpdate"))
   {
-    if (!sAutoForwardUpdate())
+    if (!forwardUpdate())
       return;
   }
   
@@ -224,4 +191,36 @@ void dspTrialBalances::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool dspTrialBalances::forwardUpdate()
+{
+  QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
+               "FROM accnt "
+               "  LEFT OUTER JOIN trialbal ON (trialbal_accnt_id=accnt_id) "
+               "WHERE ( (COALESCE(trialbal_dirty,true))"
+	             "<? if exists(\"accnt_id\") ?>"
+	             " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
+	             "<? endif ?>"
+	             ");" );
+
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  return true;
 }

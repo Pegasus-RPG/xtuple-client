@@ -18,8 +18,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 #include "dspFinancialReport.h"
+#include "storedProcErrorLookup.h"
 
 #define cFlRoot  0
 #define cFlItem  1
@@ -109,7 +111,12 @@ bool dspFinancialReport::sCheck()
 void dspFinancialReport::sFillList()
 {
   if (!sCheck())
-    return;
+    return; 
+  if (!_metrics->boolean("ManualForwardUpdate"))
+  {
+    if (!forwardUpdate())
+      return;
+  }
   if (_trend->isChecked())
     sFillListTrend();
   else
@@ -983,4 +990,30 @@ void dspFinancialReport::sTogglePeriod()
     _periods->setSelectionMode(QAbstractItemView::SingleSelection);
     _flcol->setEnabled(true);
   }
+}
+
+bool dspFinancialReport::forwardUpdate()
+{
+  QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
+               "FROM accnt "
+               "  LEFT OUTER JOIN trialbal ON (trialbal_accnt_id=accnt_id) "
+               "WHERE (COALESCE(trialbal_dirty,true));" );
+  ParameterList params;
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  return true;
 }
