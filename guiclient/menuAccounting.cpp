@@ -183,8 +183,9 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   glEnterTransactionMenu = new QMenu(parent);
   glStandardJournalsMenu = new QMenu(parent);
   bankrecMenu		= new QMenu(parent);
+  bankrecReportsMenu    = new QMenu(parent);
   financialReportsMenu	= new QMenu(parent);
-  reportsMenu		= new QMenu(parent);
+  glReportsMenu		= new QMenu(parent);
   calendarMenu      = new QMenu(parent);
   coaMenu           = new QMenu(parent);
   budgetMenu		= new QMenu(parent);
@@ -207,11 +208,12 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   arFormsMenu->setObjectName("menu.accnt.arforms");
   arReportsMenu->setObjectName("menu.accnt.arreports");
   glMenu->setObjectName("menu.accnt.gl");
+  glReportsMenu->setObjectName("menu.accnt.gl.glreports");
   glEnterTransactionMenu->setObjectName("menu.accnt.glentertransaction");
   glStandardJournalsMenu->setObjectName("menu.accnt.glstandardjournals");
   bankrecMenu->setObjectName("menu.accnt.bankrec");
+  bankrecReportsMenu->setObjectName("menu.accnt.bankrec.bankrecreports");
   financialReportsMenu->setObjectName("menu.accnt.financialreports");
-  reportsMenu->setObjectName("menu.accnt.reports");
   calendarMenu->setObjectName("menu.accnt.calendar");
   coaMenu->setObjectName("menu.accnt.coa");
   budgetMenu->setObjectName("menu.accnt.budget");
@@ -366,25 +368,31 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator",		     NULL,				   NULL,			     glStandardJournalsMenu, "true",					      NULL, NULL, true, NULL },
     { "gl.postStandardJournal",	     tr("&Post..."),	   SLOT(sPostStandardJournal()),     glStandardJournalsMenu, "PostStandardJournals",	      NULL, NULL, true, NULL },
     { "gl.postStandardJournalGroup", tr("Post G&roup..."), SLOT(sPostStandardJournalGroup()),glStandardJournalsMenu, "PostStandardJournalGroups",    NULL, NULL, true, NULL },
+    
+    { "separator", NULL, NULL, glMenu, "true", NULL, NULL, true, NULL },
+    
+    // Accounting | General Ledger |  Reports
+    { "menu", tr("&Reports"), (char*)glReportsMenu, glMenu, "true", NULL, NULL, true, NULL },
+    { "gl.dspGLTransactions",		tr("&Transactions..."),		SLOT(sDspGLTransactions()),		glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
+    { "gl.dspSummarizedGLTransactions",	tr("Su&mmarized Transactions..."),	SLOT(sDspSummarizedGLTransactions()),	glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
+    { "gl.dspGLSeries",			tr("&Series..."),			SLOT(sDspGLSeries()),			glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
+    { "gl.dspStandardJournalHistory",	tr("Standard &Journal History..."),	SLOT(sDspStandardJournalHistory()),	glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
 
     { "menu",			tr("&Bank Reconciliation"), 	(char*)bankrecMenu,		mainMenu,    "true",						NULL, NULL, true, NULL },
     { "gl.reconcileBankaccnt",	tr("&Reconcile..."),SLOT(sReconcileBankaccount()),	bankrecMenu, "MaintainBankRec", new QPixmap(":/images/bankReconciliation.png"), toolBar,  true, tr("Reconcile Bank Account") },
     { "separator",		NULL,				NULL,				bankrecMenu, "true",						NULL, NULL, true, NULL },
     { "gl.enterAdjustment",	tr("&New Adjustment..."),	SLOT(sEnterAdjustment()),	bankrecMenu, "MaintainBankAdjustments",	NULL, NULL, true, NULL },
     { "gl.adjustmentEditList",	tr("Adjustment Edit &List..."),	SLOT(sAdjustmentEditList()),	bankrecMenu, "MaintainBankAdjustments ViewBankAdjustments", NULL, NULL, true, NULL },
+ 
+    { "separator", NULL, NULL, bankrecMenu, "true", NULL, NULL, true, NULL },
+ 
+    // Accounting | Bank Reconciliation |  Reports
+    { "menu", tr("&Reports"), (char*)bankrecReportsMenu, bankrecMenu, "true", NULL, NULL, true, NULL },
+    { "gl.dspBankrecHistory",		tr("&History"),		SLOT(sDspBankrecHistory()),		bankrecReportsMenu, "ViewBankRec",		NULL, NULL, true, NULL },
+    { "gl.dspSummarizedBankrecHistory",	tr("Summari&zed History"),	SLOT(sDspSummarizedBankrecHistory()),	bankrecReportsMenu, "ViewBankRec",		NULL, NULL, true, NULL },
 
     { "separator",		  NULL,					NULL,					mainMenu,		"true",					       NULL, NULL, true, NULL },
     
-    // Accounting | Reports
-    { "menu",				tr("&Reports"),				(char*)reportsMenu,			mainMenu,      "true",					NULL, NULL, true, NULL },
-    { "gl.dspGLTransactions",		tr("G/L &Transactions..."),		SLOT(sDspGLTransactions()),		reportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
-    { "gl.dspSummarizedGLTransactions",	tr("Su&mmarized G/L Transactions..."),	SLOT(sDspSummarizedGLTransactions()),	reportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
-    { "gl.dspGLSeries",			tr("G/L &Series..."),			SLOT(sDspGLSeries()),			reportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
-    { "gl.dspStandardJournalHistory",	tr("Standard &Journal History..."),	SLOT(sDspStandardJournalHistory()),	reportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
-    { "separator",		  NULL,					NULL,					reportsMenu,		"true",					       NULL, NULL, true, NULL },
-    { "gl.dspBankrecHistory",		tr("&Bank Rec. History"),		SLOT(sDspBankrecHistory()),		reportsMenu, "ViewBankRec",		NULL, NULL, true, NULL },
-    { "gl.dspSummarizedBankrecHistory",	tr("Summari&zed Bank Rec. History"),	SLOT(sDspSummarizedBankrecHistory()),	reportsMenu, "ViewBankRec",		NULL, NULL, true, NULL },
-
     // Accounting | Statements
     { "menu",			  tr("Financial &Statements"),		(char*)financialReportsMenu,		mainMenu,			"true",					       NULL, NULL, true, NULL },
     { "gl.createFinancialReports",tr("&New Financial Report..."),	SLOT(sNewFinancialReport()),		financialReportsMenu,		"MaintainFinancialLayouts", NULL, NULL, true, NULL },
@@ -447,7 +455,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
 
     // Accounting | Utilities
     { "menu",				tr("&Utilities"),			(char*)utilitiesMenu,		mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "gl.forwardUpdateAccounts",	tr("&Forward Update Accounts..."),	SLOT(sForwardUpdateAccounts()),	utilitiesMenu,	"ViewTrialBalances",	NULL, NULL, true, NULL },
+    { "gl.forwardUpdateAccounts",	tr("&Forward Update Accounts..."),	SLOT(sForwardUpdateAccounts()),	utilitiesMenu,	"ViewTrialBalances",	NULL, NULL, _metrics->boolean("ManualForwardUpdate"), NULL },
     { "gl.duplicateAccountNumbers",      tr("&Duplicate Account Numbers..."),  SLOT(sDuplicateAccountNumbers()), utilitiesMenu,  "MaintainChartOfAccounts", NULL, NULL, true, NULL },
     { "separator",		  NULL,					NULL,					utilitiesMenu,		"true",					       NULL, NULL, true, NULL },
     { "so.purgeInvoices", tr("Purge &Invoices..."), SLOT(sPurgeInvoices()), utilitiesMenu, "PurgeInvoices", NULL, NULL, true , NULL },

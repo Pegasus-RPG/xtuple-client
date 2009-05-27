@@ -197,13 +197,10 @@ class menuAccounting : public QObject
     QMenu    *arFormsMenu;
     QMenu    *arReportsMenu;
     QMenu    *glMenu;
+    QMenu    *glReportsMenu;
     QMenu    *glEnterTransactionMenu;
     QMenu    *glStandardJournalsMenu;
     QMenu    *financialReportsMenu;
-//    QMenu    *financialReportsDisplaysMenu;
-//    QMenu    *financialReportsReportsMenu;
-//    QMenu    *displaysMenu;
-    QMenu    *reportsMenu;
     QMenu    *calendarMenu;
     QMenu    *coaMenu;
     QMenu    *budgetMenu;
