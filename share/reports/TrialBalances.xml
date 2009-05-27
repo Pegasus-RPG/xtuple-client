@@ -11,18 +11,18 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;accnt_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("accnt_id") ?>
          ( SELECT (accnt_number || '-' || accnt_descrip)
              FROM accnt
-            WHERE (accnt_id=&lt;? value(&quot;accnt_id&quot;) ?>) )
+            WHERE (accnt_id=&lt;? value("accnt_id") ?>) )
        &lt;? else ?>
          text('All Accounts')
        &lt;? endif ?>
        AS accnt,
-       &lt;? if exists(&quot;period_id&quot;) ?>
+       &lt;? if exists("period_id") ?>
          ( SELECT (formatDate(period_start) || '-' || formatDate(period_end))
              FROM period
-            WHERE (period_id=&lt;? value(&quot;period_id&quot;) ?>) )
+            WHERE (period_id=&lt;? value("period_id") ?>) )
        &lt;? else ?>
          text('All Periods')
        &lt;? endif ?>
@@ -38,7 +38,7 @@
        formatGLAccount(accnt_id) AS f_account,
        accnt_descrip,
        formatMoney(abs(trialbal_beginning)) AS f_beginning,
-       CASE WHEN(trialbal_beginning&gt;0) THEN text('CR')
+       CASE WHEN(trialbal_beginning>0) THEN text('CR')
             ELSE text('')
        END AS f_beginningcr,
        formatMoney(trialbal_debits) AS f_debits,
@@ -48,17 +48,20 @@
             ELSE text('')
        END AS f_diffcr,
        formatMoney(abs(trialbal_ending)) AS f_ending,
-       CASE WHEN(trialbal_ending&gt;0) THEN text('CR')
+       CASE WHEN(trialbal_ending>0) THEN text('CR')
             ELSE text('')
        END AS f_endingcr
   FROM trialbal, accnt, period
  WHERE ((trialbal_accnt_id=accnt_id)
    AND (trialbal_period_id=period_id)
-&lt;? if exists(&quot;accnt_id&quot;) ?>
-   AND (trialbal_accnt_id=&lt;? value(&quot;accnt_id&quot;) ?>)
+&lt;? if exists("accnt_id") ?>
+   AND (trialbal_accnt_id=&lt;? value("accnt_id") ?>)
 &lt;? endif ?>
-&lt;? if exists(&quot;period_id&quot;) ?>
-   AND (period_id=&lt;? value(&quot;period_id&quot;) ?>)
+&lt;? if exists("period_id") ?>
+   AND (period_id=&lt;? value("period_id") ?>)
+&lt;? endif ?>
+&lt;? if not exists("showZero") ?>
+   AND (abs(trialbal_beginning)+abs(trialbal_ending)+abs(trialbal_debits)+abs(trialbal_credits) > 0) 
 &lt;? endif ?>
        )
 ORDER BY period_start, formatGLAccount(accnt_id);</sql>
@@ -86,11 +89,11 @@ ORDER BY period_start, formatGLAccount(accnt_id);</sql>
            FROM trialbal, accnt, period
           WHERE ((trialbal_accnt_id=accnt_id)
             AND  (trialbal_period_id=period_id)
-&lt;? if exists(&quot;accnt_id&quot;) ?>
-            AND  (trialbal_accnt_id=&lt;? value(&quot;accnt_id&quot;) ?>)
+&lt;? if exists("accnt_id") ?>
+            AND  (trialbal_accnt_id=&lt;? value("accnt_id") ?>)
 &lt;? endif ?>
-&lt;? if exists(&quot;period_id&quot;) ?>
-            AND  (period_id=&lt;? value(&quot;period_id&quot;) ?>)
+&lt;? if exists("period_id") ?>
+            AND  (period_id=&lt;? value("period_id") ?>)
 &lt;? endif ?>
                 )
        ) AS data;</sql>
