@@ -34,10 +34,10 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
   else
     base = tr("Base");
 
-  _price->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignCenter,true, "itemsrcp_qtybreak");
-  _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignRight, true, "currabbr");
-  _price->addColumn(tr("Unit Price"),                          -1, Qt::AlignLeft,true, "itemsrcp_price");
-  _price->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignCenter,true, "itemsrcp_price_base");
+  _price->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
+  _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
+  _price->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
+  _price->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "itemsrcp_price_base");
 
 }
 
