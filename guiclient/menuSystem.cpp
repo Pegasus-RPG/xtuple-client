@@ -48,7 +48,6 @@
 #include "currencyConversions.h"
 #include "customCommands.h"
 #include "departments.h"
-#include "ediProfiles.h"
 #include "employee.h"
 #include "employees.h"
 #include "empGroup.h"
@@ -197,7 +196,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	"MaintainCountries",	NULL,	NULL,	true	},
     { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	"MaintainLocales",	NULL,	NULL,	true	},
     { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
-    { "sys.ediProfiles",	tr("EDI &Profiles..."),	SLOT(sEDIProfiles()),	masterInfoMenu,	"MaintainEDIProfiles", NULL,	NULL,	 _metrics->boolean("EnableBatchManager")	},
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
     { "sys.shifts",		tr("S&hifts..."),	SLOT(sShifts()),	masterInfoMenu,	"ViewShifts MaintainShifts" ,	NULL,	NULL, _metrics->boolean("Routings")	},
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, "ConfigureImportExport",	NULL, NULL, true },
@@ -549,11 +547,6 @@ void menuSystem::sCommentTypes()
 void menuSystem::sAccountNumbers()
 {
   omfgThis->handleNewWindow(new accountNumbers());
-}
-
-void menuSystem::sEDIProfiles()
-{
-  omfgThis->handleNewWindow(new ediProfiles());
 }
 
 void menuSystem::sDepartments()

@@ -103,7 +103,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                customers.ui customerTypes.ui customerType.ui customerTypeList.ui                      \
                databaseInformation.ui deletePlannedOrder.ui deletePlannedOrdersByPlannerCode.ui       \
                deliverEmail.ui									      \
-               deliverInvoice.ui deliverPurchaseOrder.ui deliverSalesOrder.ui                         \
+               deliverInvoice.ui deliverPurchaseOrder.ui                                              \
                department.ui departments.ui                                                           \
                distributeBreederProduction.ui                         distributeInventory.ui          \
                distributeToLocation.ui                                                                \
@@ -217,7 +217,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
-               ediForm.ui ediFormDetail.ui ediProfile.ui ediProfiles.ui                               \
+               ediForm.ui ediFormDetail.ui                                                            \
                editICMWatermark.ui countSlip.ui countTag.ui                                           \
                employee.ui employees.ui empGroup.ui empGroups.ui                                      \
                enterMiscCount.ui                                                                      \
@@ -424,7 +424,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                customers.h customerTypes.h customerType.h customerTypeList.h                          \
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
                deliverEmail.h									      \
-               deliverInvoice.h deliverPurchaseOrder.h deliverSalesOrder.h                            \
+               deliverInvoice.h deliverPurchaseOrder.h                                                \
                department.h departments.h                                                             \
                distributeBreederProduction.h                        distributeInventory.h             \
                distributeToLocation.h                                                                 \
@@ -538,7 +538,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
-               ediForm.h ediFormDetail.h ediProfile.h ediProfiles.h                                   \
+               ediForm.h ediFormDetail.h                                                              \
                editICMWatermark.h countSlip.h countTag.h                                              \
                employee.h employees.h empGroup.h  empGroups.h                                         \
                enterMiscCount.h                                                                       \
@@ -755,7 +755,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                customers.cpp customerTypes.cpp customerType.cpp customerTypeList.cpp                  \
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
                deliverEmail.cpp									      \
-               deliverInvoice.cpp deliverPurchaseOrder.cpp deliverSalesOrder.cpp                      \
+               deliverInvoice.cpp deliverPurchaseOrder.cpp                                            \
                department.cpp departments.cpp                                                         \
                distributeBreederProduction.cpp                          distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
@@ -869,7 +869,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPoItemsByBufferStatus.cpp dspWoBufferStatusByParameterList.cpp                      \
                dspWoOperationBufrStsByWorkCenter.cpp                                                  \
                duplicateAccountNumbers.cpp                                                            \
-               ediForm.cpp ediFormDetail.cpp ediProfile.cpp ediProfiles.cpp                           \
+               ediForm.cpp ediFormDetail.cpp                                                          \
                editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
                employee.cpp employees.cpp empGroup.cpp empGroups.cpp                                  \
                enterMiscCount.cpp                                                                     \

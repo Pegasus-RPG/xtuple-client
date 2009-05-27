@@ -86,7 +86,6 @@ class menuSystem : public QObject
     void sLocales();
     void sCommentTypes();
     void sAccountNumbers();
-    void sEDIProfiles();
     void sDepartments();
     void sShifts();
     void sCustomCommands();

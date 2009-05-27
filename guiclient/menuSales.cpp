@@ -124,7 +124,6 @@
 
 #include "printSoForm.h"
 #include "printRaForm.h"
-#include "deliverSalesOrder.h"
 
 #include "customer.h"
 #include "searchForCRMAccount.h"
@@ -312,8 +311,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Forms"),           (char*)formsMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.printSalesOrderForm", tr("Print Sales &Order Form..."),	SLOT(sPrintSalesOrderForm()), formsMenu, "MaintainSalesOrders ViewSalesOrders",	NULL, NULL, true, NULL },
     { "so.printReturnAuthForm", tr("Print &Return Auth. Form..."),	SLOT(sPrintReturnAuthForm()), formsMenu, "MaintainReturns",	NULL, NULL, _metrics->boolean("EnableReturnAuth"), NULL },
-    { "separator",	NULL,	NULL,	formsMenu,	"true",		NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL }, 
-    { "so.deliverSalesOrder", tr("E-mail &Sales Order Form..."),	SLOT(sDeliverSalesOrder()), formsMenu, "ViewSalesOrders" ,	NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL },
     { "separator",	NULL,	NULL,	formsMenu,	"true",		NULL, NULL, true , NULL }, 
     { "so.packingListBatch", tr("Packing &List Batch..."),	SLOT(sPackingListBatch()), formsMenu, "MaintainPackingListBatch ViewPackingListBatch",	NULL, NULL, true, NULL },
     { "so.printPackingList", tr("&Print Packing List..."),	SLOT(sPrintPackingList()), formsMenu, "PrintPackingLists",	NULL, NULL, true, NULL },
@@ -670,11 +667,6 @@ void menuSales::sReprintInvoices()
 void menuSales::sDeliverInvoice()
 {
   deliverInvoice(parent, "", TRUE).exec();
-}
-
-void menuSales::sDeliverSalesOrder()
-{
-  deliverSalesOrder(parent, "", TRUE).exec();
 }
 
 void menuSales::sPostInvoices()

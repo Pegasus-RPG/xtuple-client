@@ -1,5 +1,4 @@
 <ui version="4.0" >
- <author></author>
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -932,16 +931,6 @@ to be bound by its terms.</comment>
             <number>12</number>
            </property>
            <item>
-            <widget class="QRadioButton" name="_poButton" >
-             <property name="text" >
-              <string>Purchase Orders</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QRadioButton" name="_checksButton" >
              <property name="text" >
               <string>Checks</string>
@@ -969,189 +958,7 @@ to be bound by its terms.</comment>
             <number>0</number>
            </property>
            <widget class="QWidget" name="page_3" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <widget class="QGroupBox" name="_emailPODelivery" >
-               <property name="title" >
-                <string>Email Purchase Order Delivery</string>
-               </property>
-               <property name="checkable" >
-                <bool>true</bool>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <layout class="QVBoxLayout" >
-                <item>
-                 <layout class="QHBoxLayout" >
-                  <property name="spacing" >
-                   <number>5</number>
-                  </property>
-                  <item>
-                   <layout class="QVBoxLayout" >
-                    <property name="spacing" >
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QLabel" name="_ediEmailLit" >
-                      <property name="text" >
-                       <string>EDI Email:</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="_ediCCLit" >
-                      <property name="text" >
-                       <string>Cc:</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="_subjectLit" >
-                      <property name="text" >
-                       <string>Subject:</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="_fileNameLit" >
-                      <property name="text" >
-                       <string>Filename:</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" >
-                    <property name="spacing" >
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <layout class="QHBoxLayout" >
-                      <property name="spacing" >
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="XLineEdit" name="_ediEmail" />
-                      </item>
-                      <item>
-                       <spacer>
-                        <property name="orientation" >
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeType" >
-                         <enum>QSizePolicy::Expanding</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0" >
-                         <size>
-                          <width>11</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <layout class="QHBoxLayout" >
-                      <property name="spacing" >
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="XLineEdit" name="_ediCC" />
-                      </item>
-                      <item>
-                       <spacer>
-                        <property name="orientation" >
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeType" >
-                         <enum>QSizePolicy::Expanding</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0" >
-                         <size>
-                          <width>11</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <widget class="XLineEdit" name="_ediSubject" />
-                    </item>
-                    <item>
-                     <layout class="QHBoxLayout" >
-                      <property name="spacing" >
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="XLineEdit" name="_ediFilename" />
-                      </item>
-                      <item>
-                       <spacer>
-                        <property name="orientation" >
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeType" >
-                         <enum>QSizePolicy::Expanding</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0" >
-                         <size>
-                          <width>10</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" >
-                  <property name="spacing" >
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="_defaultEDIBody" >
-                    <property name="text" >
-                     <string>EDI Email Body:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QTextEdit" name="_ediEmailBody" />
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="_ediEmailHTML" >
-                  <property name="text" >
-                   <string>Send Email asHTML</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout" />
            </widget>
            <widget class="QWidget" name="page_4" >
             <layout class="QGridLayout" >
@@ -1399,11 +1206,6 @@ to be bound by its terms.</comment>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_poComments</tabstop>
-  <tabstop>_ediEmail</tabstop>
-  <tabstop>_ediCC</tabstop>
-  <tabstop>_ediSubject</tabstop>
-  <tabstop>_ediFilename</tabstop>
-  <tabstop>_ediEmailBody</tabstop>
   <tabstop>_achGroup</tabstop>
   <tabstop>_routingNumber</tabstop>
   <tabstop>_achAccountNumber</tabstop>
@@ -1425,8 +1227,8 @@ to be bound by its terms.</comment>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>528</x>
-     <y>32</y>
+     <x>774</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -1441,12 +1243,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>60</x>
-     <y>439</y>
+     <x>435</x>
+     <y>283</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>273</x>
-     <y>440</y>
+     <x>571</x>
+     <y>283</y>
     </hint>
    </hints>
   </connection>
@@ -1457,12 +1259,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>36</x>
-     <y>297</y>
+     <x>39</x>
+     <y>235</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>576</x>
-     <y>391</y>
+     <x>138</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>
@@ -1477,8 +1279,8 @@ to be bound by its terms.</comment>
      <y>397</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>304</x>
-     <y>397</y>
+     <x>311</x>
+     <y>321</y>
     </hint>
    </hints>
   </connection>
@@ -1493,8 +1295,8 @@ to be bound by its terms.</comment>
      <y>438</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>317</x>
-     <y>438</y>
+     <x>311</x>
+     <y>358</y>
     </hint>
    </hints>
   </connection>
@@ -1509,8 +1311,8 @@ to be bound by its terms.</comment>
      <y>467</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>313</x>
-     <y>467</y>
+     <x>311</x>
+     <y>382</y>
     </hint>
    </hints>
   </connection>
@@ -1526,7 +1328,7 @@ to be bound by its terms.</comment>
     </hint>
     <hint type="destinationlabel" >
      <x>311</x>
-     <y>416</y>
+     <y>334</y>
     </hint>
    </hints>
   </connection>

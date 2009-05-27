@@ -44,7 +44,6 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_previous, SIGNAL(clicked()), this, SLOT(sPrevious()));
   connect(_mainButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_altButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_poButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_checksButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
   _defaultCurr->setLabel(_defaultCurrLit);
@@ -68,13 +67,11 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->boolean("EnableBatchManager") &&
       ! _metrics->boolean("ACHEnabled"))
   {
-    _poButton->hide();
     _checksButton->hide();
   }
   else if (! _metrics->boolean("EnableBatchManager") &&
            _metrics->boolean("ACHEnabled"))
   {
-    _poButton->hide();
     _checksButton->hide();
     _transmitStack->setCurrentIndex(1);
   }
@@ -85,6 +82,8 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if (_metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
     _checksButton->setEnabled(false);
+
+  _vendid = -1;
 }
 
 vendor::~vendor()
@@ -122,6 +121,7 @@ SetResponse vendor::set(const ParameterList &pParams)
   if (valid)
   {
     _vendid = param.toInt();
+    emit newId(_vendid);
     populate();
   }
 
@@ -170,6 +170,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       }
 
       _number->setFocus();
+      emit newId(_vendid);
     }
     else if (param.toString() == "edit")
     {
@@ -210,7 +211,6 @@ SetResponse vendor::set(const ParameterList &pParams)
       _restrictToItemSource->setEnabled(FALSE);
       _receives1099->setEnabled(FALSE);
       _qualified->setEnabled(FALSE);
-      _emailPODelivery->setEnabled(FALSE);
       _newAddress->setEnabled(FALSE);
       _defaultFOBGroup->setEnabled(false);
       _taxauth->setEnabled(false);
@@ -247,6 +247,11 @@ SetResponse vendor::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+int vendor::id() const
+{
+  return _vendid;
 }
 
 // similar code in address, customer, shipto, vendor, vendorAddress, warehouse
@@ -431,17 +436,10 @@ void vendor::sSave()
           "    vend_fob=<? value(\"vend_fob\") ?>,"
           "    vend_terms_id=<? value(\"vend_terms_id\") ?>,"
           "    vend_shipvia=<? value(\"vend_shipvia\") ?>,"
-	  "    vend_curr_id=<? value(\"vend_curr_id\") ?>, "
-          "    vend_emailpodelivery=<? value(\"vend_emailpodelivery\") ?>,"
-          "    vend_ediemail=<? value(\"vend_ediemail\") ?>,"
-          "    vend_ediemailbody=<? value(\"vend_ediemailbody\") ?>,"
-          "    vend_edisubject=<? value(\"vend_edisubject\") ?>,"
-          "    vend_edifilename=<? value(\"vend_edifilename\") ?>,"
-          "    vend_edicc=<? value(\"vend_edicc\") ?>,"
+	  "    vend_curr_id=<? value(\"vend_curr_id\") ?>,"
           "    vend_taxauth_id=<? value(\"vend_taxauth_id\") ?>,"
           "    vend_match=<? value(\"vend_match\") ?>,"
           "    vend_ach_enabled=<? value(\"vend_ach_enabled\") ?>,"
-          "    vend_ediemailhtml=<? value(\"vend_ediemailhtml\") ?>, "
           "<? if exists(\"key\") ?>"
           "    vend_ach_routingnumber=encrypt(setbytea(<? value(\"vend_ach_routingnumber\") ?>),"
           "                             setbytea(<? value(\"key\") ?>), 'bf'),"
@@ -464,13 +462,11 @@ void vendor::sSave()
           "  vend_comments, vend_pocomments,"
           "  vend_fobsource, vend_fob,"
           "  vend_terms_id, vend_shipvia, vend_curr_id,"
-          "  vend_emailpodelivery, vend_ediemail, vend_ediemailbody,"
-          "  vend_edisubject, vend_edifilename, vend_edicc,"
           "  vend_taxauth_id, vend_match, vend_ach_enabled,"
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
           "  vend_ach_use_vendinfo,"
           "  vend_ach_accnttype, vend_ach_indiv_number,"
-          "  vend_ach_indiv_name, vend_ediemailhtml ) "
+          "  vend_ach_indiv_name ) "
           "VALUES "
           "( <? value(\"vend_id\") ?>,"
           "  <? value(\"vend_number\") ?>,"
@@ -492,12 +488,6 @@ void vendor::sSave()
           "  <? value(\"vend_terms_id\") ?>,"
           "  <? value(\"vend_shipvia\") ?>,"
           "  <? value(\"vend_curr_id\") ?>, "
-          "  <? value(\"vend_emailpodelivery\") ?>,"
-          "  <? value(\"vend_ediemail\") ?>,"
-          "  <? value(\"vend_ediemailbody\") ?>,"
-          "  <? value(\"vend_edisubject\") ?>,"
-          "  <? value(\"vend_edifilename\") ?>,"
-          "  <? value(\"vend_edicc\") ?>,"
           "  <? value(\"vend_taxauth_id\") ?>,"
           "  <? value(\"vend_match\") ?>,"
           "  <? value(\"vend_ach_enabled\") ?>,"
@@ -513,8 +503,7 @@ void vendor::sSave()
           "  <? value(\"vend_ach_use_vendinfo\") ?>,"
           "  <? value(\"vend_ach_accnttype\") ?>,"
           "  <? value(\"vend_ach_indiv_number\") ?>,"
-          "  <? value(\"vend_ach_indiv_name\") ?>,"
-          "  <? value(\"vend_ediemailhtml\") ?>"
+          "  <? value(\"vend_ach_indiv_name\") ?>"
           "   );"  ;
  
   ParameterList params;
@@ -544,14 +533,6 @@ void vendor::sSave()
   params.append("vend_1099",          QVariant(_receives1099->isChecked()));
   params.append("vend_qualified",     QVariant(_qualified->isChecked()));
   params.append("vend_match",         QVariant(_match->isChecked()));
-
-  params.append("vend_emailpodelivery", QVariant(_emailPODelivery->isChecked()));
-  params.append("vend_ediemail",     _ediEmail->text());
-  params.append("vend_ediemailbody", _ediEmailBody->toPlainText());
-  params.append("vend_edisubject",   _ediSubject->text());
-  params.append("vend_edifilename",  _ediFilename->text());
-  params.append("vend_edicc",        _ediCC->text().trimmed());
-  params.append("vend_ediemailhtml", QVariant(_ediEmailHTML->isChecked()));
 
   if (!omfgThis->_key.isEmpty())
     params.append("key",                   omfgThis->_key);
@@ -713,13 +694,6 @@ void vendor::populate()
     _qualified->setChecked(q.value("vend_qualified").toBool());
     _notes->setText(q.value("vend_comments").toString());
     _poComments->setText(q.value("vend_pocomments").toString());
-    _emailPODelivery->setChecked(q.value("vend_emailpodelivery").toBool());
-    _ediEmail->setText(q.value("vend_ediemail"));
-    _ediSubject->setText(q.value("vend_edisubject"));
-    _ediFilename->setText(q.value("vend_edifilename"));
-    _ediEmailBody->setText(q.value("vend_ediemailbody").toString());
-    _ediCC->setText(q.value("vend_edicc").toString());
-    _ediEmailHTML->setChecked(q.value("vend_ediemailhtml").toBool());
     
     _taxauth->setId(q.value("vend_taxauth_id").toInt());
 
@@ -765,6 +739,7 @@ void vendor::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  emit populated();
 }
 
 void vendor::sPrintAddresses()
@@ -996,7 +971,6 @@ void vendor::clear()
   _qualified->setChecked(false);
   _match->setChecked(false);
   _receives1099->setChecked(false);
-  _emailPODelivery->setChecked(false);
 
   _vendtype->setId(-1);
   _defaultTerms->setId(-1);
@@ -1012,11 +986,6 @@ void vendor::clear()
   _vendorFOB->clear(); 
   _notes->clear();
   _poComments->clear(); 
-  _ediEmail->clear();
-  _ediCC->clear();
-  _ediSubject->clear();
-  _ediFilename->clear();
-  _ediEmailBody->clear();
 
   _address->clear();
   _contact1->clear();
@@ -1056,8 +1025,8 @@ void vendor::sHandleButtons()
   else
     _addressStack->setCurrentIndex(1);
     
-  if (_poButton->isChecked())
-    _transmitStack->setCurrentIndex(0);
+  if (_checksButton->isChecked())
+    _transmitStack->setCurrentIndex(1);
   else
     _transmitStack->setCurrentIndex(1);
 }

@@ -26,7 +26,7 @@ public:
     ~openSalesOrders();
     virtual void setParams(ParameterList &);
     
-    virtual bool checkSitePrivs();
+    Q_INVOKABLE virtual bool checkSitePrivs();
 
 public slots:
     virtual enum SetResponse set(const ParameterList&);
@@ -41,7 +41,6 @@ public slots:
     virtual void sAddToPackingListBatch();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sFillList();
-    virtual void sDeliver();
     virtual void sPrintForms(); 
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
     virtual void sDspShipmentStatus();

@@ -37,6 +37,8 @@ public:
     customer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~customer();
 
+    Q_INVOKABLE virtual int id() const;
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void currentTabChanged(int index);
@@ -80,9 +82,11 @@ public slots:
 protected slots:
     virtual void languageChange();
     virtual int  saveContact(ContactCluster*);
-    virtual void sProfileSelected();
-    virtual void sSoProfileSelected();
     virtual void sNumberEdited();
+
+signals:
+    void populated();
+    void newId(int);
 
 protected:
     virtual void closeEvent(QCloseEvent*);

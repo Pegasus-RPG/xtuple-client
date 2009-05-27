@@ -39,7 +39,6 @@
 #include "freightBreakdown.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
-#include "deliverSalesOrder.h"
 #include "reserveSalesOrderItem.h"
 #include "dspReservations.h"
 
@@ -558,14 +557,6 @@ void salesOrder::sSaveAndAdd()
       printSoForm newdlgS(this, "", true);
       newdlgS.set(params);
       newdlgS.exec();
-
-      if (_custEmail && _metrics->boolean("EnableBatchManager"))
-      {
-        deliverSalesOrder newdlgD(this, "", true);
-        newdlgD.set(params);
-    	newdlgD.exec();
-      }
-
     }
 
     if (_captive)
@@ -587,14 +578,6 @@ void salesOrder::sSave()
       printSoForm newdlgX(this, "", true);
       newdlgX.set(params);
       newdlgX.exec();
-
-      if (_custEmail && _metrics->boolean("EnableBatchManager"))
-      {
-        deliverSalesOrder newdlgD(this, "", true);
-        newdlgD.set(params);
-    	newdlgD.exec();
-      }
-
     }
 
     if (_captive)
@@ -1426,7 +1409,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
                 "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
-                "       cust_curr_id, cust_soemaildelivery, crmacct_id "
+                "       cust_curr_id, crmacct_id "
                 "FROM custtype, custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
                 "                 AND (shipto_default)) "
@@ -1444,7 +1427,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
                 "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                "       NULL AS cust_curr_id, NULL AS cust_soemaildelivery, crmacct_id "
+                "       NULL AS cust_curr_id, crmacct_id "
                 "FROM prospect "
                 "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
                 "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
@@ -1506,7 +1489,6 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _commission->setDouble(cust.value("commission").toDouble() * 100);
       _terms->setId(cust.value("cust_terms_id").toInt());
       _custtaxzoneid = cust.value("cust_taxzone_id").toInt();
-      _custEmail = cust.value("cust_soemaildelivery").toBool();
 
       _billToCntct->setId(cust.value("cust_cntct_id").toInt());
       if(cust.value("crmacct_id").toInt() > 0)

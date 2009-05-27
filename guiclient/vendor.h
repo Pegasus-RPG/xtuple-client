@@ -25,6 +25,8 @@ public:
     vendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~vendor();
 
+    Q_INVOKABLE virtual int id() const;
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual int  saveContact(ContactCluster*);
@@ -48,6 +50,10 @@ public slots:
     virtual void sPrevious();
 
     virtual void clear();
+
+signals:
+    void populated();
+    void newId(int);
 
 protected slots:
     virtual void languageChange();

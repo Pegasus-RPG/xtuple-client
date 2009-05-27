@@ -24,8 +24,6 @@ public:
     printSoForm(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printSoForm();
 
-    virtual void init();
-
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();

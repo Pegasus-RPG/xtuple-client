@@ -37,6 +37,11 @@ void ScriptQuery::setQuery(XSqlQuery query)
   _query = query;
 }
 
+QSqlRecord ScriptQuery::record() const
+{
+  return _query.record();
+}
+
 bool ScriptQuery::isActive()
 {
   return _query.isActive();

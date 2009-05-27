@@ -20,45 +20,23 @@
 shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateNumber()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_salesRep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission(int)));
+  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateNumber()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_salesRep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission(int)));
 
-    _shipZone->populate( "SELECT shipzone_id, shipzone_name "
-			 "FROM shipzone "
-			 "ORDER BY shipzone_name;" );
+  _shipZone->populate( "SELECT shipzone_id, shipzone_name "
+                       "FROM shipzone "
+                       "ORDER BY shipzone_name;" );
 
-    _shiplabel->populate( "SELECT labelform_id, labelform_name "                                                                                      
-                          "FROM labelform "                                                                                                                
-                          "ORDER BY labelform_name;" ); 
+  _shiplabel->populate( "SELECT labelform_id, labelform_name "
+                        "FROM labelform "
+                        "ORDER BY labelform_name;" ); 
 
-    _commission->setValidator(omfgThis->percentVal());
+  _commission->setValidator(omfgThis->percentVal());
 
-    if (_metrics->boolean("EnableBatchManager"))
-    {
-      _ediProfile->append(-2, tr("Use Customer Master"));
-      _ediProfile->append(-1, tr("No EDI"));
-      q.prepare("SELECT ediprofile_id, ediprofile_name"
-  	        "  FROM ediprofile, ediform"
-	        " WHERE ((ediform_ediprofile_id=ediprofile_id)"
-	        "   AND  (ediform_type='invoice')) "
-	        "ORDER BY ediprofile_name; ");
-      q.exec();
-      while(q.next())
-        _ediProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-    else
-    {
-      _ediProfileLit->hide();
-      _ediProfile->hide();
-    }
+  _shiptoid = -1;
 }
 
 shipTo::~shipTo()
@@ -160,7 +138,6 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _shipform->setEnabled(FALSE);
       _shipchrg->setEnabled(FALSE);
       _shiplabel->setEnabled(FALSE);
-      _ediProfile->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _shippingComments->setEnabled(FALSE);
       _close->setText(tr("&Close"));
@@ -171,6 +148,11 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+int shipTo::id() const
+{
+  return _shiptoid;
 }
 
 // similar code in address, customer, shipto, vendor, vendorAddress, warehouse
@@ -273,14 +255,14 @@ void shipTo::sSave()
                "  shipto_comments, shipto_shipcomments,"
                "  shipto_taxzone_id, shipto_salesrep_id, shipto_shipzone_id,"
                "  shipto_shipvia, shipto_shipform_id, shipto_shipchrg_id, "
-	       "  shipto_ediprofile_id, shipto_addr_id, shipto_labelform_id ) "
+	       "  shipto_addr_id, shipto_labelform_id ) "
                "VALUES "
                "( :shipto_id, :shipto_cust_id, :shipto_active, :shipto_default,"
                "  :shipto_num, :shipto_name, :shipto_cntct_id, :shipto_commission,"
                "  :shipto_comments, :shipto_shipcomments,"
                "  :shipto_taxzone_id, :shipto_salesrep_id, :shipto_shipzone_id,"
                "  :shipto_shipvia, :shipto_shipform_id, :shipto_shipchrg_id, "
-	       "  :shipto_ediprofile_id , :shipto_addr_id, :shipto_labelform_id );" );
+	       "  :shipto_addr_id, :shipto_labelform_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE shiptoinfo "
@@ -290,7 +272,6 @@ void shipTo::sSave()
                "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
                "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
                "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id, shipto_shipchrg_id=:shipto_shipchrg_id,"
-               "    shipto_ediprofile_id=:shipto_ediprofile_id,"
 	       "    shipto_addr_id=:shipto_addr_id,"
                "    shipto_labelform_id=:shipto_labelform_id "
                "WHERE (shipto_id=:shipto_id);" );
@@ -321,7 +302,6 @@ void shipTo::sSave()
     q.bindValue(":shipto_labelform_id", _shiplabel->id());
   if (_shipchrg->id() != -1)
   q.bindValue(":shipto_shipchrg_id", _shipchrg->id());
-  q.bindValue(":shipto_ediprofile_id", _ediProfile->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -344,7 +324,7 @@ void shipTo::populate()
              "       shipto_comments, shipto_shipcomments,"
              "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxzone_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
              "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id,"
-	     "       shipto_ediprofile_id, shipto_addr_id, shipto_labelform_id,"
+	     "       shipto_addr_id, shipto_labelform_id,"
              "       crmacct_id "
              "FROM shiptoinfo "
              "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
@@ -371,7 +351,6 @@ void shipTo::populate()
     _shipform->setId(q.value("shipto_shipform_id").toInt());
     _shipchrg->setId(q.value("shipto_shipchrg_id").toInt());
     _shiplabel->setId(q.value("shipto_labelform_id").toInt());
-    _ediProfile->setId(q.value("shipto_ediprofile_id").toInt());
     _address->setId(q.value("shipto_addr_id").toInt());
 
     //  Handle the free-form Ship Via
@@ -392,6 +371,8 @@ void shipTo::populate()
 
     _salesRep->setId(q.value("shipto_salesrep_id").toInt());
     _commission->setDouble(commission * 100);
+
+    emit populated();
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

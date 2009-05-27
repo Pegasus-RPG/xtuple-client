@@ -22,6 +22,7 @@
 #include "parametergroupsetup.h"
 #include "polineeditsetup.h"
 #include "projectlineeditsetup.h"
+#include "qactionproto.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
 #include "qdomcharacterdataproto.h"
@@ -39,10 +40,12 @@
 #include "qdomnotationproto.h"
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
+#include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qsqldatabaseproto.h"
+#include "qsqlrecordproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
 #include "qurlproto.h"
@@ -81,6 +84,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupParameterGroup(engine);
   setupPoLineEdit(engine);
   setupProjectLineEdit(engine);
+  setupQActionProto(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
   setupQDomCharacterDataProto(engine);
@@ -98,11 +102,13 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomNotationProto(engine);
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
+  setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQSqlDatabaseProto(engine);
+  setupQSqlRecordProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
   setupQUrlProto(engine);

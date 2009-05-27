@@ -17,6 +17,7 @@ OBJECTS_DIR = tmp
 UI_DIR      = tmp
 
 HEADERS +=  setupscriptapi.h                    \
+            qactionproto.h                      \
             qdomattrproto.h                     \
             qdomcdatasectionproto.h             \
             qdomcharacterdataproto.h            \
@@ -34,10 +35,12 @@ HEADERS +=  setupscriptapi.h                    \
             qdomnotationproto.h                 \
             qdomprocessinginstructionproto.h    \
             qdomtextproto.h                     \
+            qmenuproto.h                        \
             qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
             qnetworkrequestproto.h              \
             qsqldatabaseproto.h                 \
+            qsqlrecordproto.h                   \
             qstackedwidgetproto.h               \
             qtabwidgetproto.h                   \
             qurlproto.h                         \
@@ -74,6 +77,7 @@ HEADERS +=  setupscriptapi.h                    \
             xdateeditsetup.h			\
 
 SOURCES +=  setupscriptapi.cpp                  \
+            qactionproto.cpp                    \
             qdomattrproto.cpp                   \
             qdomcdatasectionproto.cpp           \
             qdomcharacterdataproto.cpp          \
@@ -91,10 +95,12 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdomnotationproto.cpp               \
             qdomprocessinginstructionproto.cpp  \
             qdomtextproto.cpp                   \
+            qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \
             qnetworkrequestproto.cpp            \
             qsqldatabaseproto.cpp               \
+            qsqlrecordproto.cpp                 \
             qstackedwidgetproto.cpp             \
             qtabwidgetproto.cpp                 \
             qurlproto.cpp                       \

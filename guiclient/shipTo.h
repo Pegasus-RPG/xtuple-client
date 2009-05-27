@@ -25,6 +25,8 @@ public:
     shipTo(QWidget* = 0, const char* = 0, bool = false, Qt::WFlags = 0);
     ~shipTo();
 
+    Q_INVOKABLE virtual int id() const;
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual int  saveContact(ContactCluster*);
@@ -32,6 +34,9 @@ public slots:
     virtual void populate();
     virtual void sPopulateNumber();
     virtual void sPopulateCommission( int pSalesrepid );
+
+signals:
+    virtual void populated();
 
 protected slots:
     virtual void languageChange();

@@ -125,6 +125,11 @@ void OrderCluster::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
   ((OrderLineEdit*)_number)->setAllowedStatuses(p);
 }
 
+void OrderCluster::setAllowedStatuses(const int p)
+{
+  ((OrderLineEdit*)_number)->setAllowedStatuses((OrderLineEdit::OrderStatuses)p);
+}
+
 void OrderCluster::setFromSitePrivsEnforced(const bool p)
 {
   ((OrderLineEdit*)_number)->setFromSitePrivsEnforced(p);
@@ -167,6 +172,11 @@ void OrderCluster::setAllowedTypes(const OrderLineEdit::OrderTypes p)
     case OrderLineEdit::Return:		setLabel(tr("R/A #:")); break;
     default:				setLabel(tr("Order #:")); break;
   }
+}
+
+void OrderCluster::setAllowedTypes(const int p)
+{
+  setAllowedTypes((OrderLineEdit::OrderTypes)p);
 }
 
 void OrderCluster::setId(const int pId, const QString &pType)

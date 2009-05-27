@@ -19,7 +19,6 @@
 
 #include "copySalesOrder.h"
 #include "creditcardprocessor.h"
-#include "deliverSalesOrder.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "printPackingList.h"
@@ -388,11 +387,6 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
   if (!_privileges->check("MaintainPackingListBatch"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  if (_metrics->boolean("EnableBatchManager"))
-  {
-    menuItem = pMenu->insertItem(tr("Email Order Acknowledgment..."), this, SLOT(sDeliver()), 0);
-  }
-
   menuItem = pMenu->insertItem(tr("Print Sales Order Form..."), this, SLOT(sPrintForms()), 0); 
   
   pMenu->insertSeparator();
@@ -444,19 +438,6 @@ void openSalesOrders::sFillList()
     return;
   }
   _so->setDragString("soheadid=");
-}
-
-void openSalesOrders::sDeliver()
-{
-  if (!checkSitePrivs())
-    return;
-    
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-
-  deliverSalesOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void openSalesOrders::sPrintForms()

@@ -130,8 +130,10 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
 
   public slots:
     virtual void	setAllowedStatuses(const OrderLineEdit::OrderStatuses);
+    virtual void	setAllowedStatuses(const int);
     virtual void	setAllowedType(const QString &);
     virtual void	setAllowedTypes(const OrderLineEdit::OrderTypes);
+    virtual void	setAllowedTypes(const int);
     virtual void	setId(const int, const QString& = "");
     virtual void        setFromSitePrivsEnforced(const bool p);
     virtual void        setToSitePrivsEnforced(const bool p);

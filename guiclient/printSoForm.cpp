@@ -10,47 +10,37 @@
 
 #include "printSoForm.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "guiclient.h"
 
-/*
- *  Constructs a printSoForm as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printSoForm::printSoForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
- 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+
+  _captive = FALSE; 
+  _so->setType(cSoOpen | cSoClosed);
+  _report->populate( "SELECT form_id, form_name "
+                     "FROM form "
+                     "WHERE (form_key='SO') "
+                     "ORDER BY form_name;" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 printSoForm::~printSoForm()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void printSoForm::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 
@@ -69,19 +59,6 @@ enum SetResponse printSoForm::set(const ParameterList &pParams)
   }
 
   return NoError;
-}
-
-void printSoForm::init()
-{
-
-   _captive = FALSE; 
-
-  _so->setType(cSoOpen | cSoClosed);
-
-  _report->populate( "SELECT form_id, form_name "
-                     "FROM form "
-                     "WHERE (form_key='SO') "
-                     "ORDER BY form_name;" );
 }
 
 void printSoForm::sPrint()
@@ -119,4 +96,3 @@ void printSoForm::sPrint()
                           tr("Could not locate the report definition the form \"%1\"")
                           .arg(_report->currentText()) );
 }
-

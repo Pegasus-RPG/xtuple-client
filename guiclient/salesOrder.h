@@ -126,8 +126,6 @@ private:
     enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
     double _taxCache[4];	// [Rate] vs. [Part]
 
-    bool _custEmail;
-
 };
 
 #endif // SALESORDER_H

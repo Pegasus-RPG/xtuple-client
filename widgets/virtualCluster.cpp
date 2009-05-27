@@ -155,6 +155,26 @@ void VirtualCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
     connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
 }
 
+void VirtualCluster::sEllipses()
+{
+  _number->sEllipses();
+}
+
+void VirtualCluster::sInfo()
+{
+  _number->sInfo();
+}
+
+void VirtualCluster::sList()
+{
+  _number->sList();
+}
+
+void VirtualCluster::sSearch()
+{
+  _number->sSearch();
+}
+
 void VirtualCluster::sRefresh()
 {
   if (DEBUG)

@@ -27,8 +27,9 @@ class ScriptQuery : public QObject
     ScriptQuery(QScriptEngine * engine);
     virtual ~ScriptQuery();
 
-    XSqlQuery query() const;
-    void setQuery(XSqlQuery query);
+    Q_INVOKABLE XSqlQuery query() const;
+    Q_INVOKABLE void setQuery(XSqlQuery query);
+    Q_INVOKABLE QSqlRecord record() const;
 
   public slots:
     bool isActive();

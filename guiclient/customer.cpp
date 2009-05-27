@@ -135,7 +135,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
   connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
-  connect(_ediProfile, SIGNAL(activated(int)), this, SLOT(sProfileSelected()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
@@ -143,10 +142,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editTaxreg,   SIGNAL(clicked()), this, SLOT(sEditTaxreg()));
   connect(_newTaxreg,    SIGNAL(clicked()), this, SLOT(sNewTaxreg()));
   connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
-  connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
   connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
-  connect(_soButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_invoiceButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_shiptoButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -228,29 +224,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _cctransButton->hide();
   }
   
-  if (_metrics->boolean("EnableBatchManager"))
-  {
-    _ediProfile->append(-1, tr("No EDI"));
-    _ediProfile->append(0, tr("Custom Email"));
-  
-    _soEdiProfile->append(-1, tr("No EDI"));
-    _soEdiProfile->append(0, tr("Custom Email"));
-  
-    q.prepare("SELECT ediprofile_id, ediprofile_name"
-              "  FROM ediprofile, ediform"
-              " WHERE ((ediform_ediprofile_id=ediprofile_id)"
-              "   AND  (ediform_type='invoice')) "
-              "ORDER BY ediprofile_name; ");
-    q.exec();
-    while(q.next()) 
-    {
-      _ediProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-      _soEdiProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-    }
-  }
-  else
-    _tab->removePage(_tab->page(_tab->indexOf(_transmitTab)));
-  
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -281,18 +254,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _ytdSales->setPrecision(omfgThis->moneyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 customer::~customer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void customer::languageChange()
 {
   retranslateUi(this);
@@ -308,6 +274,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
   {
     _custid = param.toInt();
     populate();
+    emit newId(_custid);
   }
 
   param = pParams.value("mode", &valid);
@@ -379,6 +346,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
 
       _number->setFocus();
+      emit newId(_custid);
     }
     else if (param.toString() == "edit")
     {
@@ -432,10 +400,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _allowFFBillto->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _comments->setReadOnly(TRUE);
-      _ediProfile->setEnabled(FALSE);
-      _ediGroup->setEnabled(FALSE);
-      _soEdiProfile->setEnabled(FALSE);
-      _soEdiGroup->setEnabled(FALSE);
       _newShipto->setEnabled(FALSE);
       _newCharacteristic->setEnabled(FALSE);
       _newTaxreg->setEnabled(FALSE);
@@ -471,6 +435,11 @@ enum SetResponse customer::set(const ParameterList &pParams)
     _number->setEnabled(FALSE);
 
   return NoError;
+}
+
+int customer::id() const
+{
+  return _custid;
 }
 
 void customer::setValid(bool valid)
@@ -670,16 +639,6 @@ bool customer::sSave(bool /*partial*/)
                "       cust_taxzone_id=:cust_taxzone_id, "
                "       cust_active=:cust_active, cust_usespos=:cust_usespos,"
                "       cust_blanketpos=:cust_blanketpos, cust_comments=:cust_comments,"
-               "       cust_emaildelivery=:cust_emaildelivery, cust_ediemail=:cust_ediemail,"
-               "       cust_edisubject=:cust_edisubject, cust_edifilename=:cust_edifilename,"
-               "       cust_ediemailbody=:cust_ediemailbody, cust_edicc=:cust_edicc,"
-               "       cust_ediprofile_id=:cust_ediprofile_id, "
-               "       cust_ediemailhtml=:cust_ediemailhtml,"
-               "       cust_soemaildelivery=:cust_soemaildelivery, cust_soediemail=:cust_soediemail,"
-               "       cust_soedisubject=:cust_soedisubject, cust_soedifilename=:cust_soedifilename,"
-               "       cust_soediemailbody=:cust_soediemailbody, cust_soedicc=:cust_soedicc,"
-               "       cust_soediprofile_id=:cust_soediprofile_id, "
-               "       cust_soediemailhtml=:cust_soediemailhtml,"
                "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
                "       cust_gracedays=:cust_gracedays,"
                "       cust_curr_id=:cust_curr_id "
@@ -700,13 +659,7 @@ bool customer::sSave(bool /*partial*/)
                "  cust_shipchrg_id, cust_shipform_id, cust_terms_id,"
                "  cust_discntprcnt, cust_taxzone_id, "
                "  cust_active, cust_usespos, cust_blanketpos, cust_comments,"
-               "  cust_emaildelivery, cust_ediemail, cust_edisubject,"
-               "  cust_edifilename, cust_ediemailbody, cust_edicc, "
-               "  cust_ediprofile_id,"
-               "  cust_soemaildelivery, cust_soediemail, cust_soedisubject,"
-               "  cust_soedifilename, cust_soediemailbody, cust_soedicc, "
-               "  cust_soediemailhtml, cust_ediemailhtml,"
-               "  cust_soediprofile_id, cust_preferred_warehous_id, "
+               "  cust_preferred_warehous_id, "
                "  cust_gracedays, cust_curr_id ) "
                "VALUES "
                "( :cust_id, :cust_number,"
@@ -722,13 +675,7 @@ bool customer::sSave(bool /*partial*/)
                "  :cust_shipchrg_id, :cust_shipform_id, :cust_terms_id,"
                "  :cust_discntprcnt, :cust_taxzone_id,"
                "  :cust_active, :cust_usespos, :cust_blanketpos, :cust_comments,"
-               "  :cust_emaildelivery, :cust_ediemail, :cust_edisubject,"
-               "  :cust_edifilename, :cust_ediemailbody, :cust_edicc,"
-               "  :cust_soediprofile_id,"
-               "  :cust_soemaildelivery, :cust_soediemail, :cust_soedisubject,"
-               "  :cust_soedifilename, :cust_soediemailbody, :cust_soedicc,"
-               "  :cust_soediemailhtml, :cust_ediemailhtml,"
-               "  :cust_soediprofile_id, :cust_preferred_warehous_id, "
+               "  :cust_preferred_warehous_id, "
                "  :cust_gracedays, :cust_curr_id ) " );
 
   q.bindValue(":cust_id", _custid);
@@ -781,33 +728,11 @@ bool customer::sSave(bool /*partial*/)
 
   q.bindValue(":cust_comments", _notes->toPlainText());
 
-  q.bindValue(":cust_emaildelivery", QVariant((_ediProfile->id()==0)));
-  q.bindValue(":cust_ediemail", _ediEmail->text().trimmed());
-  q.bindValue(":cust_edisubject", _ediSubject->text().trimmed());
-  q.bindValue(":cust_edifilename", _ediFilename->text().trimmed());
-  q.bindValue(":cust_ediemailbody", _ediEmailBody->toPlainText().trimmed());
-  q.bindValue(":cust_edicc", _ediCC->text().trimmed());
-  q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked()));
-
-  q.bindValue(":cust_soemaildelivery", QVariant((_soEdiProfile->id()==0)));
-  q.bindValue(":cust_soediemail", _soEdiEmail->text().trimmed());
-  q.bindValue(":cust_soedisubject", _soEdiSubject->text().trimmed());
-  q.bindValue(":cust_soedifilename", _soEdiFilename->text().trimmed());
-  q.bindValue(":cust_soediemailbody", _soEdiEmailBody->toPlainText().trimmed());
-  q.bindValue(":cust_soedicc", _soEdiCC->text().trimmed());
-  q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked()));
-
   q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
   q.bindValue(":cust_curr_id", _currency->id());
 
   if(_warnLate->isChecked())
     q.bindValue(":cust_gracedays", _graceDays->value());
-
-  if(_ediProfile->id() > 0)
-    q.bindValue(":cust_ediprofile_id", _ediProfile->id());
-
-  if(_soEdiProfile->id() > 0)
-    q.bindValue(":cust_soediprofile_id", _soEdiProfile->id());
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -977,6 +902,7 @@ void customer::sCheck()
         _custid = q.value("cust_id").toInt();
         _mode = cEdit;
         populate();
+        emit newId(_custid);
         _name->setFocus();
       }
     }
@@ -1106,37 +1032,24 @@ void customer::sViewShipto()
 
 void customer::sDeleteShipto()
 {
-  q.prepare( "SELECT cohead_id "
-             "FROM cohead "
-             "WHERE (cohead_shipto_id=:shipto_id) "
-
-             "UNION SELECT cmhead_id "
-             "FROM cmhead "
-             "WHERE (cmhead_shipto_id=:shipto_id) "
-
-             "UNION SELECT cohist_id "
-             "FROM cohist "
-             "WHERE (cohist_shipto_id=:shipto_id) "
-
-             "LIMIT 1;" );
+  q.prepare("SELECT deleteShipTo(:shipto_id) AS result;");
   q.bindValue(":shipto_id", _shipto->id());
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical( this, tr("Cannot Delete Ship-to"),
-                           tr( "The selected Ship-to cannot be deleted as there has been Sales History recorded for it.\n"
-                               "You may Edit the selected Ship-to and set its status to inactive." ) );
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteShipTo", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "DELETE FROM ipsass "
-                 "WHERE (ipsass_shipto_id=:shipto_id);" );
-  q.bindValue(":shipto_id", _shipto->id());
-  q.exec();
-  q.prepare( "DELETE FROM shiptoinfo "
-                 "WHERE (shipto_id=:shipto_id);" );
-  q.bindValue(":shipto_id", _shipto->id());
-  q.exec();
 
   sFillShiptoList();
 }
@@ -1427,38 +1340,6 @@ void customer::populate()
     else
       _onCreditHold->setChecked(TRUE);
 
-    if(cust.value("cust_emaildelivery").toBool())
-      _ediProfile->setId(0);
-    else
-    {
-      _ediProfile->setId(cust.value("cust_ediprofile_id").toInt());
-      if(0 == _ediProfile->id())
-        _ediProfile->setId(-1);
-    }
-    sProfileSelected();
-    _ediEmail->setText(cust.value("cust_ediemail"));
-    _ediSubject->setText(cust.value("cust_edisubject"));
-    _ediFilename->setText(cust.value("cust_edifilename"));
-    _ediEmailBody->setPlainText(cust.value("cust_ediemailbody").toString());
-    _ediCC->setText(cust.value("cust_edicc").toString());
-    _ediEmailHTML->setChecked(cust.value("cust_ediemailhtml").toBool());
-    
-    if(cust.value("cust_soemaildelivery").toBool())
-      _soEdiProfile->setId(0);
-    else
-    {
-      _soEdiProfile->setId(cust.value("cust_soediprofile_id").toInt());
-      if(0 == _soEdiProfile->id())
-        _soEdiProfile->setId(-1);
-    }
-    sSoProfileSelected();
-    _soEdiEmail->setText(cust.value("cust_soediemail"));
-    _soEdiSubject->setText(cust.value("cust_soedisubject"));
-    _soEdiFilename->setText(cust.value("cust_soedifilename"));
-    _soEdiEmailBody->setPlainText(cust.value("cust_soediemailbody").toString());
-    _soEdiCC->setText(cust.value("cust_soedicc").toString());
-    _soEdiEmailHTML->setChecked(cust.value("cust_soediemailhtml").toBool());
-
     _comments->setId(_custid);
     _documents->setId(_crmacctid);
     
@@ -1474,6 +1355,8 @@ void customer::populate()
     _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     
     sFillList();
+
+    emit populated();
     return;
   }
   else if (cust.lastError().type() != QSqlError::NoError)
@@ -1580,16 +1463,6 @@ void customer::sPrintStatement()
     else
       report.reportError(this);
   }
-}
-
-void customer::sProfileSelected()
-{
-  _ediGroup->setEnabled((_ediProfile->id() == 0));
-}
-
-void customer::sSoProfileSelected()
-{
-  _soEdiGroup->setEnabled((_soEdiProfile->id() == 0));
 }
 
 void customer::sNewCreditCard()
@@ -1748,6 +1621,7 @@ void customer::sLoadProspect(int prospectId)
     _billCntct->setId(q.value("prospect_cntct_id").toInt());
   }
   _name->setFocus();
+  emit newId(_custid);
 }
 
 void customer::sLoadCrmAcct(int crmacctId )
@@ -1819,11 +1693,6 @@ void customer::sHandleButtons()
     _settingsStack->setCurrentIndex(2);
   else
     _settingsStack->setCurrentIndex(3);
-    
-  if (_soButton->isChecked())
-    _transmitStack->setCurrentIndex(0);
-  else
-    _transmitStack->setCurrentIndex(1);
     
   if (_contactsButton->isChecked())
     _crmStack->setCurrentIndex(0);
