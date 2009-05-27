@@ -113,6 +113,9 @@ void dspTrialBalances::setParams(ParameterList & params)
 
   if (_selectedPeriod->isChecked())
     params.append("period_id", _period->id());
+    
+  if (_showZero->isChecked())
+    params.append("showZero");
 }
 
 void dspTrialBalances::sPrint()
@@ -175,6 +178,9 @@ void dspTrialBalances::sFillList()
 	       "<? if exists(\"period_id\") ?>"
 	       " AND (period_id=<? value(\"period_id\") ?>)"
 	       "<? endif ?>"
+         "<? if not exists(\"showZero\") ?>"
+         " AND (abs(trialbal_beginning)+abs(trialbal_ending)+abs(trialbal_debits)+abs(trialbal_credits) > 0) "
+         "<? endif ?>"
 	       ") "
 	       "ORDER BY period_start, formatGLAccount(accnt_id);" );
 

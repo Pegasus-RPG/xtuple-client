@@ -163,6 +163,13 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
+         <item>
+          <widget class="XCheckBox" name="_showZero">
+           <property name="text">
+            <string>Show Trial Balances with Zero</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -243,7 +250,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
+     <item row="3" column="0">
       <widget class="QFrame" name="_frame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -308,6 +315,11 @@ to be bound by its terms.</comment>
    <class>GLCluster</class>
    <extends>QWidget</extends>
    <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
