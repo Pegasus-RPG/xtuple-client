@@ -2145,6 +2145,18 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
   if (valid)
     reforder = param.toString();
 
+  param = pinput.value("ccpay_id", &valid);
+  if (valid)
+  {
+    ccpay_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccpay_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
   param = pinput.value("reftype", &valid);
   if (valid)
     reftype = param.toString();
