@@ -217,7 +217,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
-               ediForm.ui ediFormDetail.ui                                                            \
+               ediFormDetail.ui                                                            \
                editICMWatermark.ui countSlip.ui countTag.ui                                           \
                employee.ui employees.ui empGroup.ui empGroups.ui                                      \
                enterMiscCount.ui                                                                      \
@@ -538,7 +538,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
-               ediForm.h ediFormDetail.h                                                              \
+               ediFormDetail.h                                                              \
                editICMWatermark.h countSlip.h countTag.h                                              \
                employee.h employees.h empGroup.h  empGroups.h                                         \
                enterMiscCount.h                                                                       \
@@ -692,7 +692,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
-               jsHighlighter.h                                                                        \
+               jsHighlighter.h metasqlHighlighter.h                                                   \
                idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
                xTupleDesigner.h xTupleDesignerActions.h getscreen.h getscreen_classlist.h getscreen_headerlist.h \
 
@@ -869,7 +869,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPoItemsByBufferStatus.cpp dspWoBufferStatusByParameterList.cpp                      \
                dspWoOperationBufrStsByWorkCenter.cpp                                                  \
                duplicateAccountNumbers.cpp                                                            \
-               ediForm.cpp ediFormDetail.cpp                                                          \
+               ediFormDetail.cpp                                                          \
                editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
                employee.cpp employees.cpp empGroup.cpp empGroups.cpp                                  \
                enterMiscCount.cpp                                                                     \
@@ -1024,7 +1024,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp xerrormessage.cpp                \
-               jsHighlighter.cpp                                                                      \
+               jsHighlighter.cpp metasqlHighlighter.cpp                                               \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
                xTupleDesigner.cpp xTupleDesignerActions.cpp getscreen.cpp                             \
 
@@ -1033,3 +1033,4 @@ QT += webkit
 
 RESOURCES += guiclient.qrc
 
+#CONFIG += debug
