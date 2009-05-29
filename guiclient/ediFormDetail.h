@@ -41,6 +41,7 @@ protected slots:
 
 private:
     virtual void init();
+    QSyntaxHighlighter *_highlighter;
 
 };
 

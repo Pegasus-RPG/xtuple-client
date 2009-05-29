@@ -18,6 +18,7 @@
 #include "documentssetup.h"
 #include "glclustersetup.h"
 #include "itemlineeditsetup.h"
+#include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
 #include "parametergroupsetup.h"
 #include "polineeditsetup.h"
@@ -47,6 +48,8 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlrecordproto.h"
 #include "qstackedwidgetproto.h"
+#include "qtextdocumentproto.h"
+#include "qtexteditproto.h"
 #include "qtabwidgetproto.h"
 #include "qurlproto.h"
 #include "ralineeditsetup.h"
@@ -80,6 +83,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupDocuments(engine);
   setupGLCluster(engine);
   setupItemLineEdit(engine);
+  setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
   setupParameterGroup(engine);
   setupPoLineEdit(engine);
@@ -110,6 +114,8 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlRecordProto(engine);
   setupQStackedWidgetProto(engine);
+  setupQTextDocumentProto(engine);
+  setupQTextEditProto(engine);
   setupQTabWidgetProto(engine);
   setupQUrlProto(engine);
   setupRaLineEdit(engine);

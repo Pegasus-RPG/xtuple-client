@@ -12,6 +12,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
+#include "metasqlHighlighter.h"
 
 /*
  *  Constructs a ediFormDetail as a child of 'parent', with the
@@ -55,6 +56,10 @@ void ediFormDetail::init()
   _mode = cNew;
   _ediformid = -1;
   _ediformdetailid = -1;
+
+  QTextDocument *document = _query->document();
+  _highlighter = new MetaSQLHighlighter(document);
+  document->setDefaultFont(QFont("Courier"));
 }
 
 enum SetResponse ediFormDetail::set( const ParameterList & pParams )

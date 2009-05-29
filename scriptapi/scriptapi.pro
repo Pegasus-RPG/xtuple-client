@@ -17,6 +17,7 @@ OBJECTS_DIR = tmp
 UI_DIR      = tmp
 
 HEADERS +=  setupscriptapi.h                    \
+            metasqlhighlighterproto.h           \
             qactionproto.h                      \
             qdomattrproto.h                     \
             qdomcdatasectionproto.h             \
@@ -43,6 +44,8 @@ HEADERS +=  setupscriptapi.h                    \
             qsqlrecordproto.h                   \
             qstackedwidgetproto.h               \
             qtabwidgetproto.h                   \
+            qtextdocumentproto.h                \
+            qtexteditproto.h                    \
             qurlproto.h                         \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
@@ -77,6 +80,7 @@ HEADERS +=  setupscriptapi.h                    \
             xdateeditsetup.h			\
 
 SOURCES +=  setupscriptapi.cpp                  \
+            metasqlhighlighterproto.cpp         \
             qactionproto.cpp                    \
             qdomattrproto.cpp                   \
             qdomcdatasectionproto.cpp           \
@@ -103,6 +107,8 @@ SOURCES +=  setupscriptapi.cpp                  \
             qsqlrecordproto.cpp                 \
             qstackedwidgetproto.cpp             \
             qtabwidgetproto.cpp                 \
+            qtextdocumentproto.cpp              \
+            qtexteditproto.cpp                  \
             qurlproto.cpp                       \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \
