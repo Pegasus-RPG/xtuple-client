@@ -24,6 +24,7 @@ public:
     ~dspBankrecHistory();
 
 public slots:
+    virtual bool setParams(ParameterList &);
     virtual void sPrint();
     virtual void sBankaccntChanged();
     virtual void sFillList();
