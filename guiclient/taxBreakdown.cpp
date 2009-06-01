@@ -141,41 +141,47 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 
   QString sql =
 	"<? if exists(\"invchead_id\") ?>"
-	"  SELECT invchead_invcnumber AS number,"
-	"         invchead_taxauth_id AS taxauth_id,"
+	/*"  SELECT invchead_invcnumber AS number,"
+	"         invchead_taxzone_id AS taxzone_id,"
 	"         invchead_curr_id AS curr_id,"
 	"         invchead_tax_curr_id AS tax_curr_id,"
 	"         invchead_invcdate AS date,"
 	"         SUM(ROUND(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price) / "
 	"                  (CASE WHEN(item_id IS NULL) THEN 1 "
 	"			ELSE invcitem_price_invuomratio END)), 2)) AS line,"
-	"         SUM(invcitem_tax_ratea) AS linea,"
-	"         SUM(invcitem_tax_rateb) AS lineb,"
-	"         SUM(invcitem_tax_ratec) AS linec,"
+	"         SUM(invcitemtax.taxhist_tax) AS total_tax,"
 	"         invchead_freight AS freight,"
-	"         invchead_freighttax_id AS freightTax,"
-	"         invchead_freighttax_pcta AS freightPcta,"
-	"         invchead_freighttax_pctb AS freightPctb,"
-	"         invchead_freighttax_pctc AS freightPctc,"
-	"         invchead_freighttax_ratea AS freighta,"
-	"         invchead_freighttax_rateb AS freightb,"
-	"         invchead_freighttax_ratec AS freightc,"
-	"         invchead_adjtax_id AS adjTax,"
-	"         invchead_adjtax_pcta AS adjPcta,"
-	"         invchead_adjtax_pctb AS adjPctb,"
-	"         invchead_adjtax_pctc AS adjPctc,"
-	"         invchead_adjtax_ratea AS adja,"
-	"         invchead_adjtax_rateb AS adjb,"
-	"         invchead_adjtax_ratec AS adjc"
+	"         invchead_freighttaxtype_id AS freightTax,"
+	"         SUM(a.taxhist_tax) AS freighttaxamt,"
+	"         invchead_adjtaxtype_id AS adjTax,"
+	"         SUM(b.taxhist_tax) AS adjtaxamt "
 	"  FROM invcitem LEFT OUTER JOIN"
-	"       invchead ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
-	"       item ON (invcitem_item_id=item_id)"
+	"       item ON (invcitem_item_id=item_id) LEFT OUTER JOIN invcitemtax ON (taxhist_parent_id = invcitem_id)"
+	"       LEFT OUTER JOIN invchead ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN invcheadtax a ON (a.taxhist_parent_id = invchead_id AND a.taxhist_taxtype_id = getfreighttaxtypeid()) "
+	"       LEFT OUTER JOIN invcheadtax b ON (b.taxhist_parent_id = invchead_id AND b.taxhist_taxtype_id = getadjustmenttaxtypeid()) "  
 	"  WHERE (invcitem_invchead_id=<? value(\"invchead_id\") ?>)"
-	"  GROUP BY number, taxauth_id, curr_id, tax_curr_id,"
-	"         date, freight, freightTax,"
-	"         freightPcta, freightPctb, freightPctc,"
-	"         freighta, freightb, freightc,"
-	"         adjTax, adjPcta, adjPctb, adjPctc, adja, adjb, adjc;"
+	"  GROUP BY number, taxzone_id, curr_id, tax_curr_id,"
+	"         date, freight, freightTax, adjTax;"*/
+
+	"SELECT head.*, linetax.*, freighttax.*, adjtax.* "
+    "FROM (SELECT invchead_invcnumber AS number, invchead_taxzone_id AS taxzone_id, "
+	"         invchead_curr_id AS curr_id, invchead_tax_curr_id AS tax_curr_id, invchead_invcdate AS date, "
+	"      SUM(ROUND(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price) / "
+    "     (CASE WHEN(item_id IS NULL) THEN 1 ELSE invcitem_price_invuomratio END)), 2)) AS line, "
+    "     invchead_freight AS freight, "
+    "      invchead_freighttaxtype_id AS freightTax, invchead_adjtaxtype_id AS adjTax "
+    "      FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
+	"      LEFT OUTER JOIN invchead ON (invcitem_invchead_id=invchead_id) "
+    "	  WHERE (invcitem_invchead_id=<? value(\"invchead_id\") ?>) "
+    "	  GROUP BY number, taxzone_id, curr_id, tax_curr_id, date, freight, freightTax, adjTax) head, "
+	"     (SELECT SUM(invcitemtax.taxhist_tax) AS total_tax FROM invcitemtax LEFT OUTER JOIN invcitem ON "
+	"      (taxhist_parent_id = invcitem_id) WHERE (invcitem_invchead_id=<? value(\"invchead_id\") ?>)) linetax,"
+    "    (SELECT  SUM(taxhist_tax) AS freighttaxamt FROM invchead LEFT OUTER JOIN invcheadtax  "
+	"    ON (taxhist_parent_id = invchead_id AND taxhist_taxtype_id = getfreighttaxtypeid()) "
+    "    WHERE invchead_id=<? value(\"invchead_id\") ?>) freighttax, "
+    "   (SELECT  SUM(taxhist_tax) AS adjtaxamt FROM invchead LEFT OUTER JOIN invcheadtax ON "
+	"   (taxhist_parent_id = invchead_id AND taxhist_taxtype_id = getadjustmenttaxtypeid()) "
+    "    WHERE invchead_id=<? value(\"invchead_id\") ?>) adjtax;"
 	"<? elseif exists(\"cmhead_id\") ?>"
 	"  SELECT cmhead_number AS number,"
 	"         cmhead_taxauth_id AS taxauth_id,"
@@ -214,43 +220,56 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"         freighta, freightb, freightc,"
 	"         adjTax, adjPcta, adjPctb, adjPctc, adja, adjb, adjc;"
 	"<? elseif exists(\"cobmisc_id\") ?>"
-	"  SELECT cohead_number AS number,"
-	"         cobmisc_taxauth_id AS taxauth_id,"
+	" SELECT head.*, linetax.*, frighttax.*, adjtax.*  " 
+    " FROM (SELECT cohead_number AS number, cobmisc_taxzone_id AS taxzone_id, "
+	"       cobmisc_curr_id AS curr_id, cobmisc_tax_curr_id AS tax_curr_id, "
+    "       cobmisc_invcdate AS date, SUM(ROUND((cobill_qty * coitem_price) / "
+    "       (CASE WHEN(item_id IS NULL) THEN 1 ELSE coitem_price_invuomratio END), 2)) AS line, "
+    "       cobmisc_freight AS freight, cobmisc_freighttaxtype_id AS freightTax, "
+    "       cobmisc_adjtaxtype_id AS adjTax	"         
+    "      FROM coitem JOIN cobill ON (cobill_coitem_id=coitem_id) "
+    "	        JOIN cobmisc ON (cobill_cobmisc_id=cobmisc_id) "
+    "	        JOIN cohead  ON (coitem_cohead_id=cohead_id) LEFT OUTER JOIN "
+    "	       itemsite ON (coitem_itemsite_id=itemsite_id) LEFT OUTER JOIN "
+    "	       item ON (itemsite_item_id=item_id) "
+    "	   WHERE (cobill_cobmisc_id=<? value(\"cobmisc_id\") ?>) "
+    "	  GROUP BY number, cobmisc_taxzone_id, curr_id, tax_curr_id, "
+    "	         date, freight, freightTax,adjTax) head, "
+    "     (SELECT SUM(cobilltax.taxhist_tax) AS total_tax FROM cobilltax LEFT OUTER JOIN "
+	"       cobill ON (cobill_id=taxhist_parent_id) "
+    "      WHERE (cobill_cobmisc_id=<? value(\"cobmisc_id\") ?>)) linetax, "
+    "     (SELECT SUM(taxhist_tax) AS freighttaxamt FROM cobmisctax LEFT OUTER JOIN "
+	"       cobmisc ON (taxhist_parent_id = cobmisc_id AND taxhist_taxtype_id = getfreighttaxtypeid()) "
+    "      WHERE (cobmisc_id=<? value(\"cobmisc_id\") ?>)) frighttax, "
+    "     ( SELECT  SUM(taxhist_tax) AS adjtaxamt FROM cobmisctax LEFT OUTER JOIN "
+	"        cobmisc ON (taxhist_parent_id = cobmisc_id AND taxhist_taxtype_id = getadjustmenttaxtypeid()) "
+    "        WHERE (cobmisc_id=<? value(\"cobmisc_id\") ?>)) adjtax;"
+
+	/*"  SELECT cohead_number AS number,"
+	"         cobmisc_taxzone_id AS taxzone_id,"
 	"         cobmisc_curr_id AS curr_id,"
 	"         cobmisc_tax_curr_id AS tax_curr_id,"
 	"         cobmisc_invcdate AS date,"
 	"         SUM(ROUND((cobill_qty * coitem_price) / "
 	"                  (CASE WHEN(item_id IS NULL) THEN 1 "
 	"			ELSE coitem_price_invuomratio END), 2)) AS line,"
-	"         SUM(cobill_tax_ratea) AS linea,"
-	"         SUM(cobill_tax_rateb) AS lineb,"
-	"         SUM(cobill_tax_ratec) AS linec,"
+	"         SUM(cobilltax.taxhist_tax) AS total_tax,"
 	"         cobmisc_freight AS freight,"
-	"         cobmisc_freighttax_id AS freightTax,"
-	"         cobmisc_freighttax_pcta AS freightPcta,"
-	"         cobmisc_freighttax_pctb AS freightPctb,"
-	"         cobmisc_freighttax_pctc AS freightPctc,"
-	"         cobmisc_freighttax_ratea AS freighta,"
-	"         cobmisc_freighttax_rateb AS freightb,"
-	"         cobmisc_freighttax_ratec AS freightc,"
-	"         cobmisc_adjtax_id AS adjTax,"
-	"         cobmisc_adjtax_pcta AS adjPcta,"
-	"         cobmisc_adjtax_pctb AS adjPctb,"
-	"         cobmisc_adjtax_pctc AS adjPctc,"
-	"         cobmisc_adjtax_ratea AS adja,"
-	"         cobmisc_adjtax_rateb AS adjb,"
-	"         cobmisc_adjtax_ratec AS adjc"
-	"  FROM coitem JOIN cobill ON (cobill_coitem_id=coitem_id) JOIN"
-	"       cobmisc ON (cobill_cobmisc_id=cobmisc_id) JOIN"
-	"       cohead  ON (coitem_cohead_id=cohead_id) LEFT OUTER JOIN"
+	"         cobmisc_freighttaxtype_id AS freightTax,"
+	"         SUM(a.taxhist_tax) AS freighttaxamt,"
+	"         cobmisc_adjtaxtype_id AS adjTax,"
+	"         SUM(b.taxhist_tax) AS adjtaxamt "
+	"  FROM coitem JOIN cobill ON (cobill_coitem_id=coitem_id) "
+	"        LEFT OUTER JOIN cobilltax ON (taxhist_parent_id = cobill_id) "
+	"       JOIN cobmisc ON (cobill_cobmisc_id=cobmisc_id) "
+	"      LEFT OUTER JOIN cobmisctax a ON (a.taxhist_parent_id = cobmisc_id AND a.taxhist_taxtype_id = getfreighttaxtypeid()) "
+	"       LEFT OUTER JOIN cobmisctax b ON (b.taxhist_parent_id = cobmisc_id AND b.taxhist_taxtype_id = getadjustmenttaxtypeid()) "
+	"       JOIN cohead  ON (coitem_cohead_id=cohead_id) LEFT OUTER JOIN"
 	"       itemsite ON (coitem_itemsite_id=itemsite_id) LEFT OUTER JOIN"
-	"       item ON (itemsite_item_id=item_id)"
+	"       item ON (itemsite_item_id=item_id) "
 	"  WHERE (cobill_cobmisc_id=<? value(\"cobmisc_id\") ?>)"
-	"  GROUP BY number, cobmisc_taxauth_id, curr_id, tax_curr_id,"
-	"         date, freight, freightTax,"
-	"         freightPcta, freightPctb, freightPctc,"
-	"         freighta, freightb, freightc,"
-	"         adjTax, adjPcta, adjPctb, adjPctc, adja, adjb, adjc;"
+	"  GROUP BY number, cobmisc_taxzone_id, curr_id, tax_curr_id,"
+	"         date, freight, freightTax,adjTax;"*/
 	"<? elseif exists(\"cohead_id\") ?>"
 	"  SELECT cohead_number AS number,"
 	"         cohead_taxzone_id AS taxzone_id,"
@@ -351,7 +370,6 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"  GROUP BY number, rahead_taxauth_id, curr_id, tax_curr_id,"
 	"         date, freight, freightTax,"
 	"         freightPcta, freightPctb, freightPctc;"
-
 	"<? elseif exists(\"tohead_id\") ?>"
 	"  SELECT tohead_number AS number,"
 	"         tohead_taxauth_id AS taxauth_id,"
@@ -404,17 +422,19 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
     _pretax->setLocalValue(_line->localValue() + _freight->localValue());
 
     
-	if(_ordertype == "S"  || _ordertype == "Q")
+	if(_ordertype == "S"  || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B")
       _taxCache.setLine(q.value("total_tax").toDouble(), 0.0, 0.0);
     else
 	  _taxCache.setLine(q.value("linea").toDouble(),
 		      q.value("lineb").toDouble(),
 		      q.value("linec").toDouble());
 
+    if(_ordertype == "S"  || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B")
+       _taxCache.setFreightType(q.value("freightTax").toInt());
+	else
+       _taxCache.setFreightId(q.value("freightTax").toInt()); 
    
-    _taxCache.setFreightId(q.value("freightTax").toInt());
-   
-   if(_ordertype != "S"  && _ordertype != "Q") 
+   if(_ordertype != "S"  && _ordertype != "Q" &&  _ordertype != "I" && _ordertype != "B") 
    {
        _taxCache.setFreightPct(q.value("freightPcta").toDouble(),
 			    q.value("freightPctb").toDouble(),
@@ -428,13 +448,25 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	 _taxCache.setFreight(q.value("freighttaxamt").toDouble(),
 			 0,
 			 0);
-    _taxCache.setAdjId(q.value("adjTax").toInt());
-    _taxCache.setAdjPct(q.value("adjPcta").toDouble(),
+
+     if(_ordertype == "S"  || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B")
+         _taxCache.setAdjType(q.value("adjTax").toInt());
+	 else
+		 _taxCache.setAdjId(q.value("adjTax").toInt());
+
+	if(_ordertype != "I" && _ordertype != "B") 
+	 {
+       _taxCache.setAdjPct(q.value("adjPcta").toDouble(),
 			q.value("adjPctb").toDouble(),
 			q.value("adjPctc").toDouble());
-    _taxCache.setAdj(q.value("adja").toDouble(),
+       _taxCache.setAdj(q.value("adja").toDouble(),
 		     q.value("adjb").toDouble(),
 		     q.value("adjc").toDouble());
+	 }
+	 else
+         _taxCache.setAdj(q.value("adjtaxamt").toDouble(),
+		     0,
+		     0);
 
     SetResponse calc = sRecalc();
     if (calc != NoError)
@@ -476,29 +508,36 @@ void taxBreakdown::sSave()
   params.append("freightPctB",	_taxCache.freightPct(1));
   params.append("freightPctC",	_taxCache.freightPct(2));
 
-  if (_taxCache.adjId() > 0)
-    params.append("adjTax",	_taxCache.adjId());
-  if (_taxCache.freightId() > 0)
-    params.append("freightTax", _taxCache.freightId());
+  if (_ordertype == "I" || _ordertype == "B")
+  {
+    if (_taxCache.adjType() > 0)
+      params.append("adjTax",	_taxCache.adjType());
+  }
+  else
+  {
+    if (_taxCache.adjId() > 0)
+     params.append("adjTax",	_taxCache.adjId());
+  }
+
+
+  if (_ordertype == "I" || _ordertype == "B")
+  {
+    if (_taxCache.freightType() > 0)
+      params.append("freightTax", _taxCache.freightType());
+  }
+  else
+  {
+    if (_taxCache.freightId() > 0)
+      params.append("freightTax", _taxCache.freightId());
+  }
 
   QString sql =
 	"<? if exists(\"invchead_id\") ?>"
 	"  UPDATE invchead SET "
-	"         invchead_adjtax_id=<? value(\"adjTax\") ?>,"
-	"         invchead_adjtax_pcta=<? value(\"adjPctA\") ?>,"
-	"         invchead_adjtax_pctb=<? value(\"adjPctB\") ?>,"
-	"         invchead_adjtax_pctc=<? value(\"adjPctC\") ?>,"
-	"         invchead_adjtax_ratea=<? value(\"adja\") ?>,"
-	"         invchead_adjtax_rateb=<? value(\"adjb\") ?>,"
-	"         invchead_adjtax_ratec=<? value(\"adjc\") ?>,"
-	"         invchead_freighttax_id=<? value(\"freightTax\") ?>,"
-	"         invchead_freighttax_pcta=<? value(\"freightPctA\") ?>,"
-	"         invchead_freighttax_pctb=<? value(\"freightPctB\") ?>,"
-	"         invchead_freighttax_pctc=<? value(\"freightPctC\") ?>,"
-	"         invchead_freighttax_ratea=<? value(\"freighta\") ?>,"
-	"         invchead_freighttax_rateb=<? value(\"freightb\") ?>,"
-	"         invchead_freighttax_ratec=<? value(\"freightc\") ?>"
-	"  WHERE (invchead_id=<? value(\"invchead_id\") ?>)"
+	"         invchead_adjtaxtype_id=<? value(\"adjTax\") ?> "
+	"  WHERE (invchead_id=<? value(\"invchead_id\") ?>) AND "
+	"        ((SELECT COUNT(*) FROM invcheadtax WHERE taxhist_parent_id=<? value(\"invchead_id\") ?> "
+	"                AND taxhist_taxtype_id = getadjustmenttaxtypeid()) > 0);"
 	"<? elseif exists(\"cmhead_id\") ?>"
 	"  UPDATE cmhead SET "
 	"         cmhead_adjtax_id=<? value(\"adjTax\") ?>,"
@@ -518,21 +557,10 @@ void taxBreakdown::sSave()
 	"  WHERE (cmhead_id=<? value(\"cmhead_id\") ?>)"
 	"<? elseif exists(\"cobmisc_id\") ?>"
 	"  UPDATE cobmisc SET "
-	"         cobmisc_adjtax_id=<? value(\"adjTax\") ?>,"
-	"         cobmisc_adjtax_pcta=<? value(\"adjPctA\") ?>,"
-	"         cobmisc_adjtax_pctb=<? value(\"adjPctB\") ?>,"
-	"         cobmisc_adjtax_pctc=<? value(\"adjPctC\") ?>,"
-	"         cobmisc_adjtax_ratea=<? value(\"adja\") ?>,"
-	"         cobmisc_adjtax_rateb=<? value(\"adjb\") ?>,"
-	"         cobmisc_adjtax_ratec=<? value(\"adjc\") ?>,"
-	"         cobmisc_freighttax_id=<? value(\"freightTax\") ?>,"
-	"         cobmisc_freighttax_pcta=<? value(\"freightPctA\") ?>,"
-	"         cobmisc_freighttax_pctb=<? value(\"freightPctB\") ?>,"
-	"         cobmisc_freighttax_pctc=<? value(\"freightPctC\") ?>,"
-	"         cobmisc_freighttax_ratea=<? value(\"freighta\") ?>,"
-	"         cobmisc_freighttax_rateb=<? value(\"freightb\") ?>,"
-	"         cobmisc_freighttax_ratec=<? value(\"freightc\") ?>"
-	"  WHERE (cobmisc_id=<? value(\"cobmisc_id\") ?>)"
+	"         cobmisc_adjtaxtype_id=<? value(\"adjTax\") ?> "
+	"  WHERE (cobmisc_id=<? value(\"cobmisc_id\") ?>) AND "
+	"        ((SELECT COUNT(*) FROM cobmisctax WHERE taxhist_parent_id=<? value(\"cobmisc_id\") ?> "
+	"                AND taxhist_taxtype_id = getadjustmenttaxtypeid()) > 0);"
 	"<? elseif exists(\"tohead_id\") ?>"
 	"  UPDATE tohead SET "
 	"         tohead_freighttax_id=<? value(\"freightTax\") ?>,"
@@ -560,7 +588,38 @@ void taxBreakdown::sAdjTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("curr_id", _taxcurrency->id());
+
+   params.append("curr_id", _taxcurrency->id());
+   params.append("date",    _adjTax->effective());
+// s/o and quote don't have a place to store changes
+  if (cView == _mode)
+    params.append("readOnly");
+
+ if (_ordertype == "I" || _ordertype == "B")
+ {
+   if (_taxCache.adjType() > 0)
+      params.append("taxtype_id",  _taxCache.adjType());
+   else
+   {
+     q.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
+	 if(q.first())
+		 params.append("taxtype_id", q.value("taxtype").toInt());  
+   }
+   
+   params.append("order_type", _ordertype);
+   params.append("order_id", _orderid);
+   params.append("display_type", "A");
+   params.append("adjustment");
+   //params.append("readOnly");
+   if (newdlg.set(params) == NoError)  
+   {
+	   newdlg.exec();
+	   _taxCache.setAdjType(newdlg.taxtype());
+	   sPopulateAdj();
+   }
+ }
+ else
+ {
   params.append("tax_id",  _taxCache.adjId());
   params.append("valueA",  _taxCache.adj(0));
   params.append("valueB",  _taxCache.adj(1));
@@ -568,12 +627,7 @@ void taxBreakdown::sAdjTaxDetail()
   params.append("pctA",    _taxCache.adjPct(0));
   params.append("pctB",    _taxCache.adjPct(1));
   params.append("pctC",    _taxCache.adjPct(2));
-  params.append("date",    _adjTax->effective());
-
-  // s/o and quote don't have a place to store changes
-  if (_ordertype == "S" || _ordertype == "Q" || cView == _mode)
-    params.append("readOnly");
-
+  
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
     _taxCache.setAdjId(newdlg.tax());
@@ -581,6 +635,7 @@ void taxBreakdown::sAdjTaxDetail()
     _taxCache.setAdjPct(newdlg.pctA(), newdlg.pctB(), newdlg.pctC());
     sRecalc();
   }
+ }
 }
 
 void taxBreakdown::sFreightTaxDetail()
@@ -588,24 +643,53 @@ void taxBreakdown::sFreightTaxDetail()
   taxDetail newdlg(this, "", true);
   ParameterList params;
 
-  if (_ordertype == "S" || _ordertype == "Q")
-  {
-   params.append("taxzone_id",  _taxzone->id());
-   params.append("taxtype_id",  _taxCache.freightId());
    params.append("curr_id", _taxcurrency->id());
    params.append("date",    _freight->effective());
    params.append("subtotal",CurrDisplay::convert(_freight->id(),
 						_taxcurrency->id(),
 						_freight->localValue(),
 						_freight->effective()));
+
+  if (_ordertype == "S" || _ordertype == "Q")
+  {
+   params.append("taxzone_id",  _taxzone->id());
+
+   if (_taxCache.freightType() > 0)
+       params.append("taxtype_id",  _taxCache.freightType());
+   else
+   {
+     q.exec("SELECT getfreighttaxtypeid() as taxtype;");
+	 if(q.first())
+		params.append("taxtype_id", q.value("taxtype").toInt());  
+   }
+   params.append("taxtype_id",  _taxCache.freightType());
+  
+   params.append("date",    _freight->effective());
+  
    params.append("readOnly");
    if (newdlg.set(params) == NoError) 
 	   newdlg.exec();
      
  }
+ else if (_ordertype == "I" || _ordertype == "B")
+ {
+   if (_taxCache.freightType() > 0)
+       params.append("taxtype_id",  _taxCache.freightType());
+   else
+   {
+     q.exec("SELECT getfreighttaxtypeid() as taxtype;");
+	 if(q.first())
+		params.append("taxtype_id", q.value("taxtype").toInt());  
+   }
+   params.append("order_type", _ordertype);
+   params.append("order_id", _orderid);
+   params.append("display_type", "F");
+   params.append("readOnly");
+   if (newdlg.set(params) == NoError) 
+	   newdlg.exec();  
+ }
  else 
-{	 
-  params.append("curr_id", _taxcurrency->id());
+ {	 
   params.append("tax_id",  _taxCache.freightId());
   params.append("valueA",  _taxCache.freight(0));
   params.append("valueB",  _taxCache.freight(1));
@@ -613,16 +697,9 @@ void taxBreakdown::sFreightTaxDetail()
   params.append("pctA",    _taxCache.freightPct(0));
   params.append("pctB",    _taxCache.freightPct(1));
   params.append("pctC",    _taxCache.freightPct(2));
-  params.append("date",    _freight->effective());
-  params.append("subtotal",CurrDisplay::convert(_freight->id(),
-						_taxcurrency->id(),
-						_freight->localValue(),
-						_freight->effective()));
-
-
-
+ 
   // s/o and quote don't have a place to store changes
-  if (_ordertype == "S" || _ordertype == "Q" || cView == _mode)
+  if (cView == _mode)
     params.append("readOnly");
 
   if (newdlg.set(params) == NoError && newdlg.exec())
@@ -639,21 +716,21 @@ void taxBreakdown::sLineTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
+
+  if (_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B")
+  {
+    params.append("order_type", _ordertype);
+    params.append("order_id", _orderid);
+    params.append("display_type", "L");
+  }
+  else
+  {
+    params.append("valueA",  _taxCache.line(0));
+    params.append("valueB",  _taxCache.line(1));
+    params.append("valueC",  _taxCache.line(2));
+  } 
+
   params.append("curr_id", _taxcurrency->id());
-
-
- if (_ordertype == "S" || _ordertype == "Q")
- {
-   params.append("order_type", _ordertype);
-   params.append("order_id", _orderid);
-   params.append("display_type", "L");
- }
- else
- {
-  params.append("valueA",  _taxCache.line(0));
-  params.append("valueB",  _taxCache.line(1));
-  params.append("valueC",  _taxCache.line(2));
- } 
   params.append("date",    _line->effective());
   params.append("subtotal",CurrDisplay::convert(_line->id(),
 						_taxcurrency->id(),
@@ -669,14 +746,12 @@ void taxBreakdown::sTotalTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
-
-
-  params.append("curr_id", _taxcurrency->id());
- if (_ordertype == "S" || _ordertype == "Q")
+ 
+ if (_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B")
  {
    params.append("order_type", _ordertype);
    params.append("order_id", _orderid);
-    params.append("display_type", "T");
+   params.append("display_type", "T");
  }
  else
  {
@@ -684,6 +759,8 @@ void taxBreakdown::sTotalTaxDetail()
   params.append("valueB",  _taxCache.total(1));
   params.append("valueC",  _taxCache.total(2));
  }
+
+  params.append("curr_id", _taxcurrency->id());
   params.append("date",    _total->effective());
   params.append("subtotal",CurrDisplay::convert(_pretax->id(),
 						_taxcurrency->id(),
@@ -724,4 +801,39 @@ SetResponse taxBreakdown::sRecalc()
 					     _totalTax->localValue(),
 					     _totalTax->effective())); 
   return NoError;
+}
+
+void taxBreakdown::sPopulateAdj()
+{
+
+  ParameterList params;
+  if (_ordertype == "I")
+    params.append("invchead_id", _orderid);
+  else if (_ordertype == "B")
+    params.append("cobmisc_id", _orderid);
+  else if (_ordertype == "CM")
+    params.append("cmhead_id", _orderid);
+  else if (_ordertype == "TO")
+    params.append("tohead_id", _orderid);
+
+  QString sql =
+	  "<? if exists(\"invchead_id\") ?>"
+    	" SELECT  SUM(taxhist_tax) AS adjtaxamt "
+        " FROM invchead LEFT OUTER JOIN invcheadtax ON (taxhist_parent_id = invchead_id AND "
+		" taxhist_taxtype_id = getadjustmenttaxtypeid()) "
+        " WHERE invchead_id=<? value(\"invchead_id\") ?>;"
+      "<? elseif exists(\"cobmisc_id\") ?>"
+       " SELECT  SUM(taxhist_tax) AS adjtaxamt "
+        " FROM cobmisc LEFT OUTER JOIN cobmisctax ON (taxhist_parent_id = cobmisc_id AND "
+		" taxhist_taxtype_id = getadjustmenttaxtypeid()) "
+        " WHERE cobmisc_id=<? value(\"cobmisc_id\") ?>;"
+      "<? endif ?>";
+
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    _taxCache.setAdj(q.value("adjtaxamt").toDouble(), 0, 0); 
+	sRecalc();
+  }
 }

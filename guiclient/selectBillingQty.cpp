@@ -8,6 +8,13 @@
  * to be bound by its terms.
  */
 
+
+
+/* 
+changes made-    _taxauthid  changed to _taxzoneid
+*/
+
+
 #include "selectBillingQty.h"
 
 #include <QMessageBox>
@@ -23,13 +30,11 @@ selectBillingQty::selectBillingQty(QWidget* parent, const char* name, bool modal
 
   connect(_item,	SIGNAL(newId(int)),	this, SLOT(sHandleItem()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sLookupTaxCode()));
   connect(_toBill, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleBillingQty()));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
-  _taxCode->setEnabled(_privileges->check("OverrideTax"));
-
-  _taxauthid = -1;
+ 
+  _taxzoneid = -1;
 
   _toBill->setValidator(omfgThis->qtyVal());
   _ordered->setPrecision(omfgThis->qtyVal());
@@ -60,19 +65,19 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 
     _item->setReadOnly(TRUE);
 
-    // get taxauth_id before item->setId()
-    XSqlQuery taxauth;
-    taxauth.prepare("SELECT cobmisc_taxauth_id "
+    // get taxzone_id before item->setId()
+    XSqlQuery taxzone;									
+    taxzone.prepare("SELECT cobmisc_taxzone_id "		
 		    "FROM coitem, cobmisc "
 		    "WHERE ((coitem_cohead_id=cobmisc_cohead_id)"
 		    "  AND  (coitem_id=:soitem_id));");
-    taxauth.bindValue(":soitem_id", _soitemid);
-    taxauth.exec();
-    if (taxauth.first())
-      _taxauthid=taxauth.value("cobmisc_taxauth_id").toInt();
-    else if (taxauth.lastError().type() != QSqlError::NoError)
+    taxzone.bindValue(":soitem_id", _soitemid);
+    taxzone.exec();
+    if (taxzone.first())
+      _taxzoneid=taxzone.value("cobmisc_taxzone_id").toInt(); 
+    else if (taxzone.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, taxauth.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, taxzone.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
 
@@ -83,7 +88,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
                     "       coitem_qtyord,"
                     "       coitem_qtyshipped,"
                     "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance,"
-                    "       COALESCE(coitem_tax_id, -1) AS tax_id "
+                    "       COALESCE(coitem_taxtype_id, -1) AS taxtype_id "
                     "FROM coitem, itemsite, cohead, cust, uom "
                     "WHERE ( (coitem_itemsite_id=itemsite_id)"
                     " AND (coitem_cohead_id=cohead_id)"
@@ -104,7 +109,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _ordered->setDouble(soitem.value("coitem_qtyord").toDouble());
       _shipped->setDouble(soitem.value("coitem_qtyshipped").toDouble());
       _balance->setDouble(soitem.value("qtybalance").toDouble());
-      _taxCode->setId(soitem.value("tax_id").toInt());
+      _taxType->setId(soitem.value("taxtype_id").toInt());               
 
       _cachedPartialShip = soitem.value("cust_partialship").toBool();
       _closeLine->setChecked(!_cachedPartialShip);
@@ -136,11 +141,11 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 
       XSqlQuery cobill;
       cobill.prepare( "SELECT cobill_qty, cobill_toclose,"
-		      "       cobill_taxtype_id, cobill_tax_id "
+		              "       cobill_taxtype_id " 
                       "FROM cobill, cobmisc "
-                      "WHERE ( (cobill_cobmisc_id=cobmisc_id) "
-		      "  AND   (NOT cobmisc_posted)"
-                      "  AND   (cobill_coitem_id=:soitem_id) );" );
+                      "WHERE ((cobill_cobmisc_id=cobmisc_id) "
+		              "      AND   (NOT cobmisc_posted)"
+                      "      AND   (cobill_coitem_id=:soitem_id));" );
       cobill.bindValue(":soitem_id", _soitemid);
       cobill.exec();
       if (cobill.first())
@@ -152,29 +157,28 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 
 	// overwrite automatically-found values if user previously set them
 	_taxType->setId(cobill.value("cobill_taxtype_id").toInt());
-	_taxCode->setId(cobill.value("cobill_tax_id").toInt());
-      }
-      else if (cobill.lastError().type() != QSqlError::NoError)
-      {
+   }
+   else if (cobill.lastError().type() != QSqlError::NoError)
+   {
 	systemError(this, cobill.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
-      }
-      else
-      {
+   }
+   else
+   {
 	_toBill->setDouble(uninvoiced);
 
-        if (soitem.value("cust_partialship").toBool())
+   if (soitem.value("cust_partialship").toBool())
 	  _closeLine->setChecked((uninvoiced == _cachedBalanceDue));
-      }
+   }
 
       _toBill->setSelection(0, _toBill->text().length());
-    }
-    else if (soitem.lastError().type() != QSqlError::NoError)
-    {
+  }
+  else if (soitem.lastError().type() != QSqlError::NoError)
+  {
       systemError(this, soitem.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
-    }
   }
+ }
 
   return NoError;
 }
@@ -188,16 +192,18 @@ void selectBillingQty::sHandleBillingQty()
 void selectBillingQty::sSave()
 {
   XSqlQuery select;
+
   select.prepare("SELECT selectForBilling(:soitem_id, :qty, :close, "
-		 "                        :taxtypeid, :taxid) AS result;");
+		         "                        :taxtypeid ) AS result;");
+
   select.bindValue(":soitem_id", _soitemid);
   select.bindValue(":qty",	 _toBill->toDouble());
   select.bindValue(":close",	 QVariant(_closeLine->isChecked()));
   if(_taxType->isValid())
     select.bindValue(":taxtypeid", _taxType->id());
-  if(_taxCode->isValid())
-    select.bindValue(":taxid",   _taxCode->id());
+ 
   select.exec();
+  
   if(select.first())
   {
     int result = select.value("result").toInt();
@@ -219,39 +225,12 @@ void selectBillingQty::sSave()
   accept();
 }
 
-void selectBillingQty::sLookupTaxCode()
-{
-  XSqlQuery taxq;
-  taxq.prepare("SELECT getTaxSelection(:auth, :type) AS result;");
-  taxq.bindValue(":auth",    _taxauthid);
-  taxq.bindValue(":type",    _taxType->id());
-  taxq.exec();
-  if (taxq.first())
-  {
-    int result = taxq.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("getTaxSelection", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-    _taxCode->setId(result);
-  }
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else
-    _taxCode->setId(-1);
-}
-
 void selectBillingQty::sHandleItem()
 {
   XSqlQuery itemq;
-  itemq.prepare("SELECT getItemTaxType(:item_id, :taxauth) AS result;");
+  itemq.prepare("SELECT getItemTaxType(:item_id, :taxzone) AS result;");
   itemq.bindValue(":item_id", _item->id());
-  itemq.bindValue(":taxauth", _taxauthid);
+  itemq.bindValue(":taxzone", _taxzoneid);    
   itemq.exec();
   if (itemq.first())
   {

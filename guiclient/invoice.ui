@@ -268,20 +268,20 @@ to be bound by its terms.</comment>
                 </layout>
                </item>
                <item row="2" column="6" >
-                <widget class="QLabel" name="_taxauthLit" >
+                <widget class="QLabel" name="_taxzoneLit" >
                  <property name="text" >
-                  <string>Tax Authority:</string>
+                  <string>Tax Zone:</string>
                  </property>
                  <property name="alignment" >
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                  <property name="buddy" >
-                  <cstring>_taxauth</cstring>
+                  <cstring>_taxzone</cstring>
                  </property>
                 </widget>
                </item>
                <item row="2" column="7" >
-                <widget class="XComboBox" name="_taxauth" >
+                <widget class="XComboBox" name="_taxzone" >
                  <property name="sizePolicy" >
                   <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                    <horstretch>0</horstretch>
@@ -295,7 +295,7 @@ to be bound by its terms.</comment>
                   <string>None</string>
                  </property>
                  <property name="type" >
-                  <enum>XComboBox::TaxAuths</enum>
+                  <enum>XComboBox::TaxZones</enum>
                  </property>
                 </widget>
                </item>
@@ -1466,7 +1466,7 @@ to be bound by its terms.</comment>
   <tabstop>_shipDate</tabstop>
   <tabstop>_salesrep</tabstop>
   <tabstop>_commission</tabstop>
-  <tabstop>_taxauth</tabstop>
+  <tabstop>_taxzone</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_billToName</tabstop>

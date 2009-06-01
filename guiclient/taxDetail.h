@@ -40,6 +40,8 @@ public slots:
     virtual void sCalculateTax();
     virtual void sCancel();
     virtual void sPopulate();
+    virtual void sNew();
+	virtual void sDelete();
 
 protected:
     double	_aCache;
@@ -55,6 +57,7 @@ protected:
 	int		_orderid;
     QString	_ordertype;
 	QString _displayType;
+	bool    _adjustment;
    
 protected slots:
     virtual void languageChange();

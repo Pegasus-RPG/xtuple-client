@@ -28,7 +28,6 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sHandleBillingQty();
     virtual void sHandleItem();
-    virtual void sLookupTaxCode();
     virtual void sSave();
 
 protected slots:
@@ -38,7 +37,7 @@ private:
     double	_cachedBalanceDue;
     bool	_cachedPartialShip;
     int		_soitemid;
-    int		_taxauthid;
+    int		_taxzoneid;  // changed from _taxauthid;
 };
 
 #endif // SELECTBILLINGQTY_H

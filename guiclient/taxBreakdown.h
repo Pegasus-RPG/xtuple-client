@@ -28,6 +28,7 @@ class taxBreakdown : public XDialog, public Ui::taxBreakdown
     virtual double	a();
     virtual double	b();
     virtual double	c();
+    
 
   public slots:
     void	     languageChange();
@@ -39,6 +40,7 @@ class taxBreakdown : public XDialog, public Ui::taxBreakdown
     virtual SetResponse	sRecalc();
     virtual void	sSave();
     virtual void	sTotalTaxDetail();
+	virtual void	sPopulateAdj();
 
   private:
     int         _mode;

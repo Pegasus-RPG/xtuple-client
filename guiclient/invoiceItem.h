@@ -35,13 +35,12 @@ public slots:
     virtual void sDeterminePrice();
     virtual void sListPrices();
     virtual void sLookupTax();
-    virtual void sLookupTaxCode();
     virtual void sPriceGroup();
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sMiscSelected(bool);
-
+	
 protected slots:
     virtual void languageChange();
 
@@ -51,16 +50,11 @@ private:
     int _custid;
     int _invcitemid;
     double _priceRatioCache;
-    double	_cachedPctA;
-    double	_cachedPctB;
-    double	_cachedPctC;
-    double	_cachedRateA;
-    double	_cachedRateB;
-    double	_cachedRateC;
-    int		_taxauthid;
-    int _invuomid;
+    int _taxzoneid;
+    int	_invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
+	bool _saved;
 };
 
 #endif // INVOICEITEM_H

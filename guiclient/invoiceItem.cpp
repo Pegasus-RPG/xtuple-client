@@ -32,8 +32,7 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_price,   SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
   connect(_save,    SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_taxLit,  SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));
-  connect(_taxcode, SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
-  connect(_taxtype, SIGNAL(newID(int)),     this, SLOT(sLookupTaxCode()));
+  connect(_taxtype, SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_miscSelected, SIGNAL(toggled(bool)), this, SLOT(sMiscSelected(bool)));
@@ -44,20 +43,13 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _billed->setValidator(omfgThis->qtyVal());
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
-  _taxcode->setEnabled(_privileges->check("OverrideTax"));
-
+  
   _mode = cNew;
   _invcheadid	= -1;
   _custid	= -1;
   _invcitemid	= -1;
   _priceRatioCache = 1.0;
-  _taxauthid	= -1;
-  _cachedPctA	= 0;
-  _cachedPctB	= 0;
-  _cachedPctC	= 0;
-  _cachedRateA	= 0;
-  _cachedRateB	= 0;
-  _cachedRateC	= 0;
+  _taxzoneid	= -1;
   _qtyinvuomratio = 1.0;
   _priceinvuomratio = 1.0;
   _invuomid = -1;
@@ -68,18 +60,19 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
     _warehouseLit->hide();
     _warehouse->hide();
   }
+  _saved = false;
   
   adjustSize();
 }
 
 invoiceItem::~invoiceItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void invoiceItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse invoiceItem::set(const ParameterList &pParams)
@@ -92,17 +85,16 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   {
     _invcheadid = param.toInt();
 
-    q.prepare("SELECT taxauth_id, "
-              "       COALESCE(taxauth_curr_id, invchead_curr_id) AS curr_id "
-              "FROM invchead, taxauth "
-              "WHERE ((invchead_taxauth_id=taxauth_id)"
-              "  AND  (invchead_id=:invchead_id));");
+    q.prepare("SELECT taxzone_id, invchead_curr_id AS curr_id "
+              "FROM invchead LEFT OUTER JOIN taxzone "
+			  "ON (invchead_taxzone_id = taxzone_id) "
+			  "WHERE ((invchead_id = :invchead_id));");
     q.bindValue(":invchead_id", _invcheadid);
     q.exec();
     if (q.first())
     {
-      _taxauthid = q.value("taxauth_id").toInt();
-      _tax->setId(q.value("curr_id").toInt());
+      _taxzoneid = q.value("taxzone_id").toInt();
+	  _tax->setId(q.value("curr_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -153,8 +145,8 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
         _lineNumber->setText(q.value("linenumber").toString());
       else if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	    return UndefinedError;
       }
 
       connect(_billed, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
@@ -181,7 +173,6 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _price->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _taxtype->setEnabled(false);
-      _taxcode->setEnabled(false);
       _save->hide();
       _close->setText(tr("&Cancel"));
 
@@ -276,10 +267,8 @@ void invoiceItem::sSave()
                "  invcitem_custprice, invcitem_price,"
                "  invcitem_price_uom_id, invcitem_price_invuomratio,"
                "  invcitem_notes, "
-	       "  invcitem_tax_id, invcitem_taxtype_id, "
-	       "  invcitem_tax_pcta, invcitem_tax_pctb, invcitem_tax_pctc, "
-	       "  invcitem_tax_ratea, invcitem_tax_rateb, invcitem_tax_ratec) "
-               "VALUES "
+			   "  invcitem_taxtype_id) "
+	           "VALUES "
                "( :invcitem_id, :invchead_id, :invcitem_linenumber,"
                "  :item_id, :warehous_id,"
                "  :invcitem_number, :invcitem_descrip, :invcitem_salescat_id,"
@@ -289,10 +278,8 @@ void invoiceItem::sSave()
                "  :invcitem_custprice, :invcitem_price,"
                "  :price_uom_id, :price_invuomratio,"
                "  :invcitem_notes, "
-	       "  :invcitem_tax_id, :invcitem_taxtype_id, "
-	       "  :invcitem_tax_pcta, :invcitem_tax_pctb, :invcitem_tax_pctc, "
-	       "  :invcitem_tax_ratea, :invcitem_tax_rateb, :invcitem_tax_ratec);");
-
+			   "  :invcitem_taxtype_id);");
+	       
     q.bindValue(":invchead_id", _invcheadid);
     q.bindValue(":invcitem_linenumber", _lineNumber->text());
   }
@@ -307,15 +294,8 @@ void invoiceItem::sSave()
                "    invcitem_custprice=:invcitem_custprice, invcitem_price=:invcitem_price,"
                "    invcitem_price_uom_id=:price_uom_id, invcitem_price_invuomratio=:price_invuomratio,"
                "    invcitem_notes=:invcitem_notes,"
-	       "    invcitem_tax_id=:invcitem_tax_id,"
-	       "    invcitem_taxtype_id=:invcitem_taxtype_id,"
-	       "    invcitem_tax_pcta=:invcitem_tax_pcta,"
-	       "    invcitem_tax_pctb=:invcitem_tax_pctb,"
-	       "    invcitem_tax_pctc=:invcitem_tax_pctc,"
-	       "    invcitem_tax_ratea=:invcitem_tax_ratea,"
-	       "    invcitem_tax_rateb=:invcitem_tax_rateb,"
-	       "    invcitem_tax_ratec=:invcitem_tax_ratec "
-               "WHERE (invcitem_id=:invcitem_id);" );
+			   "    invcitem_taxtype_id=:invcitem_taxtype_id "
+	           "WHERE (invcitem_id=:invcitem_id);" );
 
   if (_itemSelected->isChecked())
   {
@@ -344,23 +324,16 @@ void invoiceItem::sSave()
     q.bindValue(":price_uom_id", _pricingUOM->id());
   q.bindValue(":price_invuomratio", _priceinvuomratio);
   q.bindValue(":invcitem_notes", _notes->toPlainText());
-  if(_taxcode->isValid())
-    q.bindValue(":invcitem_tax_id",	_taxcode->id());
   if(_taxtype->isValid())
     q.bindValue(":invcitem_taxtype_id",	_taxtype->id());
-  q.bindValue(":invcitem_tax_pcta",	_cachedPctA);
-  q.bindValue(":invcitem_tax_pctb",	_cachedPctB);
-  q.bindValue(":invcitem_tax_pctc",	_cachedPctC);
-  q.bindValue(":invcitem_tax_ratea",	_cachedRateA);
-  q.bindValue(":invcitem_tax_rateb",	_cachedRateB);
-  q.bindValue(":invcitem_tax_ratec",	_cachedRateC);
-
+  
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  _saved = true;
 
   done(_invcitemid);
 }
@@ -372,13 +345,15 @@ void invoiceItem::populate()
                     "       CASE WHEN (item_id IS NULL) THEN :na"
                     "            ELSE item_listprice"
                     "       END AS f_listprice,"
-                    "       taxauth_id,"
-                    "       COALESCE(taxauth_curr_id, invchead_curr_id) AS taxcurrid "
+					"		taxzone_id,"
+                    "       invchead_curr_id AS taxcurrid "
                     "FROM invcitem JOIN "
-                    "     invchead ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
-                    "     item ON (invcitem_item_id=item_id) LEFT OUTER JOIN " 
-                    "     taxauth ON (invchead_taxauth_id=taxauth_id) "
-                    "WHERE (invcitem_id=:invcitem_id);" );
+                    "     invchead LEFT OUTER JOIN taxzone ON "
+					"       (invchead_taxzone_id = taxzone_id) "
+					"     ON (invcitem_invchead_id = invchead_id) LEFT OUTER JOIN "
+                    "     item ON (invcitem_item_id = item_id) "
+					"     LEFT OUTER JOIN invcitemtax ON (invcitem_id = taxhist_parent_id) "
+					"WHERE (invcitem_id = :invcitem_id);" );
   invcitem.bindValue(":invcitem_id", _invcitemid);
   invcitem.exec();
   if (invcitem.first())
@@ -406,10 +381,9 @@ void invoiceItem::populate()
     _priceinvuomratio = invcitem.value("invcitem_price_invuomratio").toDouble();
 
     // do tax stuff before invcitem_price and _tax_* to avoid signal cascade problems
-    if (! invcitem.value("taxauth_id").isNull())
-      _taxauthid = invcitem.value("taxauth_id").toInt();
-    _tax->setId(invcitem.value("taxcurr_id").toInt());
-    _taxcode->setId(invcitem.value("invcitem_tax_id").toInt());
+    if (! invcitem.value("taxzone_id").isNull())
+      _taxzoneid = invcitem.value("taxzone_id").toInt();
+	_tax->setId(invcitem.value("taxcurr_id").toInt());
     _taxtype->setId(invcitem.value("invcitem_taxtype_id").toInt());
 
     _ordered->setDouble(invcitem.value("invcitem_ordered").toDouble());
@@ -420,15 +394,6 @@ void invoiceItem::populate()
 
     _custPn->setText(invcitem.value("invcitem_custpn").toString());
     _notes->setText(invcitem.value("invcitem_notes").toString());
-
-    _cachedPctA  = invcitem.value("invcitem_tax_pcta").toDouble();
-    _cachedPctB  = invcitem.value("invcitem_tax_pctb").toDouble();
-    _cachedPctC  = invcitem.value("invcitem_tax_pctc").toDouble();
-    _cachedRateA = invcitem.value("invcitem_tax_ratea").toDouble();
-    _cachedRateB = invcitem.value("invcitem_tax_rateb").toDouble();
-    _cachedRateC = invcitem.value("invcitem_tax_ratec").toDouble();
-
-    _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
   else if (invcitem.lastError().type() != QSqlError::NoError)
   {
@@ -436,7 +401,23 @@ void invoiceItem::populate()
     return;
   }
 
+  invcitem.prepare( "SELECT SUM(COALESCE(taxhist_tax, 0.00)) AS lineTaxTotal "
+                    "FROM invcitem LEFT OUTER JOIN invcitemtax "
+                    "  ON (invcitem_id = taxhist_parent_id) "
+                    "WHERE invcitem_id = :invcitem_id;" );
+  invcitem.bindValue(":invcitem_id", _invcitemid);
+  invcitem.exec();
+  if (invcitem.first())
+    _tax->setLocalValue(invcitem.value("lineTaxTotal").toDouble());
+  else if (invcitem.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, invcitem.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   sCalculateExtendedPrice();
+
+  _saved = true;
 }
 
 void invoiceItem::sCalculateExtendedPrice()
@@ -477,11 +458,11 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
                "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
-	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
+	           "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "  FROM item"
                " WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
-    q.bindValue(":taxauth", _taxauthid);
+    q.bindValue(":taxzone", _taxzoneid);
     q.exec();
     if (q.first())
     {
@@ -572,95 +553,33 @@ void invoiceItem::sPriceGroup()
     _priceGroup->setTitle(tr("In %1:").arg(_price->currAbbr()));
 }
 
-void invoiceItem::sLookupTaxCode()
-{
-  XSqlQuery taxq;
-  taxq.prepare("SELECT tax_ratea, tax_rateb, tax_ratec, tax_id "
-	       "FROM tax "
-	       "WHERE (tax_id=getTaxSelection(:auth, :type));");
-  taxq.bindValue(":auth",    _taxauthid);
-  taxq.bindValue(":type",    _taxtype->id());
-  taxq.exec();
-  if (taxq.first())
-  {
-    _taxcode->setId(taxq.value("tax_id").toInt());
-    _cachedPctA	= taxq.value("tax_ratea").toDouble();
-    _cachedPctB	= taxq.value("tax_rateb").toDouble();
-    _cachedPctC	= taxq.value("tax_ratec").toDouble();
-  }
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else
-    _taxcode->setId(-1);
-}
-
-void invoiceItem::sLookupTax()
-{
-  XSqlQuery calcq;
-  calcq.prepare("SELECT currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'A'), :date) AS valA,"
-		"       currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'B'), :date) AS valB,"
-		"       currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'C'), :date) AS valC "
-		"FROM taxauth "
-		"WHERE (taxauth_id=:auth);");
-
-  calcq.bindValue(":extcurr", _extended->id());
-  calcq.bindValue(":tax_id",  _taxcode->id());
-  calcq.bindValue(":ext",     _extended->localValue());
-  calcq.bindValue(":date",    _extended->effective());
-  calcq.bindValue(":auth",    _taxauthid);
-  calcq.exec();
-  if (calcq.first())
-  {
-    _cachedRateA= calcq.value("valA").toDouble();
-    _cachedRateB= calcq.value("valB").toDouble();
-    _cachedRateC= calcq.value("valC").toDouble();
-    _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
-  }
-  else if (calcq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
 void invoiceItem::sTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("tax_id",   _taxcode->id());
-  params.append("curr_id",  _tax->id());
-  params.append("valueA",   _cachedRateA);
-  params.append("valueB",   _cachedRateB);
-  params.append("valueC",   _cachedRateC);
-  params.append("pctA",	    _cachedPctA);
-  params.append("pctB",	    _cachedPctB);
-  params.append("pctC",	    _cachedPctC);
-  params.append("subtotal", CurrDisplay::convert(_extended->id(), _tax->id(),
+  params.append("taxzone_id", _taxzoneid);
+  params.append("taxtype_id", _taxtype->id());
+  params.append("date", _price->effective());
+  params.append("subtotal",  CurrDisplay::convert(_extended->id(), _tax->id(),
 						 _extended->localValue(),
 						 _extended->effective()));
-
+  params.append("curr_id",  _tax->id());
+  
   if(cView == _mode)
     params.append("readOnly");
+  
+  if(_saved == true)
+  {
+	params.append("order_id", _invcitemid);
+    params.append("order_type", "II");
+  }
 
+  newdlg.set(params);
+  
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
-    _cachedRateA = newdlg.amountA();
-    _cachedRateB = newdlg.amountB();
-    _cachedRateC = newdlg.amountC();
-    _cachedPctA	 = newdlg.pctA();
-    _cachedPctB	 = newdlg.pctB();
-    _cachedPctC	 = newdlg.pctC();
-
-    if (_taxcode->id() != newdlg.tax())
-      _taxcode->setId(newdlg.tax());
-
-    _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
+    if (_taxtype->id() != newdlg.taxtype())
+      _taxtype->setId(newdlg.taxtype());
   }
 }
 
@@ -751,5 +670,27 @@ void invoiceItem::sListPrices()
        (!_metrics->boolean("DisableSalesOrderPriceOverride")) )
   {
     _price->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatioCache));
+  }
+}
+
+void invoiceItem::sLookupTax()
+{
+  XSqlQuery taxcal;
+  taxcal.prepare("SELECT calculatetax(:taxzone_id, :taxtype_id, :date, :curr_id, :amount) AS taxamount;");
+  taxcal.bindValue(":taxzone_id", _taxzoneid);
+  taxcal.bindValue(":taxtype_id", _taxtype->id());
+  taxcal.bindValue(":date", _price->effective());
+  taxcal.bindValue(":curr_id", _tax->id());
+  taxcal.bindValue(":amount", CurrDisplay::convert(_extended->id(), _tax->id(), _extended->localValue(), _extended->effective()));
+  taxcal.exec();
+  if (taxcal.first())
+  {
+    _tax->setLocalValue(taxcal.value("taxamount").toDouble());
+	_saved = false;
+  }
+  else if (taxcal.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, taxcal.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

@@ -8,6 +8,17 @@
  * to be bound by its terms.
  */
 
+
+
+/* changes made...
+
+sTaxAuthChanged() changed to sTaxZoneChanged()
+_taxauthidCache changed to _taxzoneidCache
+
+*/
+
+
+
 #ifndef SELECTORDERFORBILLING_H
 #define SELECTORDERFORBILLING_H
 
@@ -40,7 +51,7 @@ public slots:
     virtual void sSave();
     virtual void sSelectBalance();
     virtual void sSoList();
-    virtual void sTaxAuthChanged();
+    virtual void sTaxZoneChanged();
     virtual void sUpdateTotal();
 
 protected slots:
@@ -56,7 +67,7 @@ private:
     bool _captive;
     bool _updated;
     int _mode;
-    int		_taxauthidCache;
+    int		_taxzoneidCache;
     int		_taxcurrid;
     taxCache	_taxCache;
 };

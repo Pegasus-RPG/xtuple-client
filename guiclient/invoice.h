@@ -53,7 +53,7 @@ public slots:
     virtual void sShipToModified();
     virtual void populateCMInfo();
     virtual void populateCCInfo();
-    virtual void sTaxAuthChanged();
+    virtual void sTaxZoneChanged();
     virtual void sHandleShipchrg( int pShipchrgid );
 
 protected:
@@ -62,21 +62,18 @@ protected:
 
 protected slots:
     virtual void languageChange();
-
     virtual void sTaxDetail();
-
 
 private:
     int		_mode;
-
     double	_cachedSubtotal;
-    int		_custtaxauthid;
+    int		_custtaxzoneid;
     bool	_ffShipto;
     int		_invcheadid;
     int		_shiptoid;
-    int		_taxauthidCache;
+    int		_taxzoneidCache;
     int		_taxcurrid;
-    bool        _loading;
+    bool    _loading;
 
     taxCache	_taxCache;
 };

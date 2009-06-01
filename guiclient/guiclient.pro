@@ -326,8 +326,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
                syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
-               taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxCodeRate.ui taxDetail.ui   \
-               taxBreakdown.ui taxZones.ui taxZone.ui taxClass.ui taxClasses.ui                       \
+           taxAdjustment.ui    taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxCodeRate.ui   \
+            taxDetail.ui    taxBreakdown.ui taxZones.ui taxZone.ui taxClass.ui taxClasses.ui                       \
                taxRegistration.ui taxRegistrations.ui                                                 \
                taxAssignment.ui taxAssignments.ui                                                     \
                taxType.ui taxTypes.ui                                                                 \
@@ -651,8 +651,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
                syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
-               taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h taxDetail.h         \
-               taxBreakdown.h                                                                         \
+              taxAdjustment.h taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h      \
+              taxDetail.h    taxBreakdown.h                                                                         \
                taxRegistration.h taxRegistrations.h                                                   \
                taxAssignment.h taxAssignments.h                                                       \
                taxType.h taxTypes.h taxZones.h taxZone.h taxClass.h taxClasses.h                      \
@@ -983,8 +983,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
                syncCompanies.cpp                                                                      \
                systemMessage.cpp                                                                      \
-               taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp taxCodeRate.cpp           \
-               taxDetail.cpp taxBreakdown.cpp                                                         \
+             taxAdjustment.cpp  taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp          \
+              taxCodeRate.cpp  taxDetail.cpp taxBreakdown.cpp                                                         \
                taxRegistration.cpp taxRegistrations.cpp                                               \
                taxAssignment.cpp taxAssignments.cpp                                                   \
                taxType.cpp taxTypes.cpp taxZones.cpp taxZone.cpp taxClass.cpp taxClasses.cpp          \
