@@ -39,7 +39,6 @@
 #include "postBillingSelections.h"
 #include "unpostedInvoices.h"
 #include "reprintInvoices.h"
-#include "deliverInvoice.h"
 #include "printInvoices.h"
 #include "printInvoicesByShipvia.h"
 #include "purgeInvoices.h"
@@ -275,7 +274,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.printInvoicesByShipvia",	     tr("Print Invoices by Ship &Via..."),	SLOT(sPrintInvoicesByShipvia()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "so.reprintInvoices",		     tr("&Re-Print Invoices..."),	SLOT(sReprintInvoices()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingFormsMenu,	"true",		NULL, NULL,  _metrics->boolean("EnableBatchManager") , NULL },
-    { "so.scheduleInvoiceForEmailDelivery",  tr("E-mail Invoice Form..."),	SLOT(sDeliverInvoice()), billingFormsMenu, "PrintInvoices",	NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
     { "separator",	NULL,	NULL,	billingFormsMenu,	"true",		NULL, NULL, true , NULL },
     { "so.printCreditMemos",		     tr("Print &Credit Memos..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
     { "so.reprintCreditMemos",		     tr("Re-Print Credit &Memos..."),	SLOT(sReprintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
@@ -662,11 +660,6 @@ void menuSales::sPrintInvoicesByShipvia()
 void menuSales::sReprintInvoices()
 {
   reprintInvoices(parent, "", TRUE).exec();
-}
-
-void menuSales::sDeliverInvoice()
-{
-  deliverInvoice(parent, "", TRUE).exec();
 }
 
 void menuSales::sPostInvoices()

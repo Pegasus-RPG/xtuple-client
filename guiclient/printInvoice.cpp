@@ -10,60 +10,26 @@
 
 #include "printInvoice.h"
 
-#include <QVariant>
-#include <QValidator>
-#include <QMessageBox>
 #include <QApplication>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
+
 #include <openreports.h>
-#include <QStatusBar>
+
 #include "editICMWatermark.h"
-#include "deliverInvoice.h"
 #include "submitAction.h"
 
-/*
- *  Constructs a printInvoice as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printInvoice::printInvoice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
+  connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
-    connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-printInvoice::~printInvoice()
-{
-  if (_captive)	// see sPrint()
-    orReport::endMultiPrint(&_printer);
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printInvoice::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void printInvoice::init()
-{
   _captive = FALSE;
   _setup   = FALSE;
   _alert   = TRUE;
@@ -91,6 +57,17 @@ void printInvoice::init()
   }
 
   _print->setFocus();
+}
+
+printInvoice::~printInvoice()
+{
+  if (_captive)	// see sPrint()
+    orReport::endMultiPrint(&_printer);
+}
+
+void printInvoice::languageChange()
+{
+  retranslateUi(this);
 }
 
 enum SetResponse printInvoice::set(ParameterList &pParams)
@@ -261,57 +238,13 @@ void printInvoice::sPrint()
       }
     }
 
-    if (_metrics->boolean("EnableBatchManager"))
-    {
-      // TODO: Check for EDI and handle submission to Batch here
-      q.prepare("SELECT CASE WHEN (COALESCE(shipto_ediprofile_id, -2) = -2)"
-              "              THEN COALESCE(cust_ediprofile_id,-1)"
-              "            ELSE COALESCE(shipto_ediprofile_id,-2)"
-              "       END AS result,"
-              "       COALESCE(cust_emaildelivery, false) AS custom"
-              "  FROM cust, invchead"
-              "       LEFT OUTER JOIN shipto"
-              "         ON (invchead_shipto_id=shipto_id)"
-              "  WHERE ((invchead_cust_id=cust_id)"
-              "    AND  (invchead_id=:invchead_id)); ");
-      q.bindValue(":invchead_id", _invcheadid);
-      q.exec();
-      if(q.first())
-      {
-        if(q.value("result").toInt() == -1)
-        {
-          if(q.value("custom").toBool())
-          {
-            ParameterList params;
-            params.append("invchead_id", _invcheadid);
-
-            deliverInvoice newdlg(this, "", TRUE);
-            newdlg.set(params);
-            newdlg.exec();
-          }
-        }
-        else
-        {
-          ParameterList params;
-          params.append("action_name", "TransmitInvoice");
-          params.append("invchead_id", _invcheadid);
-
-          submitAction newdlg(this, "", TRUE);
-          newdlg.set(params);
-          newdlg.exec();
-        }
-      }
-    }
-    
     if (_captive)
       accept();
     else
       orReport::endMultiPrint(&_printer);
   }
-  else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void printInvoice::sHandleCopies(int pValue)
@@ -364,6 +297,11 @@ void printInvoice::populate()
   }
 }
 
+int printInvoice::id()
+{
+  return _invcheadid;
+}
+
 bool printInvoice::isSetup()
 {
   return _setup;
@@ -373,4 +311,3 @@ void printInvoice::setSetup(bool pSetup)
 {
   _setup = pSetup;
 }
-

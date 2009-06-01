@@ -24,10 +24,10 @@ public:
     printInvoice(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printInvoice();
 
-    virtual void init();
-    virtual void populate();
-    virtual bool isSetup();
-    virtual void setSetup(bool);
+    Q_INVOKABLE virtual int  id();
+    Q_INVOKABLE virtual bool isSetup();
+    Q_INVOKABLE virtual void populate();
+    Q_INVOKABLE virtual void setSetup(bool);
 
 public slots:
     virtual enum SetResponse set( ParameterList & pParams );

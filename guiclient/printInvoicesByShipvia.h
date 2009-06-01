@@ -28,11 +28,11 @@ public slots:
     virtual void sEditWatermark();
     virtual void sHandleCopies( int pValue );
 
+signals:
+    virtual void finishedPrinting(int);
+
 protected slots:
     virtual void languageChange();
-
-private:
-    virtual void init();
 
 };
 

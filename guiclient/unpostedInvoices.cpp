@@ -15,15 +15,13 @@
 #include <QSqlError>
 #include <QVariant>
 
-
 #include <metasql.h>
-#include "mqlutil.h"
-
 #include  <openreports.h>
 
 #include "failedPostList.h"
 #include "getGLDistDate.h"
 #include "invoice.h"
+#include "mqlutil.h"
 #include "printInvoice.h"
 #include "storedProcErrorLookup.h"
 
@@ -164,7 +162,7 @@ void unpostedInvoices::sPrint()
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
-	{
+    {
       ParameterList params;
       params.append("invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       params.append("persistentPrint");
@@ -177,7 +175,7 @@ void unpostedInvoices::sPrint()
           break;
         newdlg.setSetup(TRUE);
       }
-	}
+    }
   }
 
   omfgThis->sInvoicesUpdated(-1, TRUE);
@@ -251,7 +249,7 @@ void unpostedInvoices::sPost()
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
-	{
+    {
       int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
       if (changeDate)
@@ -264,7 +262,7 @@ void unpostedInvoices::sPost()
 	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
         }
       }
-	}
+    }
   }
 
   bool tryagain = false;
@@ -272,7 +270,7 @@ void unpostedInvoices::sPost()
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
-	  {
+      {
         int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
         sum.bindValue(":invchead_id", id);
@@ -340,15 +338,15 @@ void unpostedInvoices::sPost()
 		        __FILE__, __LINE__);
     }
 
-      if (triedToClosed.size() > 0)
-      {
-        failedPostList newdlg(this, "", true);
-        newdlg.sSetList(triedToClosed, _invchead->headerItem(), _invchead->header());
-        tryagain = (newdlg.exec() == XDialog::Accepted);
-        selected = triedToClosed;
-        triedToClosed.clear();
+    if (triedToClosed.size() > 0)
+    {
+      failedPostList newdlg(this, "", true);
+      newdlg.sSetList(triedToClosed, _invchead->headerItem(), _invchead->header());
+      tryagain = (newdlg.exec() == XDialog::Accepted);
+      selected = triedToClosed;
+      triedToClosed.clear();
       }
-	}
+    }
   } while (tryagain);
 
   if (_printJournal->isChecked())

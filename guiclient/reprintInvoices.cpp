@@ -19,7 +19,6 @@
 #include <openreports.h>
 
 #include "editICMWatermark.h"
-#include "deliverInvoice.h"
 #include "submitAction.h"
 
 reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -139,52 +138,8 @@ void reprintInvoices::sPrint()
 	return;
       }
     }
-    if (_metrics->boolean("EnableBatchManager"))
-    {
-      // TODO: Check for EDI and handle submission to Batch here
-      q.prepare("SELECT CASE WHEN (COALESCE(shipto_ediprofile_id, -2) = -2)"
-	      "              THEN COALESCE(cust_ediprofile_id,-1)"
-	      "            ELSE COALESCE(shipto_ediprofile_id,-2)"
-	      "       END AS result,"
-	      "       COALESCE(cust_emaildelivery, false) AS custom"
-	      "  FROM cust, invchead"
-	      "       LEFT OUTER JOIN shipto"
-	      "         ON (invchead_shipto_id=shipto_id)"
-	      "  WHERE ((invchead_cust_id=cust_id)"
-	      "    AND  (invchead_id=:invchead_id)); ");
-      q.bindValue(":invchead_id", cursor->id());
-      q.exec();
-      if(q.first())
-      {
-	if(q.value("result").toInt() == -1)
-	{
-	  if(q.value("custom").toBool())
-	  {
-	    ParameterList params;
-	    params.append("invchead_id", cursor->id());
-  
-	    deliverInvoice newdlg(this, "", TRUE);
-	    newdlg.set(params);
-	    newdlg.exec();
-	  }
-	}
-	else
-	{
-	  ParameterList params;
-	  params.append("action_name", "TransmitInvoice");
-	  params.append("invchead_id", cursor->id());
-  
-	  submitAction newdlg(this, "", TRUE);
-	  newdlg.set(params);
-	  newdlg.exec();
-	}
-      }
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+
+    emit finishedPrinting(cursor->id());
   }
   orReport::endMultiPrint(&printer);
 

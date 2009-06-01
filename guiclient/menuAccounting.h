@@ -80,7 +80,6 @@ class menuAccounting : public QObject
     void sUnpostedInvoices();
     void sPrintInvoices();
     void sReprintInvoices();
-    void sDeliverInvoice();
     void sPostInvoices();
     void sPurgeInvoices();
 

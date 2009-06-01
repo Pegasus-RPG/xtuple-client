@@ -10,62 +10,28 @@
 
 #include "printInvoices.h"
 
-#include <QVariant>
-#include <QValidator>
 #include <QMessageBox>
-#include <QApplication>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
+
 #include <openreports.h>
-#include <QStatusBar>
+
 #include "editICMWatermark.h"
-#include "deliverInvoice.h"
 #include "submitAction.h"
 
-/*
- *  Constructs a printInvoices as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printInvoices::printInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
+  connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
-    connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-printInvoices::~printInvoices()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printInvoices::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void printInvoices::init()
-{
-  _invoiceWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _invoiceWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _invoiceWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
+  _invoiceWatermarks->addColumn(tr("Copy #"),     _dateColumn, Qt::AlignCenter);
+  _invoiceWatermarks->addColumn(tr("Watermark"),  -1,          Qt::AlignLeft  );
+  _invoiceWatermarks->addColumn(tr("Show Prices"),_dateColumn, Qt::AlignCenter);
 
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
@@ -84,6 +50,16 @@ void printInvoices::init()
   }
 
   _print->setFocus();
+}
+
+printInvoices::~printInvoices()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void printInvoices::languageChange()
+{
+  retranslateUi(this);
 }
 
 void printInvoices::sPrint()
@@ -185,49 +161,7 @@ void printInvoices::sPrint()
         }
       }
 
-      if (_metrics->boolean("EnableBatchManager"))
-      {
-        // TODO: Check for EDI and handle submission to Batch here
-        XSqlQuery query;
-        query.prepare("SELECT CASE WHEN (COALESCE(shipto_ediprofile_id, -2) = -2)"
-                "              THEN COALESCE(cust_ediprofile_id,-1)"
-                "            ELSE COALESCE(shipto_ediprofile_id,-2)"
-                "       END AS result,"
-                "       COALESCE(cust_emaildelivery, false) AS custom"
-                "  FROM cust, invchead"
-                "       LEFT OUTER JOIN shipto"
-                "         ON (invchead_shipto_id=shipto_id)"
-                "  WHERE ((invchead_cust_id=cust_id)"
-                "    AND  (invchead_id=:invchead_id)); ");
-        query.bindValue(":invchead_id", invoices.value("invchead_id").toInt());
-        query.exec();
-        if(query.first())
-        {
-          if(query.value("result").toInt() == -1)
-          {
-            if(query.value("custom").toBool())
-            {
-              ParameterList params;
-              params.append("invchead_id", invoices.value("invchead_id").toInt());
-  
-              deliverInvoice newdlg(this, "", TRUE);
-              newdlg.set(params);
-              newdlg.exec();
-            }
-          }
-          else
-          {
-            ParameterList params;
-            params.append("action_name", "TransmitInvoice");
-            params.append("invchead_id", invoices.value("invchead_id").toInt());
-
-            submitAction newdlg(this, "", TRUE);
-            newdlg.set(params);
-            newdlg.exec();
-          }
-        }
-      }
-
+      emit finishedPrinting(invoices.value("invchead_id").toInt());
     }
     while (invoices.next());
     orReport::endMultiPrint(&printer);

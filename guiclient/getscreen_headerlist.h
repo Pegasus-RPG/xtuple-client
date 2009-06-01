@@ -142,7 +142,6 @@
 #include "deletePlannedOrder.h"
 #include "deletePlannedOrdersByPlannerCode.h"
 #include "deliverEmail.h"
-#include "deliverInvoice.h"
 #include "deliverPurchaseOrder.h"
 #include "department.h"
 #include "departments.h"

@@ -24,12 +24,13 @@ public:
     printInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printInvoices();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
     virtual void sHandleCopies( int pValue );
     virtual void sEditWatermark();
+
+signals:
+    virtual void finishedPrinting(int);
 
 protected slots:
     virtual void languageChange();
