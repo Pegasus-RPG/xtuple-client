@@ -83,7 +83,7 @@ static void sNoConversionRate(QWidget* parent, const int curr_id, const QDate& e
     if (displayMsg)
     {
       qWarning("%s::sNoConversionRate(%p, %d, %s, %s)",
-               qPrintable(parent->objectName()),
+               (parent ? qPrintable(parent->objectName()) : "unknown"),
                parent, curr_id, qPrintable(effective.toString()), caller);
       if (curr_id >= 0)
         QMessageBox::critical(parent,
