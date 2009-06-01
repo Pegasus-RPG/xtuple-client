@@ -14,7 +14,7 @@
 #include <QObject>
 #include <QtScript>
 
-#include "../guiclient/metasqlhighlighter.h"
+#include "../guiclient/metasqlHighlighter.h"
 
 class QString;
 
