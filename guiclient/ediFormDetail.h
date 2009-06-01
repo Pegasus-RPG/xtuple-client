@@ -17,6 +17,8 @@
 
 #include "ui_ediFormDetail.h"
 
+class QSyntaxHighlighter;
+
 class ediFormDetail : public XDialog, public Ui::ediFormDetail
 {
     Q_OBJECT
