@@ -9,43 +9,10 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT gltrans_id, formatDate(gltrans_date) AS f_date,
-       gltrans_docnumber,
-       CASE WHEN gltrans_doctype = 'CK' THEN 'CHEQUES RECONCILIES'
-            WHEN gltrans_doctype = 'CR' THEN 'DEPOTS RECONCILIES'
-            ELSE 'AJUSTEMENTS RECONCILIES' END AS type,
-       CASE WHEN gltrans_doctype = 'CK' THEN '1'
-            WHEN gltrans_doctype = 'CR' THEN '2'
-            ELSE '3' END AS sort,
-       gltrans_notes AS notes,
-       formatMoney(currtolocal(bankaccnt_curr_id,gltrans_amount,gltrans_date) * -1) AS f_amount,
-       gltrans_amount * -1 AS c_amount 
-  FROM gltrans, bankrecitem 
-    JOIN bankrec ON (bankrecitem_bankrec_id=bankrec_id)
-    JOIN bankaccnt ON (bankaccnt_id=bankrec_bankaccnt_id)
- WHERE ((bankrecitem_bankrec_id=&lt;? value("bankrec_id") ?>)
-   AND (bankrecitem_source='GL')
-   AND (bankrecitem_source_id=gltrans_id) ) 
-
-UNION
-
-SELECT gltrans_id, formatDate(gltrans_date) AS f_date,
-       gltrans_docnumber,
-       CASE WHEN gltrans_doctype = 'CK' THEN 'CHEQUES EN CIRCULATION'
-            WHEN gltrans_doctype = 'CR' THEN 'DEPOTS EN CIRCULATION'
-            ELSE 'AJUSTEMENTS EN CIRCULATION' END AS type,
-       CASE WHEN gltrans_doctype = 'CK' THEN '4'
-            WHEN gltrans_doctype = 'CR' THEN '5'
-            ELSE '6' END AS sort,
-       gltrans_notes AS notes,
-       formatMoney(currtolocal(bankaccnt_curr_id,gltrans_amount,gltrans_date) * -1) AS f_amount,
-       gltrans_amount * -1 AS c_amount 
-  FROM gltrans JOIN bankaccnt ON bankaccnt_accnt_id = gltrans_accnt_id JOIN bankrec ON bankrec_bankaccnt_id = bankaccnt_id 
- WHERE bankrec_id=&lt;? value("bankrec_id") ?>
-  AND gltrans_rec = FALSE
-ORDER BY  sort, f_date, gltrans_id;</sql>
+  <mqlgroup>bankrecHistory</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>head</name>
@@ -136,7 +103,7 @@ GROUP BY bankrec_openbal;
    </font>
    <right/>
    <vcenter/>
-   <string>Reporté par:</string>
+   <string>Posted By:</string>
   </label>
   <field>
    <rect>
@@ -213,7 +180,7 @@ GROUP BY bankrec_openbal;
    </font>
    <right/>
    <vcenter/>
-   <string>Date Reporté:</string>
+   <string>Date Posted:</string>
   </label>
   <field>
    <rect>
@@ -283,7 +250,7 @@ GROUP BY bankrec_openbal;
    </font>
    <right/>
    <vcenter/>
-   <string>Reconciliation Bancaire:</string>
+   <string>Bank Rec. Post:</string>
   </label>
   <field>
    <rect>
@@ -337,7 +304,7 @@ GROUP BY bankrec_openbal;
    </font>
    <right/>
    <vcenter/>
-   <string>Compte de Banque:</string>
+   <string>Bark Account:</string>
   </label>
   <label>
    <rect>
@@ -680,11 +647,11 @@ GROUP BY bankrec_openbal;
   </field>
  </pgfoot>
  <rptfoot>
-  <height>126</height>
+  <height>143</height>
   <field>
    <rect>
-    <x>237</x>
-    <y>27</y>
+    <x>249</x>
+    <y>29</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -702,8 +669,8 @@ GROUP BY bankrec_openbal;
   </field>
   <field>
    <rect>
-    <x>348</x>
-    <y>27</y>
+    <x>352</x>
+    <y>29</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -722,9 +689,9 @@ GROUP BY bankrec_openbal;
   <field>
    <rect>
     <x>46</x>
-    <y>27</y>
+    <y>29</y>
     <width>197</width>
-    <height>17</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -756,8 +723,8 @@ GROUP BY bankrec_openbal;
   </label>
   <label>
    <rect>
-    <x>163</x>
-    <y>45</y>
+    <x>167</x>
+    <y>46</y>
     <width>162</width>
     <height>15</height>
    </rect>
@@ -772,8 +739,8 @@ GROUP BY bankrec_openbal;
   </label>
   <label>
    <rect>
-    <x>262</x>
-    <y>61</y>
+    <x>273</x>
+    <y>63</y>
     <width>56</width>
     <height>15</height>
    </rect>
@@ -788,8 +755,8 @@ GROUP BY bankrec_openbal;
   </label>
   <label>
    <rect>
-    <x>160</x>
-    <y>75</y>
+    <x>166</x>
+    <y>78</y>
     <width>163</width>
     <height>15</height>
    </rect>
@@ -804,8 +771,8 @@ GROUP BY bankrec_openbal;
   </label>
   <label>
    <rect>
-    <x>146</x>
-    <y>91</y>
+    <x>152</x>
+    <y>94</y>
     <width>177</width>
     <height>15</height>
    </rect>
@@ -821,7 +788,7 @@ GROUP BY bankrec_openbal;
   <label>
    <rect>
     <x>110</x>
-    <y>107</y>
+    <y>109</y>
     <width>219</width>
     <height>15</height>
    </rect>
@@ -836,7 +803,7 @@ GROUP BY bankrec_openbal;
   </label>
   <field>
    <rect>
-    <x>350</x>
+    <x>352</x>
     <y>46</y>
     <width>100</width>
     <height>15</height>
@@ -874,7 +841,7 @@ GROUP BY bankrec_openbal;
   </field>
   <field>
    <rect>
-    <x>351</x>
+    <x>352</x>
     <y>78</y>
     <width>100</width>
     <height>15</height>
@@ -893,7 +860,7 @@ GROUP BY bankrec_openbal;
   </field>
   <field>
    <rect>
-    <x>349</x>
+    <x>352</x>
     <y>94</y>
     <width>100</width>
     <height>15</height>
@@ -912,7 +879,7 @@ GROUP BY bankrec_openbal;
   </field>
   <field>
    <rect>
-    <x>350</x>
+    <x>352</x>
     <y>109</y>
     <width>100</width>
     <height>15</height>
