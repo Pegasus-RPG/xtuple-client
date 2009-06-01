@@ -43,8 +43,11 @@ void initErrorLookupHash()
   { "changeCMHeadTaxAuth", -1, TR("This Credit Memo was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
 
-  { "changeInvoiceTaxAuth", -1, TR("This Invoice was not found."),	0, "" },
-  { "changeInvoiceTaxAuth", -2, TR("This Tax Authority was not found."),0, "" },
+  { "changeInvoiceTaxZone", -1, TR("This Invoice was not found."),	0, "" },
+  { "changeInvoiceTaxZone", -2, TR("Freight Tax Type was not found."),0, "" },
+
+  { "changeCobTaxZone", -1, TR("This Bill was not found."),	0, "" },
+  { "changeCobTaxZone", -2, TR("Freight Tax Type was not found."),0, "" },
 
   { "changeQuoteTaxZone", -1, TR("This Quote was not found."),		0, "" },
  // { "changeQuoteTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
