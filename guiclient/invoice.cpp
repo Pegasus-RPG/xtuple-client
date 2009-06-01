@@ -733,7 +733,6 @@ void invoice::populate()
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
     _taxzoneidCache = q.value("taxzone_id").toInt(); 
     _taxzone->setId(q.value("taxzone_id").toInt());
-    _taxcurrid = q.value("invchead_tax_curr_id").toInt();
     _tax->setLocalValue(q.value("invccurrtax").toDouble());
     _terms->setId(q.value("invchead_terms_id").toInt());
     _project->setId(q.value("invchead_prj_id").toInt());
@@ -1005,7 +1004,7 @@ void invoice::recalculateTax()
     return;
   }
 
-  _tax->setLocalValue(CurrDisplay::convert(_taxcurrid, _tax->id(),
+  _tax->setLocalValue(CurrDisplay::convert(_tax->id(), _tax->id(),
 	      _taxCache.total(), _tax->effective()));
   // changing _tax fires sCalculateTotal()
 }

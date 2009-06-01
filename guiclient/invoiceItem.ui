@@ -13,14 +13,14 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
-    <height>738</height>
+    <width>690</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Invoice Item</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout">
      <property name="leftMargin">
@@ -101,7 +101,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="0" column="2" rowspan="2">
+     <item row="0" column="3" rowspan="2">
       <layout class="QVBoxLayout">
        <property name="spacing">
         <number>5</number>
@@ -284,12 +284,6 @@ to be bound by its terms.</comment>
            <string>Miscellaneous</string>
           </property>
           <layout class="QGridLayout">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
            <item row="0" column="1">
             <widget class="XLineEdit" name="_itemNumber"/>
            </item>
@@ -524,7 +518,7 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
-     <item row="2" column="1" colspan="2">
+     <item row="2" column="1" colspan="3">
       <widget class="QGroupBox" name="_priceGroup_2">
        <property name="title">
         <string/>
@@ -619,7 +613,7 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
-     <item row="3" column="0" colspan="3">
+     <item row="3" column="0" colspan="4">
       <widget class="QTabWidget" name="_tab">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -715,7 +709,7 @@ to be bound by its terms.</comment>
            <property name="title">
             <string>Tax</string>
            </property>
-           <layout class="QGridLayout">
+           <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="_taxtypeLit">
               <property name="text">
@@ -730,20 +724,37 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="XComboBox" name="_taxtype">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="allowNull">
-               <bool>true</bool>
-              </property>
-              <property name="nullStr">
-               <string>None</string>
-              </property>
-              <property name="type">
-               <enum>XComboBox::TaxTypes</enum>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="XComboBox" name="_taxtype">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="allowNull">
+                 <bool>true</bool>
+                </property>
+                <property name="nullStr">
+                 <string>None</string>
+                </property>
+                <property name="type">
+                 <enum>XComboBox::TaxTypes</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item row="1" column="0">
              <widget class="XURLLabel" name="_taxLit">
@@ -761,6 +772,19 @@ to be bound by its terms.</comment>
                <bool>false</bool>
               </property>
              </widget>
+            </item>
+            <item row="2" column="1">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>253</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -802,6 +826,19 @@ to be bound by its terms.</comment>
         </layout>
        </widget>
       </widget>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

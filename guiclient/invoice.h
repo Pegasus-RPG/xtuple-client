@@ -72,7 +72,6 @@ private:
     int		_invcheadid;
     int		_shiptoid;
     int		_taxzoneidCache;
-    int		_taxcurrid;
     bool    _loading;
 
     taxCache	_taxCache;
