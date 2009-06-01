@@ -2,8 +2,8 @@
          name="sso"
          developer="xTuple"
          descrip="Simple Sales Order"
-         version="0.0.1"
-         updater="2.0.0">
+         version="3.2.2"
+         updater="2.1.0">
   <pkgnotes>Simple Sales Order for xTuple ERP.
 
   This file is a sample extension package for xTulpe ERP: PostBooks Edition, 
@@ -49,7 +49,7 @@
   </prerequisite>
 
   <loadcmd          name="openSalesOrdersBySalesrep" 
-                    title="Open Sales Orders By Sales Rep"
+                    title="List Open Sales Orders (Simple)"
                     module="Sales"
                     privilege="ViewSalesOrders"
                     executable="!customuiform">
