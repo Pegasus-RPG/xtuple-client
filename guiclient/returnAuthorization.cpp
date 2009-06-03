@@ -53,8 +53,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
-  connect(_taxauth, SIGNAL(newID(int)), this, SLOT(sTaxAuthChanged()));
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
+  connect(_taxzone, SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sRecvWhsChanged()));
   connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sShipWhsChanged()));
   connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
@@ -82,10 +82,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _shipToList->setMaximumWidth(25);
 #endif
 
-  _taxcurrid           = -1;
-  _custtaxauthid       = -1;
-  _taxauthidCache      = -1;
-  _taxCache.clear();
+  _custtaxzoneid       = -1;
+  _taxzoneidCache      = -1;
   _shiptoid            = -1;
   _ignoreShiptoSignals = false;
   _ignoreSoSignals = false;
@@ -277,7 +275,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _expireDate->setEnabled(FALSE);
       _salesRep->setEnabled(FALSE);
       _commission->setEnabled(FALSE);
-      _taxauth->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
       _disposition->setEnabled(FALSE);
       _timing->setEnabled(FALSE);
@@ -416,7 +414,7 @@ bool returnAuthorization::sSave(bool partial)
              "   SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
              "       rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
              "       rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
-             "       rahead_taxauth_id=:rahead_taxauth_id,rahead_rsncode_id=:rahead_rsncode_id,"
+             "       rahead_taxzone_id=:rahead_taxzone_id,rahead_rsncode_id=:rahead_rsncode_id,"
              "       rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
              "       rahead_creditmethod=:rahead_creditmethod,rahead_orig_cohead_id=:rahead_orig_cohead_id,"
              "       rahead_new_cohead_id=:rahead_new_cohead_id, "
@@ -444,8 +442,8 @@ bool returnAuthorization::sSave(bool partial)
   if (_salesRep->isValid() && _cust->isValid())
     q.bindValue(":rahead_salesrep_id", _salesRep->id());
   q.bindValue(":rahead_commission", (_commission->toDouble() / 100));
-  if (_taxauth->isValid())
-    q.bindValue(":rahead_taxauth_id", _taxauth->id());
+  if (_taxzone->isValid())
+    q.bindValue(":rahead_taxzone_id", _taxzone->id());
   if (_rsnCode->id() > 0)
     q.bindValue(":rahead_rsncode_id", _rsnCode->id());
   q.bindValue(":rahead_disposition", disposition);
@@ -638,7 +636,7 @@ void returnAuthorization::sOrigSoChanged()
         _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
         _commission->setDouble(sohead.value("cohead_commission").toDouble() * 100);
 
-        _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
+        _taxzone->setId(sohead.value("cohead_taxzone_id").toInt());
         _customerPO->setText(sohead.value("cohead_custponumber"));
 
         _cust->setEnabled(FALSE);
@@ -717,7 +715,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
   {
     XSqlQuery query;
     query.prepare( "SELECT shipto_num, shipto_name,"
-                   " shipto_addr_id, shipto_taxauth_id, "
+                   " shipto_addr_id, shipto_taxzone_id, "
                    " shipto_salesrep_id, shipto_commission "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
@@ -730,7 +728,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
       _shipToNumber->setText(query.value("shipto_num"));
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
-      _taxauth->setId(query.value("shipto_taxauth_id").toInt());
+      _taxzone->setId(query.value("shipto_taxzone_id").toInt());
       _salesRep->setId(query.value("shipto_salesrep_id").toInt());
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
       _ignoreShiptoSignals = FALSE;
@@ -761,7 +759,7 @@ void returnAuthorization::sPopulateCustomerInfo()
       XSqlQuery query;
       query.prepare( "SELECT custtype_code, cust_salesrep_id,"
                      "       cust_commprcnt,"
-                     "       cust_taxauth_id, cust_curr_id, "
+                     "       cust_taxzone_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
                      "       cust_ffshipto, cust_ffbillto, "
                      "       COALESCE(shipto_id, -1) AS shiptoid, "
@@ -781,8 +779,8 @@ void returnAuthorization::sPopulateCustomerInfo()
         _salesRep->setId(query.value("cust_salesrep_id").toInt());
         _commission->setDouble(query.value("cust_commprcnt").toDouble() * 100);
 
-        _custtaxauthid = query.value("cust_taxauth_id").toInt();
-        _taxauth->setId(query.value("cust_taxauth_id").toInt());
+        _custtaxzoneid = query.value("cust_taxzone_id").toInt();
+        _taxzone->setId(query.value("cust_taxzone_id").toInt());
         _currency->setId(query.value("cust_curr_id").toInt());
 
         _billToName->setText(query.value("cust_name"));
@@ -817,8 +815,8 @@ void returnAuthorization::sPopulateCustomerInfo()
       _origso->setCustId(-1);
       _origso->setType((cSoReleased));
       _salesRep->setCurrentIndex(-1);
-      _taxauth->setId(-1);
-      _custtaxauthid = -1;
+      _taxzone->setId(-1);
+      _custtaxzoneid = -1;
       _billToName->setEnabled(TRUE);
       _billToAddr->setEnabled(TRUE);
       _billToName->clear();
@@ -894,7 +892,7 @@ void returnAuthorization::sCopyToShipto()
     _shipToAddr->setCountry(_billToAddr->country());
   }
 
-  _taxauth->setId(_custtaxauthid);
+  _taxzone->setId(_custtaxzoneid);
 }
 
 void returnAuthorization::sNew()
@@ -1066,7 +1064,7 @@ void returnAuthorization::sFillList()
   _raitem->populate(q, true);
 
   sCalculateSubtotal();
-  recalculateTax();
+  sCalculateTax();
 
   _currency->setEnabled((_raitem->topLevelItemCount() == 0) && (_mode == cEdit));
 
@@ -1093,7 +1091,7 @@ void returnAuthorization::sFillList()
   {
     _salesRep->setEnabled(false);
     _commission->setEnabled(false);
-    _taxauth->setEnabled(false);
+    _taxzone->setEnabled(false);
     _disposition->setEnabled(false);
     _timing->setEnabled(false);
     _cust->setEnabled(false);
@@ -1104,7 +1102,7 @@ void returnAuthorization::sFillList()
   {
     _salesRep->setEnabled(true);
     _commission->setEnabled(true);
-    _taxauth->setEnabled(true);
+    _taxzone->setEnabled(true);
     _disposition->setEnabled(true);
     _timing->setEnabled(true);
     _cust->setEnabled(!_origso->isValid());
@@ -1160,9 +1158,8 @@ void returnAuthorization::populate()
 
     _salesRep->setId(rahead.value("rahead_salesrep_id").toInt());
     _commission->setDouble(rahead.value("rahead_commission").toDouble() * 100);
-    // do taxauth first so we can overwrite the result of the signal cascade
-    _taxauth->setId(rahead.value("rahead_taxauth_id").toInt());
-    _taxcurrid = rahead.value("rahead_curr_id").toInt();
+    // do taxzone first so we can overwrite the result of the signal cascade
+    _taxzone->setId(rahead.value("rahead_taxzone_id").toInt());
     if (!rahead.value("rahead_rsncode_id").isNull() && rahead.value("rahead_rsncode_id").toInt() != -1)
       _rsnCode->setId(rahead.value("rahead_rsncode_id").toInt());
 
@@ -1256,7 +1253,7 @@ void returnAuthorization::populate()
       _disposition->setCurrentIndex(4);
     _ignoreSoSignals = FALSE;
 
-    recalculateTax();
+    sCalculateTax();
 
     sFillList();
   }
@@ -1308,157 +1305,57 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
 
 void returnAuthorization::sTaxDetail()
 {
-  XSqlQuery taxq;
-  taxq.prepare("UPDATE rahead SET rahead_taxauth_id=:taxauth,"
-               "  rahead_freight=:freight,"
-//               "  rahead_freighttax_ratea=:freighta,"
-//               "  rahead_freighttax_rateb=:freightb,"
-//               "  rahead_freighttax_ratec=:freightc,"
-               "  rahead_authdate=:docdate "
-               "WHERE (rahead_id=:rahead_id);");
-  if (_taxauth->isValid())
-    taxq.bindValue(":taxauth", _taxauth->id());
-  taxq.bindValue(":freight",   _freight->localValue());
-  taxq.bindValue(":freighta",  _taxCache.freight(0));
-  taxq.bindValue(":freightb",  _taxCache.freight(1));
-  taxq.bindValue(":freightc",  _taxCache.freight(2));
-  taxq.bindValue(":docdate",   _authDate->date());
-  taxq.bindValue(":rahead_id", _raheadid);
-  taxq.exec();
-  if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+  if (!sSave(true))
     return;
-  }
 
   ParameterList params;
-  params.append("order_id",   _raheadid);
+  params.append("order_id", _raheadid);
   params.append("order_type", "RA");
-
-  if(cView == _mode)
+  // mode => view since there are no fields to hold modified tax data
+  if (_mode == cView)
     params.append("mode", "view");
-  else
-    params.append("mode", "edit");
 
   taxBreakdown newdlg(this, "", TRUE);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
     populate();
+
 }
 
-void returnAuthorization::sFreightChanged()
-{
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-                   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-                   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
-  freightq.bindValue(":tax_id", _taxCache.freightId());
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.exec();
-  if (freightq.first())
+void returnAuthorization::sCalculateTax()
+{  
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT SUM(tax) AS tax "
+                "FROM ("
+                "SELECT ROUND(calculateTax(:taxzone_id,raitem_taxtype_id,:date,:curr_id,ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2)),2) AS tax "
+                "FROM raitem "
+                "WHERE (raitem_rahead_id=:rahead_id) "
+                "UNION ALL "
+                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
+                ") AS data;" );
+
+  taxq.bindValue(":taxzone_id", _taxzone->id());
+  taxq.bindValue(":date", _authDate->date());   
+  taxq.bindValue(":curr_id", _currency->id());  
+  taxq.bindValue(":rahead_id", _raheadid);
+  taxq.bindValue(":freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
-    _taxCache.setFreight(freightq.value("freighta").toDouble(),
-                         freightq.value("freightb").toDouble(),
-                         freightq.value("freightc").toDouble());
-  }
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-  recalculateTax();
+  }              
 }
 
-void returnAuthorization::recalculateTax()
+void returnAuthorization::sTaxZoneChanged()
 {
-  XSqlQuery itemq;
-
-  //  Determine the line item tax
-  itemq.prepare( "SELECT SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'A'), 2)) AS itemtaxa,"
-                 "       SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'B'), 2)) AS itemtaxb,"
-                 "       SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'C'), 2)) AS itemtaxc "
-                 "FROM raitem, itemsite, item "
-                 "WHERE ((raitem_rahead_id=:rahead_id)"
-                 "  AND  (raitem_itemsite_id=itemsite_id)"
-                 "  AND  (itemsite_item_id=item_id));" );
-
-  itemq.bindValue(":rahead_id", _raheadid);
-  itemq.exec();
-  if (itemq.first())
-  {
-    _taxCache.setLine(itemq.value("itemtaxa").toDouble(),
-                      itemq.value("itemtaxb").toDouble(),
-                      itemq.value("itemtaxc").toDouble());
-  }
-  else if (itemq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
+  if (_raheadid == -1 || _taxzoneidCache == _taxzone->id())
     return;
-  }
-
-  if (_taxcurrid > 0)
-    _tax->setLocalValue(CurrDisplay::convert(_taxcurrid, _tax->id(),
-                        _taxCache.total(), _tax->effective()));
-}
-
-void returnAuthorization::sTaxAuthChanged()
-{
-  if (_raheadid == -1 || _taxauthidCache == _taxauth->id())
-    return;
-
-  XSqlQuery taxauthq;
-  taxauthq.prepare("SELECT COALESCE(taxauth_curr_id, :curr_id) AS taxauth_curr_id "
-                   "FROM taxauth "
-                   "WHERE (taxauth_id=:taxauth_id);");
-  if (_taxauth->isValid())
-    taxauthq.bindValue(":taxauth_id", _taxauth->id());
-  taxauthq.bindValue(":curr_id", _currency->id());
-  taxauthq.exec();
-  if (taxauthq.first())
-    _taxcurrid = taxauthq.value("taxauth_curr_id").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::NoError)
-  {
-    _taxauth->setId(_taxauthidCache);
-    systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  taxauthq.prepare("SELECT changeraTaxAuth(:rahead_id, :taxauth_id) AS result;");
-  taxauthq.bindValue(":rahead_id", _raheadid);
-  taxauthq.bindValue(":taxauth_id", _taxauth->id());
-  taxauthq.exec();
-  if (taxauthq.first())
-  {
-    int result = taxauthq.value("result").toInt();
-    if (result < 0)
-    {
-      _taxauth->setId(_taxauthidCache);
-      systemError(this, storedProcErrorLookup("changeraTaxAuth", result),
-                  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (taxauthq.lastError().type() != QSqlError::NoError)
-  {
-    _taxauth->setId(_taxauthidCache);
-    systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  _taxauthidCache = _taxauth->id();
-
-  taxauthq.prepare("SELECT COALESCE(getFreightTaxSelection(:taxauth), -1) AS result;");
-  taxauthq.bindValue(":taxauth", _taxauth->id());
-  taxauthq.exec();
-  if (taxauthq.first())
-  {
-    _taxCache.setFreightId(taxauthq.value("result").toInt());
-  }
-  else if (taxauthq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  sFreightChanged();
+    
+  _taxzoneidCache = _taxzone->id();
+ 
+  sCalculateTax();
 }
 
 void returnAuthorization::sRecvWhsChanged()

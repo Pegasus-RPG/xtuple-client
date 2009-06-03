@@ -1138,13 +1138,13 @@ void transferOrderItem::sTaxDetail()
 
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
-    _taxCache.setFreight(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
-    _taxCache.setFreightPct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
+//    _taxCache.setFreight(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
+//    _taxCache.setFreightPct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
 
-    if (_taxCache.freightId() != newdlg.tax())
-      _taxCache.setFreightId(newdlg.tax());
+ //   if (_taxCache.freightId() != newdlg.tax())
+//      _taxCache.setFreightId(newdlg.tax());
 
-    _tax->setLocalValue(_taxCache.total());
+//    _tax->setLocalValue(_taxCache.total());
   }
 }
 

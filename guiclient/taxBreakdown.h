@@ -25,11 +25,6 @@ class taxBreakdown : public XDialog, public Ui::taxBreakdown
     taxBreakdown(QWidget* = 0, const char* = 0, bool = 0, Qt::WFlags = 0);
     ~taxBreakdown();
 
-    virtual double	a();
-    virtual double	b();
-    virtual double	c();
-    
-
   public slots:
     void	     languageChange();
 
@@ -37,15 +32,12 @@ class taxBreakdown : public XDialog, public Ui::taxBreakdown
     virtual void	sAdjTaxDetail();
     virtual void	sFreightTaxDetail();
     virtual void	sLineTaxDetail();
-    virtual SetResponse	sRecalc();
-    virtual void	sSave();
     virtual void	sTotalTaxDetail();
-	virtual void	sPopulateAdj();
+	  virtual void	sPopulate();
 
   private:
-    int         _mode;
+    int   _mode;
     int		_orderid;
     QString	_ordertype;
-    taxCache	_taxCache;
 };
 #endif // TAXBREAKDOWN_H

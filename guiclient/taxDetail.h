@@ -24,24 +24,16 @@ public:
     taxDetail(QWidget* = 0, const char* = 0, bool = false, Qt::WFlags = 0);
     ~taxDetail();
 
-    virtual double amountA()	const;
-    virtual double amountB()	const;
-    virtual double amountC()	const;
-    virtual double pctA()	const;
-    virtual double pctB()	const;
-    virtual double pctC()	const;
-    virtual int    tax()	const;
 	virtual int    taxtype()	const;
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void clear();
-    virtual void sCalculateTotal();
-    virtual void sCalculateTax();
     virtual void sCancel();
+    virtual void sCalculateTax();
     virtual void sPopulate();
     virtual void sNew();
-	virtual void sDelete();
+	  virtual void sDelete();
 
 protected:
     double	_aCache;

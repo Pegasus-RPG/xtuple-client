@@ -38,8 +38,7 @@ public slots:
     void sCalculateSaleFromDiscount();
     void sListPrices();
     void sSaleListPrices();
-    void sLookupTax();
-    void sLookupTaxCode();
+    void sCalculateTax();
     void sPriceGroup();
     void sTaxDetail();
     void sQtyUOMChanged();
@@ -80,11 +79,10 @@ private:
     double   _listPriceCache;
     double   _salePriceCache;
     double   _qtyAuthCache;
-    int	     _taxauthid;
-    taxCache _taxCache;
+    int	     _taxzoneid;
     double	 _qtySoldCache;
     double   _qtycredited;
-	int	     _dispositionCache;
+	  int	     _dispositionCache;
     int      _invuomid;
     double   _qtyinvuomratio;
     double   _priceinvuomratio;

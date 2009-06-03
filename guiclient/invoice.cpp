@@ -979,8 +979,9 @@ void invoice::sTaxDetail()
     params.append("mode", "edit");
 
   taxBreakdown newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+  if (newdlg.set(params) == NoError)
   {
+    newdlg.exec();
     populate();
   }
 }

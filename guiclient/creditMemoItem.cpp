@@ -684,11 +684,11 @@ void creditMemoItem::sTaxDetail()
 
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
-    _taxCache.setLine(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
-    _taxCache.setLinePct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
+ //   _taxCache.setLine(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
+ //   _taxCache.setLinePct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
 
-    if (_taxCode->id() != newdlg.tax())
-      _taxCode->setId(newdlg.tax());
+//    if (_taxCode->id() != newdlg.tax())
+//      _taxCode->setId(newdlg.tax());
 
     _tax->setLocalValue(_taxCache.total());
   }

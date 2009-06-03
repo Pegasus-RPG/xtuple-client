@@ -171,7 +171,7 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item row="2" column="3">
-            <widget class="QLabel" name="_taxauthLit">
+            <widget class="QLabel" name="_taxzoneLit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -185,7 +185,7 @@ to be bound by its terms.</comment>
               </size>
              </property>
              <property name="text">
-              <string>Tax Authority:</string>
+              <string>Tax Zone:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -267,7 +267,7 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="2" column="4">
-            <widget class="XComboBox" name="_taxauth">
+            <widget class="XComboBox" name="_taxzone">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -287,7 +287,7 @@ to be bound by its terms.</comment>
               <string>None</string>
              </property>
              <property name="type">
-              <enum>XComboBox::TaxAuths</enum>
+              <enum>XComboBox::TaxZones</enum>
              </property>
             </widget>
            </item>

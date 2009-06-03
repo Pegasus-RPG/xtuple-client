@@ -31,7 +31,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void recalculateTax();
+    virtual void sCalculateTax();
     virtual bool sSave( bool partial );
     virtual void sSaveClick();
     virtual void sShipToList();
@@ -51,8 +51,7 @@ public slots:
     virtual void sCalculateTotal();
     virtual void populate();
     virtual void closeEvent( QCloseEvent * pEvent );
-    virtual void sFreightChanged();
-    virtual void sTaxAuthChanged();
+    virtual void sTaxZoneChanged();
     virtual void sRecvWhsChanged();
     virtual void sShipWhsChanged();
     virtual void sTaxDetail();
@@ -86,7 +85,7 @@ private:
     int _mode;
     int _raheadid;
     int _shiptoid;
-    int	_custtaxauthid;
+    int	_custtaxzoneid;
     bool _custEmail;
     bool _ffBillto;
     bool _ffShipto;
@@ -94,10 +93,7 @@ private:
 	  bool _ignoreSoSignals;
 	  bool _ignoreWhsSignals;
     double _subtotalCache;
-    int _taxauthidCache;
-    int _taxcurrid;
-
-    taxCache _taxCache;
+    int _taxzoneidCache;
 };
 
 #endif // RETURNAUTHORIZATION_H
