@@ -174,7 +174,8 @@ void taxDetail::sPopulate()
   ParameterList params;
   params.append("order_id", _orderid);
   params.append("order_type", _ordertype);
-  if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || _ordertype == "B" || _ordertype == "RA")
+  if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || 
+     _ordertype == "B" || _ordertype == "RA" || _ordertype == "CM")
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
@@ -182,7 +183,7 @@ void taxDetail::sPopulate()
          "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
 			   "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
   }
-  else if( _ordertype == "II" || _ordertype == "BI")
+  else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI")
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
          "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole "
          "FROM calculateTaxDetailLine(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>); ";
@@ -220,34 +221,35 @@ void taxDetail::sNew()
 
 void taxDetail::sDelete()
 {
-    
-  if(_taxcodes->id() == -1)
-  {
-    if (QMessageBox::question(this, tr("Delete All Tax Adjustments?"),
-                              tr("<p>Are you sure that you want to delete all tax adjustments?"),
-                              QMessageBox::Yes,
-                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-	{
-	 if(_ordertype == "I")
-       q.prepare( "DELETE FROM invcheadtax WHERE taxhist_parent_id=:parent_id AND taxhist_taxtype_id=getadjustmenttaxtypeid();");
-          
-     if(_ordertype == "B")
-         q.prepare( "DELETE FROM cobmisctax WHERE taxhist_parent_id=:parent_id AND taxhist_taxtype_id=getadjustmenttaxtypeid();");
-	  
-	 q.bindValue(":parent_id", _orderid);
-     q.exec();
-	}
-  }
+  QString table;
+  if (_ordertype == "I")
+    table = "invcheadtax";
+  else if (_ordertype == "B")
+    table = "cobmisctax";
+  else if (_ordertype == "CM")
+    table = "cmheadtax";
   else
-  {
-   if(_ordertype == "I")
-    q.prepare( "DELETE FROM invcheadtax WHERE taxhist_parent_id=:parent_id AND taxhist_taxtype_id=getadjustmenttaxtypeid() AND taxhist_tax_id=:tax_id;"); 
-   if(_ordertype == "B")
-    q.prepare( "DELETE FROM cobmisctax WHERE taxhist_parent_id=:parent_id AND taxhist_taxtype_id=getadjustmenttaxtypeid() AND taxhist_tax_id=:tax_id;"); 
-   q.bindValue(":parent_id", _orderid);
-   q.bindValue(":tax_id", _taxcodes->id());
-   q.exec();
-  }
+    table = _ordertype;
+      
+  if (QMessageBox::question(this, tr("Delete All Tax Adjustments?"),
+                            tr("<p>Are you sure that you want to delete this tax adjustment?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+	{
+    QString sql = QString("DELETE FROM %1 "
+                          "WHERE taxhist_parent_id=:parent_id "
+                          " AND taxhist_taxtype_id=getadjustmenttaxtypeid() "
+                          " AND taxhist_tax_id=:tax_id;").arg(table);
+    q.prepare(sql);       
+	  q.bindValue(":parent_id", _orderid);
+    q.bindValue(":tax_id", _taxcodes->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+	}
   sPopulate();
   return;
 }

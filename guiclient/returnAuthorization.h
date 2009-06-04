@@ -17,8 +17,6 @@
 
 #include "ui_returnAuthorization.h"
 
-#include "taxCache.h"
-
 class returnAuthorization : public XWidget, public Ui::returnAuthorization
 {
     Q_OBJECT

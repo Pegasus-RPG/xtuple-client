@@ -15,7 +15,6 @@
 #include "xdialog.h"
 #include <parameter.h>
 
-#include "taxCache.h"
 #include "ui_creditMemoItem.h"
 
 class creditMemoItem : public XDialog, public Ui::creditMemoItem
@@ -33,8 +32,7 @@ public slots:
     virtual void sCalculateDiscountPrcnt();
     virtual void sCalculateFromDiscount();
     virtual void sListPrices();
-    virtual void sLookupTax();
-    virtual void sLookupTaxCode();
+    virtual void sCalculateTax();
     virtual void sPriceGroup();
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
@@ -58,12 +56,12 @@ private:
     double _listPriceCache;
     double _salePriceCache;
     double _qtyShippedCache;
-    int		_taxauthid;
-    taxCache	_taxCache;
+    int		_taxzoneid;
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
     double _ratio;
+    bool _saved;
 
 };
 

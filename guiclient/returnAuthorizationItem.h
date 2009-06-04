@@ -15,7 +15,6 @@
 #include "xdialog.h"
 #include <parameter.h>
 
-#include "taxCache.h"
 #include "ui_returnAuthorizationItem.h"
 
 class returnAuthorizationItem : public XDialog, public Ui::returnAuthorizationItem

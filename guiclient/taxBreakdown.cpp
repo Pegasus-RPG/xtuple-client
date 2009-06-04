@@ -125,7 +125,7 @@ void taxBreakdown::sFreightTaxDetail()
 	   newdlg.exec();
      
  }
- else if (_ordertype == "I" || _ordertype == "B")
+ else if (_ordertype == "I" || _ordertype == "B" || _ordertype == "CM")
  {
    q.exec("SELECT getfreighttaxtypeid() as taxtype;");
 	 if(q.first())

@@ -44,6 +44,12 @@ to be bound by its terms.</comment>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="XComboBox" name="_taxcode">
+             <property name="allowNull">
+              <bool>true</bool>
+             </property>
+             <property name="nullStr">
+              <string>Select a Code</string>
+             </property>
              <property name="type">
               <enum>XComboBox::TaxCodes</enum>
              </property>

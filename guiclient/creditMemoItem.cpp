@@ -28,7 +28,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
 #endif
 
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-  //connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
+  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
   connect(_item,	  SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
   connect(_listPrices,	  SIGNAL(clicked()),      this, SLOT(sListPrices()));
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
@@ -36,9 +36,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_qtyToCredit,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
   connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
-  connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTaxCode()));
+  connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sCalculateTax()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
 
@@ -50,11 +49,11 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _priceRatio = 1.0;
   _qtyShippedCache = 0.0;
   _shiptoid = -1;
-  _taxauthid	= -1;
-  _taxCache.clear();
+  _taxzoneid	= -1;
   _qtyinvuomratio = 1.0;
   _priceinvuomratio = 1.0;
   _invuomid = -1;
+  _saved = false;
 
   _qtyToCredit->setValidator(omfgThis->qtyVal());
   _qtyReturned->setValidator(omfgThis->qtyVal());
@@ -63,7 +62,6 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
-  _taxCode->setEnabled(_privileges->check("OverrideTax"));
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -95,16 +93,15 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _cmheadid = param.toInt();
-    q.prepare("SELECT cmhead_taxauth_id,"
-	      "       COALESCE(cmhead_tax_curr_id, cmhead_curr_id) AS taxcurr "
-	      "FROM cmhead "
-	      "WHERE (cmhead_id=:cmhead_id);");
+    q.prepare("SELECT cmhead_taxzone_id, cmhead_curr_id "
+	            "FROM cmhead "
+	            "WHERE (cmhead_id=:cmhead_id);");
     q.bindValue(":cmhead_id", _cmheadid);
     q.exec();
     if (q.first())
     {
-      _taxauthid = q.value("cmhead_taxauth_id").toInt();
-      _tax->setId(q.value("taxcurr").toInt());
+      _taxzoneid = q.value("cmhead_taxzone_id").toInt();
+      _tax->setId(q.value("cmhead_curr_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -208,7 +205,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _discountFromSale->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
       _taxType->setEnabled(FALSE);
-      _taxCode->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
 
       _save->hide();
@@ -279,18 +275,14 @@ void creditMemoItem::sSave()
                "  cmitem_qtyreturned, cmitem_qtycredit,"
                "  cmitem_qty_uom_id, cmitem_qty_invuomratio,"
                "  cmitem_price_uom_id, cmitem_price_invuomratio,"
-               "  cmitem_unitprice, cmitem_tax_id, cmitem_taxtype_id,"
-	       "  cmitem_tax_pcta, cmitem_tax_pctb, cmitem_tax_pctc,"
-	       "  cmitem_tax_ratea, cmitem_tax_rateb, cmitem_tax_ratec,"
+               "  cmitem_unitprice, cmitem_taxtype_id,"
                "  cmitem_comments, cmitem_rsncode_id ) "
                "SELECT :cmitem_id, :cmhead_id, :cmitem_linenumber, itemsite_id,"
                "       :cmitem_qtyreturned, :cmitem_qtycredit,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
-               "       :cmitem_unitprice, :cmitem_tax_id, :cmitem_taxtype_id,"
-	       "       :cmitem_tax_pcta, :cmitem_tax_pctb, :cmitem_tax_pctc,"
-	       "       :cmitem_tax_ratea, :cmitem_tax_rateb, :cmitem_tax_ratec,"
-	       "       :cmitem_comments, :cmitem_rsncode_id "
+               "       :cmitem_unitprice, :cmitem_taxtype_id,"
+	             "       :cmitem_comments, :cmitem_rsncode_id "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -303,15 +295,8 @@ void creditMemoItem::sSave()
                "    cmitem_price_uom_id=:price_uom_id,"
                "    cmitem_price_invuomratio=:price_invuomratio,"
                "    cmitem_unitprice=:cmitem_unitprice,"
-	       "    cmitem_tax_id=:cmitem_tax_id,"
-	       "    cmitem_taxtype_id=:cmitem_taxtype_id,"
-	       "    cmitem_tax_pcta=:cmitem_tax_pcta,"
-	       "    cmitem_tax_pctb=:cmitem_tax_pctb,"
-	       "    cmitem_tax_pctc=:cmitem_tax_pctc,"
-	       "    cmitem_tax_ratea=:cmitem_tax_ratea,"
-	       "    cmitem_tax_rateb=:cmitem_tax_rateb,"
-	       "    cmitem_tax_ratec=:cmitem_tax_ratec,"
-	       "    cmitem_comments=:cmitem_comments,"
+	             "    cmitem_taxtype_id=:cmitem_taxtype_id,"
+	             "    cmitem_comments=:cmitem_comments,"
                "    cmitem_rsncode_id=:cmitem_rsncode_id "
                "WHERE (cmitem_id=:cmitem_id);" );
 
@@ -325,16 +310,8 @@ void creditMemoItem::sSave()
   q.bindValue(":price_uom_id", _pricingUOM->id());
   q.bindValue(":price_invuomratio", _priceinvuomratio);
   q.bindValue(":cmitem_unitprice", _netUnitPrice->localValue());
-  if (_taxCode->isValid())
-    q.bindValue(":cmitem_tax_id",	_taxCode->id());
   if (_taxType->isValid())
     q.bindValue(":cmitem_taxtype_id",	_taxType->id());
-  q.bindValue(":cmitem_tax_pcta",	_taxCache.linePct(0));
-  q.bindValue(":cmitem_tax_pctb",	_taxCache.linePct(1));
-  q.bindValue(":cmitem_tax_pctc",	_taxCache.linePct(2));
-  q.bindValue(":cmitem_tax_ratea",	_taxCache.line(0));
-  q.bindValue(":cmitem_tax_rateb",	_taxCache.line(1));
-  q.bindValue(":cmitem_tax_ratec",	_taxCache.line(2));
   q.bindValue(":cmitem_comments", _comments->toPlainText());
   q.bindValue(":cmitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
@@ -381,11 +358,11 @@ void creditMemoItem::sPopulateItemInfo()
                 "       iteminvpricerat(item_id) AS iteminvpricerat,"
                 "       item_listprice, "
                 "       stdCost(item_id) AS f_cost,"
-		"       getItemTaxType(item_id, :taxauth) AS taxtype_id "
+		            "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _item->id());
-  item.bindValue(":taxauth", _taxauthid);
+  item.bindValue(":taxzone", _taxzoneid);
   item.exec();
   if (item.first())
   {
@@ -452,38 +429,35 @@ void creditMemoItem::sPopulateItemInfo()
 void creditMemoItem::populate()
 {
   XSqlQuery cmitem;
-  cmitem.prepare("SELECT cmitem.*, "
-		 "       cmhead_taxauth_id,"
-		 "       COALESCE(cmhead_tax_curr_id, cmhead_curr_id) AS taxcurr "
-                 "FROM cmitem, cmhead "
+  cmitem.prepare("SELECT cmitem_cmhead_id,cmitem_itemsite_id,cmitem_linenumber,cmitem_unitprice, "
+                 "  cmitem_qtycredit,cmitem_qtyreturned,cmitem_comments,cmitem_taxtype_id, "
+		             "  cmitem_rsncode_id,cmhead_taxzone_id,cmhead_curr_id, "
+                 "  sum(taxhist_tax) AS tax "
+                 "FROM cmhead, cmitem "
+                 "  LEFT OUTER JOIN cmitemtax ON (cmitem_id=taxhist_parent_id) "
                  "WHERE ((cmitem_cmhead_id=cmhead_id)"
-		 "  AND  (cmitem_id=:cmitem_id));" );
+		             "  AND  (cmitem_id=:cmitem_id)) "
+                 "GROUP BY cmitem_cmhead_id,cmitem_itemsite_id,cmitem_linenumber,cmitem_unitprice, "
+                 "  cmitem_qtycredit,cmitem_qtyreturned,cmitem_comments,cmitem_taxtype_id, "
+		             "  cmitem_rsncode_id,cmhead_taxzone_id,cmhead_curr_id;" );
   cmitem.bindValue(":cmitem_id", _cmitemid);
   cmitem.exec();
   if (cmitem.first())
-  {
-    // do _item and _taxauth before other tax stuff because of signal cascade
-    _taxauthid = cmitem.value("cmhead_taxauth_id").toInt();
-    _tax->setId(cmitem.value("taxcurr").toInt());
+  { 
+    _cmheadid = cmitem.value("cmitem_cmhead_id").toInt();
+    _taxzoneid = cmitem.value("cmhead_taxzone_id").toInt();
+    _rsnCode->setId(cmitem.value("cmitem_rsncode_id").toInt());
     _item->setItemsiteid(cmitem.value("cmitem_itemsite_id").toInt());
     _lineNumber->setText(cmitem.value("cmitem_linenumber").toString());
     _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     _qtyToCredit->setDouble(cmitem.value("cmitem_qtycredit").toDouble());
     _qtyReturned->setDouble(cmitem.value("cmitem_qtyreturned").toDouble());
     _comments->setText(cmitem.value("cmitem_comments").toString());
-    _taxCode->setId(cmitem.value("cmitem_tax_id").toInt());
     _taxType->setId(cmitem.value("cmitem_taxtype_id").toInt());
-    _taxCache.setLinePct(cmitem.value("cmitem_tax_pcta").toDouble(),
-			 cmitem.value("cmitem_tax_pctb").toDouble(),
-			 cmitem.value("cmitem_tax_pctc").toDouble());
-    _taxCache.setLine(cmitem.value("cmitem_tax_ratea").toDouble(),
-		      cmitem.value("cmitem_tax_rateb").toDouble(),
-		      cmitem.value("cmitem_tax_ratec").toDouble());
-    _tax->setLocalValue(_taxCache.total());
-
-    _rsnCode->setId(cmitem.value("cmitem_rsncode_id").toInt());
-
+    _tax->setId(cmitem.value("cmhead_curr_id").toInt());
+    _tax->setLocalValue(cmitem.value("tax").toDouble());
     sCalculateDiscountPrcnt();
+    _saved=true;
   }
   else if (cmitem.lastError().type() != QSqlError::NoError)
   {
@@ -495,7 +469,7 @@ void creditMemoItem::populate()
 void creditMemoItem::sCalculateExtendedPrice()
 {
   _extendedPrice->setLocalValue(((_qtyToCredit->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _netUnitPrice->localValue());
-  sLookupTax();
+  sCalculateTax();
 }
 
 void creditMemoItem::sCalculateDiscountPrcnt()
@@ -632,31 +606,19 @@ void creditMemoItem::sListPrices()
   }
 }
 
-void creditMemoItem::sLookupTax()
+void creditMemoItem::sCalculateTax()
 {
+  _saved = false;
   XSqlQuery calcq;
-  calcq.prepare("SELECT currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'A'), :date) AS valA,"
-		"       currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'B'), :date) AS valB,"
-		"       currToCurr(:extcurr, COALESCE(taxauth_curr_id, :extcurr),"
-		"         calculateTax(:tax_id, :ext, 0, 'C'), :date) AS valC "
-		"FROM taxauth "
-		"WHERE (taxauth_id=:auth);");
-
-  calcq.bindValue(":extcurr", _extendedPrice->id());
-  calcq.bindValue(":tax_id",  _taxCode->id());
-  calcq.bindValue(":ext",     _extendedPrice->localValue());
-  calcq.bindValue(":date",    _extendedPrice->effective());
-  calcq.bindValue(":auth",    _taxauthid);
+  calcq.prepare( "SELECT ROUND(calculateTax(cmhead_taxzone_id,:taxtype_id,cmhead_docdate,cmhead_curr_id,ROUND(:ext,2)),2) AS tax "
+                 "FROM cmhead "
+                 "WHERE (cmhead_id=:cmhead_id); "); 
+  calcq.bindValue(":cmhead_id", _cmheadid);
+  calcq.bindValue(":taxtype_id", _taxType->id());
+  calcq.bindValue(":ext", _extendedPrice->localValue());
   calcq.exec();
   if (calcq.first())
-  {
-    _taxCache.setLine(calcq.value("valA").toDouble(),
-		      calcq.value("valB").toDouble(),
-		      calcq.value("valC").toDouble());
-    _tax->setLocalValue(_taxCache.total());
-  }
+    _tax->setLocalValue(calcq.value("tax").toDouble());
   else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
@@ -668,55 +630,28 @@ void creditMemoItem::sTaxDetail()
 {
   taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("tax_id",   _taxCode->id());
+  params.append("taxzone_id", _taxzoneid);
+  params.append("taxtype_id", _taxType->id());
+  params.append("date", _netUnitPrice->effective());
+  params.append("subtotal", _extendedPrice->localValue());
   params.append("curr_id",  _tax->id());
-  params.append("valueA",   _taxCache.line(0));
-  params.append("valueB",   _taxCache.line(1));
-  params.append("valueC",   _taxCache.line(2));
-  params.append("pctA",	    _taxCache.linePct(0));
-  params.append("pctB",	    _taxCache.linePct(1));
-  params.append("pctC",	    _taxCache.linePct(2));
-  params.append("subtotal", CurrDisplay::convert(_extendedPrice->id(), _tax->id(),
-						 _extendedPrice->localValue(),
-						 _extendedPrice->effective()));
-  if (cView == _mode)
+  
+  if(cView == _mode)
     params.append("readOnly");
+  
+  if(_saved == true)
+  {
+	  params.append("order_id", _cmitemid);
+    params.append("order_type", "CI");
+  }
 
+  newdlg.set(params);
+  
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
- //   _taxCache.setLine(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
- //   _taxCache.setLinePct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
-
-//    if (_taxCode->id() != newdlg.tax())
-//      _taxCode->setId(newdlg.tax());
-
-    _tax->setLocalValue(_taxCache.total());
+    if (_taxType->id() != newdlg.taxtype())
+      _taxType->setId(newdlg.taxtype());
   }
-}
-
-void creditMemoItem::sLookupTaxCode()
-{
-  XSqlQuery taxq;
-  taxq.prepare("SELECT tax_ratea, tax_rateb, tax_ratec, tax_id "
-	       "FROM tax "
-	       "WHERE (tax_id=getTaxSelection(:auth, :type));");
-  taxq.bindValue(":auth",    _taxauthid);
-  taxq.bindValue(":type",    _taxType->id());
-  taxq.exec();
-  if (taxq.first())
-  {
-    _taxCache.setLinePct(taxq.value("tax_ratea").toDouble(),
-		         taxq.value("tax_rateb").toDouble(),
-		         taxq.value("tax_ratec").toDouble());
-    _taxCode->setId(taxq.value("tax_id").toInt());
-  }
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else
-    _taxCode->setId(-1);
 }
 
 void creditMemoItem::sQtyUOMChanged()

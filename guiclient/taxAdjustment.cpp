@@ -23,8 +23,10 @@ taxAdjustment::taxAdjustment(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 	connect(_taxcode, SIGNAL(newID(int)), this, SLOT(sCheck()));
+  
+  _taxhistid = -1;
 }
 
 taxAdjustment::~taxAdjustment()
@@ -45,20 +47,29 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
   param = pParams.value("order_id", &valid);
   if (valid)
     _orderid = param.toInt();
-   
-   
+    
   param = pParams.value("order_type", &valid);
   if (valid)
-    _ordertype = param.toString();
-    
+  {
+    if (param.toString() == "I")
+      _table = "invcheadtax";
+    else if (param.toString() == "B")
+      _table = "cobmisctax";
+    else if (param.toString() == "CM")
+      _table = "cmheadtax";
+    else
+      _table = param.toString();
+  }  
    
   param = pParams.value("mode", &valid);
   if (valid)
+  {
     if (param.toString() == "new")
     {
-		_mode = cNew;      
-		_taxcode->setFocus();
+		  _mode = cNew;      
+		  _taxcode->setFocus();
     }
+  }
  
   param = pParams.value("date", &valid);
    if (valid)
@@ -73,41 +84,25 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
 
 void taxAdjustment::sSave()
 { 
-  if(_ordertype == "I")
-   q.prepare( "SELECT taxhist_tax_id, taxhist_tax "
-              "FROM invcheadtax " 
-              "WHERE ((taxhist_parent_id=:order_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_tax_id=:tax_id));" );
+  if (_taxcode->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Tax Code Required"),
+                          tr( "<p>You must select a tax code "
+                          " before you may save." ) );
+    return;
+  }
   
-  else if(_ordertype == "B")
-   q.prepare( "SELECT taxhist_tax_id, taxhist_tax "
-              "FROM cobmisctax " 
-              "WHERE ((taxhist_parent_id=:order_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_tax_id=:tax_id));" );
+  QString sql;
+  if (_mode == cNew)
+    sql = QString( "INSERT into %1 (taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate, taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id  ) "
+                   "VALUES (0, 0, 0, :date, :taxcode_id, :amount, getadjustmenttaxtypeid(), :order_id) ").arg(_table); 
   
-  q.bindValue(":order_id", _orderid);
-  q.bindValue(":tax_id", _taxcode->id()); 
- 
-  q.exec();
-  if (q.first())
-    _mode=cEdit;
-  
-  if (_mode == cNew && _ordertype == "I")
-    q.prepare( "INSERT into invcheadtax(taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate, taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id  ) "
-               "VALUES (0, 0, 0, :date, :taxcode_id, :amount, getadjustmenttaxtypeid(), :order_id) ");    
-  
-  else if (_mode == cEdit && _ordertype == "I")
-    q.prepare( "UPDATE invcheadtax "
-               "SET taxhist_tax=:amount, taxhist_docdate=:date "
-               "WHERE ((taxhist_tax_id=:taxcode_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_parent_id=:order_id)); ");
-		     
-  else if (_mode == cNew && _ordertype == "B")
-    q.prepare( "INSERT into cobmisctax( taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate, taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id  ) "
-               "VALUES (0, 0, 0, :date, :taxcode_id, :amount, getadjustmenttaxtypeid(), :order_id) ");    
-    
-  else if (_mode == cEdit && _ordertype == "B")
-    q.prepare( "UPDATE cobmisctax "
-                "SET taxhist_tax=:amount, taxhist_docdate=:date "
-               "WHERE ((taxhist_tax_id=:taxcode_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_parent_id=:order_id));");
-  
+  else if (_mode == cEdit)
+    sql = QString( "UPDATE taxhist "
+                   "SET taxhist_tax=:amount, taxhist_docdate=:date "
+                   "WHERE (taxhist_id=:taxhist_id) ");
+  q.prepare(sql);
+  q.bindValue(":taxhist_id", _taxhistid);
   q.bindValue(":taxcode_id", _taxcode->id());
   q.bindValue(":amount", _amount->localValue());          
   q.bindValue(":order_id", _orderid);
@@ -123,26 +118,33 @@ void taxAdjustment::sSave()
 
 void taxAdjustment::sCheck()     
 {
-  if(_ordertype == "I")
-   q.prepare( "SELECT taxhist_tax_id, taxhist_tax "
-              "FROM invcheadtax " 
-              "WHERE ((taxhist_parent_id=:order_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_tax_id=:tax_id));" );
-  
-  else if(_ordertype == "B")
-   q.prepare( "SELECT taxhist_tax_id, taxhist_tax "
-              "FROM cobmisctax " 
-              "WHERE ((taxhist_parent_id=:order_id) AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) AND (taxhist_tax_id=:tax_id));" );
-  
+  QString table;
+    
+   q.prepare( "SELECT taxhist_id, taxhist_tax_id, taxhist_tax "
+              "FROM taxhist " 
+              " JOIN pg_class ON (pg_class.oid=taxhist.tableoid) "
+              "WHERE ((taxhist_parent_id=:order_id) "
+              " AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) "
+              " AND (taxhist_tax_id=:tax_id) "
+              " AND (relname=:table) );" );
   q.bindValue(":order_id", _orderid);
-  q.bindValue(":tax_id", _taxcode->id()); 
+  q.bindValue(":tax_id", _taxcode->id());
+  q.bindValue(":table", _table);  
  
   q.exec();
   if (q.first())
   {
+    _taxhistid=q.value("taxhist_id").toInt();
     _amount->setLocalValue(q.value("taxhist_tax").toDouble());
-	_taxcode->setEnabled(FALSE);
-	_amount->setFocus();
-	_mode=cEdit;
+	  _amount->setFocus();
+	  _mode=cEdit;
+  }
+  else
+  {
+    _taxhistid=-1;
+    _amount->clear();
+	  _amount->setFocus();
+	  _mode=cNew;
   }
 }
 

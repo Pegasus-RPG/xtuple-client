@@ -17,8 +17,6 @@
 
 #include "ui_creditMemo.h"
 
-#include "taxCache.h"
-
 class creditMemo : public XWidget, public Ui::creditMemo
 {
     Q_OBJECT
@@ -31,7 +29,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void recalculateTax();
+    virtual void sCalculateTax();
     virtual void sSave();
     virtual void sShipToList();
     virtual void sInvoiceList();
@@ -50,8 +48,7 @@ public slots:
     virtual void sCalculateTotal();
     virtual void populate();
     virtual void closeEvent( QCloseEvent * pEvent );
-    virtual void sFreightChanged();
-    virtual void sTaxAuthChanged();
+    virtual void sTaxZoneChanged();
     virtual void sTaxDetail();
 
 protected slots:
@@ -61,14 +58,12 @@ private:
     int _mode;
     int _cmheadid;
     int _shiptoid;
-    int		_custtaxauthid;
+    int	_custtaxzoneid;
     bool _ffBillto;
     bool _ffShipto;
     bool _ignoreShiptoSignals;
     double _subtotalCache;
-    int		_taxauthidCache;
-    int		_taxcurrid;
-    taxCache	_taxCache;
+    int		_taxzoneidCache;
 };
 
 #endif // CREDITMEMO_H
