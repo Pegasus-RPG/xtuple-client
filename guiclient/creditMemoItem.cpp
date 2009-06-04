@@ -171,8 +171,8 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
         _lineNumber->setText(q.value("n_linenumber").toString());
       else if (q.lastError().type() == QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      return UndefinedError;
       }
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
@@ -457,6 +457,7 @@ void creditMemoItem::populate()
     _tax->setId(cmitem.value("cmhead_curr_id").toInt());
     _tax->setLocalValue(cmitem.value("tax").toDouble());
     sCalculateDiscountPrcnt();
+    _listPrices->setEnabled(true);
     _saved=true;
   }
   else if (cmitem.lastError().type() != QSqlError::NoError)

@@ -131,16 +131,11 @@ void taxDetail::sCalculateTax()
    params.append("curr_id", _subtotal->id());
  
    QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-              "taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole "
+              "   taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
+              "   0 AS taxdetail_tax_xttotalrole "
               "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
 			        " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
-			        " <? value(\"subtotal\") ?>) "
-			        "UNION ALL "
-			        "SELECT -1 AS taxdetail_tax_id, 'Total' AS taxdetail_tax_code, NULL AS taxdetail_tax_descrip, "
-			        "(select calculateTax(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
-			        " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
-			        " <? value(\"subtotal\") ?>)) AS taxdetail_tax, NULL AS taxdetail_taxclass_sequence, "
-			        "0 AS  xtindentrole;"); 
+			        " <? value(\"subtotal\") ?>) "); 
 			  
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
@@ -179,13 +174,15 @@ void taxDetail::sPopulate()
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  sum(taxdetail_tax) as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole "
+         "  sum(taxdetail_tax) as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
+         " 0 AS taxdetail_tax_xttotalrole "
          "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
 			   "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
   }
   else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI")
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole "
+         "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
+         "  0 AS taxdetail_tax_xttotalrole "
          "FROM calculateTaxDetailLine(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>); ";
   else
   {  
