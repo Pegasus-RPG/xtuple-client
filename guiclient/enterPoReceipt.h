@@ -19,6 +19,7 @@
 
 #include "ui_enterPoReceipt.h"
 
+
 class enterPoReceipt : public XWidget, public Ui::enterPoReceipt
 {
     Q_OBJECT
@@ -32,13 +33,17 @@ public:
 public slots:
     virtual void close();
     virtual enum SetResponse set(const ParameterList & pParams);
-    virtual void sEnter();
+    virtual void sEnter(bool printLabel);
+    virtual void sEnterandLabel();
+    virtual void sEnterOnly();
     virtual void sFillList();
     virtual void sPost();
     virtual void sPrint();
     virtual void sReceiveAll();
     virtual void sSave();
     virtual void setParams(ParameterList &);
+    virtual void sPrintItemLabel();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
 
 protected slots:
     virtual void languageChange();

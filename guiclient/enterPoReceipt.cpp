@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <openreports.h>
 
 #include <metasql.h>
 
@@ -30,18 +31,19 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_all,		SIGNAL(clicked()),	this, SLOT(sReceiveAll()));
-  connect(_enter,	SIGNAL(clicked()),	this, SLOT(sEnter()));
+  connect(_enter,	SIGNAL(clicked()),	this, SLOT(sEnterOnly()));
   connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
   connect(_post,	SIGNAL(clicked()),	this, SLOT(sPost()));
   connect(_print,	SIGNAL(clicked()),	this, SLOT(sPrint()));
   connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
+  connect(_orderitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Purchase |
 			  OrderLineEdit::Return |
 			  OrderLineEdit::Transfer);
   _order->setToSitePrivsEnforced(TRUE);
-  
+
   if (_metrics->boolean("EnableReturnAuth"))
   {
       _order->setExtraClause("RA", "(SELECT SUM(raitem_qtyauthorized) > 0 "
@@ -150,6 +152,19 @@ void enterPoReceipt::sPrint()
   newdlg.exec();
 }
 
+void enterPoReceipt::sPrintItemLabel()
+{
+    ParameterList params;
+    params.append("poitem_id", _orderitem->id());
+    orReport report("ReceivingLabel", params);
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+    }
+}
+
 void enterPoReceipt::post(const QString pType, const int pId)
 {
   enterPoReceipt * w = new enterPoReceipt(0, "enterPoReceipt");
@@ -242,7 +257,7 @@ void enterPoReceipt::sPost()
         q.exec();
         if(q.first())
         {
-          newdlg.enableExpiration(q.value("itemsite_perishable").toBool()); 
+          newdlg.enableExpiration(q.value("itemsite_perishable").toBool());
           newdlg.enableWarranty(q.value("itemsite_warrpurc").toBool());
         }
 
@@ -267,12 +282,12 @@ void enterPoReceipt::sPost()
         rollback.exec();
         return;
       }
-    
+
       q.exec("COMMIT;");
-      
+
       // TODO: update this to sReceiptsUpdated?
       omfgThis->sPurchaseOrderReceiptsUpdated();
-      
+
       if (_captive)
       {
         _orderitem->clear();
@@ -301,7 +316,17 @@ void enterPoReceipt::sSave()
   XWidget::close();
 }
 
-void enterPoReceipt::sEnter()
+void enterPoReceipt::sEnterandLabel()
+{
+  sEnter(true);
+}
+
+void enterPoReceipt::sEnterOnly()
+{
+  sEnter(false);
+}
+
+void enterPoReceipt::sEnter(bool printLabel)
 {
   ParameterList params;
   params.append("lineitem_id", _orderitem->id());
@@ -312,7 +337,11 @@ void enterPoReceipt::sEnter()
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
+  {
+    if(printLabel)
+       sPrintItemLabel();
     sFillList();
+  }
 }
 
 void enterPoReceipt::sFillList()
@@ -407,4 +436,12 @@ void enterPoReceipt::sReceiveAll()
   }
 
   sFillList();
+}
+
+void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+{
+  int     menuItem;
+  menuItem = pMenu->insertItem(tr("Enter and Label..."), this, SLOT(sEnterandLabel()), 0);
+  menuItem = pMenu->insertItem(tr("Enter Only..."), this, SLOT(sEnterOnly()), 0);
+  menuItem = pMenu->insertItem(tr("Label Only..."), this, SLOT(sPrintItemLabel()), 0);
 }

@@ -1,0 +1,244 @@
+<!DOCTYPE openRPTDef>
+<report>
+ <title>Receiving Label</title>
+ <name>ReceivingLabel</name>
+ <description></description>
+ <parameter default="" active="false" listtype="static" type="integer" name="daysback" >
+  <description>must be a positive number or 0. used to specify how many day back from today the report takes into account when printing recieving labels</description>
+ </parameter>
+ <parameter default="" active="false" listtype="static" type="string" name="itemstring" >
+  <description>Item Number - Used to filter the item numbers by the first matching characters from the left of the string</description>
+ </parameter>
+ <parameter default="" active="false" listtype="static" type="integer" name="labelto" >
+  <description>used to specify the number of repeated sets of labels required</description>
+ </parameter>
+ <parameter default="" active="false" listtype="static" type="string" name="pohead_id" >
+  <description>used with the pirnt receiving label form</description>
+ </parameter>
+ <parameter default="" active="false" listtype="static" type="integer" name="ponumber" >
+  <description>used to filter the report by a PO number</description>
+ </parameter>
+ <labeltype>CILS ALP1-9200-1</labeltype>
+ <size>Labels</size>
+ <portrait/>
+ <topmargin>10</topmargin>
+ <bottommargin>0</bottommargin>
+ <rightmargin>0</rightmargin>
+ <leftmargin>10</leftmargin>
+ <querysource>
+  <name>detail</name>
+  <sql>SELECT poitem_id, 
+       current_date AS date,
+       CASE WHEN location.location_name = 'AAAA NOT SET' THEN ''::text
+            ELSE location.location_name
+       END AS loc_name, 
+       item_number,
+       CASE WHEN item_descrip1 isnull THEN poitem_vend_item_descrip  
+            ELSE item_descrip1
+       END AS itemdesc1, 
+       item_descrip2, 
+       poitem_vend_item_number, 
+       pohead_number     
+  FROM pohead, poitem  
+  LEFT OUTER JOIN itemsite ON itemsite.itemsite_id = poitem.poitem_itemsite_id    
+  LEFT OUTER JOIN location ON itemsite.itemsite_location_id = location.location_id 
+  LEFT JOIN item  ON item.item_id = itemsite.itemsite_item_id
+  WHERE pohead.pohead_id = poitem.poitem_pohead_id  
+                    
+&lt;? if exists("poitem_id") ?>
+  AND poitem_id = &lt;? value("poitem_id") ?>
+&lt;? endif ?>
+
+GROUP BY poitem_id, date, loc_name, item_number, item_descrip1, item_descrip2,
+itemdesc1, poitem_vend_item_number, pohead_number
+ORDER BY item_number, pohead_number</sql>
+ </querysource>
+ <section>
+  <name>detail</name>
+  <detail>
+   <key>
+    <query>detail</query>
+   </key>
+   <height>698</height>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>42</y>
+     <width>35</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>Loc:</string>
+   </label>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>5</y>
+     <width>190</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>11</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>54</y>
+     <width>35</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>Supp#:</string>
+   </label>
+   <field>
+    <rect>
+     <x>45</x>
+     <y>42</y>
+     <width>130</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>loc_name</column>
+    </data>
+   </field>
+   <text>
+    <rect>
+     <x>5</x>
+     <y>20</y>
+     <width>175</width>
+     <height>10</height>
+    </rect>
+    <bottompad>0</bottompad>
+    <font>
+     <face>Arial</face>
+     <size>7</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>itemdesc1</column>
+    </data>
+   </text>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>64.8605</y>
+     <width>30</width>
+     <height>19.1562</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>PO#:</string>
+   </label>
+   <field>
+    <rect>
+     <x>45</x>
+     <y>54</y>
+     <width>130</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>poitem_vend_item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>35</x>
+     <y>65</y>
+     <width>40</width>
+     <height>16.9122</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>pohead_number</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>80</x>
+     <y>64.5232</y>
+     <width>30</width>
+     <height>20.3887</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>Date:</string>
+   </label>
+   <field>
+    <rect>
+     <x>110</x>
+     <y>65.6264</y>
+     <width>65</width>
+     <height>18.1824</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>recvdate</column>
+    </data>
+   </field>
+  </detail>
+ </section>
+</report>
