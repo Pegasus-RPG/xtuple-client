@@ -46,8 +46,8 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
   _prospectid = -1;
   _crmacct->setId(-1);
 
-  _taxauth->setAllowNull(true);
-  _taxauth->setType(XComboBox::TaxAuths);
+  _taxzone->setAllowNull(true);
+  _taxzone->setType(XComboBox::TaxZones);
 
   _quotes->addColumn(tr("Quote #"),          _orderColumn, Qt::AlignLeft, true, "quhead_number" );
   _quotes->addColumn(tr("Quote Date"),       _dateColumn,  Qt::AlignLeft, true, "quhead_quotedate" );
@@ -139,7 +139,7 @@ enum SetResponse prospect::set(const ParameterList &pParams)
       _name->setEnabled(FALSE);
       _active->setEnabled(FALSE);
       _contact->setEnabled(FALSE);
-      _taxauth->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _newQuote->setEnabled(FALSE);
       _save->hide();
@@ -274,37 +274,37 @@ void prospect::sSave()
   {
     q.prepare( "UPDATE prospect SET "
                "       prospect_number=:prospect_number,"
-	       "       prospect_name=:prospect_name,"
+               "       prospect_name=:prospect_name,"
                "       prospect_cntct_id=:prospect_cntct_id,"
                "       prospect_comments=:prospect_comments,"
-               "       prospect_taxauth_id=:prospect_taxauth_id,"
+               "       prospect_taxzone_id=:prospect_taxzone_id,"
                "       prospect_salesrep_id=:prospect_salesrep_id,"
                "       prospect_warehous_id=:prospect_warehous_id,"
-	       "       prospect_active=:prospect_active "
+               "       prospect_active=:prospect_active "
                "WHERE (prospect_id=:prospect_id);" );
   }
   else
   {
     q.prepare( "INSERT INTO prospect "
                "( prospect_id,	      prospect_number,	    prospect_name,"
-	       "  prospect_cntct_id,  prospect_taxauth_id,  prospect_comments,"
-	       "  prospect_salesrep_id, prospect_warehous_id, prospect_active) "
-	       " VALUES "
+               "  prospect_cntct_id,  prospect_taxzone_id,  prospect_comments,"
+               "  prospect_salesrep_id, prospect_warehous_id, prospect_active) "
+               " VALUES "
                "( :prospect_id,	      :prospect_number,	    :prospect_name,"
-	       "  :prospect_cntct_id, :prospect_taxauth_id, :prospect_comments,"
-	       "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active);");
+               "  :prospect_cntct_id, :prospect_taxzone_id, :prospect_comments,"
+               "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active);");
   }
 
   q.bindValue(":prospect_id",		_prospectid);
   q.bindValue(":prospect_number",	_number->text().trimmed());
   q.bindValue(":prospect_name",		_name->text().trimmed());
-  if (_contact->id() > 0)
+  if (_contact->isValid())
     q.bindValue(":prospect_cntct_id",	_contact->id());	// else NULL
-  if (_taxauth->id() > 0)
-    q.bindValue(":prospect_taxauth_id",	_taxauth->id());	// else NULL
-  if (_salesrep->id() > 0)
+  if (_taxzone->isValid())
+    q.bindValue(":prospect_taxzone_id",	_taxzone->id());	// else NULL
+  if (_salesrep->isValid())
     q.bindValue(":prospect_salesrep_id", _salesrep->id());      // else NULL
-  if (_site->id() > 0)
+  if (_site->isValid())
     q.bindValue(":prospect_warehous_id", _site->id());          // else NULL
   q.bindValue(":prospect_comments",	_notes->toPlainText());
   q.bindValue(":prospect_active",	QVariant(_active->isChecked()));
@@ -317,7 +317,7 @@ void prospect::sSave()
     return;
   }
 
-  if (_crmacct->id() > 0)
+  if (_crmacct->isValid())
   {
     q.prepare("UPDATE crmacct SET crmacct_prospect_id = :prospect_id "
 	      "WHERE (crmacct_id=:crmacct_id);");
@@ -545,7 +545,7 @@ void prospect::populate()
     _cachedNumber = prospect.value("prospect_number").toString();
     _name->setText(prospect.value("prospect_name").toString());
     _contact->setId(prospect.value("prospect_cntct_id").toInt());
-    _taxauth->setId(prospect.value("prospect_taxauth_id").toInt());
+    _taxzone->setId(prospect.value("prospect_taxzone_id").toInt());
     _salesrep->setId(prospect.value("prospect_salesrep_id").toInt());
     _site->setId(prospect.value("prospect_warehous_id").toInt());
     _notes->setText(prospect.value("prospect_comments").toString());

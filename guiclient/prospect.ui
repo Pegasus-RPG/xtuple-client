@@ -161,20 +161,20 @@ to be bound by its terms.</comment>
        <item>
         <layout class="QHBoxLayout" >
          <item>
-          <widget class="QLabel" name="_taxauthLit" >
+          <widget class="QLabel" name="_taxzoneLit" >
            <property name="text" >
-            <string>Tax Authority:</string>
+            <string>Tax Zone:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
-            <cstring>_taxauth</cstring>
+            <cstring>_taxzone</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="XComboBox" name="_taxauth" />
+          <widget class="XComboBox" name="_taxzone" />
          </item>
          <item>
           <spacer>
@@ -207,21 +207,6 @@ to be bound by its terms.</comment>
            <property name="allowNull" >
             <bool>true</bool>
            </property>
-           <item>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
           </widget>
          </item>
          <item>
@@ -417,7 +402,7 @@ to be bound by its terms.</comment>
   <tabstop>_salesrep</tabstop>
   <tabstop>_active</tabstop>
   <tabstop>_contact</tabstop>
-  <tabstop>_taxauth</tabstop>
+  <tabstop>_taxzone</tabstop>
   <tabstop>_site</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_tabs</tabstop>
