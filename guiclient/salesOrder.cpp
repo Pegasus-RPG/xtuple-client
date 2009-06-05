@@ -590,6 +590,14 @@ void salesOrder::sSave()
 bool salesOrder::save(bool partial)
 {
 //  Make sure that all of the required field have been populated
+  if (!_orderDate->isValid())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+                          tr("You must enter an Order Date for this order before you may save it.") );
+    _orderDate->setFocus();
+    return FALSE;
+  }
+
   if (!_cust->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
