@@ -20,40 +20,33 @@
             WHEN(quhead_origin='S') THEN 'Sales Rep.'
             ELSE quhead_origin
        END AS f_origin,
-        salesrep_name,
+       salesrep_name,
        formatScrap(quhead_commission) as f_commission,
-        (tax_code||' - '||tax_descrip) as f_tax,
-        (terms_code||' - '||terms_descrip) as f_terms,
+       (terms_code||' - '||terms_descrip) as f_terms,
        cust_number,
        quhead_billtoname,
-       formatAddr(quhead_billtoaddress1, quhead_billtoaddress2, quhead_billtoaddress3, (quhead_billtocity||', '||quhead_billtostate||' '||quhead_billtozip), quhead_billtocountry) AS f_billtoaddress,
-       
+       formatAddr(quhead_billtoaddress1,
+                  quhead_billtoaddress2,
+                  quhead_billtoaddress3,
+                 (quhead_billtocity || ', ' || quhead_billtostate || ' ' || quhead_billtozip),
+                  quhead_billtocountry) AS f_billtoaddress,
        CASE WHEN(quhead_shipto_id=-1) THEN text('')
             ELSE (select text(shipto_num) from shipto where shipto_id=quhead_shipto_id)
        END AS f_shiptonum,
-
        quhead_shiptoname,
-       formatAddr(quhead_shiptoaddress1, quhead_shiptoaddress2, quhead_shiptoaddress3, (quhead_shiptocity||', '||quhead_shiptostate||' '||quhead_shiptozipcode), quhead_shiptocountry) AS f_shiptoaddress,
+       formatAddr(quhead_shiptoaddress1,
+                  quhead_shiptoaddress2,
+                  quhead_shiptoaddress3,
+                 (quhead_shiptocity || ', ' || quhead_shiptostate || ' ' || quhead_shiptozipcode),
+                  quhead_shiptocountry) AS f_shiptoaddress,
        quhead_custponumber,
        quhead_fob
---For 2.1  the structure related to TAX and CRM and Quotes for PROSPECTS 
---has changed and the FROM and WHERE clauses should be
---changed as follows:
---Start:
-    FROM quhead
-         LEFT OUTER JOIN cust ON (quhead_cust_id = cust_id)
-	LEFT OUTER JOIN terms ON (quhead_terms_id = terms_id)
-         LEFT OUTER JOIN salesrep ON (quhead_salesrep_id = salesrep_id)
-         LEFT OUTER JOIN tax ON (quhead_tax_id = tax_id)
-    WHERE (quhead_id = &lt;? value("quhead_id") ?>)
---End
-
---  Previous FROM and WHERE clauses:
---  FROM quhead, terms, salesrep, cust
---     AND  (quhead_cust_id=cust_id))
---     AND  (quhead_salesrep_id=salesrep_id))
---     AND  (quhead_tax_id=tax_id)
---     AND  (quhead_terms_id=terms_id) );</sql>
+FROM quhead
+     LEFT OUTER JOIN cust ON (quhead_cust_id = cust_id)
+     LEFT OUTER JOIN terms ON (quhead_terms_id = terms_id)
+     LEFT OUTER JOIN salesrep ON (quhead_salesrep_id = salesrep_id)
+WHERE (quhead_id = &lt;? value("quhead_id") ?>)
+</sql>
  </querysource>
  <querysource>
   <name>notes</name>
@@ -64,9 +57,7 @@
  </querysource>
  <querysource>
   <name>items</name>
-  <sql>SELECT 
-       
-       quitem_id,
+  <sql>SELECT quitem_id,
        quitem_linenumber,
        quitem_custpn, 
        item_number,
@@ -84,124 +75,59 @@
        quitem_memo,
        char_name, 
        charass_value 
-FROM 
-     item, 
-     quitem
+FROM quitem
+     JOIN item ON (item_id=quitem_item_id)
      LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id)
      LEFT OUTER JOIN charass on (charass_target_id = quitem_id) left outer join char ON (charass_char_id = char_id)
-WHERE 
-( 
-     (quitem_item_id=item_id)
-     AND (quitem_quhead_id=&lt;? value("quhead_id") ?>) 
-)
+WHERE (quitem_quhead_id=&lt;? value("quhead_id") ?>) 
 ORDER BY quitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>totals</name>
   <sql>SELECT 1 as one,
        formatExtPrice(subtotal) AS f_subtotal,
-       formatExtPrice(tax) AS f_tax,
-       formatExtPrice(quhead_freight) as f_freight,
-       formatExtPrice(subtotal + tax + quhead_freight) AS f_total
+       formatExtPrice(itemtax + freighttax) AS f_tax,
+       formatExtPrice(quhead_freight) AS f_freight,
+       formatExtPrice(quhead_misc) AS f_misc,
+       formatExtPrice(subtotal + itemtax + freighttax + quhead_freight) AS f_total
   FROM quhead,
-       (SELECT SUM(quitem_qtyord * (quitem_price / iteminvpricerat(item_id))) AS subtotal
-          FROM quitem, item
-         WHERE ((quitem_quhead_id=&lt;? value("quhead_id") ?>)
-           AND  (quitem_item_id=item_id)) ) AS subtot,
-       (SELECT calculateTax(quhead_tax_id,
-                            SUM(quitem_qtyord
-                              * (quitem_price
-                              / iteminvpricerat(item_id))),
-                            quhead_freight) AS tax
-          FROM quitem, item,
-               (SELECT quhead_tax_id,
-                       quhead_freight
-                  FROM quhead
-                 WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) as data
-         WHERE ((quitem_quhead_id=&lt;? value("quhead_id") ?>)
-           AND  (quitem_item_id=item_id))
-      GROUP BY quhead_tax_id, quhead_freight ) as taxinfo
+       (SELECT SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS subtotal
+          FROM quitem
+         WHERE (quitem_quhead_id=&lt;? value("quhead_id") ?>) ) AS subtot,
+       (SELECT SUM(calculateTax(quhead_taxzone_id,
+                                quitem_taxtype_id,
+                                quhead_quotedate,
+                                quhead_curr_id,
+                                ((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)))) AS itemtax
+        FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id)
+        WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) AS itemtaxinfo,
+       (SELECT calculateTax(quhead_taxzone_id,
+                            getFreightTaxTypeId(),
+                            quhead_quotedate,
+                            quhead_curr_id,
+                            quhead_freight) AS freighttax
+        FROM quhead
+        WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) AS freighttaxinfo
+       
+
+--       (SELECT calculateTax(quhead_tax_id,
+--                            SUM(quitem_qtyord
+--                              * (quitem_price
+--                              / iteminvpricerat(item_id))),
+--                            quhead_freight) AS tax
+--          FROM quitem, item,
+--               (SELECT quhead_tax_id,
+--                       quhead_freight
+--                  FROM quhead
+--                 WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) as data
+--         WHERE ((quitem_quhead_id=&lt;? value("quhead_id") ?>)
+--           AND  (quitem_item_id=item_id))
+--      GROUP BY quhead_tax_id, quhead_freight ) as taxinfo
+
+
  WHERE (quhead_id=&lt;? value("quhead_id") ?>);
 
 </sql>
- </querysource>
- <querysource>
-  <name>GroupFoot</name>
-  <sql>--Note that for version 2.3 the addition of quitem_qty_invuomratio was added in the line below and iteminvpricerat(item_id) was replaced
---with quitem_price_invuomratio:
-SELECT formatMoney(SUM(round((quitem_price * quitem_qty_invuomratio) * quitem_qtyord / quitem_price_invuomratio ,2))) AS f_extprice,
-       formatMoney(quhead_freight) AS f_freight,
-       formatMoney(quhead_misc) AS f_misc,
-
--- Old way of calculating Tax:       
---formatMoney(calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / iteminvpricerat(item_id) ,2)), quhead_freight, 'T')) AS f_tax,
---
--- New way after 2.1.1:
-formatMoney((select 
-((
-
---Note that for version 2.3 the addition of quitem_qty_invuomratio was added in the line below and iteminvpricerat(item_id) was replaced
---with quitem_price_invuomratio:
-select sum(calculatetax(quitem_tax_id, (quitem_qtyord * (quitem_price * quitem_qty_invuomratio) / quitem_price_invuomratio), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'A') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'B') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'C') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
-))) AS f_tax,
---End of new 2.1.1 Tax Calc
-
---Note: in 2.1.1 replace Tax Calc with new method in the section 
---of the query that returns f_totaldue:
---Old f_total due START:
---formatMoney((calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / --iteminvpricerat(item_id) ,2)), quhead_freight, 'T')) + SUM(round(quitem_price * quitem_qtyord / iteminvpricerat(item_id) ,2)) + quhead_freight + --quhead_misc) as f_totaldue
---Old f_totaldue END
-
-------------------------------------
---New f_totaldue begin:
-
-formatMoney(
-(
---Note that for version 2.3 the addition of quitem_qty_invuomratio was added in the line below and iteminvpricerat(item_id) was replaced
---with quitem_price_invuomratio:
-select sum(calculatetax(quitem_tax_id, (quitem_qtyord * (quitem_price * quitem_qty_invuomratio) / quitem_price_invuomratio), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'A') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'B') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
-+
-(
-select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'C') from quhead where quhead_id = &lt;? value("quhead_id") ?>
-)
---Note that for version 2.3 the addition of quitem_qty_invuomratio was added in the line below and iteminvpricerat(item_id) was replaced
---with quitem_price_invuomratio:
- + SUM(round((quitem_price * quitem_qty_invuomratio) * quitem_qtyord / quitem_price_invuomratio ,2)) 
- + quhead_freight 
- + quhead_misc) 
-AS f_totaldue
-
---New f_totaldue end:
-------------------------------------
-
-FROM quhead, quitem, item
-
-WHERE ( (quitem_quhead_id=quhead_id)
- AND (quitem_item_id=item_id)
- AND (quhead_id=&lt;? value("quhead_id") ?>) )
-GROUP BY quhead_id, quhead_freight, quhead_tax_id, quhead_misc;</sql>
  </querysource>
  <querysource>
   <name>logo</name>
@@ -212,37 +138,36 @@ WHERE ((image_name='logo'));</sql>
  <querysource>
   <name>currency_info</name>
   <sql>--this was added in version 2.3
-select 
-curr_name,
-curr_symbol,
-curr_abbr
- from quhead, curr_symbol where quhead_curr_id = curr_id
- and quhead_id = &lt;? value("quhead_id") ?>;</sql>
+SELECT curr_name,
+       curr_symbol,
+       curr_abbr
+FROM quhead, curr_symbol
+WHERE ( (quhead_curr_id = curr_id)
+  AND   (quhead_id = &lt;? value("quhead_id") ?>) );</sql>
  </querysource>
  <querysource>
   <name>address</name>
-  <sql>SELECT
-     warehous_descrip,
-     formatAddr(addr_line1, addr_line2, addr_line3, ( addr_city || '  ' || addr_state || '  ' || addr_postalcode), addr_country) AS warehouse_address
-FROM
-     whsinfo, 
+  <sql>SELECT warehous_descrip,
+       formatAddr(addr_line1,
+                  addr_line2,
+                  addr_line3,
+                 (addr_city || '  ' || addr_state || '  ' || addr_postalcode),
+                  addr_country) AS warehouse_address
+FROM whsinfo, 
      addr, 
      quhead
-WHERE 
-     addr_id = warehous_addr_id
-     and quhead_warehous_id = warehous_id
-     AND quhead_id=&lt;? value("quhead_id") ?> ;</sql>
+WHERE ( (addr_id = warehous_addr_id)
+  AND   (quhead_warehous_id = warehous_id)
+  AND   (quhead_id=&lt;? value("quhead_id") ?>) );</sql>
  </querysource>
  <querysource>
   <name>contact_fax_phone</name>
-  <sql>select 
-
-cntct_fax,
-cntct_phone
-
-from 
-
-cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntct_id and quhead_id = &lt;? value("quhead_id") ?>;
+  <sql>SELECT cntct_fax,
+       cntct_phone
+FROM cntct, quhead, custinfo
+WHERE ( (cust_id = quhead_cust_id)
+  AND   (cust_cntct_id = cntct_id)
+  AND   (quhead_id = &lt;? value("quhead_id") ?>) );
 </sql>
  </querysource>
  <rpthead>
@@ -1405,8 +1330,8 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <right/>
      <vcenter/>
      <data>
-      <query>GroupFoot</query>
-      <column>f_totaldue</column>
+      <query>totals</query>
+      <column>f_total</column>
      </data>
     </field>
     <label>
@@ -1440,7 +1365,7 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <right/>
      <vcenter/>
      <data>
-      <query>GroupFoot</query>
+      <query>totals</query>
       <column>f_tax</column>
      </data>
     </field>
@@ -1475,7 +1400,7 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <right/>
      <vcenter/>
      <data>
-      <query>GroupFoot</query>
+      <query>totals</query>
       <column>f_freight</column>
      </data>
     </field>
@@ -1494,7 +1419,7 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <right/>
      <vcenter/>
      <data>
-      <query>GroupFoot</query>
+      <query>totals</query>
       <column>f_misc</column>
      </data>
     </field>
@@ -1580,8 +1505,8 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <right/>
      <vcenter/>
      <data>
-      <query>GroupFoot</query>
-      <column>f_extprice</column>
+      <query>totals</query>
+      <column>f_subtotal</column>
      </data>
     </field>
    </foot>
