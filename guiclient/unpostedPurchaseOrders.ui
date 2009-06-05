@@ -87,7 +87,7 @@ to be bound by its terms.</comment>
      <item>
       <layout class="QGridLayout" name="gridLayout" >
        <item row="0" column="0" >
-        <widget class="QCheckBox" name="_searchPo" >
+        <widget class="XCheckBox" name="_searchPo" >
          <property name="text" >
           <string>Search in P/O #</string>
          </property>
@@ -97,7 +97,7 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QCheckBox" name="_searchDesc" >
+        <widget class="XCheckBox" name="_searchDesc" >
          <property name="text" >
           <string>Search in Vendor</string>
          </property>
