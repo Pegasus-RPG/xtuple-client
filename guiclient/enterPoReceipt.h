@@ -42,6 +42,8 @@ public slots:
     virtual void sReceiveAll();
     virtual void sSave();
     virtual void setParams(ParameterList &);
+    virtual void sSearch( const QString & pTarget );
+    virtual void sSearchNext();
     virtual void sPrintItemLabel();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
 

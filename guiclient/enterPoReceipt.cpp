@@ -36,6 +36,8 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_post,	SIGNAL(clicked()),	this, SLOT(sPost()));
   connect(_print,	SIGNAL(clicked()),	this, SLOT(sPrint()));
   connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
   connect(_orderitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
@@ -436,6 +438,53 @@ void enterPoReceipt::sReceiveAll()
   }
 
   sFillList();
+}
+
+void enterPoReceipt::sSearch( const QString &pTarget )
+{
+  _orderitem->clearSelection();
+  int i;
+  for (i = 0; i < _orderitem->topLevelItemCount(); i++)
+  {
+    if ( (_orderitem->topLevelItem(i)->text(2).startsWith(pTarget, Qt::CaseInsensitive) &&
+         _searchItemNum->isChecked()) ||
+         (_orderitem->topLevelItem(i)->text(3).contains(pTarget, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()) ||
+         (_orderitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) &&
+         _searchVendItem->isChecked()))
+      break;
+  }
+
+  if (i < _orderitem->topLevelItemCount())
+  {
+    _orderitem->setCurrentItem(_orderitem->topLevelItem(i));
+    _orderitem->scrollToItem(_orderitem->topLevelItem(i));
+  }
+}
+
+void enterPoReceipt::sSearchNext()
+{
+  QString target = _searchFor->text();
+  int i;
+  int currentIndex = _orderitem->indexOfTopLevelItem(_orderitem->currentItem()) + 1;
+  if(currentIndex < 0 || currentIndex > _orderitem->topLevelItemCount())
+    currentIndex = 0;
+  for (i = currentIndex; i < _orderitem->topLevelItemCount(); i++)
+  {
+    if ( (_orderitem->topLevelItem(i)->text(2).startsWith(target, Qt::CaseInsensitive) &&
+         _searchItemNum->isChecked()) ||
+         (_orderitem->topLevelItem(i)->text(3).contains(target, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()) ||
+         (_orderitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) &&
+         _searchVendItem->isChecked()))
+      break;
+  }
+
+  if (i < _orderitem->topLevelItemCount())
+  {
+    _orderitem->setCurrentItem(_orderitem->topLevelItem(i));
+    _orderitem->scrollToItem(_orderitem->topLevelItem(i));
+  }
 }
 
 void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
