@@ -57,7 +57,7 @@ PoitemTableModel::PoitemTableModel(QObject * parent, QSqlDatabase db) :
   setHeaderData(ITEM_NUMBER_COL,	Qt::Horizontal, tr("Item"));
   setHeaderData(WAREHOUS_CODE_COL,	Qt::Horizontal, tr("Supplying Site"));
   setHeaderData(POITEM_VEND_ITEM_NUMBER_COL, Qt::Horizontal, tr("Vend Item #"));
-  setHeaderData(POITEM_VEND_ITEM_DESCRIP_COL,Qt::Horizontal, tr("Vend Descrip"));
+  setHeaderData(POITEM_VEND_ITEM_DESCRIP_COL,Qt::Horizontal, tr("Vend Description"));
   setHeaderData(POITEM_VEND_UOM_COL,	Qt::Horizontal, tr("Vend UOM"));
   setHeaderData(POITEM_QTY_ORDERED_COL,	Qt::Horizontal, tr("Qty."));
   setHeaderData(POITEM_UNITPRICE_COL,	Qt::Horizontal, tr("Unit Price"));
