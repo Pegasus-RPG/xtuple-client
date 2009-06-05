@@ -368,7 +368,7 @@ to be bound by its terms.</comment>
              </layout>
             </item>
             <item row="1" column="0">
-             <widget class="QCheckBox" name="_searchItemNum">
+             <widget class="XCheckBox" name="_searchItemNum">
               <property name="text">
                <string>Search in Item #</string>
               </property>
@@ -378,7 +378,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QCheckBox" name="_searchDesc">
+             <widget class="XCheckBox" name="_searchDesc">
               <property name="text">
                <string>Search in Description</string>
               </property>
@@ -388,7 +388,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QCheckBox" name="_searchVendItem">
+             <widget class="XCheckBox" name="_searchVendItem">
               <property name="text">
                <string>Search in Vend. Item #</string>
               </property>
@@ -428,6 +428,11 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>VendorCluster</class>
    <extends>QWidget</extends>
