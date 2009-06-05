@@ -38,6 +38,8 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WF
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
 
   _agent->setText(omfgThis->username());
 
@@ -45,8 +47,9 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WF
   _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode"  );
   _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
   _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter, true,  "poitem_duedate" );
-  _poitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
+  _poitem->addColumn(tr("Item #"),      _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
   _poitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _poitem->addColumn(tr("Vend. Item #"), _itemColumn, Qt::AlignLeft,   true,  "poitem_vend_item_number");
   _poitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "itemuom" );
   _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
   _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
@@ -83,7 +86,7 @@ void dspPoItemsByVendor::setParams(ParameterList & params)
   else if (_openItems->isChecked())
     params.append("openItems");
 
-  params.append("nonInv",	tr("NonInv - "));
+  params.append("nonInv",	tr("Non Inventory"));
   params.append("closed",	tr("Closed"));
   params.append("unposted",	tr("Unposted"));
   params.append("partial",	tr("Partial"));
@@ -312,8 +315,9 @@ void dspPoItemsByVendor::sFillList()
                "                   FROM warehous"
                "                   WHERE (itemsite_warehous_id=warehous_id) )"
                "       END AS warehousecode,"
-               "       COALESCE(item_number, (<? value(\"nonInv\") ?> || poitem_vend_item_number)) AS itemnumber,"
+               "       COALESCE(item_number, <? value(\"nonInv\") ?>) AS itemnumber,"
                "       COALESCE(item_descrip1, firstLine(poitem_vend_item_descrip)) AS itemdescrip,"
+               "       poitem_vend_item_number,"
                "       COALESCE(uom_name, poitem_vend_uom) AS itemuom,"
                "       poitem_duedate, poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
                "       CASE WHEN (poitem_duedate < CURRENT_DATE) THEN 'error' END AS poitem_duedate_qtforegroundrole,"
@@ -365,7 +369,7 @@ void dspPoItemsByVendor::sPopulatePo()
 {
   _poNumber->clear();
 
-  if ( _vendor->isValid()) 
+  if ( _vendor->isValid())
   {
     q.prepare( "SELECT pohead_id, pohead_number "
                "FROM pohead "
@@ -381,3 +385,52 @@ void dspPoItemsByVendor::sPopulatePo()
     }
   }
 }
+
+void dspPoItemsByVendor::sSearch( const QString &pTarget )
+{
+  _poitem->clearSelection();
+  int i;
+  for (i = 0; i < _poitem->topLevelItemCount(); i++)
+  {
+    if ( (_poitem->topLevelItem(i)->text(4).startsWith(pTarget, Qt::CaseInsensitive) &&
+         _searchItemNum->isChecked()) ||
+         (_poitem->topLevelItem(i)->text(5).contains(pTarget, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()) ||
+         (_poitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) &&
+         _searchVendItem->isChecked()))
+      break;
+  }
+
+  if (i < _poitem->topLevelItemCount())
+  {
+    _poitem->setCurrentItem(_poitem->topLevelItem(i));
+    _poitem->scrollToItem(_poitem->topLevelItem(i));
+  }
+}
+
+void dspPoItemsByVendor::sSearchNext()
+{
+  QString target = _searchFor->text();
+  int i;
+  int currentIndex = _poitem->indexOfTopLevelItem(_poitem->currentItem()) + 1;
+  if(currentIndex < 0 || currentIndex > _poitem->topLevelItemCount())
+    currentIndex = 0;
+  for (i = currentIndex; i < _poitem->topLevelItemCount(); i++)
+  {
+    if ( (_poitem->topLevelItem(i)->text(4).startsWith(target, Qt::CaseInsensitive) &&
+         _searchItemNum->isChecked()) ||
+         (_poitem->topLevelItem(i)->text(5).contains(target, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()) ||
+         (_poitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) &&
+         _searchVendItem->isChecked()))
+      break;
+  }
+
+  if (i < _poitem->topLevelItemCount())
+  {
+    _poitem->setCurrentItem(_poitem->topLevelItem(i));
+    _poitem->scrollToItem(_poitem->topLevelItem(i));
+  }
+}
+
+

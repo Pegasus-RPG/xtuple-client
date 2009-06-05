@@ -40,6 +40,8 @@ public slots:
     virtual void sOpenItem();
     virtual void sFillList();
     virtual void sPopulatePo();
+    virtual void sSearch( const QString & pTarget );
+    virtual void sSearchNext();
 
 protected slots:
     virtual void languageChange();
