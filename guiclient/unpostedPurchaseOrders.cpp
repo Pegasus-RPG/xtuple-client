@@ -40,6 +40,8 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
     connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
     connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
     connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
+    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+    connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
 
     connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
 						this,	SLOT(sFillList()));
@@ -91,7 +93,7 @@ void unpostedPurchaseOrders::sEdit()
       ParameterList params;
       params.append("mode", "edit");
       params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-  
+
       purchaseOrder *newdlg = new purchaseOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
@@ -115,11 +117,11 @@ void unpostedPurchaseOrders::sView()
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
     {
-      
+
       ParameterList params;
       params.append("mode", "view");
       params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-    
+
       purchaseOrder *newdlg = new purchaseOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
@@ -172,7 +174,7 @@ void unpostedPurchaseOrders::sDelete()
 }
 
 void unpostedPurchaseOrders::sPrint()
-{    
+{
   QList<QTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
@@ -180,7 +182,7 @@ void unpostedPurchaseOrders::sPrint()
     {
       ParameterList params;
       params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-    
+
       printPurchaseOrder newdlg(this, "", TRUE);
       newdlg.set(params);
       newdlg.exec();
@@ -199,7 +201,7 @@ void unpostedPurchaseOrders::sDeliver()
     {
       ParameterList params;
       params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-    
+
       deliverPurchaseOrder newdlg(this, "", TRUE);
       newdlg.set(params);
       newdlg.exec();
@@ -209,7 +211,7 @@ void unpostedPurchaseOrders::sDeliver()
 }
 
 void unpostedPurchaseOrders::sPost()
-{    
+{
   if ( QMessageBox::warning( this, tr("Post Selected Purchase Orders"),
                              tr("<p>Are you sure that you want to post "
 			        "the selected Purchase Orders?" ),
@@ -375,4 +377,48 @@ bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
     }
   }
   return true;
+}
+
+
+void unpostedPurchaseOrders::sSearch( const QString &pTarget )
+{
+  _pohead->clearSelection();
+  int i;
+  for (i = 0; i < _pohead->topLevelItemCount(); i++)
+  {
+    if ( (_pohead->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive) &&
+         _searchPo->isChecked()) ||
+         (_pohead->topLevelItem(i)->text(1).contains(pTarget, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()))
+      break;
+  }
+
+  if (i < _pohead->topLevelItemCount())
+  {
+    _pohead->setCurrentItem(_pohead->topLevelItem(i));
+    _pohead->scrollToItem(_pohead->topLevelItem(i));
+  }
+}
+
+void unpostedPurchaseOrders::sSearchNext()
+{
+  QString target = _searchFor->text();
+  int i;
+  int currentIndex = _pohead->indexOfTopLevelItem(_pohead->currentItem()) + 1;
+  if(currentIndex < 0 || currentIndex > _pohead->topLevelItemCount())
+    currentIndex = 0;
+  for (i = currentIndex; i < _pohead->topLevelItemCount(); i++)
+  {
+    if ( (_pohead->topLevelItem(i)->text(0).startsWith(target, Qt::CaseInsensitive) &&
+         _searchPo->isChecked()) ||
+         (_pohead->topLevelItem(i)->text(1).contains(target, Qt::CaseInsensitive) &&
+          _searchDesc->isChecked()))
+      break;
+  }
+
+  if (i < _pohead->topLevelItemCount())
+  {
+    _pohead->setCurrentItem(_pohead->topLevelItem(i));
+    _pohead->scrollToItem(_pohead->topLevelItem(i));
+  }
 }

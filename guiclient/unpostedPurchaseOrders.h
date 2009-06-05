@@ -22,7 +22,7 @@ class unpostedPurchaseOrders : public XWidget, public Ui::unpostedPurchaseOrders
 public:
     unpostedPurchaseOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~unpostedPurchaseOrders();
-    
+
     virtual bool checkSitePrivs(int orderid);
 
 public slots:
@@ -36,6 +36,8 @@ public slots:
     virtual void sPost();
     virtual void sPrint();
     virtual void sView();
+    virtual void sSearch( const QString & pTarget );
+    virtual void sSearchNext();
 
 protected slots:
     virtual void languageChange();
