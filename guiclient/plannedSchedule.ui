@@ -29,11 +29,7 @@ to be bound by its terms.</comment>
         <widget class="WComboBox" name="_warehouse" />
        </item>
        <item rowspan="2" row="2" column="5" >
-        <widget class="DateCluster" name="_dates" >
-         <property name="focusPolicy" >
-          <enum>Qt::TabFocus</enum>
-         </property>
-        </widget>
+        <widget class="DateCluster" name="_dates" />
        </item>
        <item row="2" column="3" colspan="2" >
         <spacer>
