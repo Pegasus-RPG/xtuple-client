@@ -79,9 +79,10 @@ void dspBriefEarnedCommissions::sPrint()
 
   ParameterList params;
   _dates->appendValue(params);
-
   if (_selectedSalesrep->isChecked())
     params.append("salesrep_id", _salesrep->id());
+  if (_includeMisc->isChecked())
+    params.append("includeMisc");
 
   orReport report("BriefEarnedCommissions", params);
   if (report.isValid())
@@ -105,10 +106,18 @@ void dspBriefEarnedCommissions::sFillList()
                  "       'curr' AS sumbaseextprice_xtnumericrole,"
                  "       'curr' AS sumbasecommission_xtnumericrole,"
                  "       0 AS sumbaseextprice_xttotalrole,"
-                 "       0 AS sumbasecommission_xttotalrole "
-                 "FROM saleshistory "
-                 "WHERE ( (cohist_commission <> 0) "
-                 "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+                 "       0 AS sumbasecommission_xttotalrole " );
+    if (_includeMisc->isChecked())
+      sql += "FROM saleshistorymisc ";
+    else
+      sql += "FROM saleshistory ";
+
+    sql += "WHERE ( (cohist_commission <> 0) "
+           "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)";
+
+    if (_includeMisc->isChecked())
+      sql += " AND (COALESCE(cohist_misc_type, '') <> 'T')"
+             " AND (COALESCE(cohist_misc_type, '') <> 'F')";
 
     if (_selectedSalesrep->isChecked())
       sql += " AND (cohist_salesrep_id=:salesrep_id)";

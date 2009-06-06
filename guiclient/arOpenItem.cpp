@@ -233,7 +233,7 @@ void arOpenItem::sSave()
                  "                           :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                           :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                           :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due,"
-		 "                           :curr_id ) AS result;" );
+                 "                           :curr_id, :taxzone, :taxtype, :tax ) AS result;" );
       storedProc = "createARCreditMemo";
     }
     else if (_docType->currentIndex() == 1)
@@ -242,7 +242,7 @@ void arOpenItem::sSave()
                  "                          :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                           :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                           :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due, "
-		 "                           :curr_id ) AS result;" );
+                 "                           :curr_id, :taxzone, :taxtype, :tax ) AS result;" );
       storedProc = "createARCreditMemo";
     }
 
@@ -281,6 +281,9 @@ void arOpenItem::sSave()
   q.bindValue(":aropen_notes",          _notes->toPlainText());
   q.bindValue(":aropen_rsncode_id", _rsnCode->id());
   q.bindValue(":curr_id", _amount->id());
+  q.bindValue(":taxzone", _taxZone->id());
+  q.bindValue(":taxtype", _taxType->id());
+  q.bindValue(":tax", _tax->localValue());
   if(_altPrepaid->isChecked() && _altSalescatidSelected->isChecked())
     q.bindValue(":aropen_salescat_id", _altSalescatid->id());
   else
@@ -387,6 +390,7 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
       _terms->setId(c.value("cust_terms_id").toInt());
       _salesrep->setId(c.value("cust_salesrep_id").toInt());
       _amount->setId(c.value("cust_curr_id").toInt());
+      _tax->setId(c.value("cust_curr_id").toInt());
       _taxZone->setId(c.value("cust_taxzone_id").toInt());
     }
     else if (c.lastError().type() != QSqlError::NoError)
@@ -581,17 +585,18 @@ void arOpenItem::sPopulateDueDate()
 
 void arOpenItem::sCalculateTax()
 {
+  _tax->setBaseValue(0);
   if ( (_taxZone->isValid()) && (_taxType->isValid()) && (_docDate->isValid()) && (!_amount->isZero()) )
   {
-    q.prepare("SELECT calculateTaxBasis(:taxzone, :taxtype, :docdate, :curr, :amount) AS basis;");
+    q.prepare("SELECT calculateTaxBasis(:taxzone, :taxtype, :docdate, :curr, :amount) AS tax;");
     q.bindValue(":taxzone", _taxZone->id());
     q.bindValue(":taxtype", _taxType->id());
-    q.bindValue(":docDate", _docDate->date());
+    q.bindValue(":docdate", _amount->effective());
     q.bindValue(":curr",    _amount->id());
     q.bindValue(":amount",  _amount->localValue());
     q.exec();
     if (q.first())
-      _tax->setBaseValue(q.value("basis").toDouble());
+      _tax->setLocalValue(q.value("tax").toDouble());
   }
 }
 

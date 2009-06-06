@@ -87,9 +87,10 @@ void dspEarnedCommissions::sPrint()
 
   ParameterList params;
   _dates->appendValue(params);
-
   if (_selectedSalesrep->isChecked())
     params.append("salesrep_id", _salesrep->id());
+  if (_includeMisc->isChecked())
+    params.append("includeMisc");
 
   orReport report("EarnedCommissions", params);
   if (report.isValid())
@@ -115,6 +116,8 @@ void dspEarnedCommissions::sFillList()
   _dates->appendValue(params);
   if (_selectedSalesrep->isChecked())
     params.append("salesrep_id", _salesrep->id());
+  if (_includeMisc->isChecked())
+    params.append("includeMisc");
   params.append("orderBySalesRepInvcdate");
   q = mql.toQuery(params);
   _commission->populate(q);
