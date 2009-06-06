@@ -24,24 +24,33 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
-       cohist_ordernumber, cohist_invcnumber, formatDate(cohist_invcdate) as f_invcdate,
-       formatMoney(SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2))) as f_extprice,
-       SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) as extprice,
-       formatMoney(SUM(round(cohist_commission,2))) as f_commission,
-       SUM(round(cohist_commission,2)) AS commission
-  FROM cohist, salesrep, cust
- WHERE ((cohist_cust_id=cust_id)
-   AND (cohist_salesrep_id=salesrep_id)
-   AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-   AND (cohist_commission &lt;> 0)
+  <sql>SELECT cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
+       cohist_ordernumber, cohist_invcnumber, formatDate(cohist_invcdate) AS f_invcdate, currAbbr,
+       formatMoney(SUM(baseextprice)) AS f_extprice,
+       formatMoney(SUM(basecommission)) AS f_commission,
+       SUM(baseextprice) AS extprice,
+       SUM(basecommission) AS commission
+&lt;? if exists("includeMisc") ?>
+FROM saleshistorymisc
+&lt;? else ?>
+FROM saleshistory
+&lt;? endif ?>
+WHERE ( (cohist_commission &lt;> 0)
+  AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+
+&lt;? if exists("includeMisc") ?>
+  AND (COALESCE(cohist_misc_type, '') &lt;> 'T')
+  AND (COALESCE(cohist_misc_type, '') &lt;> 'F')
+&lt;? endif ?>
+
 &lt;? if exists("salesrep_id") ?>
-   AND (salesrep_id=&lt;? value("salesrep_id") ?>)
+  AND (salesrep_id=&lt;? value("salesrep_id") ?>)
 &lt;? endif ?>
 )
-GROUP BY salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
-         cohist_ordernumber, cohist_invcnumber, cohist_invcdate 
-ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
+GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
+         cohist_ordernumber, cohist_invcnumber, cohist_invcdate, currAbbr
+ORDER BY salesrep_number, cust_number, cohist_invcdate
+</sql>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -133,7 +142,7 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Commision</string>
+   <string>Base Commision</string>
   </label>
   <label>
    <rect>
@@ -149,7 +158,7 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Price</string>
+   <string>Base Ext. Price</string>
   </label>
   <label>
    <rect>

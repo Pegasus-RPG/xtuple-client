@@ -22,29 +22,10 @@
        formatDate(&lt;? value("startDate") ?>) AS startdate,
        formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT salesrep_name, cohist_ordernumber,
-       cust_number, cohist_shiptoname,
-       formatDate(cohist_invcdate) AS f_invcdate,
-       item_number, formatQty(cohist_qtyshipped) AS f_qty,
-       formatMoney(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) AS f_extprice,
-       round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2) as extprice,
-       formatMoney(cohist_commission) AS f_prcnt,
-       round(cohist_commission,2) as prcnt,
-       formatBoolYN(cohist_commissionpaid) AS f_earned
-  FROM cohist, salesrep, cust, itemsite, item 
- WHERE ( (cohist_cust_id=cust_id)
-   AND (cohist_salesrep_id=salesrep_id)
-   AND (cohist_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (cohist_commission &lt;> 0)
-   AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("salesrep_id") ?>
-   AND (salesrep_id=&lt;? value("salesrep_id") ?>)
-&lt;? endif ?>
-)
-ORDER BY salesrep_name, cohist_invcdate;</sql>
+  <mqlgroup>salesHistory</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -212,7 +193,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Price</string>
+   <string>Base Ext. Price</string>
   </label>
   <label>
    <rect>
@@ -334,7 +315,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Commision</string>
+   <string>Base Commision</string>
   </label>
  </rpthead>
  <pghead>
@@ -553,7 +534,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_extprice</column>
+     <column>f_baseextprice</column>
     </data>
    </field>
    <field>
@@ -610,7 +591,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_earned</column>
+     <column>f_commissionpaid</column>
     </data>
    </field>
    <field>
@@ -667,7 +648,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_qty</column>
+     <column>f_qtyshipped</column>
     </data>
    </field>
    <field>
@@ -686,7 +667,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_prcnt</column>
+     <column>f_basecommission</column>
     </data>
    </field>
    <field>
@@ -817,9 +798,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>extprice</column>
+    <column>baseextprice</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <tracktotal builtin="true" >qty</tracktotal>
   </field>
   <field>
    <rect>
@@ -837,9 +818,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>prcnt</column>
+    <column>basecommission</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <tracktotal builtin="true" >qty</tracktotal>
   </field>
  </rptfoot>
 </report>
