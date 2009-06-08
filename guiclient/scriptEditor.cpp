@@ -29,7 +29,7 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
   setWindowModality(Qt::WindowModal);
 
-  connect(_export,          SIGNAL(clicked()), this, SLOT(sExport()));
+  connect(_export,          SIGNAL(clicked()), this, SLOT(sSaveFile()));
   connect(_find,            SIGNAL(clicked()), this, SLOT(sFind()));
   connect(_findText,SIGNAL(editingFinished()), this, SLOT(sFind()));
   connect(_import,          SIGNAL(clicked()), this, SLOT(sImport()));
@@ -166,22 +166,45 @@ bool scriptEditor::sSave()
                              QMessageBox::No  | QMessageBox::Default) != QMessageBox::Yes)
     return false;
   }
+
+  QMessageBox save;
+  save.setText("How do you want to save your changes?");
+  QPushButton *cancel = save.addButton(QMessageBox::Cancel);
+  QPushButton *db     = save.addButton(tr("Database only"),    QMessageBox::AcceptRole);
+  QPushButton *file   = save.addButton(tr("File only"),        QMessageBox::AcceptRole);
+  QPushButton *both   = save.addButton(tr("Database and File"),QMessageBox::AcceptRole);
+
+  QString _importFileName;      // TODO: make this a private class member?
+  save.setDefaultButton(_importFileName.isEmpty() ? db : both);
+  save.setEscapeButton((QAbstractButton*)cancel);
+
+  save.exec();
+  if (save.clickedButton() == (QAbstractButton*)db)
+    return sSaveToDB();
+  else if (save.clickedButton() == (QAbstractButton*)file)
+    return sSaveFile();
+  else if (save.clickedButton() == (QAbstractButton*)both)
+    return sSaveFile() && sSaveToDB();
+  else if (save.clickedButton() == (QAbstractButton*)cancel)
+    return false;
+  else
+  {
+    qWarning("scriptEditor::sSave() bug - unknown button clicked");
+    return false;
+  }
+
+  return false; // should never reach here!
+}
   
+bool scriptEditor::sSaveToDB()
+{
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('script_script_id_seq') AS _script_id");
-    if (q.first())
-      _scriptid = q.value("_script_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
-    }
-
     q.prepare( "INSERT INTO script "
                "(script_id, script_name, script_notes, script_order, script_enabled, script_source) "
                "VALUES "
-               "(:script_id, :script_name, :script_notes, :script_order, :script_enabled, :script_source);" );
+               "(DEFAULT, :script_name, :script_notes, :script_order, :script_enabled, :script_source) "
+               "RETURNING script_id;" );
 
   }
   else if (_mode == cEdit)
@@ -189,7 +212,8 @@ bool scriptEditor::sSave()
                "SET script_name=:script_name, script_notes=:script_notes,"
                "    script_order=:script_order, script_enabled=:script_enabled,"
                "    script_source=:script_source "
-               "WHERE (script_id=:script_id);" );
+               "WHERE (script_id=:script_id) "
+               "RETURNING script_id;" );
 
   q.bindValue(":script_id", _scriptid);
   q.bindValue(":script_name", _name->text());
@@ -199,9 +223,17 @@ bool scriptEditor::sSave()
   q.bindValue(":script_notes", _notes->text());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (q.first())
+    _scriptid = q.value("script_id").toInt();
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  else
+  {
+    systemError(this, tr("The script was not saved properly"),
+                         __FILE__, __LINE__);
     return false;
   }
 
@@ -258,7 +290,7 @@ void scriptEditor::sImport()
   file.close();
 }
 
-void scriptEditor::sExport()
+bool scriptEditor::sSaveFile()
 {
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Script File"),
                                                   lastSaveDir +
@@ -267,7 +299,7 @@ void scriptEditor::sExport()
                                                   ".js",
                                                   tr("Script (*.script *.js)"));
   if(filename.isNull())
-    return;
+    return false;
 
   QFileInfo fi(filename);
   if(fi.suffix().isEmpty())
@@ -277,7 +309,7 @@ void scriptEditor::sExport()
   if(!file.open(QIODevice::WriteOnly))
   {
     QMessageBox::critical(this, tr("Could not export file"), file.errorString());
-    return;
+    return false;
   }
 
   QTextStream ts(&file);
@@ -286,6 +318,7 @@ void scriptEditor::sExport()
   file.close();
 
   lastSaveDir = fi.absolutePath();
+  return true;
 }
 
 void scriptEditor::sGoto()

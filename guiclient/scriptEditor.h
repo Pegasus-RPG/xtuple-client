@@ -30,7 +30,8 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void populate();
-    virtual void sExport();
+    virtual bool sSaveFile();
+    virtual bool sSaveToDB();
     virtual void sFind();
     virtual void sGoto();
     virtual void sImport();
