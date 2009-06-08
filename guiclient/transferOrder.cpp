@@ -71,7 +71,7 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_srcWhs,         SIGNAL(newID(int)), this, SLOT(sHandleSrcWhs(int)));
   connect(_tabs,  SIGNAL(currentChanged(int)), this, SLOT(sTabChanged(int)));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_taxauth,        SIGNAL(newID(int)), this, SLOT(sTaxAuthChanged()));
+  connect(_taxzone,        SIGNAL(newID(int)), this, SLOT(sCalculateTax()));
   connect(_toitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_toitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_trnsWhs,  SIGNAL(newID(int)), this, SLOT(sHandleTrnsWhs(int)));
@@ -101,14 +101,12 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _freighttaxid		= -1;
   _orderNumberGen	= 0;
   _saved		= false;
-  _taxauthidCache	= -1;
-  _whstaxauthid		= -1;
+  _taxzoneidCache	= -1;
+  _whstaxzoneid		= -1;
   _srcWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   _trnsWhs->setId(_metrics->value("DefaultTransitWarehouse").toInt());
   _dstWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   getWhsInfo(_trnsWhs->id(), _trnsWhs);
-
-  _taxCache.clear();
 
   _weight->setValidator(omfgThis->qtyVal());
   
@@ -123,6 +121,31 @@ void transferOrder::setToheadid(const int pId)
   _toheadid = pId;
   _qeitem->setHeadId(pId);
   _comments->setId(_toheadid);
+       
+  if(_mode == cEdit)
+  {
+     XSqlQuery to;
+     to.prepare("SELECT lockTohead(:tohead_id) AS result;");
+     to.bindValue(":tohead_id", _toheadid);
+     to.exec();
+     if(to.first())
+     {
+       if(to.value("result").toBool() != true)
+       {
+          QMessageBox::critical( this, tr("Record Currently Being Edited"),
+               tr("<p>The record you are trying to edit is currently being edited "
+               "by another user. Continue in View Mode.") );
+          setViewMode();
+       }
+     }
+     else
+     {
+       QMessageBox::critical( this, tr("Cannot Lock Record for Editing"),
+             tr("<p>There was an unexpected error while trying to lock the record "
+             "for editing. Please report this to your administator.") );
+       setViewMode();
+     }
+  }
 }
 
 transferOrder::~transferOrder()
@@ -256,7 +279,7 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
       newItemParams.append("srcwarehouse_id", _srcWhs->id());
       newItemParams.append("orderNumber",	_orderNumber->text());
       newItemParams.append("orderDate",	_orderDate->date());
-      newItemParams.append("taxauth_id",	_taxauth->id());
+      newItemParams.append("taxzone_id",	_taxzone->id());
       newItemParams.append("curr_id",	_freightCurrency->id());
       newItemParams.append("item_id", itemid);
       newItemParams.append("captive", TRUE);
@@ -469,10 +492,10 @@ void transferOrder::sSaveAndAdd()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError(this,
+	      systemError(this,
 		    storedProcErrorLookup("addToPackingListBatch", result),
 		    __FILE__, __LINE__);
-	return;
+	      return;
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -481,6 +504,7 @@ void transferOrder::sSaveAndAdd()
       return;
     }
 
+    sReleaseTohead();
     if (_captive)
       close();
     else
@@ -492,6 +516,7 @@ void transferOrder::sSave()
 {
   if (save(false))
   {
+    sReleaseTohead();
     if (_captive)
       close();
     else
@@ -597,16 +622,9 @@ bool transferOrder::save(bool partial)
 	    "    tohead_agent_username=:agent_username,"
 	    "    tohead_shipvia=:shipvia,"
 	    "    tohead_shipform_id=:shipform_id,"
-	    "    tohead_taxauth_id=:taxauth_id,"
+	    "    tohead_taxzone_id=:taxzone_id,"
 	    "    tohead_freight=:freight,"
 	    "    tohead_freight_curr_id=:freight_curr_id,"
-	    "    tohead_freighttax_id=:freighttax_id,"
-	    "    tohead_freighttax_pcta=:freighttax_pcta,"
-	    "    tohead_freighttax_pctb=:freighttax_pctb,"
-	    "    tohead_freighttax_pctc=:freighttax_pctc,"
-	    "    tohead_freighttax_ratea=:freighttax_ratea,"
-	    "    tohead_freighttax_rateb=:freighttax_rateb,"
-	    "    tohead_freighttax_ratec=:freighttax_ratec,"
 	    "    tohead_shipcomplete=:shipcomplete,"
 	    "    tohead_ordercomments=:ordercomments,"
 	    "    tohead_shipcomments=:shipcomments,"
@@ -654,20 +672,11 @@ bool transferOrder::save(bool partial)
   q.bindValue(":agent_username",	_agent->currentText());
   q.bindValue(":shipvia",		_shipVia->currentText());
 
-  if (_taxauth->isValid())
-    q.bindValue(":taxauth_id",		_taxauth->id());
+  if (_taxzone->isValid())
+    q.bindValue(":taxzone_id",		_taxzone->id());
 
   q.bindValue(":freight",		_freight->localValue());
   q.bindValue(":freight_curr_id",	_freight->id());
-
-  if (_taxCache.freightId() > 0)
-    q.bindValue(":freighttax_id",	_taxCache.freightId());
-  q.bindValue(":freighttax_pcta",	_taxCache.freightPct(0));
-  q.bindValue(":freighttax_pctb",	_taxCache.freightPct(1));
-  q.bindValue(":freighttax_pctc",	_taxCache.freightPct(2));
-  q.bindValue(":freighttax_ratea",	_taxCache.freight(0));
-  q.bindValue(":freighttax_rateb",	_taxCache.freight(1));
-  q.bindValue(":freighttax_ratec",	_taxCache.freight(2));
 
   q.bindValue(":shipcomplete",	QVariant(_shipComplete->isChecked()));
   q.bindValue(":ordercomments",		_orderComments->toPlainText());
@@ -915,7 +924,7 @@ void transferOrder::sNew()
   params.append("srcwarehouse_id", _srcWhs->id());
   params.append("orderNumber",	_orderNumber->text());
   params.append("orderDate",	_orderDate->date());
-  params.append("taxauth_id",	_taxauth->id());
+  params.append("taxzone_id",	_taxzone->id());
   params.append("curr_id",	_freightCurrency->id());
 
   if ((_mode == cNew) || (_mode == cEdit))
@@ -941,7 +950,11 @@ void transferOrder::sEdit()
   newdlg.set(params);
   if (newdlg.exec() == XDialog::Accepted &&
       ((_mode == cNew) || (_mode == cEdit)) )
+  {
     sFillItemList();
+    sCalculateTax();
+  }
+    
 }
 
 void transferOrder::sHandleButtons()
@@ -1145,29 +1158,6 @@ void transferOrder::populate()
   if ( (_mode == cEdit) || (_mode == cView) )
   {
     XSqlQuery to;
-    if(_mode == cEdit)
-    {
-      to.prepare("SELECT lockTohead(:tohead_id) AS result;");
-      to.bindValue(":tohead_id", _toheadid);
-      to.exec();
-      if(to.first())
-      {
-        if(to.value("result").toBool() != true)
-        {
-          QMessageBox::critical( this, tr("Record Currently Being Edited"),
-            tr("<p>The record you are trying to edit is currently being edited "
-               "by another user. Continue in View Mode.") );
-          setViewMode();
-        }
-      }
-      else
-      {
-        QMessageBox::critical( this, tr("Cannot Lock Record for Editing"),
-          tr("<p>There was an unexpected error while trying to lock the record "
-             "for editing. Please report this to your administator.") );
-        setViewMode();
-      }
-    }
     to.prepare( "SELECT * "
                 "FROM tohead "
                 "WHERE (tohead_id=:tohead_id);" );
@@ -1244,30 +1234,23 @@ void transferOrder::populate()
       }
       _dstContact->setId(to.value("tohead_destcntct_id").toInt());
       if (_dstContact->name() != to.value("tohead_destcntct_name").toString() ||
-	  _dstContact->phone() != to.value("tohead_destphone").toString())
+        _dstContact->phone() != to.value("tohead_destphone").toString())
       {
-	_dstContact->setId(-1);
-	_dstContact->setObjectName(to.value("tohead_destcntct_name").toString());
-	_dstContact->setPhone(to.value("tohead_destphone").toString());
+        _dstContact->setId(-1);
+        _dstContact->setObjectName(to.value("tohead_destcntct_name").toString());
+        _dstContact->setPhone(to.value("tohead_destphone").toString());
       }
 
       _agent->setText(to.value("tohead_agent_username").toString());
       _shipVia->setText(to.value("tohead_shipvia").toString());
       _shippingForm->setId(to.value("tohead_shipform_id").toInt());
-      _taxauthidCache = to.value("tohead_taxauth_id").toInt();
-      _taxauth->setId(to.value("tohead_taxauth_id").toInt());
+      _taxzoneidCache = to.value("tohead_taxzone_id").toInt();
+      _taxzone->setId(to.value("tohead_taxzone_id").toInt());
 
       _freight->setId(to.value("tohead_freight_curr_id").toInt());
       _freight->setLocalValue(to.value("tohead_freight").toDouble());
 
       if (to.value("tohead_freighttax_id").isNull())
-	_taxCache.setFreightId(-1);
-      _taxCache.setFreightPct(to.value("tohead_freighttax_pcta").toDouble(),
-			      to.value("tohead_freighttax_pctb").toDouble(),
-			      to.value("tohead_freighttax_pctc").toDouble());
-      _taxCache.setFreight(to.value("tohead_freighttax_ratea").toDouble(),
-			   to.value("tohead_freighttax_rateb").toDouble(),
-			   to.value("tohead_freighttax_ratec").toDouble());
 
       _shipComplete->setChecked(to.value("tohead_shipcomplete").toBool());
       _orderComments->setText(to.value("tohead_ordercomments").toString());
@@ -1313,9 +1296,12 @@ void transferOrder::sFillItemList()
   }
 
   _toitem->clear();
-  _srcWhs->setEnabled(true);
-  _trnsWhs->setEnabled(true);
-  _dstWhs->setEnabled(true);
+  if (_mode == cEdit || _mode == cNew)
+  {
+    _srcWhs->setEnabled(true);
+    _trnsWhs->setEnabled(true);
+    _dstWhs->setEnabled(true);
+  }
 
   QString sql("SELECT toitem_id, closestatus,"
 	      "       toitem_status,"
@@ -1423,7 +1409,7 @@ void transferOrder::sFillItemList()
     return;
   }
 
-  recalculateTax(); // triggers sCalculateTotal();
+  sCalculateTax(); // triggers sCalculateTotal();
 
   _srcWhs->setEnabled(_toitem->topLevelItemCount() == 0);
   _freightCurrency->setEnabled(_toitem->topLevelItemCount() == 0);
@@ -1469,16 +1455,7 @@ bool transferOrder::deleteForCancel()
   }
 
   if(cView != _mode)
-  {
-    query.prepare("SELECT releaseTohead(:tohead_id) AS result;");
-    query.bindValue(":tohead_id", _toheadid);
-    query.exec();
-    if (query.first() && ! query.value("result").toBool())
-      systemError(this, tr("Could not release this Transfer Order record."),
-                  __FILE__, __LINE__);
-    else if (query.lastError().type() != QSqlError::NoError)
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-  }
+    sReleaseTohead();
 
   return true;
 }
@@ -1493,16 +1470,7 @@ void transferOrder::sClear()
 void transferOrder::clear()
 {
   if (cView != _mode)
-  {
-    q.prepare("SELECT releaseTohead(:tohead_id) AS result;");
-    q.bindValue(":tohead_id", _toheadid);
-    q.exec();
-    if (q.first() && ! q.value("result").toBool())
-      systemError(this, tr("Could not release this Transfer Order record."),
-                  __FILE__, __LINE__);
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-  }
+    sReleaseTohead();
   _toheadid = -1;
 
   _tabs->setCurrentPage(0);
@@ -1522,15 +1490,14 @@ void transferOrder::clear()
   _dstAddr->setId(-1);
   _srcContact->clear();
   _dstContact->clear();
-  _taxauthidCache = -1;
-  _taxauth->setId(-1);
-  _whstaxauthid        = -1;
+  _taxzoneidCache = -1;
+  _taxzone->setId(-1);
+  _whstaxzoneid        = -1;
   _shipVia->setId(-1);
   _shippingForm->setId(-1);
   _freight->clear();
   _orderComments->clear();
   _shippingComments->clear();
-  _taxCache.clear();
   _tax->clear();
   _freight->clear();
   _total->clear();
@@ -1684,12 +1651,12 @@ void transferOrder::sTaxDetail()
   XSqlQuery taxq;
   if (cView != _mode)
   {
-    taxq.prepare("UPDATE tohead SET tohead_taxauth_id=:taxauth, "
+    taxq.prepare("UPDATE tohead SET tohead_taxzone_id=:taxzone, "
 		  "  tohead_freight=:freight,"
 		  "  tohead_orderdate=:date "
 		  "WHERE (tohead_id=:head_id);");
-    if (_taxauth->isValid())
-      taxq.bindValue(":taxauth", _taxauth->id());
+    if (_taxzone->isValid())
+      taxq.bindValue(":taxzone", _taxzone->id());
     taxq.bindValue(":freight", _freight->localValue());
     taxq.bindValue(":date",    _orderDate->date());
     taxq.bindValue(":head_id", _toheadid);
@@ -1707,8 +1674,9 @@ void transferOrder::sTaxDetail()
   params.append("mode", "view"); // because tohead has no fields to hold changes
 
   taxBreakdown newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+  if (newdlg.set(params) == NoError)
   {
+    newdlg.exec();
     populate();
   }
 }
@@ -1735,7 +1703,7 @@ void transferOrder::setViewMode()
   _dstWhs->setEnabled(FALSE);
   _trnsWhs->setEnabled(FALSE);
   _agent->setEnabled(FALSE);
-  _taxauth->setEnabled(FALSE);
+  _taxzone->setEnabled(FALSE);
   _shipVia->setEnabled(FALSE);
   _shippingForm->setEnabled(FALSE);
   _freight->setEnabled(FALSE);
@@ -1746,6 +1714,8 @@ void transferOrder::setViewMode()
   _qedelete->setEnabled(FALSE);
   _qecurrency->setEnabled(FALSE);
   _freightCurrency->setEnabled(FALSE);
+  _srcContact->setEnabled(FALSE);
+  _dstContact->setEnabled(FALSE);
 
   _edit->setText(tr("View"));
   _comments->setReadOnly(true);
@@ -2038,103 +2008,32 @@ void transferOrder::sIssueLineBalance()
   sFillItemList();
 }
 
-void transferOrder::sFreightChanged()
+void transferOrder::sCalculateTax()
 {
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-                   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-                   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
-  freightq.bindValue(":tax_id", _taxCache.freightId());
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.exec();
-  if (freightq.first())
+  XSqlQuery taxq;
+
+  taxq.prepare( "SELECT SUM(tax) AS tax "
+                "FROM ("
+                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,toitem_freight),2) AS tax "
+                "FROM toitem "
+                "WHERE (toitem_tohead_id=:tohead_id) "
+                "UNION ALL "
+                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
+                ") AS data;" );
+  taxq.bindValue(":tohead_id", _toheadid);
+  taxq.bindValue(":taxzone_id", _taxzone->id());
+  taxq.bindValue(":date", _orderDate->date());
+  taxq.bindValue(":freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
-    _taxCache.setFreight(freightq.value("freighta").toDouble(),
-			 freightq.value("freightb").toDouble(),
-			 freightq.value("freightc").toDouble());
-  }
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  recalculateTax();
-}
-
-void transferOrder::recalculateTax()
-{
-  XSqlQuery itemq;
-
-  itemq.prepare( "SELECT SUM(toitem_freighttax_ratea) AS itemtaxa,"
-		 "       SUM(toitem_freighttax_rateb) AS itemtaxb,"
-		 "       SUM(toitem_freighttax_ratec) AS itemtaxc "
-		 "FROM toitem "
-		 "WHERE ((toitem_tohead_id=:head_id)"
-		 "  AND  (toitem_status != 'X'));" );
-
-  itemq.bindValue(":head_id", _toheadid);
-  itemq.exec();
-  if (itemq.first())
-  {
-    _taxCache.setLine(itemq.value("itemtaxa").toDouble(),
-		      itemq.value("itemtaxb").toDouble(),
-		      itemq.value("itemtaxc").toDouble());
-  }
-  else if (itemq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  _tax->setLocalValue(_taxCache.total());
+  
   sCalculateTotal();
-}
-
-void transferOrder::sTaxAuthChanged()
-{
-  XSqlQuery taxauthq;
-  if (_taxauth->id() != _taxauthidCache && _toheadid > 0)
-  {
-    taxauthq.prepare("SELECT changeTOTaxAuth(:head_id, :taxauth_id) AS result;");
-    taxauthq.bindValue(":head_id", _toheadid);
-    taxauthq.bindValue(":taxauth_id", _taxauth->id());
-    taxauthq.exec();
-    if (taxauthq.first())
-    {
-      int result = taxauthq.value("result").toInt();
-      if (result < 0)
-      {
-        _taxauth->setId(_taxauthidCache);
-        systemError(this,
-                    storedProcErrorLookup("changeTOTaxAuth", result),
-                    __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (taxauthq.lastError().type() != QSqlError::NoError)
-    {
-      _taxauth->setId(_taxauthidCache);
-      systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    _taxauthidCache = _taxauth->id();
-  }
-
-  taxauthq.prepare("SELECT COALESCE(getFreightTaxSelection(:taxauth), -1) AS result;");
-  taxauthq.bindValue(":taxauth", _taxauth->id());
-  taxauthq.exec();
-  if (taxauthq.first())
-  {
-    // -1 => there is none, which isn't an error, hence no error lookup
-    _taxCache.setFreightId(taxauthq.value("result").toInt());
-  }
-  else if (taxauthq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  recalculateTax();
 }
 
 bool transferOrder::sQESave()
@@ -2223,7 +2122,7 @@ void transferOrder::getWhsInfo(const int pid, const QWidget* pwidget)
     {
       _dstContact->setId(whsq.value("warehous_cntct_id").toInt());
       _dstAddr->setId(whsq.value("warehous_addr_id").toInt());
-      _taxauth->setId(whsq.value("warehous_taxauth_id").toInt());
+      _taxzone->setId(whsq.value("warehous_taxzone_id").toInt());
     }
     else if (pwidget == _trnsWhs)
     {
@@ -2252,4 +2151,17 @@ void transferOrder::sHandleSrcWhs(const int pid)
 void transferOrder::sHandleTrnsWhs(const int pid)
 {
   getWhsInfo(pid, _trnsWhs);
+}
+
+void transferOrder::sReleaseTohead()
+{
+  XSqlQuery query;
+  query.prepare("SELECT releaseTohead(:tohead_id) AS result;");
+  query.bindValue(":tohead_id", _toheadid);
+  query.exec();
+  if (query.first() && ! query.value("result").toBool())
+    systemError(this, tr("Could not release this Transfer Order record."),
+                __FILE__, __LINE__);
+  else if (query.lastError().type() != QSqlError::NoError)
+    systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 }

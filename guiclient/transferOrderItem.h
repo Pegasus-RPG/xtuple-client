@@ -17,8 +17,6 @@
 #include <parameter.h>
 #include "ui_transferOrderItem.h"
 
-#include "taxCache.h"
-
 class transferOrderItem : public XDialog, public Ui::transferOrderItem
 {
     Q_OBJECT
@@ -40,7 +38,7 @@ public slots:
     virtual void sPrev();
     virtual void sChanged();
     virtual void sCancel();
-    virtual void sLookupTax();
+    virtual void sCalculateTax();
     virtual void sTaxDetail();
     virtual void sHandleButton();
 
@@ -55,7 +53,7 @@ private:
     bool		_availabilityLastShow;
     bool		_availabilityLastShowIndent;
     int			_availabilityLastWarehousid;
-    double		_availabilityQtyOrdered;
+    double	_availabilityQtyOrdered;
     bool		_canceling;
     bool    _captive;
     int			_dstwhsid;
@@ -64,12 +62,12 @@ private:
     int			_itemsiteid;
     int			_mode;
     bool		_modified;
-    double		_originalQtyOrd;
-    taxCache		_taxCache;
-    int			_taxauthid;
+    double	_originalQtyOrd;
+    int			_taxzoneid;
     int			_toheadid;
     int			_toitemid;
     int			_transwhsid;
+    bool    _saved;
 };
 
 #endif // TRANSFERORDERITEM_H

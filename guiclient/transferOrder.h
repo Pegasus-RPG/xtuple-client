@@ -15,7 +15,6 @@
 #include "xwidget.h"
 #include <parameter.h>
 
-#include "taxCache.h"
 #include "toitemTableModel.h"
 
 #include "ui_transferOrder.h"
@@ -44,12 +43,12 @@ public slots:
     virtual void populate();
     virtual void populateOrderNumber();
     virtual void sAction();
+    virtual void sCalculateTax();
     virtual void sCalculateTotal();
     virtual void sClear();
     virtual void sDelete();
     virtual void sEdit();
     virtual void sFillItemList();
-    virtual void sFreightChanged();
     virtual void sHandleButtons();
     virtual void sHandleDstWhs(const int);
     virtual void sHandleOrderNumber();
@@ -61,16 +60,15 @@ public slots:
     virtual void sIssueStock();
     virtual void sNew();
     virtual void sPopulateMenu(QMenu * pMenu);
+    virtual void sReleaseTohead();
     virtual void sReturnStock();
     virtual void sSave();
     virtual void sSaveAndAdd();
     virtual void sSetUserEnteredOrderNumber();
-    virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
-    virtual void recalculateTax();
 
 protected slots:
     virtual void languageChange();
@@ -93,7 +91,6 @@ private:
     bool		_ignoreSignals;
     int			_lineMode;
     int			_mode;
-    QString		_oops;
     int			_orderNumberGen;
     int			_originalPrjid;
     bool		_passPrecheck;
@@ -103,12 +100,11 @@ private:
     bool		_saved;
     int			_shiptoid;
     int			_toheadid;
-    int			_taxauthidCache;
+    int			_taxzoneidCache;
     bool		_userEnteredOrderNumber;
-    int			_whstaxauthid;
+    int			_whstaxzoneid;
     QString		doServer;
 
-    taxCache _taxCache;
 
 };
 

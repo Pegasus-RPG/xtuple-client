@@ -25,7 +25,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   setupUi(this);
 
   connect(_cancel,	SIGNAL(clicked()),      this, SLOT(sCancel()));
-  connect(_freight,     SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
+  connect(_freight,     SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
   connect(_freight,	SIGNAL(valueChanged()), this, SLOT(sChanged()));
   connect(_item,	SIGNAL(newId(int)),     this, SLOT(sChanged()));
   connect(_item,	SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo(int)));
@@ -50,6 +50,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _canceling	= false;
   _error	= false;
   _originalQtyOrd	= 0.0;
+  _saved = false;
 
   _availabilityLastItemid	= -1;
   _availabilityLastWarehousid	= -1;
@@ -100,8 +101,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _itemsiteid	= -1;
   _transwhsid	= -1;
   _toheadid	= -1;
-  _taxauthid	= -1;
-  _taxCache.clear();
+  _taxzoneid	= -1;
   adjustSize();
   
   _inventoryButton->setEnabled(_showAvailability->isChecked());
@@ -137,9 +137,9 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
   if (valid)
     _warehouse->setId(param.toInt());
 
-  param = pParams.value("taxauth_id", &valid);
+  param = pParams.value("taxzone_id", &valid);
   if (valid)
-    _taxauthid = param.toInt();
+    _taxzoneid = param.toInt();
 
   param = pParams.value("orderNumber", &valid);
   if (valid)
@@ -419,46 +419,31 @@ void transferOrderItem::sSave()
     q.prepare( "INSERT INTO toitem "
                "( toitem_id, toitem_tohead_id, toitem_linenumber,"
                "  toitem_item_id, toitem_status, toitem_duedate,"
-	       "  toitem_schedshipdate, toitem_schedrecvdate,"
+               "  toitem_schedshipdate, toitem_schedrecvdate,"
                "  toitem_qty_ordered, toitem_notes,"
                "  toitem_uom, toitem_stdcost, toitem_prj_id,"
-               "  toitem_freight, toitem_freight_curr_id,"
-	       "  toitem_freighttax_id, toitem_freighttax_pcta,"
-	       "  toitem_freighttax_pctb, toitem_freighttax_pctc,"
-	       "  toitem_freighttax_ratea, toitem_freighttax_rateb,"
-	       "  toitem_freighttax_ratec ) "
+               "  toitem_freight, toitem_freight_curr_id ) "
                "VALUES "
-	       "( :toitem_id, :toitem_tohead_id, :toitem_linenumber,"
+	             "( :toitem_id, :toitem_tohead_id, :toitem_linenumber,"
                "  :toitem_item_id, 'U', :toitem_duedate,"
-	       "  :toitem_schedshipdate, :toitem_schedrecvdate,"
+	             "  :toitem_schedshipdate, :toitem_schedrecvdate,"
                "  :toitem_qty_ordered, :toitem_notes,"
                "  :toitem_uom, stdCost(:toitem_item_id), :toitem_prj_id,"
-               "  :toitem_freight, :toitem_freight_curr_id,"
-	       "  :toitem_freighttax_id, :toitem_freighttax_pcta,"
-	       "  :toitem_freighttax_pctb, :toitem_freighttax_pctc,"
-	       "  :toitem_freighttax_ratea, :toitem_freighttax_rateb,"
-	       "  :toitem_freighttax_ratec );" );
+               "  :toitem_freight, :toitem_freight_curr_id );" );
 
   }
   else if (_mode == cEdit)
   {
     q.prepare( "UPDATE toitem SET"
                "  toitem_duedate=:toitem_duedate,"
-	       "  toitem_schedshipdate=:toitem_schedshipdate,"
-	       "  toitem_schedrecvdate=:toitem_schedrecvdate,"
+	             "  toitem_schedshipdate=:toitem_schedshipdate,"
+	             "  toitem_schedrecvdate=:toitem_schedrecvdate,"
                "  toitem_qty_ordered=:toitem_qty_ordered,"
-	       "  toitem_notes=:toitem_notes,"
-	       "  toitem_prj_id=:toitem_prj_id,"
+	             "  toitem_notes=:toitem_notes,"
+	             "  toitem_prj_id=:toitem_prj_id,"
                "  toitem_freight=:toitem_freight,"
-	       "  toitem_freight_curr_id=:toitem_freight_curr_id,"
-	       "  toitem_freighttax_id=:toitem_freighttax_id,"
-	       "  toitem_freighttax_pcta=:toitem_freighttax_pcta,"
-	       "  toitem_freighttax_pctb=:toitem_freighttax_pctb,"
-	       "  toitem_freighttax_pctc=:toitem_freighttax_pctc,"
-	       "  toitem_freighttax_ratea=:toitem_freighttax_ratea,"
-	       "  toitem_freighttax_rateb=:toitem_freighttax_rateb,"
-	       "  toitem_freighttax_ratec=:toitem_freighttax_ratec,"
-	       "  toitem_lastupdated=CURRENT_TIMESTAMP "
+	             "  toitem_freight_curr_id=:toitem_freight_curr_id,"
+	             "  toitem_lastupdated=CURRENT_TIMESTAMP "
                "WHERE (toitem_id=:toitem_id);" );
   }
 
@@ -475,14 +460,6 @@ void transferOrderItem::sSave()
   // TODO: q.bindValue(":toitem_prj_id",		);
   q.bindValue(":toitem_freight",	  _freight->localValue());
   q.bindValue(":toitem_freight_curr_id",  _freight->id());
-  if (_taxCache.freightId() > 0)
-    q.bindValue(":toitem_freighttax_id",  _taxCache.freightId());
-  q.bindValue(":toitem_freighttax_pcta",  _taxCache.freightPct(0));
-  q.bindValue(":toitem_freighttax_pctb",  _taxCache.freightPct(1));
-  q.bindValue(":toitem_freighttax_pctc",  _taxCache.freightPct(2));
-  q.bindValue(":toitem_freighttax_ratea", _taxCache.freight(0));
-  q.bindValue(":toitem_freighttax_rateb", _taxCache.freight(1));
-  q.bindValue(":toitem_freighttax_ratec", _taxCache.freight(2));
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -509,22 +486,23 @@ void transferOrderItem::sSave()
       q.exec();
       if (q.first())
       {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("updateCharAssignment", result),
+	      int result = q.value("result").toInt();
+	      if (result < 0)
+	      {
+	        systemError(this, storedProcErrorLookup("updateCharAssignment", result),
 		      __FILE__, __LINE__);
-	  return;
-	}
+	        return;
+	      }
       }
       else if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      return;
       }
     }
   }
-
+  
+  _modified = false;
   omfgThis->sTransferOrdersUpdated(_toheadid);
 
   if ((!_captive) && (!_canceling) && (cNew == _mode))
@@ -536,8 +514,6 @@ void transferOrderItem::sSave()
   }
   else
     close();
-
-  _modified = false;
 }
 
 void transferOrderItem::sPopulateItemInfo(int pItemid)
@@ -820,7 +796,11 @@ void transferOrderItem::populate()
   }
   else
   {
-    item.prepare("SELECT toitem.*, tohead.*,"
+    item.prepare("SELECT toitem_linenumber,toitem_qty_ordered, "
+     "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
+     "       toitem_freight,toitem_item_id, "
+     "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
+     "       tohead_dest_warehous_id,tohead_number, "
 		 "       warehous_id, warehous_code,"
 		 "       stdCost(toitem_item_id) AS stdcost,"
 		 "       itemsite_id,"
@@ -828,13 +808,21 @@ void transferOrderItem::populate()
 		 "          FROM shipitem, shiphead"
 		 "         WHERE ((shipitem_shiphead_id=shiphead_id)"
 		 "           AND  (shiphead_order_type='TO')"
-		 "           AND  (shipitem_orderitem_id=toitem_id))) AS shipitem_qty "
-		 "FROM toitem, whsinfo, tohead, itemsite "
+		 "           AND  (shipitem_orderitem_id=toitem_id))) AS shipitem_qty, "
+     "        SUM(taxhist_tax) AS tax "
+		 "FROM whsinfo, tohead, itemsite, toitem  "
+     " LEFT OUTER JOIN toitemtax ON (toitem_id=taxhist_parent_id) "
 		 "WHERE ((toitem_tohead_id=tohead_id)"
 		 "  AND  (tohead_src_warehous_id=warehous_id)"
 		 "  AND  (itemsite_item_id=toitem_item_id)"
 		 "  AND  (itemsite_warehous_id=tohead_src_warehous_id)"
-		 "  AND  (toitem_id=:id));");
+		 "  AND  (toitem_id=:id)) "
+     "GROUP BY toitem_linenumber,toitem_qty_ordered, "
+     "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
+     "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
+     "       tohead_dest_warehous_id,tohead_number,toitem_freight, "
+		 "       warehous_id, warehous_code,toitem_item_id,"
+		 "       stdcost, shipitem_qty, itemsite_id;");
     item.bindValue(":id", _toitemid);
   }
 
@@ -842,7 +830,7 @@ void transferOrderItem::populate()
   if (item.first())
   {
     _toheadid	= item.value("tohead_id").toInt();
-    _taxauthid	= item.value("tohead_taxauth_id").toInt();
+    _taxzoneid	= item.value("tohead_taxzone_id").toInt();
     _transwhsid	= item.value("tohead_trns_warehous_id").toInt();
     _dstwhsid	= item.value("tohead_dest_warehous_id").toInt();
     _orderNumber->setText(item.value("tohead_number").toString());
@@ -860,21 +848,17 @@ void transferOrderItem::populate()
       _shippedToDate->setText(formatQty(item.value("shipitem_qty").toDouble()));
 
       // do tax stuff before _qtyOrdered so signal cascade has data to work with
-      _taxCache.setFreightId(item.value("toitem_freighttax_id").toInt());
       _qtyOrdered->setDouble(item.value("toitem_qty_ordered").toDouble());
       _scheduledDate->setDate(item.value("toitem_schedshipdate").toDate());
       _notes->setText(item.value("toitem_notes").toString());
       if (!item.value("toitem_schedrecvdate").isNull() && _metrics->boolean("UsePromiseDate"))
-	_promisedDate->setDate(item.value("toitem_schedrecvdate").toDate());
-      _freight->set(item.value("toitem_freight").toDouble(),
-		    item.value("tohead_freight_curr_id").toInt(),
-		    item.value("tohead_orderdate").toDate());
+	      _promisedDate->setDate(item.value("toitem_schedrecvdate").toDate());
       _originalQtyOrd	= _qtyOrdered->toDouble();
 
       //  Set the _item here to tickle signal cascade
       _item->setId(item.value("toitem_item_id").toInt());
-
-      sLookupTax();
+      _freight->setLocalValue(item.value("toitem_freight").toDouble());
+      _tax->setLocalValue(item.value("tax").toDouble());
       sDetermineAvailability();
     }
   }
@@ -1087,30 +1071,18 @@ void transferOrderItem::sCancel()
 
 }
 
-void transferOrderItem::sLookupTax()
-{
+void transferOrderItem::sCalculateTax()
+{  
   XSqlQuery calcq;
-  calcq.prepare("SELECT tax_ratea, tax_rateb, tax_ratec, tax_id,"
-		"       calculateTax(tax_id, :ext, 0, 'A') AS tax_a,"
-		"       calculateTax(tax_id, :ext, 0, 'B') AS tax_b,"
-		"       calculateTax(tax_id, :ext, 0, 'C') AS tax_c "
-		"FROM tax "
-		"WHERE (tax_id=getFreightTaxSelection(:auth));");
+  calcq.prepare("SELECT ROUND(calculateTax(tohead_taxzone_id,getFreightTaxTypeId(),tohead_orderdate,tohead_freight_curr_id,:freight),2) AS tax "
+                "FROM tohead "
+                "WHERE (tohead_id=:tohead_id); " );
 
-  calcq.bindValue(":auth", _taxauthid);
-  calcq.bindValue(":ext",  _freight->localValue());
+  calcq.bindValue(":tohead_id", _toheadid);
+  calcq.bindValue(":freight", _freight->localValue());
   calcq.exec();
   if (calcq.first())
-  {
-    _taxCache.setFreightId(calcq.value("tax_id").toInt());
-    _taxCache.setFreightPct(calcq.value("tax_ratea").toDouble(),
-			    calcq.value("tax_rateb").toDouble(),
-			    calcq.value("tax_ratec").toDouble());
-    _taxCache.setFreight(calcq.value("tax_a").toDouble(),
-			 calcq.value("tax_b").toDouble(),
-			 calcq.value("tax_c").toDouble());
-    _tax->setLocalValue(_taxCache.total());
-  }
+    _tax->setLocalValue(calcq.value("tax").toDouble());
   else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1120,32 +1092,20 @@ void transferOrderItem::sLookupTax()
 
 void transferOrderItem::sTaxDetail()
 {
+  XSqlQuery fid;
+  fid.exec("SELECT getFreightTaxTypeId() AS taxtype_id;");
+  fid.first();
   taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("tax_id",   _taxCache.freightId());
-  params.append("curr_id",  _tax->id());
-  params.append("valueA",   _taxCache.freight(0));
-  params.append("valueB",   _taxCache.freight(1));
-  params.append("valueC",   _taxCache.freight(2));
-  params.append("pctA",	    _taxCache.freightPct(0));
-  params.append("pctB",	    _taxCache.freightPct(1));
-  params.append("pctC",	    _taxCache.freightPct(2));
-  params.append("subtotal", CurrDisplay::convert(_freight->id(), _tax->id(),
-						 _freight->localValue(),
-						 _freight->effective()));
-  if(cView == _mode)
-    params.append("readOnly");
+  params.append("taxzone_id",   _taxzoneid);
+  params.append("taxtype_id",  fid.value("taxtype_id").toInt());
+  params.append("date", _tax->effective());
+  params.append("curr_id", _tax->id());
+  params.append("subtotal", _freight->localValue());
+  params.append("readOnly");
 
-  if (newdlg.set(params) == NoError && newdlg.exec())
-  {
-//    _taxCache.setFreight(newdlg.amountA(), newdlg.amountB(), newdlg.amountC());
-//    _taxCache.setFreightPct(newdlg.pctA(), newdlg.pctB(),    newdlg.pctC());
-
- //   if (_taxCache.freightId() != newdlg.tax())
-//      _taxCache.setFreightId(newdlg.tax());
-
-//    _tax->setLocalValue(_taxCache.total());
-  }
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
 }
 
 void transferOrderItem::sHandleButton()

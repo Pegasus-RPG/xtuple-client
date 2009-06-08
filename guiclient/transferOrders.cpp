@@ -47,9 +47,9 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(transferOrdersUpdated(int)), this, SLOT(sFillList()));
 
   _to->addColumn(tr("Order #"),                -1,  Qt::AlignLeft,   true,  "tohead_number"   );
-  _to->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "f_status" );
-  _to->addColumn(tr("Source Site"),  _whsColumn*2,  Qt::AlignLeft,   true,  "srcWhs"   );
-  _to->addColumn(tr("Dest. Site"),	 _whsColumn*2,  Qt::AlignLeft,   true,  "destWhs"   );
+  _to->addColumn(tr("Status"),       _statusColumn*2, Qt::AlignCenter, true,  "f_status" );
+  _to->addColumn(tr("Source Site"),  _whsColumn*3,  Qt::AlignLeft,   true,  "srcWhs"   );
+  _to->addColumn(tr("Dest. Site"),	 _whsColumn*3,  Qt::AlignLeft,   true,  "destWhs"   );
   _to->addColumn(tr("Ordered"),       _dateColumn,  Qt::AlignCenter, true,  "tohead_orderdate" );
   _to->addColumn(tr("Scheduled"),     _dateColumn,  Qt::AlignCenter, true,  "scheduled" );
   

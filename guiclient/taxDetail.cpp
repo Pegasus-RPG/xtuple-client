@@ -171,7 +171,7 @@ void taxDetail::sPopulate()
   params.append("order_type", _ordertype);
   if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || 
      _ordertype == "B" || _ordertype == "RA" || _ordertype == "CM" ||
-	 _ordertype == "PO" || _ordertype == "VO")
+	   _ordertype == "PO" || _ordertype == "VO" || _ordertype == "TO")
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
@@ -180,7 +180,10 @@ void taxDetail::sPopulate()
          "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
 			   "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
   }
-  else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI" || _ordertype == "VI")
+
+  else if( _ordertype == "II" || _ordertype == "BI" || 
+           _ordertype == "CI" || _ordertype == "TI" || _ordertype == "VI")
+
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
          "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
          "  0 AS taxdetail_tax_xttotalrole "

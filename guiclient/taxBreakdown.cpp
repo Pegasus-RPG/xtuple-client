@@ -125,7 +125,7 @@ void taxBreakdown::sFreightTaxDetail()
 	   newdlg.exec();
      
  }
- else if (_ordertype == "I" || _ordertype == "B" || _ordertype == "CM")
+ else if (_ordertype == "I" || _ordertype == "B" || _ordertype == "CM" || _ordertype == "TO")
  {
    q.exec("SELECT getfreighttaxtypeid() as taxtype;");
 	 if(q.first())
@@ -243,6 +243,10 @@ void taxBreakdown::sPopulate()
     _currencyLit->setText(tr("Transfer Order Currency:"));
     _header->setText(tr("Tax Breakdown for Transfer Order:"));
     _totalLit->setText(tr("Transfer Order Total:"));
+    _adjTaxLit->setVisible(false);
+    _adjTax->setVisible(false);
+    _freightTaxLit->setVisible(false);
+    _freightTax->setVisible(false);
 
     params.append("tohead_id", _orderid);
   }
@@ -254,7 +258,7 @@ void taxBreakdown::sPopulate()
 
     _adjTaxLit->setVisible(false);
     _adjTax->setVisible(false);
-	_freightTaxLit->setVisible(false);
+	  _freightTaxLit->setVisible(false);
     _freightTax->setVisible(false);
     params.append("pohead_id", _orderid);
   }
