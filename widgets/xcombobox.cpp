@@ -951,6 +951,10 @@ void XComboBox::setCode(QString pString)
 
         return;
       }
+      else if (DEBUG)
+        qDebug("%s::setCode(%s) not found (%s)",
+               qPrintable(objectName()), qPrintable(pString),
+               qPrintable(_codes.at(counter)));
     }
   }
   else  // this is an ad-hoc combobox without a query behind it?
@@ -1070,7 +1074,15 @@ void XComboBox::setText(const QString &pString)
 
 void XComboBox::setAllowNull(bool pAllowNull)
 {
+  if (DEBUG)
+    qDebug("%s::setAllowNull(%d)",
+           qPrintable(objectName()), pAllowNull);
   _allowNull = pAllowNull;
+  if (pAllowNull)
+  {
+    append(-1, _nullStr);
+    setItemText(0, _nullStr);
+  }
 }
 
 void XComboBox::setNull()
@@ -1088,9 +1100,15 @@ void XComboBox::setNull()
 
 void XComboBox::setNullStr(const QString& pNullStr)
 {
+  if (DEBUG)
+    qDebug("%s::setNullStr(%s)",
+           qPrintable(objectName()), qPrintable(pNullStr));
   _nullStr = pNullStr;
   if (allowNull())
+  {
+    append(-1, _nullStr);
     setItemText(0, pNullStr);
+  }
 }
 
 void XComboBox::setText(const QVariant &pVariant)
@@ -1221,6 +1239,11 @@ void XComboBox::append(int pId, const QString &pText)
 
 void XComboBox::append(int pId, const QString &pText, const QString &pCode)
 {
+  if (DEBUG)
+      qDebug("%s::append(%d, %s, %s)",
+             qPrintable(objectName()), pId,
+             qPrintable(pText), qPrintable(pCode));
+
   _ids.append(pId);
   insertItem(pText);
   _codes.append(pCode);
