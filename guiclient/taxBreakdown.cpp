@@ -246,6 +246,31 @@ void taxBreakdown::sPopulate()
 
     params.append("tohead_id", _orderid);
   }
+  else if (_ordertype == "PO")
+  {
+    _currencyLit->setText(tr("Purchase Order Currency:"));
+    _header->setText(tr("Tax Breakdown for Purchase Order:"));
+    _totalLit->setText(tr("Purchase Order Total:"));
+
+    _adjTaxLit->setVisible(false);
+    _adjTax->setVisible(false);
+	_freightTaxLit->setVisible(false);
+    _freightTax->setVisible(false);
+    params.append("pohead_id", _orderid);
+  }
+   else if (_ordertype == "VO")
+  {
+    _currencyLit->setText(tr("Voucher Currency:"));
+    _header->setText(tr("Tax Breakdown for Voucher:"));
+    _totalLit->setText(tr("Voucher Total:"));
+
+	_freightTaxLit->setVisible(false);
+    _freightTax->setVisible(false);
+
+    params.append("vohead_id", _orderid);
+  }
+
+
 
   MetaSQLQuery mql = mqlLoad("taxBreakdown", "detail");
   q = mql.toQuery(params);

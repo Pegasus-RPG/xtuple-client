@@ -25,6 +25,7 @@
 #include "printPurchaseOrder.h"
 #include "purchaseOrderItem.h"
 #include "vendorAddressList.h"
+#include "taxBreakdown.h"
 
 #define cDelete 0x01
 #define cClose  0x02
@@ -50,7 +51,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_qedelete,	SIGNAL(clicked()),	this, SLOT(sQEDelete()));
   connect(_qesave,	SIGNAL(clicked()),	this, SLOT(sQESave()));
   connect(_save,        SIGNAL(clicked()),      this, SLOT(sSave()));
-  connect(_tax,         SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
+  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_tax,          SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
+  connect(_taxZone,      SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_vendaddrList, SIGNAL(clicked()),     this, SLOT(sVendaddrList()));
   connect(_vendor,       SIGNAL(newId(int)),    this, SLOT(sHandleVendor(int)));
 
@@ -89,6 +92,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setPoheadid(-1);
 
   _cachedTabIndex = 0;
+  _taxzoneidCache = -1;
 
   _mode = cView;	// initialize _mode to something safe - bug 3768
  
@@ -368,6 +372,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _orderNumber->setEnabled(FALSE);
       _orderDate->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
+	  _taxZone->setEnabled(FALSE);
       _agent->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
@@ -452,17 +457,19 @@ void purchaseOrder::createHeader()
 
   q.prepare( "INSERT INTO pohead "
              "( pohead_id, pohead_number, pohead_status,"
-             "  pohead_agent_username, pohead_vend_id, "
+             "  pohead_agent_username, pohead_vend_id, pohead_taxzone_id,"
 	     "  pohead_orderdate, pohead_curr_id, pohead_saved) "
              "VALUES "
              "( :pohead_id, :pohead_number, 'U',"
-             "  :pohead_agent_username, :pohead_vend_id, "
+             "  :pohead_agent_username, :pohead_vend_id, :pohead_taxzone_id, "
 	     "  :pohead_orderdate, :pohead_curr_id, false );" );
   q.bindValue(":pohead_id", _poheadid);
   q.bindValue(":pohead_agent_username", _agent->currentText());
   q.bindValue(":pohead_number", (!_orderNumber->text().isEmpty() ?_orderNumber->text() : "0"));
   if (_vendor->isValid())
     q.bindValue(":pohead_vend_id", _vendor->id());
+  if (_taxZone->isValid())
+    q.bindValue(":pohead_taxzone_id", _taxZone->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
   q.exec();
@@ -474,7 +481,7 @@ void purchaseOrder::populate()
 {
   XSqlQuery po;
   po.prepare( "SELECT pohead_number, COALESCE(pohead_warehous_id,-1) AS pohead_warehous_id, "
-              "       pohead_orderdate, pohead_status, pohead_printed, "
+              "       pohead_orderdate, pohead_status, pohead_printed, pohead_taxzone_id, "
               "       pohead_shipvia, pohead_comments,"
               "       pohead_fob, COALESCE(pohead_terms_id,-1) AS pohead_terms_id, "
               "       COALESCE(pohead_vend_id,-1) AS pohead_vend_id,"
@@ -503,7 +510,7 @@ void purchaseOrder::populate()
     _shipVia->setText(po.value("pohead_shipvia"));
     _fob->setText(po.value("pohead_fob"));
     _notes->setText(po.value("pohead_comments").toString());
-
+	
     _vendaddrid = po.value("vendaddrid").toInt();
     if (_vendaddrid == -1)
     {
@@ -533,6 +540,7 @@ void purchaseOrder::populate()
     _comments->setId(_poheadid);
     _vendor->setId(po.value("pohead_vend_id").toInt());
     _vendEmail = po.value("vend_emailpodelivery").toBool();
+	_taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
     _tax->setLocalValue(po.value("pohead_tax").toDouble());
     _freight->setLocalValue(po.value("pohead_freight").toDouble());
@@ -585,7 +593,7 @@ void purchaseOrder::sSave()
 
   q.prepare( "UPDATE pohead "
              "SET pohead_warehous_id=:pohead_warehous_id, pohead_orderdate=:pohead_orderdate,"
-             "    pohead_shipvia=:pohead_shipvia,"
+             "    pohead_shipvia=:pohead_shipvia, pohead_taxzone_id=:pohead_taxzone_id,"
              "    pohead_tax=:pohead_tax, pohead_freight=:pohead_freight,"
              "    pohead_fob=:pohead_fob, pohead_agent_username=:pohead_agent_username,"
              "    pohead_terms_id=:pohead_terms_id,"
@@ -597,6 +605,8 @@ void purchaseOrder::sSave()
   q.bindValue(":pohead_id", _poheadid);
   if (_warehouse->isValid())
     q.bindValue(":pohead_warehous_id", _warehouse->id());
+  if (_taxZone->isValid())
+    q.bindValue(":pohead_taxzone_id", _taxZone->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_shipvia", _shipVia->text());
   q.bindValue(":pohead_fob", _fob->text());
@@ -648,6 +658,7 @@ void purchaseOrder::sSave()
     _agent->setText(omfgThis->username());
     _terms->setId(-1);
     _vendor->setId(-1);
+	_taxZone->setId(-1);
 
     _orderNumber->clear();
     _orderDate->clear();
@@ -690,7 +701,7 @@ void purchaseOrder::sNew()
   {
     q.prepare( "UPDATE pohead "
                "SET pohead_warehous_id=:pohead_warehous_id, pohead_vend_id=:pohead_vend_id,"
-               "    pohead_number=:pohead_number, "
+               "    pohead_number=:pohead_number, pohead_taxzone_id=:pohead_taxzone_id, "
 	       "    pohead_curr_id=:pohead_curr_id, "
 	       "    pohead_orderdate=:pohead_orderdate "
                "WHERE (pohead_id=:pohead_id);" );
@@ -699,6 +710,7 @@ void purchaseOrder::sNew()
     q.bindValue(":pohead_vend_id", _vendor->id());
     q.bindValue(":pohead_number", _orderNumber->text());
     q.bindValue(":pohead_id", _poheadid);
+	q.bindValue(":pohead_taxzone_id", _taxZone->id());
     q.bindValue(":pohead_curr_id", _poCurrency->id());
     q.bindValue(":pohead_orderdate", _orderDate->date());
     q.exec();
@@ -717,7 +729,10 @@ void purchaseOrder::sNew()
 
 void purchaseOrder::sEdit()
 {
+  saveDetail();
+  
   ParameterList params;
+  params.append("pohead_id", _poheadid);
   params.append("poitem_id", _poitem->id());
 
   if (_mode == cEdit || _mode == cNew)
@@ -845,7 +860,8 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       vend_fobsource, vend_fob, vend_shipvia,"
                "       vend_name, vend_address1, vend_address2, vend_address3,"
                "       vend_city, vend_state, vend_zip, vend_country,"
-               "       COALESCE(vendaddr_id, -1) AS vendaddrid "
+               "       COALESCE(vendaddr_id, -1) AS vendaddrid,"
+			   "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid "
                "FROM vend LEFT OUTER JOIN vendaddr ON (vendaddr_vend_id=vend_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
@@ -853,6 +869,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
     q.exec();
     if (q.first())
     {
+	  _taxZone->setId(q.value("vendtaxzoneid").toInt());
       _poCurrency->setId(q.value("vend_curr_id").toInt());
       
       if (_terms->id() == -1)
@@ -925,7 +942,8 @@ void purchaseOrder::sFillList()
 
   q.exec();
   _poitem->populate(q);
-
+  
+  sCalculateTax();
   sCalculateTotals();
 
   _poCurrency->setEnabled(_poitem->topLevelItemCount() == 0);
@@ -1128,4 +1146,77 @@ void purchaseOrder::sTabChanged(int pIndex)
 void purchaseOrder::sHandleOrderDate()
 {
   static_cast<PoitemTableModel*>(_qeitemView->model())->setTransDate(_orderDate->date());
+}
+
+void purchaseOrder::sTaxZoneChanged()
+{
+ if (_poheadid == -1 || _taxzoneidCache == _taxZone->id())
+    return;
+    
+  _taxzoneidCache = _taxZone->id();
+ 
+  sCalculateTax();
+}
+
+void purchaseOrder::sCalculateTax()
+{  
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT SUM(ROUND(calculateTax(:taxzone_id, poitem_taxtype_id, "
+                "  :date, :curr_id, ROUND(((poitem_qty_ordered * poitem_invvenduomratio) "
+				"  * poitem_unitprice), 2)),2)) AS tax "
+                "FROM poitem "
+                "WHERE (poitem_pohead_id=:pohead_id) ");
+  taxq.bindValue(":taxzone_id", _taxZone->id());
+  taxq.bindValue(":date", _orderDate->date());   
+  taxq.bindValue(":curr_id", _poCurrency->id());  
+  taxq.bindValue(":pohead_id", _poheadid);
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }              
+}
+
+void purchaseOrder::sTaxDetail()
+{
+  saveDetail();
+
+  ParameterList params;
+  params.append("order_id", _poheadid);
+  params.append("order_type", "PO");
+  // mode => view since there are no fields to hold modified tax data
+  if (_mode == cView)
+    params.append("mode", "view");
+
+  taxBreakdown newdlg(this, "", TRUE);
+  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+    populate();
+}
+
+void purchaseOrder::saveDetail()
+{
+  XSqlQuery taxq;
+  if (_mode != cView)
+  {
+    taxq.prepare("UPDATE pohead SET pohead_taxzone_id = :taxzone,"
+                 " pohead_orderdate = :pohead_orderdate,"
+				 " pohead_curr_id = :pohead_curr_id,"
+				 " pohead_freight = :pohead_freight "
+		         "WHERE (pohead_id = :pohead_id);");
+    if (_taxZone->isValid())
+      taxq.bindValue(":taxzone",	_taxZone->id());
+    taxq.bindValue(":pohead_id",	_poheadid);
+    taxq.bindValue(":pohead_orderdate", _orderDate->date());
+	taxq.bindValue(":pohead_curr_id", _poCurrency->id());
+	taxq.bindValue(":pohead_freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }

@@ -13,10 +13,11 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
-
+#include "taxDetail.h"
 #include "itemCharacteristicDelegate.h"
 #include "itemSourceSearch.h"
 #include "vendorPriceList.h"
+#include <QSqlError>
 
 purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -36,10 +37,14 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_vendorItemNumberList, SIGNAL(clicked()), this, SLOT(sVendorItemNumberList()));
   connect(_notesButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_listPrices, SIGNAL(clicked()), this, SLOT(sVendorListPrices()));
+  connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));  // new slot added for tax url //
+  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for price //
+  connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sCalculateTax()));            // new slot added for taxtype //
 
   _parentwo = -1;
   _parentso = -1;
   _itemsrcid = -1;
+  _taxzoneid = -1;   //  _taxzoneid  added // 
 
   _overriddenUnitPrice = false;
 
@@ -103,6 +108,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   bool     haveQty  = FALSE;
   bool     haveDate = FALSE;
 
+
+
   param = pParams.value("warehous_id", &valid);
   if (valid)
     _preferredWarehouseid = param.toInt();
@@ -120,7 +127,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   {
     _poheadid = param.toInt();
 
-    q.prepare( "SELECT pohead_number, pohead_orderdate, pohead_status, "
+    q.prepare( "SELECT pohead_taxzone_id, pohead_number, pohead_orderdate, pohead_status, " // pohead_taxzone_id added
                "       vend_id, vend_restrictpurch, pohead_curr_id "
                "FROM pohead, vend "
                "WHERE ( (pohead_vend_id=vend_id)"
@@ -133,6 +140,9 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       _poStatus = q.value("pohead_status").toString();
       _unitPrice->setEffective(q.value("pohead_orderdate").toDate());
       _unitPrice->setId(q.value("pohead_curr_id").toInt());
+	  _taxzoneid=q.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
+	  _tax->setEffective(q.value("pohead_orderdate").toDate());
+      _tax->setId(q.value("pohead_curr_id").toInt());
 
       if (q.value("vend_restrictpurch").toBool())
       {
@@ -345,7 +355,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
 void purchaseOrderItem::populate()
 {
-  q.prepare( "SELECT pohead_number, poitem_linenumber, "
+  q.prepare( "SELECT pohead_number, poitem_linenumber, pohead_taxzone_id, "  //  pohead_taxzone_id added
              "       COALESCE(poitem_itemsite_id,-1) AS poitem_itemsite_id,"
              "       COALESCE(poitem_itemsrc_id,-1) AS poitem_itemsrc_id, "
              "       poitem_vend_item_number, poitem_vend_item_descrip,"
@@ -355,10 +365,11 @@ void purchaseOrderItem::populate()
              "       poitem_duedate,"
              "       poitem_qty_ordered,"
              "       poitem_qty_received,"
-	     "       pohead_curr_id, pohead_orderdate, "
+	         "       pohead_curr_id, pohead_orderdate, "
              "       poitem_unitprice,"
              "       poitem_freight,"
              "       poitem_unitprice * poitem_qty_ordered AS f_extended,"
+			 "       poitem_taxtype_id, "
              "       poitem_comments, poitem_prj_id,"
              "       poitem_bom_rev_id,poitem_boo_rev_id, "
              "       poitem_manuf_name, poitem_manuf_item_number, "
@@ -373,6 +384,7 @@ void purchaseOrderItem::populate()
   {
     _poNumber->setText(q.value("pohead_number").toString());
     _lineNumber->setText(q.value("poitem_linenumber").toString());
+	_taxzoneid=q.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
     _dueDate->setDate(q.value("poitem_duedate").toDate());
     _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
     _received->setDouble(q.value("poitem_qty_received").toDouble());
@@ -381,10 +393,10 @@ void purchaseOrderItem::populate()
 		    q.value("pohead_orderdate").toDate(), false);
     _freight->setLocalValue(q.value("poitem_freight").toDouble());
     _extendedPrice->setLocalValue(q.value("f_extended").toDouble());
+	_taxtype->setId(q.value("poitem_taxtype_id").toInt());
     _notes->setText(q.value("poitem_comments").toString());
     _project->setId(q.value("poitem_prj_id").toInt());
-
-    if(q.value("overrideCost").toDouble() > 0)
+	if(q.value("overrideCost").toDouble() > 0)
       _overriddenUnitPrice = true;
 
     if (q.value("poitem_itemsite_id").toInt() == -1)
@@ -589,7 +601,7 @@ void purchaseOrderItem::sSave()
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO poitem "
-               "( poitem_id, poitem_pohead_id, poitem_status, poitem_linenumber,"
+               "( poitem_id, poitem_pohead_id, poitem_status, poitem_linenumber, poitem_taxtype_id,"  // taxtype_id added  //
                "  poitem_itemsite_id, poitem_expcat_id,"
                "  poitem_itemsrc_id, poitem_vend_item_number, poitem_vend_item_descrip,"
                "  poitem_vend_uom, poitem_invvenduomratio,"
@@ -599,7 +611,7 @@ void purchaseOrderItem::sSave()
 	       "  poitem_comments, poitem_prj_id, poitem_stdcost, poitem_manuf_name, "
                "  poitem_manuf_item_number, poitem_manuf_item_descrip ) "
                "VALUES "
-               "( :poitem_id, :poitem_pohead_id, :status, :poitem_linenumber,"
+               "( :poitem_id, :poitem_pohead_id, :status, :poitem_linenumber, :poitem_taxtype_id,"  // taxtype_id reference //
                "  :poitem_itemsite_id, :poitem_expcat_id,"
                "  :poitem_itemsrc_id, :poitem_vend_item_number, :poitem_vend_item_descrip,"
                "  :poitem_vend_uom, :poitem_invvenduomratio,"
@@ -611,6 +623,7 @@ void purchaseOrderItem::sSave()
 
     q.bindValue(":status", _poStatus);
     q.bindValue(":item_id", _item->id());
+    q.bindValue(":poitem_taxtype_id", _taxtype->id()); // picking up taxtype_id from ui //
 
     if (_inventoryItem->isChecked())
     {
@@ -640,7 +653,8 @@ void purchaseOrderItem::sSave()
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE poitem "
-               "SET poitem_itemsrc_id=:poitem_itemsrc_id,"
+               "SET poitem_itemsrc_id=:poitem_itemsrc_id,"   
+               "    poitem_taxtype_id=:poitem_taxtype_id,"     // updating the poitem_taxtype_id in poitem
                "    poitem_vend_item_number=:poitem_vend_item_number,"
                "    poitem_vend_item_descrip=:poitem_vend_item_descrip,"
                "    poitem_vend_uom=:poitem_vend_uom, poitem_invvenduomratio=:poitem_invvenduomratio,"
@@ -656,6 +670,7 @@ void purchaseOrderItem::sSave()
                "WHERE (poitem_id=:poitem_id);" );
 
   q.bindValue(":poitem_id", _poitemid);
+  q.bindValue(":poitem_taxtype_id", _taxtype->id());            // picking up taxtype_id from ui //
   q.bindValue(":poitem_pohead_id", _poheadid);
   q.bindValue(":poitem_linenumber", _lineNumber->text().toInt());
   if (_itemsrcid != -1)
@@ -779,7 +794,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
       row++;
     }
     
-    item.prepare("SELECT itemsrc_id "
+    item.prepare("SELECT itemsrc_id " 
                  "FROM itemsrc, pohead "
                  "WHERE ( (itemsrc_vend_id=pohead_vend_id)"
                  " AND (itemsrc_item_id=:item_id)"
@@ -790,6 +805,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
     if (item.size() == 1)
     {
       item.first();
+	 
       if (item.value("itemsrc_id").toInt() != _itemsrcid)
         sPopulateItemSourceInfo(item.value("itemsrc_id").toInt());
     }
@@ -827,6 +843,16 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
       _minimumOrder = 0;
       _orderMultiple = 0;
     }
+
+
+	item.prepare("SELECT getItemTaxType(:item_id, pohead_taxzone_id) AS taxtype_id "
+	             "FROM pohead WHERE (pohead_id=:pohead_id);");
+    item.bindValue(":item_id", pItemid);
+	item.bindValue(":pohead_id", _poheadid);
+    item.exec();
+	if(item.first())
+      _taxtype->setId(item.value("taxtype_id").toInt());   // added to show default taxtype of item
+
   }
 }
 
@@ -1009,3 +1035,52 @@ void purchaseOrderItem::sVendorListPrices()
   }
 }
 
+
+void purchaseOrderItem::sCalculateTax()  // new function added from raitem
+{
+  XSqlQuery calcq;
+
+  calcq.prepare("SELECT ROUND(calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)),2) AS tax "
+                "FROM pohead "
+                "WHERE (pohead_id=:pohead_id); " );
+
+  calcq.bindValue(":pohead_id", _poheadid);
+  calcq.bindValue(":taxtype_id", _taxtype->id());
+  calcq.bindValue(":ext", _extendedPrice->localValue());
+  ///////////////////////////////////////////////////////////////////////////////////////////////////// 
+   char str[100];
+   sprintf(str, "PO: %d, TaxType: %d, ExtPrice: %lf", _poheadid, _taxtype->id(),_extendedPrice->localValue());
+   QMessageBox::information(this, "Variables", str);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  calcq.exec();
+  if (calcq.first())
+    _tax->setLocalValue(calcq.value("tax").toDouble());
+
+  else if (calcq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  } 
+}
+
+void purchaseOrderItem::sTaxDetail()    // new function added from raitem
+{
+  taxDetail newdlg(this, "", true);
+  ParameterList params;
+  params.append("taxzone_id",   _taxzoneid);
+  params.append("taxtype_id",  _taxtype->id());
+  params.append("date", _tax->effective());
+  params.append("curr_id", _tax->id());
+  params.append("subtotal", _extendedPrice->localValue());
+  //params.append("readOnly");
+
+  if (newdlg.set(params) == NoError && newdlg.exec())
+  {
+    if (_taxtype->id() != newdlg.taxtype())
+      _taxtype->setId(newdlg.taxtype());
+  }
+}

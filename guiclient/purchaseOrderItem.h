@@ -30,6 +30,8 @@ public slots:
     virtual void populate();
     virtual void sDeterminePrice();
     virtual void sUpdateVendorQty();
+    virtual void sCalculateTax();        // new function added
+    virtual void sTaxDetail();           // new function added
 
 protected slots:
     virtual void languageChange();
@@ -53,6 +55,7 @@ private:
     int _parentwo;
     int _parentso;
     int _preferredWarehouseid;
+	int _taxzoneid;                    // new variable added
     double _invVendUOMRatio;
     double _minimumOrder;
     double _orderMultiple;

@@ -30,6 +30,7 @@ public:
 
     virtual void createHeader();
     virtual void populateOrderNumber();
+	virtual void saveDetail();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -47,6 +48,9 @@ public slots:
     virtual void sSetUserOrderNumber();
     virtual void sHandleOrderNumber();
     virtual void closeEvent( QCloseEvent * pEvent );
+	virtual void sCalculateTax();
+	virtual void sTaxZoneChanged();
+	virtual void sTaxDetail();
 
 protected slots:
     virtual void languageChange();
@@ -68,6 +72,7 @@ private:
     bool	_printed;
     PoitemTableModel*	_qeitem;
     bool	_vendEmail;
+	int _taxzoneidCache;
 };
 
 #endif // PURCHASEORDER_H
