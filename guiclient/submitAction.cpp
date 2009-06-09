@@ -10,19 +10,16 @@
 
 #include "submitAction.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
 submitAction::submitAction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
-  connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  connect(_scheduled, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _action->setText("Unknown");
 }
@@ -82,10 +79,11 @@ void submitAction::sSubmit()
   }
 
   if (_asap->isChecked())
-    q.prepare("SELECT submitActionToBatch(:action, :emailAddress, CURRENT_TIMESTAMP) AS batch_id;");
+    q.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, "
+              "CURRENT_TIMESTAMP) AS batch_id;");
   else
   {
-    q.prepare("SELECT submitActionToBatch(:action, :emailAddress, :scheduled) AS batch_id;");
+    q.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, :scheduled) AS batch_id;");
 
     QDateTime scheduled;
     scheduled.setDate(_date->date());
@@ -101,7 +99,7 @@ void submitAction::sSubmit()
   {
     int batchid = q.value("batch_id").toInt();
 
-    q.prepare( "INSERT INTO batchparam "
+    q.prepare( "INSERT INTO xtbatch.batchparam "
                "( batchparam_batch_id, batchparam_order,"
                "  batchparam_name, batchparam_type, batchparam_value ) "
                "VALUES "
@@ -118,11 +116,8 @@ void submitAction::sSubmit()
       q.exec();
     }
   }
-  else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   accept();
 }
-
