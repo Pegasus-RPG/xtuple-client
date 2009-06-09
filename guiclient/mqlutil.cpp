@@ -32,7 +32,7 @@ MetaSQLQuery mqlLoad(const QString & name, bool * valid)
   else
   {
     _lastError = QString("Could not open file '%1': %2").arg(name).arg(fin.errorString());
-    qDebug(_lastError);
+    qWarning("%s", qPrintable(_lastError));
     if(valid)
       *valid = false;
   }
@@ -57,7 +57,7 @@ MetaSQLQuery mqlLoad(const QString & group, const QString & name, bool * valid)
   else
   {
     _lastError = QString("Could not open query '%1': %2").arg(group).arg(name);
-    qDebug(_lastError);
+    qWarning("%s", qPrintable(_lastError));
     if(valid)
       *valid = false;
   }

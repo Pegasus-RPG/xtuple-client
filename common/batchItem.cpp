@@ -21,9 +21,13 @@
 #define cReschedule  0x10
 
 batchItem::batchItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : QDialog(parent, fl)
 {
   setupUi(this);
+  if (name)
+    setObjectName(name);
+  if (modal)
+    setModal(modal);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 

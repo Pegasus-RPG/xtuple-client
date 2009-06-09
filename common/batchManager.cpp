@@ -20,9 +20,11 @@
 #include "batchItem.h"
 
 batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : QMainWindow(parent, fl)
 {
   setupUi(this);
+  if (name)
+    setObjectName(name);
 
   QButtonGroup * buttonGroup = new QButtonGroup(this);
   buttonGroup->addButton(_currentUser);
