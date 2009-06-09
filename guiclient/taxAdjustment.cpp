@@ -57,6 +57,8 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
       _table = "cobmisctax";
     else if (param.toString() == "CM")
       _table = "cmheadtax";
+    else if (param.toString() == "AR")
+      _table = "aropentax";
     else
       _table = param.toString();
   }  
@@ -66,8 +68,8 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-		  _mode = cNew;      
-		  _taxcode->setFocus();
+      _mode = cNew;      
+      _taxcode->setFocus();
     }
   }
  

@@ -22,16 +22,16 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   setupUi(this);
 
   _taxcodes->addColumn(tr("Code"),	       -1,  Qt::AlignLeft,   true,  "taxdetail_tax_code");
-  _taxcodes->addColumn(tr("Description"), 100,  Qt::AlignLeft,   true,  "taxdetail_tax_descrip");
-  _taxcodes->addColumn(tr("Amount"),      100,  Qt::AlignLeft,   true,  "taxdetail_tax");
-  _taxcodes->addColumn(tr("Sequence"),    100,  Qt::AlignLeft,   true,  "taxdetail_taxclass_sequence");
+  _taxcodes->addColumn(tr("Description"),     100,  Qt::AlignLeft,   true,  "taxdetail_tax_descrip");
+  _taxcodes->addColumn(tr("Amount"),          100,  Qt::AlignRight,   true, "taxdetail_tax");
+  _taxcodes->addColumn(tr("Sequence"),        100,  Qt::AlignRight,   true, "taxdetail_taxclass_sequence");
   _taxcodes->setIndentation(10);
     
-	connect(_taxcodes, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_taxcodes, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   connect(_cancel,	SIGNAL(clicked()),	this, SLOT(sCancel()));
-	connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
-	connect(_new,	SIGNAL(clicked()),	this, SLOT(sNew()));
-	connect(_delete, SIGNAL(clicked()),	this, SLOT(sDelete()));
+  connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
+  connect(_new,	SIGNAL(clicked()),	this, SLOT(sNew()));
+  connect(_delete, SIGNAL(clicked()),	this, SLOT(sDelete()));
 }
 
 taxDetail::~taxDetail()
@@ -171,7 +171,7 @@ void taxDetail::sPopulate()
   params.append("order_type", _ordertype);
   if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || 
      _ordertype == "B" || _ordertype == "RA" || _ordertype == "CM" ||
-	   _ordertype == "PO" || _ordertype == "VO" || _ordertype == "TO")
+     _ordertype == "PO" || _ordertype == "VO" || _ordertype == "TO")
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
@@ -181,8 +181,8 @@ void taxDetail::sPopulate()
 			   "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
   }
 
-  else if( _ordertype == "II" || _ordertype == "BI" || 
-           _ordertype == "CI" || _ordertype == "TI" || _ordertype == "VI")
+  else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI" || 
+           _ordertype == "TI" || _ordertype == "VI" || _ordertype == "AR")
 
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
          "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
@@ -231,6 +231,8 @@ void taxDetail::sDelete()
     table = "cmheadtax";
   else if (_ordertype == "VO")
     table = "voheadtax";
+  else if (_ordertype == "AR")
+    table = "aropentax";
   else
     table = _ordertype;
       
