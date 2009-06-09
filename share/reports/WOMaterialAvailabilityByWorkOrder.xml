@@ -14,13 +14,21 @@
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
        warehous_code as warehouse,
        item_number, item_descrip1, item_descrip2, uom_name,
-       wo_status AS status
+       wo_status AS status,        
+       &lt;? if exists("onlyShowShortages") ?>
+         text('Only Show Shortages')
+       &lt;? elseif exists("onlyShowInsufficientInventory") ?>
+         text('Only Show Insufficient Inventory')
+       &lt;? else ?>
+         text('None')
+       &lt;? endif ?>
+       AS filtertext
   FROM wo, itemsite, item, uom, warehous
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
-   AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) );</sql>
+   AND (wo_id=&lt;? value("wo_id") ?>) );</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -42,10 +50,13 @@
              AND (womatl_itemsite_id=itemsite_id)
              AND (itemsite_item_id=item_id)
              AND (womatl_uom_id=uom_id)
-             AND (womatl_wo_id=&lt;? value(&quot;wo_id&quot;) ?>))
+             AND (womatl_wo_id=&lt;? value("wo_id") ?>))
         ) AS data
-&lt;? if exists(&quot;onlyShowShortages&quot;) ?>
+&lt;? if exists("onlyShowShortages") ?>
  WHERE ( ((qoh + ordered - allocated) &lt; 0) OR ((qoh + ordered - wobalance) &lt; 0) )
+&lt;? endif ?>
+&lt;? if exists("onlyShowInsufficientInventory") ?>
+   WHERE ( ((qoh - allocated) &lt; 0)OR ((qoh - wobalance) &lt; 0) ) 
 &lt;? endif ?>
 ORDER BY item_number;</sql>
  </querysource>
@@ -431,6 +442,41 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <string>Description</string>
   </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>165</y>
+    <width>55</width>
+    <height>18</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Filter:</string>
+  </label>
+  <field>
+   <rect>
+    <x>325</x>
+    <y>165</y>
+    <width>365</width>
+    <height>18</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>filtertext</column>
+   </data>
+  </field>
  </rpthead>
  <pghead>
   <firstpage/>

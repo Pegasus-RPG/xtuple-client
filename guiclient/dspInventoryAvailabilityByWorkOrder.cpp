@@ -39,7 +39,9 @@ dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_showAll, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_onlyShowShortages, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_onlyShowInsufficientInventory, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_includeChildren, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
@@ -81,6 +83,8 @@ enum SetResponse dspInventoryAvailabilityByWorkOrder::set(const ParameterList &p
 
   _onlyShowShortages->setChecked(pParams.inList("onlyShowShortages"));
 
+  _onlyShowInsufficientInventory->setChecked(pParams.inList("onlyShowInsufficientInventory"));
+
   if (pParams.inList("run"))
   {
     sFillList();
@@ -104,6 +108,9 @@ bool dspInventoryAvailabilityByWorkOrder::setParams(ParameterList &params)
 
   if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
+
+  if(_onlyShowInsufficientInventory->isChecked())
+    params.append("onlyShowInsufficientInventory");
 
   if(_includeChildren->isChecked())
   {
@@ -358,6 +365,8 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                "       'qty' AS totalavail_xtnumericrole,"
                "       CASE WHEN (qoh < 0) THEN 'error'"
                "            WHEN (qoh < reorderlevel) THEN 'warning'"
+               "            WHEN ((qoh - wobalance) < 0) THEN 'altemphasis'"
+               "            WHEN ((qoh - allocated) < 0) THEN 'altemphasis'"
                "       END AS qoh_qtforegroundrole,"
                "       CASE WHEN ((qoh + ordered - wobalance) < 0) THEN 'error'"
                "            WHEN ((qoh + ordered - wobalance) < reorderlevel) THEN 'warning'"
@@ -389,6 +398,10 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                "<? if exists(\"onlyShowShortages\") ?>"
                "WHERE ( ((qoh + ordered - allocated) < 0)"
                " OR ((qoh + ordered - wobalance) < 0) ) "
+               "<? endif ?>"
+               "<? if exists(\"onlyShowInsufficientInventory\") ?>"
+               "WHERE ( ((qoh - allocated) < 0)"
+               " OR ((qoh - wobalance) < 0) ) "
                "<? endif ?>"
                "ORDER BY item_number;");
   q = mql.toQuery(params);
