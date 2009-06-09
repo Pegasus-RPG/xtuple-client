@@ -18,6 +18,8 @@
 #include <QScriptEngine>
 
 #include "jsHighlighter.h"
+#include "package.h"
+#include "storedProcErrorLookup.h"
 
 #define DEBUG false
 
@@ -40,11 +42,18 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
   _document = _source->document();
   _document->setDefaultFont(QFont("Courier"));
 
+  _package->populate("SELECT pkghead_id, pkghead_name, pkghead_name "
+                     "FROM   pkghead "
+                     "ORDER BY pkghead_name;");
+
   connect(_document, SIGNAL(blockCountChanged(int)), this, SLOT(sBlockCountChanged(int)));
   connect(_document, SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
   connect(_source, SIGNAL(cursorPositionChanged()), this, SLOT(sPositionChanged()));
 
-  _scriptid = -1;
+  _package->setEnabled(package::userHasPriv(cEdit));
+
+  _scriptid      = -1;
+  _pkgheadidOrig = -1;
 }
 
 scriptEditor::~scriptEditor()
@@ -149,7 +158,7 @@ void scriptEditor::setMode(const int pmode)
 
 bool scriptEditor::sSave()
 {
-  if (_name->text().trimmed().length() == 0)
+  if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Script Name is Invalid"),
                           tr("<p>You must enter a valid name for this Script.") );
@@ -198,6 +207,7 @@ bool scriptEditor::sSave()
   
 bool scriptEditor::sSaveToDB()
 {
+
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO script "
@@ -238,13 +248,49 @@ bool scriptEditor::sSaveToDB()
   }
 
   _document->setModified(false);
+  if (_package->id() != _pkgheadidOrig &&
+      QMessageBox::question(this, tr("Move to different package?"),
+                            tr("Do you want to move this script "
+                               "to the %1 package?").arg(_package->code()),
+                                QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+  {
+    q.prepare("SELECT movescript(:scriptid, :oldpkgid, "
+              "                  :newpkgid) AS result;");
+    q.bindValue(":scriptid",  _scriptid);
+    q.bindValue(":oldpkgid", _pkgheadidOrig);
+    q.bindValue(":newpkgid",  _package->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result >= 0)
+        _pkgheadidOrig = _package->id();
+      else
+      {
+        systemError(this,
+                    tr("<p>The script was saved to its original location but "
+                       "could not be moved: %1")
+                     .arg(storedProcErrorLookup("movescript", result)),
+                    __FILE__, __LINE__);
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this,
+                  tr("<p>The script was saved to its original location but "
+                     "could not be moved: <pre>%1</pre>")
+                  .arg(q.lastError().databaseText()), __FILE__, __LINE__);
+    }
+  }
+
   setMode(cEdit);
   return true;
 }
 
 void scriptEditor::populate()
 {
-  q.prepare( "SELECT script.*, COALESCE(pkghead_indev,true) AS editable "
+  q.prepare( "SELECT script.*, COALESCE(pkghead_id, -1) AS pkghead_id, "
+            "        COALESCE(pkghead_indev,true) AS editable "
       	     "  FROM script, pg_class, pg_namespace "
              "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((script.tableoid=pg_class.oid)"
@@ -259,6 +305,9 @@ void scriptEditor::populate()
     _enabled->setChecked(q.value("script_enabled").toBool());
     _source->setText(q.value("script_source").toString());
     _notes->setText(q.value("script_notes").toString());
+    _pkgheadidOrig = q.value("pkghead_id").toInt();
+    _package->setId(_pkgheadidOrig);
+
     setWindowTitle("[*]" + tr("Script Editor - %1").arg(_name->text()));
     if (DEBUG)
       qDebug("scriptEditor::populate() editable = %d",

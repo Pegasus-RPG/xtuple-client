@@ -48,6 +48,7 @@ protected slots:
 
 private:
     int _mode;
+    int _pkgheadidOrig;
     int _scriptid;
     JSHighlighter *_highlighter;
     QTextDocument *_document;
