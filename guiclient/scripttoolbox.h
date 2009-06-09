@@ -158,6 +158,7 @@ class ScriptToolbox : public QObject
     bool fileExists(const QString & name);
     QString getCurrentDir();
     QString getHomeDir();
+    QString getTempDir();
     void    listProperties(const QScriptValue &obj) const;
     bool    makePath(const QString & mkPath, const QString & rootPath);
     int     messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);

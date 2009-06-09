@@ -629,6 +629,11 @@ QString ScriptToolbox::getCurrentDir()
    return QDir::currentPath();
 }
 
+QString ScriptToolbox::getTempDir()
+{
+   return QDir::tempPath();
+}
+
 QString ScriptToolbox::rootPath()
 {
    return QDir::rootPath();
