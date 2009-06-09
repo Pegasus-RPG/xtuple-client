@@ -74,13 +74,16 @@ enum SetResponse issueWoMaterialItem::set(const ParameterList &pParams)
     _captive = TRUE;
 
     _wo->setId(param.toInt());
-    _wo->setReadOnly(TRUE);
+    _wo->setEnabled(false);
     _issue->setFocus();
   }
 
   param = pParams.value("womatl_id", &valid);
   if (valid)
+  {
     _womatl->setId(param.toInt());
+    _womatl->setEnabled(false);
+  }
 
   param = pParams.value("qty", &valid);
   if (valid)

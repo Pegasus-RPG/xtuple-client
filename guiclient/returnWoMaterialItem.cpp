@@ -61,9 +61,15 @@ enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
     q.bindValue(":womatl_id", param.toInt());
     q.exec();
     if(q.first())
+    {
       _wo->setId(q.value("womatl_wo_id").toInt());
-
+      _wo->setEnabled(false);
+    }
+   if (valid)
+   {
     _womatl->setId(param.toInt());
+    _womatl->setEnabled(false);
+   }
     _qty->setFocus();
   }
 

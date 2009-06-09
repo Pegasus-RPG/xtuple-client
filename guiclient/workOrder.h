@@ -34,6 +34,36 @@ public slots:
     virtual void populateWoNumber();
     virtual void sClose();
     virtual void sHandleButtons();
+    virtual void sFillList();
+    virtual void sPostOperations();
+    virtual void sPostProduction();
+    virtual void sCorrectOperationsPosting();
+    virtual void sCorrectProductionPosting();
+    virtual void sRecallWO();
+    virtual void sReleaseWO();
+    virtual void sExplodeWO();
+    virtual void sImplodeWO();
+    virtual void sDeleteWO();
+    virtual void sCloseWO();
+    virtual void sChangeWOQty();
+    virtual void sInventoryAvailabilityByWorkOrder();
+    virtual void sPrintTraveler();
+    virtual void sReprioritizeWo();
+    virtual void sRescheduleWO();
+    virtual void sDspRunningAvailability();
+    virtual void sIssueMatlBatch();
+    virtual void sReturnMatlBatch();
+    virtual void sIssueMatl();
+    virtual void sReturnMatl();
+    virtual void sScrapMatl();
+    virtual void sNewMatl();
+    virtual void sEditMatl();
+    virtual void sViewMatl();
+    virtual void sDeleteMatl();
+    virtual void sViewMatlAvailability();
+    virtual void sViewMatlSubstituteAvailability();
+    virtual void sSubstituteMatl();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
 
 protected slots:
     virtual void languageChange();

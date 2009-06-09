@@ -15,8 +15,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>628</height>
+    <width>817</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -28,8 +28,8 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Work Order</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
+   <item>
     <layout class="QGridLayout" >
      <property name="margin" >
       <number>12</number>
@@ -530,6 +530,67 @@ to be bound by its terms.</comment>
        <property name="currentIndex" >
         <number>0</number>
        </property>
+       <widget class="QWidget" name="_materials" >
+        <attribute name="title" >
+         <string>Materials</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout" >
+           <item>
+            <widget class="XTreeWidget" name="_woIndentedList" />
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout" >
+             <item>
+              <spacer name="verticalSpacer" >
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_singleLevel" >
+               <property name="text" >
+                <string>Single Level</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_indented" >
+               <property name="text" >
+                <string>Indented</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="_showMaterials" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Show Materials</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tab" >
         <attribute name="title" >
          <string>Notes</string>
@@ -945,6 +1006,11 @@ to be bound by its terms.</comment>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_woNumber</tabstop>
@@ -975,12 +1041,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>51</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>640</x>
+     <y>42</y>
     </hint>
    </hints>
   </connection>
@@ -991,12 +1057,12 @@ to be bound by its terms.</comment>
    <slot>findItemsites(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>51</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>458</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -1007,12 +1073,12 @@ to be bound by its terms.</comment>
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>51</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>458</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -1027,8 +1093,8 @@ to be bound by its terms.</comment>
      <y>85</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>126</x>
-     <y>188</y>
+     <x>156</x>
+     <y>397</y>
     </hint>
    </hints>
   </connection>
@@ -1043,8 +1109,40 @@ to be bound by its terms.</comment>
      <y>85</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>348</x>
-     <y>188</y>
+     <x>381</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_singleLevel</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>_showMaterials</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>709</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>709</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_singleLevel</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_showMaterials</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>744</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>740</x>
+     <y>433</y>
     </hint>
    </hints>
   </connection>
