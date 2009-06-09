@@ -247,18 +247,21 @@ bool user::save()
     }
   }
 
-  q.prepare("SELECT pg_has_role(:username,'xtrole','member') AS result;");
-  q.bindValue(":username", username);
-  q.exec();
-  if(q.first() && !q.value("result").toBool())
+  if(_createUsers->isEnabled())
   {
-    q.exec( QString("ALTER GROUP xtrole ADD USER %1;")
-            .arg(username) );
-  }
-  if(q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
+    q.prepare("SELECT pg_has_role(:username,'xtrole','member') AS result;");
+    q.bindValue(":username", username);
+    q.exec();
+    if(q.first() && !q.value("result").toBool())
+    {
+      q.exec( QString("ALTER GROUP xtrole ADD USER %1;")
+              .arg(username) );
+    }
+    if(q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
   }
 
   if (_passwd->text() != "        ")
