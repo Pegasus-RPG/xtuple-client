@@ -47,7 +47,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscAmount, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
   connect(_allocatedCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -62,7 +62,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_invcitem, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
   connect(_invcitem, SIGNAL(valid(bool)),     _delete, SLOT(setEnabled(bool)));
   connect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sTaxZoneChanged()));
+  connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sCalculateTax));
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
 
   setFreeFormShipto(false);
@@ -71,7 +71,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _shipToList->setMaximumWidth(25);
 #endif
 
-  _taxCache.clear();
   _custtaxzoneid  = -1;
   _invcheadid	  = -1;
   _shiptoid	  = -1;
@@ -147,14 +146,14 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       q.prepare("INSERT INTO invchead ("
 				"    invchead_id, invchead_invcnumber, invchead_orderdate,"
-		        "    invchead_invcdate, invchead_cust_id, invchead_posted,"
+		                "    invchead_invcdate, invchead_cust_id, invchead_posted,"
 				"    invchead_printed, invchead_commission, invchead_freight,"
-				"    invchead_tax, invchead_misc_amount, invchead_shipchrg_id "
+				"    invchead_misc_amount, invchead_shipchrg_id "
 				") VALUES ("
 				"    :invchead_id, :invchead_invcnumber, :invchead_orderdate, "
 				"    :invchead_invcdate, -1, false,"
 				"    false, 0, 0,"
-				"    0, 0, -1"
+				"    0, -1"
 				");");
       q.bindValue(":invchead_id",	 _invcheadid);
       q.bindValue(":invchead_invcnumber",_invoiceNumber->text());
@@ -489,7 +488,6 @@ void invoice::sSave()
 	     "    invchead_terms_id=:invchead_terms_id, invchead_commission=:invchead_commission,"
 	     "    invchead_misc_amount=:invchead_misc_amount, invchead_misc_descrip=:invchead_misc_descrip,"
 	     "    invchead_misc_accnt_id=:invchead_misc_accnt_id,"
-		 "    invchead_tax=:invchead_tax,"
 	     "    invchead_freight=:invchead_freight,"
 	     "    invchead_payment=:invchead_payment,"
 	     "    invchead_curr_id=:invchead_curr_id,"
@@ -546,7 +544,6 @@ void invoice::sSave()
   q.bindValue(":invchead_prj_id",	_project->id());
   q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
   q.bindValue(":invchead_recurring", QVariant(_recurring->isChecked()));
-  q.bindValue(":invchead_tax",		_tax->localValue());
   if(_recurring->isChecked()) // only set the following if it's recurring otherwise they end upp null
   {
     QString rtype[] = {"D", "W", "M", "Y"};
@@ -564,38 +561,6 @@ void invoice::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-
-  if(_taxCache.freightType() < 0)
-  {
-    q.prepare("UPDATE invchead "
-              "SET invchead_freighttaxtype_id = (SELECT DISTINCT taxass_taxtype_id "
-              "  FROM taxass "
-              "  WHERE taxass_taxtype_id = getfreighttaxtypeid() "
-              "  AND (taxass_taxzone_id = :taxzone_id OR taxass_taxzone_id ISNULL)) "
-			  "WHERE invchead_id = :invchead_id;");
-	q.bindValue(":taxzone_id", _taxzoneidCache);
-	q.bindValue(":invchead_id", _invcheadid);
-	q.exec();
-	if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
-  {
-	q.prepare("UPDATE invchead "
-              "SET invchead_freighttaxtype_id = :freighttaxtype_id "
-			  "WHERE invchead_id = :invchead_id;");
-	q.bindValue(":freighttaxtype_id", _taxCache.freightType());
-	q.bindValue(":invchead_id", _invcheadid);
-	q.exec();
-	if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
   }
 
   omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
@@ -670,8 +635,6 @@ void invoice::populate()
 {
   q.prepare( "SELECT invchead.*,"
              "    COALESCE(invchead_taxzone_id, -1) AS taxzone_id,"
-             "    currToCurr(invchead_tax_curr_id, invchead_curr_id, "
-             "               invchead_tax, invchead_invcdate) AS invccurrtax, "
              "    COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
 	         "    cust_ffbillto, cust_ffshipto, "
 	         "    invchead_shipchrg_id, invchead_ordernumber, "
@@ -733,7 +696,6 @@ void invoice::populate()
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
     _taxzoneidCache = q.value("taxzone_id").toInt(); 
     _taxzone->setId(q.value("taxzone_id").toInt());
-    _tax->setLocalValue(q.value("invccurrtax").toDouble());
     _terms->setId(q.value("invchead_terms_id").toInt());
     _project->setId(q.value("invchead_prj_id").toInt());
 
@@ -795,52 +757,7 @@ void invoice::populate()
     return;
   }
 
-  q.prepare( "SELECT invchead_freighttaxtype_id, "
-             "  SUM(COALESCE(taxhist_tax, 0.00)) AS freight_tax "
-             "FROM invchead LEFT OUTER JOIN invcheadtax "
-             "  ON ((invchead_id = taxhist_parent_id) AND "
-             "  (invchead_freighttaxtype_id = taxhist_taxtype_id)) "
-			 "WHERE (invchead_id = :invchead_id) "
-			 "GROUP BY invchead_freighttaxtype_id;" );
-  q.bindValue(":invchead_id", _invcheadid);
-  q.exec();
-  if (q.first())
-  {
-    if (q.value("invchead_freighttaxtype_id").isNull())
-      _taxCache.setFreightType(-1);
-    else
-      _taxCache.setFreightType(q.value("invchead_freighttaxtype_id").toInt());
-    _taxCache.setFreight(q.value("freight_tax").toDouble(), 0.00, 0.00);
-  }
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  q.prepare( "SELECT invchead_adjtaxtype_id, "
-             "  SUM(COALESCE(taxhist_tax, 0.00)) AS adjustment_tax "
-             "FROM invchead LEFT OUTER JOIN invcheadtax "
-             "  ON ((invchead_id = taxhist_parent_id) AND "
-             "  (invchead_adjtaxtype_id = taxhist_taxtype_id)) "
-			 "WHERE (invchead_id = :invchead_id) "
-			 "GROUP BY invchead_adjtaxtype_id;" );
-  q.bindValue(":invchead_id", _invcheadid);
-  q.exec();
-  if (q.first())
-  {
-    if (q.value("invchead_adjtaxtype_id").isNull())
-      _taxCache.setAdjType(-1);
-    else
-      _taxCache.setAdjType(q.value("invchead_adjtaxtype_id").toInt());
-    _taxCache.setAdj(q.value("adjustment_tax").toDouble(), 0.00, 0.00);
-  }
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  recalculateTax();
+  sCalculateTax();
 }
 
 void invoice::sFillItemList()
@@ -895,28 +812,7 @@ void invoice::sFillItemList()
   _custCurrency->setEnabled(_invcitem->topLevelItemCount() == 0);
 
   // TODO: Calculate the Freight weight here.
-  recalculateTax();
-}
-
-void invoice::sFreightChanged()
-{
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculatetax(:taxzone_id, "
-                   " getfreighttaxtypeid(), :invcdate, :taxcurr, :freight) "
-				   " AS freightamount;");
-  freightq.bindValue(":taxzone_id", _taxzone->id());
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.bindValue(":taxcurr",  _custCurrency->id());
-  freightq.bindValue(":invcdate", _invoiceDate->date());
-  freightq.exec();
-  if (freightq.first())
-    _taxCache.setFreight(freightq.value("freightamount").toDouble(), 0.00, 0.00);
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  recalculateTax();
+  sCalculateTax();
 }
 
 void invoice::sCalculateTotal()
@@ -986,27 +882,35 @@ void invoice::sTaxDetail()
   }
 }
 
-void invoice::recalculateTax()
+void invoice::sCalculateTax()
 {
-  XSqlQuery itemq;
-
-  //  Determine the line item tax
-  itemq.prepare( "SELECT SUM(COALESCE(taxhist_tax, 0.00)) AS itemtaxamount "
-                 "FROM invcitem LEFT OUTER JOIN invcitemtax "
-                 "  ON (invcitem_id = taxhist_parent_id) "
-                 "WHERE (invcitem_invchead_id = :invchead_id);" );
-  itemq.bindValue(":invchead_id", _invcheadid);
-  itemq.exec();
-  if (itemq.first())
-    _taxCache.setLine(itemq.value("itemtaxamount").toDouble(), 0.00, 0.00);
-  else if (itemq.lastError().type() != QSqlError::NoError)
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT SUM(taxhist_tax) AS tax "
+		            "FROM ("
+                " SELECT taxhist_tax "
+                " FROM invcheadtax "
+                " WHERE ((taxhist_parent_id=:invchead_id)"
+                " AND (taxhist_taxtype_id=getadjustmenttaxtypeid())) "
+                " UNION ALL "
+                " SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
+                " UNION ALL "
+                " SELECT taxhist_tax "
+                " FROM invcitemtax "
+                "  JOIN invcitem ON (invcitem_id=taxhist_parent_id) "
+                " WHERE (invcitem_invchead_id=:invchead_id) ) AS data;" );
+  taxq.bindValue(":invchead_id", _invcheadid);
+  taxq.bindValue(":taxzone_id", _taxzone->id());
+  taxq.bindValue(":date", _invoiceDate->date());   
+  taxq.bindValue(":curr_id", _custCurrency->id());  
+  taxq.bindValue(":freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  _tax->setLocalValue(CurrDisplay::convert(_tax->id(), _tax->id(),
-	      _taxCache.total(), _tax->effective()));
   // changing _tax fires sCalculateTotal()
 }
 
@@ -1249,81 +1153,6 @@ void invoice::populateCCInfo()
   }
   else
     _authCC->setLocalValue(0.00);
-}
-
-void invoice::sTaxZoneChanged()
-{
-  if (cView == _mode || _loading || _taxzoneidCache == _taxzone->id())
-    return;
-
-  XSqlQuery taxzoneq;
-  taxzoneq.prepare("SELECT changeinvoicetaxzone(:invchead_id, :taxzone_id) AS result;");
-  taxzoneq.bindValue(":invchead_id", _invcheadid);
-  taxzoneq.bindValue(":taxzone_id", _taxzone->id());
-  taxzoneq.exec();
-  if (taxzoneq.first())
-  {
-    int result = taxzoneq.value("result").toInt();
-    if (result < 0)
-    {
-      _taxzone->setId(_taxzoneidCache);
-      systemError(this, storedProcErrorLookup("changeInvoiceTaxZone", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (taxzoneq.lastError().type() != QSqlError::NoError)
-  {
-    _taxzone->setId(_taxzoneidCache);
-    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  _taxzoneidCache = _taxzone->id();
-
-  taxzoneq.prepare("SELECT invchead_freighttaxtype_id, invchead_adjtaxtype_id "
-                   "FROM invchead "
-                   "WHERE (invchead_id = :invchead_id);");
-  taxzoneq.bindValue(":invchead_id", _invcheadid);
-  taxzoneq.exec();
-  if (taxzoneq.first())
-  {
-    if (taxzoneq.value("invchead_freighttaxtype_id").isNull())
-      _taxCache.setFreightType(-1);
-    else
-      _taxCache.setFreightType(taxzoneq.value("invchead_freighttaxtype_id").toInt());
-
-	if (taxzoneq.value("invchead_adjtaxtype_id").isNull())
-	  _taxCache.setAdjType(-1);
-    else
-	{
-	  _taxCache.setAdjType(taxzoneq.value("invchead_adjtaxtype_id").toInt());
-
-      XSqlQuery adjustmentq;
-      adjustmentq.prepare("SELECT SUM(COALESCE(taxhist_tax, 0.00)) AS adjTax "
-                          "FROM invchead LEFT OUTER JOIN invcheadtax "
-                          "  ON ((invchead_id = taxhist_parent_id) "
-                          "    AND (invchead_adjtaxtype_id = taxhist_taxtype_id)) "
-                          "WHERE invchead_id = invchead_id");
-      adjustmentq.bindValue(":invchead_id", _invcheadid);
-      adjustmentq.exec();
-      if (adjustmentq.first())
-      {
-  	    _taxCache.setAdj(adjustmentq.value("adjTax").toDouble(), 0.00, 0.00);
-      }
-      else if (adjustmentq.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, adjustmentq.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-	}
-  }
-  else if (taxzoneq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  sFreightChanged();
 }
 
 void invoice::sHandleShipchrg(int pShipchrgid)

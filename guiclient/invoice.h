@@ -17,8 +17,6 @@
 
 #include "ui_invoice.h"
 
-#include "taxCache.h"
-
 class invoice : public XWidget, public Ui::invoice
 {
     Q_OBJECT
@@ -46,19 +44,17 @@ public slots:
     virtual void sDelete();
     virtual void populate();
     virtual void sFillItemList();
-    virtual void sFreightChanged();
     virtual void sCalculateTotal();
+    virtual void sCalculateTax();
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void setFreeFormShipto( bool pFreeForm );
     virtual void sShipToModified();
     virtual void populateCMInfo();
     virtual void populateCCInfo();
-    virtual void sTaxZoneChanged();
     virtual void sHandleShipchrg( int pShipchrgid );
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
-    virtual void recalculateTax();
 
 protected slots:
     virtual void languageChange();
@@ -72,9 +68,8 @@ private:
     int		_invcheadid;
     int		_shiptoid;
     int		_taxzoneidCache;
-    bool    _loading;
+    bool        _loading;
 
-    taxCache	_taxCache;
 };
 
 #endif // INVOICE_H
