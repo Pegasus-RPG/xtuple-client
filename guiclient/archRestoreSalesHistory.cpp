@@ -10,55 +10,35 @@
 
 #include "archRestoreSalesHistory.h"
 
-#include <qvariant.h>
-
-/*
- *  Constructs a archRestoreSalesHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-archRestoreSalesHistory::archRestoreSalesHistory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
-{
-    setupUi(this);
-
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-archRestoreSalesHistory::~archRestoreSalesHistory()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void archRestoreSalesHistory::languageChange()
-{
-    retranslateUi(this);
-}
-
+#include <QVariant>
 
 #define cArchive 0x01
 #define cRestore  0x02
 
-void archRestoreSalesHistory::init()
+archRestoreSalesHistory::archRestoreSalesHistory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : XDialog(parent, name, modal, fl)
 {
+  setupUi(this);
+
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
+
   _customerType->setType(ParameterGroup::CustomerType);
   _productCategory->setType(ParameterGroup::ProductCategory);
 }
 
-enum SetResponse archRestoreSalesHistory::set(ParameterList &pParams)
+archRestoreSalesHistory::~archRestoreSalesHistory()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void archRestoreSalesHistory::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse archRestoreSalesHistory::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
