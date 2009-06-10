@@ -94,6 +94,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(FALSE);
       _vendor->setReadOnly(TRUE);
+	  _taxzone->setEnabled(FALSE);
       _amountToDistribute->setEnabled(FALSE);
       _distributionDate->setEnabled(FALSE);
       _invoiceDate->setEnabled(FALSE);
@@ -183,12 +184,12 @@ void miscVoucher::sSave()
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO vohead "
-               "( vohead_id, vohead_number, vohead_pohead_id, vohead_vend_id,"
+               "( vohead_id, vohead_number, vohead_pohead_id, vohead_vend_id, vohead_taxzone_id, "
                "  vohead_terms_id, vohead_distdate, vohead_docdate, vohead_duedate,"
                "  vohead_invcnumber, vohead_reference,"
                "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id, vohead_misc, vohead_notes ) "
                "VALUES "
-               "( :vohead_id, :vohead_number, -1, :vohead_vend_id,"
+               "( :vohead_id, :vohead_number, -1, :vohead_vend_id, :vohead_taxzone_id, "
                "  :vohead_terms_id, :vohead_distdate, :vohead_docdate, :vohead_duedate,"
                "  :vohead_invcnumber, :vohead_reference,"
                "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id, TRUE, :vohead_notes );" );
@@ -198,7 +199,7 @@ void miscVoucher::sSave()
   else
     q.prepare( "UPDATE vohead "
                "SET vohead_distdate=:vohead_distdate, vohead_docdate=:vohead_docdate, vohead_duedate=:vohead_duedate,"
-               "    vohead_terms_id=:vohead_terms_id,"
+               "    vohead_terms_id=:vohead_terms_id, vohead_taxzone_id=:vohead_taxzone_id, "
                "    vohead_invcnumber=:vohead_invcnumber, vohead_reference=:vohead_reference,"
                "    vohead_amount=:vohead_amount, vohead_1099=:vohead_1099, "
 	       "    vohead_curr_id=:vohead_curr_id, vohead_notes=:vohead_notes "
@@ -206,6 +207,7 @@ void miscVoucher::sSave()
 
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":vohead_terms_id", _terms->id());
+  q.bindValue(":vohead_taxzone_id", _taxzone->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
   q.bindValue(":vohead_duedate", _dueDate->date());
@@ -286,7 +288,7 @@ void miscVoucher::sHandleVoucherNumber()
 
 void miscVoucher::sPopulateVendorInfo(int pVendid)
 {
-  q.prepare( "SELECT vend_terms_id, vend_1099, vend_curr_id "
+  q.prepare( "SELECT vend_terms_id, vend_1099, vend_curr_id, vend_taxzone_id "
              "FROM vend "
              "WHERE (vend_id=:vend_id);" );
   q.bindValue(":vend_id", pVendid);
@@ -296,6 +298,7 @@ void miscVoucher::sPopulateVendorInfo(int pVendid)
     _terms->setId(q.value("vend_terms_id").toInt());
     _flagFor1099->setChecked(q.value("vend_1099").toBool());
     _amountToDistribute->setId(q.value("vend_curr_id").toInt());
+	_taxzone->setId(q.value("vend_taxzone_id").toInt());
   }
 }
 
@@ -307,6 +310,8 @@ void miscVoucher::sNewMiscDistribution()
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
   params.append("amount", _balance->localValue());
+  if (_taxzone->isValid())
+   params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -324,6 +329,8 @@ void miscVoucher::sEditMiscDistribution()
   params.append("vodist_id", _miscDistrib->id());
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
+  if (_taxzone->isValid())
+   params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -359,6 +366,13 @@ void miscVoucher::sFillMiscList()
              " WHERE ( (vodist_poitem_id=-1)"
              "   AND   (vodist_expcat_id=expcat_id)"
              "   AND   (vodist_vohead_id=:vohead_id) ) "
+			 "UNION ALL "
+             "SELECT vodist_id, (tax_code || ' - ' || tax_descrip) AS account,"
+             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
+             "  FROM vodist, tax "
+             " WHERE ( (vodist_poitem_id=-1)"
+             "   AND   (vodist_tax_id=tax_id)"
+             "   AND   (vodist_vohead_id=:vohead_id) ) " 
              "ORDER BY account;" );
   q.bindValue(":vohead_id", _voheadid);
   q.exec();
@@ -401,7 +415,7 @@ void miscVoucher::populateNumber()
 void miscVoucher::populate()
 {
   XSqlQuery vohead;
-  vohead.prepare( "SELECT vohead_number, vohead_vend_id, vohead_terms_id,"
+  vohead.prepare( "SELECT vohead_number, vohead_vend_id, vohead_taxzone_id, vohead_terms_id,"
                   "       vohead_distdate, vohead_docdate, vohead_duedate,"
                   "       vohead_invcnumber, vohead_reference,"
                   "       vohead_1099, vohead_amount, vohead_curr_id, vohead_notes "
@@ -413,6 +427,7 @@ void miscVoucher::populate()
   {
     _voucherNumber->setText(vohead.value("vohead_number").toString());
     _vendor->setId(vohead.value("vohead_vend_id").toInt());
+	_taxzone->setId(vohead.value("vohead_taxzone_id").toInt());
     _amountToDistribute->set(vohead.value("vohead_amount").toDouble(),
 			     vohead.value("vohead_curr_id").toInt(),
 			     vohead.value("vohead_docdate").toDate(), false);

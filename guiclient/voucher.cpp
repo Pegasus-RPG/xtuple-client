@@ -145,6 +145,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
       _poList->hide();
+	  _taxzone->setEnabled(FALSE);
       _amountToDistribute->setEnabled(FALSE);
       _distributionDate->setEnabled(FALSE);
       _invoiceDate->setEnabled(FALSE);
@@ -257,6 +258,7 @@ void voucher::sSave()
 
   q.prepare( "UPDATE vohead "
 	     "SET vohead_pohead_id=:vohead_pohead_id,"
+		 "    vohead_taxzone_id=:vohead_taxzone_id,  "
 	     "    vohead_vend_id=:vohead_vend_id,"
 	     "    vohead_terms_id=:vohead_terms_id,"
 	     "    vohead_distdate=:vohead_distdate,"
@@ -272,6 +274,7 @@ void voucher::sSave()
 
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":vohead_pohead_id", _poNumber->id());
+  q.bindValue(":vohead_taxzone_id", _taxzone->id());
   q.bindValue(":vohead_vend_id", _poNumber->vendId());
   q.bindValue(":vohead_terms_id", _terms->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
@@ -497,6 +500,8 @@ void voucher::sNewMiscDistribution()
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
   params.append("amount", _balance->localValue());
+  if (_taxzone->isValid())
+   params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -514,6 +519,8 @@ void voucher::sEditMiscDistribution()
   params.append("vodist_id", _miscDistrib->id());
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
+  if (_taxzone->isValid())
+   params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -634,6 +641,13 @@ void voucher::sFillMiscList()
                " WHERE ( (vodist_poitem_id=-1)"
                "   AND   (vodist_expcat_id=expcat_id)"
                "   AND   (vodist_vohead_id=:vohead_id) ) "
+               "UNION ALL "
+               "SELECT vodist_id, (tax_code || ' - ' || tax_descrip) AS account,"
+               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
+               "  FROM vodist, tax "
+               " WHERE ( (vodist_poitem_id=-1)"
+               "   AND   (vodist_tax_id=tax_id)"
+               "   AND   (vodist_vohead_id=:vohead_id) ) " 
                "ORDER BY account;" );
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
@@ -648,7 +662,7 @@ void voucher::sFillMiscList()
 
 void voucher::sPopulatePoInfo()
 {
-  q.prepare( "SELECT pohead_terms_id, vend_1099, pohead_curr_id "
+  q.prepare( "SELECT pohead_terms_id, pohead_taxzone_id, vend_1099, pohead_curr_id "
              "FROM pohead, vendinfo "
              "WHERE ( (pohead_vend_id=vend_id)"
              " AND (pohead_id=:pohead_id) );" );
@@ -660,6 +674,7 @@ void voucher::sPopulatePoInfo()
 
     _flagFor1099->setChecked(gets1099);
     _terms->setId(q.value("pohead_terms_id").toInt());
+	_taxzone->setId(q.value("pohead_taxzone_id").toInt());
     _amountToDistribute->setId(q.value("pohead_curr_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -717,7 +732,7 @@ void voucher::populateNumber()
 void voucher::populate()
 {
   XSqlQuery vohead;
-  vohead.prepare( "SELECT vohead_number, vohead_pohead_id, vohead_terms_id,"
+  vohead.prepare( "SELECT vohead_number, vohead_pohead_id, vohead_taxzone_id, vohead_terms_id,"
                   "       vohead_distdate, vohead_docdate, vohead_duedate,"
                   "       vohead_invcnumber, vohead_reference,"
                   "       vohead_1099, vohead_amount, vohead_curr_id, vohead_notes "
@@ -729,6 +744,7 @@ void voucher::populate()
   {
     _voucherNumber->setText(vohead.value("vohead_number").toString());
     _poNumber->setId(vohead.value("vohead_pohead_id").toInt());
+	_taxzone->setId(vohead.value("vohead_taxzone_id").toInt());
     _terms->setId(vohead.value("vohead_terms_id").toInt());
     _amountToDistribute->set(vohead.value("vohead_amount").toDouble(),
 			     vohead.value("vohead_curr_id").toInt(),

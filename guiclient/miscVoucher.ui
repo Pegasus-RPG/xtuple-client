@@ -408,6 +408,12 @@ to be bound by its terms.</comment>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="XComboBox" name="_taxzone">
+            <property name="allowNull">
+             <bool>true</bool>
+            </property>
+            <property name="nullStr">
+             <string>none</string>
+            </property>
             <property name="type">
              <enum>XComboBox::TaxZones</enum>
             </property>

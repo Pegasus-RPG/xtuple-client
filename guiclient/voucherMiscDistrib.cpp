@@ -54,6 +54,10 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("taxzone_id", &valid);
+  if (valid)
+    _taxSelected->setEnabled(true);
+
   param = pParams.value("vohead_id", &valid);
   if (valid)
     _voheadid = param.toInt();
@@ -98,7 +102,8 @@ void voucherMiscDistrib::populate()
 {
   q.prepare( "SELECT vodist_accnt_id,"
              "       vodist_amount, "
-             "       vodist_expcat_id "
+             "       vodist_expcat_id, "
+			 "       vodist_tax_id "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
   q.bindValue(":vodist_id", _vodistid);
@@ -111,6 +116,11 @@ void voucherMiscDistrib::populate()
     {
       _expcatSelected->setChecked(TRUE);
       _expcat->setId(q.value("vodist_expcat_id").toInt());
+    }
+    if(q.value("vodist_tax_id").toInt() != -1)
+    {
+	   _taxSelected->setChecked(TRUE);
+	   _taxCode->setId(q.value("vodist_tax_id").toInt());
     }
   }
 }
@@ -129,6 +139,14 @@ void voucherMiscDistrib::sSave()
   {
     QMessageBox::warning( this, tr("Select Expense Category"),
                           tr("You must select an Expense Category to post this Miscellaneous Distribution to.") );
+    _account->setFocus();
+    return;
+  }
+
+  if (_taxSelected->isChecked() && !_taxCode->isValid())
+  {
+    QMessageBox::warning( this, tr("Select Tax Code"),
+                          tr("You must select a Tax Code to post this Miscellaneous Distribution to.") );
     _account->setFocus();
     return;
   }
@@ -156,16 +174,17 @@ void voucherMiscDistrib::sSave()
 
     q.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
-               "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_expcat_id ) "
+               "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_expcat_id, vodist_tax_id ) "
                "VALUES "
                "( :vodist_id, :vodist_vohead_id, -1,"
-               "  -1, :vodist_accnt_id, :vodist_amount, :vodist_expcat_id );" );
+               "  -1, :vodist_accnt_id, :vodist_amount, :vodist_expcat_id, :vodist_tax_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE vodist "
                "SET vodist_accnt_id=:vodist_accnt_id,"
                "    vodist_amount=:vodist_amount,"
-               "    vodist_expcat_id=:vodist_expcat_id "
+               "    vodist_expcat_id=:vodist_expcat_id, "
+			   "    vodist_tax_id = :vodist_tax_id "
                "WHERE (vodist_id=:vodist_id);" );
   
   q.bindValue(":vodist_id", _vodistid);
@@ -175,11 +194,19 @@ void voucherMiscDistrib::sSave()
   {
     q.bindValue(":vodist_accnt_id", _account->id());
     q.bindValue(":vodist_expcat_id", -1);
+    q.bindValue(":vodist_tax_id", -1);
+  }
+  else if (_expcatSelected->isChecked())
+  {
+    q.bindValue(":vodist_accnt_id", -1);
+    q.bindValue(":vodist_expcat_id", _expcat->id());
+	q.bindValue(":vodist_tax_id", -1);
   }
   else
   {
     q.bindValue(":vodist_accnt_id", -1);
-    q.bindValue(":vodist_expcat_id", _expcat->id());
+    q.bindValue(":vodist_expcat_id", -1);
+	q.bindValue(":vodist_tax_id", _taxCode->id()); 
   }
   q.exec();
 
