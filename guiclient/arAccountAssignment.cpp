@@ -13,18 +13,12 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a arAccountAssignment as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 arAccountAssignment::arAccountAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
+  _araccntid = -1;
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -41,18 +35,11 @@ arAccountAssignment::arAccountAssignment(QWidget* parent, const char* name, bool
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 arAccountAssignment::~arAccountAssignment()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void arAccountAssignment::languageChange()
 {
   retranslateUi(this);
@@ -133,6 +120,30 @@ void arAccountAssignment::sSave()
     QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
                           tr("You must select a Deferred Revenue Account before saving this A/R Account Assignment") );
     _deferred->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT araccnt_id"
+            "  FROM araccnt"
+            " WHERE((araccnt_custtype_id=:araccnt_custtype_id)"
+            "   AND (araccnt_custtype=:araccnt_custtype)"
+            "   AND (araccnt_id != :araccnt_id))");
+  q.bindValue(":araccnt_id", _araccntid);
+  if (_selectedCustomerType->isChecked())
+  {
+    q.bindValue(":araccnt_custtype_id", _customerTypes->id());
+    q.bindValue(":araccnt_custtype", "^[a-zA-Z0-9_]");
+  }
+  else if (_customerTypePattern->isChecked())
+  {
+    q.bindValue(":araccnt_custtype_id", -1);
+    q.bindValue(":araccnt_custtype", _customerType->text());
+  }
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+      tr("A record for that assignment already exists."));
     return;
   }
 
