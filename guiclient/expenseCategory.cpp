@@ -10,52 +10,33 @@
 
 #include "expenseCategory.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a expenseCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 expenseCategory::expenseCategory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _expcatid = -1;
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 expenseCategory::~expenseCategory()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void expenseCategory::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void expenseCategory::init()
-{
-}
-
-enum SetResponse expenseCategory::set(ParameterList &pParams)
+enum SetResponse expenseCategory::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -130,6 +111,29 @@ void expenseCategory::sCheck()
 
 void expenseCategory::sSave()
 {
+  if(_category->text().trimmed().isEmpty())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+      tr("You must specify a name."));
+    _category->setFocus();
+    return;
+  }
+
+  q.prepare( "SELECT expcat_id "
+             "  FROM expcat "
+             " WHERE((UPPER(expcat_code)=:expcat_code)"
+             "   AND (expcat_id != :expcat_id));" );
+  q.bindValue(":expcat_id", _expcatid);
+  q.bindValue(":expcat_code", _category->text().trimmed());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+      tr("The name you have specified is already in use."));
+    _category->setFocus();
+    return;
+  }
+
   if (!_expense->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Expense Category"),
