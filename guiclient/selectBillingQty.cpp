@@ -8,13 +8,6 @@
  * to be bound by its terms.
  */
 
-
-
-/* 
-changes made-    _taxauthid  changed to _taxzoneid
-*/
-
-
 #include "selectBillingQty.h"
 
 #include <QMessageBox>

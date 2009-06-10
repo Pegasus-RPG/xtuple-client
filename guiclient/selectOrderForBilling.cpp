@@ -8,16 +8,6 @@
  * to be bound by its terms.
  */
 
- /* changes made...
-
-_taxauth changed to _taxZone
-sTaxAuthChanged() changed to sTaxZoneChanged().
-_taxauthidCache changed to _taxzoneidCache.
-
-cobmisc_taxauth_id changed to cobmisc_taxzone_id in sSave() line 206, sPopulate() line 335, sTaxDetail() line 647, 
-
- */
-
 #include "selectOrderForBilling.h"
 
 #include <QMessageBox>
@@ -42,7 +32,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
 
   connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancelSelection()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditOrder()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sUpdateTotal()));
   connect(_salesTaxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -54,7 +44,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   connect(_soList, SIGNAL(clicked()), this, SLOT(sSoList()));
   connect(_salesTax,	SIGNAL(valueChanged()),	this, SLOT(sUpdateTotal()));
   connect(_subtotal,	SIGNAL(valueChanged()),	this, SLOT(sUpdateTotal()));
-  connect(_taxZone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
+  connect(_taxZone,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
 
 //  statusBar()->hide();
 
@@ -67,7 +57,6 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _updated = FALSE;
 
   _taxzoneidCache	= -1;
-  _taxCache.clear();
 
   _custCurrency->setLabel(_custCurrencyLit);
 
@@ -161,7 +150,6 @@ void selectOrderForBilling::clear()
   _shipToName->clear();
   _custCurrency->setId(-1);
   _taxZone->setId(-1);
-  _taxCache.clear();
   _taxzoneidCache = -1;
   _soitem->clear();
   _shipvia->clear();
@@ -210,10 +198,7 @@ void selectOrderForBilling::sSave()
                "    cobmisc_shipvia=:cobmisc_shipvia, cobmisc_closeorder=:cobmisc_closeorder,"
                "    cobmisc_misc=:cobmisc_misc, cobmisc_misc_accnt_id=:cobmisc_misc_accnt_id,"
                "    cobmisc_misc_descrip=:cobmisc_misc_descrip, "
-	       "    cobmisc_curr_id=:cobmisc_curr_id,"
-               "    cobmisc_tax_curr_id=:tax_curr_id,"
-               "    cobmisc_adjtaxtype_id=:adjtaxtype_id,"
-               "    cobmisc_freighttaxtype_id=:freighttaxtype_id "
+	       "    cobmisc_curr_id=:cobmisc_curr_id "
                "WHERE (cobmisc_id=:cobmisc_id);" );
     q.bindValue(":cobmisc_id", _cobmiscid);
     q.bindValue(":cobmisc_freight", _freight->localValue());
@@ -231,12 +216,6 @@ void selectOrderForBilling::sSave()
     q.bindValue(":cobmisc_misc_accnt_id", _miscChargeAccount->id());
     q.bindValue(":cobmisc_misc_descrip", _miscChargeDescription->text().trimmed());
     q.bindValue(":cobmisc_curr_id",	_custCurrency->id());
-    q.bindValue(":tax_curr_id",	_custCurrency->id());
-
-    if (_taxCache.adjType() > 0)
-      q.bindValue(":adjtaxtype_id",	_taxCache.adjType());
-    if (_taxCache.freightType() > 0)
-      q.bindValue(":freighttaxtype_id",	_taxCache.freightType());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -302,9 +281,6 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
                      "       cohead_orderdate, cobmisc_shipdate,"
 		     "       cobmisc_invcdate, cobmisc_taxzone_id,"
                      "       cobmisc_freight AS freight,"
-                     "       cobmisc_tax AS f_tax,"
-        		     "       cobmisc_adjtaxtype_id,"
-         		     "       cobmisc_freighttaxtype_id,"
                      "       cobmisc_misc, cobmisc_misc_accnt_id, cobmisc_misc_descrip,"
                      "       cobmisc_payment AS payment,"
                      "       cobmisc_closeorder,"
@@ -315,9 +291,10 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
                      "       CASE WHEN (shipchrg_custfreight IS NULL) THEN TRUE"
                      "            ELSE shipchrg_custfreight"
                      "       END AS custfreight "
-                     "FROM cobmisc, cohead LEFT OUTER JOIN shipchrg ON (cohead_shipchrg_id=shipchrg_id) "
+                     "FROM cobmisc , cohead "
+                     "  LEFT OUTER JOIN shipchrg ON (cohead_shipchrg_id=shipchrg_id) "
                      "WHERE ( (cobmisc_id=:cobmisc_id)"
-                     " AND (cohead_id=:cohead_id) );" );
+                     " AND (cohead_id=:cohead_id) ) ");
     cobmisc.bindValue(":cobmisc_id", _cobmiscid);
     cobmisc.bindValue(":cohead_id", pSoheadid);
     cobmisc.exec();
@@ -336,10 +313,6 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
       _shipToName->setText(cobmisc.value("cohead_shiptoname").toString());
       _shipvia->setText(cobmisc.value("cobmisc_shipvia").toString());
       _salesTax->setLocalValue(cobmisc.value("f_tax").toDouble());
-   
-      _taxCache.setAdjType(cobmisc.value("cobmisc_adjtaxtype_id").toInt());
-   
-      _taxCache.setFreightType(cobmisc.value("cobmisc_freighttaxtype_id").toInt());
      
       _miscCharge->setLocalValue(cobmisc.value("cobmisc_misc").toDouble());
       _miscChargeAccount->setId(cobmisc.value("cobmisc_misc_accnt_id").toInt());
@@ -361,24 +334,6 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
         _freight->setEnabled(FALSE);
         _freight->clear();
       }
-     
-      cobmisc.prepare( "SELECT SUM(COALESCE(taxhist_tax, 0.0)) AS totfreighttax FROM cobmisctax "
-	                   " WHERE (taxhist_parent_id=:cobmisc_id AND taxhist_taxtype_id=getfreighttaxtypeid());");
-					   
-      cobmisc.bindValue(":cobmisc_id", _cobmiscid);
-      cobmisc.exec();
-	  if(cobmisc.first())
-        _taxCache.setFreight(cobmisc.value("totfreighttax").toDouble(), 0, 0);
-
-	
-	  cobmisc.prepare( "SELECT COALESCE(SUM(taxhist_tax), 0.0) AS totadjtax FROM cobmisctax "
-	                   " WHERE (taxhist_parent_id=:cobmisc_id AND taxhist_taxtype_id=getadjustmenttaxtypeid());");
-					   
-      cobmisc.bindValue(":cobmisc_id", _cobmiscid);
-      cobmisc.exec();
-	  if(cobmisc.first())
-        _taxCache.setAdj(cobmisc.value("totadjtax").toDouble(), 0, 0);
-
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -451,49 +406,36 @@ void selectOrderForBilling::sSelectBalance()
   sFillList();
 }
 
-void selectOrderForBilling::sFreightChanged()
+void selectOrderForBilling::sCalculateTax()   
 {
-  XSqlQuery tax;
-  tax.prepare( "SELECT calculateTax(:taxZone_id, getfreighttaxtypeid(), :invoiceDate, :custCurrency, :freight) AS freighttax;");
-  
-  tax.bindValue(":taxZone_id", _taxZone->id());
-  tax.bindValue(":invoiceDate", _invoiceDate->date());
-  tax.bindValue(":custCurrency",_custCurrency->id());
-  tax.bindValue(":freight",_freight->localValue());
- 
-  tax.exec();
-
-  if(tax.first())
-     _taxCache.setFreight(tax.value("freighttax").toDouble(), 0, 0);
-
-  else
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT SUM(taxhist_tax) AS tax "
+		            "FROM ("
+                " SELECT taxhist_tax "
+                " FROM cobmisctax "
+                " WHERE ((taxhist_parent_id=:cobmisc_id)"
+                " AND (taxhist_taxtype_id=getadjustmenttaxtypeid())) "
+                " UNION ALL "
+                " SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
+                " UNION ALL "
+                " SELECT taxhist_tax "
+                " FROM cobilltax "
+                "  JOIN cobill ON (cobill_id=taxhist_parent_id) "
+                " WHERE (cobill_cobmisc_id=:cobmisc_id) ) AS data;" );
+  taxq.bindValue(":cobmisc_id", _cobmiscid);
+  taxq.bindValue(":taxzone_id", _taxZone->id());
+  taxq.bindValue(":date", _invoiceDate->date());   
+  taxq.bindValue(":curr_id", _custCurrency->id());  
+  taxq.bindValue(":freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.first())
+    _salesTax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-    _taxCache.setFreight(0, 0, 0);
-  }
-  recalculateTax();
-}
-
-void selectOrderForBilling::recalculateTax()   
-{
-  XSqlQuery tax;
-  tax.prepare( "SELECT SUM(taxhist_tax) AS totaltax "
-	           " FROM cobilltax LEFT OUTER JOIN cobill ON (cobill_id=taxhist_parent_id) "
-			   " WHERE (cobill_cobmisc_id=:cobmisc_id);");			  
-  tax.bindValue(":cobmisc_id", _cobmiscid);
-  tax.exec();
-  if (tax.first())
-     _taxCache.setLine(tax.value("totaltax").toDouble(),  0,  0);
-
-  else if (tax.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, tax.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _salesTax->setLocalValue(_taxCache.total());
-  // changing _salesTax fires sUpdateTotal()
+  // changing _tax fires sCalculateTotal()
 }
 
 void selectOrderForBilling::sUpdateTotal()
@@ -580,7 +522,7 @@ void selectOrderForBilling::sFillList()
       _subtotal->clear();
     }
 
-    recalculateTax();
+    sCalculateTax();
   }
 }
 
@@ -634,66 +576,11 @@ void selectOrderForBilling::sTaxDetail()
   params.append("mode",		"edit");
 
   taxBreakdown newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+  if (newdlg.set(params) == NoError)
+  {
+    newdlg.exec();
     sPopulate(_so->id());
-}
-
-void selectOrderForBilling::sTaxZoneChanged()
-{
-  if (_cobmiscid == -1)
-    return;
-
-  XSqlQuery taxzoneq;
-  taxzoneq.prepare("SELECT changeCobTaxZone(:cobmisc_id, :taxzone_id) AS result;");
-  taxzoneq.bindValue(":cobmisc_id", _cobmiscid);
-  taxzoneq.bindValue(":taxzone_id", _taxZone->id());
-  taxzoneq.exec();
-  if (taxzoneq.first())
-  {
-    int result = taxzoneq.value("result").toInt();
-    if (result < 0)
-    {
-      _taxZone->setId(_taxzoneidCache);
-      systemError(this, storedProcErrorLookup("changeCobTaxZone", result),
-		  __FILE__, __LINE__);
-      return;
-    }
   }
-  else if (taxzoneq.lastError().type() != QSqlError::NoError)
-  {
-    _taxZone->setId(_taxzoneidCache);
-    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  _taxzoneidCache = _taxZone->id();
-
-  taxzoneq.prepare("SELECT cobmisc_freighttaxtype_id "
-		 		   "FROM cobmisc "
-		           "WHERE (cobmisc_id=:cobmisc_id);");
-  taxzoneq.bindValue(":cobmisc_id", _cobmiscid);
-  taxzoneq.exec();
-  if (taxzoneq.first())
-  {
-    if (taxzoneq.value("cobmisc_freighttaxtype_id").isNull())   
-      _taxCache.setFreightType(-1);
-    else
-      _taxCache.setFreightType(taxzoneq.value("cobmisc_freighttaxtype_id").toInt()); 
-   
-     q.prepare( "SELECT COALESCE(SUM(taxhist_tax), 0.0) AS totadjtax FROM cobmisctax "
-	                   " WHERE (taxhist_parent_id=:cobmisc_id AND taxhist_taxtype_id=getadjustmenttaxtypeid());");
-					   
-     q.bindValue(":cobmisc_id", _cobmiscid);
-     q.exec();
-	 if(q.first())
-       _taxCache.setAdj(q.value("totadjtax").toDouble(), 0, 0);
-  }
-  else if (taxzoneq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  sFreightChanged();
 }
 
 void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)

@@ -756,8 +756,6 @@ void invoice::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  sCalculateTax();
 }
 
 void invoice::sFillItemList()
