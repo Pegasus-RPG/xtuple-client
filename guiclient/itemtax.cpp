@@ -63,7 +63,7 @@ enum SetResponse itemtax::set(const ParameterList & pParams)
   {
     _itemtaxid = param.toInt();
     q.prepare("SELECT itemtax_item_id,"
-              "       COALESCE(itemtax_taxauth_id,-1) AS taxauth_id,"
+              "       COALESCE(itemtax_taxzone_id,-1) AS taxzone_id,"
               "       itemtax_taxtype_id"
               "  FROM itemtax"
               " WHERE (itemtax_id=:itemtax_id);");
@@ -72,7 +72,7 @@ enum SetResponse itemtax::set(const ParameterList & pParams)
     if(q.first())
     {
       _itemid = q.value("itemtax_item_id").toInt();
-      _taxauth->setId(q.value("taxauth_id").toInt());
+      _taxzone->setId(q.value("taxzone_id").toInt());
       _taxtype->setId(q.value("itemtax_taxtype_id").toInt());
     }
     // TODO: catch any possible errors
@@ -89,7 +89,7 @@ enum SetResponse itemtax::set(const ParameterList & pParams)
     {
       _mode = cView;
       _save->hide();
-      _taxauth->setEnabled(false);
+      _taxzone->setEnabled(false);
       _taxtype->setEnabled(false);
     }
   }
@@ -101,35 +101,35 @@ void itemtax::sSave()
 {
   q.prepare("SELECT itemtax_id"
             "  FROM itemtax"
-            " WHERE ((itemtax_taxauth_id=:taxauth_id)"
+            " WHERE ((itemtax_taxzone_id=:taxzone_id)"
             "   AND  (itemtax_item_id=:item_id)"
             "   AND  (itemtax_id != :itemtax_id))");
   q.bindValue(":item_id", _itemid);
   q.bindValue(":itemtax_id", _itemtaxid);
-  if(_taxauth->isValid())
-    q.bindValue(":taxauth_id", _taxauth->id());
+  if(_taxzone->isValid())
+    q.bindValue(":taxzone_id", _taxzone->id());
   q.exec();
   if(q.first())
   {
-    QMessageBox::warning(this, tr("Tax Authority Already Exists"),
-                      tr("The Tax Authority you have choosen already exists for this item."));
+    QMessageBox::warning(this, tr("Tax Zone Already Exists"),
+                      tr("The Tax Zone you have choosen already exists for this item."));
     return;
   }
 
   if(cNew == _mode)
     q.prepare("INSERT INTO itemtax"
-              "      (itemtax_item_id, itemtax_taxauth_id, itemtax_taxtype_id) "
-              "VALUES(:item_id, :taxauth_id, :taxtype_id)");
+              "      (itemtax_item_id, itemtax_taxzone_id, itemtax_taxtype_id) "
+              "VALUES(:item_id, :taxzone_id, :taxtype_id)");
   else if(cEdit == _mode)
     q.prepare("UPDATE itemtax"
-              "   SET itemtax_taxauth_id=:taxauth_id,"
+              "   SET itemtax_taxzone_id=:taxzone_id,"
               "       itemtax_taxtype_id=:taxtype_id"
               " WHERE (itemtax_id=:itemtax_id);");
 
   q.bindValue(":item_id", _itemid);
   q.bindValue(":itemtax_id", _itemtaxid);
-  if(_taxauth->isValid())
-    q.bindValue(":taxauth_id", _taxauth->id());
+  if(_taxzone->isValid())
+    q.bindValue(":taxzone_id", _taxzone->id());
   q.bindValue(":taxtype_id", _taxtype->id());
   q.exec();
 

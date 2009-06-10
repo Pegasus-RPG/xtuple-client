@@ -62,7 +62,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_invcitem, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
   connect(_invcitem, SIGNAL(valid(bool)),     _delete, SLOT(setEnabled(bool)));
   connect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sCalculateTax));
+  connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sTaxZoneChanged()));
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
 
   setFreeFormShipto(false);
@@ -1175,5 +1175,28 @@ void invoice::sHandleShipchrg(int pShipchrgid)
         _freight->clear();
       }
     }
+  }
+}
+
+void invoice::sTaxZoneChanged()
+{
+  if (_invcheadid != -1)
+  {
+    XSqlQuery taxq;
+    taxq.prepare("UPDATE invchead SET "
+      "  invchead_taxzone_id=:taxzone_id, "
+      "  invchead_freight=:freight "
+      "WHERE (invchead_id=:invchead_id) ");
+    if (_taxzone->id() != -1)
+      taxq.bindValue(":taxzone_id", _taxzone->id());
+    taxq.bindValue(":invchead_id", _invcheadid);
+    taxq.bindValue(":freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sCalculateTax();
   }
 }

@@ -87,10 +87,10 @@ public slots:
     virtual void sAllocateCreditMemos();
     virtual void sCheckValidContacts();
     virtual void sHandleMore();
+    virtual void sCalculateTax();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
-    virtual void recalculateTax();
 
 protected slots:
     virtual void languageChange();
@@ -119,12 +119,7 @@ private:
     int _numSelected;
     int _originalPrjid;
     int _custtaxzoneid;
-    int _freighttaxtypeid;
     int _taxzoneidCache;
-
-    //enum Rate { A = 0, B = 1, C = 2 };
-    enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
-    double _taxCache[4];	// [Rate] vs. [Part]
 
 };
 

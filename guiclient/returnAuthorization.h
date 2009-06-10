@@ -88,10 +88,10 @@ private:
     bool _ffBillto;
     bool _ffShipto;
     bool _ignoreShiptoSignals;
-	  bool _ignoreSoSignals;
-	  bool _ignoreWhsSignals;
+    bool _ignoreSoSignals;
+    bool _ignoreWhsSignals;
+    bool _saved;
     double _subtotalCache;
-    int _taxzoneidCache;
 };
 
 #endif // RETURNAUTHORIZATION_H

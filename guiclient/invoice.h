@@ -52,6 +52,7 @@ public slots:
     virtual void populateCMInfo();
     virtual void populateCCInfo();
     virtual void sHandleShipchrg( int pShipchrgid );
+    virtual void sTaxZoneChanged();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

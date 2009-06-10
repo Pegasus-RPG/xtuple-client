@@ -126,15 +126,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _calcfreight = false;
   _freightCache = 0;
-  _freighttaxtypeid = -1;
   _taxzoneidCache = -1;
   _custtaxzoneid = -1;
-  for (unsigned i = Line; i <= Total; i++)
-  {
-    _taxCache[i] = 0;
-
-  }
-
   _amountOutstanding = 0.0;
 
   _captive = FALSE;
@@ -2675,7 +2668,7 @@ void salesOrder::sFillItemList()
     }
   }
 
-  recalculateTax(); // triggers sCalculateTotal();
+  sCalculateTax(); // triggers sCalculateTotal();
 
   _orderCurrency->setEnabled(_soitem->topLevelItemCount() == 0);
 }
@@ -3022,7 +3015,7 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
         _freightCache = 0;
         _freight->setEnabled(FALSE);
         _freight->clear();
-        recalculateTax();
+        sCalculateTax();
       }
     }
   }
@@ -3838,113 +3831,42 @@ void salesOrder::sFreightChanged()
     }
   }
   
-  recalculateTax();
+  sCalculateTax();
 }
 
-void salesOrder::recalculateTax()
+void salesOrder::sCalculateTax()
 {
-  XSqlQuery itemq;
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT SUM(tax) AS tax "
+                "FROM ("
+                "SELECT ROUND(calculateTax(:taxzone_id,coitem_taxtype_id,:date,:curr_id,ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2)),2) AS tax "
+                "FROM coitem "
+                "WHERE (coitem_cohead_id=:cohead_id) "
+                "UNION ALL "
+                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
+                ") AS data;" );
 
-  //  Determine the line item tax
-  if (ISORDER(_mode))
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(:taxZone_id,coitem_taxtype_id,:orderDate,:orderCurrency,ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2)),2)) AS itemtax "
-                   "FROM coitem, itemsite, item "
-                   "WHERE ((coitem_cohead_id=:head_id)"
-                   "  AND  (coitem_status != 'X')"
-                   "  AND  (coitem_itemsite_id=itemsite_id)"
-                   "  AND  (itemsite_item_id=item_id));" );
-  else // ISQUOTE(_mode)
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(:taxZone_id,quitem_taxtype_id,:orderDate,:orderCurrency, ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio), 2)),2)) AS itemtax "
-                   "FROM quitem, item "
-                   "WHERE ((quitem_quhead_id=:head_id)"
-                   "  AND  (quitem_item_id=item_id));" );
-
-  itemq.bindValue(":head_id", _soheadid);
-  itemq.bindValue(":taxZone_id", _taxZone->id());
-  itemq.bindValue(":orderDate",_orderDate->date());
-  itemq.bindValue(":orderCurrency",_orderCurrency->id());
-  itemq.exec();
-  if (itemq.first())
+  taxq.bindValue(":taxzone_id", _taxZone->id());
+  taxq.bindValue(":date", _orderDate->date());   
+  taxq.bindValue(":curr_id", _orderCurrency->id());  
+  taxq.bindValue(":rahead_id", _soheadid);
+  taxq.bindValue(":freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
-    _taxCache[Line] = itemq.value("itemtax").toDouble();
-
-  }
-  else if (itemq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-
-  //  Determine the freight tax
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:taxZone_id,:taxtype_id,:orderDate,:orderCurrency, :freight) AS freight;");
-  freightq.bindValue(":taxtype_id", _freighttaxtypeid);
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.bindValue(":taxZone_id", _taxZone->id());
-  freightq.bindValue(":orderDate",_orderDate->date());
-  freightq.bindValue(":orderCurrency",_orderCurrency->id());
-  freightq.exec();
-  if (freightq.first())
-  {
-    _taxCache[Freight] = freightq.value("freight").toDouble();
-
-  }
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  _taxCache[Total] = _taxCache[Line] + _taxCache[Freight] + _taxCache[Adj];
-
-  _tax->setLocalValue(_taxCache[Total]);
+  }       
   sCalculateTotal();
 }
 
 void salesOrder::sTaxZoneChanged()
 {
-  XSqlQuery taxzoneq;
-  if ( (_taxZone->id() != _taxzoneidCache) && !(((_mode == cNew) || (_mode == cNewQuote)) && !_saved) )
-  {
-    if (ISORDER(_mode))
-      taxzoneq.prepare("SELECT changeSOTaxZone(:head_id, :taxzone_id) AS result;");
-    else
-      taxzoneq.prepare("SELECT changeQuoteTaxZone(:head_id, :taxzone_id) AS result;");
-    taxzoneq.bindValue(":head_id", _soheadid);
-    taxzoneq.bindValue(":taxzone_id", _taxZone->id());
-    taxzoneq.exec();
-    if (taxzoneq.first())
-    {
-      int result = taxzoneq.value("result").toInt();
-      if (result < 0)
-      {
-        _taxZone->setId(_taxzoneidCache);
-        systemError(this,
-                    storedProcErrorLookup(ISORDER(_mode) ? "changeSOTaxZone" : "changeQuoteTaxZone", result),
-                    __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (taxzoneq.lastError().type() != QSqlError::NoError)
-    {
-      _taxZone->setId(_taxzoneidCache);
-      systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-      return; 
-    }
-    _taxzoneidCache = _taxZone->id();
-  }
-
-  taxzoneq.prepare("SELECT COALESCE(getfreighttaxtypeid(), -1) AS result;");
-  taxzoneq.exec();
-  if (taxzoneq.first())
-    _freighttaxtypeid = taxzoneq.value("result").toInt();
-  else if (taxzoneq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxzoneq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  recalculateTax();
+  if (_saved)
+    save(true);
+  sCalculateTax();
 }
 
 void salesOrder::sReserveStock()

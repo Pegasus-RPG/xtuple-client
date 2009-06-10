@@ -358,7 +358,7 @@ void creditMemoItem::sPopulateItemInfo()
                 "       iteminvpricerat(item_id) AS iteminvpricerat,"
                 "       item_listprice, "
                 "       stdCost(item_id) AS f_cost,"
-		            "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
+		"       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _item->id());

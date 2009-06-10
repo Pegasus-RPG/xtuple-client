@@ -50,7 +50,6 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
 #endif
 
   _custtaxzoneid	= -1;
-  _taxzoneidCache	= -1;
   _shiptoid		= -1;
 
   _memoNumber->setValidator(omfgThis->orderVal());
@@ -1047,9 +1046,24 @@ void creditMemo::sCalculateTax()
 
 void creditMemo::sTaxZoneChanged()
 {
-  if (_cmheadid == -1 || _taxzoneidCache == _taxzone->id())
-    return;
-
-  sCalculateTax();
+  if (_cmheadid != -1)
+  {
+    XSqlQuery taxq;
+    taxq.prepare("UPDATE cmhead SET "
+      "  cmhead_taxzone_id=:taxzone_id, "
+      "  cmhead_freight=:freight "
+      "WHERE (cmhead_id=:cmhead_id) ");
+    if (_taxzone->id() != -1)
+      taxq.bindValue(":taxzone_id", _taxzone->id());
+    taxq.bindValue(":cmhead_id", _cmheadid);
+    taxq.bindValue(":freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sCalculateTax();
+  }
 }
 

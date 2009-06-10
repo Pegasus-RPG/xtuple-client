@@ -63,7 +63,6 @@ private:
     bool _ffShipto;
     bool _ignoreShiptoSignals;
     double _subtotalCache;
-    int		_taxzoneidCache;
 };
 
 #endif // CREDITMEMO_H

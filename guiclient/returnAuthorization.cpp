@@ -83,7 +83,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 #endif
 
   _custtaxzoneid       = -1;
-  _taxzoneidCache      = -1;
   _shiptoid            = -1;
   _ignoreShiptoSignals = false;
   _ignoreSoSignals = false;
@@ -91,6 +90,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _ffBillto = TRUE;
   _ffShipto = TRUE;
   _custEmail = FALSE;
+  _saved = FALSE;
 
   _origso->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
@@ -500,7 +500,7 @@ bool returnAuthorization::sSave(bool partial)
 
   omfgThis->sReturnAuthorizationsUpdated();
   omfgThis->sProjectsUpdated(_project->id());
-
+  _saved = TRUE;
   _comments->setId(_raheadid);
   
   connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
@@ -1252,9 +1252,7 @@ void returnAuthorization::populate()
     else if (rahead.value("rahead_disposition").toString() == "M")
       _disposition->setCurrentIndex(4);
     _ignoreSoSignals = FALSE;
-
-    sCalculateTax();
-
+    _saved = TRUE;
     sFillList();
   }
   else if (rahead.lastError().type() != QSqlError::NoError)
@@ -1350,11 +1348,8 @@ void returnAuthorization::sCalculateTax()
 
 void returnAuthorization::sTaxZoneChanged()
 {
-  if (_raheadid == -1 || _taxzoneidCache == _taxzone->id())
-    return;
-    
-  _taxzoneidCache = _taxzone->id();
- 
+  if (_saved)
+    sSave(true);
   sCalculateTax();
 }
 

@@ -151,7 +151,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillListItemSites()));
 
   _itemtax->addColumn(tr("Tax Type"),_itemColumn, Qt::AlignLeft,true,"taxtype_name");
-  _itemtax->addColumn(tr("Tax Authority"),    -1, Qt::AlignLeft,true,"taxauth");
+  _itemtax->addColumn(tr("Tax Zone"),    -1, Qt::AlignLeft,true,"taxzone");
 
   if(!_privileges->check("MaintainBOOs") || !_metrics->boolean("Routings"))
     _boo->hide();
@@ -1751,9 +1751,9 @@ void item::sDeleteItemtax()
 void item::sFillListItemtax()
 {
   q.prepare("SELECT itemtax_id, taxtype_name,"
-            "       COALESCE(taxauth_code,:any) AS taxauth"
+            "       COALESCE(taxzone_code,:any) AS taxzone"
             "  FROM itemtax JOIN taxtype ON (itemtax_taxtype_id=taxtype_id)"
-            "       LEFT OUTER JOIN taxauth ON (itemtax_taxauth_id=taxauth_id)"
+            "       LEFT OUTER JOIN taxzone ON (itemtax_taxzone_id=taxzone_id)"
             " WHERE (itemtax_item_id=:item_id)"
             " ORDER BY taxtype_name;");
   q.bindValue(":item_id", _itemid);
