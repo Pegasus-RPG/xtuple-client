@@ -276,7 +276,7 @@ void packingListBatch::sAddTO()
   newdlg.set(params);
 
   int toid;
-  if ((toid = newdlg.exec()) != -1)
+  if ((toid = newdlg.exec()) != QSqlError::NoError)
   {
     q.prepare("SELECT addToPackingListBatch('TO', :tohead_id) AS result;");
     q.bindValue(":tohead_id", toid);

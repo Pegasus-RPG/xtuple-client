@@ -74,7 +74,7 @@ transferOrderList::transferOrderList( QWidget* parent, const char* name, bool mo
 
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
 
-  connect(_close,	SIGNAL(clicked()), this,    SLOT( sClose() ) );
+  connect(_close,	SIGNAL(clicked()), this,    SLOT( reject() ) );
   connect(_dstwhs,	SIGNAL(updated()), this,    SLOT( sFillList() ) );
   connect(_select,	SIGNAL(clicked()), this,    SLOT( sSelect() ) );
   connect(_srcwhs,	SIGNAL(updated()), this,    SLOT( sFillList() ) );
@@ -109,11 +109,6 @@ void transferOrderList::set(const ParameterList &pParams)
     _type = param.toInt();
  
   sFillList();
-}
-
-void transferOrderList::sClose()
-{
-  done(_toheadid);
 }
 
 void transferOrderList::sSelect()

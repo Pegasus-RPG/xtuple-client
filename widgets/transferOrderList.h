@@ -40,7 +40,6 @@ public:
 
 public slots:
     virtual void set(const ParameterList & pParams );
-    virtual void sClose();
     virtual void sSelect();
     virtual void sFillList();
 
