@@ -99,7 +99,8 @@ void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis)
   if(_so->id() == -1)
     return;
 
-  menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
+  if(_privileges->check("MaintainSalesOrders"))
+    menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
   menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
   menuThis->insertSeparator();
   menuThis->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
