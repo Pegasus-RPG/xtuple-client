@@ -48,9 +48,9 @@ public slots:
     virtual void sSetUserOrderNumber();
     virtual void sHandleOrderNumber();
     virtual void closeEvent( QCloseEvent * pEvent );
-	virtual void sCalculateTax();
-	virtual void sTaxZoneChanged();
-	virtual void sTaxDetail();
+    virtual void sCalculateTax();
+    virtual void sTaxZoneChanged();
+    virtual void sTaxDetail();
 
 protected slots:
     virtual void languageChange();
@@ -60,7 +60,7 @@ protected slots:
     virtual void sTabChanged(int);
 
 private:
-    void	setPoheadid(const int);
+    void setPoheadid(const int);
     bool _userOrderNumber;
     bool _useWarehouseFOB;
     int	_cachedTabIndex;
@@ -69,10 +69,9 @@ private:
     int _poheadid;
     QList<int> _pridList;
     int _mode;
-    bool	_printed;
-    PoitemTableModel*	_qeitem;
-    bool	_vendEmail;
-	int _taxzoneidCache;
+    bool _printed;
+    PoitemTableModel* _qeitem;
+    bool _vendEmail;
 };
 
 #endif // PURCHASEORDER_H

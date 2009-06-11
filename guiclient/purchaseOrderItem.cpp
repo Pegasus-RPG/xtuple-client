@@ -623,7 +623,6 @@ void purchaseOrderItem::sSave()
 
     q.bindValue(":status", _poStatus);
     q.bindValue(":item_id", _item->id());
-    q.bindValue(":poitem_taxtype_id", _taxtype->id()); // picking up taxtype_id from ui //
 
     if (_inventoryItem->isChecked())
     {
@@ -670,7 +669,8 @@ void purchaseOrderItem::sSave()
                "WHERE (poitem_id=:poitem_id);" );
 
   q.bindValue(":poitem_id", _poitemid);
-  q.bindValue(":poitem_taxtype_id", _taxtype->id());            // picking up taxtype_id from ui //
+  if (_taxtype->id() != -1)
+    q.bindValue(":poitem_taxtype_id", _taxtype->id());            // picking up taxtype_id from ui //
   q.bindValue(":poitem_pohead_id", _poheadid);
   q.bindValue(":poitem_linenumber", _lineNumber->text().toInt());
   if (_itemsrcid != -1)
@@ -1036,7 +1036,7 @@ void purchaseOrderItem::sVendorListPrices()
 }
 
 
-void purchaseOrderItem::sCalculateTax()  // new function added from raitem
+void purchaseOrderItem::sCalculateTax()
 {
   XSqlQuery calcq;
 
@@ -1047,14 +1047,6 @@ void purchaseOrderItem::sCalculateTax()  // new function added from raitem
   calcq.bindValue(":pohead_id", _poheadid);
   calcq.bindValue(":taxtype_id", _taxtype->id());
   calcq.bindValue(":ext", _extendedPrice->localValue());
-  ///////////////////////////////////////////////////////////////////////////////////////////////////// 
-   char str[100];
-   sprintf(str, "PO: %d, TaxType: %d, ExtPrice: %lf", _poheadid, _taxtype->id(),_extendedPrice->localValue());
-   QMessageBox::information(this, "Variables", str);
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
   calcq.exec();
   if (calcq.first())

@@ -57,7 +57,7 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendaddr->addColumn(tr("Country"),-1, Qt::AlignLeft, true, "vendaddr_country");
   _vendaddr->addColumn(tr("Postal Code"),-1, Qt::AlignLeft, true, "vendaddr_zipcode");
 
-  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
+  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxzone_code");
   _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
 
   _crmacctid = -1;
@@ -213,7 +213,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       _qualified->setEnabled(FALSE);
       _newAddress->setEnabled(FALSE);
       _defaultFOBGroup->setEnabled(false);
-      _taxauth->setEnabled(false);
+      _taxzone->setEnabled(false);
       _match->setEnabled(false);
       _newTaxreg->setEnabled(false);
       _comments->setReadOnly(TRUE);
@@ -437,7 +437,7 @@ void vendor::sSave()
           "    vend_terms_id=<? value(\"vend_terms_id\") ?>,"
           "    vend_shipvia=<? value(\"vend_shipvia\") ?>,"
 	  "    vend_curr_id=<? value(\"vend_curr_id\") ?>,"
-          "    vend_taxauth_id=<? value(\"vend_taxauth_id\") ?>,"
+          "    vend_taxzone_id=<? value(\"vend_taxzone_id\") ?>,"
           "    vend_match=<? value(\"vend_match\") ?>,"
           "    vend_ach_enabled=<? value(\"vend_ach_enabled\") ?>,"
           "<? if exists(\"key\") ?>"
@@ -462,7 +462,7 @@ void vendor::sSave()
           "  vend_comments, vend_pocomments,"
           "  vend_fobsource, vend_fob,"
           "  vend_terms_id, vend_shipvia, vend_curr_id,"
-          "  vend_taxauth_id, vend_match, vend_ach_enabled,"
+          "  vend_taxzone_id, vend_match, vend_ach_enabled,"
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
           "  vend_ach_use_vendinfo,"
           "  vend_ach_accnttype, vend_ach_indiv_number,"
@@ -488,7 +488,7 @@ void vendor::sSave()
           "  <? value(\"vend_terms_id\") ?>,"
           "  <? value(\"vend_shipvia\") ?>,"
           "  <? value(\"vend_curr_id\") ?>, "
-          "  <? value(\"vend_taxauth_id\") ?>,"
+          "  <? value(\"vend_taxzone_id\") ?>,"
           "  <? value(\"vend_match\") ?>,"
           "  <? value(\"vend_ach_enabled\") ?>,"
           "<? if exists(\"key\") ?>"
@@ -548,8 +548,8 @@ void vendor::sSave()
   else if (_accountType->currentItem() == 1)
     params.append("vend_ach_accnttype",  "C");
 
-  if(_taxauth->isValid())
-    params.append("vend_taxauth_id", _taxauth->id());
+  if(_taxzone->isValid())
+    params.append("vend_taxzone_id", _taxzone->id());
 
   if (_useWarehouseFOB->isChecked())
   {
@@ -695,7 +695,7 @@ void vendor::populate()
     _notes->setText(q.value("vend_comments").toString());
     _poComments->setText(q.value("vend_pocomments").toString());
     
-    _taxauth->setId(q.value("vend_taxauth_id").toInt());
+    _taxzone->setId(q.value("vend_taxzone_id").toInt());
 
     if (q.value("vend_fobsource").toString() == "V")
     {
@@ -975,7 +975,7 @@ void vendor::clear()
   _vendtype->setId(-1);
   _defaultTerms->setId(-1);
   _defaultCurr->setCurrentIndex(0);
-  _taxauth->setId(-1);
+  _taxzone->setId(-1);
 
   _useWarehouseFOB->setChecked(true);
 

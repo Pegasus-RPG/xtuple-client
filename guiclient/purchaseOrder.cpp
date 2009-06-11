@@ -92,7 +92,6 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setPoheadid(-1);
 
   _cachedTabIndex = 0;
-  _taxzoneidCache = -1;
 
   _mode = cView;	// initialize _mode to something safe - bug 3768
  
@@ -861,7 +860,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       vend_name, vend_address1, vend_address2, vend_address3,"
                "       vend_city, vend_state, vend_zip, vend_country,"
                "       COALESCE(vendaddr_id, -1) AS vendaddrid,"
-			   "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid "
+	       "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid "
                "FROM vend LEFT OUTER JOIN vendaddr ON (vendaddr_vend_id=vend_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
@@ -869,7 +868,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
     q.exec();
     if (q.first())
     {
-	  _taxZone->setId(q.value("vendtaxzoneid").toInt());
+      _taxZone->setId(q.value("vendtaxzoneid").toInt());
       _poCurrency->setId(q.value("vend_curr_id").toInt());
       
       if (_terms->id() == -1)
@@ -1150,12 +1149,24 @@ void purchaseOrder::sHandleOrderDate()
 
 void purchaseOrder::sTaxZoneChanged()
 {
- if (_poheadid == -1 || _taxzoneidCache == _taxZone->id())
-    return;
-    
-  _taxzoneidCache = _taxZone->id();
- 
-  sCalculateTax();
+ if (_poheadid == -1 )
+  {
+    XSqlQuery taxq;
+    taxq.prepare("UPDATE pohead SET "
+      "  pohead_taxzone_id=:taxzone_id, "
+      "WHERE (pohead_id=:pohead_id) ");
+    if (_taxZone->id() != -1)
+      taxq.bindValue(":taxzone_id", _taxZone->id());
+    taxq.bindValue(":pohead_id", _poheadid);
+    taxq.bindValue(":freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sCalculateTax();
+  }
 }
 
 void purchaseOrder::sCalculateTax()
