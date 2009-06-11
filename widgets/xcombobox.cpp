@@ -1244,9 +1244,12 @@ void XComboBox::append(int pId, const QString &pText, const QString &pCode)
              qPrintable(objectName()), pId,
              qPrintable(pText), qPrintable(pCode));
 
-  _ids.append(pId);
-  insertItem(pText);
-  _codes.append(pCode);
+  if (! _ids.contains(pId))
+  {
+    _ids.append(pId);
+    insertItem(pText);
+    _codes.append(pCode);
+  }
 }
 
 int XComboBox::id(int pIndex) const
