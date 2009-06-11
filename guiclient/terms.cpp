@@ -10,59 +10,37 @@
 
 #include "terms.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 
-/*
- *  Constructs a terms as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 terms::terms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_proximo, SIGNAL(toggled(bool)), _cutOffDay, SLOT(setEnabled(bool)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_days, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    
-    _discountPercent->setValidator(omfgThis->percentVal());
-    
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-terms::~terms()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void terms::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void terms::init()
-{
+  // signals and slots connections
+  connect(_proximo, SIGNAL(toggled(bool)), _cutOffDay, SLOT(setEnabled(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_days, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  
   _discountPercent->setValidator(omfgThis->percentVal());
 }
 
-enum SetResponse terms::set(ParameterList &pParams)
+terms::~terms()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void terms::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse terms::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -134,6 +112,14 @@ void terms::sCheck()
 
 void terms::sSave()
 {
+  if(_code->text().trimmed().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Terms"),
+      tr("You must specify a code for the Terms."));
+    _code->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('terms_terms_id_seq') AS _terms_id");
