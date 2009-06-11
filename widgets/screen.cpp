@@ -98,6 +98,10 @@ bool Screen::isDirty()
             return true; 
       }
   }
+  else if(_mode == View)
+  {
+    return false;
+  }
   else  //Use usual technique to determine if edits occured
   {
     for (int c = 0; c < _model->columnCount(); c++)
