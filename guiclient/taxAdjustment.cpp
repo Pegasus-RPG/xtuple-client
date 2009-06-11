@@ -59,6 +59,8 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
       _table = "cmheadtax";
     else if (param.toString() == "AR")
       _table = "aropentax";
+    else if (param.toString() == "AP")
+      _table = "apopentax";
     else
       _table = param.toString();
   }  

@@ -33,6 +33,7 @@ public slots:
     virtual void sClose();
     virtual void sPopulateVendInfo( int vend_id );
     virtual void sPopulateDueDate();
+    virtual void sTaxDetail();
 
 protected slots:
     virtual void languageChange();

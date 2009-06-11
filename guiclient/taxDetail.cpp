@@ -182,7 +182,7 @@ void taxDetail::sPopulate()
   }
 
   else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI" || 
-           _ordertype == "TI" || _ordertype == "VI" || _ordertype == "AR")
+           _ordertype == "TI" || _ordertype == "VI" || _ordertype == "AR" || _ordertype == "AP" )
 
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
          "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
@@ -233,6 +233,8 @@ void taxDetail::sDelete()
     table = "voheadtax";
   else if (_ordertype == "AR")
     table = "aropentax";
+  else if (_ordertype == "AP")
+    table = "apopentax";
   else
     table = _ordertype;
       
