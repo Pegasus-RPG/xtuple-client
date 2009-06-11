@@ -150,6 +150,29 @@ void customerGroup::sClose()
 
 void customerGroup::sSave()
 {
+  if(_name->text().trimmed().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Customer Group"),
+      tr("You cannot have an empty name."));
+    _name->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT custgrp_id"
+            "  FROM custgrp"
+            " WHERE((custgrp_name=:custgrp_name)"
+            "   AND (custgrp_id != :custgrp_id))");
+  q.bindValue(":custgrp_id", _custgrpid);
+  q.bindValue(":custgrp_name", _name->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Customer Group"),
+      tr("You cannot have a duplicate name."));
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
     q.prepare( "INSERT INTO custgrp "
                "(custgrp_id, custgrp_name, custgrp_descrip) "
