@@ -149,14 +149,15 @@ void salesRep::sSave()
     }
  
     q.prepare( "INSERT INTO salesrep "
-               "(salesrep_id, salesrep_number, salesrep_active, salesrep_name, salesrep_commission) "
+               "(salesrep_id, salesrep_number, salesrep_active, salesrep_name, salesrep_commission, salesrep_emp_id) "
                "VALUES "
-               "(:salesrep_id, :salesrep_number, :salesrep_active, :salesrep_name, :salesrep_commission);" );
+               "(:salesrep_id, :salesrep_number, :salesrep_active, :salesrep_name, :salesrep_commission, :salesrep_emp_id);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE salesrep "
                "SET salesrep_active=:salesrep_active, salesrep_number=:salesrep_number,"
-               "    salesrep_name=:salesrep_name, salesrep_commission=:salesrep_commission "
+               "    salesrep_name=:salesrep_name, salesrep_commission=:salesrep_commission,"
+               "    salesrep_emp_id=:salesrep_emp_id "
                "WHERE (salesrep_id=:salesrep_id);" );
 
   q.bindValue(":salesrep_id", _salesrepid);
@@ -164,6 +165,7 @@ void salesRep::sSave()
   q.bindValue(":salesrep_name", _name->text());
   q.bindValue(":salesrep_commission", (_commPrcnt->toDouble() / 100));
   q.bindValue(":salesrep_active", QVariant(_active->isChecked()));
+  q.bindValue(":salesrep_emp_id", _employee->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -177,7 +179,7 @@ void salesRep::sSave()
 void salesRep::populate()
 {
   q.prepare( "SELECT salesrep_number, salesrep_active, salesrep_name,"
-             "       salesrep_commission "
+             "       salesrep_commission, salesrep_emp_id "
              "FROM salesrep "
              "WHERE (salesrep_id=:salesrep_id);" );
   q.bindValue(":salesrep_id", _salesrepid);
@@ -188,6 +190,7 @@ void salesRep::populate()
     _active->setChecked(q.value("salesrep_active").toBool());
     _name->setText(q.value("salesrep_name").toString());
     _commPrcnt->setDouble(q.value("salesrep_commission").toDouble() * 100);
+    _employee->setId(q.value("salesrep_emp_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
