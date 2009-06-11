@@ -51,28 +51,16 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("taxzone_id", &valid);
+  if (valid)
+    _taxzoneid = param.toInt();
+    
   param = pParams.value("soitem_id", &valid);
   if (valid)
   {
     _soitemid = param.toInt();
 
     _item->setReadOnly(TRUE);
-
-    // get taxzone_id before item->setId()
-    XSqlQuery taxzone;									
-    taxzone.prepare("SELECT cobmisc_taxzone_id "		
-		    "FROM coitem, cobmisc "
-		    "WHERE ((coitem_cohead_id=cobmisc_cohead_id)"
-		    "  AND  (coitem_id=:soitem_id));");
-    taxzone.bindValue(":soitem_id", _soitemid);
-    taxzone.exec();
-    if (taxzone.first())
-      _taxzoneid=taxzone.value("cobmisc_taxzone_id").toInt(); 
-    else if (taxzone.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxzone.lastError().databaseText(), __FILE__, __LINE__);
-      return UndefinedError;
-    }
 
     XSqlQuery soitem;
     soitem.prepare( "SELECT itemsite_item_id, cust_partialship,"
@@ -101,8 +89,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _qtyUOM->setText(soitem.value("uom_name").toString());
       _ordered->setDouble(soitem.value("coitem_qtyord").toDouble());
       _shipped->setDouble(soitem.value("coitem_qtyshipped").toDouble());
-      _balance->setDouble(soitem.value("qtybalance").toDouble());
-      _taxType->setId(soitem.value("taxtype_id").toInt());               
+      _balance->setDouble(soitem.value("qtybalance").toDouble());               
 
       _cachedPartialShip = soitem.value("cust_partialship").toBool();
       _closeLine->setChecked(!_cachedPartialShip);
@@ -223,7 +210,8 @@ void selectBillingQty::sHandleItem()
   XSqlQuery itemq;
   itemq.prepare("SELECT getItemTaxType(:item_id, :taxzone) AS result;");
   itemq.bindValue(":item_id", _item->id());
-  itemq.bindValue(":taxzone", _taxzoneid);    
+  if (_taxzoneid != -1)
+    itemq.bindValue(":taxzone", _taxzoneid);    
   itemq.exec();
   if (itemq.first())
   {

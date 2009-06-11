@@ -44,7 +44,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   connect(_soList, SIGNAL(clicked()), this, SLOT(sSoList()));
   connect(_salesTax,	SIGNAL(valueChanged()),	this, SLOT(sUpdateTotal()));
   connect(_subtotal,	SIGNAL(valueChanged()),	this, SLOT(sUpdateTotal()));
-  connect(_taxZone,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
+  connect(_taxZone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
 
 //  statusBar()->hide();
 
@@ -55,8 +55,6 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _cobmiscid = -1;
   _captive = FALSE;
   _updated = FALSE;
-
-  _taxzoneidCache	= -1;
 
   _custCurrency->setLabel(_custCurrencyLit);
 
@@ -150,7 +148,6 @@ void selectOrderForBilling::clear()
   _shipToName->clear();
   _custCurrency->setId(-1);
   _taxZone->setId(-1);
-  _taxzoneidCache = -1;
   _soitem->clear();
   _shipvia->clear();
   _miscChargeAccount->setId(-1);
@@ -358,6 +355,7 @@ void selectOrderForBilling::sEditSelection()
 {
   ParameterList params;
   params.append("soitem_id", _soitem->id());
+  params.append("taxzone_id", _taxZone->id());
 
   selectBillingQty newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -599,4 +597,27 @@ void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   XWidget::closeEvent(pEvent);
+}
+
+void selectOrderForBilling::sTaxZoneChanged()
+{
+  if (_cobmiscid != -1)
+  {
+    XSqlQuery taxq;
+    taxq.prepare("UPDATE cobmisc SET "
+      "  cobmisc_taxzone_id=:taxzone_id, "
+      "  cobmisc_freight=:freight "
+      "WHERE (cobmisc_id=:cobmisc_id) ");
+    if (_taxZone->id() != -1)
+      taxq.bindValue(":taxzone_id", _taxZone->id());
+    taxq.bindValue(":cobmisc_id", _cobmiscid);
+    taxq.bindValue(":freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sCalculateTax();
+  }
 }

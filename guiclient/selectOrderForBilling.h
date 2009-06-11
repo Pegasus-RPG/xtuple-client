@@ -39,6 +39,7 @@ public slots:
     virtual void sSelectBalance();
     virtual void sSoList();
     virtual void sUpdateTotal();
+    virtual void sTaxZoneChanged();
 
 protected slots:
     virtual void languageChange();
@@ -53,7 +54,6 @@ private:
     bool _captive;
     bool _updated;
     int _mode;
-    int		_taxzoneidCache;
     int		_taxcurrid;
 };
 
