@@ -10,54 +10,36 @@
 
 #include "sale.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a sale as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 sale::sale(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _saleid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-sale::~sale()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void sale::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void sale::init()
-{
   _ipshead->populate( QString( "SELECT ipshead_id, ipshead_name "
                                "FROM ipshead "
                                "ORDER BY ipshead_name;" ) );
 }
 
-enum SetResponse sale::set(ParameterList &pParams)
+sale::~sale()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void sale::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse sale::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -109,6 +91,21 @@ void sale::sSave()
   {
     QMessageBox::critical( this, tr("Enter Sale Name"),
                            tr("You must enter a name for this Sale before saving it.") );
+    _name->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT sale_id"
+            "  FROM sale"
+            " WHERE((sale_name=:sale_name)"
+            "   AND (sale_id != :sale_id))");
+  q.bindValue(":sale_id", _saleid);
+  q.bindValue(":sale_name", _name->text().trimmed());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Sale"),
+                           tr("You cannot enter a duplicate name for this Sale before saving it.") );
     _name->setFocus();
     return;
   }
