@@ -358,6 +358,9 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newTransform->setEnabled(FALSE);
       _itemtaxNew->setEnabled(FALSE);
       _close->setText(tr("&Close"));
+      _newSrc->setEnabled(false);
+      _newItemSite->setEnabled(false);
+      _newUOM->setEnabled(false);
 
       connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
 
