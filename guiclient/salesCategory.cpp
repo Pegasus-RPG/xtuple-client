@@ -10,52 +10,32 @@
 
 #include "salesCategory.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a salesCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 salesCategory::salesCategory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 salesCategory::~salesCategory()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void salesCategory::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void salesCategory::init()
-{
-}
-
-enum SetResponse salesCategory::set(ParameterList &pParams)
+enum SetResponse salesCategory::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -129,6 +109,29 @@ void salesCategory::sCheck()
 
 void salesCategory::sSave()
 {
+  if(_category->text().trimmed().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Sales Category"),
+      tr("You must specify a name for the Sales Category."));
+    _category->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT salescat_id"
+            "  FROM salescat"
+            " WHERE((salescat_name=:salescat_name)"
+            "   AND (salescat_id != :salescat_id))");
+  q.bindValue(":salescat_id", _salescatid);
+  q.bindValue(":salescat_name", _category->text().trimmed());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Sales Category"),
+      tr("You cannot specify a duplicate name for the Sales Category."));
+    _category->setFocus();
+    return;
+  }
+
   if (!_sales->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Category"),
