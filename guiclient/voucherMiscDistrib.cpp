@@ -28,6 +28,7 @@ voucherMiscDistrib::voucherMiscDistrib(QWidget* parent, const char* name, bool m
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_taxCode, SIGNAL(newID(int)), this, SLOT(sCheck()));
   
   adjustSize();
 }
@@ -61,7 +62,9 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
   param = pParams.value("vohead_id", &valid);
   if (valid)
     _voheadid = param.toInt();
-
+ 
+  _miscvoucher = pParams.inList("voucher_type");
+ 
   param = pParams.value("curr_id", &valid);
   if (valid)
     _amount->setId(param.toInt());
@@ -90,8 +93,10 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
       _amount->setFocus();
+	  sCheck();
+	  if (_accountSelected->isChecked() || _expcatSelected->isChecked())
+		_taxSelected->setEnabled(false);
     }
   }
 
@@ -210,6 +215,73 @@ void voucherMiscDistrib::sSave()
   }
   q.exec();
 
+
+  // Voucher tax adjustment
+if (_taxSelected->isChecked() && !_miscvoucher)
+{
+ if (_mode == cNew)
+   q.prepare("INSERT INTO voheadtax (taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate,taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id) "	   
+			 "VALUES (0, 0, 0, :date, :vodist_tax_id, :vodist_amount, getadjustmenttaxtypeid(), :vodist_vohead_id); "); 
+ else if(_mode == cEdit)
+	  q.prepare("UPDATE voheadtax "
+                "SET taxhist_tax=:vodist_amount, taxhist_docdate=:date "
+                "WHERE (taxhist_parent_id=:vodist_vohead_id) "
+				"  AND (taxhist_tax_id=:vodist_tax_id) "
+				"  AND (taxhist_taxtype_id = getadjustmenttaxtypeid());");
+
+  q.bindValue(":vodist_vohead_id", _voheadid);
+  q.bindValue(":vodist_amount", _amount->localValue());
+  q.bindValue(":vodist_tax_id", _taxCode->id()); 
+  q.bindValue(":date", _amount->effective());
+  q.exec();
+ }
   done(_vodistid);
 }
 
+void voucherMiscDistrib::sCheck()     
+{
+  
+ if(_taxSelected->isChecked() && _mode == cEdit)
+ {
+  q.prepare( "SELECT vodist_id, vodist_vohead_id, vodist_amount "
+              "FROM vodist " 
+              "WHERE (vodist_id=:vodist_id) "
+			  "   AND (vodist_poitem_id=-1)"
+              "   AND (vodist_tax_id=:tax_id);" );
+  
+  q.bindValue(":vodist_id", _vodistid);
+  q.bindValue(":tax_id", _taxCode->id());
+  q.exec();
+  if (q.first())
+  {
+    _amount->setFocus();
+	_taxSelected->setEnabled(false);
+	_taxCode->setEnabled(false);
+	_expcatSelected->setEnabled(false);
+	_accountSelected->setEnabled(false);
+  }
+ }
+else if(_taxSelected->isChecked() && _mode == cNew)
+{
+   q.prepare( "SELECT vodist_id, vodist_amount "
+              "FROM vodist " 
+              "WHERE (vodist_vohead_id=:vodist_vohead_id) "
+			  "   AND (vodist_poitem_id=-1)"
+              "   AND (vodist_tax_id=:tax_id);" );
+  
+  q.bindValue(":vodist_vohead_id", _voheadid);
+  q.bindValue(":tax_id", _taxCode->id());
+  q.exec();
+  if (q.first())
+  {
+    _vodistid=q.value("vodist_id").toInt();
+    _amount->setLocalValue(q.value("vodist_amount").toDouble());
+	_amount->setFocus();
+	_mode=cEdit;
+	_taxSelected->setEnabled(false);
+	_taxCode->setEnabled(false);
+	_expcatSelected->setEnabled(false);
+	_accountSelected->setEnabled(false);
+  }
+ }
+}

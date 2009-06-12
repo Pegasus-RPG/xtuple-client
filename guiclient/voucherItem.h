@@ -22,7 +22,7 @@ class voucherItem : public XDialog, public Ui::voucherItem
 public:
     voucherItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~voucherItem();
-
+	
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
@@ -35,6 +35,8 @@ public slots:
     virtual void sCorrectReceiving();
     virtual void sSplitReceipt();
     virtual void reject();
+	virtual void sCalculateTax();
+	virtual void sTaxDetail();
     
 protected slots:
     virtual void languageChange();
@@ -44,7 +46,10 @@ private:
     int _voheadid;
     int _voitemid;
     int _poitemid;
+	int _taxzoneid;
     bool _inTransaction;
+	bool _saved;
+	double _distamount;
     QString _rejectedMsg;
 };
 

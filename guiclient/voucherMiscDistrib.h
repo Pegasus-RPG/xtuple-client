@@ -28,6 +28,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sSave();
+	virtual void sCheck();
 
 protected slots:
     virtual void languageChange();
@@ -36,6 +37,7 @@ private:
     int _mode;
     int _voheadid;
     int _vodistid;
+	bool _miscvoucher;
 
 };
 

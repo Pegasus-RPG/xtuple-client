@@ -40,6 +40,9 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
+
+  _inTransaction = TRUE;
+  q.exec("BEGIN;"); //Lot's of things can happen in here that can cause problems if cancelled out.  Let's make it easy to roll it back.
 }
 
 miscVoucher::~miscVoucher()
@@ -223,6 +226,9 @@ void miscVoucher::sSave()
 
   _voheadid = -1;
 
+  q.exec("COMMIT;");
+  _inTransaction = false;
+
   if(cNew != _mode)
   {
     close();
@@ -307,6 +313,7 @@ void miscVoucher::sNewMiscDistribution()
   ParameterList params;
   params.append("mode", "new");
   params.append("vohead_id", _voheadid);
+  params.append("voucher_type");
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
   params.append("amount", _balance->localValue());
@@ -326,6 +333,8 @@ void miscVoucher::sEditMiscDistribution()
 {
   ParameterList params;
   params.append("mode", "edit");
+  params.append("vohead_id", _voheadid);
+  params.append("voucher_type");
   params.append("vodist_id", _miscDistrib->id());
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
@@ -465,7 +474,9 @@ void miscVoucher::closeEvent(QCloseEvent *pEvent)
     q.bindValue(":voucherNumber", _voucherNumber->text().toInt());
     q.exec();
   }
-
+  else if(_mode == cEdit && _inTransaction)
+  	q.exec("ROLLBACK;");
+   
   pEvent->accept();
 }
 
@@ -501,4 +512,3 @@ void miscVoucher::keyPressEvent( QKeyEvent * e )
   else
     e->ignore();
 }
-

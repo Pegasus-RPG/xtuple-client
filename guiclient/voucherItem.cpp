@@ -18,6 +18,7 @@
 #include "voucherItemDistrib.h"
 #include "enterPoitemReceipt.h"
 #include "splitReceipt.h"
+#include "taxDetail.h"
 
 voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -31,6 +32,9 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
   connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_freightToVoucher, SIGNAL(lostFocus()), this, SLOT(sFillList()));
+  connect(_vodist, SIGNAL(populated()), this, SLOT(sCalculateTax()));
+  connect(_taxtype,	  SIGNAL(newID(int)), this, SLOT(sCalculateTax()));
+  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
 
   _item->setReadOnly(TRUE);
   
@@ -78,15 +82,37 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
 
   param = pParams.value("curr_id", &valid);
   if (valid)
+  {
     _freightToVoucher->setId(param.toInt());
+	_tax->setId(param.toInt());
+  }
 
   param = pParams.value("effective", &valid);
   if (valid)
-    _freightToVoucher->setEffective(param.toDate());
+  {
+	_freightToVoucher->setEffective(param.toDate());
+	_tax->setEffective(param.toDate());
+  }
 
   param = pParams.value("vohead_id", &valid);
   if (valid)
+  {
     _voheadid = param.toInt();
+    q.prepare("SELECT vohead_taxzone_id "
+	          "FROM vohead "
+	          "WHERE (vohead_id = :vohead_id);");
+    q.bindValue(":vohead_id", _voheadid);
+    q.exec();
+    if (q.first())
+      _taxzoneid = q.value("vohead_taxzone_id").toInt();
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
+	else
+	  _taxzoneid = -1;
+  }
   else
     _voheadid = -1;
 
@@ -95,7 +121,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
   {
     _poitemid = param.toInt();
 
-    q.prepare( "SELECT pohead_number, poitem_linenumber,"
+    q.prepare( "SELECT pohead_number, poitem_linenumber, poitem_taxtype_id, "
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
                "       poitem_vend_item_number, poitem_vend_uom, poitem_vend_item_descrip,"
                "       poitem_duedate,"
@@ -139,7 +165,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _unitPrice->setText(q.value("poitem_unitprice").toDouble());
       _extPrice->setText(q.value("f_extprice").toDouble());
       _lineFreight->setText(q.value("poitem_freight").toDouble());
-
+	  _taxtype->setId(q.value("poitem_taxtype_id").toInt());
       if (q.value("itemsiteid") != -1)
         _item->setItemsiteid(q.value("itemsiteid").toInt());
     }
@@ -156,7 +182,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
 
   if ( (_voheadid != -1) && (_poitemid != -1) )
   {
-    q.prepare( "SELECT voitem_id, voitem_close,"
+    q.prepare( "SELECT voitem_id, voitem_close, voitem_taxtype_id, "
                "       voitem_qty,"
                "       voitem_freight "
                "FROM voitem "
@@ -171,6 +197,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _closePoitem->setChecked(q.value("voitem_close").toBool());
       _qtyToVoucher->setText(q.value("voitem_qty").toDouble());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
+	  _taxtype->setId(q.value("voitem_taxtype_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -186,10 +213,30 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _qtyToVoucher->clear();
       _freightToVoucher->clear();
     }
+
+	q.prepare( "SELECT SUM(COALESCE(taxhist_tax, 0.00)) AS taxamt "
+	           "FROM voitem LEFT OUTER JOIN voitemtax "
+			   " ON (voitem_id = taxhist_parent_id) "
+               "WHERE ( (voitem_vohead_id=:vohead_id)"
+               " AND (voitem_poitem_id=:poitem_id) );" );
+    q.bindValue(":vohead_id", _voheadid);
+    q.bindValue(":poitem_id", _poitemid);
+    q.exec();
+    if (q.first())
+	  _tax->setLocalValue(q.value("taxamt").toDouble());
+	else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+      reject();
+      return UndefinedError;
+    }
+    else
+      _tax->clear();
   }
 
   sFillList();
-
+  _saved = TRUE;
   return NoError;
 }
 
@@ -203,7 +250,7 @@ void voucherItem::sSave()
     return;
   }
 
-//  Check to make sure there is at least distribution for this Voucher Item
+  // Check to make sure there is at least distribution for this Voucher Item
   q.prepare( "SELECT vodist_id "
              "FROM vodist "
              "WHERE ( (vodist_vohead_id=:vohead_id)"
@@ -226,7 +273,7 @@ void voucherItem::sSave()
     return;
   }
 
-// Check for vendor matching requirement
+  // Check for vendor matching requirement
   q.prepare( "SELECT vend_id "
              " FROM vendinfo,pohead,poitem "
 	     " WHERE (	(vend_id=pohead_vend_id) "
@@ -266,10 +313,11 @@ void voucherItem::sSave()
     return;
   }
 
-//  Update the qty vouchered
+  // Update the qty vouchered
   q.prepare( "UPDATE voitem "
              "SET voitem_close=:voitem_close,"
-             "    voitem_freight=:voitem_freight "
+             "    voitem_freight=:voitem_freight, "
+			 "    voitem_taxtype_id=:voitem_taxtype_id "
              "WHERE (voitem_id=:voitem_id);"
              "UPDATE vodist "
              "SET vodist_qty=:qty "
@@ -281,6 +329,7 @@ void voucherItem::sSave()
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked()));
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
+  q.bindValue(":voitem_taxtype_id", _taxtype->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -289,8 +338,30 @@ void voucherItem::sSave()
     reject();
     return;
   }
-
   q.exec("COMMIT;");
+  
+  // Insert data into voitemtax table
+  XSqlQuery insertq;
+  insertq.prepare("SELECT calculatetaxhist('voitemtax', :voitem_id, vohead_taxzone_id, "
+                  ":voitem_taxtype_id, COALESCE(vohead_docdate, CURRENT_DATE), vohead_curr_id, "
+			      "(SELECT COALESCE(SUM(vodist_amount), 0.00) FROM vodist "
+			      "  WHERE vodist_vohead_id=:vohead_id "
+			      "  AND vodist_poitem_id=:poitem_id)) "
+			      "FROM vohead "
+			      "WHERE vohead_id=:vohead_id;");
+  insertq.bindValue(":voitem_id", _voitemid);
+  insertq.bindValue(":voitem_taxtype_id", _taxtype->id());
+  insertq.bindValue(":vohead_id", _voheadid);
+  insertq.bindValue(":poitem_id", _poitemid);
+  insertq.exec();
+  if (insertq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, _rejectedMsg.arg(insertq.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
+         
   _inTransaction = FALSE;
   accept();
 }
@@ -435,14 +506,14 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     }
   }
 
-//Check PO Close flag
+  // Check PO Close flag
 
   if ( ((_ordered->toDouble() <= (_received->toDouble() - _rejected->toDouble()))) && (_uninvoicedReceived->toDouble() == 0) && (_uninvoicedRejected->toDouble() == 0) )
         _closePoitem->setChecked(true);
   else
 	_closePoitem->setChecked(false);
   
-//  Save the voitem information
+  // Save the voitem information
   if (_voitemid != -1)
   {
     q.prepare( "UPDATE voitem "
@@ -452,7 +523,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   }
   else
   {
-//  Get next voitem id
+  // Get next voitem id
     q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
     q.exec();
     if (q.first())
@@ -486,7 +557,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     return;
   }
   
-//Update the receipt record
+  // Update the receipt record
   if (item->text(3) == "Yes")
   {
     if (item->altId() == 1)
@@ -548,6 +619,7 @@ void voucherItem::sFillList()
     return;
   }
 
+  // Display the total distributed amount
   q.prepare( "SELECT SUM(vodist_amount) AS totalamount "
              "FROM vodist "
              "WHERE ( (vodist_vohead_id=:vohead_id)"
@@ -556,7 +628,7 @@ void voucherItem::sFillList()
   q.bindValue(":poitem_id", _poitemid);
   q.exec();
   if (q.first())
-    _totalDistributed->setLocalValue(q.value("totalamount").toDouble() +
+    _totalDistributed->setLocalValue(q.value("totalamount").toDouble() + _tax->localValue() + 
 					_freightToVoucher->localValue());
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -566,7 +638,7 @@ void voucherItem::sFillList()
     return;
   }
           
-  //Fill univoiced receipts list
+  // Fill univoiced receipts list
   q.prepare( "SELECT porecv_id AS item_id, 1 AS item_type, :receiving AS action,"
              "       porecv_date AS item_date,"
              "       porecv_qty AS qty, 'qty' AS qty_xtnumericrole,"
@@ -601,7 +673,7 @@ void voucherItem::sFillList()
     reject();
     return;
   }
-}
+ }
 
 void voucherItem::sCorrectReceiving()
 {
@@ -645,4 +717,72 @@ void voucherItem::reject()
     _inTransaction = false;
   }
   XDialog::reject();
+}
+
+void voucherItem::sCalculateTax()
+{
+  _saved = FALSE;
+  XSqlQuery calcq;
+  calcq.prepare( "SELECT SUM(COALESCE(tax, 0.00)) AS totaltax "
+                 "FROM (SELECT ROUND(calculateTax(vohead_taxzone_id, :taxtype_id, "
+				 " vohead_docdate, vohead_curr_id, vodist_amount), 2) AS tax "
+                 " FROM vohead JOIN vodist ON(vohead_id=vodist_vohead_id) "
+                 " WHERE (vohead_id=:vohead_id) "
+                 " AND (vodist_poitem_id=:poitem_id) "
+				 ") data;"); 
+  calcq.bindValue(":vohead_id", _voheadid);
+  calcq.bindValue(":taxtype_id", _taxtype->id());
+  calcq.bindValue(":poitem_id", _poitemid);
+  calcq.exec();
+  if (calcq.first())
+    _tax->setLocalValue(calcq.value("totaltax").toDouble());
+  else if (calcq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void voucherItem::sTaxDetail()
+{
+  q.prepare( "SELECT SUM(vodist_amount) AS distamount "
+             "FROM vodist "
+             "WHERE ( (vodist_vohead_id=:vohead_id)"
+             " AND (vodist_poitem_id=:poitem_id) );" );
+  q.bindValue(":vohead_id", _voheadid);
+  q.bindValue(":poitem_id", _poitemid);
+  q.exec();
+  if (q.first())
+    _distamount = q.value("distamount").toDouble();
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    return;
+  }
+
+  taxDetail newdlg(this, "", true);
+  ParameterList params;
+  params.append("taxzone_id", _taxzoneid);
+  params.append("taxtype_id", _taxtype->id());
+  params.append("date", _tax->effective());
+  params.append("subtotal", _distamount);
+  params.append("curr_id", _tax->id());
+  
+  if(cView == _mode)
+    params.append("readOnly");
+  
+  if(_saved == TRUE)
+  {
+	params.append("order_id", _voitemid);
+    params.append("order_type", "VI");
+  }
+
+  newdlg.set(params);
+  
+  if (newdlg.set(params) == NoError && newdlg.exec())
+  {
+    if (_taxtype->id() != newdlg.taxtype())
+      _taxtype->setId(newdlg.taxtype());
+  }
 }

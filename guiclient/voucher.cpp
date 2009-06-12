@@ -47,11 +47,13 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
+  connect(_taxzone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
 
 #ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);
 #endif
 
+  _taxzoneidCache	= -1;
   _terms->setType(XComboBox::APTerms);
   _poNumber->setType(cPOOpen);
 
@@ -375,6 +377,7 @@ void voucher::sPopulate()
 
 void voucher::sDistributions()
 {
+  saveDetail();
   QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -399,6 +402,7 @@ void voucher::sDistributions()
 
 void voucher::sDistributeLine()
 {
+  saveDetail();
   QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -464,6 +468,7 @@ void voucher::sClear()
 
 void voucher::sDistributeAll()
 {
+  saveDetail();
   _poitem->selectAll();
   QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -494,6 +499,7 @@ void voucher::sDistributeAll()
 
 void voucher::sNewMiscDistribution()
 {
+  saveDetail();
   ParameterList params;
   params.append("mode", "new");
   params.append("vohead_id", _voheadid);
@@ -514,8 +520,10 @@ void voucher::sNewMiscDistribution()
 
 void voucher::sEditMiscDistribution()
 {
+  saveDetail();
   ParameterList params;
   params.append("mode", "edit");
+  params.append("vohead_id", _voheadid);
   params.append("vodist_id", _miscDistrib->id());
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
@@ -533,8 +541,15 @@ void voucher::sEditMiscDistribution()
 
 void voucher::sDeleteMiscDistribution()
 {
-  q.prepare( "DELETE FROM vodist "
-             "WHERE (vodist_id=:vodist_id);" );
+  saveDetail();
+  q.prepare( "DELETE FROM voheadtax "
+             "WHERE (taxhist_parent_id=:vohead_id) "
+			 " AND  (taxhist_taxtype_id=getadjustmenttaxtypeid()) "
+			 " AND  (taxhist_tax_id = (SELECT vodist_tax_id FROM vodist WHERE (vodist_id=:vodist_id))); "
+	         "DELETE FROM vodist "
+             "WHERE (vodist_id=:vodist_id);");
+
+  q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":vodist_id", _miscDistrib->id());
   q.exec();
   sFillMiscList();
@@ -688,13 +703,17 @@ void voucher::sPopulateDistributed()
 {
   if (_poNumber->isValid())
   {
-    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0)) AS distrib"
+    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(linetax,0)) AS distrib"
                "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
                "          FROM voitem"
                "         WHERE (voitem_vohead_id=:vohead_id)) AS data1, "
                "       (SELECT SUM(COALESCE(vodist_amount, 0)) AS dist"
                "          FROM vodist"
-               "         WHERE (vodist_vohead_id=:vohead_id)) AS data2;" );
+               "         WHERE (vodist_vohead_id=:vohead_id)) AS data2, "
+			   "       (SELECT SUM(COALESCE(taxhist_tax,0)) AS linetax "
+			   "         FROM voitemtax, voitem, vohead "
+			   "        WHERE (voitem_id=taxhist_parent_id) AND (vohead_id=voitem_vohead_id) "
+			   "          AND (vohead_id=:vohead_id)) AS data3;" );
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     if (q.first())
@@ -821,7 +840,6 @@ void voucher::sPopulateDueDate()
       _dueDate->setDate(q.value("duedate").toDate());
   }
 }
- 
 
 void voucher::sPopulateMenu( QMenu * pMenu )
 {
@@ -851,4 +869,70 @@ void voucher::keyPressEvent( QKeyEvent * e )
   }
   else
     e->ignore();
+}
+
+void voucher::saveDetail()
+{
+  if (_mode != cView)
+  {
+    q.prepare("UPDATE vohead SET vohead_taxzone_id = :taxzone_id,"
+                 " vohead_docdate = COALESCE(:vohead_docdate, CURRENT_DATE),"
+				 " vohead_curr_id = :vohead_curr_id "
+				 "WHERE (vohead_id = :vohead_id);");
+    if (_taxzone->isValid())
+      q.bindValue(":taxzone_id",	_taxzone->id());
+    q.bindValue(":vohead_id",	_voheadid);
+    q.bindValue(":vohead_docdate", _distributionDate->date());
+	q.bindValue(":vohead_curr_id", _amountToDistribute->id());
+	q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void voucher::sTaxZoneChanged()
+{
+  if (_voheadid == -1 || _taxzoneidCache == _taxzone->id())
+    return;
+
+  _taxzoneidCache = _taxzone->id();
+
+  sCalculateTax();
+}
+
+void voucher::sCalculateTax()
+{
+  if (_poNumber->isValid())
+  {
+    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(linetax,0)) AS distrib"
+               "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
+               "          FROM voitem"
+               "         WHERE (voitem_vohead_id=:vohead_id)) AS data1, "
+               "       (SELECT SUM(COALESCE(vodist_amount, 0)) AS dist"
+               "          FROM vodist"
+               "         WHERE (vodist_vohead_id=:vohead_id)) AS data2, "
+               "       (SELECT COALESCE(SUM(calculatetax(:taxzone_id, voitem_taxtype_id, COALESCE(:date, CURRENT_DATE), :curr_id, vodist_amount)),0) AS linetax "
+			   "          FROM vodist, voitem, vohead "
+			   "          WHERE (vodist_poitem_id=voitem_poitem_id) AND (vohead_id=voitem_vohead_id) AND (vohead_id=vodist_vohead_id) "
+			   "          AND (vohead_id=:vohead_id)) AS data3" );
+	  
+    q.bindValue(":vohead_id", _voheadid);
+    q.bindValue(":taxzone_id", _taxzone->id());
+    q.bindValue(":date", _distributionDate->date());
+    q.bindValue(":curr_id", _amountToDistribute->id());
+    q.exec();
+    if (q.first())
+    {
+      _amountDistributed->setLocalValue(q.value("distrib").toDouble());
+      sPopulateBalanceDue();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }

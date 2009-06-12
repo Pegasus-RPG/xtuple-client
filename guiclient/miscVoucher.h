@@ -53,6 +53,7 @@ private:
     int _voheadid;
     double _cachedAmountDistributed;
     int _mode;
+	bool _inTransaction;
 };
 
 #endif // MISCVOUCHER_H
