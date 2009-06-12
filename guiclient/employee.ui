@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -8,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>employee</class>
- <widget class="QDialog" name="employee" >
-  <property name="geometry" >
+ <widget class="QDialog" name="employee">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -17,76 +17,76 @@ to be bound by its terms.</comment>
     <height>433</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Employee</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="spacing" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <layout class="QGridLayout">
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="QLabel" name="_codeLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_codeLit">
+         <property name="text">
           <string>Employee:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_code</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="XLineEdit" name="_code" >
-         <property name="fieldName" >
+        <widget class="XLineEdit" name="_code">
+         <property name="fieldName">
           <string>code</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_numberLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_numberLit">
+         <property name="text">
           <string>Employee Number:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="XLineEdit" name="_number" >
-         <property name="fieldName" >
+        <widget class="XLineEdit" name="_number">
+         <property name="fieldName">
           <string>number</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="XCheckBox" name="_active" >
-         <property name="text" >
+        <widget class="XCheckBox" name="_active">
+         <property name="text">
           <string>Active</string>
          </property>
-         <property name="checked" >
+         <property name="checked">
           <bool>true</bool>
          </property>
-         <property name="fieldName" >
+         <property name="fieldName">
           <string>active</string>
          </property>
-         <property name="forgetful" >
+         <property name="forgetful">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>0</width>
            <height>20</height>
@@ -95,33 +95,33 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>Cancel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_save" >
-           <property name="text" >
+          <widget class="QPushButton" name="_save">
+           <property name="text">
             <string>Save</string>
            </property>
-           <property name="default" >
+           <property name="default">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -133,107 +133,107 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QTabWidget" name="_tabWidget" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <item row="1" column="0">
+      <widget class="QTabWidget" name="_tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="currentIndex" >
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_contactTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_contactTab">
+        <attribute name="title">
          <string>&amp;Contact</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="ContactCluster" name="_contact" >
-           <property name="listVisible" >
-            <bool>true</bool>
-           </property>
-           <property name="accountVisible" >
+        <layout class="QGridLayout">
+         <item row="0" column="0">
+          <widget class="ContactCluster" name="_contact">
+           <property name="listVisible">
             <bool>false</bool>
            </property>
-           <property name="activeVisible" >
+           <property name="accountVisible">
             <bool>false</bool>
            </property>
-           <property name="initialsVisible" >
+           <property name="activeVisible">
             <bool>false</bool>
            </property>
-           <property name="fieldNameChange" >
+           <property name="initialsVisible">
+            <bool>false</bool>
+           </property>
+           <property name="fieldNameChange">
             <string>contact_change</string>
            </property>
-           <property name="fieldNameNumber" >
+           <property name="fieldNameNumber">
             <string>contact_number</string>
            </property>
-           <property name="fieldNameActive" >
+           <property name="fieldNameActive">
             <string/>
            </property>
-           <property name="fieldNameHonorific" >
+           <property name="fieldNameHonorific">
             <string>honorific</string>
            </property>
-           <property name="fieldNameFirst" >
+           <property name="fieldNameFirst">
             <string>first</string>
            </property>
-           <property name="fieldNameLast" >
+           <property name="fieldNameLast">
             <string>last</string>
            </property>
-           <property name="fieldNameTitle" >
+           <property name="fieldNameTitle">
             <string>job_title</string>
            </property>
-           <property name="fieldNamePhone" >
+           <property name="fieldNamePhone">
             <string>voice</string>
            </property>
-           <property name="fieldNamePhone2" >
+           <property name="fieldNamePhone2">
             <string>alternate</string>
            </property>
-           <property name="fieldNameFax" >
+           <property name="fieldNameFax">
             <string>fax</string>
            </property>
-           <property name="fieldNameEmailAddress" >
+           <property name="fieldNameEmailAddress">
             <string>email</string>
            </property>
-           <property name="fieldNameWebAddress" >
+           <property name="fieldNameWebAddress">
             <string>web</string>
            </property>
-           <property name="fieldNameAddressChange" stdset="0" >
+           <property name="fieldNameAddressChange" stdset="0">
             <string>address_change</string>
            </property>
-           <property name="fieldNameAddressNumber" stdset="0" >
+           <property name="fieldNameAddressNumber" stdset="0">
             <string>address_number</string>
            </property>
-           <property name="fieldNameLine1" >
+           <property name="fieldNameLine1">
             <string>address1</string>
            </property>
-           <property name="fieldNameLine2" >
+           <property name="fieldNameLine2">
             <string>address2</string>
            </property>
-           <property name="fieldNameLine3" >
+           <property name="fieldNameLine3">
             <string>address3</string>
            </property>
-           <property name="fieldNameCity" >
+           <property name="fieldNameCity">
             <string>city</string>
            </property>
-           <property name="fieldNameState" >
+           <property name="fieldNameState">
             <string>state</string>
            </property>
-           <property name="fieldNamePostalCode" >
+           <property name="fieldNamePostalCode">
             <string>postalcode</string>
            </property>
-           <property name="fieldNameCountry" >
+           <property name="fieldNameCountry">
             <string>country</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
+         <item row="1" column="0">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -243,33 +243,33 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_imageTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_imageTab">
+        <attribute name="title">
          <string>Image</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="ImageCluster" name="_image" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+        <layout class="QGridLayout">
+         <item row="0" column="0">
+          <widget class="ImageCluster" name="_image">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>2</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="focusPolicy" >
+           <property name="focusPolicy">
             <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="label" >
+           <property name="label">
             <string>Picture:</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
+         <item row="0" column="1">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -279,175 +279,45 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_detailTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_detailTab">
+        <attribute name="title">
          <string>&amp;Detail</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QGroupBox" name="_memberGroup" >
-           <property name="title" >
+        <layout class="QGridLayout">
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="_memberGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_siteLit" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="_siteLit">
+              <property name="text">
                <string>        Site:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <layout class="QHBoxLayout" >
+            <item row="0" column="1">
+             <layout class="QHBoxLayout">
               <item>
-               <widget class="WComboBox" name="_site" >
-                <property name="allowNull" >
+               <widget class="WComboBox" name="_site">
+                <property name="allowNull">
                  <bool>true</bool>
                 </property>
-                <property name="fieldName" >
+                <property name="fieldName">
                  <string>site</string>
                 </property>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -457,15 +327,15 @@ to be bound by its terms.</comment>
               </item>
              </layout>
             </item>
-            <item row="1" column="0" colspan="2" >
-             <widget class="EmpCluster" name="_mgr" >
-              <property name="focusPolicy" >
+            <item row="1" column="0" colspan="2">
+             <widget class="EmpCluster" name="_mgr">
+              <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
-              <property name="label" >
+              <property name="label">
                <string>Manager:</string>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>manager_code</string>
               </property>
              </widget>
@@ -473,89 +343,89 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QGroupBox" name="_rateGroup" >
-           <property name="title" >
+         <item row="0" column="1">
+          <widget class="QGroupBox" name="_rateGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_wageTypeLit" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="_wageTypeLit">
+              <property name="text">
                <string>Type:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="XComboBox" name="_wagetype" >
-              <property name="allowNull" >
+            <item row="0" column="1">
+             <widget class="XComboBox" name="_wagetype">
+              <property name="allowNull">
                <bool>true</bool>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>wage_type</string>
               </property>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string/>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>Hourly</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>Salaried</string>
                </property>
               </item>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_rateLit" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="QLabel" name="_rateLit">
+              <property name="text">
                <string>Rate:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="CurrCluster" name="_rate" >
-              <property name="fieldNameValue" >
+            <item row="1" column="1">
+             <widget class="CurrCluster" name="_rate">
+              <property name="fieldNameValue">
                <string>wage</string>
               </property>
-              <property name="currencyEditable" stdset="0" >
+              <property name="currencyEditable" stdset="0">
                <bool>false</bool>
               </property>
-              <property name="currencyVisible" >
+              <property name="currencyVisible">
                <bool>false</bool>
               </property>
-              <property name="fieldNameCurr" >
+              <property name="fieldNameCurr">
                <string>wage_currency</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_perLit" >
-              <property name="text" >
+            <item row="2" column="0">
+             <widget class="QLabel" name="_perLit">
+              <property name="text">
                <string>Per:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="XComboBox" name="_per" >
-              <property name="allowNull" >
+            <item row="2" column="1">
+             <widget class="XComboBox" name="_per">
+              <property name="allowNull">
                <bool>true</bool>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>wage_period</string>
               </property>
              </widget>
@@ -563,33 +433,33 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="QGroupBox" name="_timeclockGroup" >
-           <property name="title" >
+         <item row="1" column="0">
+          <widget class="QGroupBox" name="_timeclockGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <layout class="QVBoxLayout" >
-              <property name="topMargin" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout">
+              <property name="topMargin">
                <number>5</number>
               </property>
               <item>
-               <widget class="QLabel" name="_deptLit" >
-                <property name="text" >
+               <widget class="QLabel" name="_deptLit">
+                <property name="text">
                  <string>Dept.:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
                   <height>40</height>
@@ -599,40 +469,40 @@ to be bound by its terms.</comment>
               </item>
              </layout>
             </item>
-            <item row="0" column="1" >
-             <widget class="DeptCluster" name="_dept" >
-              <property name="focusPolicy" >
+            <item row="0" column="1">
+             <widget class="DeptCluster" name="_dept">
+              <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
-              <property name="infoVisible" >
+              <property name="infoVisible">
                <bool>false</bool>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>department</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <layout class="QVBoxLayout" >
-              <property name="topMargin" >
+            <item row="1" column="0">
+             <layout class="QVBoxLayout">
+              <property name="topMargin">
                <number>5</number>
               </property>
               <item>
-               <widget class="QLabel" name="shiftLit" >
-                <property name="text" >
+               <widget class="QLabel" name="shiftLit">
+                <property name="text">
                  <string>Shift:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
                   <height>21</height>
@@ -642,28 +512,28 @@ to be bound by its terms.</comment>
               </item>
              </layout>
             </item>
-            <item row="1" column="1" >
-             <widget class="ShiftCluster" name="_shift" >
-              <property name="focusPolicy" >
+            <item row="1" column="1">
+             <widget class="ShiftCluster" name="_shift">
+              <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
-              <property name="infoVisible" >
+              <property name="infoVisible">
                <bool>false</bool>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>shift</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
+            <item row="2" column="1">
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeType" >
+              <property name="sizeType">
                <enum>QSizePolicy::Preferred</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -674,44 +544,44 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QGroupBox" name="_relationshipsGroup" >
-           <property name="title" >
+         <item row="1" column="1">
+          <widget class="QGroupBox" name="_relationshipsGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" >
-            <property name="spacing" >
+           <layout class="QGridLayout">
+            <property name="spacing">
              <number>12</number>
             </property>
-            <item row="0" column="0" >
-             <widget class="XCheckBox" name="_user" >
-              <property name="text" >
+            <item row="0" column="0">
+             <widget class="XCheckBox" name="_user">
+              <property name="text">
                <string/>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>is_user</string>
               </property>
-              <property name="forgetful" >
+              <property name="forgetful">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="QPushButton" name="_userButton" >
-              <property name="enabled" >
+            <item row="0" column="1">
+             <widget class="QPushButton" name="_userButton">
+              <property name="enabled">
                <bool>false</bool>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>&amp;User...</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="2" >
+            <item row="0" column="2">
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>91</width>
                 <height>20</height>
@@ -719,35 +589,35 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="1" column="0" >
-             <widget class="XCheckBox" name="_salesrep" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="XCheckBox" name="_salesrep">
+              <property name="text">
                <string/>
               </property>
-              <property name="fieldName" >
+              <property name="fieldName">
                <string>is_salesrep</string>
               </property>
-              <property name="forgetful" >
+              <property name="forgetful">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="QPushButton" name="_salesrepButton" >
-              <property name="enabled" >
+            <item row="1" column="1">
+             <widget class="QPushButton" name="_salesrepButton">
+              <property name="enabled">
                <bool>false</bool>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>&amp;Sales Rep...</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="2" >
+            <item row="1" column="2">
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -755,15 +625,15 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="2" column="1" colspan="2" >
+            <item row="2" column="1" colspan="2">
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeType" >
+              <property name="sizeType">
                <enum>QSizePolicy::Preferred</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -774,12 +644,12 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="2" column="0" >
+         <item row="2" column="0">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -789,99 +659,99 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_notesTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_notesTab">
+        <attribute name="title">
          <string>Notes</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>9</number>
          </property>
          <item>
-          <widget class="XTextEdit" name="_notes" >
-           <property name="fieldName" >
+          <widget class="XTextEdit" name="_notes">
+           <property name="fieldName">
             <string>notes</string>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_commentsTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_commentsTab">
+        <attribute name="title">
          <string>Comments</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>9</number>
          </property>
          <item>
-          <widget class="Comments" name="_comments" >
-           <property name="type" >
+          <widget class="Comments" name="_comments">
+           <property name="type">
             <enum>Comments::Employee</enum>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_charactersticsTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_charactersticsTab">
+        <attribute name="title">
          <string>Characteristics</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>9</number>
          </property>
          <item>
-          <widget class="XTreeWidget" name="_charass" >
-           <property name="enabled" >
+          <widget class="XTreeWidget" name="_charass">
+           <property name="enabled">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
+          <layout class="QVBoxLayout">
            <item>
-            <widget class="QPushButton" name="_newCharass" >
-             <property name="text" >
+            <widget class="QPushButton" name="_newCharass">
+             <property name="text">
               <string>New</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_editCharass" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_editCharass">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Edit</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_deleteCharass" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_deleteCharass">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Delete</string>
              </property>
             </widget>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
                <height>40</height>
@@ -893,68 +763,68 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_groupTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_groupTab">
+        <attribute name="title">
          <string>Groups</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>9</number>
          </property>
          <item>
-          <widget class="XTreeWidget" name="_groups" />
+          <widget class="XTreeWidget" name="_groups"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
+          <layout class="QVBoxLayout">
            <item>
-            <widget class="QPushButton" name="_editGroup" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_editGroup">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Edit</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_viewGroup" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_viewGroup">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>View</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_detachGroup" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_detachGroup">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Detach</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_attachGroup" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_attachGroup">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Attach</string>
              </property>
             </widget>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
                <height>40</height>
@@ -972,7 +842,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
   <customwidget>
    <class>Comments</class>
@@ -987,6 +857,11 @@ to be bound by its terms.</comment>
   <customwidget>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
@@ -1078,11 +953,11 @@ to be bound by its terms.</comment>
    <receiver>employee</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>716</x>
      <y>113</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>546</x>
      <y>106</y>
     </hint>
@@ -1094,11 +969,11 @@ to be bound by its terms.</comment>
    <receiver>_deleteCharass</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>336</x>
      <y>747</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>435</x>
      <y>747</y>
     </hint>
@@ -1110,11 +985,11 @@ to be bound by its terms.</comment>
    <receiver>_editCharass</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>336</x>
      <y>747</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>435</x>
      <y>747</y>
     </hint>
@@ -1126,11 +1001,11 @@ to be bound by its terms.</comment>
    <receiver>_editCharass</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>336</x>
      <y>747</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>435</x>
      <y>747</y>
     </hint>
