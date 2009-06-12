@@ -180,7 +180,7 @@ void openSalesOrders::sDelete()
     {
       bool closeInstead = false;
       int result = q.value("result").toInt();
-      if (result == -4 && _privileges->check("ProcessCreditCards"))
+      if (result == -1 && _privileges->check("ProcessCreditCards"))
       {
 	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
 				   storedProcErrorLookup("deleteSo", result) + 
