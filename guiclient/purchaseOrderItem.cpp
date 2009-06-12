@@ -28,6 +28,10 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _vendorItemNumberList->setMaximumWidth(25);
 #endif
 
+  _invVendUOMRatio = 1;
+  _minimumOrder = 0;
+  _orderMultiple = 0;
+
   connect(_ordered, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
   connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sFindWarehouseItemsites(int)));
