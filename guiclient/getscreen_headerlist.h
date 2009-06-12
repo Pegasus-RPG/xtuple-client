@@ -311,7 +311,7 @@
 #include "dspSummarizedSalesByItem.h"
 #include "dspSummarizedSalesBySalesRep.h"
 #include "dspSummarizedSalesHistoryByShippingZone.h"
-#include "dspSummarizedTaxableSales.h"
+#include "dspTaxHistory.h"
 #include "dspTimePhasedAvailability.h"
 #include "dspTimePhasedAvailableCapacityByWorkCenter.h"
 #include "dspTimePhasedBookingsByCustomer.h"

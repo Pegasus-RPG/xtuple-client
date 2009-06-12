@@ -88,7 +88,7 @@
 #include "dspPartiallyShippedOrders.h"
 #include "dspEarnedCommissions.h"
 #include "dspBriefEarnedCommissions.h"
-#include "dspSummarizedTaxableSales.h"
+#include "dspTaxHistory.h"
 
 #include "dspSalesHistoryByCustomer.h"
 #include "dspSalesHistoryByBilltoName.h"
@@ -342,7 +342,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },
     { "so.dspEarnedCommissions", tr("&Earned Commissions..."),	SLOT(sDspEarnedCommissions()), reportsMenu, "ViewCommissions",	NULL, NULL, true, NULL },
     { "so.dspBriefEarnedCommissions", tr("B&rief Earned Commissions..."),	SLOT(sDspBriefEarnedCommissions()), reportsMenu, "ViewCommissions",	NULL, NULL, true, NULL },
-    { "so.dspSummarizedTaxableSales", tr("Summarized &Taxable Sales..."),	SLOT(sDspSummarizedTaxableSales()), reportsMenu, "ViewCommissions",	NULL, NULL, true, NULL },
+    { "so.dspTaxHistory", tr("Tax History..."),	SLOT(sDspTaxHistory()), reportsMenu, "ViewTaxReconciliations",	NULL, NULL, true, NULL },
 
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },
     
@@ -935,9 +935,9 @@ void menuSales::sDspBriefEarnedCommissions()
   omfgThis->handleNewWindow(new dspBriefEarnedCommissions());
 }
 
-void menuSales::sDspSummarizedTaxableSales()
+void menuSales::sDspTaxHistory()
 {
-  omfgThis->handleNewWindow(new dspSummarizedTaxableSales());
+  omfgThis->handleNewWindow(new dspTaxHistory());
 }
 
 

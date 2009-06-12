@@ -108,7 +108,7 @@ class menuSales : public QObject
     void sDspPartiallyShippedOrders();
     void sDspEarnedCommissions();
     void sDspBriefEarnedCommissions();
-    void sDspSummarizedTaxableSales();
+    void sDspTaxHistory();
     
     void sDspSalesHistoryByCustomer();
     void sDspSalesHistoryByBilltoName();

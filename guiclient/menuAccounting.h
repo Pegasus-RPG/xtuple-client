@@ -137,11 +137,12 @@ class menuAccounting : public QObject
     void sTaxCodes();
     void sTaxTypes();
     void sTaxAuthorities();
-	void sTaxZones();
-	void sTaxClasses();
+    void sTaxZones();
+    void sTaxClasses();
     void sTaxAuthoritySearch();
     void sTaxAssignments();
     void sTaxRegistrations();
+    void sDspTaxHistory();
 
     void sReconcileBankaccount();
     void sEnterAdjustment();
@@ -204,6 +205,7 @@ class menuAccounting : public QObject
     QMenu    *coaMenu;
     QMenu    *budgetMenu;
     QMenu    *taxMenu;
+    QMenu    *taxReportsMenu;
     QMenu    *masterInfoMenu;
     QMenu    *bankrecMenu;
     QMenu    *bankrecDisplaysMenu;

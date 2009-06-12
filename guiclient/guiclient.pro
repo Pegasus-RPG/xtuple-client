@@ -188,7 +188,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSummarizedSalesByCustomer.ui dspSummarizedSalesByCustomerByItem.ui                  \
                dspSummarizedSalesByCustomerType.ui dspSummarizedSalesByCustomerTypeByItem.ui          \
                dspSummarizedSalesByItem.ui                                                            \
-               dspSummarizedSalesBySalesRep.ui dspSummarizedTaxableSales.ui                           \
+               dspSummarizedSalesBySalesRep.ui dspTaxHistory.ui                                       \
                dspSummarizedSalesHistoryByShippingZone.ui                                             \
                dspTimePhasedAvailability.ui dspTimePhasedAvailableCapacityByWorkCenter.ui             \
                dspTimePhasedBookingsByCustomer.ui dspTimePhasedBookingsByItem.ui                      \
@@ -447,7 +447,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspCountSlipsByWarehouse.h dspCountSlipEditList.h dspCountTagEditList.h                \
                dspCountTagsByItem.h dspCountTagsByWarehouse.h dspCountTagsByClassCode.h               \
                dspCreditCardTransactions.h                                                            \
-               dspCustomerARHistory.h dspCustomerInformationExport.h         \
+               dspCustomerARHistory.h dspCustomerInformationExport.h                                  \
                dspCustomersByCharacteristic.h dspCustomersByCustomerType.h                            \
                dspDetailedInventoryHistoryByLocation.h dspDetailedInventoryHistoryByLotSerial.h       \
                dspDepositsRegister.h                                                                  \
@@ -508,7 +508,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspSummarizedSalesByCustomer.h dspSummarizedSalesByCustomerByItem.h                    \
                dspSummarizedSalesByCustomerType.h dspSummarizedSalesByCustomerTypeByItem.h            \
                dspSummarizedSalesByItem.h                                                             \
-               dspSummarizedSalesBySalesRep.h dspSummarizedTaxableSales.h                             \
+               dspSummarizedSalesBySalesRep.h dspTaxHistory.h                                         \
                dspSummarizedSalesHistoryByShippingZone.h                                              \
                dspTimePhasedAvailability.h dspTimePhasedAvailableCapacityByWorkCenter.h               \
                dspTimePhasedBookingsByCustomer.h dspTimePhasedBookingsByItem.h                        \
@@ -838,7 +838,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspSummarizedSalesByCustomer.cpp dspSummarizedSalesByCustomerByItem.cpp                \
                dspSummarizedSalesByCustomerType.cpp dspSummarizedSalesByCustomerTypeByItem.cpp        \
                dspSummarizedSalesByItem.cpp                                                           \
-               dspSummarizedSalesBySalesRep.cpp dspSummarizedTaxableSales.cpp                         \
+               dspSummarizedSalesBySalesRep.cpp dspTaxHistory.cpp                                     \
                dspSummarizedSalesHistoryByShippingZone.cpp                                            \
                dspTimePhasedAvailability.cpp dspTimePhasedAvailableCapacityByWorkCenter.cpp           \
                dspTimePhasedBookingsByCustomer.cpp dspTimePhasedBookingsByItem.cpp                    \

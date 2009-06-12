@@ -117,6 +117,7 @@
 #include "searchForCRMAccount.h"
 #include "taxAssignments.h"
 #include "taxRegistrations.h"
+#include "dspTaxHistory.h"
 
 #include "reconcileBankaccount.h"
 #include "bankAdjustment.h"
@@ -181,16 +182,17 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   glMenu = new QMenu(parent);
   glEnterTransactionMenu = new QMenu(parent);
   glStandardJournalsMenu = new QMenu(parent);
-  bankrecMenu		= new QMenu(parent);
-  bankrecReportsMenu    = new QMenu(parent);
-  financialReportsMenu	= new QMenu(parent);
-  glReportsMenu		= new QMenu(parent);
-  calendarMenu      = new QMenu(parent);
-  coaMenu           = new QMenu(parent);
-  budgetMenu		= new QMenu(parent);
-  taxMenu           = new QMenu(parent);
-  masterInfoMenu	= new QMenu(parent);
-  utilitiesMenu		= new QMenu(parent);
+  bankrecMenu = new QMenu(parent);
+  bankrecReportsMenu = new QMenu(parent);
+  financialReportsMenu = new QMenu(parent);
+  glReportsMenu = new QMenu(parent);
+  calendarMenu = new QMenu(parent);
+  coaMenu = new QMenu(parent);
+  budgetMenu = new QMenu(parent);
+  taxMenu = new QMenu(parent);
+  taxReportsMenu = new QMenu(parent);
+  masterInfoMenu = new QMenu(parent);
+  utilitiesMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.accnt");
   apMenu->setObjectName("menu.accnt.ap");
@@ -217,6 +219,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   coaMenu->setObjectName("menu.accnt.coa");
   budgetMenu->setObjectName("menu.accnt.budget");
   taxMenu->setObjectName("menu.accnt.tax");
+  taxMenu->setObjectName("menu.accnt.tax.taxreports");
   masterInfoMenu->setObjectName("menu.accnt.masterinfo");
   utilitiesMenu->setObjectName("menu.accnt.utilities");
 
@@ -421,15 +424,20 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
 
     // Accounting | Tax
     { "menu", tr("&Tax"), (char*)taxMenu, mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "gl.searchForTaxAuth",	tr("&Search for Tax Authority..."), SLOT(sTaxAuthoritySearch()),	taxMenu,	"MaintainTaxAuthorities ViewTaxAuthorities", NULL, NULL, true, NULL },
+    { "gl.searchForTaxAuth",	tr("&Search for Tax Authority..."), SLOT(sTaxAuthoritySearch()),taxMenu,	"MaintainTaxAuthorities ViewTaxAuthorities", NULL, NULL, true, NULL },
     { "gl.taxAuthorities",	tr("Tax &Authorities..."),	SLOT(sTaxAuthorities()),	taxMenu,	"MaintainTaxAuthorities ViewTaxAuthorities", NULL, NULL, true, NULL },
-    { "gl.taxZones",		tr("Tax &Zones..."),		SLOT(sTaxZones()),		taxMenu,	"MaintainTaxZones ViewTaxZones", NULL, NULL, true, NULL }, 
-    { "gl.taxClasses",		tr("Tax &Classes..."),		SLOT(sTaxClasses()),		taxMenu,	"MaintainTaxClasses ViewTaxClasses", NULL, NULL, true, NULL }, 
-    { "gl.taxCodes",		tr("Tax &Codes..."),		SLOT(sTaxCodes()),		taxMenu,	"MaintainTaxCodes ViewTaxCodes", NULL, NULL, true, NULL },
-    { "gl.taxTypes",		tr("Tax &Types..."),		SLOT(sTaxTypes()),		taxMenu,	"MaintainTaxTypes ViewTaxTypes", NULL, NULL, true, NULL },
+    { "gl.taxZones",		tr("Tax &Zones..."),		SLOT(sTaxZones()),		taxMenu,	"MaintainTaxZones ViewTaxZones",             NULL, NULL, true, NULL }, 
+    { "gl.taxClasses",		tr("Tax &Classes..."),		SLOT(sTaxClasses()),		taxMenu,	"MaintainTaxClasses ViewTaxClasses",         NULL, NULL, true, NULL }, 
+    { "gl.taxCodes",		tr("Tax &Codes..."),		SLOT(sTaxCodes()),		taxMenu,	"MaintainTaxCodes ViewTaxCodes",             NULL, NULL, true, NULL },
+    { "gl.taxTypes",		tr("Tax &Types..."),		SLOT(sTaxTypes()),		taxMenu,	"MaintainTaxTypes ViewTaxTypes",             NULL, NULL, true, NULL },
     { "gl.taxAssignments",	tr("Tax Assi&gnments..."),	SLOT(sTaxAssignments()),	taxMenu,	"MaintainTaxAssignments ViewTaxAssignments", NULL, NULL, true, NULL },
-    { "gl.taxRegistatrions",	tr("Tax &Registrations..."),	SLOT(sTaxRegistrations()),	taxMenu,	"MaintainChartOfAccounts",   NULL, NULL, true, NULL },
-    
+    { "gl.taxRegistatrions",	tr("Tax &Registrations..."),	SLOT(sTaxRegistrations()),	taxMenu,	"MaintainChartOfAccounts",                   NULL, NULL, true, NULL },
+    { "separator",		NULL,			        NULL,			        taxMenu,	"true",	                                     NULL, NULL, true, NULL },
+ 
+    // Accounting | Tax | Reports
+    { "menu",			tr("&Reports"),	                (char*)taxReportsMenu,		taxMenu,	"true",					     NULL, NULL, true, NULL },
+    { "gl.dspTaxHistory",	tr("&Tax History..."),           SLOT(sDspTaxHistory()),        taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
+     
     { "separator",		  NULL,					NULL,					mainMenu,		"true",					       NULL, NULL, true, NULL },
    
     // Accounting | Master Information
@@ -1102,6 +1110,11 @@ void menuAccounting::sTaxAssignments()
 void menuAccounting::sTaxRegistrations()
 {
   omfgThis->handleNewWindow(new taxRegistrations());
+}
+
+void menuAccounting::sDspTaxHistory()
+{
+  omfgThis->handleNewWindow(new dspTaxHistory());
 }
 
 void menuAccounting::sDspBankrecHistory()
