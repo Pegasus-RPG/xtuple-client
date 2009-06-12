@@ -97,18 +97,18 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
   param = pParams.value("mode", &valid);
   if (valid)
   {
-    _mode = cNew;
-
-    param = pParams.value("crmacct_id", &valid);
-    if (valid)
-      _crmacct->setId(param.toInt());
-
     if (param.toString() == "new")
     {
+      _mode = cNew;
+
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       _comments->setReadOnly(true);
+      
+      param = pParams.value("crmacct_id", &valid);
+      if (valid)
+        _crmacct->setId(param.toInt());
     }
     else if (param.toString() == "edit")
     {

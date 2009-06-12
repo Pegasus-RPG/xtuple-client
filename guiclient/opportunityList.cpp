@@ -63,11 +63,15 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   if(_privileges->check("MaintainOpportunities"))
   {
     connect(_list, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_list, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
     connect(_list, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
     connect(_list, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
   else
+  {
+    connect(_list, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
     connect(_list, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
 
 //  statusBar()->hide();
 
