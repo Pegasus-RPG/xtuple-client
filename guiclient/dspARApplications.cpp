@@ -42,10 +42,10 @@ dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFla
   _arapply->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );
   _arapply->addColumn(tr("Post Date"),       _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
   _arapply->addColumn(tr("Dist. Date"),      _dateColumn, Qt::AlignCenter, true,  "arapply_distdate" );
-  _arapply->addColumn("hidden source type",           10, Qt::AlignCenter, true,  "arapply_source_doctype" );
+  _arapply->addColumn(tr("Source Doc Type"),          10, Qt::AlignCenter, true,  "arapply_source_doctype" );
   _arapply->addColumn(tr("Source"),	         _itemColumn, Qt::AlignCenter, true,  "doctype" );
   _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "source" );
-  _arapply->addColumn("hidden target type",           10, Qt::AlignCenter, true,  "arapply_target_doctype" );
+  _arapply->addColumn(tr("Apply-To Doc Type"),        10, Qt::AlignCenter, true,  "arapply_target_doctype" );
   _arapply->addColumn(tr("Apply-To"),        _itemColumn, Qt::AlignCenter, true,  "targetdoctype" );
   _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "target" );
   _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
