@@ -304,8 +304,7 @@ void unpostedPurchaseOrders::sHandleButtons()
   _edit->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
 		    (open && _privileges->check("MaintainPostedPurchaseOrders")));
   _post->setEnabled(unposted && _privileges->check("PostPurchaseOrders"));
-  _print->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
-		     (open && _privileges->check("MaintainPostedPurchaseOrders")));
+  _print->setEnabled(_privileges->check("PrintPurchaseOrders"));
 
   if ((unposted && _privileges->check("MaintainPurchaseOrders")) ||
       (open && _privileges->check("MaintainPostedPurchaseOrders")))
