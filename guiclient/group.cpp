@@ -110,7 +110,9 @@ enum SetResponse group::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _addAll->setEnabled(FALSE);
       _revokeAll->setEnabled(FALSE);
+      disconnect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
       disconnect(_available, SIGNAL(valid(bool)), _add, SLOT(setEnabled(bool)));
+      disconnect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
       disconnect(_granted, SIGNAL(valid(bool)), _revoke, SLOT(setEnabled(bool)));
       _save->hide();
       _close->setText(tr("&Close"));
