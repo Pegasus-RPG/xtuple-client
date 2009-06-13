@@ -30,6 +30,7 @@ public slots:
     virtual void sSave();
     virtual void sCheck();
     virtual void populate();
+    virtual void sHandleMask();
 
 protected slots:
     virtual void languageChange();

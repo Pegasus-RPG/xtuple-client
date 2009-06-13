@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,54 +8,54 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>characteristic</class>
- <widget class="QDialog" name="characteristic" >
-  <property name="geometry" >
+ <widget class="QDialog" name="characteristic">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
-    <height>416</height>
+    <width>420</width>
+    <height>448</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Characteristic</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QLabel" name="_nameLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_nameLit">
+           <property name="text">
             <string>Name:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
-           <property name="buddy" >
+           <property name="buddy">
             <cstring>_name</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="XLineEdit" name="_name" />
+          <widget class="XLineEdit" name="_name"/>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Fixed</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>163</height>
@@ -63,69 +64,69 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
          <item>
-          <widget class="QGroupBox" name="_useGroup" >
-           <property name="title" >
+          <widget class="QGroupBox" name="_useGroup">
+           <property name="title">
             <string>May be used for:</string>
            </property>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
+           <layout class="QVBoxLayout">
+            <property name="spacing">
              <number>0</number>
             </property>
-            <property name="margin" >
+            <property name="margin">
              <number>5</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="_items" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_items">
+              <property name="text">
                <string>Item Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_customers" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_customers">
+              <property name="text">
                <string>Customer Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_lotSerial" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_lotSerial">
+              <property name="text">
                <string>Lot/Serial Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_addresses" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_addresses">
+              <property name="text">
                <string>Address Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_crmaccounts" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_crmaccounts">
+              <property name="text">
                <string>CRM Account Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_contacts" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_contacts">
+              <property name="text">
                <string>Contact Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_opportunity" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_opportunity">
+              <property name="text">
                <string>Opportunity Characteristics</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_employees" >
-              <property name="text" >
+             <widget class="QCheckBox" name="_employees">
+              <property name="text">
                <string>Employee Characteristics</string>
               </property>
              </widget>
@@ -135,13 +136,13 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>100</width>
              <height>163</height>
@@ -154,36 +155,36 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
+        <widget class="QPushButton" name="_close">
+         <property name="text">
           <string>&amp;Cancel</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="_save" >
-         <property name="text" >
+        <widget class="QPushButton" name="_save">
+         <property name="text">
           <string>&amp;Save</string>
          </property>
-         <property name="autoDefault" >
+         <property name="autoDefault">
           <bool>true</bool>
          </property>
-         <property name="default" >
+         <property name="default">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>89</width>
            <height>132</height>
@@ -196,59 +197,81 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="_typeLit" >
-       <property name="text" >
-        <string>Type:</string>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="_maskLit">
+         <property name="text">
+          <string>Input Mask:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="XComboBox" name="_mask">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <property name="allowNull">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>00/00/0000</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>00000000.99</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>xx-xxxx-xx</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="_validatorLit">
+         <property name="text">
+          <string>Validator:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="XComboBox" name="_validator">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <property name="allowNull">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>[Y|N]</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>[1-9]\\d{0,3}</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>[A-C]\\d{5}[W-Z]</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="XComboBox" name="_type" >
-       <item>
-        <property name="text" >
-         <string>Boolean</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Character</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Date</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Integer</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Numeric</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Text</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Timestamp</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -259,39 +282,39 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" >
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="_descriptionLit" >
-        <property name="text" >
+       <widget class="QLabel" name="_descriptionLit">
+        <property name="text">
          <string>Description:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>_description</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QTextEdit" name="_description" />
+       <widget class="QTextEdit" name="_description"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -316,10 +339,11 @@ to be bound by its terms.</comment>
   <tabstop>_contacts</tabstop>
   <tabstop>_opportunity</tabstop>
   <tabstop>_employees</tabstop>
-  <tabstop>_type</tabstop>
+  <tabstop>_mask</tabstop>
+  <tabstop>_validator</tabstop>
   <tabstop>_description</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -329,11 +353,11 @@ to be bound by its terms.</comment>
    <receiver>characteristic</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>350</x>
      <y>31</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

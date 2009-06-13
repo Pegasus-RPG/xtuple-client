@@ -13,13 +13,15 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QRegExpValidator>
 
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()),    this, SLOT(sSave()));
+  connect(_char, SIGNAL(newID(int)),   this, SLOT(sHandleMask()));
 
   _char->setAllowNull(TRUE);
 
@@ -311,8 +313,32 @@ void characteristicAssignment::handleTargetType()
     setWindowTitle(tr("Employee Characteristic"));
     boolColumn = "char_employees";
   }
-  _char->populate(QString("SELECT char_id, char_name, char_name "
-			 "FROM char "
-			 "WHERE (%1) "
-			 "ORDER BY char_name; ").arg(boolColumn));
+  _char->populate(QString("SELECT char_id, CASE WHEN (char_notes IS NULL) THEN char_name "
+                          "                     ELSE (char_name || ' - ' || firstLine(char_notes)) END "
+                          "FROM char "
+                          "WHERE (%1) "
+                          "ORDER BY char_name; ").arg(boolColumn));
+}
+
+void characteristicAssignment::sHandleMask()
+{
+  XSqlQuery mask;
+  mask.prepare( "SELECT char_mask, char_validator "
+                "FROM char "
+                "WHERE (char_id=:char_id);" );
+  mask.bindValue(":char_id", _char->id());
+  mask.exec();
+  if (mask.first())
+  {
+    _value->setInputMask(mask.value("char_mask").toString());
+    QRegExp rx(mask.value("char_validator").toString());
+    QValidator *validator = new QRegExpValidator(rx, this);
+    _value->setValidator(validator);
+  }
+  else if (mask.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, mask.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
 }

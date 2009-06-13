@@ -14,8 +14,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-const char *_charTypes[] = { "B", "C", "D", "I", "N", "T", "S" };
-
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -40,10 +38,6 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
   
-// Temporarily hide this control until ready to deploy
-  _type->hide();
-  _typeLit->hide();
-
   param = pParams.value("char_id", &valid);
   if (valid)
   {
@@ -59,7 +53,9 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _type->setEnabled(FALSE);
+// TODO
+//      _mask->setEnabled(FALSE);
+//      _validator->setEnabled(FALSE);
     }
     else if (param.toString() == "view")
     {
@@ -67,7 +63,8 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
       _name->setEnabled(FALSE);
       _useGroup->setEnabled(FALSE);
-      _type->setEnabled(FALSE);
+      _mask->setEnabled(FALSE);
+      _validator->setEnabled(FALSE);
 
       _items->setEnabled(FALSE);
       _customers->setEnabled(FALSE);
@@ -126,13 +123,13 @@ void characteristic::sSave()
                "  char_contacts, char_crmaccounts, char_addresses, "
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
-               "  char_notes, char_type ) "
+               "  char_notes, char_mask, char_validator ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
                "  :char_contacts, :char_crmaccounts, :char_addresses, "
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
-               "  :char_notes, :char_type );" );
+               "  :char_notes, :char_mask, :char_validator );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE char "
@@ -147,7 +144,8 @@ void characteristic::sSave()
                "    char_lotserial=:char_lotserial,"
                "    char_employees=:char_employees,"
                "    char_notes=:char_notes,"
-               "    char_type=:char_type "
+               "    char_mask=:char_mask,"
+               "    char_validator=:char_validator "
                "WHERE (char_id=:char_id);" );
 
   q.bindValue(":char_id", _charid);
@@ -163,7 +161,8 @@ void characteristic::sSave()
   q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
   q.bindValue(":char_notes",       _description->toPlainText().trimmed());
-  q.bindValue(":char_type",        _charTypes[_type->currentItem()]);
+  q.bindValue(":char_mask",        _mask->currentText());
+  q.bindValue(":char_validator",   _validator->currentText());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -214,10 +213,8 @@ void characteristic::populate()
     _opportunity->setChecked(q.value("char_opportunity").toBool());
     _employees->setChecked(q.value("char_employees").toBool());
     _description->setText(q.value("char_notes").toString());
-    QString type = q.value("char_type").toString();
-    for (int counter = 0; counter < _type->count(); counter++)
-      if (type == _charTypes[counter])
-        _type->setCurrentItem(counter);
+    _mask->setText(q.value("char_mask").toString());
+    _validator->setText(q.value("char_validator").toString());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
