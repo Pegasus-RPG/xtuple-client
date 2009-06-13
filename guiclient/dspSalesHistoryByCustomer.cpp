@@ -176,6 +176,7 @@ void dspSalesHistoryByCustomer::sHandleParams()
 void dspSalesHistoryByCustomer::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_sohist->currentItem();
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
   if (!_privileges->check("EditSalesHistory"))
@@ -183,9 +184,12 @@ void dspSalesHistoryByCustomer::sPopulateMenu(QMenu *pMenu)
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
-  pMenu->insertSeparator();
+  if (item->rawValue("invoicenumber").toString().length() > 0)
+  {
+    pMenu->insertSeparator();
 
-  menuItem = pMenu->insertItem(tr("Invoice Information..."), this, SLOT(sInvoiceInformation()), 0);
+    menuItem = pMenu->insertItem(tr("Invoice Information..."), this, SLOT(sInvoiceInformation()), 0);
+  }
 }
 
 void dspSalesHistoryByCustomer::sEdit()
