@@ -169,6 +169,12 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     _listprice->show();
   }
 
+  param = pParams.value("char_id", &valid);
+  if (valid)
+  {
+    _char->setId(param.toInt());
+  }
+
   return NoError;
 }
 
@@ -323,7 +329,8 @@ void characteristicAssignment::handleTargetType()
 void characteristicAssignment::sHandleMask()
 {
   XSqlQuery mask;
-  mask.prepare( "SELECT char_mask, char_validator "
+  mask.prepare( "SELECT COALESCE(char_mask, '') AS char_mask,"
+                "       COALESCE(char_validator, '.*') AS char_validator "
                 "FROM char "
                 "WHERE (char_id=:char_id);" );
   mask.bindValue(":char_id", _char->id());

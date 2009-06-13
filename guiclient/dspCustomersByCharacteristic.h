@@ -30,6 +30,8 @@ public slots:
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sEdit();
+    virtual void sEditCharacteristic();
+    virtual void sNewCharacteristic();
     virtual void sView();
     virtual void sFillList();
     virtual void sFillList( int pItemid, bool pLocal );

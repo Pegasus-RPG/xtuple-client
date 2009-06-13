@@ -17,6 +17,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "characteristicAssignment.h"
 #include "customer.h"
 #include "guiclient.h"
 
@@ -89,15 +90,28 @@ void dspCustomersByCharacteristic::sPrint()
     report.reportError(this);
 }
 
-void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->insertItem(tr("Edit Customer..."), this, SLOT(sEdit()), 0);
   if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->insertItem(tr("View Customer..."), this, SLOT(sView()), 0);
+
+  if (((XTreeWidgetItem *)pSelected)->altId() == -1)
+  {
+    menuItem = pMenu->insertItem(tr("New Characteristic..."), this, SLOT(sNewCharacteristic()), 0);
+    if (!_privileges->check("MaintainCustomerMasters"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
+  else
+  {
+    menuItem = pMenu->insertItem(tr("Edit Characteristic..."), this, SLOT(sEditCharacteristic()), 0);
+    if (!_privileges->check("MaintainCustomerMasters"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void dspCustomersByCharacteristic::sEdit()
@@ -122,6 +136,33 @@ void dspCustomersByCharacteristic::sView()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspCustomersByCharacteristic::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("cust_id", _cust->id());
+  params.append("char_id", _char->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void dspCustomersByCharacteristic::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _cust->altId());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
 void dspCustomersByCharacteristic::sFillList()
 {
   sFillList(-1, TRUE);
@@ -129,9 +170,9 @@ void dspCustomersByCharacteristic::sFillList()
 
 void dspCustomersByCharacteristic::sFillList(int pCustid, bool pLocal)
 {
-  QString sql = "SELECT cust_id, cust_active, cust_number, cust_name, char_name, "
+  QString sql =
 		"<? if exists(\"hasCharacteristic\") ?>"
-		"       charass_value "
+    "SELECT cust_id, charass_id, cust_active, cust_number, cust_name, char_name, charass_value "
 		"FROM cust, charass, char "
 		"WHERE ( (charass_target_type='C')"
 		" AND (charass_target_id=cust_id)"
@@ -144,7 +185,7 @@ void dspCustomersByCharacteristic::sFillList(int pCustid, bool pLocal)
 		" <? endif ?>"
 		") "
 		"<? else ?>"	// if does not have characteristic
-		"       '' AS charass_value "
+    "SELECT cust_id, -1, cust_active, cust_number, cust_name, char_name, '' AS charass_value "
 		"FROM cust, char "
 		"WHERE ((cust_id NOT IN (SELECT charass_target_id"
 		"                        FROM charass"
@@ -165,9 +206,9 @@ void dspCustomersByCharacteristic::sFillList(int pCustid, bool pLocal)
   q = mql.toQuery(params);
 
   if ((pCustid != -1) && (pLocal))
-    _cust->populate(q, pCustid);
+    _cust->populate(q, pCustid, true);
   else
-    _cust->populate(q);
+    _cust->populate(q, true);
 
   if (q.lastError().type() != QSqlError::NoError)
   {
