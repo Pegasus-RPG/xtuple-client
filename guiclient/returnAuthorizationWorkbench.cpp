@@ -679,7 +679,7 @@ bool returnAuthorizationWorkbench::checkSitePrivs(int orderid)
   return true;
 }
 
-void returnAuthorizationWorkbench::sPopulateReviewMenu(QMenu *pMenu, QTreeWidgetItem * pSelected)
+void returnAuthorizationWorkbench::sPopulateReviewMenu(QMenu *pMenu, QTreeWidgetItem * /*pSelected*/)
 {
   int menuItem;
 
@@ -689,7 +689,7 @@ void returnAuthorizationWorkbench::sPopulateReviewMenu(QMenu *pMenu, QTreeWidget
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 }
 
-void returnAuthorizationWorkbench::sPopulateDueMenu(QMenu *pMenu, QTreeWidgetItem * pSelected)
+void returnAuthorizationWorkbench::sPopulateDueMenu(QMenu *pMenu, QTreeWidgetItem * /*pSelected*/)
 {
   int menuItem;
 
