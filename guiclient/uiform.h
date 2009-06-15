@@ -32,6 +32,7 @@ public:
     uiform(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~uiform();
     virtual bool changed();
+    static  bool saveFile(const QString &source, QString &filename);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );

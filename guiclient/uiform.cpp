@@ -280,6 +280,11 @@ void uiform::sExport()
   if(filename.isNull())
     return;
 
+  (void)saveFile(_source, filename);
+}
+
+bool uiform::saveFile(const QString &source, QString &filename)
+{
   QFileInfo fi(filename);
   if(fi.suffix().isEmpty())
     filename += ".ui";
@@ -287,14 +292,16 @@ void uiform::sExport()
   QFile file(filename);
   if(!file.open(QIODevice::WriteOnly))
   {
-    QMessageBox::critical(this, tr("Could not export file"), file.errorString());
-    return;
+    QMessageBox::critical(0, tr("Could not export file"), file.errorString());
+    return false;
   }
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
-  ts << _source;
+  ts << source;
   file.close();
+
+  return true;
 }
 
 void uiform::sScriptNew()

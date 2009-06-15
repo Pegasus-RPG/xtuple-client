@@ -350,20 +350,26 @@ bool scriptEditor::sSaveFile()
   if(filename.isNull())
     return false;
 
+  return saveFile(_source->toPlainText(), filename);
+}
+
+bool scriptEditor::saveFile(const QString &source,
+                            QString &filename) // input/output
+{
   QFileInfo fi(filename);
   if(fi.suffix().isEmpty())
-    filename += ".script";
+    filename += ".js";
 
   QFile file(filename);
   if(!file.open(QIODevice::WriteOnly))
   {
-    QMessageBox::critical(this, tr("Could not export file"), file.errorString());
+    QMessageBox::critical(0, tr("Could not export file"), file.errorString());
     return false;
   }
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
-  ts << _source->toPlainText();
+  ts << source;
   file.close();
 
   lastSaveDir = fi.absolutePath();
