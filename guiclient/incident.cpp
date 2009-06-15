@@ -10,22 +10,16 @@
 
 #include "incident.h"
 
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QMenu>
 
+#include "arOpenItem.h"
+#include "returnAuthorization.h"
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
-#include "returnAuthorization.h"
-#include "arOpenItem.h"
-#include "deliverEmail.h"
 
-/*
- *  Constructs a incident as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -33,49 +27,26 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   setupUi(this);
 
   _incdtid = -1;
-  _commentAdded = false;
-  _updated = false;
-  _ediprofileid = -1;
   _saved = false;
   _aropenid = -1;
-  
+
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  // signals and slots connections
-  connect(_cancel,        SIGNAL(clicked()),        this,	SLOT(sCancel()));
-  connect(_crmacct,       SIGNAL(newId(int)),       this,	SLOT(sCRMAcctChanged(int)));
-  connect(_deleteTodoItem, SIGNAL(clicked()),       this,	SLOT(sDeleteTodoItem()));
-  connect(_editTodoItem,  SIGNAL(clicked()),        this,	SLOT(sEditTodoItem()));
-  connect(_item,          SIGNAL(newId(int)),     _lotserial,   SLOT(setItemId(int)));
-  connect(_newTodoItem,   SIGNAL(clicked()),        this,	SLOT(sNewTodoItem()));
-  connect(_save,          SIGNAL(clicked()),        this,	SLOT(sSave()));
-  connect(_todoList,      SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  connect(_todoList,      SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
-	    this,         SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_todoList,      SIGNAL(valid(bool)),      this, SLOT(sHandleTodoPrivs()));
-  connect(_viewTodoItem,  SIGNAL(clicked()),        this,	SLOT(sViewTodoItem()));
-  //connect(_return,      SIGNAL(clicked()),        this, SLOT(sReturn()));
-  connect(_viewAR,        SIGNAL(clicked()),        this, SLOT(sViewAR()));
-  connect(_cntct,         SIGNAL(changed()),        this, SLOT(sContactChanged()));
   connect(_assignedTo,    SIGNAL(newId(int)),       this, SLOT(sAssigned()));
-  connect(_comments,      SIGNAL(commentAdded()),   this, SLOT(sCommentAdded()));
-  
-  //Note changes for e-mail notification
-  connect(_category,      SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateEdiProfile()));
-  connect(_category,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_description,   SIGNAL(textChanged(QString)), this, SLOT(sChanged()));
-  connect(_crmacct,       SIGNAL(newId(int))          , this, SLOT(sChanged()));
-  connect(_owner,         SIGNAL(newId(int))          , this, SLOT(sChanged()));
-  connect(_assignedTo,    SIGNAL(newId(int))          , this, SLOT(sChanged()));
-  connect(_severity,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_status,        SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_resolution,    SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_priority,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_resolution,    SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
-  connect(_cntct,         SIGNAL(changed())           , this, SLOT(sChanged()));
-  connect(_notes,         SIGNAL(textChanged())       , this, SLOT(sChanged()));
-  connect(_item,          SIGNAL(newId(int))          , this, SLOT(sChanged()));
-  connect(_lotserial,     SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  connect(_cancel,        SIGNAL(clicked()),        this,       SLOT(sCancel()));
+  connect(_cntct,         SIGNAL(changed()),        this, SLOT(sContactChanged()));
+  connect(_crmacct,       SIGNAL(newId(int)),       this,       SLOT(sCRMAcctChanged(int)));
+  connect(_deleteTodoItem, SIGNAL(clicked()),       this,       SLOT(sDeleteTodoItem()));
+  connect(_editTodoItem,  SIGNAL(clicked()),        this,       SLOT(sEditTodoItem()));
+  connect(_item,          SIGNAL(newId(int)),     _lotserial,   SLOT(setItemId(int)));
+  connect(_newTodoItem,   SIGNAL(clicked()),        this,       SLOT(sNewTodoItem()));
+  //connect(_return,      SIGNAL(clicked()),        this, SLOT(sReturn()));
+  connect(_save,          SIGNAL(clicked()),        this,       SLOT(sSave()));
+  connect(_todoList,      SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
+  connect(_todoList,      SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,         SLOT(sPopulateTodoMenu(QMenu*)));
+  connect(_todoList,      SIGNAL(valid(bool)),      this, SLOT(sHandleTodoPrivs()));
+  connect(_viewAR,        SIGNAL(clicked()),        this, SLOT(sViewAR()));
+  connect(_viewTodoItem,  SIGNAL(clicked()),        this,       SLOT(sViewTodoItem()));
 
   _severity->setType(XComboBox::IncidentSeverity);
   _priority->setType(XComboBox::IncidentPriority);
@@ -95,7 +66,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _todoList->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date");
 
   _owner->setUsername(omfgThis->username());
-  
+
   if (_metrics->boolean("LotSerialControl"))
   {
     connect(_item, SIGNAL(valid(bool)), _lotserial, SLOT(setEnabled(bool)));
@@ -106,22 +77,13 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   // because this causes a pop-behind situation we are hiding for now.
   //_return->hide();
-  
-  sUpdateEdiProfile();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 incident::~incident()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void incident::languageChange()
 {
   retranslateUi(this);
@@ -192,7 +154,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _editTodoItem->setEnabled(false);
       _newTodoItem->setEnabled(false);
       _owner->setEnabled(false);
-  
+
       _save->hide();
       _cancel->setText(tr("&Close"));
       _cancel->setFocus();
@@ -231,10 +193,10 @@ enum SetResponse incident::set(const ParameterList &pParams)
     q.bindValue(":creditMemo", tr("Credit Memo"));
     q.bindValue(":debitMemo", tr("Debit Memo"));
     q.bindValue(":invoice", tr("Invoice"));
-    q.bindValue(":cashdeposit", tr("Customer Deposit"));    
+    q.bindValue(":cashdeposit", tr("Customer Deposit"));
     q.exec();
     if (q.first())
-    { 
+    {
       if (_metrics->value("DefaultARIncidentStatus").toInt())
         _category->setId(_metrics->value("DefaultARIncidentStatus").toInt());
       _ardoctype=q.value("aropen_doctype").toString();
@@ -248,36 +210,56 @@ enum SetResponse incident::set(const ParameterList &pParams)
   return NoError;
 }
 
+int incident::id() const
+{
+  return _incdtid;
+}
+
+int incident::mode() const
+{
+  return _mode;
+}
+
+int incident::aropenid() const
+{
+  return _aropenid;
+}
+
+QString incident::arDoctype() const
+{
+  return _ardoctype;
+}
+
 int incident::saveContact(ContactCluster* pContact)
 {
   pContact->setAccount(_crmacct->id());
 
-  int answer = 2;	// Cancel
+  int answer = 2;       // Cancel
   int saveResult = pContact->save(AddressCluster::CHECK);
 
   if (-1 == saveResult)
     systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
+                         "Check the database server log for errors.")
+                      .arg(pContact->label()).arg(saveResult),
+                __FILE__, __LINE__);
   else if (-2 == saveResult)
     answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this address (%1).\n"
-		       "What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
+                    tr("Question Saving Address"),
+                    tr("There are multiple Contacts sharing this address (%1).\n"
+                       "What would you like to do?")
+                    .arg(pContact->label()),
+                    tr("Change This One"),
+                    tr("Change Address for All"),
+                    tr("Cancel"),
+                    2, 2);
   else if (-10 == saveResult)
     answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(pContact->label()),
-		    tr("Would you like to update the existing Contact or create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
+                    tr("Question Saving %1").arg(pContact->label()),
+                    tr("Would you like to update the existing Contact or create a new one?"),
+                    tr("Create New"),
+                    tr("Change Existing"),
+                    tr("Cancel"),
+                    2, 2);
   if (0 == answer)
     return pContact->save(AddressCluster::CHANGEONE);
   else if (1 == answer)
@@ -347,29 +329,29 @@ bool incident::save(bool partial)
     if(_crmacct->id() == -1)
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify the Account that this incident is for.") );
+        tr("You must specify the Account that this incident is for.") );
       return false;
     }
 
     if(_cntct->id() <= 0 && _cntct->name().simplified().isEmpty())
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify a Contact for this Incident.") );
+        tr("You must specify a Contact for this Incident.") );
       return false;
     }
 
     if(_description->text().trimmed().isEmpty())
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify a description for this incident report.") );
+        tr("You must specify a description for this incident report.") );
       _description->setFocus();
       return false;
     }
-    
+
     if (_status->currentIndex() == 3 && _assignedTo->username().isEmpty())
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify an assignee when the status is assigned.") );
+        tr("You must specify an assignee when the status is assigned.") );
       _description->setFocus();
       return false;
     }
@@ -466,9 +448,6 @@ bool incident::save(bool partial)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
-  
-  if (! partial)
-    emit prepareMail();
 
   _saved = true;
   return true;
@@ -500,7 +479,7 @@ void incident::sFillHistoryList()
 }
 
 void incident::populate()
-{ 
+{
   q.prepare("SELECT incdt_number,"
             "       incdt_crmacct_id,"
             "       COALESCE(incdt_cntct_id,-1) AS incdt_cntct_id,"
@@ -510,8 +489,8 @@ void incident::populate()
             "       incdt_status, incdt_assigned_username,"
             "       incdt_incdtcat_id, incdt_incdtseverity_id,"
             "       incdt_incdtpriority_id, incdt_incdtresolution_id, incdt_owner_username, "
-			"       COALESCE(incdt_aropen_id, -1) AS docId,"
-			"       COALESCE(aropen_docnumber, '') AS docNumber,"
+                        "       COALESCE(incdt_aropen_id, -1) AS docId,"
+                        "       COALESCE(aropen_docnumber, '') AS docNumber,"
             "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
             "            WHEN (aropen_doctype='D') THEN :debitMemo"
             "            WHEN (aropen_doctype='I') THEN :invoice"
@@ -520,7 +499,7 @@ void incident::populate()
             "       END AS docType, "
             "       aropen_doctype "
             "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
-			"           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
+                        "           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
             "WHERE (incdt_id=:incdt_id); ");
   q.bindValue(":incdt_id", _incdtid);
   q.bindValue(":creditMemo", tr("Credit Memo"));
@@ -539,7 +518,6 @@ void incident::populate()
     if(!q.value("incdt_incdtcat_id").toString().isEmpty())
       _category->setId(q.value("incdt_incdtcat_id").toInt());
     _status->setCurrentIndex(_statusCodes.indexOf(q.value("incdt_status").toString()));
-    _statusCache=_status->currentIndex();
     _severity->setNull();
     if(!q.value("incdt_incdtseverity_id").toString().isEmpty())
       _severity->setId(q.value("incdt_incdtseverity_id").toInt());
@@ -563,7 +541,7 @@ void incident::populate()
     _comments->setId(_incdtid);
     _documents->setId(_incdtid);
     _alarms->setId(_incdtid);
-	
+        
     _docType->setText(q.value("docType").toString());
     _docNumber->setText(q.value("docNumber").toString());
     _aropenid = q.value("docId").toInt();
@@ -573,7 +551,8 @@ void incident::populate()
 
     sFillHistoryList();
     sFillTodoList();
-    _updated=false;
+
+    emit populated();
   }
 }
 
@@ -647,17 +626,17 @@ void incident::sDeleteTodoItem()
 void incident::sFillTodoList()
 {
   q.prepare("SELECT todoitem_id, *, "
-	    "       firstLine(todoitem_notes) AS todoitem_notes, "
+            "       firstLine(todoitem_notes) AS todoitem_notes, "
             "       CASE WHEN (todoitem_status != 'C' AND"
             "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
             "            WHEN (todoitem_status != 'C' AND"
             "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
             "       END AS todoitem_due_date_qtforegroundrole "
-	    "  FROM todoitem "
+            "  FROM todoitem "
             "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-	    "WHERE ( (todoitem_incdt_id=:incdt_id) "
-	    "  AND   (todoitem_active) ) "
-	    "ORDER BY todoitem_due_date, todoitem_username;");
+            "WHERE ( (todoitem_incdt_id=:incdt_id) "
+            "  AND   (todoitem_active) ) "
+            "ORDER BY todoitem_due_date, todoitem_username;");
 
   q.bindValue(":incdt_id", _incdtid);
   q.exec();
@@ -726,12 +705,12 @@ void incident::sHandleTodoPrivs()
   if (editPriv)
   {
     disconnect(_todoList,SIGNAL(itemSelected(int)),_viewTodoItem, SLOT(animateClick()));
-    connect(_todoList,	SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
+    connect(_todoList,  SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
   }
   else if (viewPriv)
   {
     disconnect(_todoList,SIGNAL(itemSelected(int)),_editTodoItem, SLOT(animateClick()));
-    connect(_todoList,	SIGNAL(itemSelected(int)), _viewTodoItem, SLOT(animateClick()));
+    connect(_todoList,  SIGNAL(itemSelected(int)), _viewTodoItem, SLOT(animateClick()));
   }
 }
 
@@ -761,9 +740,7 @@ void incident::sReturn()
   else
     QMessageBox::critical(this, tr("Could Not Open Window"),
                           tr("The new Return Authorization could not be created"));
-  
 }
-
 
 void incident::sViewAR()
 {
@@ -793,202 +770,8 @@ void incident::sContactChanged()
   }
 }
 
-void incident::sPrepareMail()
-{
-  //Users can use scripting to disconnect the signal that calls this and implement their
-  //own logic to build message tokens if they like
-  ParameterList params;
-  ParameterList rptParams;
-  QString ownerEmail;
-  QString assignedEmail;
-  QString docbody;
-  QString reason;
-  
-  //See if we need to take action
-  if ( !_metrics->boolean("CRMIncidentEmailCreated") &&
-       !_metrics->boolean("CRMIncidentEmailAssigned") &&
-       !_metrics->boolean("CRMIncidentEmailStatus") &&
-       !_metrics->boolean("CRMIncidentEmailUpdated") &&
-       !_metrics->boolean("CRMIncidentEmailComments") ) 
-    return;
-    
-  //Determine reason, if none exit
-  if (_statusCache != 3 && 
-      _status->currentIndex() == 3 &&
-      _metrics->boolean("CRMIncidentEmailAssigned") )
-    reason = tr("The following incident has been ASSIGNED.");
-  else if (cNew == _mode)
-  {
-    if (_metrics->boolean("CRMIncidentEmailCreated"))
-      reason = tr("The following incident has been CREATED.");
-    else
-      return;
-  }
-  else if (_statusCache != _status->currentIndex() && 
-      _metrics->boolean("CRMIncidentEmailStatus") )
-    reason = tr("The status of the following incident has been changed to %1.").arg(_status->currentText().upper());
-  else if (_updated && _metrics->boolean("CRMIncidentEmailUpdated"))
-    reason = tr("The following incident has been UPDATED.");
-  else if (_commentAdded && _metrics->boolean("CRMIncidentEmailUpdated"))
-    reason = tr("A new COMMENT has been added to the following incident.");
-  else
-    return;
-  
-  //Fetch email
-  q.prepare("SELECT usr_email FROM usr WHERE (usr_username=:user);");
-  q.bindValue(":user", _owner->username());
-  q.exec();
-  if (q.first())
-    ownerEmail=q.value("usr_email").toString();
-    
-  q.prepare("SELECT usr_email FROM usr WHERE (usr_username=:user);");
-  q.bindValue(":user", _assignedTo->username());
-  q.exec();
-  if (q.first())
-    assignedEmail=q.value("usr_email").toString();
-    
-  //Build body
-  docbody= QString("%1\n\n"
-                   "Incident Number: %2\n"
-                   "Description: %3\n"
-                   "=====================================================\n"
-                   "Owner: %4\n"
-                   "Assigned To: %5\n" 
-                   "Contact: %6\n"
-                   "=====================================================\n"
-                   "Category: %7\n"
-                   "Status: %8\n"
-                   "Severity: %9\n"
-                   "Priority: %10\n"
-                   "Resolution: %11\n")
-           .arg(reason)
-           .arg(_number->text())
-           .arg(_description->text())
-           .arg(_owner->username())
-           .arg(_assignedTo->username())
-           .arg(_cntct->name())
-           .arg(_category->currentText())
-           .arg(_status->currentText())
-           .arg(_severity->currentText())
-           .arg(_priority->currentText())
-           .arg(_resolution->currentText());
-           
-  if (_item->id() != -1)
-    docbody += tr("Item Number: %1\n").arg(_item->itemNumber());
-    
-  if (_lotserial->id() != -1)
-    docbody += tr("Lot/Serial Number: %1\n").arg(_lotserial->number());
-    
-  if (!_docType->text().isEmpty())
-  {
-    docbody += tr("Receivable Type: %1\n"
-                  "Document Number: %2\n")
-           .arg(_docType->text())
-           .arg(_docNumber->text());
-  }
-  
-  docbody += tr(  "=====================================================\n"
-                  "Notes:\n"
-                  "%1\n\n")
-           .arg(_notes->text());
-           
-  //Build history detail if applicable
-  docbody += tr("=====================================================\n\n"
-               "Incident History\n"
-               "Date            Username  Text\n"
-               "=====================================================\n");
-               
-  q.prepare("SELECT incdthist_timestamp, incdthist_username, incdthist_descrip "
-            "FROM incdthist "
-            "WHERE ( incdthist_incdt_id=:incdt_id);");
-  q.bindValue(":incdt_id", _incdtid);
-  q.exec();
-  while (q.next())
-  {
-    docbody += q.value("incdthist_timestamp").toString();
-    docbody += "  ";
-    docbody += q.value("incdthist_username").toString().left(10).leftJustified(10,' ');
-    docbody += q.value("incdthist_descrip").toString();
-    docbody += "\n";
-  }
-  
-  docbody += "=====================================================\n";
-  
-  params.append("description" , _description->text());
-  params.append("docid"       , _incdtid);
-  params.append("docbody"     , docbody);
-  params.append("docnumber"   , _number->text());
-  params.append("doctype"     , "INCDT");
-  params.append("email1"      , ownerEmail);
-  params.append("email2"      , assignedEmail);
-  params.append("email3"      , _cntct->emailAddress());
-  params.append("preview"     , _metrics->boolean("CRMIncidentEmailPreview"));
-  
-  if (_ardoctype == "I")
-  {
-    if (QMessageBox::question(this, tr("Attach Invoice"),
-                              tr("<p>Would you like to attach a copy of the invoice "
-                              "to the email to be sent?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::Yes)
-    {
-      q.prepare( "SELECT invchead_id, findCustomerForm(invchead_cust_id, 'I') AS invoiceform "
-             "FROM invchead "
-             "WHERE (invchead_invcnumber=:invcnumber);" );
-      q.bindValue(":invcnumber", _docNumber->text());
-      q.exec();
-      if (q.first())
-      {
-        params.append("reportName", q.value("invoiceform").toString());
-        params.append("fileName", tr("Invoice-%1").arg(_docNumber->text()));
-        rptParams.append("invchead_id", q.value("invchead_id").toInt());
-      }
-    }
-  }
-  sSendMail(params, rptParams);
-}
-
-void incident::sSendMail(ParameterList & params, ParameterList & rptParams)
-{
-  deliverEmail::profileEmail(this, _ediprofileid, params, rptParams);
-}
-
 void incident::sAssigned()
 {
   if (_status->currentIndex() < 3 && !_assignedTo->username().isEmpty())
     _status->setCurrentIndex(3);
-}
-
-void incident::sUpdateEdiProfile()
-{
-  disconnect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
-  if (_category->id() != -1)
-  {
-    XSqlQuery edi;
-    edi.prepare("SELECT COALESCE(incdtcat_ediprofile_id,fetchMetricValue('CRMIncidentEmailProfile')) AS ediprofile_id "
-              "FROM incdtcat "
-              "WHERE (incdtcat_id=:incdtcat_id);");
-    edi.bindValue(":incdtcat_id", _category->id());
-    edi.exec();
-    if (edi.first())
-    {
-      connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
-      _ediprofileid=edi.value("ediprofile_id").toInt();
-    }
-    else if (edi.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      _ediprofileid=-1;
-      return;
-    }
-    else
-      _ediprofileid=-1;
-  }
-  else if (_metrics->value("CRMIncidentEmailProfile").toInt())
-  {
-    connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
-    _ediprofileid=_metrics->value("CRMIncidentEmailProfile").toInt();
-  }
-  else
-    _ediprofileid=-1;
 }

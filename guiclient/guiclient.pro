@@ -102,7 +102,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                customerFormAssignment.ui customerFormAssignments.ui                                   \
                customers.ui customerTypes.ui customerType.ui customerTypeList.ui                      \
                databaseInformation.ui deletePlannedOrder.ui deletePlannedOrdersByPlannerCode.ui       \
-               deliverEmail.ui									      \
                                  deliverPurchaseOrder.ui                                              \
                department.ui departments.ui                                                           \
                distributeBreederProduction.ui                         distributeInventory.ui          \
@@ -423,7 +422,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                customerFormAssignment.h customerFormAssignments.h                                     \
                customers.h customerTypes.h customerType.h customerTypeList.h                          \
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
-               deliverEmail.h									      \
                                 deliverPurchaseOrder.h                                                \
                department.h departments.h                                                             \
                distributeBreederProduction.h                        distributeInventory.h             \
@@ -754,7 +752,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                customerFormAssignment.cpp customerFormAssignments.cpp                                 \
                customers.cpp customerTypes.cpp customerType.cpp customerTypeList.cpp                  \
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
-               deliverEmail.cpp									      \
                                   deliverPurchaseOrder.cpp                                            \
                department.cpp departments.cpp                                                         \
                distributeBreederProduction.cpp                          distributeInventory.cpp       \
