@@ -15,57 +15,39 @@
 #include <QVariant>
 #include <openreports.h>
 
-/*
- *  Constructs a printPurchaseOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printPurchaseOrder::printPurchaseOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_po, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    _captive = FALSE;
+  _captive = FALSE;
 
-    _po->setType(cPOUnposted | cPOOpen);
+  _po->setType(cPOUnposted | cPOOpen);
 
-    _vendorCopy->setChecked(_metrics->boolean("POVendor"));
+  _vendorCopy->setChecked(_metrics->boolean("POVendor"));
 
-    if (_metrics->value("POInternal").toInt() > 0)
-    {
-      _internalCopy->setChecked(TRUE);
-      _numOfCopies->setValue(_metrics->value("POInternal").toInt());
-    }
-    else
-    {
-      _internalCopy->setChecked(FALSE);
-      _numOfCopies->setEnabled(FALSE);
-    }
+  if (_metrics->value("POInternal").toInt() > 0)
+  {
+    _internalCopy->setChecked(TRUE);
+    _numOfCopies->setValue(_metrics->value("POInternal").toInt());
+  }
+  else
+  {
+    _internalCopy->setChecked(FALSE);
+    _numOfCopies->setEnabled(FALSE);
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 printPurchaseOrder::~printPurchaseOrder()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void printPurchaseOrder::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse printPurchaseOrder::set(const ParameterList &pParams)
@@ -171,4 +153,3 @@ void printPurchaseOrder::sPrint()
     _po->setFocus();
   }
 }
-

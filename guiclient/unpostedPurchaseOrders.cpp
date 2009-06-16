@@ -22,42 +22,41 @@
 #include "purchaseOrder.h"
 #include "printPurchaseOrder.h"
 #include "guiclient.h"
-#include "deliverPurchaseOrder.h"
 #include "storedProcErrorLookup.h"
 
 unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_allOpenOrders,SIGNAL(clicked()),	this,	SLOT(sFillList()));
-    connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
-    connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
-    connect(_new,	SIGNAL(clicked()),	this,	SLOT(sNew()));
-    connect(_pohead,	SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
-						this,	SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
-    connect(_pohead,	SIGNAL(valid(bool)),	this,	SLOT(sHandleButtons()));
-    connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
-    connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
-    connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
+  connect(_allOpenOrders,SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
+  connect(_new,         SIGNAL(clicked()),	this,	SLOT(sNew()));
+  connect(_pohead,	SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
+                                                this,	SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
+  connect(_pohead,	SIGNAL(valid(bool)),	this,	SLOT(sHandleButtons()));
+  connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
+  connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
+  connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
 
-    connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
-						this,	SLOT(sFillList()));
+  connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
+                                              this,	SLOT(sFillList()));
 
-    _pohead->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
-    _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );
-    _pohead->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
-    _pohead->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
-    _pohead->addColumn(tr("Printed"),   _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
+  _pohead->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
+  _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );
+  _pohead->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
+  _pohead->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
+  _pohead->addColumn(tr("Printed"),   _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
 
-    _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    if (_privileges->check("MaintainPurchaseOrders"))
-      _new->setEnabled(TRUE);
+  if (_privileges->check("MaintainPurchaseOrders"))
+    _new->setEnabled(TRUE);
 
-    sFillList();
+  sFillList();
 }
 
 unpostedPurchaseOrders::~unpostedPurchaseOrders()
@@ -192,24 +191,6 @@ void unpostedPurchaseOrders::sPrint()
   sFillList();
 }
 
-void unpostedPurchaseOrders::sDeliver()
-{
-  QList<QTreeWidgetItem*> list = _pohead->selectedItems();
-  for (int i = 0; i < list.size(); i++)
-  {
-    if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
-    {
-      ParameterList params;
-      params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-
-      deliverPurchaseOrder newdlg(this, "", TRUE);
-      newdlg.set(params);
-      newdlg.exec();
-      break;
-    }
-  }
-}
-
 void unpostedPurchaseOrders::sPost()
 {
   if ( QMessageBox::warning( this, tr("Post Selected Purchase Orders"),
@@ -272,12 +253,6 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 
   menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
   pMenu->setItemEnabled(menuItem, canMaintain);
-
-  if (_metrics->boolean("EnableBatchManager"))
-  {
-    menuItem = pMenu->insertItem(tr("Deliver..."), this, SLOT(sDeliver()), 0);
-    pMenu->setItemEnabled(menuItem, canMaintain);
-  }
 
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
   pMenu->setItemEnabled(menuItem, _privileges->check("PostPurchaseOrders") &&

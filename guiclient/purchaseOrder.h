@@ -71,7 +71,6 @@ private:
     int _mode;
     bool _printed;
     PoitemTableModel* _qeitem;
-    bool _vendEmail;
 };
 
 #endif // PURCHASEORDER_H

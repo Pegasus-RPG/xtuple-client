@@ -27,7 +27,6 @@ public:
 
 public slots:
     virtual void sDelete();
-    virtual void sDeliver();
     virtual void sEdit();
     virtual void sFillList();
     virtual void sHandleButtons();

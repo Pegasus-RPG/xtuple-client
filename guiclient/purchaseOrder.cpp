@@ -11,15 +11,11 @@
 #include "purchaseOrder.h"
 
 #include <QCloseEvent>
-#include <QList>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
-#include <QValidator>
 #include <QVariant>
 
 #include "comment.h"
-#include "deliverPurchaseOrder.h"
 #include "itemSourceList.h"
 #include "poitemTableModel.h"
 #include "printPurchaseOrder.h"
@@ -34,8 +30,6 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -491,7 +485,7 @@ void purchaseOrder::populate()
               "       COALESCE(vendaddr_id, -1) AS vendaddrid,"
               "       vendaddr_code, vendaddr_name, vendaddr_address1, vendaddr_address2,"
               "       vendaddr_address3, vendaddr_city, vendaddr_state, vendaddr_zipcode,"
-              "       vendaddr_country, pohead_curr_id, vend_emailpodelivery "
+              "       vendaddr_country, pohead_curr_id "
               "FROM vend, pohead LEFT OUTER JOIN vendaddr ON (pohead_vendaddr_id=vendaddr_id) "
               "WHERE ( (pohead_vend_id=vend_id)"
               " AND (pohead_id=:pohead_id) );" );
@@ -538,8 +532,7 @@ void purchaseOrder::populate()
 
     _comments->setId(_poheadid);
     _vendor->setId(po.value("pohead_vend_id").toInt());
-    _vendEmail = po.value("vend_emailpodelivery").toBool();
-	_taxZone->setId(po.value("pohead_taxzone_id").toInt());
+    _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
     _tax->setLocalValue(po.value("pohead_tax").toDouble());
     _freight->setLocalValue(po.value("pohead_freight").toDouble());
@@ -641,13 +634,6 @@ void purchaseOrder::sSave()
     printPurchaseOrder newdlgP(this, "", true);
     newdlgP.set(params);
     newdlgP.exec();
-
-    if (_vendEmail && _metrics->boolean("EnableBatchManager"))
-    {
-      deliverPurchaseOrder newdlgD(this, "", true);
-      newdlgD.set(params);
-      newdlgD.exec();
-    }
   }
 
   if (_mode == cNew)

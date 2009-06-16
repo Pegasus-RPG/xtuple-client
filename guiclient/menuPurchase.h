@@ -42,7 +42,6 @@ class menuPurchase : public QObject
     void sPurchaseOrderEditList();
     void sPrintPurchaseOrder();
     void sPrintPurchaseOrdersByAgent();
-    void sDeliverPurchaseOrder();
     void sPostPurchaseOrder();
     void sPostPurchaseOrdersByAgent();
     void sClosePurchaseOrder();

@@ -141,7 +141,6 @@
 #include "databaseInformation.h"
 #include "deletePlannedOrder.h"
 #include "deletePlannedOrdersByPlannerCode.h"
-#include "deliverPurchaseOrder.h"
 #include "department.h"
 #include "departments.h"
 #include "distributeBreederProduction.h"

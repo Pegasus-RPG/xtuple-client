@@ -26,7 +26,6 @@
 #include "unpostedPurchaseOrders.h"
 #include "printPurchaseOrder.h"
 #include "printPurchaseOrdersByAgent.h"
-#include "deliverPurchaseOrder.h"
 #include "postPurchaseOrder.h"
 #include "postPurchaseOrdersByAgent.h"
 #include "closePurchaseOrder.h"
@@ -167,8 +166,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "menu", tr("&Forms"), (char*)formsMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.printPurchaseOrder", tr("Print Purchase &Order..."), SLOT(sPrintPurchaseOrder()), formsMenu, "PrintPurchaseOrders", NULL, NULL, true , NULL },
     { "po.printPurchaseOrdersByAgent", tr("Print Purchase Orders by &Agent..."), SLOT(sPrintPurchaseOrdersByAgent()), formsMenu, "PrintPurchaseOrders", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, formsMenu, "true", NULL, NULL,  _metrics->boolean("EnableBatchManager") , NULL },
-    { "po.schedulePoForEmailDelivery", tr("&E-Mail Purchase Order Form..."), SLOT(sDeliverPurchaseOrder()), formsMenu, "PrintPurchaseOrders", NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
     { "separator", NULL, NULL, formsMenu, "true", NULL, NULL, true , NULL },
     { "po.printPoForm", tr("Print &P/O Form..."), SLOT(sPrintPOForm()), formsMenu, "PrintPurchaseOrders", NULL, NULL, true , NULL },
     { "po.printVendorForm", tr("Print &Vendor Form..."), SLOT(sPrintVendorForm()), formsMenu, "MaintainVendors ViewVendors", NULL, NULL, true , NULL },
@@ -354,11 +351,6 @@ void menuPurchase::sPrintPurchaseOrder()
 void menuPurchase::sPrintPurchaseOrdersByAgent()
 {
   printPurchaseOrdersByAgent(parent, "", TRUE).exec();
-}
-
-void menuPurchase::sDeliverPurchaseOrder()
-{
-  deliverPurchaseOrder(parent, "", TRUE).exec();
 }
 
 void menuPurchase::sPostPurchaseOrder()
