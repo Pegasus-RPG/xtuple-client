@@ -288,10 +288,10 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _save->setEnabled(FALSE);
+      _save->setEnabled(false);
       _next->setText(tr("New"));
       _comments->setType(Comments::SalesOrderItem);
-      _comments->setEnabled(FALSE);
+      _comments->setEnabled(true);
       _orderStatusLit->hide();
       _orderStatus->hide();
       _item->setReadOnly(false);
@@ -595,7 +595,10 @@ void salesOrderItem::prepare()
 //  Grab the next coitem_id
     q.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
     if (q.first())
+    {
       _soitemid = q.value("_coitem_id").toInt();
+      _comments->setId(_soitemid);
+    }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -791,8 +794,8 @@ void salesOrderItem::sSave()
                "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
                "  coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
-                   "  coitem_prcost, coitem_taxtype_id, coitem_cos_accnt_id, coitem_warranty ) "
-               "SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
+               "  coitem_prcost, coitem_taxtype_id, coitem_cos_accnt_id, coitem_warranty ) "
+               "  SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
                "       stdCost(:item_id), :soitem_custprice,"
@@ -2691,6 +2694,17 @@ void salesOrderItem::reject()
         return;
     }
   }
+
+  //DELETE ANY COMMENTS
+  q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
+  q.bindValue(":coitem_id", _soitemid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   XDialog::reject();
 }
 
@@ -2703,6 +2717,16 @@ void salesOrderItem::sCancel()
     return;
 
   q.prepare("UPDATE coitem SET coitem_status='X' WHERE (coitem_id=:coitem_id);");
+  q.bindValue(":coitem_id", _soitemid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  //DELETE ANY COMMENTS
+  q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
   q.bindValue(":coitem_id", _soitemid);
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
