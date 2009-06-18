@@ -20,6 +20,8 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
+  
+  _sense = 1;
 
   _taxcodes->addColumn(tr("Code"),	       -1,  Qt::AlignLeft,   true,  "taxdetail_tax_code");
   _taxcodes->addColumn(tr("Description"),     100,  Qt::AlignLeft,   true,  "taxdetail_tax_descrip");
@@ -32,6 +34,7 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sCalculateTax()));
   connect(_new,	SIGNAL(clicked()),	this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()),	this, SLOT(sDelete()));
+  
 }
 
 taxDetail::~taxDetail()
@@ -84,12 +87,15 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
    if (valid)
     _ordertype = param.toString();
 
-    param = pParams.value("display_type", &valid);
+   param = pParams.value("display_type", &valid);
    if (valid)
     _displayType = param.toString();
 	
-    
    _adjustment = pParams.inList("adjustment"); 
+   
+   param = pParams.value("sense", &valid);
+   if (valid)
+    _sense = param.toInt();
 
    if (_readonly)
    {
@@ -129,9 +135,11 @@ void taxDetail::sCalculateTax()
    params.append("date", _subtotal->effective());
    params.append("subtotal", _subtotal->localValue());
    params.append("curr_id", _subtotal->id());
+   params.append("sense", _sense);
  
    QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-              "   taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
+              "   taxdetail_tax * <? value(\"sense\") ?> As taxdetail_tax, "
+              "   taxdetail_taxclass_sequence, 0 AS xtindentrole, "
               "   0 AS taxdetail_tax_xttotalrole "
               "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
 			        " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
@@ -169,13 +177,15 @@ void taxDetail::sPopulate()
   ParameterList params;
   params.append("order_id", _orderid);
   params.append("order_type", _ordertype);
+  params.append("sense", _sense);
+    
   if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || 
      _ordertype == "B" || _ordertype == "RA" || _ordertype == "CM" ||
      _ordertype == "PO" || _ordertype == "VO" || _ordertype == "TO")
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  sum(taxdetail_tax) as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
+         "  sum(taxdetail_tax) * <? value(\"sense\") ?> as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
          " 0 AS taxdetail_tax_xttotalrole "
          "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
 			   "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
@@ -185,7 +195,7 @@ void taxDetail::sPopulate()
            _ordertype == "TI" || _ordertype == "VI" || _ordertype == "AR" || _ordertype == "AP" )
 
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
+         "  taxdetail_tax * <? value(\"sense\") ?> AS taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
          "  0 AS taxdetail_tax_xttotalrole "
          "FROM calculateTaxDetailLine(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>); ";
   else
@@ -214,6 +224,7 @@ void taxDetail::sNew()
   params.append("order_type", _ordertype);
   params.append("date", _subtotal->effective());
   params.append("curr_id", _subtotal->id());
+  params.append("sense", _sense);
   params.append("mode", "new");
   if (newdlg.set(params) == NoError)
     newdlg.exec();
@@ -243,19 +254,19 @@ void taxDetail::sDelete()
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
 	{
-    QString sql = QString("DELETE FROM %1 "
+          QString sql = QString("DELETE FROM %1 "
                           "WHERE taxhist_parent_id=:parent_id "
                           " AND taxhist_taxtype_id=getadjustmenttaxtypeid() "
                           " AND taxhist_tax_id=:tax_id;").arg(table);
-    q.prepare(sql);       
+          q.prepare(sql);       
 	  q.bindValue(":parent_id", _orderid);
-    q.bindValue(":tax_id", _taxcodes->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+          q.bindValue(":tax_id", _taxcodes->id());
+          q.exec();
+          if (q.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+          }
 	}
   sPopulate();
   return;

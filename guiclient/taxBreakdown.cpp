@@ -34,6 +34,7 @@ taxBreakdown::taxBreakdown(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _orderid	= -1;
   _ordertype	= "";
+  _sense        = 1;
 }
 
 taxBreakdown::~taxBreakdown()
@@ -67,6 +68,10 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
     else
       _mode = cEdit;
   }
+  
+   param = pParams.value("sense", &valid);
+   if (valid)
+    _sense = param.toInt();
 
   sPopulate();
 
@@ -91,6 +96,7 @@ void taxBreakdown::sAdjTaxDetail()
   params.append("order_id", _orderid);
   params.append("display_type", "A");
   params.append("adjustment");
+  params.append("sense", _sense);
   if (newdlg.set(params) == NoError)  
   {
 	  newdlg.exec();

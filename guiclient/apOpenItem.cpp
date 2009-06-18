@@ -522,6 +522,8 @@ void apOpenItem::sTaxDetail()
   params.append("display_type", "A");
   params.append("subtotal", _amount->localValue());
   params.append("adjustment");
+  if (_docType->currentIndex())
+    params.append("sense",-1);
   if (newdlg.set(params) == NoError)  
   {
     newdlg.exec();
@@ -532,7 +534,12 @@ void apOpenItem::sTaxDetail()
     taxq.bindValue(":apopen_id", _apopenid);
     taxq.exec();
     if (taxq.first())
-      _tax->setLocalValue(taxq.value("tax").toDouble());
+    {
+      if (_docType->currentIndex())
+        _tax->setLocalValue(taxq.value("tax").toDouble() * -1);
+      else
+        _tax->setLocalValue(taxq.value("tax").toDouble());
+    }
     else if (taxq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);

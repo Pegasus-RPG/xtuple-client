@@ -33,11 +33,12 @@ class taxBreakdown : public XDialog, public Ui::taxBreakdown
     virtual void	sFreightTaxDetail();
     virtual void	sLineTaxDetail();
     virtual void	sTotalTaxDetail();
-	  virtual void	sPopulate();
+    virtual void	sPopulate();
 
   private:
-    int   _mode;
+    int         _mode;
     int		_orderid;
+    int         _sense;
     QString	_ordertype;
 };
 #endif // TAXBREAKDOWN_H

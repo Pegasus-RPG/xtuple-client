@@ -33,7 +33,7 @@ public slots:
     virtual void sCalculateTax();
     virtual void sPopulate();
     virtual void sNew();
-	virtual void sDelete();
+    virtual void sDelete();
 
 protected:
     double	_aCache;
@@ -45,11 +45,12 @@ protected:
     bool	_blankDetailDescriptions;
     bool	_readonly;
     double	_taxCodeInitialized;
-	int     _taxzoneId;
-	int		_orderid;
+    int         _taxzoneId;
+    int		_orderid;
+    int         _sense;
     QString	_ordertype;
-	QString _displayType;
-	bool    _adjustment;
+    QString     _displayType;
+    bool        _adjustment;
    
 protected slots:
     virtual void languageChange();

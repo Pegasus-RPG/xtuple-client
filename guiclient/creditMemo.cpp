@@ -998,6 +998,7 @@ void creditMemo::sTaxDetail()
   ParameterList params;
   params.append("order_id",	_cmheadid);
   params.append("order_type",	"CM");
+  params.append("sense", -1);
 
   if(cView == _mode)
     params.append("mode", "view");

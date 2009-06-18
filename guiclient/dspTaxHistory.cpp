@@ -28,7 +28,9 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_filterOn, SIGNAL(newID(int)), this, SLOT(sHandleFilter()));
+  connect(_filterOn, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleFilter()));
+  connect(_showOnlyGroup, SIGNAL(toggled(bool)), this, SLOT(sHandleFilter()));
+  connect(_summary, SIGNAL(toggled(bool)), this, SLOT(sHandleType()));
 
   sHandleType();
 }
@@ -126,7 +128,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
     switch (_filterOn->currentIndex())
     {
       case 0:
-        params.append("taxcode_id",_selection->id());
+        params.append("tax_id",_selection->id());
         break;
 
       case 1:
@@ -145,13 +147,12 @@ bool dspTaxHistory::setParams(ParameterList &params)
         params.append("taxzone_id",_selection->id());
         break;
     }
-    
-    params.append("invoice",tr("Invoice"));
-    params.append("creditmemo",tr("Credit Memo"));
-    params.append("debitmemo",tr("Debit Memo"));
-    params.append("other",tr("Other"));
-    params.append("none",tr("None"));
   }
+  params.append("invoice",tr("Invoice"));
+  params.append("creditmemo",tr("Credit Memo"));
+  params.append("debitmemo",tr("Debit Memo"));
+  params.append("other",tr("Other"));
+  params.append("none",tr("None"));
 
   return true;
 }
@@ -216,6 +217,7 @@ void dspTaxHistory::sHandleFilter()
 
 void dspTaxHistory::sHandleType()
 {
+  _taxhist->clear();
   _taxhist->setColumnCount(0);
   
   if (_summary->isChecked())
@@ -225,23 +227,23 @@ void dspTaxHistory::sHandleType()
   else
   {
     QString base = CurrDisplay::baseCurrAbbr();
-    _taxhist->addColumn(tr("Document#"),           _orderColumn,    Qt::AlignLeft,  true,  "docnumber"   );
-    _taxhist->addColumn(tr("Doc. Type"),           _orderColumn,    Qt::AlignCenter,true,  "doctype"   );
+    _taxhist->addColumn(tr("Doc#"),                _orderColumn,    Qt::AlignLeft,  true,  "docnumber"   );
+    _taxhist->addColumn(tr("Doc. Type"),           _orderColumn,    Qt::AlignLeft,  true,  "doctype"   );
     _taxhist->addColumn(tr("Order#"),              _orderColumn,    Qt::AlignLeft,  true,  "ordernumber"   );
-    _taxhist->addColumn(tr("Doc. Date"),           _dateColumn,     Qt::AlignLeft,  true,  "currAbbr"  );
-    _taxhist->addColumn(tr("Dist. Date"),          _dateColumn,     Qt::AlignLeft,  false, "currAbbr"  );   
-    _taxhist->addColumn(tr("Name"),                -1,              Qt::AlignLeft,  true,  "name"  );
-    _taxhist->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,  true,  "taxcode_code"  );
-    _taxhist->addColumn(tr("Tax Type"),            _itemColumn,     Qt::AlignLeft,  true,  "taxtype"  );
+    _taxhist->addColumn(tr("Doc. Date"),           _dateColumn,     Qt::AlignLeft,  true,  "docdate"  );
+    _taxhist->addColumn(tr("Dist. Date"),          _dateColumn,     Qt::AlignLeft,  false, "taxhist_distdate"  );   
+    _taxhist->addColumn(tr("Name"),                -1,              Qt::AlignLeft,  false, "name"  );
+    _taxhist->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,  true,  "tax_code"  );
+    _taxhist->addColumn(tr("Tax Type"),            _itemColumn,     Qt::AlignLeft,  false, "taxtype"  );
     _taxhist->addColumn(tr("Tax Zone"),            _itemColumn,     Qt::AlignLeft,  false, "taxzone"  );
     _taxhist->addColumn(tr("Tax Class"),           _itemColumn,     Qt::AlignLeft,  false, "taxclass"  );
     _taxhist->addColumn(tr("Tax Authority"),       _itemColumn,     Qt::AlignLeft,  false, "taxauth"   );
     _taxhist->addColumn(tr("Item#"),               _itemColumn,     Qt::AlignLeft,  true,  "item_number"  );
     _taxhist->addColumn(tr("Description"),         -1,              Qt::AlignLeft,  true,  "description"  );
-    _taxhist->addColumn(tr("Qty"),                 _qtyColumn,      Qt::AlignRight, true,  "qty"  );
-    _taxhist->addColumn(tr("Unit Price"),          _moneyColumn,    Qt::AlignRight, true,  "unitprice"  );
-    _taxhist->addColumn(tr("Extension"),           _moneyColumn,    Qt::AlignRight, true,  "extension"  );
-    _taxhist->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight, true,  "taxhist_tax"  );
+    _taxhist->addColumn(tr("Qty"),                 _qtyColumn,      Qt::AlignRight, false, "qty"  );
+    _taxhist->addColumn(tr("Unit Price"),          _moneyColumn,    Qt::AlignRight, false, "unitprice"  );
+    _taxhist->addColumn(tr("Extension"),           _moneyColumn,    Qt::AlignRight, false, "extension"  );
+    _taxhist->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight, true,  "tax_local"  );
     _taxhist->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignRight, true,  "curr_abbr"  ); 
     _taxhist->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignLeft,  true,  "tax_base"  );
   }

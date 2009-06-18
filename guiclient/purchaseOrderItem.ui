@@ -1267,9 +1267,11 @@ to be bound by its terms.</comment>
   <tabstop>_expcat</tabstop>
   <tabstop>_ordered</tabstop>
   <tabstop>_received</tabstop>
+  <tabstop>_taxtype</tabstop>
   <tabstop>_unitPrice</tabstop>
   <tabstop>_extendedPrice</tabstop>
   <tabstop>_freight</tabstop>
+  <tabstop>_tax</tabstop>
   <tabstop>_dueDate</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_tab</tabstop>
@@ -1283,11 +1285,13 @@ to be bound by its terms.</comment>
   <tabstop>_manufName</tabstop>
   <tabstop>_manufItemNumber</tabstop>
   <tabstop>_manufItemDescrip</tabstop>
+  <tabstop>_notesButton</tabstop>
+  <tabstop>_commentsButton</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_itemcharView</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_comments</tabstop>
  </tabstops>
  <resources/>
  <connections>

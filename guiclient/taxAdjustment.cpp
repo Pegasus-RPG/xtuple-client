@@ -27,6 +27,7 @@ taxAdjustment::taxAdjustment(QWidget* parent, const char* name, bool modal, Qt::
 	connect(_taxcode, SIGNAL(newID(int)), this, SLOT(sCheck()));
   
   _taxhistid = -1;
+  _sense = 1;
 }
 
 taxAdjustment::~taxAdjustment()
@@ -82,6 +83,10 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
   param = pParams.value("curr_id", &valid);
    if (valid)
      _amount->setId(param.toInt());
+     
+   param = pParams.value("sense", &valid);
+   if (valid)
+    _sense = param.toInt();
 
   return NoError;
 }
@@ -108,7 +113,7 @@ void taxAdjustment::sSave()
   q.prepare(sql);
   q.bindValue(":taxhist_id", _taxhistid);
   q.bindValue(":taxcode_id", _taxcode->id());
-  q.bindValue(":amount", _amount->localValue());          
+  q.bindValue(":amount", _amount->localValue() * _sense);          
   q.bindValue(":order_id", _orderid);
   q.bindValue(":date", _amount->effective());
   q.exec();
@@ -139,9 +144,9 @@ void taxAdjustment::sCheck()
   if (q.first())
   {
     _taxhistid=q.value("taxhist_id").toInt();
-    _amount->setLocalValue(q.value("taxhist_tax").toDouble());
-	  _amount->setFocus();
-	  _mode=cEdit;
+    _amount->setLocalValue(q.value("taxhist_tax").toDouble() * _sense);
+    _amount->setFocus();
+    _mode=cEdit;
   }
   else
   {
