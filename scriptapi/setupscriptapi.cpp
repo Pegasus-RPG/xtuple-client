@@ -48,9 +48,10 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlrecordproto.h"
 #include "qstackedwidgetproto.h"
+#include "qtabwidgetproto.h"
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
-#include "qtabwidgetproto.h"
+#include "qtreewidgetitemproto.h"
 #include "qurlproto.h"
 #include "ralineeditsetup.h"
 #include "revisionlineeditsetup.h"
@@ -114,9 +115,10 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlRecordProto(engine);
   setupQStackedWidgetProto(engine);
+  setupQTabWidgetProto(engine);
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
-  setupQTabWidgetProto(engine);
+  setupQTreeWidgetItemProto(engine);
   setupQUrlProto(engine);
   setupRaLineEdit(engine);
   setupRevisionLineEdit(engine);

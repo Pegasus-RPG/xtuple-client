@@ -46,6 +46,7 @@ HEADERS +=  setupscriptapi.h                    \
             qtabwidgetproto.h                   \
             qtextdocumentproto.h                \
             qtexteditproto.h                    \
+            qtreewidgetitemproto.h              \
             qurlproto.h                         \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
@@ -109,6 +110,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qtabwidgetproto.cpp                 \
             qtextdocumentproto.cpp              \
             qtexteditproto.cpp                  \
+            qtreewidgetitemproto.cpp            \
             qurlproto.cpp                       \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \
