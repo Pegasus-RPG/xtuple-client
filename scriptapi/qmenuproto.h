@@ -63,6 +63,8 @@ class QMenuProto : public QObject, public QScriptable
     Q_INVOKABLE QString  title()	                const;
     // Q_INVOKABLE HMENU    wceMenu(bool create = false);
 
+    Q_INVOKABLE QString  toString()                     const;
+
 };
 
 #endif

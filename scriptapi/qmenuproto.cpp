@@ -309,12 +309,14 @@ HMENU QMenuProto::wceMenu(bool create)
     return item->wceMenu(create);
   return HMENU();
 }
+*/
 
 QString QMenuProto::toString() const
 {
   QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
   if (item)
-    return QString("QMenu()");
+    return QString("[QMenu named %1: %2]")
+                  .arg(item->objectName())
+                  .arg(item->title());
   return QString("QMenu(unknown)");
 }
-*/
