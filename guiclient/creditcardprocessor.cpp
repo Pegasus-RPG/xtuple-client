@@ -300,11 +300,11 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 	cashq.prepare("INSERT INTO cashrcpt (cashrcpt_id,"
 		  "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
 		  "  cashrcpt_fundstype, cashrcpt_docnumber,"
-		  "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate) "
+		  "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate, cashrcpt_usecustdeposit) "
 		  "SELECT :cashrcptid,"
 		  "       ccpay_cust_id, :amount, :curr_id,"
 		  "       ccard_type, ccpay_r_ordernum,"
-		  "       :bankaccnt_id, :notes, current_date"
+		  "       :bankaccnt_id, :notes, current_date, :custdeposit"
 		  "  FROM ccpay, ccard "
 		  "WHERE (ccpay_ccard_id=ccard_id);");
       }
@@ -316,7 +316,8 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 		       "    cashrcpt_bankaccnt_id=:bankaccnt_id,"
 		       "    cashrcpt_distdate=CURRENT_DATE,"
 		       "    cashrcpt_notes=:notes, "
-		       "    cashrcpt_curr_id=:curr_id "
+		       "    cashrcpt_curr_id=:curr_id,"
+                       "    cashrcpt_usecustdeposit=:custdeposit "
 		       "FROM ccard "
 		       "WHERE ((cashrcpt_id=:cashrcptid)"
 		       "  AND  (ccard_id=:ccardid));" );
@@ -327,6 +328,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
       cashq.bindValue(":curr_id",      pcurrid);
       cashq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
       cashq.bindValue(":notes",        "Credit Card Pre-Authorization");
+      cashq.bindValue(":custdeposit",  _metrics->boolean("EnableCustomerDeposits"));
       cashq.exec();
       if (cashq.lastError().type() != QSqlError::NoError)
       {
@@ -614,10 +616,11 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     ccq.prepare("INSERT INTO cashrcpt ("
 	      "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
 	      "  cashrcpt_fundstype, cashrcpt_docnumber,"
-	      "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate) "
+	      "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate, cashrcpt_usecustdeposit) "
 	      "SELECT ccpay_cust_id, :amount, :curr_id,"
 	      "       ccard_type, ccpay_r_ordernum,"
-	      "       :bankaccnt_id, :notes, current_date"
+	      "       :bankaccnt_id, :notes, current_date,"
+              "       :custdeposit"
 	      "  FROM ccpay, ccard "
 	      "WHERE ((ccpay_ccard_id=ccard_id)"
 	      "  AND  (ccpay_id=:pccpayid));");
@@ -626,6 +629,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     ccq.bindValue(":curr_id",      pcurrid);
     ccq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
     ccq.bindValue(":notes",        "Converted Pre-auth");
+    ccq.bindValue(":custdeposit",  _metrics->boolean("EnableCustomerDeposits"));
     ccq.exec();
     if (ccq.lastError().type() != QSqlError::NoError)
     {
