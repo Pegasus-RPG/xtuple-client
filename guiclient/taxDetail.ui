@@ -149,14 +149,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QPushButton" name="_cancel">
              <property name="text">
-              <string>&amp;Cancel</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_save">
-             <property name="text">
-              <string>&amp;Save</string>
+              <string>&amp;Close</string>
              </property>
             </widget>
            </item>
@@ -299,27 +292,10 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_save</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_save</sender>
-   <signal>clicked()</signal>
-   <receiver>taxDetail</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_taxcodes</sender>
    <signal>valid(bool)</signal>

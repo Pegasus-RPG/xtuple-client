@@ -100,7 +100,6 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
    if (_readonly)
    {
      _taxType->setEnabled(FALSE);
-     _save->hide();
      _cancel->setText(tr("&Close"));
    }
 
@@ -109,7 +108,6 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
      _taxType->setEnabled(FALSE);
 	   _new->show();
 	   _delete->show();
-	   _save->show();
    }
 
    sPopulate();
@@ -135,10 +133,9 @@ void taxDetail::sCalculateTax()
    params.append("date", _subtotal->effective());
    params.append("subtotal", _subtotal->localValue());
    params.append("curr_id", _subtotal->id());
-   params.append("sense", _sense);
  
    QString sql("SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-              "   taxdetail_tax * <? value(\"sense\") ?> As taxdetail_tax, "
+              "   taxdetail_tax AS taxdetail_tax, "
               "   taxdetail_taxclass_sequence, 0 AS xtindentrole, "
               "   0 AS taxdetail_tax_xttotalrole "
               "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "

@@ -1018,14 +1018,14 @@ void creditMemo::sCalculateTax()
   XSqlQuery taxq;
   taxq.prepare( "SELECT SUM(taxhist_tax) AS tax "
 		            "FROM ("
-                " SELECT taxhist_tax "
+                " SELECT taxhist_tax * -1 AS taxhist_tax "
                 " FROM cmheadtax "
                 " WHERE ((taxhist_parent_id=:cmhead_id)"
                 " AND (taxhist_taxtype_id=getadjustmenttaxtypeid())) "
                 " UNION ALL "
                 " SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
                 " UNION ALL "
-                " SELECT taxhist_tax "
+                " SELECT taxhist_tax * -1 AS taxhist_tax "
                 " FROM cmitemtax "
                 "  JOIN cmitem ON (cmitem_id=taxhist_parent_id) "
                 " WHERE (cmitem_cmhead_id=:cmhead_id) ) AS data;" );

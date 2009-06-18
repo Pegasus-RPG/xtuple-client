@@ -115,6 +115,7 @@ void taxBreakdown::sFreightTaxDetail()
 						_taxcurrency->id(),
 						_freight->localValue(),
 						_freight->effective()));
+   params.append("sense", _sense);
 
   if (_ordertype == "S" || _ordertype == "Q" || _ordertype == "RA")
   {
@@ -160,6 +161,7 @@ void taxBreakdown::sLineTaxDetail()
 						_line->localValue(),
 						_line->effective()));
   params.append("readOnly");
+  params.append("sense", _sense);
 
   if (newdlg.set(params) == NoError)
     newdlg.exec();
@@ -179,6 +181,7 @@ void taxBreakdown::sTotalTaxDetail()
 						_pretax->localValue(),
 						_pretax->effective()));
   params.append("readOnly");
+  params.append("sense", _sense);
 
   if (newdlg.set(params) == NoError)
     newdlg.exec();

@@ -432,7 +432,7 @@ void creditMemoItem::populate()
   cmitem.prepare("SELECT cmitem_cmhead_id,cmitem_itemsite_id,cmitem_linenumber,cmitem_unitprice, "
                  "  cmitem_qtycredit,cmitem_qtyreturned,cmitem_comments,cmitem_taxtype_id, "
 		             "  cmitem_rsncode_id,cmhead_taxzone_id,cmhead_curr_id, "
-                 "  sum(taxhist_tax) AS tax "
+                 "  sum(taxhist_tax * -1) AS tax "
                  "FROM cmhead, cmitem "
                  "  LEFT OUTER JOIN cmitemtax ON (cmitem_id=taxhist_parent_id) "
                  "WHERE ((cmitem_cmhead_id=cmhead_id)"
@@ -636,13 +636,14 @@ void creditMemoItem::sTaxDetail()
   params.append("date", _netUnitPrice->effective());
   params.append("subtotal", _extendedPrice->localValue());
   params.append("curr_id",  _tax->id());
+  params.append("sense", -1);
   
   if(cView == _mode)
     params.append("readOnly");
   
   if(_saved == true)
   {
-	  params.append("order_id", _cmitemid);
+    params.append("order_id", _cmitemid);
     params.append("order_type", "CI");
   }
 
