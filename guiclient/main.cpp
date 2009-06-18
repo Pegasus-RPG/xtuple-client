@@ -50,6 +50,8 @@
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(xTuplePlugin)
 
+QString __password;
+
 int main(int argc, char *argv[])
 {
   Q_INIT_RESOURCE(guiclient);
@@ -209,6 +211,7 @@ int main(int argc, char *argv[])
       {
         databaseURL = newdlg._databaseURL;
         username = newdlg.username();
+        __password = newdlg.password();
       }
     }
   }

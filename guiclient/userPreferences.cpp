@@ -10,15 +10,21 @@
 
 #include "userPreferences.h"
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 #include <QSqlError>
+
+#include <qmd5.h>
+#include "storedProcErrorLookup.h"
 
 #include <parameter.h>
 
 #include "hotkey.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
+
+extern QString __password;
 
 userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -136,13 +142,29 @@ void userPreferences::sBackgroundList()
 void userPreferences::sPopulate()
 {
   if (_currentUser->isChecked())
+  {
     _pref = _preferences;
+	q.prepare("SELECT CURRENT_USER as cuser;");
+    q.exec();
+    if (q.first())
+    {
+      _username->setText(q.value("cuser"));
+      _username->setEnabled(FALSE);
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    } 
+  }
   else
   {
     if(_altPref)
       delete _altPref;
     _altPref = new Preferences(_user->currentText());
     _pref = _altPref;
+	_username->setText(_user->currentText());
+     _username->setEnabled(FALSE);
   }
 
   if (_pref->value("BackgroundImageid").toInt() > 0)
@@ -281,7 +303,87 @@ void userPreferences::sSave()
         omfgThis->initMenuBar();
   }
 
+  if (!_currentpassword->text().isEmpty())
+  {
+    if (save())
+     accept(); 
+  }
+  else
+  {
   accept();
+  }
+}
+
+bool userPreferences::save()
+{
+  
+  if (_currentpassword->text().length() == 0)
+  {
+    QMessageBox::warning( this, tr("Cannot save User"),
+                          tr( "You must enter a valid Current Password before you can save this User." ));
+    _currentpassword->setFocus();
+    return false;
+  }
+
+  if (_newpassword->text().length() == 0)
+  {
+    QMessageBox::warning( this, tr("Cannot save User"),
+                          tr( "You must enter a valid Password before you can save this User." ));
+    _newpassword->setFocus();
+    return false;
+  }
+
+  QString passwd = _newpassword->text();
+  QString currentpasswd = _currentpassword->text();
+   
+  // TODO: have to compare this against something usefull
+  if(currentpasswd != __password)
+  {
+    QMessageBox::warning( this, tr("Cannot save User"),
+                  tr( "Please Verify Current Password." ));
+    _currentpassword->setFocus();
+    return false;
+  }
+
+  if (_newpassword->text() != _retypepassword->text())
+  {
+    QMessageBox::warning( this, tr("Password do not Match"),
+                   tr( "The entered password and verify do not match\n"
+                       "Please enter both again carefully." ));
+
+    _newpassword->clear();
+    _retypepassword->clear();
+    _newpassword->setFocus();
+    return false;
+  }   
+
+  if (_newpassword->text() != "        ")
+  {
+    q.prepare( "SELECT usrpref_value "
+                "  FROM usrpref "
+                " WHERE ( (usrpref_name = 'UseEnhancedAuthentication') "
+                "   AND (usrpref_username=:username) ); ");
+    q.bindValue(":username", _username->text().trimmed().lower());         
+    q.exec();
+    if(q.first())
+    {
+      if (q.value("usrpref_value").toString()=="t")
+      {
+        passwd = passwd + "xTuple" + _username->text();
+        passwd = QMd5(passwd);
+      }
+    }
+
+    q.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
+           .arg(_username->text()) );
+    q.bindValue(":password", passwd);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
 }
 
 void userPreferences::sClose()
