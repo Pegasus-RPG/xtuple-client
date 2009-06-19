@@ -14,8 +14,10 @@
 
 #include "format.h"
 
-JSHighlighter::JSHighlighter(QTextDocument *document)
-  : QSyntaxHighlighter(document)
+static QStringList _keyword;
+static QStringList _extension;
+
+void JSHighlighter::init()
 {
   _commentColor   = namedColor("altemphasis");
   _errorColor     = namedColor("error");
@@ -23,23 +25,52 @@ JSHighlighter::JSHighlighter(QTextDocument *document)
   _keywordColor   = namedColor("emphasis");
   _literalColor   = namedColor("future");
 
-  _keyword  << "break"     << "case"    << "catch"          << "continue"
-            << "default"   << "delete"  << "do"             << "else"
-            << "false"     << "finally" << "for"            << "function"
-            << "if"        << "in"      << "instanceof"     << "new"
-            << "null"      << "return"  << "switch"         << "this"
-            << "throw"     << "true"    << "try"            << "typeof"
-            << "var"       << "void"    << "while"          << "with"
-            ;
-  _extension  << "abstract" << "boolean"   << "byte"         << "char"
-              << "class"    << "const"     << "debugger"     << "double"
-              << "enum"     << "export"    << "extends"      << "final"
-              << "float"    << "goto"      << "implements"   << "import"
-              << "int"      << "interface" << "long"         << "native"
-              << "package"  << "private"   << "protected"    << "public"
-              << "short"    << "static"    << "super"        << "synchronized"
-              << "throws"   << "transient" << "volatile"
+  if (_keyword.isEmpty())
+    _keyword  << "break"     << "case"    << "catch"          << "continue"
+              << "default"   << "delete"  << "do"             << "else"
+              << "false"     << "finally" << "for"            << "function"
+              << "if"        << "in"      << "instanceof"     << "new"
+              << "null"      << "return"  << "switch"         << "this"
+              << "throw"     << "true"    << "try"            << "typeof"
+              << "var"       << "void"    << "while"          << "with"
               ;
+
+  if (_extension.isEmpty())
+    _extension  << "abstract" << "boolean"   << "byte"         << "char"
+                << "class"    << "const"     << "debugger"     << "double"
+                << "enum"     << "export"    << "extends"      << "final"
+                << "float"    << "goto"      << "implements"   << "import"
+                << "int"      << "interface" << "long"         << "native"
+                << "package"  << "private"   << "protected"    << "public"
+                << "short"    << "static"    << "super"        << "synchronized"
+                << "throws"   << "transient" << "volatile"
+                ;
+  
+  _kwtest.setPattern("^(" + _keyword.join("|") + ")((?=\\W)|$)");
+  _extest.setPattern("^(" + _extension.join("|") + ")((?=\\W)|$)");
+  _numerictest.setPattern("^(0[xX][0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
+  _wordtest.setPattern("^\\w+");
+  _quotetest.setPattern("^\"[^\"]*\"|'[^']*'");
+  _regexptest.setPattern("/[^/]*/[igm]?");
+
+}
+
+JSHighlighter::JSHighlighter(QObject *parent)
+  : QSyntaxHighlighter(parent)
+{
+  init();
+}
+
+JSHighlighter::JSHighlighter(QTextDocument *document)
+  : QSyntaxHighlighter(document)
+{
+  init();
+}
+
+JSHighlighter::JSHighlighter(QTextEdit *editor)
+  : QSyntaxHighlighter(editor)
+{
+  init();
 }
 
 JSHighlighter::~JSHighlighter()
@@ -53,13 +84,6 @@ void JSHighlighter::highlightBlock(const QString &text)
 
   for (int i = 0; i < text.length(); i++)
   {
-    QRegExp kwtest("^(" + _keyword.join("|") + ")((?=\\W)|$)");
-    QRegExp extest("^(" + _extension.join("|") + ")((?=\\W)|$)");
-    QRegExp numerictest("^(0[xX][0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
-    QRegExp wordtest("^\\w+");
-    QRegExp quotetest("^\"[^\"]*\"|'[^']*'");
-    QRegExp regexptest("/[^/]*/[igm]?");
-
     if (state == InsideCStyleComment)
     {
       if (text.mid(i, 2) == "*/")
@@ -88,38 +112,38 @@ void JSHighlighter::highlightBlock(const QString &text)
       start = i;
       state = InsideCStyleComment;
     }
-    else if (quotetest.indexIn(text.mid(i)) == 0)
+    else if (_quotetest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, quotetest.matchedLength(), _literalColor);
-      i += quotetest.matchedLength();
+      setFormat(i, _quotetest.matchedLength(), _literalColor);
+      i += _quotetest.matchedLength();
     }
     else if (text.mid(i, 1) == "\"")
     {
       start = i;
       state = InsideString;
     }
-    else if (kwtest.indexIn(text.mid(i)) == 0)
+    else if (_kwtest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, kwtest.matchedLength(), _keywordColor);
-      i += kwtest.matchedLength();
+      setFormat(i, _kwtest.matchedLength(), _keywordColor);
+      i += _kwtest.matchedLength();
     }
-    else if (extest.indexIn(text.mid(i)) == 0)
+    else if (_extest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, extest.matchedLength(), _extensionColor);
-      i += extest.matchedLength();
+      setFormat(i, _extest.matchedLength(), _extensionColor);
+      i += _extest.matchedLength();
     }
-    else if (numerictest.indexIn(text.mid(i)) == 0)
+    else if (_numerictest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, numerictest.matchedLength(), _literalColor);
-      i += numerictest.matchedLength();
+      setFormat(i, _numerictest.matchedLength(), _literalColor);
+      i += _numerictest.matchedLength();
     }
-    else if (regexptest.indexIn(text.mid(i)) == 0)
+    else if (_regexptest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, regexptest.matchedLength(), _literalColor);
-      i += regexptest.matchedLength();
+      setFormat(i, _regexptest.matchedLength(), _literalColor);
+      i += _regexptest.matchedLength();
     }
-    else if (wordtest.indexIn(text.mid(i)) == 0)        // skip non-keywords
-      i += wordtest.matchedLength();
+    else if (_wordtest.indexIn(text.mid(i)) == 0)        // skip non-keywords
+      i += _wordtest.matchedLength();
   }
 
   if (state == InsideCStyleComment)

@@ -13,6 +13,9 @@
 #include <QTextDocument>
 #include <QString>
 
+#include "qtextdocumentproto.h"
+#include "qtexteditproto.h"
+
 #define DEBUG  true
 
 void setupMetaSQLHighlighterProto(QScriptEngine *engine)
@@ -32,19 +35,24 @@ QScriptValue constructMetaSQLHighlighter(QScriptContext *context,
   MetaSQLHighlighter *obj = 0;
   if (context->argumentCount() > 0)
   {
-    if (DEBUG)
+    if (QTextDocument *doc = qscriptvalue_cast<QTextDocument*>(context->argument(0)))
     {
-      QObject *tmpobj = context->argument(0).toQObject();
-      qDebug("constructMetaSQLHighlighter(): tmpobj is a %s",
-             tmpobj ? (tmpobj->metaObject() ? tmpobj->metaObject()->className()
-                                            : "(no metaobject)")
-                    : qPrintable(context->argument(0).toString()));
-      QTextDocument *doc = qobject_cast<QTextDocument*>(tmpobj);
-      qDebug("constructMetaSQLHighlighter(): doc = %p", doc);
+      if (DEBUG)
+        qDebug("constructMetaSQLHighlighter(): doc = %p", doc);
       obj = new MetaSQLHighlighter(doc);
     }
-    else
-      obj = new MetaSQLHighlighter(qobject_cast<QTextDocument*>(context->argument(0).toQObject()));
+    else if (QTextEdit *edit = qscriptvalue_cast<QTextEdit*>(context->argument(0)))
+    {
+      if (DEBUG)
+        qDebug("constructMetaSQLHighlighter(): edit = %p", edit);
+      obj = new MetaSQLHighlighter(edit);
+    }
+    else if (QObject *qobj = qscriptvalue_cast<QObject*>(context->argument(0)))
+    {
+      if (DEBUG)
+        qDebug("constructMetaSQLHighlighter(): qobj = %p", qobj);
+      obj = new MetaSQLHighlighter(qobj);
+    }
   }
   return engine->toScriptValue(obj);
 }

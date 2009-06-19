@@ -21,15 +21,14 @@ class JSHighlighter : public QSyntaxHighlighter
   Q_OBJECT
 
   public:
+    JSHighlighter(QObject *parent);
     JSHighlighter(QTextDocument *document);
+    JSHighlighter(QTextEdit *editor);
     ~JSHighlighter();
 
   protected:
     enum State { NormalState = -1, InsideCStyleComment, InsideString };
     virtual void highlightBlock(const QString &text);
-
-    QStringList _keyword;
-    QStringList _extension;
 
     QColor       _commentColor;
     QColor       _errorColor;
@@ -38,6 +37,14 @@ class JSHighlighter : public QSyntaxHighlighter
     QColor       _literalColor;
 
   private:
+    virtual void init();
+
+    QRegExp _kwtest;
+    QRegExp _extest;
+    QRegExp _numerictest;
+    QRegExp _wordtest;
+    QRegExp _quotetest;
+    QRegExp _regexptest;
 
 };
 

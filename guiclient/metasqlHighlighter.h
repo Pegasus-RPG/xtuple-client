@@ -21,15 +21,14 @@ class MetaSQLHighlighter : public QSyntaxHighlighter
   Q_OBJECT
 
   public:
+    MetaSQLHighlighter(QObject *parent);
     MetaSQLHighlighter(QTextDocument *document);
+    MetaSQLHighlighter(QTextEdit *editor);
     ~MetaSQLHighlighter();
 
   protected:
     enum State { NormalState = -1, InsideString };
     virtual void highlightBlock(const QString &text);
-
-    QStringList _keyword;
-    QStringList _extension;
 
     QColor       _commentColor;
     QColor       _errorColor;
@@ -38,6 +37,13 @@ class MetaSQLHighlighter : public QSyntaxHighlighter
     QColor       _literalColor;
 
   private:
+    virtual void init();
+
+    QRegExp _kwtest;
+    QRegExp _extest;
+    QRegExp _numerictest;
+    QRegExp _wordtest;
+    QRegExp _quotetest;
 
 };
 
