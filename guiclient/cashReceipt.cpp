@@ -48,6 +48,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _mindate;
+
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
@@ -68,6 +70,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_received, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillApplyList()));
   connect(_received, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillMiscList()));
   connect(_received, SIGNAL(idChanged(int)), this, SLOT(sChangeCurrency(int)));
+  connect(_distDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
+  connect(_applDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
   if (_metrics->boolean("CCAccept"))
   {
     connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
@@ -192,6 +196,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       }
 
       _distDate->setDate(omfgThis->dbDate(), true);
+      _applDate->setDate(omfgThis->dbDate(), true);
       _cust->setFocus();
     }
     else if (param.toString() == "edit")
@@ -217,6 +222,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _docDate->setEnabled(FALSE);
       _bankaccnt->setEnabled(FALSE);
       _distDate->setEnabled(FALSE);
+      _applDate->setEnabled(false);
       _aropen->setEnabled(FALSE);
       _cashrcptmisc->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
@@ -246,6 +252,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _docDate->setEnabled(FALSE);
       _bankaccnt->setEnabled(FALSE);
       _distDate->setEnabled(FALSE);
+      _applDate->setEnabled(FALSE);
     }
 
   }
@@ -630,6 +637,7 @@ int to = -1, from = -1;
   q.bindValue(":cashrcpt_docdate", _docDate->date());
   q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
   q.bindValue(":cashrcpt_distdate", _distDate->date());
+  q.bindValue(":cashrcpt_applydate", _applDate->date());
   q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
   q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
   if (_received->id() != _bankaccnt_curr_id)
@@ -719,6 +727,16 @@ void cashReceipt::sFillApplyList()
       systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+
+    apply.prepare("select max(aropen_docdate) AS mindate FROM aropen, cashrcptitem WHERE cashrcptitem_aropen_id=aropen_id AND cashrcptitem_cashrcpt_id=:id;");
+    apply.bindValue(":id", _cashrcptid);
+    apply.exec();
+    if(apply.first())
+    {
+      _mindate = apply.value("mindate").toDate();
+      if(_mindate > _applDate->date())
+        _applDate->setDate(_mindate);
+    }
   }
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
 }
@@ -769,7 +787,8 @@ void cashReceipt::sUpdateBalance()
 
 void cashReceipt::populate()
 {
-  q.prepare( "SELECT * "
+  q.prepare( "SELECT *,"
+             "       COALESCE(cashrcpt_applydate, cashrcpt_distdate) AS applydate "
              "FROM cashrcpt "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
   q.bindValue(":cashrcpt_id", _cashrcptid);
@@ -785,6 +804,7 @@ void cashReceipt::populate()
     _docDate->setDate(q.value("cashrcpt_docdate").toDate(), true);
     _bankaccnt->setId(q.value("cashrcpt_bankaccnt_id").toInt());
     _distDate->setDate(q.value("cashrcpt_distdate").toDate(), true);
+    _applDate->setDate(q.value("applydate").toDate(), true);
     _notes->setText(q.value("cashrcpt_notes").toString());
     _posted = q.value("cashrcpt_posted").toBool();
     if(q.value("cashrcpt_salescat_id").toInt() != -1)
@@ -952,3 +972,13 @@ void cashReceipt::sMoveDown()
   setCreditCard();
 }
 
+void cashReceipt::sDateChanged()
+{
+  if(_applDate->date() < _mindate)
+    _applDate->setDate(_mindate);
+
+  if(_distDate->date() < _applDate->date())
+    _applyBalLit->setText(tr("Record Receipt as:"));
+  else
+    _applyBalLit->setText(tr("Apply Balance As:"));
+}

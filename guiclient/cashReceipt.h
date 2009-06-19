@@ -49,6 +49,7 @@ public slots:
     virtual void sUpdateBalance();
     virtual void sViewCreditCard();
     virtual void setCreditCard();
+    virtual void sDateChanged();
 
 protected slots:
     virtual void languageChange();
@@ -63,6 +64,7 @@ private:
     QString _origFunds;
     bool    _overapplied;
     bool    _posted;
+    QDate   _mindate;
 
 };
 
