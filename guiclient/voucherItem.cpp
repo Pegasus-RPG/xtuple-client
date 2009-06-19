@@ -746,6 +746,7 @@ void voucherItem::sTaxDetail()
   params.append("date", _tax->effective());
   params.append("subtotal", _distamount);
   params.append("curr_id", _tax->id());
+  params.append("sense", -1);
   
   if(cView == _mode)
     params.append("readOnly");

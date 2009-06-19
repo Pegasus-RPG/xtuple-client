@@ -187,7 +187,11 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="DateCluster" name="_dates"/>
+             <widget class="DateCluster" name="_dates">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -269,7 +273,7 @@ to be bound by its terms.</comment>
             <item row="1" column="0">
              <widget class="QLabel" name="_selectionLit">
               <property name="text">
-               <string>Show:</string>
+               <string>Selection:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -481,9 +485,20 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_taxdet</tabstop>
+  <tabstop>_summary</tabstop>
+  <tabstop>_detail</tabstop>
+  <tabstop>_sales</tabstop>
+  <tabstop>_purchases</tabstop>
+  <tabstop>_docDate</tabstop>
+  <tabstop>_distDate</tabstop>
+  <tabstop>_filterOn</tabstop>
+  <tabstop>_selection</tabstop>
+  <tabstop>_dates</tabstop>
+  <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_taxsum</tabstop>
+  <tabstop>_taxdet</tabstop>
  </tabstops>
  <resources/>
  <connections>

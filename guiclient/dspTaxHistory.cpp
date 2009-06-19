@@ -31,14 +31,17 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_filterOn, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleFilter()));
   connect(_showOnlyGroup, SIGNAL(toggled(bool)), this, SLOT(sHandleFilter()));
   connect(_summary, SIGNAL(toggled(bool)), this, SLOT(sHandleType()));
+  connect(_sales, SIGNAL(toggled(bool)), this, SLOT(sHandleType()));
+  connect(_purchases, SIGNAL(toggled(bool)), this, SLOT(sHandleType()));
   
   QString base = CurrDisplay::baseCurrAbbr();
   _taxdet->addColumn(tr("Doc#"),                _orderColumn,    Qt::AlignLeft,  true,  "docnumber"   );
+  _taxdet->addColumn(tr("Source"),              _orderColumn,    Qt::AlignLeft,  true,  "source"   );
   _taxdet->addColumn(tr("Doc. Type"),           _orderColumn,    Qt::AlignLeft,  true,  "doctype"   );
-  _taxdet->addColumn(tr("Order#"),              _orderColumn,    Qt::AlignLeft,  true,  "ordernumber"   );
+  _taxdet->addColumn(tr("Order#"),              _orderColumn,    Qt::AlignLeft,  false, "ordernumber"   );
   _taxdet->addColumn(tr("Doc. Date"),           _dateColumn,     Qt::AlignLeft,  true,  "docdate"  );
   _taxdet->addColumn(tr("Dist. Date"),          _dateColumn,     Qt::AlignLeft,  false, "taxhist_distdate"  );   
-  _taxdet->addColumn(tr("Name"),                -1,              Qt::AlignLeft,  false, "name"  );
+  _taxdet->addColumn(tr("Name"),                _orderColumn,    Qt::AlignLeft,  false, "name"  );
   _taxdet->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,  true,  "tax"  );
   _taxdet->addColumn(tr("Tax Type"),            _itemColumn,     Qt::AlignLeft,  false, "taxtype"  );
   _taxdet->addColumn(tr("Tax Zone"),            _itemColumn,     Qt::AlignLeft,  false, "taxzone"  );
@@ -48,12 +51,13 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxdet->addColumn(tr("Description"),         -1,              Qt::AlignLeft,  true,  "description"  );
   _taxdet->addColumn(tr("Qty"),                 _qtyColumn,      Qt::AlignRight, false, "qty"  );
   _taxdet->addColumn(tr("Unit Price"),          _moneyColumn,    Qt::AlignRight, false, "unitprice"  );
-  _taxdet->addColumn(tr("Extension"),           _moneyColumn,    Qt::AlignRight, false, "extension"  );
-  _taxdet->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight, true,  "tax_local"  );
+  _taxdet->addColumn(tr("Extension"),           _moneyColumn,    Qt::AlignRight, false, "amount"  );
+  _taxdet->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight, true,  "taxlocal"  );
   _taxdet->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignRight, true,  "curr_abbr"  ); 
-  _taxdet->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignRight,  true,  "tax_base"  );
+  _taxdet->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignRight,  true, "taxbase"  );
 
   sHandleType();
+  _dates->setFocus();
 }
 
 dspTaxHistory::~dspTaxHistory()
@@ -146,18 +150,16 @@ bool dspTaxHistory::setParams(ParameterList &params)
   
   if (((_showOnlyGroup->isCheckable() && _showOnlyGroup->isChecked()) || 
        !_showOnlyGroup->isCheckable()) &&
-        _filterOn->id() != -1)
+        _selection->id() != -1)
   {
     switch (_filterOn->currentIndex())
     {
       case 0:
         params.append("tax_id",_selection->id());
-        params.append("groupBy","taxcode");
         break;
 
       case 1:
         params.append("taxtype_id",_selection->id());
-        params.append("groupBy","taxcode");
         break;
 
       case 2:
@@ -206,6 +208,9 @@ bool dspTaxHistory::setParams(ParameterList &params)
   params.append("debitmemo",tr("Debit Memo"));
   params.append("other",tr("Other"));
   params.append("none",tr("None"));
+  params.append("sales",tr("Sales"));
+  params.append("purchase",tr("Purchase"));
+  params.append("voucher",tr("Voucher"));
 
   return true;
 }
@@ -300,14 +305,21 @@ void dspTaxHistory::sHandleFilter()
         break;
     }
 
-    _taxsum->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "description"   );
-    _taxsum->addColumn(tr("Sales %1").arg(base),  _itemColumn,     Qt::AlignRight,  true,  "salesbase"  );
-    _taxsum->addColumn(tr("Sales Freight %1").arg(base),_moneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
-    _taxsum->addColumn(tr("Freight Taxed"),       _itemColumn,     Qt::AlignCenter, true,  "freighttax"  );
-    _taxsum->addColumn(tr("Sales Tax %1").arg(base), _moneyColumn,    Qt::AlignRight,  true,  "salestaxbase"  );
-    _taxsum->addColumn(tr("Purchases %1").arg(base),  _itemColumn,     Qt::AlignRight,  true,  "purhasebase"  );
-    _taxsum->addColumn(tr("Purchase Tax %1").arg(base), _moneyColumn,    Qt::AlignRight,  true,  "purchasetaxbase"  );
-    _taxsum->addColumn(tr("Net Tax %1").arg(base),_moneyColumn,    Qt::AlignRight,  true,  "nettaxbase"  );
+    _taxsum->addColumn(tr("Description"),               -1,                 Qt::AlignLeft,   true,  "description"   );
+    if (_sales->isChecked())
+    {
+      _taxsum->addColumn(tr("Sales %1").arg(base),        _bigMoneyColumn,    Qt::AlignRight,  true,  "salesbase"  );
+      _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+      _taxsum->addColumn(tr("Freight Taxed"),             _itemColumn,        Qt::AlignCenter, true, "freighttax"  );
+      _taxsum->addColumn(tr("Sales Tax %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "salestaxbase"  );
+    }
+    if (_purchases->isChecked())
+    {
+      _taxsum->addColumn(tr("Purchases %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasebase"  );
+      _taxsum->addColumn(tr("Purchase Tax %1").arg(base), _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasetaxbase"  );
+    }
+    if (_sales->isChecked() && _purchases->isChecked())
+      _taxsum->addColumn(tr("Net Tax %1").arg(base),      _bigMoneyColumn,    Qt::AlignRight,  true,  "nettaxbase"  );
   }
 }
 
@@ -321,12 +333,10 @@ void dspTaxHistory::sHandleType()
     _taxdet->hide();
     _taxsum->show();
     _selection->setAllowNull(true);
-    _selectionLit->setText(tr("Filter on:"));
   }
   else
   {
     _showOnlyGroup->setTitle(tr("Show only tax"));
-    _selectionLit->setText(tr("Of"));
     _showOnlyGroup->setCheckable(true);
     _showOnlyGroup->setChecked(false);
     _taxsum->hide();
