@@ -340,28 +340,6 @@ void voucherItem::sSave()
   }
   q.exec("COMMIT;");
   
-  // Insert data into voitemtax table
-  XSqlQuery insertq;
-  insertq.prepare("SELECT calculatetaxhist('voitemtax', :voitem_id, vohead_taxzone_id, "
-                  ":voitem_taxtype_id, COALESCE(vohead_docdate, CURRENT_DATE), vohead_curr_id, "
-			      "(SELECT COALESCE(SUM(vodist_amount), 0.00) FROM vodist "
-			      "  WHERE vodist_vohead_id=:vohead_id "
-			      "  AND vodist_poitem_id=:poitem_id)) "
-			      "FROM vohead "
-			      "WHERE vohead_id=:vohead_id;");
-  insertq.bindValue(":voitem_id", _voitemid);
-  insertq.bindValue(":voitem_taxtype_id", _taxtype->id());
-  insertq.bindValue(":vohead_id", _voheadid);
-  insertq.bindValue(":poitem_id", _poitemid);
-  insertq.exec();
-  if (insertq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, _rejectedMsg.arg(insertq.lastError().databaseText()),
-                __FILE__, __LINE__);
-    reject();
-    return;
-  }
-         
   _inTransaction = FALSE;
   accept();
 }

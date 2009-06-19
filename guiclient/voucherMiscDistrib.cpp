@@ -108,7 +108,7 @@ void voucherMiscDistrib::populate()
   q.prepare( "SELECT vodist_accnt_id,"
              "       vodist_amount, "
              "       vodist_expcat_id, "
-			 "       vodist_tax_id "
+             "       vodist_tax_id "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
   q.bindValue(":vodist_id", _vodistid);
@@ -189,7 +189,7 @@ void voucherMiscDistrib::sSave()
                "SET vodist_accnt_id=:vodist_accnt_id,"
                "    vodist_amount=:vodist_amount,"
                "    vodist_expcat_id=:vodist_expcat_id, "
-			   "    vodist_tax_id = :vodist_tax_id "
+               "    vodist_tax_id = :vodist_tax_id "
                "WHERE (vodist_id=:vodist_id);" );
   
   q.bindValue(":vodist_id", _vodistid);
@@ -205,36 +205,16 @@ void voucherMiscDistrib::sSave()
   {
     q.bindValue(":vodist_accnt_id", -1);
     q.bindValue(":vodist_expcat_id", _expcat->id());
-	q.bindValue(":vodist_tax_id", -1);
+    q.bindValue(":vodist_tax_id", -1);
   }
   else
   {
     q.bindValue(":vodist_accnt_id", -1);
     q.bindValue(":vodist_expcat_id", -1);
-	q.bindValue(":vodist_tax_id", _taxCode->id()); 
+    q.bindValue(":vodist_tax_id", _taxCode->id()); 
   }
   q.exec();
 
-
-  // Voucher tax adjustment
-if (_taxSelected->isChecked() && !_miscvoucher)
-{
- if (_mode == cNew)
-   q.prepare("INSERT INTO voheadtax (taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate,taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id) "	   
-			 "VALUES (0, 0, 0, :date, :vodist_tax_id, :vodist_amount, getadjustmenttaxtypeid(), :vodist_vohead_id); "); 
- else if(_mode == cEdit)
-	  q.prepare("UPDATE voheadtax "
-                "SET taxhist_tax=:vodist_amount, taxhist_docdate=:date "
-                "WHERE (taxhist_parent_id=:vodist_vohead_id) "
-				"  AND (taxhist_tax_id=:vodist_tax_id) "
-				"  AND (taxhist_taxtype_id = getadjustmenttaxtypeid());");
-
-  q.bindValue(":vodist_vohead_id", _voheadid);
-  q.bindValue(":vodist_amount", _amount->localValue());
-  q.bindValue(":vodist_tax_id", _taxCode->id()); 
-  q.bindValue(":date", _amount->effective());
-  q.exec();
- }
   done(_vodistid);
 }
 

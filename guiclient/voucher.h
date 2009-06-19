@@ -50,8 +50,6 @@ public slots:
     virtual void sPopulateDueDate();
     virtual void sView();
 	virtual void saveDetail();
-	virtual void sTaxZoneChanged();
-	virtual void sCalculateTax();;
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -65,7 +63,6 @@ protected slots:
 private:
     int _voheadid;
     int _mode;
-	int	_taxzoneidCache;
 
 };
 

@@ -47,13 +47,11 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-  connect(_taxzone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
 
 #ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);
 #endif
 
-  _taxzoneidCache	= -1;
   _terms->setType(XComboBox::APTerms);
   _poNumber->setType(cPOOpen);
 
@@ -147,7 +145,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
       _poList->hide();
-	  _taxzone->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _amountToDistribute->setEnabled(FALSE);
       _distributionDate->setEnabled(FALSE);
       _invoiceDate->setEnabled(FALSE);
@@ -260,7 +258,7 @@ void voucher::sSave()
 
   q.prepare( "UPDATE vohead "
 	     "SET vohead_pohead_id=:vohead_pohead_id,"
-		 "    vohead_taxzone_id=:vohead_taxzone_id,  "
+       "    vohead_taxzone_id=:vohead_taxzone_id,  "
 	     "    vohead_vend_id=:vohead_vend_id,"
 	     "    vohead_terms_id=:vohead_terms_id,"
 	     "    vohead_distdate=:vohead_distdate,"
@@ -507,7 +505,7 @@ void voucher::sNewMiscDistribution()
   params.append("curr_effective", _amountToDistribute->effective());
   params.append("amount", _balance->localValue());
   if (_taxzone->isValid())
-   params.append("taxzone_id", _taxzone->id());
+    params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -528,7 +526,7 @@ void voucher::sEditMiscDistribution()
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
   if (_taxzone->isValid())
-   params.append("taxzone_id", _taxzone->id());
+    params.append("taxzone_id", _taxzone->id());
 
   voucherMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -689,7 +687,7 @@ void voucher::sPopulatePoInfo()
 
     _flagFor1099->setChecked(gets1099);
     _terms->setId(q.value("pohead_terms_id").toInt());
-	_taxzone->setId(q.value("pohead_taxzone_id").toInt());
+    _taxzone->setId(q.value("pohead_taxzone_id").toInt());
     _amountToDistribute->setId(q.value("pohead_curr_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -703,23 +701,27 @@ void voucher::sPopulateDistributed()
 {
   if (_poNumber->isValid())
   {
-    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(linetax,0)) AS distrib"
+    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + "
+               "        COALESCE(headtax,0) + COALESCE(linetax,0)) AS distrib"
                "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
                "          FROM voitem"
                "         WHERE (voitem_vohead_id=:vohead_id)) AS data1, "
                "       (SELECT SUM(COALESCE(vodist_amount, 0)) AS dist"
                "          FROM vodist"
-               "         WHERE (vodist_vohead_id=:vohead_id)) AS data2, "
-			   "       (SELECT SUM(COALESCE(taxhist_tax,0)) AS linetax "
-			   "         FROM voitemtax, voitem, vohead "
-			   "        WHERE (voitem_id=taxhist_parent_id) AND (vohead_id=voitem_vohead_id) "
-			   "          AND (vohead_id=:vohead_id)) AS data3;" );
+               "         WHERE ( (vodist_vohead_id=:vohead_id)"
+               "           AND   (vodist_tax_id=-1) )) AS data2, "
+               "       (SELECT SUM(COALESCE(taxhist_tax,0) * -1) AS headtax "
+               "          FROM vohead JOIN voheadtax ON (taxhist_parent_id=vohead_id) "
+               "         WHERE (vohead_id=:vohead_id)) AS data3, "
+               "       (SELECT SUM(COALESCE(taxhist_tax,0) * -1) AS linetax "
+               "          FROM vohead JOIN voitem ON (voitem_vohead_id=vohead_id) "
+               "                      JOIN voitemtax ON (taxhist_parent_id=voitem_id) "
+               "         WHERE (vohead_id=:vohead_id)) AS data4;" );
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     if (q.first())
     {
       _amountDistributed->setLocalValue(q.value("distrib").toDouble());
-      sPopulateBalanceDue();
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -763,7 +765,7 @@ void voucher::populate()
   {
     _voucherNumber->setText(vohead.value("vohead_number").toString());
     _poNumber->setId(vohead.value("vohead_pohead_id").toInt());
-	_taxzone->setId(vohead.value("vohead_taxzone_id").toInt());
+    _taxzone->setId(vohead.value("vohead_taxzone_id").toInt());
     _terms->setId(vohead.value("vohead_terms_id").toInt());
     _amountToDistribute->set(vohead.value("vohead_amount").toDouble(),
 			     vohead.value("vohead_curr_id").toInt(),
@@ -876,60 +878,16 @@ void voucher::saveDetail()
   if (_mode != cView)
   {
     q.prepare("UPDATE vohead SET vohead_taxzone_id = :taxzone_id,"
-                 " vohead_docdate = COALESCE(:vohead_docdate, CURRENT_DATE),"
-				 " vohead_curr_id = :vohead_curr_id "
-				 "WHERE (vohead_id = :vohead_id);");
+              "                  vohead_docdate = COALESCE(:vohead_docdate, CURRENT_DATE),"
+              "                  vohead_curr_id = :vohead_curr_id "
+              "WHERE (vohead_id = :vohead_id);");
     if (_taxzone->isValid())
       q.bindValue(":taxzone_id",	_taxzone->id());
     q.bindValue(":vohead_id",	_voheadid);
     q.bindValue(":vohead_docdate", _distributionDate->date());
-	q.bindValue(":vohead_curr_id", _amountToDistribute->id());
-	q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-}
-
-void voucher::sTaxZoneChanged()
-{
-  if (_voheadid == -1 || _taxzoneidCache == _taxzone->id())
-    return;
-
-  _taxzoneidCache = _taxzone->id();
-
-  sCalculateTax();
-}
-
-void voucher::sCalculateTax()
-{
-  if (_poNumber->isValid())
-  {
-    q.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(linetax,0)) AS distrib"
-               "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
-               "          FROM voitem"
-               "         WHERE (voitem_vohead_id=:vohead_id)) AS data1, "
-               "       (SELECT SUM(COALESCE(vodist_amount, 0)) AS dist"
-               "          FROM vodist"
-               "         WHERE (vodist_vohead_id=:vohead_id)) AS data2, "
-               "       (SELECT COALESCE(SUM(calculatetax(:taxzone_id, voitem_taxtype_id, COALESCE(:date, CURRENT_DATE), :curr_id, vodist_amount)),0) AS linetax "
-			   "          FROM vodist, voitem, vohead "
-			   "          WHERE (vodist_poitem_id=voitem_poitem_id) AND (vohead_id=voitem_vohead_id) AND (vohead_id=vodist_vohead_id) "
-			   "          AND (vohead_id=:vohead_id)) AS data3" );
-	  
-    q.bindValue(":vohead_id", _voheadid);
-    q.bindValue(":taxzone_id", _taxzone->id());
-    q.bindValue(":date", _distributionDate->date());
-    q.bindValue(":curr_id", _amountToDistribute->id());
+    q.bindValue(":vohead_curr_id", _amountToDistribute->id());
     q.exec();
-    if (q.first())
-    {
-      _amountDistributed->setLocalValue(q.value("distrib").toDouble());
-      sPopulateBalanceDue();
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
