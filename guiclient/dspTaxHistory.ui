@@ -20,7 +20,7 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Tax History</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_10">
+  <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_9">
      <property name="margin">
@@ -180,94 +180,6 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QGroupBox" name="_showOnlyGroup">
-           <property name="title">
-            <string>Show only tax</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <layout class="QGridLayout" name="gridLayout_7">
-              <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
-                <item>
-                 <widget class="XComboBox" name="_filterOn">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>Code</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Type</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Class</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Authority</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Zone</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label">
-                  <property name="text">
-                   <string>of</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XComboBox" name="_selection">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="1" column="2">
           <widget class="QGroupBox" name="_dateGroup">
            <property name="title">
@@ -276,6 +188,123 @@ to be bound by its terms.</comment>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
              <widget class="DateCluster" name="_dates"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QGroupBox" name="_showOnlyGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Type:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="XComboBox" name="_filterOn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Code</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Type</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Class</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Authority</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Zone</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="_selectionLit">
+              <property name="text">
+               <string>Show:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="XComboBox" name="_selection">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="nullStr">
+                 <string>All</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -405,7 +434,10 @@ to be bound by its terms.</comment>
            </widget>
           </item>
           <item>
-           <widget class="XTreeWidget" name="_taxhist">
+           <widget class="XTreeWidget" name="_taxsum"/>
+          </item>
+          <item>
+           <widget class="XTreeWidget" name="_taxdet">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -449,7 +481,7 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_taxhist</tabstop>
+  <tabstop>_taxdet</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
