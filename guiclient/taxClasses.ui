@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>taxClasses</class>
- <widget class="QWidget" name="taxClasses" >
-  <property name="geometry" >
+ <widget class="QWidget" name="taxClasses">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,30 +17,30 @@ to be bound by its terms.</comment>
     <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>List Tax Classes</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" >
-    <layout class="QVBoxLayout" name="verticalLayout" >
-     <property name="spacing" >
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin" >
+     <property name="margin">
       <number>12</number>
      </property>
      <item>
-      <widget class="QLabel" name="_taxclassLit" >
-       <property name="text" >
+      <widget class="QLabel" name="_taxclassLit">
+       <property name="text">
         <string>Tax Classes:</string>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="XTreeWidget" name="_taxclass" >
-         <property name="columnCount" >
+        <widget class="XTreeWidget" name="_taxclass">
+         <property name="columnCount">
           <number>0</number>
          </property>
          <item/>
@@ -49,44 +50,37 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
+            <widget class="QPushButton" name="_close">
+             <property name="text">
               <string>&amp;Close</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_print" >
-             <property name="text" >
-              <string>&amp;Print</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer" >
-             <property name="orientation" >
+            <spacer name="verticalSpacer">
+             <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
                <height>5</height>
@@ -95,46 +89,46 @@ to be bound by its terms.</comment>
             </spacer>
            </item>
            <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
+            <layout class="QVBoxLayout">
+             <property name="spacing">
               <number>0</number>
              </property>
-             <property name="margin" >
+             <property name="margin">
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="_new" >
-               <property name="text" >
+              <widget class="QPushButton" name="_new">
+               <property name="text">
                 <string>&amp;New</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_edit" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_edit">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>&amp;Edit</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_view" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_view">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>&amp;View</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_delete" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_delete">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>&amp;Delete</string>
                </property>
               </widget>
@@ -144,14 +138,14 @@ to be bound by its terms.</comment>
           </layout>
          </item>
          <item>
-          <spacer name="Spacer12" >
-           <property name="orientation" >
+          <spacer name="Spacer12">
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>151</height>
@@ -167,7 +161,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -183,7 +177,6 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
@@ -194,11 +187,11 @@ to be bound by its terms.</comment>
    <receiver>taxClasses</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -210,11 +203,11 @@ to be bound by its terms.</comment>
    <receiver>_view</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

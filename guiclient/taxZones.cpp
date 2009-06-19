@@ -32,7 +32,6 @@ taxZones::taxZones(QWidget* parent, const char* name, Qt::WFlags fl)
 //  (void)statusBar();
 
   // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -137,15 +136,6 @@ void taxZones::sView()
   taxZone newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void taxZones::sPrint()
-{
-  orReport report("TaxZonesMasterList");
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void taxZones::sFillList(int pId)

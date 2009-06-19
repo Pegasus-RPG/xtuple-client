@@ -32,7 +32,6 @@ taxClasses::taxClasses(QWidget* parent, const char* name, Qt::WFlags fl)
 //  (void)statusBar();
 
   // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -138,15 +137,6 @@ void taxClasses::sView()
   taxClass newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void taxClasses::sPrint()
-{
-  orReport report("TaxClassesMasterList");
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void taxClasses::sFillList(int pId)

@@ -29,7 +29,6 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sFillList(int pId);
-    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
