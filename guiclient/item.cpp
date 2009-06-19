@@ -356,6 +356,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newAlias->setEnabled(FALSE);
       _newSubstitute->setEnabled(FALSE);
       _newTransform->setEnabled(FALSE);
+      _taxRecoverable->setEnabled(FALSE);
       _itemtaxNew->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _newSrc->setEnabled(false);
@@ -770,7 +771,8 @@ void item::sSave()
                "  item_prodcat_id, item_price_uom_id,"
                "  item_exclusive,"
                "  item_listprice, item_upccode, item_config,"
-               "  item_comments, item_extdescrip, item_warrdays, item_freightclass_id ) "
+               "  item_comments, item_extdescrip, item_warrdays, item_freightclass_id,"
+               "  item_tax_recoverable ) "
                "VALUES "
                "( :item_id, :item_number, :item_active,"
                "  :item_descrip1, :item_descrip2,"
@@ -780,7 +782,8 @@ void item::sSave()
                "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
-               "  :item_comments, :item_extdescrip, :item_wardays, :item_freightclass_id );" ;
+               "  :item_comments, :item_extdescrip, :item_wardays, :item_freightclass_id,"
+               "  :item_tax_recoverable );" ;
   else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
          sql = "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
@@ -793,7 +796,8 @@ void item::sSave()
                "    item_exclusive=:item_exclusive,"
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
                "    item_comments=:item_comments, item_extdescrip=:item_extdescrip, item_warrdays=:item_warrdays,"
-               "    item_freightclass_id=:item_freightclass_id "
+               "    item_freightclass_id=:item_freightclass_id,"
+               "    item_tax_recoverable=:item_tax_recoverable "
                "WHERE (item_id=:item_id);";
   q.prepare(sql);
   q.bindValue(":item_id", _itemid);
@@ -821,6 +825,7 @@ void item::sSave()
   q.bindValue(":item_warrdays", _warranty->value());
   if (_freightClass->isValid())
     q.bindValue(":item_freightclass_id", _freightClass->id());
+  q.bindValue(":item_tax_recoverable", QVariant(_taxRecoverable->isChecked()));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -1042,6 +1047,7 @@ void item::populate()
     _listprice->setDouble(item.value("item_listprice").toDouble());
     _priceUOM->setId(item.value("item_price_uom_id").toInt());
     _warranty->setValue(item.value("item_warrdays").toInt());
+    _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
 
     sFillList();
     sFillUOMList();
