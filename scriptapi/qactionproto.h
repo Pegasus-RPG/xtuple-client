@@ -80,7 +80,7 @@ class QActionProto : public QObject, public QScriptable
     Q_INVOKABLE QString             toolTip()           const;
     Q_INVOKABLE QString             whatsThis()         const;
 
-    // Q_INVOKABLE QString     toString()               const;
+    Q_INVOKABLE QString             toString()          const;
 };
 
 #endif

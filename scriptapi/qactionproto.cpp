@@ -413,12 +413,12 @@ QString QActionProto::whatsThis() const
   return QString();
 }
 
-/*
 QString QActionProto::toString() const
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
-    return item->toString();
+    return QString("[QAction %1: %2]")
+                  .arg(item->objectName())
+                  .arg(item->text());
   return QString();
 }
-*/
