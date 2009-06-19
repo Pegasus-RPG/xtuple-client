@@ -144,18 +144,7 @@ void userPreferences::sPopulate()
   if (_currentUser->isChecked())
   {
     _pref = _preferences;
-	q.prepare("SELECT CURRENT_USER as cuser;");
-    q.exec();
-    if (q.first())
-    {
-      _username->setText(q.value("cuser"));
-      _username->setEnabled(FALSE);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    } 
+    _username->setText(omfgThis->username());
   }
   else
   {
@@ -163,9 +152,13 @@ void userPreferences::sPopulate()
       delete _altPref;
     _altPref = new Preferences(_user->currentText());
     _pref = _altPref;
-	_username->setText(_user->currentText());
-     _username->setEnabled(FALSE);
+    _username->setText(_user->currentText());
   }
+  _username->setEnabled(FALSE);
+  _currentpassword->setEnabled(_currentUser->isChecked());
+  _newpassword->setEnabled(_currentUser->isChecked());
+  _retypepassword->setEnabled(_currentUser->isChecked());
+  
 
   if (_pref->value("BackgroundImageid").toInt() > 0)
   {
@@ -300,17 +293,17 @@ void userPreferences::sSave()
   if (_currentUser->isChecked())
   {
     _preferences->load();
-        omfgThis->initMenuBar();
+    omfgThis->initMenuBar();
   }
 
-  if (!_currentpassword->text().isEmpty())
+  if (_currentUser->isChecked() && !_currentpassword->text().isEmpty())
   {
     if (save())
      accept(); 
   }
   else
   {
-  accept();
+    accept();
   }
 }
 
@@ -384,6 +377,7 @@ bool userPreferences::save()
       return false;
     }
   }
+  return true;
 }
 
 void userPreferences::sClose()
