@@ -246,7 +246,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
     }
   }
   
-  if (((XTreeWidgetItem *)pItem)->altId() == 1 && 
+  if ((((XTreeWidgetItem *)pItem)->altId() == 1 || ((XTreeWidgetItem *)pItem)->altId() == 3) && 
       ((XTreeWidgetItem *)pItem)->rawValue("posted").toBool() && 
       ((XTreeWidgetItem *)pItem)->rawValue("open").toBool() )
   {
@@ -976,17 +976,7 @@ void dspAROpenItems::sPostInvoice()
 		"  AND  (invchead_invcdate BETWEEN curr_effective AND curr_expires));");
   // if SUM becomes dependent on curr_id then move XRATE before it in the loop
   XSqlQuery sum;
-  sum.prepare("SELECT COALESCE(SUM(round((invcitem_billed * invcitem_qty_invuomratio) *"
-	      "                 (invcitem_price / "
-	      "                  CASE WHEN (item_id IS NULL) THEN 1"
-	      "                       ELSE invcitem_price_invuomratio"
-	      "                  END), 2)),0) + "
-	      "       invchead_freight + invchead_tax + "
-	      "       invchead_misc_amount AS subtotal "
-	      "  FROM invchead LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
-	      "       item ON (invcitem_item_id=item_id) "
-	      " WHERE(invchead_id=:invchead_id) "
-	      " GROUP BY invchead_freight, invchead_tax, invchead_misc_amount;");
+  sum.prepare("SELECT invoicetotal(:invchead_id) AS subtotal;");
 
   XSqlQuery post;
   post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
@@ -1159,7 +1149,7 @@ void dspAROpenItems::sHandleButtons(bool valid)
     _view->setEnabled(true);
     
     // Handle Post and Apply Button
-    if (_aropen->altId() == 1 && 
+    if ((_aropen->altId() == 1 || _aropen->altId() == 3) && 
         _aropen->currentItem()->rawValue("posted").toBool() && 
         _aropen->currentItem()->rawValue("open").toBool() )
     {
