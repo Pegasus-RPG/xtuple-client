@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -8,52 +8,55 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>arCreditMemoApplication</class>
- <widget class="QDialog" name="arCreditMemoApplication" >
-  <property name="geometry" >
+ <widget class="QDialog" name="arCreditMemoApplication">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>352</height>
+    <width>503</width>
+    <height>391</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Receivables Credit Memo Application</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <property name="spacing" >
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="margin">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout">
+       <property name="spacing">
         <number>7</number>
        </property>
-       <property name="margin" >
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <widget class="CustCluster" name="_cust" />
+          <widget class="CustCluster" name="_cust"/>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>41</width>
              <height>10</height>
@@ -64,37 +67,37 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin" >
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
+          <layout class="QVBoxLayout">
+           <property name="spacing">
+            <number>0</number>
            </property>
-           <property name="margin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
+            <widget class="QPushButton" name="_close">
+             <property name="text">
               <string>&amp;Cancel</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_save" >
-             <property name="text" >
+            <widget class="QPushButton" name="_save">
+             <property name="text">
               <string>&amp;Save</string>
              </property>
-             <property name="autoDefault" >
+             <property name="autoDefault">
               <bool>true</bool>
              </property>
-             <property name="default" >
+             <property name="default">
               <bool>true</bool>
              </property>
             </widget>
@@ -103,13 +106,13 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Preferred</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>10</width>
              <height>0</height>
@@ -121,289 +124,279 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QGroupBox" name="_applyToGroupBox" >
-       <property name="title" >
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="_applyToGroupBox">
+       <property name="title">
         <string>Apply-To Information</string>
        </property>
-       <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <item row="1" column="1" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="DLineEdit" name="_docDate" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize" >
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="DLineEdit" name="_dueDate" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize" >
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0" >
-             <size>
-              <width>207</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="1" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>7</number>
-            </property>
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_docNumber" >
-              <property name="minimumSize" >
-               <size>
-                <width>100</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text" >
-               <string/>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_docTypeLit" >
-                <property name="text" >
-                 <string>Doc. Type:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="_docType" >
-                <property name="minimumSize" >
-                 <size>
-                  <width>40</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0" >
-             <size>
-              <width>47</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0" >
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_docDateLit" >
-            <property name="text" >
-             <string>Doc. Date:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="_dueDateLit" >
-            <property name="text" >
-             <string>Due Date:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="0" >
-         <widget class="QLabel" name="_docNumberLit" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="_docNumberLit">
+          <property name="text">
            <string>Doc. Number:</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2" >
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>0</number>
+        <item row="0" column="1">
+         <widget class="QLabel" name="_docNumber">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="spacing" >
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <layout class="QHBoxLayout">
+          <property name="spacing">
            <number>5</number>
           </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="_targetAmountLit" >
-            <property name="text" >
-             <string>Amount:</string>
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="_docTypeLit">
+            <property name="text">
+             <string>Doc. Type:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="CurrCluster" name="_targetAmount" >
-            <property name="localControl" >
-             <bool>false</bool>
+          <item>
+           <widget class="QLabel" name="_docType">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="currencyEditable" stdset="0" >
-             <bool>false</bool>
+            <property name="text">
+             <string/>
             </property>
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="_targetPaidLit" >
-            <property name="text" >
-             <string>Paid:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_targetBalanceLit" >
-            <property name="text" >
-             <string>Balance:</string>
+         </layout>
+        </item>
+        <item row="0" column="3">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>155</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="_docDateLit">
+          <property name="text">
+           <string>Doc. Date:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="DLineEdit" name="_docDate">
+            <property name="enabled">
+             <bool>false</bool>
             </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="CurrDisplay" name="_targetPaid" />
-          </item>
-          <item row="2" column="1" >
-           <widget class="CurrDisplay" name="_targetBalance" />
-          </item>
-          <item rowspan="3" row="0" column="2" >
+          <item>
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
-              <width>196</width>
+              <width>260</width>
               <height>16</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="_dueDateLit">
+          <property name="text">
+           <string>Due Date:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="DLineEdit" name="_dueDate">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="_targetAmountLit">
+          <property name="text">
+           <string>Amount:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="3">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="CurrCluster" name="_targetAmount">
+            <property name="localControl">
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="_targetPaidLit">
+          <property name="text">
+           <string>Paid:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="CurrDisplay" name="_targetPaid"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="_targetBalanceLit">
+          <property name="text">
+           <string>Balance:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="CurrDisplay" name="_targetBalance"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -413,66 +406,66 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
+     <item row="2" column="0">
+      <layout class="QGridLayout">
+       <property name="margin">
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="spacing">
         <number>5</number>
        </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_availableToApplyLit" >
-         <property name="text" >
+       <item row="0" column="0">
+        <widget class="QLabel" name="_availableToApplyLit">
+         <property name="text">
           <string>Available To Apply:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="CurrCluster" name="_availableToApply" >
-         <property name="localControl" >
+       <item row="0" column="1">
+        <widget class="CurrCluster" name="_availableToApply">
+         <property name="localControl">
           <bool>false</bool>
          </property>
-         <property name="currencyEditable" stdset="0" >
+         <property name="currencyEditable" stdset="0">
           <bool>false</bool>
          </property>
-         <property name="enabled" >
+         <property name="enabled">
           <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_amountToApplyLit" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="_amountToApplyLit">
+         <property name="text">
           <string>Amount To Apply:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
-        <widget class="CurrCluster" name="_amountToApply" >
-         <property name="currencyEditable" stdset="0" >
+       <item row="1" column="1">
+        <widget class="CurrCluster" name="_amountToApply">
+         <property name="currencyEditable" stdset="0">
           <bool>false</bool>
          </property>
-         <property name="currencyVisible" >
+         <property name="currencyVisible">
           <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item rowspan="2" row="0" column="2" >
+       <item row="0" column="2" rowspan="2">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>132</width>
            <height>16</height>
@@ -486,7 +479,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -512,7 +505,6 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_cust</tabstop>
-  <tabstop>_docDate</tabstop>
   <tabstop>_dueDate</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
@@ -525,11 +517,11 @@ to be bound by its terms.</comment>
    <receiver>arCreditMemoApplication</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -541,11 +533,11 @@ to be bound by its terms.</comment>
    <receiver>_amountToApply</receiver>
    <slot>setId(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -557,11 +549,11 @@ to be bound by its terms.</comment>
    <receiver>_targetPaid</receiver>
    <slot>setId(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -573,11 +565,11 @@ to be bound by its terms.</comment>
    <receiver>_targetBalance</receiver>
    <slot>setId(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -589,11 +581,11 @@ to be bound by its terms.</comment>
    <receiver>_amountToApply</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -605,11 +597,11 @@ to be bound by its terms.</comment>
    <receiver>_targetPaid</receiver>
    <slot>reset()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -621,11 +613,11 @@ to be bound by its terms.</comment>
    <receiver>_targetBalance</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -637,11 +629,11 @@ to be bound by its terms.</comment>
    <receiver>_targetAmount</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -653,11 +645,11 @@ to be bound by its terms.</comment>
    <receiver>_availableToApply</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>156</x>
      <y>204</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>216</x>
      <y>317</y>
     </hint>
@@ -669,11 +661,11 @@ to be bound by its terms.</comment>
    <receiver>_amountToApply</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>156</x>
      <y>204</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>216</x>
      <y>364</y>
     </hint>
