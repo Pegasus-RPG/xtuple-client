@@ -604,12 +604,12 @@ int to = -1, from = -1;
                "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
                "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
-               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number ) "
+               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate ) "
                "VALUES "
                "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
                "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
-               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number );" );
+               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -622,7 +622,8 @@ int to = -1, from = -1;
 	       "    cashrcpt_notes=:cashrcpt_notes, "
 	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
 	       "    cashrcpt_curr_id=:curr_id,"
-	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit "
+	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
+               "    cashrcpt_applydate=:cashrcpt_applydate "
 	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
