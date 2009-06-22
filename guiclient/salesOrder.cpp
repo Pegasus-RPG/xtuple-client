@@ -3849,7 +3849,7 @@ void salesOrder::sCalculateTax()
   taxq.bindValue(":taxzone_id", _taxZone->id());
   taxq.bindValue(":date", _orderDate->date());   
   taxq.bindValue(":curr_id", _orderCurrency->id());  
-  taxq.bindValue(":rahead_id", _soheadid);
+  taxq.bindValue(":cohead_id", _soheadid);
   taxq.bindValue(":freight", _freight->localValue());
   taxq.exec();
   if (taxq.first())
