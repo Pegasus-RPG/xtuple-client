@@ -675,6 +675,7 @@ void invoice::populate()
     _shipVia->setText(q.value("invchead_shipvia").toString());
     _fob->setText(q.value("invchead_fob").toString());
     _shipChrgs->setId(q.value("shipchrg_id").toInt());
+    _freight->setLocalValue(q.value("invchead_freight").toDouble());
 
     if(q.value("invchead_recurring").toBool())
     {
@@ -739,8 +740,7 @@ void invoice::populate()
       if (shipto.lastError().type() != QSqlError::NoError)
 	systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
     }
-
-    _freight->setLocalValue(q.value("invchead_freight").toDouble());
+    
     _payment->setLocalValue(q.value("invchead_payment").toDouble());
     _miscChargeDescription->setText(q.value("invchead_misc_descrip"));
     _miscChargeAccount->setId(q.value("invchead_misc_accnt_id").toInt());
@@ -1180,7 +1180,7 @@ void invoice::sHandleShipchrg(int pShipchrgid)
 
 void invoice::sTaxZoneChanged()
 {
-  if (_invcheadid != -1)
+  if (_invcheadid != -1 && _taxzoneidCache != _taxzone->id())
   {
     XSqlQuery taxq;
     taxq.prepare("UPDATE invchead SET "
