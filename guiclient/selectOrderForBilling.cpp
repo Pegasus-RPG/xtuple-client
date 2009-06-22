@@ -53,6 +53,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
 #endif
   
   _cobmiscid = -1;
+  _taxzoneidCache = -1;
   _captive = FALSE;
   _updated = FALSE;
 
@@ -299,6 +300,7 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
     {
       _cobmiscid = cobmisc.value("cobmisc_id").toInt();
       // do taxzone first so we can overwrite the result of the signal cascade
+      _taxzoneidCache = cobmisc.value("cobmisc_taxzone_id").toInt();
       _taxZone->setId(cobmisc.value("cobmisc_taxzone_id").toInt());
 
       _orderDate->setDate(cobmisc.value("cohead_orderdate").toDate(), true);
@@ -601,7 +603,7 @@ void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)
 
 void selectOrderForBilling::sTaxZoneChanged()
 {
-  if (_cobmiscid != -1)
+  if (_cobmiscid != -1 && _taxzoneidCache != _taxZone->id())
   {
     XSqlQuery taxq;
     taxq.prepare("UPDATE cobmisc SET "

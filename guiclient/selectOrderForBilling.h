@@ -54,7 +54,7 @@ private:
     bool _captive;
     bool _updated;
     int _mode;
-    int		_taxcurrid;
+    int	_taxzoneidCache;
 };
 
 #endif // SELECTORDERFORBILLING_H
