@@ -96,6 +96,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _returns->findChild<XTreeWidget*>("_radue")->hideColumn("cust_name");
   
   _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
+  _aritems->setObjectName("dspAROpenItems");
   _aritemsPage->layout()->addWidget(_aritems);
   _aritems->findChild<QWidget*>("_close")->hide();
   _aritems->findChild<QWidget*>("_customerSelector")->hide();
@@ -129,6 +130,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewShipto, SIGNAL(clicked()), this, SLOT(sViewShipto()));
   connect(_deleteShipto, SIGNAL(clicked()), this, SLOT(sDeleteShipto()));
   connect(_shipto, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateShiptoMenu(QMenu*)));
+  connect(_print,       SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_printShipto, SIGNAL(clicked()), this, SLOT(sPrintShipto()));
   connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -172,11 +174,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_cctransButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_cashreceiptsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
-  
-  QMenu * _printMenu = new QMenu;
-  _printMenu->addAction(tr("Customer Infomation"), this, SLOT(sPrint()));
-  _printMenu->addAction(tr("Statement"),      this, SLOT(sPrintStatement()));
-  _print->setMenu(_printMenu);
   
   _custid = -1;
   _crmacctid = -1;
@@ -1445,24 +1442,6 @@ void customer::sPrint()
     report.print();
   else
     report.reportError(this);
-}
-
-void customer::sPrintStatement()
-{
-  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
-  q.bindValue(":cust_id", _custid);
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("cust_id", _custid);
-
-    orReport report(q.value("_reportname").toString(), params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
 }
 
 void customer::sNewCreditCard()

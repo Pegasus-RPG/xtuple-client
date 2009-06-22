@@ -55,11 +55,13 @@ public slots:
     virtual void sViewIncident();
     virtual void sPrint();
     virtual void sPrintItem();
+    virtual void sPrintStatement();
     virtual void sPost();
     virtual void sPostInvoice();
     virtual void sPostCreditMemo();
     virtual void sShipment();
     virtual void sHandleButtons(bool);
+    virtual void sHandleStatementButton();
     virtual void sClosedToggled(bool);
 
 protected slots:

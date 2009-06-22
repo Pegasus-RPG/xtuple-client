@@ -28,6 +28,9 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sPrint();
 
+signals:
+    virtual void finishedPrinting(int);
+
 protected slots:
     virtual void languageChange();
 

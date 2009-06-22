@@ -14,7 +14,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
+
+#define DEBUG false
 
 printStatementsByCustomerType::printStatementsByCustomerType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -56,30 +59,33 @@ enum SetResponse printStatementsByCustomerType::set(const ParameterList &pParams
 
 void printStatementsByCustomerType::sPrint()
 {
-  QString sql( "SELECT cust_id, (cust_number || '-' || cust_name) AS customer,"
-               "       findCustomerForm(cust_id, 'S') AS reportname "
-               "FROM cust, custtype, aropen "
-               "WHERE ( (cust_custtype_id=custtype_id)"
-               " AND (aropen_cust_id=cust_id)"
-               " AND (aropen_open)" );
+  MetaSQLQuery custm("SELECT cust_id, (cust_number || '-' || cust_name) AS customer,"
+                     "       findCustomerForm(cust_id, 'S') AS reportname "
+                     "FROM custinfo, custtype, aropen "
+                     "WHERE ( (cust_custtype_id=custtype_id)"
+                     " AND (aropen_cust_id=cust_id)"
+                     " AND (aropen_open)"
+                     "<? if exists(\"graceDays\") ?>"
+                     " AND (aropen_duedate < (CURRENT_DATE - <? value (\"graceDays\") ?>))"
+                     "<? endif ?>"
+                     "<? if exists(\"custtype_id\") ?>"
+                     " AND (custtype_id=<? value (\"custtype_id\") ?>)"
+                     "<? elseif exists(\"custtype_pattern\") ?>"
+                     " AND (custtype_code ~ <? value (\"custtype_pattern\") ?>)"
+                     "<? endif ?>"
+                     ") "
+                     "GROUP BY cust_id, cust_number, cust_name "
+                     "HAVING (SUM((aropen_amount - aropen_paid) *"
+                     "             CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1"
+                     "                  ELSE 1 END) > 0) "
+                     "ORDER BY cust_number;" );
 
-  if (_dueonly->isChecked())
-    sql += " AND (aropen_duedate < (CURRENT_DATE - :graceDays))";
-  if (_customerTypes->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
-  else if (_customerTypes->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
+  ParameterList custp;
+  _customerTypes->appendValue(custp);
+  custp.append("graceDays", _graceDays->value());
 
-  sql += ") "
-         "GROUP BY cust_id, cust_number, cust_name "
-         "HAVING (SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END) > 0) "
-         "ORDER BY cust_number;";
-
-  q.prepare(sql);
-  _customerTypes->bindValue(q);
-  q.bindValue(":graceDays", _graceDays->value());
-  q.exec();
-  if (q.first())
+  XSqlQuery custq = custm.toQuery(custp);
+  if (custq.first())
   {
     QPrinter printer(QPrinter::HighResolution);
     bool userCanceled = false;
@@ -92,13 +98,18 @@ void printStatementsByCustomerType::sPrint()
     bool doSetup = true;
     do
     {
+      if (DEBUG)
+        qDebug("printing statement for %s",
+               qPrintable(custq.value("customer").toString()));
+
       message( tr("Printing Statement for Customer %1.")
-               .arg(q.value("customer").toString()) );
+               .arg(custq.value("customer").toString()) );
 
       ParameterList params;
-      params.append("cust_id", q.value("cust_id").toInt());
+      params.append("cust_id", custq.value("cust_id").toInt());
 
-      orReport report(q.value("reportname").toString(), params);
+      if (DEBUG) qDebug("instantiating report");
+      orReport report(custq.value("reportname").toString(), params);
       if (! (report.isValid() && report.print(&printer, doSetup)) )
       {
         report.reportError(this);
@@ -106,20 +117,26 @@ void printStatementsByCustomerType::sPrint()
         reject();
       }
       doSetup = false;
+
+      if (DEBUG)
+        qDebug("emitting finishedPrinting(%d)", custq.value("cust_id").toInt());
+      emit finishedPrinting(custq.value("cust_id").toInt());
     }
-    while (q.next());
+    while (custq.next());
     orReport::endMultiPrint(&printer);
 
     message("");
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (custq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, custq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
     QMessageBox::information( this, tr("No Statement to Print"),
-                              tr("There are no Customers whose accounts are past due for which Statements should be printed.") );
+                              tr("<p>There are no Customers whose accounts are "
+                                 "past due for which Statements should be "
+                                 "printed.") );
 
   if (_captive)
     accept();

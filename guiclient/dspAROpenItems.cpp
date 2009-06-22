@@ -44,13 +44,13 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_printItem, SIGNAL(clicked()), this, SLOT(sPrintItem()));
+  connect(_print,          SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_printItem,      SIGNAL(clicked()), this, SLOT(sPrintItem()));
+  connect(_printStatement, SIGNAL(clicked()), this, SLOT(sPrintStatement()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_customerSelector, SIGNAL(updated()), _aropen, SLOT(clear()));
+  connect(_customerSelector, SIGNAL(updated()), this, SLOT(sHandleStatementButton()));
   connect(_aropen, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApplyAropenCM()));
@@ -103,6 +103,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   menuItem = newMenu->insertItem(tr("Misc. Credit Memo"),   this, SLOT(sEnterMiscArCreditMemo()));
   newMenu->setItemEnabled(menuItem, _privileges->check("MaintainARMemos"));
   _new->setMenu(newMenu);
+
   
   _asOf->setDate(omfgThis->dbDate(), true);
   _closed->hide();
@@ -825,6 +826,24 @@ void dspAROpenItems::sPrintItem()
   }
 }
 
+void dspAROpenItems::sPrintStatement()
+{
+  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+  q.bindValue(":cust_id", _customerSelector->custId());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("cust_id", _customerSelector->custId());
+
+    orReport report(q.value("_reportname").toString(), params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+}
+
 void dspAROpenItems::sPost()
 {
   if (_aropen->altId() == 1 && _aropen->id() == -1)
@@ -1083,8 +1102,16 @@ void dspAROpenItems::sFillList()
   }
 }
 
+void dspAROpenItems::sHandleStatementButton()
+{
+  _printStatement->setEnabled(_customerSelector->isValid() &&
+                              _customerSelector->isSelectedCust());
+}
+
+
 void dspAROpenItems::sHandleButtons(bool valid)
 {
+  sHandleStatementButton();
   if (valid)
   {
     // Handle Print Item Button
