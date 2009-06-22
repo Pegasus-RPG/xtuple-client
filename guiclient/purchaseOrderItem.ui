@@ -405,36 +405,23 @@ to be bound by its terms.</comment>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
+              <width>0</width>
               <height>20</height>
              </size>
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="XCheckBox" name="_taxRecoverable">
+            <property name="text">
+             <string>Recoverable</string>
+            </property>
+            <property name="forgetful">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
-        </item>
-        <item row="4" column="1">
-         <widget class="XCheckBox" name="_taxRecoverable">
-          <property name="text">
-           <string>Tax Recoverable</string>
-          </property>
-          <property name="forgetful">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <spacer name="horizontalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>

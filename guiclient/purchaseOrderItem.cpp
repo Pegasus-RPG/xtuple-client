@@ -86,6 +86,9 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
    _tab->removePage(_tab->page(4));
    
   adjustSize();
+  
+  //TO DO: Implement later
+  _taxRecoverable->hide();
 }
 
 /*

@@ -221,6 +221,9 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _tab->setUsesScrollButtons(true);
   _tab->setElideMode(Qt::ElideNone);
 #endif
+
+  // TO DO: Implement later
+  _taxRecoverable->hide();
 }
 
 /*
