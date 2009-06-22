@@ -1050,5 +1050,5 @@ QString scriptHandleIncludes(QString source)
 
 QString ScriptToolbox::storedProcErrorLookup(const QString proc, const int result)
 {
-  return storedProcErrorLookup(proc, result);
+  return ::storedProcErrorLookup(proc, result);
 }
