@@ -10,13 +10,16 @@
 
 #include "login2.h"
 
+#include <QAction>
 #include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
 #include <QCursor>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QApplication>
 #include <QSplashScreen>
+#include <QStringList>
 #include <QCheckBox>
 
 #include "xtsettings.h"
@@ -47,6 +50,7 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _password->setEchoMode(QLineEdit::Password);
 
+  updateRecentOptionsActions();
   _databaseURL = xtsettingsValue("/xTuple/_databaseURL", "pgsql://:5432/").toString();
   _enhancedAuth = xtsettingsValue("/xTuple/_enhancedAuthentication", false).toBool();
   _requireSSL = xtsettingsValue("/xTuple/_requireSSL", false).toBool();
@@ -304,6 +308,7 @@ void login2::sLogin()
       }
       _user = login.value("user").toString();
       _databaseURL = databaseURL;
+      updateRecentOptions();
       accept();
     }
     else if (login.lastError().type() != QSqlError::NoError)
@@ -331,6 +336,7 @@ void login2::sLogin()
   {
     setCursor(QCursor(Qt::ArrowCursor));
     _databaseURL = databaseURL;
+    updateRecentOptions();
     accept();
   }
 }
@@ -353,10 +359,13 @@ void login2::sOptions()
   newdlg.set(params);
   if (newdlg.exec() != QDialog::Rejected)
   {
+    updateRecentOptions();
     _databaseURL = newdlg._databaseURL;
     _enhancedAuth = newdlg._enhancedAuth->isChecked();
     _requireSSL = newdlg._requireSSL->isChecked();
     populateDatabaseInfo();
+    updateRecentOptions();
+    updateRecentOptionsActions();
     _username->setFocus();
   }
 }
@@ -399,5 +408,74 @@ void login2::setEnhancedAuth(bool on)
 void login2::setRequireSSL(bool on)
 {
   _requireSSL = on;
+}
+
+void login2::updateRecentOptions()
+{
+  if (_demoOption->isChecked())
+    return;
+    
+  QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
+  list.removeAll(_databaseURL);
+  list.prepend(_databaseURL);
+      
+  xtsettingsSetValue("/xTuple/_recentOptionsList", list);
+  xtsettingsSetValue("/xTuple/_databaseURL", _databaseURL);
+}
+
+void login2::updateRecentOptionsActions()
+{ 
+  QMenu * recentMenu = new QMenu;
+  QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
+  if (list.size())
+  {
+    list.takeFirst();
+    int size = list.size();
+    if (size > 5)
+      size = 5;
+  
+    if (size)
+    {
+      _recent->setEnabled(true);
+      QAction *act;
+      for (int i = 0; i < size; ++i) 
+      {
+        act = new QAction(list.value(i).remove("psql://"),this);
+        connect(act, SIGNAL(triggered()), this, SLOT(selectRecentOptions()));
+        recentMenu->addAction(act);
+      }
+  
+      recentMenu->addSeparator();
+
+      act = new QAction(tr("Clear &Menu"), this);
+      act->setObjectName(QLatin1String("__xt_action_clear_menu_"));
+      connect(act, SIGNAL(triggered()), this, SLOT(clearRecentOptions()));
+      recentMenu->addAction(act);
+    }
+    else
+      _recent->setEnabled(false);
+  }
+  else
+    _recent->setEnabled(false);
+  
+  _recent->setMenu(recentMenu);
+}
+
+void login2::selectRecentOptions()
+{
+  if (const QAction *action = qobject_cast<const QAction *>(sender())) 
+  {
+    _databaseURL = action->iconText().prepend("psql://");
+    populateDatabaseInfo();
+    updateRecentOptions();
+    updateRecentOptionsActions();
+  }
+}
+
+void login2::clearRecentOptions()
+{
+    QStringList list;
+    xtsettingsSetValue("/xTuple/_recentOptionsList", list);
+    updateRecentOptionsActions();
 }
 

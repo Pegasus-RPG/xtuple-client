@@ -45,6 +45,10 @@ class login2 : public QDialog, public Ui::login2
     virtual void setLogo( const QImage & );
     virtual void setEnhancedAuth(bool);
     virtual void setRequireSSL(bool);
+    virtual void updateRecentOptions();
+    virtual void updateRecentOptionsActions();
+    virtual void selectRecentOptions();
+    virtual void clearRecentOptions();
 
   protected slots:
     virtual void languageChange();
