@@ -19,7 +19,9 @@
 #include <QVariant>
 
 #include "customCommand.h"
+#include "package.h"
 #include "scriptEditor.h"
+#include "storedProcErrorLookup.h"
 #include "xTupleDesigner.h"
 
 uiform::uiform(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -49,8 +51,14 @@ uiform::uiform(QWidget* parent, const char* name, Qt::WFlags fl)
   _commands->addColumn(tr("Menu Label"),     -1, Qt::AlignLeft,  true, "cmd_title");
   _commands->addColumn(tr("Package"), _ynColumn, Qt::AlignCenter,false,"nspname");
 
+  _package->populate("SELECT pkghead_id, pkghead_name, pkghead_name "
+                     "FROM   pkghead "
+                     "ORDER BY pkghead_name;");
+  _package->setEnabled(package::userHasPriv(cEdit));
+
   _uiformid = -1;
   _changed = false;
+  _pkgheadidOrig = -1;
 }
 
 uiform::~uiform()
@@ -149,7 +157,7 @@ void uiform::close()
 
 void uiform::sSave()
 {
-  if (_name->text().length() == 0)
+  if (_name->text().isEmpty())
   {
     QMessageBox::warning( this, tr("UI Form Name is Invalid"),
                           tr("<p>You must enter a valid name for this UI Form.") );
@@ -202,13 +210,49 @@ void uiform::sSave()
     return;
   }
 
+  if (_package->id() != _pkgheadidOrig &&
+      QMessageBox::question(this, tr("Move to different package?"),
+                            tr("Do you want to move this screen "
+                               "to the %1 package?").arg(_package->code()),
+                            QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+  {
+    q.prepare("SELECT moveuiform(:formid, :oldpkgid,"
+              "                  :newpkgid) AS result;");
+    q.bindValue(":formid",   _uiformid);
+    q.bindValue(":oldpkgid", _pkgheadidOrig);
+    q.bindValue(":newpkgid", _package->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result >= 0)
+        _pkgheadidOrig = _package->id();
+      else
+      {
+        systemError(this,
+                    tr("<p>The screen was saved to its original location but "
+                       "could not be moved: %1")
+                    .arg(storedProcErrorLookup("moveuiform", result)),
+                    __FILE__, __LINE__);
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this,
+                  tr("<p>The screen was saved to its original location but "
+                     "could not be moved: <pre>%1</pre>")
+                  .arg(q.lastError().databaseText()), __FILE__, __LINE__);
+    }
+  }
+
   _changed = false;
   close();
 }
 
 void uiform::populate()
 {
-  q.prepare( "SELECT uiform.*, COALESCE(pkghead_indev,true) AS editable "
+  q.prepare( "SELECT uiform.*, COALESCE(pkghead_id, -1) AS pkghead_id,"
+             "       COALESCE(pkghead_indev,true) AS editable "
       	     "  FROM uiform, pg_class, pg_namespace "
              "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((uiform.tableoid=pg_class.oid)"
@@ -223,6 +267,9 @@ void uiform::populate()
     _enabled->setChecked(q.value("uiform_enabled").toBool());
     _source = q.value("uiform_source").toString();
     _notes->setText(q.value("uiform_notes").toString());
+    _pkgheadidOrig = q.value("pkghead_id").toInt();
+    _package->setId(_pkgheadidOrig);
+
     if (!q.value("editable").toBool())
       setMode(cView);
 

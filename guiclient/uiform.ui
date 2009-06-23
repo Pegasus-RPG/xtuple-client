@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -8,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>uiform</class>
- <widget class="QWidget" name="uiform" >
-  <property name="geometry" >
+ <widget class="QWidget" name="uiform">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -17,49 +17,49 @@ to be bound by its terms.</comment>
     <height>391</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Screen</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QLabel" name="_nameLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_nameLit">
+         <property name="text">
           <string>&amp;Name:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_name</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_notesLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_notesLit">
+         <property name="text">
           <string>No&amp;tes:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_notes</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_orderLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_orderLit">
+         <property name="text">
           <string>&amp;Order</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_order</cstring>
          </property>
         </widget>
@@ -67,27 +67,24 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="margin" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="XLineEdit" name="_name" />
+          <widget class="XLineEdit" name="_name"/>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -95,26 +92,49 @@ to be bound by its terms.</comment>
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="XLabel" name="_packageLit">
+           <property name="text">
+            <string>Package:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy">
+            <cstring>_package</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XComboBox" name="_package">
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="nullStr">
+            <string>[ Not in a Package ]</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
-        <widget class="XLineEdit" name="_notes" />
+        <widget class="XLineEdit" name="_notes"/>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QSpinBox" name="_order" >
-           <property name="maximum" >
+          <widget class="QSpinBox" name="_order">
+           <property name="maximum">
             <number>999</number>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -123,8 +143,8 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_enabled" >
-           <property name="text" >
+          <widget class="QCheckBox" name="_enabled">
+           <property name="text">
             <string>&amp;Enabled</string>
            </property>
           </widget>
@@ -134,34 +154,28 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="margin" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>5</number>
          </property>
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>&amp;Cancel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_save" >
-           <property name="text" >
+          <widget class="QPushButton" name="_save">
+           <property name="text">
             <string>&amp;Save</string>
            </property>
-           <property name="default" >
+           <property name="default">
             <bool>true</bool>
            </property>
           </widget>
@@ -170,13 +184,13 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>20</height>
@@ -189,13 +203,13 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -204,22 +218,22 @@ to be bound by its terms.</comment>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="_edit" >
-       <property name="text" >
+      <widget class="QPushButton" name="_edit">
+       <property name="text">
         <string>Edit</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_import" >
-       <property name="text" >
+      <widget class="QPushButton" name="_import">
+       <property name="text">
         <string>&amp;Import</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_export" >
-       <property name="text" >
+      <widget class="QPushButton" name="_export">
+       <property name="text">
         <string>&amp;Export</string>
        </property>
       </widget>
@@ -227,25 +241,25 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_scriptTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_scriptTab">
+      <attribute name="title">
        <string>Scripts</string>
       </attribute>
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="XTreeWidget" name="_script" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <widget class="XTreeWidget" name="_script">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -253,46 +267,46 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_scriptNew" >
-           <property name="text" >
+          <widget class="QPushButton" name="_scriptNew">
+           <property name="text">
             <string>&amp;New</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_scriptEdit" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_scriptEdit">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_scriptDelete" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_scriptDelete">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>77</width>
              <height>92</height>
@@ -304,15 +318,15 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_cmdTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_cmdTab">
+      <attribute name="title">
        <string>Commands</string>
       </attribute>
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="XTreeWidget" name="_commands" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <widget class="XTreeWidget" name="_commands">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -320,46 +334,46 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_cmdNew" >
-           <property name="text" >
+          <widget class="QPushButton" name="_cmdNew">
+           <property name="text">
             <string>&amp;New</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_cmdEdit" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_cmdEdit">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_cmdDelete" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_cmdDelete">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -375,9 +389,19 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
@@ -387,23 +411,26 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_name</tabstop>
+  <tabstop>_package</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_enabled</tabstop>
+  <tabstop>_edit</tabstop>
   <tabstop>_import</tabstop>
   <tabstop>_export</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>_script</tabstop>
   <tabstop>_scriptNew</tabstop>
   <tabstop>_scriptEdit</tabstop>
   <tabstop>_scriptDelete</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>_commands</tabstop>
-  <tabstop>_cmdNew</tabstop>
   <tabstop>_cmdEdit</tabstop>
+  <tabstop>_cmdNew</tabstop>
   <tabstop>_cmdDelete</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
@@ -416,11 +443,11 @@ to be bound by its terms.</comment>
    <receiver>uiform</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>423</x>
      <y>32</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -432,11 +459,11 @@ to be bound by its terms.</comment>
    <receiver>_scriptEdit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>383</x>
      <y>229</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>443</x>
      <y>233</y>
     </hint>
@@ -448,11 +475,11 @@ to be bound by its terms.</comment>
    <receiver>_scriptDelete</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>382</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>413</x>
      <y>256</y>
     </hint>
@@ -464,11 +491,11 @@ to be bound by its terms.</comment>
    <receiver>_scriptEdit</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>376</x>
      <y>216</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>416</x>
      <y>218</y>
     </hint>
@@ -480,11 +507,11 @@ to be bound by its terms.</comment>
    <receiver>_cmdEdit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>312</x>
      <y>228</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>445</x>
      <y>226</y>
     </hint>
@@ -496,11 +523,11 @@ to be bound by its terms.</comment>
    <receiver>_cmdDelete</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>331</x>
      <y>267</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>439</x>
      <y>253</y>
     </hint>
@@ -512,11 +539,11 @@ to be bound by its terms.</comment>
    <receiver>_cmdEdit</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>379</x>
      <y>202</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>435</x>
      <y>220</y>
     </hint>

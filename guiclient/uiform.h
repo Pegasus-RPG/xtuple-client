@@ -64,6 +64,7 @@ private:
     QDesignerFormWindowInterface        *_formwindow;
     int                                  _mode;
     QDesignerObjectInspectorInterface   *_objinsp;
+    int                                  _pkgheadidOrig;
     QDesignerPropertyEditorInterface    *_propeditor;
     QWidget                             *_sloteditor;
     QString                              _source;
