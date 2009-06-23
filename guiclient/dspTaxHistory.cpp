@@ -148,6 +148,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
 
   _dates->appendValue(params);
   
+  params.append("selection", _selection->currentText());
   if (((_showOnlyGroup->isCheckable() && _showOnlyGroup->isChecked()) || 
        !_showOnlyGroup->isCheckable()) &&
         _selection->id() != -1)
@@ -183,22 +184,27 @@ bool dspTaxHistory::setParams(ParameterList &params)
     {
       case 0:
         params.append("groupBy","tax");
+        params.append("groupProper",tr("Tax Code"));
         break;
 
       case 1:
         params.append("groupBy","taxtype");
+        params.append("groupProper",tr("Tax Type"));
         break;
 
       case 2:
         params.append("groupBy","taxclass");
+        params.append("groupProper",tr("Tax Class"));
         break;
  
       case 3:
         params.append("groupBy","taxauth");
+        params.append("groupProper",tr("Tax Authority"));
         break;
       
       case 4:
         params.append("groupBy","taxzone");
+        params.append("groupProper",tr("Tax Zone"));
         break;
     }
   }
@@ -217,11 +223,17 @@ bool dspTaxHistory::setParams(ParameterList &params)
 
 void dspTaxHistory::sPrint()
 {
+  QString name;
+  if (_summary->isChecked())
+    name="TaxHistorySummary";
+  else
+    name="TaxHistoryDetailed";
+
   ParameterList params;
   if (! setParams(params))
     return;
-
-  orReport report("SummarizedTaxableSales", params);
+    
+  orReport report(name, params);
   if (report.isValid())
     report.print();
   else
