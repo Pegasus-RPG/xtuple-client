@@ -27,7 +27,7 @@ class MetaSQLHighlighter : public QSyntaxHighlighter
     ~MetaSQLHighlighter();
 
   protected:
-    enum State { NormalState = -1, InsideString };
+    enum State { NormalState = -1, InsideString, InsideMetaSQL, InsideMetaSQLString };
     virtual void highlightBlock(const QString &text);
 
     QColor       _commentColor;
@@ -43,7 +43,8 @@ class MetaSQLHighlighter : public QSyntaxHighlighter
     QRegExp _extest;
     QRegExp _numerictest;
     QRegExp _wordtest;
-    QRegExp _quotetest;
+    QRegExp _metasqlquotetest;
+    QRegExp _sqlquotetest;
 
 };
 

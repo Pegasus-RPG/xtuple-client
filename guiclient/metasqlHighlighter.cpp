@@ -686,7 +686,10 @@ void MetaSQLHighlighter::init()
   _extest.setPattern("^(" + _extension.join("|") + ")((?=\\W)|$)");
   _numerictest.setPattern("^(0[xX][0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
   _wordtest.setPattern("^\\w+");
-  _quotetest.setPattern("^\"[^\"]*\"|'[^']*'");
+  _sqlquotetest.setPattern("^'([^']|(''))+'");
+  /*
+  _metasqlquotetest.setPattern("^\"[^\"]+\"");
+  */
 }
 
 MetaSQLHighlighter::MetaSQLHighlighter(QObject *parent)
@@ -718,25 +721,56 @@ void MetaSQLHighlighter::highlightBlock(const QString &text)
 
   for (int i = 0; i < text.length(); i++)
   {
-    if (state == InsideString)
+    if (state == InsideString && text.mid(i, 1) == "'" && text.mid(i, 2) != "''")
     {
-      // TODO: if i == 0 then error color until next "
-      if (text.mid(i, 1) == "\"")
-      {
-        state = NormalState;
-        setFormat(start, i - start + 1, _literalColor);
-        start = i;
-      }
+      state = NormalState;
+      setFormat(start, i - start + 1, _literalColor);
+      start = i;
+    }
+    else if (state == InsideMetaSQL && _extest.indexIn(text.mid(i)) == 0)
+    {
+      setFormat(i, _extest.matchedLength(), _extensionColor);
+      i += _extest.matchedLength();
+      start = i;
+    }
+    else if (state == NormalState && text.mid(i, 2) == "<?")
+    {
+      state = InsideMetaSQL;
+      setFormat(i, i + 2, _extensionColor);
+      start = i + 2;
+    }
+    else if (state == InsideMetaSQL && text.mid(i, 2) == "?>")
+    {
+      state = NormalState;
+      setFormat(i, i + 2, _extensionColor);
+      start = i + 2;
+    }
+    else if (state == InsideMetaSQL && text.mid(i, 1) == "\"")
+    {
+      state = InsideMetaSQLString;
+      setFormat(i, i - start + 1, _literalColor);
+      i += 1;
+    }
+    else if (state == InsideMetaSQLString && text.mid(i, 1) == "\"")
+    {
+      state = InsideMetaSQL;
+      setFormat(i, 1, _literalColor);
+      i += 1;
+    }
+    else if (state == InsideMetaSQLString)
+    {
+      setFormat(i, 1, _literalColor);
+      start = i;
     }
     else if (text.mid(i, 2) == "--")
     {
       setFormat(i, text.length() - i, _commentColor);
       break;
     }
-    else if (_quotetest.indexIn(text.mid(i)) == 0)
+    else if (_sqlquotetest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, _quotetest.matchedLength(), _literalColor);
-      i += _quotetest.matchedLength();
+      setFormat(i, _sqlquotetest.matchedLength(), _literalColor);
+      i += _sqlquotetest.matchedLength();
     }
     else if (text.mid(i, 2) == "''")
     {
@@ -747,11 +781,6 @@ void MetaSQLHighlighter::highlightBlock(const QString &text)
     {
       setFormat(i, _kwtest.matchedLength(), _keywordColor);
       i += _kwtest.matchedLength();
-    }
-    else if (_extest.indexIn(text.mid(i)) == 0)
-    {
-      setFormat(i, _extest.matchedLength(), _extensionColor);
-      i += _extest.matchedLength();
     }
     else if (_numerictest.indexIn(text.mid(i)) == 0)
     {
