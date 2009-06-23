@@ -178,8 +178,11 @@ bool dspTaxHistory::setParams(ParameterList &params)
   }
     
   if (_summary->isChecked())
-  {
     params.append("summary");
+    
+  if ((_showOnlyGroup->isCheckable() && _showOnlyGroup->isChecked()) || 
+       _summary->isChecked())
+  {
     switch (_filterOn->currentIndex())
     {
       case 0:
@@ -201,7 +204,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
         params.append("groupBy","taxauth");
         params.append("groupProper",tr("Tax Authority"));
         break;
-      
+    
       case 4:
         params.append("groupBy","taxzone");
         params.append("groupProper",tr("Tax Zone"));
@@ -227,7 +230,7 @@ void dspTaxHistory::sPrint()
   if (_summary->isChecked())
     name="TaxHistorySummary";
   else
-    name="TaxHistoryDetailed";
+    name="TaxHistoryDetail";
 
   ParameterList params;
   if (! setParams(params))
