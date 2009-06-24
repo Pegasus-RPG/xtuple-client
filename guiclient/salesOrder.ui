@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>641</height>
+    <width>976</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -962,7 +962,7 @@ to be bound by its terms.</comment>
              </property>
             </spacer>
            </item>
-           <item row="3" column="0" colspan="8">
+           <item row="2" column="0" colspan="8">
             <spacer>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -974,26 +974,6 @@ to be bound by its terms.</comment>
               </size>
              </property>
             </spacer>
-           </item>
-           <item row="2" column="7">
-            <widget class="XComboBox" name="_shippingLabel">
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>NONE</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="6">
-            <widget class="QLabel" name="_shippingLabelLit">
-             <property name="text">
-              <string>Shipping Label:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
            </item>
           </layout>
          </item>
@@ -1971,7 +1951,6 @@ to be bound by its terms.</comment>
   <tabstop>_holdType</tabstop>
   <tabstop>_shippingCharges</tabstop>
   <tabstop>_shippingForm</tabstop>
-  <tabstop>_shippingLabel</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_requireInventory</tabstop>

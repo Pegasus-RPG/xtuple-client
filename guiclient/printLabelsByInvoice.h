@@ -26,7 +26,6 @@ public slots:
     virtual void sPrint();
     virtual void sParseInvoiceNumber();
     virtual void sSetToMin( int pValue );
-    virtual void sPopulateLabel();
 
 protected slots:
     virtual void languageChange();

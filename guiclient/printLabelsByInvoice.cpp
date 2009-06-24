@@ -21,12 +21,10 @@ printLabelsByInvoice::printLabelsByInvoice(QWidget* parent, const char* name, bo
 {
   setupUi(this);
 
-
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sParseInvoiceNumber()));
-  connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateLabel()));
   connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
 
   _invcheadid = -1;
@@ -108,19 +106,3 @@ void printLabelsByInvoice::sSetToMin(int pValue)
 {
   _to->setMinValue(pValue);
 }
-
-void printLabelsByInvoice::sPopulateLabel()
-{
-  XSqlQuery label;
-  label.prepare("SELECT cohead_labelform_id "
-                "FROM cohead,invchead "
-                "WHERE (invchead_invcnumber=:invoiceNumber) "
-                "AND (invchead_ordernumber=cohead_number);");
-  label.bindValue(":invoiceNumber", _invoiceNumber->text());
-  label.exec();
-  if(label.first())
-  {
-    _report->setId(label.value("cohead_labelform_id").toInt());
-  }
-}
-

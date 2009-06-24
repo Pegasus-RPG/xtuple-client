@@ -483,16 +483,6 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QLabel" name="_shiplabelLit">
-              <property name="text">
-               <string>Shipping Label:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
@@ -542,16 +532,6 @@ to be bound by its terms.</comment>
               </property>
               <property name="type">
                <enum>XComboBox::ShippingCharges</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XComboBox" name="_shiplabel">
-              <property name="allowNull">
-               <bool>true</bool>
-              </property>
-              <property name="nullStr">
-               <string>NONE</string>
               </property>
              </widget>
             </item>
@@ -659,7 +639,6 @@ to be bound by its terms.</comment>
   <tabstop>_shipVia</tabstop>
   <tabstop>_shipform</tabstop>
   <tabstop>_shipchrg</tabstop>
-  <tabstop>_shiplabel</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_commentsTab</tabstop>
   <tabstop>_shippingComments</tabstop>

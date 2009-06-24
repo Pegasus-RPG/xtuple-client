@@ -30,10 +30,6 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
                        "FROM shipzone "
                        "ORDER BY shipzone_name;" );
 
-  _shiplabel->populate( "SELECT labelform_id, labelform_name "
-                        "FROM labelform "
-                        "ORDER BY labelform_name;" ); 
-
   _commission->setValidator(omfgThis->percentVal());
 
   _shiptoid = -1;
@@ -137,7 +133,6 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _shipVia->setEnabled(FALSE);
       _shipform->setEnabled(FALSE);
       _shipchrg->setEnabled(FALSE);
-      _shiplabel->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _shippingComments->setEnabled(FALSE);
       _close->setText(tr("&Close"));
@@ -255,14 +250,14 @@ void shipTo::sSave()
                "  shipto_comments, shipto_shipcomments,"
                "  shipto_taxzone_id, shipto_salesrep_id, shipto_shipzone_id,"
                "  shipto_shipvia, shipto_shipform_id, shipto_shipchrg_id, "
-	       "  shipto_addr_id, shipto_labelform_id ) "
+	       "  shipto_addr_id ) "
                "VALUES "
                "( :shipto_id, :shipto_cust_id, :shipto_active, :shipto_default,"
                "  :shipto_num, :shipto_name, :shipto_cntct_id, :shipto_commission,"
                "  :shipto_comments, :shipto_shipcomments,"
                "  :shipto_taxzone_id, :shipto_salesrep_id, :shipto_shipzone_id,"
                "  :shipto_shipvia, :shipto_shipform_id, :shipto_shipchrg_id, "
-	       "  :shipto_addr_id, :shipto_labelform_id );" );
+	       "  :shipto_addr_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE shiptoinfo "
@@ -272,8 +267,7 @@ void shipTo::sSave()
                "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
                "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
                "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id, shipto_shipchrg_id=:shipto_shipchrg_id,"
-	       "    shipto_addr_id=:shipto_addr_id,"
-               "    shipto_labelform_id=:shipto_labelform_id "
+	       "    shipto_addr_id=:shipto_addr_id "
                "WHERE (shipto_id=:shipto_id);" );
 
   q.bindValue(":shipto_id", _shiptoid);
@@ -298,8 +292,6 @@ void shipTo::sSave()
     q.bindValue(":shipto_shipzone_id", _shipZone->id());
   if (_shipform->id() != -1)
     q.bindValue(":shipto_shipform_id", _shipform->id());
-  if (_shiplabel->id() != -1)
-    q.bindValue(":shipto_labelform_id", _shiplabel->id());
   if (_shipchrg->id() != -1)
   q.bindValue(":shipto_shipchrg_id", _shipchrg->id());
   q.exec();
@@ -324,7 +316,7 @@ void shipTo::populate()
              "       shipto_comments, shipto_shipcomments,"
              "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxzone_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
              "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id,"
-	     "       shipto_addr_id, shipto_labelform_id,"
+	     "       shipto_addr_id,"
              "       crmacct_id "
              "FROM shiptoinfo "
              "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
@@ -350,7 +342,6 @@ void shipTo::populate()
     _shipZone->setId(q.value("shipto_shipzone_id").toInt());
     _shipform->setId(q.value("shipto_shipform_id").toInt());
     _shipchrg->setId(q.value("shipto_shipchrg_id").toInt());
-    _shiplabel->setId(q.value("shipto_labelform_id").toInt());
     _address->setId(q.value("shipto_addr_id").toInt());
 
     //  Handle the free-form Ship Via

@@ -64,7 +64,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   sCheckValidContacts();
-  
+
   connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
   connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
   connect(_charge,    SIGNAL(clicked()), this, SLOT(sChargeCC()));
@@ -4051,8 +4051,8 @@ void salesOrder::sHandleMore()
   _shipDate->setVisible(_more->isChecked());
   _packDateLit->setVisible(_more->isChecked());
   _packDate->setVisible(_more->isChecked());
-  
- if (ISORDER(_mode))
+
+  if (ISORDER(_mode))
   {
     _fromQuote->setVisible(_more->isChecked());
     _fromQuoteLit->setVisible(_more->isChecked());
