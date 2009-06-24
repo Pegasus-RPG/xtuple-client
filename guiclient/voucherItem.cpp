@@ -197,7 +197,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _closePoitem->setChecked(q.value("voitem_close").toBool());
       _qtyToVoucher->setText(q.value("voitem_qty").toDouble());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
-	  _taxtype->setId(q.value("voitem_taxtype_id").toInt());
+      _taxtype->setId(q.value("voitem_taxtype_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -329,7 +329,8 @@ void voucherItem::sSave()
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked()));
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
-  q.bindValue(":voitem_taxtype_id", _taxtype->id());
+  if (_taxtype->id() != -1)
+    q.bindValue(":voitem_taxtype_id", _taxtype->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
