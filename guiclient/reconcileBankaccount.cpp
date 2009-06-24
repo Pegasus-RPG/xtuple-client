@@ -758,6 +758,25 @@ void reconcileBankaccount::sBankaccntChanged()
       systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    
+    accntq.prepare("SELECT bankrec_enddate + 1 AS startdate, "
+                   " bankrec_endbal AS openbal "
+                   "FROM bankrec "
+                   "WHERE (bankrec_bankaccnt_id=:accntId) "
+                   "ORDER BY bankrec_enddate DESC "
+                   "LIMIT 1");
+    accntq.bindValue(":accntId", _bankaccnt->id());
+    accntq.exec();
+    if (accntq.first())
+    {
+      _startDate->setDate(accntq.value("startdate").toDate());
+      _openBal->setLocalValue(accntq.value("openbal").toDouble());
+    }
+    else if (accntq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   populate();
