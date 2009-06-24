@@ -597,7 +597,7 @@ void purchaseOrder::sSave()
   q.bindValue(":pohead_id", _poheadid);
   if (_warehouse->isValid())
     q.bindValue(":pohead_warehous_id", _warehouse->id());
-  if (_taxZone->isValid())
+  if (_taxZone->id() != -1) 
     q.bindValue(":pohead_taxzone_id", _taxZone->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_shipvia", _shipVia->text());
@@ -695,7 +695,8 @@ void purchaseOrder::sNew()
     q.bindValue(":pohead_vend_id", _vendor->id());
     q.bindValue(":pohead_number", _orderNumber->text());
     q.bindValue(":pohead_id", _poheadid);
-	q.bindValue(":pohead_taxzone_id", _taxZone->id());
+    if (_taxZone->isValid())
+      q.bindValue(":pohead_taxzone_id", _taxZone->id());
     q.bindValue(":pohead_curr_id", _poCurrency->id());
     q.bindValue(":pohead_orderdate", _orderDate->date());
     q.exec();
@@ -1141,7 +1142,7 @@ void purchaseOrder::sTaxZoneChanged()
     taxq.prepare("UPDATE pohead SET "
       "  pohead_taxzone_id=:taxzone_id, "
       "WHERE (pohead_id=:pohead_id) ");
-    if (_taxZone->id() != -1)
+    if (_taxZone->isValid())
       taxq.bindValue(":taxzone_id", _taxZone->id());
     taxq.bindValue(":pohead_id", _poheadid);
     taxq.bindValue(":freight", _freight->localValue());
