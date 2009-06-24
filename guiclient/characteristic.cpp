@@ -161,8 +161,10 @@ void characteristic::sSave()
   q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
   q.bindValue(":char_notes",       _description->toPlainText().trimmed());
-  q.bindValue(":char_mask",        _mask->currentText());
-  q.bindValue(":char_validator",   _validator->currentText());
+  if (_mask->currentText().size())
+    q.bindValue(":char_mask",        _mask->currentText());
+  if (_validator->currentText().size())
+    q.bindValue(":char_validator",   _validator->currentText());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
