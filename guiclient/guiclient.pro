@@ -215,7 +215,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
-               ediFormDetail.ui                                                            \
                editICMWatermark.ui countSlip.ui countTag.ui                                           \
                employee.ui employees.ui empGroup.ui empGroups.ui                                      \
                enterMiscCount.ui                                                                      \
@@ -534,7 +533,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
-               ediFormDetail.h                                                              \
                editICMWatermark.h countSlip.h countTag.h                                              \
                employee.h employees.h empGroup.h  empGroups.h                                         \
                enterMiscCount.h                                                                       \
@@ -863,7 +861,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPoItemsByBufferStatus.cpp dspWoBufferStatusByParameterList.cpp                      \
                dspWoOperationBufrStsByWorkCenter.cpp                                                  \
                duplicateAccountNumbers.cpp                                                            \
-               ediFormDetail.cpp                                                          \
                editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
                employee.cpp employees.cpp empGroup.cpp empGroups.cpp                                  \
                enterMiscCount.cpp                                                                     \
