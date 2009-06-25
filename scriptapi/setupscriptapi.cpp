@@ -41,6 +41,7 @@
 #include "qdomnotationproto.h"
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
+#include "qfontproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
@@ -107,6 +108,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomNotationProto(engine);
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
+  setupQFontProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);

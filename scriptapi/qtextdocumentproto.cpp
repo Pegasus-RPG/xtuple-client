@@ -317,6 +317,13 @@ QTextFrame *QTextDocumentProto::rootFrame() const
   return 0;
 }
 
+void QTextDocumentProto::setDefaultFont(const QFont &font)
+{
+  QTextDocument *item = qscriptvalue_cast<QTextDocument*>(thisObject());
+  if (item)
+    item->setDefaultFont(font);
+}
+
 void QTextDocumentProto::setDocumentLayout(QAbstractTextDocumentLayout *layout)
 {
   QTextDocument *item = qscriptvalue_cast<QTextDocument*>(thisObject());

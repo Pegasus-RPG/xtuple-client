@@ -13,6 +13,7 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QChar>
+#include <QFont>
 #include <QObject>
 #include <QTextBlock>
 #include <QTextDocument>
@@ -72,6 +73,7 @@ class QTextDocumentProto : public QObject, public QScriptable
     Q_INVOKABLE QVariant        resource(int type, const QUrl &name) const;
     Q_INVOKABLE int             revision() const;
     Q_INVOKABLE QTextFrame     *rootFrame() const;
+    Q_INVOKABLE void            setDefaultFont(const QFont &font);
     Q_INVOKABLE void            setDocumentLayout(QAbstractTextDocumentLayout *layout);
     Q_INVOKABLE void            setHtml(const QString &html);
     Q_INVOKABLE void            setMetaInformation(int info, const QString &string);
