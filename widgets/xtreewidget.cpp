@@ -41,6 +41,24 @@
 
 #define DEBUG false
 
+//cint() and round() regarding Issue #8897
+#include <cmath>
+
+static double cint(double x){
+  double intpart, fractpart;
+  fractpart = modf (x, &intpart);
+
+  if (fabs(fractpart) >= 0.5)
+    return x>=0?ceil(x):floor(x);
+  else
+    return x<0?ceil(x):floor(x);
+}
+
+static double round(double r,unsigned places){
+  double off=pow(10,places);
+  return cint(r*off)/off;
+}
+
 XTreeWidget::XTreeWidget(QWidget *pParent) :
   QTreeWidget(pParent)
 {
@@ -333,10 +351,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                               pQuery.value(role->value("xtnullrole").toString()).toString() :
                               "");
               else
-                last->setData(col, Qt::DisplayRole,
-                              QLocale().toString(rawValue.toDouble(),
-                                                 'f', scale));
-              }
+              {
+                //Issue #8897
+	        last->setData(col, Qt::DisplayRole, QLocale().toString(round(rawValue.toDouble(), scale), 'f', scale));
+	      }  
+            }
             else if (rawValue.type() == QVariant::Bool && ! rawValue.isNull())
             {
 	      last->setData(col, Qt::DisplayRole,

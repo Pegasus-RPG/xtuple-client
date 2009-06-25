@@ -213,7 +213,7 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
       "       qtyper,       'qtyper' AS qtyper_xtnumericrole,"
       "       scrap,        'scrap' AS scrap_xtnumericrole,"
       "       cost,         'cost' AS cost_xtnumericrole,"
-      "       extendedcost, 'curr' AS extendedcost_xtnumericrole,"
+      "       extendedcost, 'cost' AS extendedcost_xtnumericrole,"
       "       0 AS extendedcost_xttotalrole "
       "FROM uom, item, ("
       "<? if exists(\"useBOM\") ?>"
