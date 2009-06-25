@@ -192,12 +192,13 @@ void enterPoReceipt::sPost()
 		   "FROM recv, orderitem "
 		   "WHERE ((recv_order_type=<? value(\"ordertype\") ?>)"
 		   "  AND  (recv_orderitem_id=orderitem_id)"
+                   "  AND  (orderitem_orderhead_type=<? value(\"ordertype\") ?>)"
 		   "  AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>));";
   MetaSQLQuery checkm(checks);
   q = checkm.toQuery(params);
   if (q.first())
   {
-    if (q.value("qtyToRecv").toDouble() == 0)
+    if (q.value("qtyToRecv").toDouble() <= 0)
     {
       QMessageBox::critical(this, tr("Nothing selected for Receipt"),
 			    tr("<p>No Line Items have been selected "
@@ -212,93 +213,60 @@ void enterPoReceipt::sPost()
     return;
   }
 
+  QString lotnum = QString::null;
+  QDate expdate = omfgThis->startOfTime();
+  QDate warrdate;
+  bool gotlot = false;
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible insertgltransaction failures
-  QString posts = "SELECT postReceipts(<? value (\"ordertype\") ?>,"
-		  "                    <? value(\"orderid\") ?>,0) AS result;" ;
-  MetaSQLQuery postm(posts);
-  q = postm.toQuery(params);
-  if (q.first())
+  QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc"
+                  "  FROM orderitem, recv LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id)"
+                  " WHERE((recv_orderitem_id=orderitem_id)"
+                  "   AND (orderitem_orderhead_id=<? value(\"orderid\") ?>)"
+                  "   AND (orderitem_orderhead_type=<? value (\"ordertype\") ?>)"
+                  "   AND (NOT recv_posted)"
+                  "   AND (recv_trans_usr_name=CURRENT_USER)"
+                  "   AND (recv_order_type=<? value (\"ordertype\") ?>))";
+  MetaSQLQuery itemsm(items);
+  XSqlQuery qi = itemsm.toQuery(params);
+  while(qi.next())
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    if(!gotlot && qi.value("itemsite_controlmethod").toString() == "L")
     {
-      rollback.exec();
-      systemError(this, storedProcErrorLookup("postReceipts", result),
-		  __FILE__, __LINE__);
-      return;
+      getLotInfo newdlg(this, "", TRUE);
+      newdlg.enableExpiration(qi.value("itemsite_perishable").toBool());
+      newdlg.enableWarranty(qi.value("itemsite_warrpurc").toBool());
+
+      if(newdlg.exec() == XDialog::Accepted)
+      {
+        gotlot = true;
+        lotnum = newdlg.lot();
+        expdate = newdlg.expiration();
+        warrdate = newdlg.warranty();
+      }
     }
 
-    QString lotnum = QString::null;
-    QDate expdate = omfgThis->startOfTime();
-    QDate warrdate;
-    if(result > 0 && _singleLot->isChecked())
+    q.exec("BEGIN;");	// because of possible insertgltransaction failures
+    q.prepare("SELECT postReceipt(:recv_id, 0) AS result;");
+    q.bindValue(":recv_id", qi.value("recv_id").toInt());
+    if (q.first())
     {
-      // first find out if we have any lot controlled items that need distribution
-      q.prepare("SELECT count(*) AS result"
-                "  FROM itemlocdist, itemsite"
-                " WHERE ((itemlocdist_itemsite_id=itemsite_id)"
-                "   AND  (itemlocdist_reqlotserial)"
-                "   AND  (itemsite_controlmethod='L')"
-                "   AND  (itemlocdist_series=:itemlocdist_series) ); ");
-      q.bindValue(":itemlocdist_series", result);
-      q.exec();
-      // if we have any then ask for a lot# and optionally expiration date.
-      if(q.first() && (q.value("result").toInt() > 0) )
+      int result = q.value("result").toInt();
+      if (result < 0 && result != -11) // ignore -11 as it just means there was no inventory
       {
-        getLotInfo newdlg(this, "", TRUE);
-
-        // find out if any itemsites that are lot controlled are perishable
-        q.prepare("SELECT itemsite_perishable,itemsite_warrpurc"
-            "  FROM itemlocdist, itemsite"
-            " WHERE ((itemlocdist_itemsite_id=itemsite_id)"
-            "   AND  (itemlocdist_series=:itemlocdist_series) ); ");
-        q.bindValue(":itemlocdist_series", result);
-        q.exec();
-        if(q.first())
-        {
-          newdlg.enableExpiration(q.value("itemsite_perishable").toBool());
-          newdlg.enableWarranty(q.value("itemsite_warrpurc").toBool());
-        }
-
-          if(newdlg.exec() == XDialog::Accepted)
-          {
-            lotnum = newdlg.lot();
-            expdate = newdlg.expiration();
-            warrdate = newdlg.warranty();
-          }
-        }
-        else if (q.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-          rollback.exec();
-          return;
-        }
+        rollback.exec();
+        systemError(this, storedProcErrorLookup("postReceipt", result),
+		    __FILE__, __LINE__);
+        return;
       }
-
+  
       if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate, warrdate) == XDialog::Rejected)
       {
         QMessageBox::information( this, tr("Enter Receipts"), tr("Post Canceled") );
         rollback.exec();
         return;
-      }
-
-      q.exec("COMMIT;");
-
-      // TODO: update this to sReceiptsUpdated?
-      omfgThis->sPurchaseOrderReceiptsUpdated();
-
-      if (_captive)
-      {
-        _orderitem->clear();
-        close();
-      }
-      else
-      {
-        _order->setId(-1);
-        _close->setText(tr("&Close"));
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -307,8 +275,22 @@ void enterPoReceipt::sPost()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else // select succeeded but returned no rows
-      q.exec("COMMIT;");
+    q.exec("COMMIT;");
+  } 
+
+  // TODO: update this to sReceiptsUpdated?
+  omfgThis->sPurchaseOrderReceiptsUpdated();
+
+  if (_captive)
+  {
+    _orderitem->clear();
+    close();
+  }
+  else
+  {
+    _order->setId(-1);
+    _close->setText(tr("&Close"));
+  }
 }
 
 void enterPoReceipt::sSave()

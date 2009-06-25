@@ -12,11 +12,8 @@
 #define ENTERPORECEIPT_H
 
 #include "guiclient.h"
-
 #include "xwidget.h"
-
 #include <parameter.h>
-
 #include "ui_enterPoReceipt.h"
 
 
