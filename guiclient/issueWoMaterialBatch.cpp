@@ -15,46 +15,16 @@
 #include "inputManager.h"
 #include "distributeInventory.h"
 
-/*
- *  Constructs a issueWoMaterialBatch as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
-    // signals and slots connections
-    connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-issueWoMaterialBatch::~issueWoMaterialBatch()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void issueWoMaterialBatch::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void issueWoMaterialBatch::init()
-{
   _hasPush = FALSE;
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
@@ -70,7 +40,17 @@ void issueWoMaterialBatch::init()
   _womatl->addColumn(tr("Short"),        _qtyColumn,  Qt::AlignRight,  true,  "short"  );
 }
 
-enum SetResponse issueWoMaterialBatch::set(ParameterList &pParams)
+issueWoMaterialBatch::~issueWoMaterialBatch()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void issueWoMaterialBatch::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse issueWoMaterialBatch::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -126,50 +106,65 @@ void issueWoMaterialBatch::sIssue()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  issue.prepare("SELECT issueWoMaterialBatch(:wo_id) AS result;");
-  issue.bindValue(":wo_id", _wo->id());
-  issue.exec();
-  omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-
-  if (issue.first())
+  XSqlQuery items;
+  items.prepare("SELECT womatl_id,"
+                "       CASE WHEN (womatl_qtyreq >= 0) THEN"
+                "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss))"
+                "       ELSE"
+                "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1))"
+                "       END AS qty"
+                "  FROM womatl, itemsite, item"
+                " WHERE((womatl_itemsite_id=itemsite_id)"
+                "   AND (itemsite_item_id=item_id)"
+                "   AND (womatl_issuemethod IN ('S', 'M'))"
+                "   AND (womatl_wo_id=:wo_id) );");
+  items.bindValue(":wo_id", _wo->id());
+  items.exec();
+  while(items.next())
   {
-    if (issue.value("result").toInt() < 0)
+    issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, 0, TRUE) AS result;");
+    issue.bindValue(":womatl_id", items.value("womatl_id").toInt());
+    issue.bindValue(":qty", items.value("qty").toDouble());
+    issue.exec();
+  
+    if (issue.first())
     {
-      rollback.exec();
-      systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2, Error #%3.")
-                         .arg(__LINE__)
-                         .arg(_wo->id())
-                         .arg(issue.value("result").toInt()) );
-      return;
-    }
-    else
-    {
+      if (issue.value("result").toInt() < 0)
+      {
+        rollback.exec();
+        systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2, Error #%3.")
+                           .arg(__LINE__)
+                           .arg(_wo->id())
+                           .arg(issue.value("result").toInt()) );
+        return;
+      }
       if (distributeInventory::SeriesAdjust(issue.value("result").toInt(), this) == XDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Material Issue"), tr("Transaction Canceled") );
         return;
       }
-
-      issue.exec("COMMIT;");
-
-      if (_captive)
-        accept();
-      else
-      {
-        _wo->setId(-1);
-        _wo->setFocus();
-      }
     }
+    else
+    {
+      rollback.exec();
+      systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2.")
+                         .arg(__LINE__)
+                         .arg(_wo->id()) );
+      return;
+    }
+    issue.exec("COMMIT;");
   }
+
+  omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+
+  if (_captive)
+    accept();
   else
   {
-    rollback.exec();
-    systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2.")
-                       .arg(__LINE__)
-                       .arg(_wo->id()) );
-    return;
+    _wo->setId(-1);
+    _wo->setFocus();
   }
 }
 
