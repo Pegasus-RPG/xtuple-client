@@ -34,10 +34,16 @@ dspBankrecHistory::dspBankrecHistory(QWidget* parent, const char* name, Qt::WFla
   connect(_query,   SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print,      SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _details->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter,true, "gltrans_date");
-  _details->addColumn(tr("Doc Number/Notes"),    -1, Qt::AlignLeft,  true, "gltrans_docnumber");
-  _details->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight, true, "amount");
+  _rec->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter,true, "gltrans_date");
+  _rec->addColumn(tr("Doc Number/Notes"),    -1, Qt::AlignLeft,  true, "gltrans_docnumber");
+  _rec->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight, true, "amount");
 
+  _unrec->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter,true, "gltrans_date");
+  _unrec->addColumn(tr("Doc Number/Notes"),    -1, Qt::AlignLeft,  true, "gltrans_docnumber");
+  _unrec->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight, true, "amount");
+  
+  _unrec->hide();
+  _unrecLit->hide();
   sBankaccntChanged();
 }
 
@@ -56,15 +62,14 @@ bool dspBankrecHistory::setParams(ParameterList &params)
   params.append("bankaccnt_id", _bankaccnt->id());
   params.append("bankrec_id", _bankrec->id());
   params.append("openingBalance" , tr("Opening Balance"));
-  params.append("reconciledChecks" , tr("Reconciled Checks"));
-  params.append("reconciledDeposits" , tr("Reconciled Deposits"));
-  params.append("reconciledAdjustments" , tr("Reconciled Adjustments"));
-  params.append("unreconciledChecks" , tr("Unreconciled Checks"));
-  params.append("unreconciledDeposits" , tr("Unreconciled Deposits"));
-  params.append("unreconciledAdjustments" , tr("Unreconciled Adjustments"));
+  params.append("Checks" , tr("Checks"));
+  params.append("Deposits" , tr("Deposits"));
+  params.append("Adjustments" , tr("Adjustments"));
   params.append("closingBalance" , tr("Closing Balance"));
+  params.append("reconciled" , tr("Reconciled"));
+  params.append("unreconciled" , tr("Unreconciled"));
   if (_showUnreconciled->isChecked())
-    params.append("showUnreconciled", true);
+    params.append("showUnreconciled");
   return true;
 }
 
@@ -86,7 +91,7 @@ void dspBankrecHistory::sBankaccntChanged()
   bq.prepare( "SELECT bankrec_id, (formatDate(bankrec_opendate) || '-' || formatDate(bankrec_enddate)) "
              "FROM bankrec "
              "WHERE (bankrec_bankaccnt_id=:bankaccnt_id) "
-             "ORDER BY bankrec_opendate, bankrec_enddate; ");
+             "ORDER BY bankrec_opendate DESC, bankrec_enddate DESC; ");
   bq.bindValue(":bankaccnt_id", _bankaccnt->id());
   bq.exec();
   _bankrec->populate(bq);
@@ -94,7 +99,9 @@ void dspBankrecHistory::sBankaccntChanged()
 
 void dspBankrecHistory::sFillList()
 {
-  q.prepare( "SELECT bankrec_username, bankrec_posted,"
+  q.prepare( "SELECT bankrec_username, "
+             "       bankrec_posted,"
+             "       bankrec_postdate,"
              "       bankrec_opendate,"
              "       bankrec_enddate,"
              "       bankrec_openbal,"
@@ -105,67 +112,42 @@ void dspBankrecHistory::sFillList()
   q.exec();
   if(q.first())
   {
-    MetaSQLQuery mql = mqlLoad("bankrecHistory", "detail");
+    _poster->setText(q.value("bankrec_username").toString());
+    _postdate->setDate(q.value("bankrec_postdate").toDate());
+    
     ParameterList params;
     params.append("treeView", true);
     if (! setParams(params))
       return;
+    
+    MetaSQLQuery mql = mqlLoad("bankrecHistory", "reconciled");
     q = mql.toQuery(params);
-    _details->populate(q, true);
+    _rec->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
-      _details->expandAll();
-  }
-  /*
-  {
-    _poster->setText(q.value("bankrec_username").toString());
-    _postdate->setDate(q.value("bankrec_created").toDate());
-
-    XSqlQuery brq;
-    brq.prepare("SELECT -1 AS gltrans_id, 0 AS seq,"
-                "       CAST(:opendate AS DATE) AS gltrans_date,"
-                "       :opening AS gltrans_docnumber, :openbal AS amount,"
-                "       'curr' AS amount_xtnumericrole "
-                "UNION "
-                "SELECT -1 AS gltrans_id, 2 AS seq,"
-                "       CAST(:enddate AS DATE) AS gltrans_date,"
-                "       :ending AS gltrans_docnumber, :endbal AS amount,"
-                "       'curr' AS amount_xtnumericrole "
-                "UNION "
-                "SELECT gltrans_id, 1 AS seq, gltrans_date,"
-                "       gltrans_docnumber,"
-                "       (currtolocal(bankaccnt_curr_id,gltrans_amount,gltrans_date) * -1) AS amount,"
-                "       'curr' AS amount_xtnumericrole "
-                "FROM gltrans, bankrecitem "
-                "  JOIN bankrec ON (bankrecitem_bankrec_id=bankrec_id) "
-                "  JOIN bankaccnt ON (bankaccnt_id=bankrec_bankaccnt_id) "
-                "WHERE ((bankrecitem_bankrec_id=:bankrecid)"
-                "  AND (bankrecitem_source='GL')"
-                "  AND (bankrecitem_source_id=gltrans_id) ) "
-                "ORDER BY seq, gltrans_date, gltrans_id;" );
-    brq.bindValue(":bankrecid", _bankrec->id());
-    brq.bindValue(":opendate", q.value("bankrec_opendate").toDate());
-    brq.bindValue(":openbal",  q.value("bankrec_openbal").toDouble());
-    brq.bindValue(":opening",  tr("Opening Balance"));
-    brq.bindValue(":enddate",  q.value("bankrec_enddate").toDate());
-    brq.bindValue(":endbal",   q.value("bankrec_endbal").toDouble());
-    brq.bindValue(":ending",   tr("Ending Balance"));
-    brq.exec();
-    _details->populate(brq);
-    if (brq.lastError().type() != QSqlError::NoError)
+      _rec->expandAll();
+    
+    if (_showUnreconciled->isChecked())
     {
-      systemError(this, brq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      ParameterList params2;
+      params2.append("treeView", true);
+      if (! setParams(params2))
+        return;
+      
+      MetaSQLQuery mql2 = mqlLoad("bankrecHistory", "unreconciled");
+      q = mql2.toQuery(params2);
+      _unrec->populate(q, true);
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      else
+        _unrec->expandAll();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  */
 }

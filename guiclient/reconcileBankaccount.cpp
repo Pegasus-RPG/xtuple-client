@@ -772,7 +772,12 @@ void reconcileBankaccount::sBankaccntChanged()
       _startDate->setDate(accntq.value("startdate").toDate());
       _openBal->setLocalValue(accntq.value("openbal").toDouble());
     }
-    else if (accntq.lastError().type() != QSqlError::NoError)
+    else
+    {
+      _startDate->clear();
+      _openBal->clear();
+    }
+    if (accntq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
       return;

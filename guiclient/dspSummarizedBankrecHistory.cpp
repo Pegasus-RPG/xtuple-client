@@ -34,7 +34,7 @@ dspSummarizedBankrecHistory::dspSummarizedBankrecHistory(QWidget* parent, const 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _bankrec->addColumn(tr("Posted"),             _ynColumn, Qt::AlignLeft,   true,  "bankrec_posted"   );
-  _bankrec->addColumn(tr("Post Date"),        _dateColumn, Qt::AlignCenter, true,  "bankrec_created" );
+  _bankrec->addColumn(tr("Post Date"),        _dateColumn, Qt::AlignCenter, true,  "bankrec_postdate" );
   _bankrec->addColumn(tr("User"),                      -1, Qt::AlignLeft,   true,  "bankrec_username"   );
   _bankrec->addColumn(tr("Start Date"),       _dateColumn, Qt::AlignCenter, true,  "bankrec_opendate" );
   _bankrec->addColumn(tr("End Date"),         _dateColumn, Qt::AlignCenter, true,  "bankrec_enddate" );
