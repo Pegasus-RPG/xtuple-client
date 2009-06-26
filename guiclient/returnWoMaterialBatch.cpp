@@ -10,51 +10,22 @@
 
 #include "returnWoMaterialBatch.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "inputManager.h"
 #include "distributeInventory.h"
 
-/*
- *  Constructs a returnWoMaterialBatch as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
-    connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_wo, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
+  connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-returnWoMaterialBatch::~returnWoMaterialBatch()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void returnWoMaterialBatch::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void returnWoMaterialBatch::init()
-{
   _captive = FALSE;
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -62,7 +33,17 @@ void returnWoMaterialBatch::init()
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 }
 
-enum SetResponse returnWoMaterialBatch::set(ParameterList &pParams)
+returnWoMaterialBatch::~returnWoMaterialBatch()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void returnWoMaterialBatch::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse returnWoMaterialBatch::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -81,7 +62,7 @@ enum SetResponse returnWoMaterialBatch::set(ParameterList &pParams)
 
 void returnWoMaterialBatch::sReturn()
 {
-  q.prepare( "SELECT wo_qtyrcv "
+  q.prepare( "SELECT wo_qtyrcv, wo_status "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
   q.bindValue(":wo_id", _wo->id());
@@ -99,40 +80,63 @@ void returnWoMaterialBatch::sReturn()
     }
     else
     {
-      XSqlQuery rollback;
-      rollback.prepare("ROLLBACK;");
-
-      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-      q.prepare("SELECT returnWoMaterialBatch(:wo_id) AS result;");
-      q.bindValue(":wo_id", _wo->id());
-      q.exec();
-      if (q.first())
+      if(q.value("wo_status").toString() == "E" || q.value("wo_status").toString() == "I")
       {
-        if (q.value("result").toInt() < 0)
+        XSqlQuery rollback;
+        rollback.prepare("ROLLBACK;");
+  
+        XSqlQuery items;
+        items.prepare("SELECT womatl_id,"
+                      "       CASE WHEN wo_qtyord >= 0 THEN"
+                      "         womatl_qtyiss"
+                      "       ELSE"
+                      "         ((womatl_qtyreq - womatl_qtyiss) * -1)"
+                      "       END AS qty"
+                      "  FROM wo, womatl, itemsite"
+                      " WHERE((wo_id=womatl_wo_id)"
+                      "   AND (womatl_itemsite_id=itemsite_id)"
+                      "   AND ( (wo_qtyord < 0) OR (womatl_issuemethod IN ('S','M')) )"
+                      "   AND (womatl_wo_id=:wo_id))");
+        items.bindValue(":wo_id", _wo->id());
+        items.exec();
+        while(items.next())
         {
-          rollback.exec();
-          systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
-                             .arg(__LINE__)
-                             .arg(_wo->id())
-                             .arg(q.value("result").toInt()) );
-          return;
-        }
-        else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-        {
-          rollback.exec();
-          QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
-          return;
-        }
+          if(items.value("qty").toDouble() == 0.0)
+            continue;
 
-        q.exec("COMMIT;");
-      }
-      else
-      {
-        rollback.exec();
-        systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2.")
-                           .arg(__LINE__)
-                           .arg(_wo->id()) );
-        return;
+          q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+          q.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0) AS result;");
+          q.bindValue(":womatl_id", items.value("womatl_id").toInt());
+          q.bindValue(":qty", items.value("qty").toDouble());
+          q.exec();
+          if (q.first())
+          {
+            if (q.value("result").toInt() < 0)
+            {
+              rollback.exec();
+              systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
+                                 .arg(__LINE__)
+                                 .arg(_wo->id())
+                                 .arg(q.value("result").toInt()) );
+              return;
+            }
+            if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+            {
+              rollback.exec();
+              QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
+              return;
+            }
+          }
+          else
+          {
+            rollback.exec();
+            systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2.")
+                               .arg(__LINE__)
+                               .arg(_wo->id()) );
+            return;
+          }
+          q.exec("COMMIT;");
+        }
       }
     }
   }
