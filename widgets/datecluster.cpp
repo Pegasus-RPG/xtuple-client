@@ -26,7 +26,7 @@
 #include "dcalendarpopup.h"
 #include "format.h"
 
-#define DEBUG true
+#define DEBUG false
 
 DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   : QWidget(parent, Qt::Popup)
