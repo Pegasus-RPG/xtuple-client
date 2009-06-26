@@ -14,20 +14,21 @@
   <sql>SELECT bankrec_id,
        formatBoolYN(bankrec_posted) AS f_posted,
        formatDate(bankrec_created) AS f_created,
+       formatDate(bankrec_postdate) AS f_postdate,
        bankrec_username AS f_username,
        formatDate(bankrec_opendate) AS f_opendate,
        formatDate(bankrec_enddate) AS f_enddate,
        formatMoney(bankrec_openbal) AS f_openbal,
        formatMoney(bankrec_endbal) AS f_endbal
   FROM bankrec
- WHERE (bankrec_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
+ WHERE (bankrec_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
  ORDER BY bankrec_created;</sql>
  </querysource>
  <querysource>
   <name>head</name>
   <sql>SELECT (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bankaccnt
   FROM bankaccnt
- WHERE (bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>);</sql>
+ WHERE (bankaccnt_id=&lt;? value("bankaccnt_id") ?>);</sql>
  </querysource>
  <rpthead>
   <height>121</height>
@@ -356,7 +357,7 @@
    </field>
    <field>
     <rect>
-     <x>95</x>
+     <x>96</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -370,7 +371,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_created</column>
+     <column>f_postdate</column>
     </data>
    </field>
    <field>
