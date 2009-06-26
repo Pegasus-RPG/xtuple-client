@@ -26,7 +26,7 @@
 #include "dcalendarpopup.h"
 #include "format.h"
 
-#define DEBUG false
+#define DEBUG true
 
 DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   : QWidget(parent, Qt::Popup)
@@ -274,6 +274,57 @@ void XDateEdit::parseDate()
         
         if(day > 0 && month > 0 && year > 0)
           tmp = QDate(year, month, day);
+      }
+      else if(formatList.size() == 3 && numberList.size() == 1)
+      {
+        QString ns = numberList.at(0);
+        bool isNumber = false;
+        int ni = ns.toInt(&isNumber);
+        if(isNumber && (ns.length() == 6 || ns.length() == 8))
+        {
+          int year = today.year();
+          int day = -1;
+          int month = -1;
+
+          pos = 0;
+          for (int i = 0; i < formatList.size(); ++i)
+          {
+            QChar ch = formatList.at(i).toLower().at(0);
+            if(ch == 'y')
+            {
+              if(ns.length() == 8)
+              {
+                year = ns.mid(pos, 4).toInt();
+                pos+=4;
+              }
+              else
+              {
+                year = ns.mid(pos, 2).toInt(&isNumber);
+                pos+=2;
+                if(isNumber)
+                {
+                  if(year < 50)
+                    year += 2000;
+                  else
+                    year += 1900;
+                }
+              }
+            }
+            else if(ch == 'm')
+            {
+              month = ns.mid(pos, 2).toInt();
+              pos+=2;
+            }
+            else if(ch == 'd')
+            {
+              day = ns.mid(pos, 2).toInt();
+              pos+=2;
+            }
+          }
+
+          if(day > 0 && month > 0 && year > 0)
+            tmp = QDate(year, month, day);
+        }
       }
     }
 
