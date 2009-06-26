@@ -213,6 +213,7 @@ int QFontProto::letterSpacingType() const
   return 0;
 }
 
+#ifdef Q_WS_MAC
 quint32 QFontProto::macFontID() const
 {
   QFont *item = qscriptvalue_cast<QFont*>(thisObject());
@@ -220,6 +221,7 @@ quint32 QFontProto::macFontID() const
     return item->macFontID();
   return quint32();
 }
+#endif
 
 bool QFontProto::overline() const
 {

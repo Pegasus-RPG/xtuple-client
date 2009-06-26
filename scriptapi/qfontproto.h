@@ -50,7 +50,9 @@ class QFontProto : public QObject, public QScriptable
     Q_INVOKABLE QString lastResortFont()        const;
     Q_INVOKABLE qreal   letterSpacing() const;
     Q_INVOKABLE int     letterSpacingType()    const;
+#ifdef Q_WS_MAC
     Q_INVOKABLE quint32 macFontID()     const;
+#endif
     Q_INVOKABLE bool    overline()      const;
     Q_INVOKABLE int     pixelSize()     const;
     Q_INVOKABLE int     pointSize()     const;
