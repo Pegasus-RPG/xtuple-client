@@ -411,7 +411,6 @@ void enterPoReceipt::sReceiveAll()
 		  __FILE__, __LINE__);
       return;
     }
-    omfgThis->sPurchaseOrderReceiptsUpdated();
   }
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -419,6 +418,7 @@ void enterPoReceipt::sReceiveAll()
     return;
   }
 
+  omfgThis->sPurchaseOrderReceiptsUpdated();
   sFillList();
 }
 
