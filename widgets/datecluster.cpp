@@ -279,7 +279,7 @@ void XDateEdit::parseDate()
       {
         QString ns = numberList.at(0);
         bool isNumber = false;
-        int ni = ns.toInt(&isNumber);
+        (void)ns.toInt(&isNumber);
         if(isNumber && (ns.length() == 6 || ns.length() == 8))
         {
           int year = today.year();
