@@ -469,7 +469,7 @@ void enterPoReceipt::sSearchNext()
   }
 }
 
-void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem * /*selected*/)
 {
   int     menuItem;
   menuItem = pMenu->insertItem(tr("Enter and Label..."), this, SLOT(sEnterandLabel()), 0);
