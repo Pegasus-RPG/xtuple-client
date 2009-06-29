@@ -34,6 +34,9 @@ public slots:
     virtual void sHandleCopies( int pValue );
     virtual void sEditWatermark();
 
+signals:
+    virtual void finishedPrinting(int);
+
 protected slots:
     virtual void languageChange();
 

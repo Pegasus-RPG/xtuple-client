@@ -33,6 +33,7 @@ dynamic {
 HEADERS += \
            plugins/addressclusterplugin.h \
            plugins/alarmsplugin.h \
+           plugins/cmheadclusterplugin.h \
            plugins/calendarcomboboxplugin.h \
            plugins/clineeditplugin.h \
            plugins/cmclusterplugin.h \
@@ -153,6 +154,7 @@ SOURCES    += widgets.cpp \
               imageAssignment.cpp \
               file.cpp \
               alarms.cpp alarmMaint.cpp \
+              cmheadcluster.cpp \
               invoiceCluster.cpp \
               xspinbox.cpp \
               xsqlrelationaldelegate.cpp \
@@ -207,6 +209,7 @@ HEADERS    += widgets.h \
               imageAssignment.h \
               file.h \
               alarms.h alarmMaint.h \
+              cmheadcluster.h \
               invoicecluster.h \
               xspinbox.h \
               xsqlrelationaldelegate.h \

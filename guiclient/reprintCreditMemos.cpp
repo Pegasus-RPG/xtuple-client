@@ -110,7 +110,7 @@ void reprintCreditMemos::sPrint()
 	}
 	else
 	  QMessageBox::critical(this, tr("Cannot Find Credit Memo Form"),
-				tr("<p>The Invoice Form '%1' cannot be found. "
+				tr("<p>The Credit Memo Form '%1' cannot be found. "
                                    "One or more of the selected Credit Memos "
                                    "cannot be printed until a Customer Form "
                                    "Assignment is updated to remove any "
@@ -119,6 +119,8 @@ void reprintCreditMemos::sPrint()
 				 .arg(q.value("_reportname").toString()) );
       }
     }
+
+    emit finishedPrinting(cursor->id());
   }
   orReport::endMultiPrint(&printer);
 

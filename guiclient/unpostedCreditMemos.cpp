@@ -13,9 +13,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <parameter.h>
 #include <openreports.h>
@@ -32,8 +30,6 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
 {
     setupUi(this);
 
-//    (void)statusBar();
-
     connect(_cmhead, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -42,8 +38,6 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-//    statusBar()->hide();
-    
     _cmhead->addColumn(tr("C/M #"),         _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
     _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
     _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );

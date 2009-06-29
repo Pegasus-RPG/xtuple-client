@@ -192,6 +192,8 @@ void printCreditMemo::sPrint()
         }
       }
     }
+
+    emit finishedPrinting(_cmheadid);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
