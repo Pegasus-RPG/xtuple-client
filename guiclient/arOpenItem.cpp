@@ -18,6 +18,7 @@
 
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
+#include "currcluster.h"
 
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -30,6 +31,7 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_terms,          SIGNAL(newID(int)),                this, SLOT(sPopulateDueDate()));
   connect(_docDate,        SIGNAL(newDate(const QDate&)),     this, SLOT(sPopulateDueDate()));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_amount,         SIGNAL(noConversionRate()),            this, SLOT(noConversionRate()));
 
   _last = -1;
   _aropenid = -1;
@@ -119,7 +121,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _commissionPaid->clear();
       _save->setText(tr("Post"));
       _printOnPost->setVisible(true);
-      q.exec("BEGIN;");
     }
     else if (param.toString() == "edit")
     {
@@ -325,7 +326,6 @@ void arOpenItem::sSave()
       q.first();
       if (q.lastError().type() != QSqlError::NoError)
       {
-        q.exec("ROLLBACK;");
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         reset();
 	return;
@@ -333,7 +333,6 @@ void arOpenItem::sSave()
       _last = q.value("result").toInt();
       if (_last < 0)
       {
-        q.exec("ROLLBACK");
 	systemError(this, storedProc.isEmpty() ?
 			    tr("Saving Credit Memo Failed: %1").arg(_last) :
 			    storedProcErrorLookup(storedProc, _last),
@@ -341,7 +340,6 @@ void arOpenItem::sSave()
         reset();
 	return;
       }
-      q.exec("COMMIT;");
       reset();
     }
   }
@@ -349,10 +347,7 @@ void arOpenItem::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     if (_mode == cNew)
-    {
-      q.exec("ROLLBACK;");
       reset();
-    }
     return;
   }
 
@@ -694,7 +689,6 @@ void arOpenItem::sTaxDetail()
     ar.exec();
     if (ar.lastError().type() != QSqlError::NoError)
     {
-      q.exec("ROLLBACK;");
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       reset();
       return;
@@ -745,3 +739,4 @@ void arOpenItem::sTaxDetail()
     }
   }
 }
+
