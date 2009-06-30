@@ -600,8 +600,8 @@ void dspAROpenItems::sEnterMiscArCreditMemo()
 
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  newdlg.exec();
+  sFillList();
 }
 
 void dspAROpenItems::sEnterMiscArDebitMemo()
@@ -614,8 +614,8 @@ void dspAROpenItems::sEnterMiscArDebitMemo()
 
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  newdlg.exec();
+  sFillList();
 }
 
 void dspAROpenItems::sCreateInvoice()
