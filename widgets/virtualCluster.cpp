@@ -734,21 +734,21 @@ void VirtualSearch::sFillList()
 
     _listTab->clear();
 
-    _search->setText(_search->text().trimmed().toUpper());
+    _search->setText(_search->text().trimmed());
     if (_search->text().length() == 0)
 	return;
 
     QString search;
     if (_searchNumber->isChecked())
-        search += QString("%1~'%2'").arg(_parent->_numColName).arg(_search->text());
+        search += QString("%1~*'%2'").arg(_parent->_numColName).arg(_search->text());
     if (_parent->_hasName &&
         (_searchName->isChecked()))
-        search += (search.isEmpty() ?  QString("%1~'%2'").arg(_parent->_nameColName).arg(_search->text()) :  
+        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_nameColName).arg(_search->text()) :  
         " OR " +  QString("%1~'%2'").arg(_parent->_nameColName).arg(_search->text()));
     if (_parent->_hasDescription &&
         (_searchDescrip->isChecked()))
-        search += (search.isEmpty() ?  QString("%1~'%2'").arg(_parent->_descripColName).arg(_search->text()) :  
-        " OR " +  QString("%1~'%2'").arg(_parent->_descripColName).arg(_search->text()));
+        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_descripColName).arg(_search->text()) :  
+        " OR " +  QString("%1~*'%2'").arg(_parent->_descripColName).arg(_search->text()));
     if (!search.isEmpty())
     {
       search.prepend("(");
