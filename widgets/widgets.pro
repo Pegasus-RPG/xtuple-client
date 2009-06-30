@@ -36,7 +36,7 @@ HEADERS += \
            plugins/cmheadclusterplugin.h \
            plugins/calendarcomboboxplugin.h \
            plugins/clineeditplugin.h \
-           plugins/cmclusterplugin.h \
+           plugins/aropenclusterplugin.h \
            plugins/commentsplugin.h \
            plugins/contactclusterplugin.h \
            plugins/crmacctclusterplugin.h \
@@ -109,7 +109,7 @@ SOURCES    += widgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
               xlabel.cpp xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
-              cmCluster.cpp \
+              aropencluster.cpp \
               custCluster.cpp \
               customerselector.cpp \
               itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
@@ -163,7 +163,7 @@ HEADERS    += widgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
               xlabel.h xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
-              cmcluster.h \
+              aropencluster.h \
               custcluster.h \
               customerselector.h \
               itemcluster.h itemList.h itemSearch.h itemAliasList.h \

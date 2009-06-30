@@ -16,6 +16,7 @@
 
 #include <openreports.h>
 
+#include "printArOpenItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "currcluster.h"
@@ -620,31 +621,9 @@ void arOpenItem::sPrintOnPost(int temp_id)
   ParameterList params;
   params.append("aropen_id", temp_id);
 
-  switch (_docType->currentIndex())
-  {
-    case 0:
-      params.append("docTypeRC", "1");
-      break;
-    case 1:
-      params.append("docTypeID", "1");
-      break;
-    case 2:
-      params.append("docTypeID", "1");
-      break;
-    case 3:
-      params.append("docTypeRC", "1");
-      break;
-  }
-
-  orReport report("AROpenItem", params);
-  if (report.isValid())
-    report.print();
-  else
-  {
-    report.reportError(this);
-    reject();
-    return;
-  }
+  printArOpenItem newdlg(this, "", true);
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
 }
 
 void arOpenItem::sTaxDetail()

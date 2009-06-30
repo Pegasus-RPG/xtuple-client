@@ -8,36 +8,36 @@
  * to be bound by its terms.
  */
 
-#ifndef __CMCLUSTERPLUGIN_H__
-#define __CMCLUSTERPLUGIN_H__
+#ifndef __AROPENCLUSTERPLUGIN_H__
+#define __AROPENCLUSTERPLUGIN_H__
 
-#include "cmcluster.h"
+#include "aropencluster.h"
 
 #include <QDesignerCustomWidgetInterface>
 #include <QtPlugin>
 
-class CmClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
+class AropenClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
   public:
-    CmClusterPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
+    AropenClusterPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
     bool isContainer() const { return false; }
     bool isInitialized() const { return initialized; }
     QIcon icon() const { return QIcon(); }
     QString domXml() const
     {
-      return "<widget class=\"CmCluster\" name=\"cmCluster\">\n"
+      return "<widget class=\"AropenCluster\" name=\"AropenCluster\">\n"
              "</widget>\n";
     }
     QString group() const { return "xTuple Custom Widgets"; }
-    QString includeFile() const { return "cmcluster.h"; }
-    QString name() const { return "CmCluster"; }
+    QString includeFile() const { return "aropencluster.h"; }
+    QString name() const { return "AropenCluster"; }
     QString toolTip() const { return ""; }
     QString whatsThis() const { return ""; }
-    QWidget *createWidget(QWidget *parent) { return new CmCluster(parent); }
+    QWidget *createWidget(QWidget *parent) { return new AropenCluster(parent); }
     void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
   private:

@@ -34,6 +34,7 @@
 #include "getGLDistDate.h"
 #include "invoice.h"
 #include "incident.h"
+#include "printArOpenItem.h"
 #include "printCreditMemo.h"
 #include "printInvoice.h"
 #include "salesOrder.h"
@@ -812,17 +813,10 @@ void dspAROpenItems::sPrintItem()
   // Print AR Open Item
   {
     params.append("aropen_id", _aropen->id());
-  
-    if (_aropen->altId() == 1 || _aropen->altId() == 3)
-      params.append("docTypeRC", "1");
-    else
-      params.append("docTypeID", "1");
-    
-    orReport report("AROpenItem", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
+
+    printArOpenItem newdlg(this, "", true);
+    if (newdlg.set(params) == NoError)
+      newdlg.exec();
   }
 }
 
