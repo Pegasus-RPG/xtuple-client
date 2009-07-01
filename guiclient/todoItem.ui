@@ -113,7 +113,7 @@ to be bound by its terms.</comment>
           <layout class="QHBoxLayout">
            <item>
             <widget class="XComboBox" name="_priority">
-             <property name="allowNull" stdset="0">
+             <property name="allowNull">
               <bool>true</bool>
              </property>
             </widget>
@@ -145,12 +145,18 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Cancel</string>
            </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="_save">
            <property name="text">
             <string>Save</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -178,15 +184,21 @@ to be bound by its terms.</comment>
        </property>
        <layout class="QGridLayout">
         <item row="0" column="0">
-         <widget class="UsernameCluster" name="_owner" native="true">
-          <property name="label" stdset="0">
+         <widget class="UsernameCluster" name="_owner">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="label">
            <string>Owner:</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="UsernameCluster" name="_assignedTo" native="true">
-          <property name="label" stdset="0">
+         <widget class="UsernameCluster" name="_assignedTo">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="label">
            <string>Assigned to:</string>
           </property>
          </widget>
@@ -240,7 +252,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="DLineEdit" name="_due" native="true">
+             <widget class="DLineEdit" name="_due">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -260,7 +272,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="DLineEdit" name="_assigned" native="true"/>
+             <widget class="DLineEdit" name="_assigned"/>
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="_startedLit">
@@ -273,7 +285,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="DLineEdit" name="_started" native="true"/>
+             <widget class="DLineEdit" name="_started"/>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="_completedLit">
@@ -286,7 +298,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="DLineEdit" name="_completed" native="true"/>
+             <widget class="DLineEdit" name="_completed"/>
             </item>
             <item row="1" column="2">
              <spacer>
@@ -429,7 +441,7 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="0" column="1">
-            <widget class="CRMAcctCluster" name="_crmacct" native="true">
+            <widget class="CRMAcctCluster" name="_crmacct">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -439,17 +451,17 @@ to be bound by its terms.</comment>
              <property name="focusPolicy">
               <enum>Qt::StrongFocus</enum>
              </property>
-             <property name="label" stdset="0">
+             <property name="label">
               <string/>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="OpportunityCluster" name="_ophead" native="true">
+            <widget class="OpportunityCluster" name="_ophead">
              <property name="focusPolicy">
               <enum>Qt::StrongFocus</enum>
              </property>
-             <property name="label" stdset="0">
+             <property name="label">
               <string/>
              </property>
             </widget>
@@ -485,11 +497,11 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="2" column="1">
-            <widget class="IncidentCluster" name="_incident" native="true">
+            <widget class="IncidentCluster" name="_incident">
              <property name="focusPolicy">
               <enum>Qt::StrongFocus</enum>
              </property>
-             <property name="label" stdset="0">
+             <property name="label">
               <string/>
              </property>
             </widget>
@@ -534,7 +546,7 @@ to be bound by its terms.</comment>
         </attribute>
         <layout class="QHBoxLayout">
          <item>
-          <widget class="Alarms" name="_alarms" native="true"/>
+          <widget class="Alarms" name="_alarms"/>
          </item>
         </layout>
        </widget>
@@ -544,7 +556,7 @@ to be bound by its terms.</comment>
         </attribute>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="Comments" name="_comments" native="true"/>
+          <widget class="Comments" name="_comments"/>
          </item>
         </layout>
        </widget>
@@ -605,6 +617,10 @@ to be bound by its terms.</comment>
   <tabstop>_owner</tabstop>
   <tabstop>_assignedTo</tabstop>
   <tabstop>_tab</tabstop>
+  <tabstop>_due</tabstop>
+  <tabstop>_assigned</tabstop>
+  <tabstop>_started</tabstop>
+  <tabstop>_completed</tabstop>
   <tabstop>_pending</tabstop>
   <tabstop>_deferred</tabstop>
   <tabstop>_neither</tabstop>
@@ -612,8 +628,8 @@ to be bound by its terms.</comment>
   <tabstop>_crmacct</tabstop>
   <tabstop>_ophead</tabstop>
   <tabstop>_incident</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
