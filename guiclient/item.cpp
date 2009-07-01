@@ -201,6 +201,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   else
     _tab->setTabEnabled(_tab->indexOf(_itemsitesTab), FALSE);
+
   
   if (!_metrics->boolean("BBOM"))
   {
@@ -367,6 +368,30 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newUOM->setEnabled(false);
 
       connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
+
+      disconnect(_itemSite, SIGNAL(valid(bool)), _editItemSite, SLOT(setEnabled(bool)));
+      disconnect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
+      disconnect(_itemSite, SIGNAL(itemSelected(int)), _editItemSite, SLOT(animateClick()));
+      disconnect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
+      disconnect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
+  
+      if (_privileges->check("ViewItemSites"))
+      {
+        connect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
+        connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
+      }
+  
+      disconnect(_itemsrc, SIGNAL(valid(bool)), _editSrc, SLOT(setEnabled(bool)));
+      disconnect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
+      disconnect(_itemsrc, SIGNAL(valid(bool)), _copySrc, SLOT(setEnabled(bool)));
+      disconnect(_itemsrc, SIGNAL(valid(bool)), _deleteSrc, SLOT(setEnabled(bool)));
+      disconnect(_itemsrc, SIGNAL(itemSelected(int)), _editSrc, SLOT(animateClick()));
+  
+      if (_privileges->check("ViewItemSources"))
+      {
+        connect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
+        connect(_itemsrc, SIGNAL(itemSelected(int)), _viewSrc, SLOT(animateClick()));
+      }
 
       _save->hide();
 
