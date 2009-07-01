@@ -246,7 +246,7 @@ void arOpenItem::sSave()
     }
     else if (_docType->currentIndex() == 1)
     {
-      q.prepare( "SELECT createARDebitMemo( :aropen_id,:cust_id, :aropen_docnumber, :aropen_ordernumber,"
+      q.prepare( "SELECT createARDebitMemo( :aropen_id,:cust_id, NULL, :aropen_docnumber, :aropen_ordernumber,"
                  "                          :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                          :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                          :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due, "
