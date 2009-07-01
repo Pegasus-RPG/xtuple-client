@@ -193,7 +193,7 @@ void applyARCreditMemo::populate()
              "       COALESCE(SUM(currToCurr(arcreditapply_curr_id, "
 	         "				     aropen_curr_id, "
 	         "				     arcreditapply_amount, "
-	         "				     aropen_docdate)), 0) AS f_applied, "
+	         "				     current_date)), 0) AS f_applied, "
 	         "	     aropen_curr_id "
              "FROM aropen LEFT OUTER JOIN arcreditapply ON (arcreditapply_source_aropen_id=aropen_id) "
  	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
