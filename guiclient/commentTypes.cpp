@@ -22,7 +22,6 @@ commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -138,13 +137,4 @@ void commentTypes::sDelete()
 
     sFillList();
   }
-}
-
-void commentTypes::sPrint()
-{
-  orReport report("CommentTypes");
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
