@@ -99,30 +99,30 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 
 XTreeWidget::~XTreeWidget()
 {
-  xtsettingsSetValue(_settingsName + "/isForgetful", _forgetful);
-  xtsettingsSetValue(_settingsName + "/isForgetfulOrder", _forgetfulOrder);
-  QString savedString;
-  if(!_forgetful)
-  {
-    savedString = "";
-    for(int i = 0; i < header()->count(); i++)
-    {
-      int w = -1;
-      if(_defaultColumnWidths.contains(i))
-        w = _defaultColumnWidths.value(i);
-      if(!_stretch.contains(i) && header()->sectionSize(i) != w && !header()->isSectionHidden(i))
-        savedString.append(QString::number(i) + "," + QString::number(header()->sectionSize(i)) + "|");
-    }
-    xtsettingsSetValue(_settingsName + "/columnWidths", savedString);
-  }
-  if(!_forgetfulOrder && header()->isSortIndicatorShown())
-    savedString = QString::number(header()->sortIndicatorSection()) + " "
-      + (header()->sortIndicatorOrder() == Qt::AscendingOrder ? "ASC" : "DESC" );
-  else
-    savedString = "-1,ASC";
-  xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
   if(_x_preferences)
   {
+    xtsettingsSetValue(_settingsName + "/isForgetful", _forgetful);
+    xtsettingsSetValue(_settingsName + "/isForgetfulOrder", _forgetfulOrder);
+    QString savedString;
+    if(!_forgetful)
+    {
+      savedString = "";
+      for(int i = 0; i < header()->count(); i++)
+      {
+        int w = -1;
+        if(_defaultColumnWidths.contains(i))
+          w = _defaultColumnWidths.value(i);
+        if(!_stretch.contains(i) && header()->sectionSize(i) != w && !header()->isSectionHidden(i))
+          savedString.append(QString::number(i) + "," + QString::number(header()->sectionSize(i)) + "|");
+      }
+      xtsettingsSetValue(_settingsName + "/columnWidths", savedString);
+    }
+    if(!_forgetfulOrder && header()->isSortIndicatorShown())
+      savedString = QString::number(header()->sortIndicatorSection()) + " "
+        + (header()->sortIndicatorOrder() == Qt::AscendingOrder ? "ASC" : "DESC" );
+    else
+      savedString = "-1,ASC";
+    xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
     savedString = "";
     for(int i = 0; i < header()->count(); i++)
     {
@@ -136,6 +136,7 @@ XTreeWidget::~XTreeWidget()
 
   for (int i = 0; i < _roles.size(); i++)
     delete _roles.value(i);
+  _roles.clear();
 }
 
 void XTreeWidget::populate(const QString &pSql, bool pUseAltId)

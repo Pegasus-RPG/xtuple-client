@@ -66,33 +66,33 @@ XTreeView::XTreeView(QWidget *parent) :
 
 XTreeView::~XTreeView()
 {
-  // window()->objectName() isn't available here, at least for scripted windows!
-  QString settingsPrefix = _windowName + "/" + objectName();
-
-  xtsettingsSetValue(settingsPrefix + "/isForgetful", _forgetful);
-  QString savedString;
-  if(!_forgetful)
-  {
-    savedString = "";
-    for(int i = 0; i < header()->count(); i++)
-    {
-      int w = -1;
-      ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
-      if (cp)
-      {
-        if (!cp->stretchy)
-          w = cp->savedWidth;
-        _columnByName.remove(cp->columnName);
-        delete cp;
-      }
-      if (w >= 0 && ! header()->isSectionHidden(i))
-        savedString.append(QString::number(i) + "," +
-                           QString::number(header()->sectionSize(i)) + "|");
-    }
-    xtsettingsSetValue(settingsPrefix + "/columnWidths", savedString);
-  }
   if(_x_preferences)
   {
+    // window()->objectName() isn't available here, at least for scripted windows!
+    QString settingsPrefix = _windowName + "/" + objectName();
+
+    xtsettingsSetValue(settingsPrefix + "/isForgetful", _forgetful);
+    QString savedString;
+    if(!_forgetful)
+    {
+      savedString = "";
+      for(int i = 0; i < header()->count(); i++)
+      {
+        int w = -1;
+        ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
+        if (cp)
+        {
+          if (!cp->stretchy)
+            w = cp->savedWidth;
+          _columnByName.remove(cp->columnName);
+          delete cp;
+        }
+        if (w >= 0 && ! header()->isSectionHidden(i))
+          savedString.append(QString::number(i) + "," +
+                             QString::number(header()->sectionSize(i)) + "|");
+      }
+      xtsettingsSetValue(settingsPrefix + "/columnWidths", savedString);
+    }
     savedString = "";
     for(int i = 0; i < header()->count(); i++)
     {
