@@ -782,6 +782,23 @@ void customer::sSave()
     }
   }
   
+  //Save characteristics
+  if (_widgetStack->currentIndex() == 1)
+  {
+    q.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
+  
+    QModelIndex idx1, idx2;
+    for(int i = 0; i < _custchar->rowCount(); i++)
+    {
+      idx1 = _custchar->index(i, 0);
+      idx2 = _custchar->index(i, 1);
+      q.bindValue(":target_id", _custid);
+      q.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
+      q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
+      q.exec();
+    }
+  }
+  
   if (!sSave(false))
     return;
   
@@ -804,23 +821,6 @@ void customer::sSave()
 
 
 
-  //Save characteristics
-  if (_widgetStack->currentIndex() == 1)
-  {
-    q.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
-  
-    QModelIndex idx1, idx2;
-    for(int i = 0; i < _custchar->rowCount(); i++)
-    {
-      idx1 = _custchar->index(i, 0);
-      idx2 = _custchar->index(i, 1);
-      q.bindValue(":target_id", _custid);
-      q.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
-      q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
-      q.exec();
-    }
-  }
-  
   if (convertQuotes)
   {
     q.prepare("SELECT MIN(convertQuote(quhead_id)) AS result "
