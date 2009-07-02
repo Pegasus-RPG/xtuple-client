@@ -40,6 +40,7 @@ public slots:
     virtual void sSoList();
     virtual void sUpdateTotal();
     virtual void sTaxZoneChanged();
+    virtual void sFreightChanged();
 
 protected slots:
     virtual void languageChange();
@@ -55,6 +56,7 @@ private:
     bool _updated;
     int _mode;
     int	_taxzoneidCache;
+    double _freightCache;
 };
 
 #endif // SELECTORDERFORBILLING_H

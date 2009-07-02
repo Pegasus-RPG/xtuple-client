@@ -3792,6 +3792,9 @@ void salesOrder::sIssueLineBalance()
 
 void salesOrder::sFreightChanged()
 {
+  if (_freight->localValue() == _freightCache)
+    return;
+    
   if (_freight->isEnabled())
   {
     if (_calcfreight)
@@ -3831,6 +3834,7 @@ void salesOrder::sFreightChanged()
     }
   }
   
+  save(true);
   sCalculateTax();
 }
 
@@ -3839,18 +3843,16 @@ void salesOrder::sCalculateTax()
   XSqlQuery taxq;
   taxq.prepare( "SELECT SUM(tax) AS tax "
                 "FROM ("
-                "SELECT ROUND(calculateTax(:taxzone_id,coitem_taxtype_id,:date,:curr_id,ROUND((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio), 2)),2) AS tax "
-                "FROM coitem "
-                "WHERE (coitem_cohead_id=:cohead_id) "
-                "UNION ALL "
-                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
-                ") AS data;" );
+                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
+                "FROM tax "
+                " JOIN calculateTaxDetailSummary(:type, :cohead_id, 'T') ON (taxdetail_tax_id=tax_id)"
+	        "GROUP BY tax_id) AS data;" );
 
-  taxq.bindValue(":taxzone_id", _taxZone->id());
-  taxq.bindValue(":date", _orderDate->date());   
-  taxq.bindValue(":curr_id", _orderCurrency->id());  
   taxq.bindValue(":cohead_id", _soheadid);
-  taxq.bindValue(":freight", _freight->localValue());
+  if ISQUOTE(_mode)
+    taxq.bindValue(":type","Q");
+  else
+    taxq.bindValue(":type","S");
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());

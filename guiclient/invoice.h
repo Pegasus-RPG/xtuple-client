@@ -53,6 +53,7 @@ public slots:
     virtual void populateCCInfo();
     virtual void sHandleShipchrg( int pShipchrgid );
     virtual void sTaxZoneChanged();
+    virtual void sFreightChanged();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -70,6 +71,7 @@ private:
     int		_shiptoid;
     int		_taxzoneidCache;
     bool        _loading;
+    double      _freightCache;
 
 };
 
