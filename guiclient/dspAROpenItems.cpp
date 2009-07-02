@@ -89,7 +89,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   if (omfgThis->singleCurrency())
   {
     _aropen->hideColumn("currAbbr");
-    _aropen->hideColumn("base_balance");
+    _aropen->hideColumn("balance");
   }
 
   int menuItem;
