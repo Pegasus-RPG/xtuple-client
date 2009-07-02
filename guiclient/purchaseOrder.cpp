@@ -1159,14 +1159,12 @@ void purchaseOrder::sTaxZoneChanged()
 void purchaseOrder::sCalculateTax()
 {  
   XSqlQuery taxq;
-  taxq.prepare( "SELECT SUM(ROUND(calculateTax(:taxzone_id, poitem_taxtype_id, "
-                "  :date, :curr_id, ROUND(((poitem_qty_ordered * poitem_invvenduomratio) "
-				"  * poitem_unitprice), 2)),2)) AS tax "
-                "FROM poitem "
-                "WHERE (poitem_pohead_id=:pohead_id) ");
-  taxq.bindValue(":taxzone_id", _taxZone->id());
-  taxq.bindValue(":date", _orderDate->date());   
-  taxq.bindValue(":curr_id", _poCurrency->id());  
+  taxq.prepare( "SELECT SUM(tax) AS tax "
+                "FROM ("
+                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
+                "FROM tax "
+                " JOIN calculateTaxDetailSummary('PO', :pohead_id, 'T') ON (taxdetail_tax_id=tax_id)"
+	        "GROUP BY tax_id) AS data;" );
   taxq.bindValue(":pohead_id", _poheadid);
   taxq.exec();
   if (taxq.first())

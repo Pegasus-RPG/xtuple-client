@@ -1061,7 +1061,7 @@ void purchaseOrderItem::sCalculateTax()
 {
   XSqlQuery calcq;
 
-  calcq.prepare("SELECT ROUND(calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)),2) AS tax "
+  calcq.prepare("SELECT calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)) AS tax "
                 "FROM pohead "
                 "WHERE (pohead_id=:pohead_id); " );
 

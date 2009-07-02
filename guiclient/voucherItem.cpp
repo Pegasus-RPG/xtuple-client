@@ -703,8 +703,8 @@ void voucherItem::sCalculateTax()
   _saved = FALSE;
   XSqlQuery calcq;
   calcq.prepare( "SELECT SUM(COALESCE(tax, 0.00)) AS totaltax "
-                 "FROM (SELECT ROUND(calculateTax(vohead_taxzone_id, :taxtype_id, "
-				 " vohead_docdate, vohead_curr_id, vodist_amount), 2) AS tax "
+                 "FROM (SELECT calculateTax(vohead_taxzone_id, :taxtype_id, "
+				 " vohead_docdate, vohead_curr_id, vodist_amount) AS tax "
                  " FROM vohead JOIN vodist ON(vohead_id=vodist_vohead_id) "
                  " WHERE (vohead_id=:vohead_id) "
                  " AND (vodist_poitem_id=:poitem_id) "
