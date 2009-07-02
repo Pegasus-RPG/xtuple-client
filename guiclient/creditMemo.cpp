@@ -41,7 +41,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTax()));
+  connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxzone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
 
 #ifndef Q_WS_MAC
@@ -51,6 +51,8 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _custtaxzoneid	= -1;
   _shiptoid		= -1;
+  _freightCache         = 0;
+  _taxzoneidCache       = 0;
 
   _memoNumber->setValidator(omfgThis->orderVal());
   _commission->setValidator(omfgThis->scrapVal());
@@ -879,6 +881,7 @@ void creditMemo::populate()
     _salesRep->setId(cmhead.value("cmhead_salesrep_id").toInt());
     _commission->setDouble(cmhead.value("cmhead_commission").toDouble() * 100);
     // do taxauth first so we can overwrite the result of the signal cascade
+    _taxzoneidCache = cmhead.value("cmhead_taxzone_id").toInt();
     _taxzone->setId(cmhead.value("cmhead_taxzone_id").toInt());
 
     _memoNumber->setText(cmhead.value("cmhead_number"));
@@ -888,6 +891,7 @@ void creditMemo::populate()
     _hold->setChecked(cmhead.value("cmhead_hold").toBool());
 
     _currency->setId(cmhead.value("cmhead_curr_id").toInt());
+    _freightCache = cmhead.value("cmhead_freight").toDouble();
     _freight->setLocalValue(cmhead.value("cmhead_freight").toDouble());
 
     _miscCharge->setLocalValue(cmhead.value("cmhead_misc").toDouble());
@@ -1016,24 +1020,13 @@ void creditMemo::sTaxDetail()
 void creditMemo::sCalculateTax()
 {
   XSqlQuery taxq;
-  taxq.prepare( "SELECT SUM(taxhist_tax) AS tax "
-		            "FROM ("
-                " SELECT taxhist_tax * -1 AS taxhist_tax "
-                " FROM cmheadtax "
-                " WHERE ((taxhist_parent_id=:cmhead_id)"
-                " AND (taxhist_taxtype_id=getadjustmenttaxtypeid())) "
-                " UNION ALL "
-                " SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
-                " UNION ALL "
-                " SELECT taxhist_tax * -1 AS taxhist_tax "
-                " FROM cmitemtax "
-                "  JOIN cmitem ON (cmitem_id=taxhist_parent_id) "
-                " WHERE (cmitem_cmhead_id=:cmhead_id) ) AS data;" );
+  taxq.prepare( "SELECT SUM(tax) * -1 AS tax "
+                "FROM ("
+                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
+                "FROM tax "
+                " JOIN calculateTaxDetailSummary('CM', :cmhead_id, 'T') ON (taxdetail_tax_id=tax_id)"
+	        "GROUP BY tax_id) AS data;" );
   taxq.bindValue(":cmhead_id", _cmheadid);
-  taxq.bindValue(":taxzone_id", _taxzone->id());
-  taxq.bindValue(":date", _memoDate->date());   
-  taxq.bindValue(":curr_id", _currency->id());  
-  taxq.bindValue(":freight", _freight->localValue());
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
@@ -1047,7 +1040,7 @@ void creditMemo::sCalculateTax()
 
 void creditMemo::sTaxZoneChanged()
 {
-  if (_cmheadid != -1)
+  if (_cmheadid != -1 && _taxzoneidCache != _taxzone->id())
   {
     XSqlQuery taxq;
     taxq.prepare("UPDATE cmhead SET "
@@ -1064,7 +1057,29 @@ void creditMemo::sTaxZoneChanged()
       systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    _taxzoneidCache = _taxzone->id();
     sCalculateTax();
   }
+}
+
+void creditMemo::sFreightChanged()
+{
+  if (_cmheadid != -1 && _freightCache != _freight->localValue())
+  {
+    XSqlQuery taxq;
+    taxq.prepare("UPDATE cmhead SET "
+      "  cmhead_freight=:freight "
+      "WHERE (cmhead_id=:cmhead_id) ");
+    taxq.bindValue(":cmhead_id", _cmheadid);
+    taxq.bindValue(":freight", _freight->localValue());
+    taxq.exec();
+    if (taxq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    _freightCache = _freight->localValue();
+    sCalculateTax();
+  }   
 }
 

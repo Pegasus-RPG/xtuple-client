@@ -52,8 +52,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   connect(_taxzone, SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sRecvWhsChanged()));
   connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sShipWhsChanged()));
@@ -91,6 +90,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _ffShipto = TRUE;
   _custEmail = FALSE;
   _saved = FALSE;
+  _freightCache = 0;
 
   _origso->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
@@ -1219,6 +1219,7 @@ void returnAuthorization::populate()
     _customerPO->setText(rahead.value("rahead_custponumber"));
 
     _currency->setId(rahead.value("rahead_curr_id").toInt());
+    _freightCache = rahead.value("rahead_freight").toDouble();
     _freight->setLocalValue(rahead.value("rahead_freight").toDouble());
 
     _ignoreWhsSignals = TRUE;
@@ -1324,18 +1325,12 @@ void returnAuthorization::sCalculateTax()
   XSqlQuery taxq;
   taxq.prepare( "SELECT SUM(tax) AS tax "
                 "FROM ("
-                "SELECT ROUND(calculateTax(:taxzone_id,raitem_taxtype_id,:date,:curr_id,ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2)),2) AS tax "
-                "FROM raitem "
-                "WHERE (raitem_rahead_id=:rahead_id) "
-                "UNION ALL "
-                "SELECT ROUND(calculateTax(:taxzone_id,getFreightTaxTypeId(),:date,:curr_id,:freight),2) AS tax "
-                ") AS data;" );
+                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
+                "FROM tax "
+                " JOIN calculateTaxDetailSummary('RA', :rahead_id, 'T') ON (taxdetail_tax_id=tax_id)"
+	        "GROUP BY tax_id) AS data;" );
 
-  taxq.bindValue(":taxzone_id", _taxzone->id());
-  taxq.bindValue(":date", _authDate->date());   
-  taxq.bindValue(":curr_id", _currency->id());  
   taxq.bindValue(":rahead_id", _raheadid);
-  taxq.bindValue(":freight", _freight->localValue());
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
@@ -1916,6 +1911,16 @@ void returnAuthorization::sCheckNumber()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+}
+
+void returnAuthorization::sFreightChanged()
+{
+  if (_freight->localValue() != _freightCache)
+  {
+    sSave(true);   
+    _freightCache = _freight->localValue();
+    sCalculateTax();
   }
 }
 

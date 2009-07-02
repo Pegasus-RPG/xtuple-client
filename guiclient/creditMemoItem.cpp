@@ -611,7 +611,7 @@ void creditMemoItem::sCalculateTax()
 {
   _saved = false;
   XSqlQuery calcq;
-  calcq.prepare( "SELECT ROUND(calculateTax(cmhead_taxzone_id,:taxtype_id,cmhead_docdate,cmhead_curr_id,ROUND(:ext,2)),2) AS tax "
+  calcq.prepare( "SELECT calculateTax(cmhead_taxzone_id,:taxtype_id,cmhead_docdate,cmhead_curr_id,ROUND(:ext,2)) AS tax "
                  "FROM cmhead "
                  "WHERE (cmhead_id=:cmhead_id); "); 
   calcq.bindValue(":cmhead_id", _cmheadid);

@@ -878,7 +878,7 @@ void invoice::sTaxDetail()
   if (newdlg.set(params) == NoError)
   {
     newdlg.exec();
-    populate();
+    sCalculateTax();
   }
 }
 

@@ -1164,7 +1164,7 @@ void returnAuthorizationItem::sCalculateTax()
 {
   XSqlQuery calcq;
 
-  calcq.prepare("SELECT ROUND(calculateTax(rahead_taxzone_id,:taxtype_id,rahead_authdate,rahead_curr_id,ROUND(:ext,2)),2) AS tax "
+  calcq.prepare("SELECT calculateTax(rahead_taxzone_id,:taxtype_id,rahead_authdate,rahead_curr_id,ROUND(:ext,2)) AS tax "
                 "FROM rahead "
                 "WHERE (rahead_id=:rahead_id); " );
 

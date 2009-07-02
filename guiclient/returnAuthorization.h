@@ -75,6 +75,7 @@ public slots:
     virtual void sShipment();
     virtual void sShipmentStatus();
     virtual void sCheckNumber();
+    virtual void sFreightChanged();
 
 protected slots:
     virtual void languageChange();
@@ -92,6 +93,7 @@ private:
     bool _ignoreWhsSignals;
     bool _saved;
     double _subtotalCache;
+    double _freightCache;
 };
 
 #endif // RETURNAUTHORIZATION_H

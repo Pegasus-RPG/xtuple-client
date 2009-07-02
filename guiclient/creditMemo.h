@@ -50,6 +50,7 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sTaxZoneChanged();
     virtual void sTaxDetail();
+    virtual void sFreightChanged();
 
 protected slots:
     virtual void languageChange();
@@ -63,6 +64,8 @@ private:
     bool _ffShipto;
     bool _ignoreShiptoSignals;
     double _subtotalCache;
+    double _freightCache;
+    int _taxzoneidCache;
 };
 
 #endif // CREDITMEMO_H
