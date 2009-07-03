@@ -94,6 +94,24 @@ void labelForm::sSave()
 
   if (_mode == cNew)
   {
+    q.prepare( "SELECT labelform_id "
+         	     "FROM labelform "
+               "WHERE (labelform_name=:labelform_name);" );
+    q.bindValue(":labelform_name", _name->text());
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::warning( this, tr("Format Name is Invalid"),
+                            tr("<p>This Label Form Name already exists.") );
+      _name->setFocus();
+      return;
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
     q.exec("SELECT NEXTVAL('labelform_labelform_id_seq') AS _labelform_id");
     if (q.first())
       _labelformid = q.value("_labelform_id").toInt();
