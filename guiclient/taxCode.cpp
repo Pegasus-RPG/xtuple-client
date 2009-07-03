@@ -408,7 +408,9 @@ void taxCode::closeEvent(QCloseEvent *pEvent)
     }
 
     q.prepare( " DELETE FROM taxrate "
-               " WHERE (taxrate_tax_id=:tax_id);");
+               " WHERE (taxrate_tax_id=:tax_id);"
+               " DELETE FROM tax "
+               " WHERE (tax_id=:tax_id);");
                 
     q.bindValue(":tax_id", _taxid);
     q.exec();
