@@ -28,6 +28,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sApply();
+    virtual void sViewVoucher();
 
 protected:
     int _apopenid;

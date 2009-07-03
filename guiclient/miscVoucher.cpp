@@ -14,6 +14,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QVariant>
+#include <QSqlError>
 
 #include "voucherMiscDistrib.h"
 
@@ -81,7 +82,18 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
         _voucherNumber->setFocus();
 
       connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulateVendorInfo(int)));
-    }
+
+      q.prepare("INSERT INTO vohead (vohead_id, vohead_number, vohead_misc, vohead_posted, vohead_pohead_id)"
+                "            VALUES (:vohead_id, :vohead_number, true, false, -1);" );
+      q.bindValue(":vohead_id",     _voheadid);
+      q.bindValue(":vohead_number", _voucherNumber->text());
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
+   }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
@@ -184,31 +196,18 @@ void miscVoucher::sSave()
       }
   }
 
-  if (_mode == cNew)
-  {
-    q.prepare( "INSERT INTO vohead "
-               "( vohead_id, vohead_number, vohead_pohead_id, vohead_vend_id, vohead_taxzone_id, "
-               "  vohead_terms_id, vohead_distdate, vohead_docdate, vohead_duedate,"
-               "  vohead_invcnumber, vohead_reference,"
-               "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id, vohead_misc, vohead_notes ) "
-               "VALUES "
-               "( :vohead_id, :vohead_number, -1, :vohead_vend_id, :vohead_taxzone_id, "
-               "  :vohead_terms_id, :vohead_distdate, :vohead_docdate, :vohead_duedate,"
-               "  :vohead_invcnumber, :vohead_reference,"
-               "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id, TRUE, :vohead_notes );" );
-    q.bindValue(":vohead_number", _voucherNumber->text().toInt());
-    q.bindValue(":vohead_vend_id", _vendor->id());
-  }
-  else
-    q.prepare( "UPDATE vohead "
-               "SET vohead_distdate=:vohead_distdate, vohead_docdate=:vohead_docdate, vohead_duedate=:vohead_duedate,"
-               "    vohead_terms_id=:vohead_terms_id, vohead_taxzone_id=:vohead_taxzone_id, "
-               "    vohead_invcnumber=:vohead_invcnumber, vohead_reference=:vohead_reference,"
-               "    vohead_amount=:vohead_amount, vohead_1099=:vohead_1099, "
-	       "    vohead_curr_id=:vohead_curr_id, vohead_notes=:vohead_notes "
-               "WHERE (vohead_id=:vohead_id);" );
+  q.prepare( "UPDATE vohead "
+             "SET vohead_number=:vohead_number, vohead_vend_id=:vohead_vend_id,"
+             "    vohead_distdate=:vohead_distdate, vohead_docdate=:vohead_docdate, vohead_duedate=:vohead_duedate,"
+             "    vohead_terms_id=:vohead_terms_id, vohead_taxzone_id=:vohead_taxzone_id, "
+             "    vohead_invcnumber=:vohead_invcnumber, vohead_reference=:vohead_reference,"
+             "    vohead_amount=:vohead_amount, vohead_1099=:vohead_1099, "
+             "    vohead_curr_id=:vohead_curr_id, vohead_notes=:vohead_notes "
+             "WHERE (vohead_id=:vohead_id);" );
 
   q.bindValue(":vohead_id", _voheadid);
+  q.bindValue(":vohead_number", _voucherNumber->text().toInt());
+  q.bindValue(":vohead_vend_id", _vendor->id());
   q.bindValue(":vohead_terms_id", _terms->id());
   q.bindValue(":vohead_taxzone_id", _taxzone->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());

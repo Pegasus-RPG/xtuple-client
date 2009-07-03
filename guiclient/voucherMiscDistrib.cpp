@@ -105,10 +105,7 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
 
 void voucherMiscDistrib::populate()
 {
-  q.prepare( "SELECT vodist_accnt_id,"
-             "       vodist_amount, "
-             "       vodist_expcat_id, "
-             "       vodist_tax_id "
+  q.prepare( "SELECT * "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
   q.bindValue(":vodist_id", _vodistid);
@@ -117,6 +114,7 @@ void voucherMiscDistrib::populate()
   {
     _account->setId(q.value("vodist_accnt_id").toInt());
     _amount->setLocalValue(q.value("vodist_amount").toDouble());
+    _discountable->setChecked(q.value("vodist_discountable").toBool());
     if(q.value("vodist_expcat_id").toInt() != -1)
     {
       _expcatSelected->setChecked(TRUE);
@@ -179,15 +177,18 @@ void voucherMiscDistrib::sSave()
 
     q.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
-               "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_expcat_id, vodist_tax_id ) "
+               "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_discountable,"
+               "  vodist_expcat_id, vodist_tax_id ) "
                "VALUES "
                "( :vodist_id, :vodist_vohead_id, -1,"
-               "  -1, :vodist_accnt_id, :vodist_amount, :vodist_expcat_id, :vodist_tax_id );" );
+               "  -1, :vodist_accnt_id, :vodist_amount, :vodist_discountable,"
+               "  :vodist_expcat_id, :vodist_tax_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE vodist "
                "SET vodist_accnt_id=:vodist_accnt_id,"
                "    vodist_amount=:vodist_amount,"
+               "    vodist_discountable=:vodist_discountable,"
                "    vodist_expcat_id=:vodist_expcat_id, "
                "    vodist_tax_id = :vodist_tax_id "
                "WHERE (vodist_id=:vodist_id);" );
@@ -195,6 +196,7 @@ void voucherMiscDistrib::sSave()
   q.bindValue(":vodist_id", _vodistid);
   q.bindValue(":vodist_vohead_id", _voheadid);
   q.bindValue(":vodist_amount", _amount->localValue());
+  q.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
   if(_accountSelected->isChecked())
   {
     q.bindValue(":vodist_accnt_id", _account->id());

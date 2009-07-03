@@ -9,6 +9,8 @@
  */
 
 #include "applyDiscount.h"
+#include "voucher.h"
+#include "miscVoucher.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -20,6 +22,10 @@ applyDiscount::applyDiscount(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
+// TODO - cannot launch window from modal dialog???
+//  connect(_view, SIGNAL(clicked()), this, SLOT(sViewVoucher()));
+  _view->hide();
+
   _discprcnt->setPrecision(omfgThis->percentVal());
 
   _apopenid = -1;
@@ -72,17 +78,17 @@ void applyDiscount::populate()
             "            ELSE apopen_doctype"
             "       END AS f_doctype,"
             "       apopen_docnumber,"
-	    "       apopen_docdate, "
+            "       apopen_docdate, "
             "       (terms_code|| '-' || terms_descrip) AS f_terms,"
             "       (apopen_docdate + terms_discdays) AS discdate,"
             "       terms_discprcnt,"
-            "       apopen_amount, apopen_curr_id, applied, "
-            "       noNeg(apopen_amount *"
+            "       apopen_amount, apopen_discountable_amount, apopen_curr_id, applied, "
+            "       noNeg(apopen_discountable_amount *"
             "             CASE WHEN (CURRENT_DATE <= (apopen_docdate + terms_discdays)) THEN terms_discprcnt"
             "             ELSE 0.0 END - applied) AS amount,"
             "       ((apopen_docdate + terms_discdays) < CURRENT_DATE) AS past"
             "  FROM apopen LEFT OUTER JOIN terms ON (apopen_terms_id=terms_id),"
-	    "       vend, "
+            "       vend, "
             "       (SELECT COALESCE(SUM(apapply_amount),0) AS applied"
             "          FROM apapply, apopen"
             "         WHERE ((apapply_target_apopen_id=:apopen_id)"
@@ -117,6 +123,7 @@ void applyDiscount::populate()
     _discprcnt->setDouble(q.value("terms_discprcnt").toDouble() * 100);
 
     _owed->setLocalValue(q.value("apopen_amount").toDouble());
+    _discountableOwed->setLocalValue(q.value("apopen_discountable_amount").toDouble());
     _applieddiscounts->setLocalValue(q.value("applied").toDouble());
 
     _amount->set(q.value("amount").toDouble(),
@@ -126,4 +133,36 @@ void applyDiscount::populate()
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
+
+void applyDiscount::sViewVoucher()
+{
+  q.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
+            "  FROM apopen, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)"
+            " WHERE((vohead_number=apopen_docnumber)"
+            "   AND (apopen_id=:apopen_id));");
+  q.bindValue(":apopen_id", _apopenid);
+  q.exec();
+  if(q.first())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("vohead_id", q.value("vohead_id").toInt());
+  
+    if (q.value("pohead_id").toInt() == -1)
+    {
+      miscVoucher *newdlg = new miscVoucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else
+    {
+      voucher *newdlg = new voucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
+  else
+    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+}
+
 

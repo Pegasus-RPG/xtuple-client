@@ -322,12 +322,13 @@ void apOpenItem::populate()
              "       (apopen_amount - apopen_paid) AS f_balance,"
              "       apopen_terms_id, apopen_notes, apopen_accnt_id, "
              "       apopen_curr_id, "
-             "       COALESCE(SUM(taxhist_tax),0) AS tax, "
-             "       CASE WHEN (apopen_doctype IN ('D', 'C') THEN TRUE "
+             "       (SELECT COALESCE(SUM(taxhist_tax),0) "
+             "        FROM apopentax "
+             "        WHERE (taxhist_parent_id=apopen_id)) AS tax, "
+             "       CASE WHEN (apopen_doctype IN ('D', 'C')) THEN TRUE "
              "            ELSE FALSE "
              "       END AS showTax "
              "FROM apopen "
-             "  LEFT OUTER JOIN apopentax ON (apopen_id=taxhist_parent_id) "
              "WHERE ( (apopen_id=:apopen_id)"
              "  AND   (apopen_void = FALSE) );" );
   q.bindValue(":apopen_id", _apopenid);

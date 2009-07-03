@@ -121,7 +121,7 @@ enum SetResponse voucherItemDistrib::set(ParameterList &pParams)
 
 void voucherItemDistrib::populate()
 {
-  q.prepare( "SELECT vodist_costelem_id, vodist_amount "
+  q.prepare( "SELECT * "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
   q.bindValue(":vodist_id", _vodistid);
@@ -130,6 +130,7 @@ void voucherItemDistrib::populate()
   {
     _costelem->setId(q.value("vodist_costelem_id").toInt());
     _amount->setLocalValue(q.value("vodist_amount").toDouble());
+    _discountable->setChecked(q.value("vodist_discountable").toBool());
   }
 }
 
@@ -172,15 +173,16 @@ void voucherItemDistrib::sSave()
 
     q.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
-               "  vodist_costelem_id, vodist_amount ) "
+               "  vodist_costelem_id, vodist_amount, vodist_discountable ) "
                "VALUES "
                "( :vodist_id, :vodist_vohead_id, :vodist_poitem_id,"
-               "  :vodist_costelem_id, :vodist_amount );" );
+               "  :vodist_costelem_id, :vodist_amount, :vodist_discountable );" );
   }
   if (_mode == cEdit)
     q.prepare( "UPDATE vodist "
                "SET vodist_costelem_id=:vodist_costelem_id,"
-               "    vodist_amount=:vodist_amount "
+               "    vodist_amount=:vodist_amount,"
+               "    vodist_discountable=:vodist_discountable "
                "WHERE (vodist_id=:vodist_id);" );
 
   q.bindValue(":vodist_id", _vodistid);
@@ -188,6 +190,7 @@ void voucherItemDistrib::sSave()
   q.bindValue(":vodist_poitem_id", _poitemid);
   q.bindValue(":vodist_costelem_id", _costelem->id());
   q.bindValue(":vodist_amount", _amount->localValue());
+  q.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
   q.exec();
 
   done(_vodistid);
