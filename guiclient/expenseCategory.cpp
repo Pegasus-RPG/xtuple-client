@@ -142,6 +142,14 @@ void expenseCategory::sSave()
     return;
   }
 
+  if (!_purchasePrice->isValid())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                          tr("You must select a Purchase Price Variance Account Number for this Expense Category before you may save it.") );
+    _purchasePrice->setFocus();
+    return;
+  }
+
   if (!_liability->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Expense Category"),
