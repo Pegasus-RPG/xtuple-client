@@ -41,6 +41,7 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxdet->addColumn(tr("Order#"),              _orderColumn,    Qt::AlignLeft,  false, "ordernumber"   );
   _taxdet->addColumn(tr("Doc. Date"),           _dateColumn,     Qt::AlignCenter,true,  "docdate"  );
   _taxdet->addColumn(tr("Dist. Date"),          _dateColumn,     Qt::AlignCenter,false, "taxhist_distdate"  );   
+  _taxdet->addColumn(tr("Journal#"),            _orderColumn,    Qt::AlignRight, false, "taxhist_journalnumber"  );
   _taxdet->addColumn(tr("Name"),                _orderColumn,    Qt::AlignLeft,  false, "name"  );
   _taxdet->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,  true,  "tax"  );
   _taxdet->addColumn(tr("Tax Type"),            _itemColumn,     Qt::AlignLeft,  false, "taxtype"  );

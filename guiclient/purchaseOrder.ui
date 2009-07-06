@@ -1141,11 +1141,12 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
+  <tabstop>_terms</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_orderDate</tabstop>
+  <tabstop>_taxZone</tabstop>
   <tabstop>_agent</tabstop>
-  <tabstop>_terms</tabstop>
-  <tabstop>_vendor</tabstop>
+  <tabstop>_printPO</tabstop>
   <tabstop>_vendName</tabstop>
   <tabstop>_vendAddr1</tabstop>
   <tabstop>_vendAddr2</tabstop>
@@ -1163,21 +1164,23 @@ to be bound by its terms.</comment>
   <tabstop>_vendaddrState</tabstop>
   <tabstop>_vendaddrZipCode</tabstop>
   <tabstop>_vendaddrCountry</tabstop>
-  <tabstop>_shipVia</tabstop>
   <tabstop>_fob</tabstop>
-  <tabstop>_purchaseOrderInformation</tabstop>
+  <tabstop>_shipVia</tabstop>
   <tabstop>_poitem</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_delete</tabstop>
   <tabstop>_poCurrency</tabstop>
   <tabstop>_tax</tabstop>
   <tabstop>_freight</tabstop>
   <tabstop>_total</tabstop>
-  <tabstop>_new</tabstop>
-  <tabstop>_edit</tabstop>
-  <tabstop>_delete</tabstop>
   <tabstop>_notes</tabstop>
-  <tabstop>_comments</tabstop>
+  <tabstop>_qesave</tabstop>
+  <tabstop>_qedelete</tabstop>
+  <tabstop>_qecurrency</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_purchaseOrderInformation</tabstop>
  </tabstops>
  <resources/>
  <connections>

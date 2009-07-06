@@ -366,8 +366,7 @@ void arOpenItem::sClose()
 {
   if (_mode == cNew)
   {
-    q.prepare("SELECT releaseARMemoNumber(:docNumber);"
-              "COMMIT;");
+    q.prepare("SELECT releaseARMemoNumber(:docNumber);");
     q.bindValue(":docNumber", _docNumber->text().toInt());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
