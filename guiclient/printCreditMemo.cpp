@@ -19,6 +19,8 @@
 
 #include <openreports.h>
 #include "editICMWatermark.h"
+#include "storedProcErrorLookup.h"
+#include "distributeInventory.h"
 
 printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -178,17 +180,43 @@ void printCreditMemo::sPrint()
 
         if (_alert)
           omfgThis->sCreditMemosUpdated();
-
+        
         if (_post->isChecked())
         {
+          //TO DO:  Replace this method with commit that doesn't require transaction
+          //block that can lead to locking issues
+          XSqlQuery rollback;
+          rollback.prepare("ROLLBACK;");
+          
           q.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
           q.bindValue(":cmhead_id", _cmheadid);
           q.exec();
-	  if (q.lastError().type() != QSqlError::NoError)
+          q.first();
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            rollback.exec();
+            systemError( this, storedProcErrorLookup("postCreditMemo", result),
+                  __FILE__, __LINE__);
+            return;
+          }
+          else if (q.lastError().type() != QSqlError::NoError)
 	  {
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            rollback.exec();
 	    return;
 	  }
+          else
+          {
+            if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+            {
+              rollback.exec();
+              QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+              return;
+            }
+
+            q.exec("COMMIT;");
+          }         
         }
       }
     }
