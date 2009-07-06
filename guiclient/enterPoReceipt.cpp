@@ -251,6 +251,7 @@ void enterPoReceipt::sPost()
     q.exec("BEGIN;");	// because of possible insertgltransaction failures
     q.prepare("SELECT postReceipt(:recv_id, 0) AS result;");
     q.bindValue(":recv_id", qi.value("recv_id").toInt());
+    q.exec();
     if (q.first())
     {
       int result = q.value("result").toInt();
