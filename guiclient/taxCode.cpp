@@ -168,15 +168,16 @@ void taxCode::sFillList()
                  "            ELSE taxrate_expires END AS expires, "
                  "       <? literal (\"always\") ?> AS effective_xtnullrole, "
                  "       <? literal (\"never\") ?>  AS expires_xtnullrole, "
-				 "       (taxrate_percent * 100) as taxrate_percent, taxrate_amount, curr_name, "
-				 " CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
+		 "       taxrate_percent, taxrate_amount, curr_name, "
+		 " CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
                  "	    WHEN (taxrate_effective >= CURRENT_DATE) THEN 'emphasis'"
-                 "      END AS qtforegroundrole "
-				 " FROM taxrate LEFT OUTER JOIN curr_symbol "
-				 "       ON (taxrate_curr_id = curr_id) "
-				 " WHERE taxrate_tax_id = <? value(\"tax_id\") ?> "
-				 " ORDER BY taxrate_id, taxrate_effective, taxrate_expires, "
-				 " taxrate_percent, taxrate_amount; " );
+                 "      END AS qtforegroundrole, "
+                 "  'percent' AS taxrate_percent_xtnumericrole "
+		 " FROM taxrate LEFT OUTER JOIN curr_symbol "
+		 "       ON (taxrate_curr_id = curr_id) "
+		 " WHERE taxrate_tax_id = <? value(\"tax_id\") ?> "
+		 " ORDER BY taxrate_id, taxrate_effective, taxrate_expires, "
+		 " taxrate_percent, taxrate_amount; " );
 
   ParameterList params;
   setParams(params);

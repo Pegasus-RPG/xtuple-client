@@ -35,6 +35,7 @@ sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_qtyScale,       SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_qtyPerScale,    SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_salesPriceScale,SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
+  connect(_percentScale,   SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_save,           SIGNAL(clicked()),         this, SLOT(sSave()));
   connect(_uomRatioScale,  SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_warning,        SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
@@ -177,7 +178,7 @@ void sysLocale::sSave()
                "  locale_salesprice_scale, locale_purchprice_scale,"
                "  locale_extprice_scale, locale_cost_scale,"
                "  locale_qty_scale, locale_qtyper_scale,"
-               "  locale_uomratio_scale,"
+               "  locale_uomratio_scale, locale_percent_scale, "
                "  locale_comments, "
                "  locale_error_color, locale_warning_color,"
                "  locale_emphasis_color, locale_altemphasis_color,"
@@ -191,7 +192,7 @@ void sysLocale::sSave()
                "  :locale_salesprice_scale, :locale_purchprice_scale,"
                "  :locale_extprice_scale, :locale_cost_scale,"
                "  :locale_qty_scale, :locale_qtyper_scale,"
-               "  :locale_uomratio_scale,"
+               "  :locale_uomratio_scale, :local_percent_scale, "
                "  :locale_comments,"
                "  :locale_error_color, :locale_warning_color,"
                "  :locale_emphasis_color, :locale_altemphasis_color,"
@@ -216,6 +217,7 @@ void sysLocale::sSave()
                 "    locale_qty_scale=:locale_qty_scale,"
                 "    locale_qtyper_scale=:locale_qtyper_scale,"
                 "    locale_uomratio_scale=:locale_uomratio_scale,"
+                "    locale_percent_scale=:locale_percent_scale,"
                 "    locale_comments=:locale_comments,"
                 "    locale_error_color=:locale_error_color,"
                 "    locale_warning_color=:locale_warning_color,"
@@ -238,6 +240,7 @@ void sysLocale::sSave()
   q.bindValue(":locale_qty_scale",         _qtyScale->text());
   q.bindValue(":locale_qtyper_scale",      _qtyPerScale->text());
   q.bindValue(":locale_uomratio_scale",    _uomRatioScale->text());
+  q.bindValue(":locale_percent_scale",     _percentScale->text());
   q.bindValue(":locale_comments",          _comments->toPlainText());
   q.bindValue(":locale_error_color",       _error->text());
   q.bindValue(":locale_warning_color",     _warning->text());
@@ -352,6 +355,7 @@ void sysLocale::sUpdateSamples()
     _qtySample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyScale->value()));
     _qtyPerSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyPerScale->value()));
     _uomRatioSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _uomRatioScale->value()));
+    _percentSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _percentScale->value()));
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -396,6 +400,7 @@ void sysLocale::populate()
     _qtyScale->setValue(popq.value("locale_qty_scale").toInt());
     _qtyPerScale->setValue(popq.value("locale_qtyper_scale").toInt());
     _uomRatioScale->setValue(popq.value("locale_uomratio_scale").toInt());
+    _percentScale->setValue(popq.value("locale_percent_scale").toInt());
     _comments->setText(popq.value("locale_comments").toString());
     _error->setText(popq.value("locale_error_color").toString());
     _warning->setText(popq.value("locale_warning_color").toString());
