@@ -235,14 +235,14 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
 
 xTupleDesigner::~xTupleDesigner()
 {
-  if (_objinspwindow)  _objinspwindow->deleteLater();
-  if (_propinspwindow) _propinspwindow->deleteLater();
-  if (_slotedwindow)   _slotedwindow->deleteLater();
-  if (_widgetwindow)   _widgetwindow->deleteLater();
+  //if (_objinspwindow)  _objinspwindow->deleteLater();
+  //if (_propinspwindow) _propinspwindow->deleteLater();
+  //if (_slotedwindow)   _slotedwindow->deleteLater();
+  //if (_widgetwindow)   _widgetwindow->deleteLater();
 
-  //if (_designer)   _designer->deleteLater();
-  if (_formeditor) _formeditor->deleteLater();
-  if (_formwindow) _formwindow->deleteLater();
+  ////if (_designer)   _designer->deleteLater();
+  //if (_formeditor) _formeditor->deleteLater();
+  //if (_formwindow) _formwindow->deleteLater();
 }
 
 QString xTupleDesigner::name()
@@ -330,7 +330,14 @@ QString xTupleDesigner::source()
 void xTupleDesigner::closeEvent(QCloseEvent * event)
 {
   if(_actions->sClose())
+  {
+    if (_objinspwindow)  _objinspwindow->hide();
+    if (_propinspwindow) _propinspwindow->hide();
+    if (_slotedwindow)   _slotedwindow->hide();
+    if (_widgetwindow)   _widgetwindow->hide();
+    if (_formwindow) _formwindow->hide();
     XMainWindow::closeEvent(event);
+  }
   else
     event->ignore();
 }
