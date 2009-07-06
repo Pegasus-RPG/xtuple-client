@@ -212,6 +212,14 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _more->setChecked(_preferences->boolean("SoShowAll"));
   _newCust->setVisible(_privileges->check("MaintainCustomerMasters") ||
                        _privileges->check("MaintainProspectMasters"));
+                       
+#ifndef Q_WS_MAC
+  _newCust->setMaximumWidth(25);
+#else
+  _newCust->setMinimumWidth(60);
+  _newCust->setMinimumHeight(32);
+#endif
+
   sHandleMore();
 }
 
