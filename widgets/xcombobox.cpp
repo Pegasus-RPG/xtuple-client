@@ -1205,7 +1205,7 @@ void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
   }
 
   setCurrentIndex(selected);
-  if (_ids.count())
+  if (_ids.count() > selected)
   {
     _lastId = _ids.at(selected);
 
