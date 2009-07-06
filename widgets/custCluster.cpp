@@ -426,7 +426,6 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
     _info->setMinimumHeight(32);
 #endif
   _info->setFocusPolicy(Qt::NoFocus);
-  _info->setMinimumWidth(60);
 
   layoutButtons->addWidget(_info);
   
