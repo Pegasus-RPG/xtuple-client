@@ -86,43 +86,21 @@ ORDER BY quitem_linenumber;</sql>
   <name>totals</name>
   <sql>SELECT 1 as one,
        formatExtPrice(subtotal) AS f_subtotal,
-       formatExtPrice(itemtax + freighttax) AS f_tax,
+       formatExtPrice(tax) AS f_tax,
        formatExtPrice(quhead_freight) AS f_freight,
        formatExtPrice(quhead_misc) AS f_misc,
-       formatExtPrice(subtotal + itemtax + freighttax + quhead_freight) AS f_total
+       formatExtPrice(subtotal + tax + quhead_freight) AS f_total
   FROM quhead,
        (SELECT SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS subtotal
           FROM quitem
          WHERE (quitem_quhead_id=&lt;? value("quhead_id") ?>) ) AS subtot,
-       (SELECT SUM(calculateTax(quhead_taxzone_id,
-                                quitem_taxtype_id,
-                                quhead_quotedate,
-                                quhead_curr_id,
-                                ((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)))) AS itemtax
-        FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id)
-        WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) AS itemtaxinfo,
-       (SELECT calculateTax(quhead_taxzone_id,
-                            getFreightTaxTypeId(),
-                            quhead_quotedate,
-                            quhead_curr_id,
-                            quhead_freight) AS freighttax
-        FROM quhead
-        WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) AS freighttaxinfo
+       (SELECT SUM(tax) AS tax 
+        FROM (
+          SELECT ROUND(SUM(taxdetail_tax),2) AS tax 
+          FROM tax 
+          JOIN calculateTaxDetailSummary('Q', &lt;? value("quhead_id") ?>, 'T') ON (taxdetail_tax_id=tax_id)
+	GROUP BY tax_id) AS data) AS taxtot
        
-
---       (SELECT calculateTax(quhead_tax_id,
---                            SUM(quitem_qtyord
---                              * (quitem_price
---                              / iteminvpricerat(item_id))),
---                            quhead_freight) AS tax
---          FROM quitem, item,
---               (SELECT quhead_tax_id,
---                       quhead_freight
---                  FROM quhead
---                 WHERE (quhead_id=&lt;? value("quhead_id") ?>) ) as data
---         WHERE ((quitem_quhead_id=&lt;? value("quhead_id") ?>)
---           AND  (quitem_item_id=item_id))
---      GROUP BY quhead_tax_id, quhead_freight ) as taxinfo
 
 
  WHERE (quhead_id=&lt;? value("quhead_id") ?>);
