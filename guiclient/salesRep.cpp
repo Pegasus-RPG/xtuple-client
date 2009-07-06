@@ -165,7 +165,8 @@ void salesRep::sSave()
   q.bindValue(":salesrep_name", _name->text());
   q.bindValue(":salesrep_commission", (_commPrcnt->toDouble() / 100));
   q.bindValue(":salesrep_active", QVariant(_active->isChecked()));
-  q.bindValue(":salesrep_emp_id", _employee->id());
+  if(_employee->id() != -1)
+    q.bindValue(":salesrep_emp_id", _employee->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
