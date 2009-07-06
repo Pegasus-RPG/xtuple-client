@@ -617,7 +617,8 @@ void voucher::sFillList()
                "         poitem_vend_item_number, poitem_vend_uom,"
                "         poitem_unitprice, poitem_freight,"
                "         poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
-               "         itemsite_id, pohead_curr_id;" );
+               "         itemsite_id, pohead_curr_id "
+               "ORDER BY poitem_linenumber;" );
     q.bindValue(":vohead_id", _voheadid);
     q.bindValue(":pohead_id", _poNumber->id());
     q.bindValue(":closed", tr("Closed"));
