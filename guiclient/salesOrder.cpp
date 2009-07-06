@@ -12,23 +12,22 @@
 #include <stdlib.h>
 
 #include <Q3DragObject>
-#include <QApplication>
 #include <QCloseEvent>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QFileInfo>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <metasql.h>
 
 #include "creditCard.h"
 #include "creditcardprocessor.h"
+#include "crmacctcluster.h"
+#include "customer.h"
 #include "distributeInventory.h"
 #include "issueLineToShipping.h"
 #include "mqlutil.h"
@@ -39,6 +38,7 @@
 #include "freightBreakdown.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
+#include "prospect.h"
 #include "reserveSalesOrderItem.h"
 #include "dspReservations.h"
 
@@ -79,6 +79,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+  connect(_newCust,       SIGNAL(clicked()), this, SLOT(sNewCust()));
   connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserEnteredOrderNumber()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -209,6 +210,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _saveAndAdd->hide();
   
   _more->setChecked(_preferences->boolean("SoShowAll"));
+  _newCust->setVisible(_privileges->check("MaintainCustomerMasters") ||
+                       _privileges->check("MaintainProspectMasters"));
   sHandleMore();
 }
 
@@ -526,6 +529,10 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _orderDate->setEnabled(FALSE);
     _packDate->setEnabled(FALSE);
   }
+
+  if (ISNEW(_mode))
+    _newCust->setEnabled(_privileges->check("MaintainCustomerMasters") ||
+                         (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters")));
 
   return NoError;
 }
@@ -1399,6 +1406,9 @@ void salesOrder::sPopulateFOB(int pWarehousid)
 void salesOrder::sPopulateCustomerInfo(int pCustid)
 {
   _holdType->setCurrentIndex(0);
+  _newCust->setEnabled(pCustid == -1 &&
+                       (_privileges->check("MaintainCustomerMasters") ||
+                        (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters"))));
   if (pCustid != -1)
   {
     QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
@@ -3354,7 +3364,89 @@ void salesOrder::populateCCInfo()
     _authCC->setLocalValue(0);
 }
 
+void salesOrder::sNewCust()
+{
+  QMessageBox ask(this);
+  ask.setIcon(QMessageBox::Question);
+  QPushButton *cbutton = ask.addButton(tr("Customer"), QMessageBox::YesRole);
+  QPushButton *pbutton = ask.addButton(tr("Prospect"), QMessageBox::YesRole);
+  /*QPushButton *cancel  = */ask.addButton(QMessageBox::Cancel);
 
+  ask.setWindowTitle(tr("Customer or Prospect?"));
+
+  if (ISQUOTE(_mode))
+    ask.setText(tr("<p>Would you like to create a new Customer or "
+                   "a new Prospect?"));
+  else
+    ask.setText(tr("<p>Would you like to create a new Customer or convert "
+                   "an existing Prospect?"));
+
+  ask.exec();
+
+  if (ask.clickedButton() == cbutton)
+  {
+    ParameterList params;
+    params.append("mode", "new");
+
+    customer *custWind = new customer(this, "customer", Qt::Dialog);
+    custWind->set(params);
+    omfgThis->handleNewWindow(custWind, Qt::WindowModal);
+    connect(custWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
+  }
+  else if (ask.clickedButton() == pbutton && ISQUOTE(_mode))
+  {
+    ParameterList params;
+    params.append("mode", "new");
+
+    prospect *prospectWind = new prospect(this, "prospect", Qt::Dialog);
+    prospectWind->set(params);
+    omfgThis->handleNewWindow(prospectWind, Qt::WindowModal);
+    connect(prospectWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
+  }
+  else if (ask.clickedButton() == pbutton) // converting prospect
+  {
+    CLineEdit::CLineEditTypes oldtype = _cust->type();
+    _cust->setType(CLineEdit::ActiveProspects);
+
+    int prospectid = -1;
+    if (_preferences->value("DefaultEllipsesAction") == "search")
+    {
+      CRMAcctSearch *newdlg = new CRMAcctSearch(_cust);
+      prospectid = newdlg->exec();
+    }
+    else
+    {
+      CRMAcctList *newdlg = new CRMAcctList(_cust);
+      prospectid = newdlg->exec();
+    }
+    _cust->setType(oldtype);
+
+    if (prospectid > 0)
+    {
+      XSqlQuery convertq;
+      convertq.prepare("SELECT convertProspectToCustomer(:id) AS result;");
+      convertq.bindValue(":id", prospectid);
+      convertq.exec();
+      if (convertq.first())
+      {
+	int result = convertq.value("result").toInt();
+	if (result < 0)
+	{
+	  systemError(this, storedProcErrorLookup("convertProspectToCustomer",
+                                                  result), __FILE__, __LINE__);
+	  return;
+	}
+        _cust->setId(prospectid);
+      }
+      else if (convertq.lastError().type() != QSqlError::NoError)
+      {
+	systemError(this, convertq.lastError().databaseText(),
+                    __FILE__, __LINE__);
+	return;
+      }
+    }
+  }
+}
 
 void salesOrder::sNewCreditCard()
 {

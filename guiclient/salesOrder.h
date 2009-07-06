@@ -88,6 +88,7 @@ public slots:
     virtual void sCheckValidContacts();
     virtual void sHandleMore();
     virtual void sCalculateTax();
+    virtual void sNewCust();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

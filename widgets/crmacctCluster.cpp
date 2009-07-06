@@ -108,11 +108,18 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
     setSubtype((qobject_cast<CRMAcctCluster*>(_parent))->subtype());
   else if (_parent->inherits("CRMAcctLineEdit"))
     setSubtype((qobject_cast<CRMAcctLineEdit*>(_parent))->subtype());
-  else if (_parent->inherits("CLineEdit") || _parent->inherits("CustCluster"))
+  else if (_parent->inherits("CLineEdit") || _parent->inherits("CustCluster") ||
+           _parent->inherits("CustInfo"))
   {
-    CLineEdit::CLineEditTypes type = _parent->inherits("CLineEdit") ?
-				  (qobject_cast<CLineEdit*>(_parent))->type() :
-				  (qobject_cast<CustCluster*>(_parent))->type();
+    CLineEdit::CLineEditTypes type = CLineEdit::AllCustomersAndProspects;
+
+    if (_parent->inherits("CLineEdit"))
+      type = (qobject_cast<CLineEdit*>(_parent))->type();
+    else if (_parent->inherits("CustCluster"))
+      type = (qobject_cast<CustCluster*>(_parent))->type();
+    else if (_parent->inherits("CustInfo"))
+      type = (qobject_cast<CustInfo*>(_parent))->type();
+
     switch (type)
     {
       case CLineEdit::AllCustomers:

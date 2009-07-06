@@ -25,6 +25,8 @@ public:
     prospect(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~prospect();
 
+    Q_INVOKABLE virtual int id() const { return _prospectid; }
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
 
@@ -38,6 +40,9 @@ public slots:
     virtual void	sFillQuotesList();
     virtual void	sPopulateQuotesMenu(QMenu * menuThis);
     virtual void	populate();
+
+signals:
+    virtual void newId(int);
 
 protected slots:
     virtual void languageChange();

@@ -89,6 +89,7 @@ enum SetResponse prospect::set(const ParameterList &pParams)
   {
     _prospectid = param.toInt();
     populate();
+    emit newId(_prospectid);
   }
 
   param = pParams.value("mode", &valid);
@@ -103,6 +104,7 @@ enum SetResponse prospect::set(const ParameterList &pParams)
       if (q.first())
       {
         _prospectid = q.value("prospect_id").toInt();
+        emit newId(_prospectid);
 	_number->setFocus();
       }
       else
@@ -378,7 +380,10 @@ void prospect::sSave()
   _NumberGen = -1;
   omfgThis->sProspectsUpdated();
   if (_mode == cNew)
+  {
     omfgThis->sCrmAccountsUpdated(_crmacct->id());
+    emit newId(_prospectid);   // cluster listeners couldn't handle set()'s emit
+  }
 
   close();
 }
@@ -408,6 +413,7 @@ void prospect::sCheckNumber()
       _prospectid = q.value("prospect_id").toInt();
       _mode = cEdit;
       populate();
+      emit newId(_prospectid);
       _name->setFocus();
     }
   }

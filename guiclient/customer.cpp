@@ -739,7 +739,10 @@ bool customer::sSave(bool /*partial*/)
   }
   
   if (_mode == cNew)
+  {
     _mode = cEdit;
+    emit newId(_custid); // custcluster listeners couldn't handle set()'s emit
+  }
   
   setValid(true);
   populate();

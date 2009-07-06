@@ -583,7 +583,10 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
       _titleLit->setText(_parent->_titlePlural);
     }
     else
+    {
       _parent = 0;
+      _id = -1;
+    }
 
     sFillList();
 }
@@ -712,7 +715,10 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
       _titleLit->setText(_parent->_titlePlural);
     }
     else
+    {
       _parent = 0;
+      _id = -1;
+    }
 
     sFillList();
 }
