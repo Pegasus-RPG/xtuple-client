@@ -420,12 +420,14 @@ void issueToShipping::sIssueAllBalance()
         rollback.exec();
         systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
               __FILE__, __LINE__);
+        sFillList();
         return;
       }
       else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        sFillList();
         return;
       }
       q.exec("COMMIT;");
@@ -434,6 +436,7 @@ void issueToShipping::sIssueAllBalance()
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      sFillList();
       return;
     }
   }
