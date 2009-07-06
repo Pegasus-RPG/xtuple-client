@@ -1165,5 +1165,21 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_price</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_tax</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>475</x>
+     <y>434</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>491</x>
+     <y>624</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
