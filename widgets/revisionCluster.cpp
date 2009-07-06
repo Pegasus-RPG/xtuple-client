@@ -237,86 +237,87 @@ void RevisionLineEdit::setType(RevisionTypes pType)
 void RevisionLineEdit::sParse()
 {
   if ((_isRevControl) && (!_parsed))
-  {
+  { 
+    _parsed = TRUE;
     QString stripped = text().trimmed().toUpper();
     if (stripped.length() == 0)
     {
       setId(-1);
-          _parsed = TRUE;
     }
     else
     {
         
       XSqlQuery numQ;
-          numQ.prepare("SELECT rev_id, "
+      numQ.prepare("SELECT rev_id, "
                        "rev_number, "
                        "CASE WHEN rev_status='A' THEN "
-                       "  'Active' "
+                       "  :active "
                        "WHEN rev_status='P' THEN "
-                       "  'Pending' "
-                       "ELSE 'Inactive' "
+                       "  :pending "
+                       "ELSE :inactive "
                        "END AS status "
                        "FROM rev "
                        "WHERE ((rev_number=UPPER(:number))"
                        " AND (rev_target_id=:target_id)"
                        " AND (rev_target_type=:target_type));");
-          numQ.bindValue(":number", stripped);
-          numQ.bindValue(":target_id",_targetId);
-          numQ.bindValue(":target_type",typeText());
-          numQ.exec();
-          if (numQ.first())
-          {
-            _valid = true;
-            setId(numQ.value("rev_id").toInt());
-                setText(numQ.value("rev_number").toString());
-          }
+      numQ.bindValue(":number", stripped);
+      numQ.bindValue(":target_id",_targetId);
+      numQ.bindValue(":target_type",typeText());
+      numQ.bindValue(":active",tr("Active"));
+      numQ.bindValue(":pending",tr("Pending"));
+      numQ.bindValue(":inactive",tr("Inactive"));
+      numQ.exec();
+      if (numQ.first())
+      {
+        _valid = true;
+        setId(numQ.value("rev_id").toInt());
+        setText(numQ.value("rev_number").toString());
+      }
       else
       {
-            if (_allowNew)
-            {
+        if (_allowNew)
+        {
           if (QMessageBox::question(this, tr("Create New Revision?"),
                   tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
                              QMessageBox::Yes | QMessageBox::Default,
                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-                  {
-                    XSqlQuery newrev;
-                        if (_type==BOM)
-                          newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
-                        else if (_type==BOO)
-                      newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
-                        newrev.bindValue(":target_id", _targetId);
-                        newrev.bindValue(":revision", text());
-                    newrev.exec();
-                        if (newrev.first())
-                          setId(newrev.value("result").toInt());
-                        else
-                        {
-                  setText(_cachenum);
-                  if (newrev.lastError().type() != QSqlError::NoError)
-                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                              .arg(__FILE__)
-                              .arg(__LINE__),
-                      newrev.lastError().databaseText());
-                        }
-                  }
-                  else
-                  {
-                    setText(_cachenum);
-                  }
-                }
-                else 
+          {
+            XSqlQuery newrev;
+            if (_type==BOM)
+              newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
+            else if (_type==BOO)
+              newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
+            newrev.bindValue(":target_id", _targetId);
+            newrev.bindValue(":revision", text());
+            newrev.exec();
+            if (newrev.first())
+              setId(newrev.value("result").toInt());
+            else
             {
-                  setText(_cachenum);
-              if (numQ.lastError().type() != QSqlError::NoError)
-              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+              setText(_cachenum);
+              if (newrev.lastError().type() != QSqlError::NoError)
+                QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                               .arg(__FILE__)
                               .arg(__LINE__),
-          numQ.lastError().databaseText());
-        }
+                           newrev.lastError().databaseText());
+            }
           }
-        }
+          else
+            setText(_cachenum);
+         }
+         else 
+         {
+            setText(_cachenum);
+            if (numQ.lastError().type() != QSqlError::NoError)
+            QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                              .arg(__FILE__)
+                              .arg(__LINE__),
+            numQ.lastError().databaseText());
+           
+         }
+      }
+    }
   }
-  _parsed = TRUE;
   emit valid(_valid);
   emit parsed();
 }
