@@ -82,6 +82,8 @@ static bool loadLocale()
         currvalscale    = localeq.value("locale_curr_scale").toInt();
       if (! localeq.value("locale_extprice_scale").toString().isEmpty())
         extpricescale   = localeq.value("locale_extprice_scale").toInt();
+      if (! localeq.value("locale_percent_scale").toString().isEmpty())
+        percentscale   = localeq.value("locale_percent_scale").toInt();
       if (! localeq.value("locale_purchprice_scale").toString().isEmpty())
         purchpricescale = localeq.value("locale_purchprice_scale").toInt();
       if (! localeq.value("locale_qty_scale").toString().isEmpty())
