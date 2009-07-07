@@ -31,26 +31,20 @@ errorLog::errorLog(QWidget* parent, const char * name, Qt::WFlags flags)
 {
   setupUi(this);
 
-//  statusBar()->hide();
-
   for(int i = 0; i < _errorList.size(); i++)
     _errorLog->append(_errorList.at(i));
 
+  connect(_clear,   SIGNAL(clicked()),           _errorLog, SLOT(clear()));
+  connect(_clear,   SIGNAL(clicked()),            listener, SLOT(clear()));
+  connect(_clear,   SIGNAL(clicked()),            omfgThis, SLOT(sClearErrorMessages()));
   connect(listener, SIGNAL(updated(const QString &)), this, SLOT(updateErrors(const QString &)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 errorLog::~errorLog()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void errorLog::languageChange()
 {
   retranslateUi(this);
@@ -86,3 +80,9 @@ void errorLogListener::error(const QString & sql, const QSqlError & error)
     omfgThis->sNewErrorMessage();
 }
 
+void errorLogListener::clear()
+{
+  bool blocked = blockSignals(true);
+  _errorList.clear();
+  (void)blockSignals(blocked);
+}

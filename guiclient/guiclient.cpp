@@ -844,6 +844,12 @@ void GUIClient::sNewErrorMessage()
   }
 }
 
+void GUIClient::sClearErrorMessages()
+{
+  if (_errorButton)
+    _errorButton->setVisible(false);
+}
+
 //  Global notification slots
 void GUIClient::sItemsUpdated(int intPItemid, bool boolPLocalUpdate)
 {

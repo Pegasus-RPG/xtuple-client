@@ -295,6 +295,7 @@ class GUIClient : public QMainWindow
 
     void sFocusChanged(QWidget* old, QWidget* now);
 
+    void sClearErrorMessages();
     void sNewErrorMessage();
     void setWindowTitle();
 
