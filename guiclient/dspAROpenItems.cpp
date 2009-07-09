@@ -749,6 +749,7 @@ void dspAROpenItems::sPrint()
   ParameterList params;
   if (! setParams(params))
     return;
+  params.append("includeFormatted");
 
   orReport report("AROpenItems", params);
   if (report.isValid())
