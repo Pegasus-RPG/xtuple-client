@@ -24,6 +24,7 @@
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "transferOrder.h"
+#include "transferOrderItem.h"
 #include "printShippingForm.h"
 #include "issueToShipping.h"
 #include "storedProcErrorLookup.h"
@@ -272,11 +273,21 @@ void maintainShipping::sViewLine()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _ship->altId());
-      
-  salesOrderItem newdlg(this);
-  newdlg.set(params);
-  newdlg.exec();
+  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "SO")
+  {
+    params.append("soitem_id", _ship->altId());
+    salesOrderItem newdlg(this);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+
+  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "TO")
+  {
+    params.append("toitem_id", _ship->altId());
+    transferOrderItem newdlg(this);
+    newdlg.set(params);
+    newdlg.exec();
+  }
 }
 
 void maintainShipping::sReturnAllStock()
