@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1028</width>
+    <height>733</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1379,7 +1379,7 @@ to be bound by its terms.</comment>
                 <widget class="CurrDisplay" name="_netdue"/>
                </item>
                <item row="5" column="3">
-                <widget class="XURLLabel" name="_netdueLit">
+                <widget class="QLabel" name="_netdueLit">
                  <property name="text">
                   <string>Net Due:</string>
                  </property>

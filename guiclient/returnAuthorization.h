@@ -47,6 +47,7 @@ public slots:
     virtual void sFillList();
     virtual void sCalculateSubtotal();
     virtual void sCalculateTotal();
+    virtual void sCalculateNetDue();
     virtual void populate();
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sTaxZoneChanged();

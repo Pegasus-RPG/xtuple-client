@@ -98,27 +98,30 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   _currency->setLabel(_currencyLit);
 
-  _raitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter,true,  "f_linenumber");
-  _raitem->addColumn(tr("Kit Seq. #"),  _seqColumn,   Qt::AlignRight, false, "raitem_subnumber");
-  _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft,   true, "item_number"   );
-  _raitem->addColumn(tr("UOM"),         _statusColumn,Qt::AlignLeft,   true, "uom_name"   );
-  _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true, "item_descrip"   );
-  _raitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true, "warehous_code" );
-  _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter, true, "raitem_status" );
-  _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft,   true, "disposition"   );
-  _raitem->addColumn(tr("Warranty"),    _qtyColumn,Qt::AlignCenter,    true, "raitem_warranty");
-  _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight,  true, "oldcoitem_qtyshipped"  );
-  _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyauthorized"  );
-  _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyreceived"  );
-  _raitem->addColumn(tr("To Receive"),  _qtyColumn,   Qt::AlignRight,  true, "raitem_qtytoreceive"  );
-  _raitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true, "newcoitem_qtyshipped"  );
-  _raitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight,  true, "raitem_unitprice"  );
-  _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight,  true, "raitem_extprice"  );
-  _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight,  true, "raitem_amtcredited"  );
-  _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft,   true, "oldcohead_number"   );
-  _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft,   true, "newcohead_number"   );
-  _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft,   true, "raitem_scheddate"   );
-  _raitem->addColumn(tr("Item Type"),   _statusColumn,Qt::AlignLeft,  false, "item_type"   );
+  _raitem->addColumn(tr("#"),             _seqColumn,   Qt::AlignCenter,true,  "f_linenumber");
+  _raitem->addColumn(tr("Kit Seq. #"),    _seqColumn,   Qt::AlignRight, false, "raitem_subnumber");
+  _raitem->addColumn(tr("Item"),          _itemColumn,  Qt::AlignLeft,   true, "item_number"   );
+  _raitem->addColumn(tr("UOM"),           _statusColumn,Qt::AlignLeft,   true, "uom_name"   );
+  _raitem->addColumn(tr("Description"),   -1,           Qt::AlignLeft,   true, "item_descrip"   );
+  _raitem->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true, "warehous_code" );
+  _raitem->addColumn(tr("Status"),        _statusColumn,Qt::AlignCenter, true, "raitem_status" );
+  _raitem->addColumn(tr("Disposition"),   _itemColumn,  Qt::AlignLeft,   true, "disposition"   );
+  _raitem->addColumn(tr("Warranty"),      _qtyColumn,Qt::AlignCenter,    true, "raitem_warranty");
+  _raitem->addColumn(tr("Sold"),          _qtyColumn,   Qt::AlignRight,  true, "oldcoitem_qtyshipped"  );
+  _raitem->addColumn(tr("Authorized"),    _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyauthorized"  );
+  _raitem->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyreceived"  );
+  _raitem->addColumn(tr("To Receive"),    _qtyColumn,   Qt::AlignRight,  true, "raitem_qtytoreceive"  );
+  _raitem->addColumn(tr("Shipped"),       _qtyColumn,   Qt::AlignRight,  true, "newcoitem_qtyshipped"  );
+  _raitem->addColumn(tr("Credit Price"),  _priceColumn, Qt::AlignRight,  true, "raitem_unitprice"  );
+  _raitem->addColumn(tr("Extended"),      _moneyColumn, Qt::AlignRight,  true, "raitem_extprice"  );
+  _raitem->addColumn(tr("Credited"),      _moneyColumn, Qt::AlignRight,  true, "raitem_amtcredited"  );
+  _raitem->addColumn(tr("Sale Price"),    _priceColumn, Qt::AlignRight,  true, "raitem_saleprice"  );
+  _raitem->addColumn(tr("Extended"),      _moneyColumn, Qt::AlignRight,  true, "raitem_extsaleprice"  );
+  _raitem->addColumn(tr("Net Due"),       _moneyColumn, Qt::AlignRight,  true, "raitem_netdue"  );
+  _raitem->addColumn(tr("Orig. Order"),   _itemColumn,  Qt::AlignLeft,   true, "oldcohead_number"   );
+  _raitem->addColumn(tr("New Order"),     _itemColumn,  Qt::AlignLeft,   true, "newcohead_number"   );
+  _raitem->addColumn(tr("Sched. Date"),   _dateColumn,  Qt::AlignLeft,   true, "raitem_scheddate"   );
+  _raitem->addColumn(tr("Item Type"),     _statusColumn,Qt::AlignLeft,  false, "item_type"   );
 
   _authorizeLine->hide();
   _clearAuthorization->hide();
@@ -1017,6 +1020,10 @@ void returnAuthorization::sFillList()
              "       raitem_unitprice,"
              "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) AS raitem_extprice,"
              "       raitem_amtcredited,"
+             "       raitem_saleprice,"
+             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio),2) AS raitem_extsaleprice,"
+             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) - "
+             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio),2) AS raitem_netdue,"
              "       och.cohead_number::text || '-' || oc.coitem_linenumber::text AS oldcohead_number, "
              "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text AS newcohead_number, "
              "       raitem_scheddate, "
@@ -1028,6 +1035,9 @@ void returnAuthorization::sFillList()
              "       'salesprice' AS raitem_unitprice_xtnumericrole, "
              "       'extprice' AS raitem_extprice_xtnumericrole, "
              "       'curr' AS raitem_amtcredited_xtnumericrole, "
+             "       'salesprice' AS raitem_saleprice_xtnumericrole, "
+             "       'extprice' AS raitem_extsaleprice_xtnumericrole, "
+             "       'extprice' AS raitem_netdue_xtnumericrole, "
              "        :na AS raitem_scheddate_xtnullrole,"
              "       CASE WHEN raitem_subnumber = 0 THEN 0"
              "            ELSE 1 END AS xtindentrole "
@@ -1064,6 +1074,7 @@ void returnAuthorization::sFillList()
   _raitem->populate(q, true);
 
   sCalculateSubtotal();
+  sCalculateNetDue();
   sCalculateTax();
 
   _currency->setEnabled((_raitem->topLevelItemCount() == 0) && (_mode == cEdit));
@@ -1127,6 +1138,21 @@ void returnAuthorization::sCalculateSubtotal()
   query.exec();
   if (query.first())
     _subtotal->setLocalValue(query.value("subtotal").toDouble());
+}
+
+void returnAuthorization::sCalculateNetDue()
+{
+  XSqlQuery query;
+  query.prepare( "SELECT SUM(round( ((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio)) - "
+               "                    ((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio)),2)) AS netdue "
+               "FROM raitem, itemsite, item "
+               "WHERE ( (raitem_rahead_id=:rahead_id)"
+               " AND (raitem_itemsite_id=itemsite_id)"
+               " AND (itemsite_item_id=item_id) );" );
+  query.bindValue(":rahead_id", _raheadid);
+  query.exec();
+  if (query.first())
+    _netdue->setLocalValue(query.value("netdue").toDouble());
 }
 
 void returnAuthorization::sCalculateTotal()
