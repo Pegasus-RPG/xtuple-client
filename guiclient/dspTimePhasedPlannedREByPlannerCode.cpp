@@ -51,6 +51,14 @@ void dspTimePhasedPlannedREByPlannerCode::languageChange()
 
 void dspTimePhasedPlannedREByPlannerCode::sPrint()
 {
+  if(_useAveragePrice->isChecked() && !(_startEvalDate->isValid() && _endEvalDate->isValid()))
+  {
+    QMessageBox::information(this, tr("Average Price Requires Dates"),
+                                   tr("The Average Price option requires that you specify a valid\n"
+                                      "date range to evaluate the average price."));
+    return;
+  }
+
   // TODO: Why is this so different from sFillList()?
   ParameterList params;
 
@@ -72,6 +80,13 @@ void dspTimePhasedPlannedREByPlannerCode::sPrint()
   }
 
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  if(selected.isEmpty())
+  {
+    QMessageBox::information(this, tr("No Periods Selected"),
+                                   tr("You must select at least one Period."));
+    return;
+  }
+
   QList<QVariant> periodList;
   for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -102,6 +117,13 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
   bool show    = FALSE;
   int  columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  if(selected.isEmpty())
+  {
+    QMessageBox::information(this, tr("No Periods Selected"),
+                                   tr("You must select at least one Period."));
+    return;
+  }
+
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
