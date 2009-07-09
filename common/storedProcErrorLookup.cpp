@@ -948,12 +948,33 @@ void initErrorLookupHash()
 			 "against which it is to be posted is not valid."),
 			 						0, "" },
 
-  { "postCreditMemo",	-1, TR("This Credit Memo cannot be posted because it "
+  { "postCreditMemo",	-10, TR("This Credit Memo cannot be posted because it "
 			       "has already been posted."),	 0, "" },
-  { "postCreditMemo",	-2, TR("This Credit Memo is on Hold and, thus, cannot "
+  { "postCreditMemo",	-11, TR("This Credit Memo is on Hold and, thus, cannot "
 			       "be posted."),			 0, "" },
-  { "postCreditMemo",	-5, TR("The G/L Account Assignments for this Credit "
-			       "Memo are not configured correctly. Because of "
+  { "postCreditMemo",	-12, TR("The Sales Account Assignment for this Credit "
+			       "Memo is not configured correctly. Because of "
+			       "this, G/L Transactions cannot be posted for "
+			       "this Credit Memo. You must contact your "
+			       "Systems Administrator to have this corrected "
+			       "before you may post this Credit Memo."),
+								 0, "" },
+  { "postCreditMemo",	-14, TR("The Misc. Charge Account Assignment for this Credit "
+			       "Memo is not configured correctly. Because of "
+			       "this, G/L Transactions cannot be posted for "
+			       "this Credit Memo. You must contact your "
+			       "Systems Administrator to have this corrected "
+			       "before you may post this Credit Memo."),
+								 0, "" },
+  { "postCreditMemo",	-16, TR("The Freight Account Assignment for this Credit "
+			       "Memo is not configured correctly. Because of "
+			       "this, G/L Transactions cannot be posted for "
+			       "this Credit Memo. You must contact your "
+			       "Systems Administrator to have this corrected "
+			       "before you may post this Credit Memo."),
+								 0, "" },
+  { "postCreditMemo",	-18, TR("The A/R Account Assignment for this Credit "
+			       "Memo is not configured correctly. Because of "
 			       "this, G/L Transactions cannot be posted for "
 			       "this Credit Memo. You must contact your "
 			       "Systems Administrator to have this corrected "
