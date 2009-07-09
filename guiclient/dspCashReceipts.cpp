@@ -93,6 +93,7 @@ void dspCashReceipts::sPrint()
   ParameterList params;
   if (! setParams(params))
     return;
+  params.append("includeFormatted");
 
   orReport report("CashReceipts", params);
   if (report.isValid())
