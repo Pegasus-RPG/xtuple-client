@@ -258,7 +258,7 @@ void voucher::sSave()
 
   q.prepare( "UPDATE vohead "
 	     "SET vohead_pohead_id=:vohead_pohead_id,"
-       "    vohead_taxzone_id=:vohead_taxzone_id,  "
+             "    vohead_taxzone_id=:vohead_taxzone_id,  "
 	     "    vohead_vend_id=:vohead_vend_id,"
 	     "    vohead_terms_id=:vohead_terms_id,"
 	     "    vohead_distdate=:vohead_distdate,"
@@ -274,7 +274,8 @@ void voucher::sSave()
 
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":vohead_pohead_id", _poNumber->id());
-  q.bindValue(":vohead_taxzone_id", _taxzone->id());
+  if (_taxzone->isValid())
+    q.bindValue(":vohead_taxzone_id", _taxzone->id());
   q.bindValue(":vohead_vend_id", _poNumber->vendId());
   q.bindValue(":vohead_terms_id", _terms->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
