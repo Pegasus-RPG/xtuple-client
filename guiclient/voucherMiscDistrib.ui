@@ -51,9 +51,6 @@ to be bound by its terms.</comment>
             </item>
             <item row="2" column="0">
              <widget class="QRadioButton" name="_taxSelected">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
               <property name="text">
                <string>Tax</string>
               </property>

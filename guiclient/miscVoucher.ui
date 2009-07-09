@@ -412,7 +412,7 @@ to be bound by its terms.</comment>
              <bool>true</bool>
             </property>
             <property name="nullStr">
-             <string>none</string>
+             <string>None</string>
             </property>
             <property name="type">
              <enum>XComboBox::TaxZones</enum>

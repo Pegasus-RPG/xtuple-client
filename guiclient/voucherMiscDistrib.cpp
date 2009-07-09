@@ -55,9 +55,6 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("taxzone_id", &valid);
-  if (valid)
-    _taxSelected->setEnabled(true);
 
   param = pParams.value("vohead_id", &valid);
   if (valid)
@@ -94,9 +91,7 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _amount->setFocus();
-	  sCheck();
-	  if (_accountSelected->isChecked() || _expcatSelected->isChecked())
-		_taxSelected->setEnabled(false);
+      sCheck();
     }
   }
 
