@@ -28,8 +28,8 @@
 
 QString printCheck::achFileDir = QString();
 
-printCheck::printCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -495,10 +495,10 @@ void printCheck::storeAchFileDir()
   }
 }
 
-void printCheck::done(int p)
+void printCheck::done(int /*p*/)
 {
   storeAchFileDir();
-  XDialog::done(p);
+  close();
 }
 
 void printCheck::markCheckAsPrinted(const int pcheckid)
@@ -523,7 +523,7 @@ void printCheck::markCheckAsPrinted(const int pcheckid)
                              pcheckid, TRUE);
 
     if (_captive)
-      accept();
+      close();
     else
     {
       sHandleBankAccount(_bankaccnt->id());

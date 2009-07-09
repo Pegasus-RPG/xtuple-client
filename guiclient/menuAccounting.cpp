@@ -638,7 +638,7 @@ void menuAccounting::sViewCheckRun()
 
 void menuAccounting::sPrintCheck()
 {
-  printCheck(parent, "", TRUE).exec();
+  omfgThis->handleNewWindow(new printCheck(0, "printCheckFromAccountingMenu"));
 }
 
 void menuAccounting::sPrintCheckRun()

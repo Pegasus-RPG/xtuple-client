@@ -8,7 +8,7 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>printCheck</class>
- <widget class="QDialog" name="printCheck" >
+ <widget class="QWidget" name="printCheck" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -237,7 +237,7 @@ to be bound by its terms.</comment>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>printCheck</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>348</x>

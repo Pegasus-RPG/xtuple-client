@@ -12,18 +12,18 @@
 #define PRINTCHECK_H
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_printCheck.h"
 
 class QCloseEvent;
 
-class printCheck : public XDialog, public Ui::printCheck
+class printCheck : public XWidget, public Ui::printCheck
 {
     Q_OBJECT
 
 public:
-    printCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    printCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
     ~printCheck();
 
     static QString achFileDir;

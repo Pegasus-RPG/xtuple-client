@@ -194,9 +194,9 @@ void viewCheckRun::sPrint()
   ParameterList params;
   params.append("check_id", _check->id());
 
-  printCheck newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+  printCheck *newdlg = new printCheck();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
 }
 
 void viewCheckRun::sPost()
