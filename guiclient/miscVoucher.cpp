@@ -209,7 +209,8 @@ void miscVoucher::sSave()
   q.bindValue(":vohead_number", _voucherNumber->text().toInt());
   q.bindValue(":vohead_vend_id", _vendor->id());
   q.bindValue(":vohead_terms_id", _terms->id());
-  q.bindValue(":vohead_taxzone_id", _taxzone->id());
+  if (_taxzone->isValid())
+    q.bindValue(":vohead_taxzone_id", _taxzone->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
   q.bindValue(":vohead_duedate", _dueDate->date());
