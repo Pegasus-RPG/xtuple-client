@@ -183,6 +183,7 @@ void printCreditMemo::sPrint()
         
         if (_post->isChecked())
         {
+          q.exec("BEGIN;");
           //TO DO:  Replace this method with commit that doesn't require transaction
           //block that can lead to locking issues
           XSqlQuery rollback;
