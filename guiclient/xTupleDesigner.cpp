@@ -131,7 +131,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _propinspwindow = 0;
   _slotedwindow = 0;
 
-  _formeditor = QDesignerComponents::createFormEditor(this);
+  _formeditor = QDesignerComponents::createFormEditor(omfgThis);
   if (! _formeditor)
   {
     QMessageBox::information(this, QString("Cannot edit the UI"), 
