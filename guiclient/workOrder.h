@@ -31,6 +31,7 @@ public slots:
     virtual void sUpdateStartDate();
     virtual void sPopulateLeadTime( int pWarehousid );
     virtual void sPopulateItemChar( int pItemid );
+    virtual void populate();
     virtual void populateWoNumber();
     virtual void sClose();
     virtual void sHandleButtons();
