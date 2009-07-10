@@ -2674,6 +2674,7 @@ void salesOrderItem::sChanged()
 
 void salesOrderItem::reject()
 {
+  bool saved = false;
   if(_modified)
   {
     switch( QMessageBox::question( this, tr("Unsaved Changed"),
@@ -2687,6 +2688,8 @@ void salesOrderItem::reject()
         sSave();
         if(_modified) // catch an error saving
           return;
+        saved = true;
+        break;
       case QMessageBox::No:
         break;
       case QMessageBox::Cancel:
@@ -2695,14 +2698,20 @@ void salesOrderItem::reject()
     }
   }
 
-  //DELETE ANY COMMENTS
-  q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
-  q.bindValue(":coitem_id", _soitemid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  if(!saved && (cNew == _mode || cNewQuote == _mode))
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    //DELETE ANY COMMENTS
+    if(ISQUOTE(_mode))
+      q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'QI';");
+    else
+      q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
+    q.bindValue(":coitem_id", _soitemid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   XDialog::reject();
@@ -2717,16 +2726,6 @@ void salesOrderItem::sCancel()
     return;
 
   q.prepare("UPDATE coitem SET coitem_status='X' WHERE (coitem_id=:coitem_id);");
-  q.bindValue(":coitem_id", _soitemid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  //DELETE ANY COMMENTS
-  q.prepare("DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
   q.bindValue(":coitem_id", _soitemid);
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
