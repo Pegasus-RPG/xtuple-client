@@ -238,6 +238,8 @@ void printInvoice::sPrint()
       }
     }
 
+    emit finishedPrinting(_invcheadid);
+
     if (_captive)
       accept();
     else
