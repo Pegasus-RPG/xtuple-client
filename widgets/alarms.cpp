@@ -18,6 +18,8 @@
 #include "alarms.h"
 
 
+// CAUTION: This will break if the order of this list does not match
+//          the order of the enumerated values as defined.
 const Alarms::AlarmMap Alarms::_alarmMap[] =
 {
   AlarmMap( Uninitialized,     " "   ),

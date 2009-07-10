@@ -22,6 +22,8 @@
 #include "documents.h"
 
 
+// CAUTION: This will break if the order of this list does not match
+//          the order of the enumerated values as defined.
 const Documents::DocumentMap Documents::_documentMap[] =
 {
   DocumentMap( Uninitialized,     " "   ),

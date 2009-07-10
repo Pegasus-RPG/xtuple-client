@@ -55,9 +55,9 @@ class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
     struct AlarmMap
     {
       enum AlarmSources source;
-      QString           ident;
+      const char *      ident;
 
-      AlarmMap(enum AlarmSources s, const QString & i)
+      AlarmMap(enum AlarmSources s, const char * i)
       {
         source = s;
         ident = i;

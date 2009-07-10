@@ -25,6 +25,8 @@
 #include "comments.h"
 
 
+// CAUTION: This will break if the order of this list does not match
+//          the order of the enumerated values as defined.
 const Comments::CommentMap Comments::_commentMap[] =
   {
     CommentMap( Uninitialized,     " "   ),

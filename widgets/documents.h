@@ -54,9 +54,9 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     struct DocumentMap
     {
       enum DocumentSources source;
-      QString             ident;
+      const char *        ident;
 
-      DocumentMap(enum DocumentSources s, const QString & i)
+      DocumentMap(enum DocumentSources s, const char * i)
       {
         source = s;
         ident = i;

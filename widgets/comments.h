@@ -60,9 +60,9 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     struct CommentMap
     {
       enum CommentSources source;
-      QString             ident;
+      const char *        ident;
 
-      CommentMap(enum CommentSources s, const QString & i)
+      CommentMap(enum CommentSources s, const char * i)
       {
         source = s;
         ident = i;
