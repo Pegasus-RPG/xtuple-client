@@ -12,6 +12,7 @@
 #define menuSystem_h
 
 #include <QObject>
+#include <QPixmap>
 
 class QMenu;
 class QPixmap;
@@ -29,7 +30,7 @@ class menuSystem : public QObject
     const char*		slot;
     QMenu*		menu;
     QString		priv;
-    QPixmap*		pixmap;
+    QPixmap		pixmap;
     QToolBar*		toolBar;
     bool		visible;
   };

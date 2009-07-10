@@ -235,7 +235,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", NULL, NULL, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
-    { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", new QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "Manufacturing" },
+    { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "Manufacturing" },
     { "community.editAccount", tr("My Online User &Account"),      SLOT(sCommunityEditAccount()), communityMenu, "true", NULL, NULL, true },
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
@@ -295,7 +295,7 @@ void menuSystem::addActionsToMenu(actionProperties acts[], unsigned int numElems
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar) );
     }
     else

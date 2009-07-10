@@ -181,7 +181,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, "ScrapWoMaterials", 0, 0, true, NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	_metrics->boolean("Routings") , NULL },
-    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, "WoTimeClock", new QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), NULL },
+    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, "WoTimeClock", QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), NULL },
     { "wo.postOperations",		tr("&Post Operation..."),		SLOT(sPostOperations()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.correctOperationsPosting",	tr("Co&rrect Operation Posting..."),	SLOT(sCorrectOperationsPosting()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	true, NULL },
@@ -207,7 +207,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     //  Production | Reports | Schedule
     { "menu",				tr("Work Order &Schedule"),	(char*)reportsScheduleMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", new QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
+    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
     { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
     { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
@@ -322,7 +322,7 @@ void menuManufacture::addActionsToMenu(actionProperties acts[], unsigned int num
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -335,7 +335,7 @@ void menuManufacture::addActionsToMenu(actionProperties acts[], unsigned int num
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }

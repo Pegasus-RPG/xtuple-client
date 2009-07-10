@@ -182,7 +182,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Items
   { "menu",	tr("&Item"), (char*)itemsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   { "pd.enterNewItem", tr("&New..."), SLOT(sNewItem()), itemsMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
-  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, "MaintainItemMasters ViewItemMasters", new QPixmap(":/images/items.png"), toolBar, true , tr("List Items") },
+  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, "MaintainItemMasters ViewItemMasters", QPixmap(":/images/items.png"), toolBar, true , tr("List Items") },
   { "pd.searchForItems", tr("&Search..."),SLOT(sSearchForItems()), itemsMenu, "MaintainItemMasters ViewItemMasters", NULL, NULL, true , NULL },
   { "pd.copyItem", tr("&Copy..."), SLOT(sCopyItem()), itemsMenu, "MaintainItemMasters" , NULL, NULL, true, NULL },
   { "separator", NULL, NULL, itemsMenu,	"true", NULL, NULL, true , NULL },
@@ -194,7 +194,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Bill of Materials
   { "menu",	tr("Bill Of Ma&terials"), (char*)bomMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   { "pd.enterNewBOM", tr("&New..."), SLOT(sNewBOM()), bomMenu, "MaintainBOMs", NULL, NULL, true , NULL },
-  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, "MaintainBOMs ViewBOMs", new QPixmap(":/images/boms.png"), toolBar, true , tr("List Bill of Materials") },
+  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, "MaintainBOMs ViewBOMs", QPixmap(":/images/boms.png"), toolBar, true , tr("List Bill of Materials") },
   { "pd.copyBOM", tr("&Copy..."), SLOT(sCopyBOM()), bomMenu, "MaintainBOMs", NULL, NULL, true , NULL },
   { "separator", NULL, NULL, bomMenu,	"true", NULL, NULL, true , NULL },
   { "pd.massReplaceComponentItem", tr("Mass &Replace..."), SLOT(sMassReplaceComponent()), bomMenu, "MaintainBOMs", NULL, NULL, true , NULL },
@@ -203,7 +203,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Bill of Operations...
   { "menu",	tr("Bill Of &Operations"), (char*)booMenu,	mainMenu, "true", NULL, NULL,  _metrics->boolean("Routings") , NULL },
   { "pd.enterNewBOO", tr("&New..."), SLOT(sNewBOO()), booMenu, "MaintainBOOs", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, "MaintainBOOs ViewBOOs", new QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , tr("List Bill of Operations") },
+  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, "MaintainBOOs ViewBOOs", QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , tr("List Bill of Operations") },
   { "pd.copyBOO", tr("&Copy..."), SLOT(sCopyBOO()), booMenu, "MaintainBOOs", NULL, NULL, _metrics->boolean("Routings") , NULL },
 
   // Product | Breeder Bill of Materials
@@ -315,7 +315,7 @@ void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -328,7 +328,7 @@ void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }

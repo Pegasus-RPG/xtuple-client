@@ -137,13 +137,13 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   actionProperties acts[] = {
     //  Purchase | Requisitions
     { "menu", tr("Purchase &Requests"), (char*)requestMenu, mainMenu, "true", NULL, NULL, true , NULL },
-    { "po.dspPurchaseRequestsByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPurchaseReqsByPlannerCode()), requestMenu, "ViewPurchaseRequests", new QPixmap(":/images/dspPurchaseReqByPlannerCode.png"), toolBar, true , tr("Purchase Requests by Planner Code") },
+    { "po.dspPurchaseRequestsByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPurchaseReqsByPlannerCode()), requestMenu, "ViewPurchaseRequests", QPixmap(":/images/dspPurchaseReqByPlannerCode.png"), toolBar, true , tr("Purchase Requests by Planner Code") },
     { "po.dspPurchaseRequestsByItem", tr("by &Item..."), SLOT(sDspPurchaseReqsByItem()), requestMenu, "ViewPurchaseRequests", NULL, NULL, true , NULL },
 
     //  Purchase | Purchase Order
     { "menu", tr("&Purchase Order"), (char*)ordersMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.newPurchaseOrder", tr("&New..."), SLOT(sNewPurchaseOrder()), ordersMenu, "MaintainPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sPurchaseOrderEditList()), ordersMenu, "MaintainPurchaseOrders ViewPurchaseOrders", new QPixmap(":/images/listUnpostedPo.png"), toolBar, true , tr("List Unposted Purchase Orders") },
+    { "po.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sPurchaseOrderEditList()), ordersMenu, "MaintainPurchaseOrders ViewPurchaseOrders", QPixmap(":/images/listUnpostedPo.png"), toolBar, true , tr("List Unposted Purchase Orders") },
     { "separator", NULL, NULL, ordersMenu, "true", NULL, NULL, true , NULL },
     { "po.postPurchaseOrder", tr("&Post..."), SLOT(sPostPurchaseOrder()), ordersMenu, "PostPurchaseOrders", NULL, NULL, true , NULL },
     { "po.postPurchaseOrdersByAgent", tr("Post by A&gent..."), SLOT(sPostPurchaseOrdersByAgent()), ordersMenu, "PostPurchaseOrders", NULL, NULL, true , NULL },
@@ -298,7 +298,7 @@ void menuPurchase::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -311,7 +311,7 @@ void menuPurchase::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }

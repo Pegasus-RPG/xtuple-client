@@ -122,7 +122,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
  
     // Schedule | Schedule | MRP
     { "menu",	tr("Run &MRP"), (char*)plannedOrdersMrpMenu,	plannedOrdersMenu,	"true",	NULL, NULL, true	, NULL },
-    { "ms.runMRPByPlannerCode", tr("by &Planner Code..."), SLOT(sCreatePlannedReplenOrdersByPlannerCode()), plannedOrdersMrpMenu, "CreatePlannedOrders", new QPixmap(":/images/runMrpByPlannerCode.png"), toolBar, true , "Run MRP by Planner Code" },
+    { "ms.runMRPByPlannerCode", tr("by &Planner Code..."), SLOT(sCreatePlannedReplenOrdersByPlannerCode()), plannedOrdersMrpMenu, "CreatePlannedOrders", QPixmap(":/images/runMrpByPlannerCode.png"), toolBar, true , "Run MRP by Planner Code" },
     { "ms.runMRPByItem", tr("by &Item..."), SLOT(sCreatePlannedReplenOrdersByItem()), plannedOrdersMrpMenu, "CreatePlannedOrders", NULL, NULL, true , NULL },
     
     { "separator", NULL, NULL, plannedOrdersMenu, "true", NULL, NULL, true , NULL },
@@ -181,7 +181,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   
     // Schedule | Report | Planned Orders
     { "menu",	tr("Planned &Orders"), (char*)reportsPlannedMenu, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "ms.dspPlannedOrdersByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPlannedOrdersByPlannerCode()), reportsPlannedMenu, "ViewPlannedOrders", new QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , tr("Planned Orders by Planner Code") },
+    { "ms.dspPlannedOrdersByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPlannedOrdersByPlannerCode()), reportsPlannedMenu, "ViewPlannedOrders", QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , tr("Planned Orders by Planner Code") },
     { "ms.dspPlannedOrdersByItem", tr("by &Item..."), SLOT(sDspPlannedOrdersByItem()), reportsPlannedMenu, "ViewPlannedOrders", NULL, NULL, true , NULL },
     
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
@@ -243,7 +243,7 @@ void menuSchedule::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -256,7 +256,7 @@ void menuSchedule::addActionsToMenu(actionProperties acts[], unsigned int numEle
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }

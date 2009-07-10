@@ -283,7 +283,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory | Receiving
     { "menu",	tr("R&eceiving"),  (char*)receivingMenu,	mainMenu,	"true",	NULL, NULL, true , NULL },
     { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, "EnterReceipts", NULL, NULL, true, NULL },
-    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, "EnterReceipts", new QPixmap(":/images/postReceipts.png"), toolBar,  true, NULL },
+    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, "EnterReceipts", QPixmap(":/images/postReceipts.png"), toolBar,  true, NULL },
     { "separator", NULL, NULL, receivingMenu, "true", NULL, NULL, true, NULL },
     { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, "EnterReturns", NULL, NULL, true, NULL },
     { "separator",			NULL,				  NULL,				receivingMenu, "true", NULL, NULL, true , NULL },
@@ -294,7 +294,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Shipping
     { "menu",	tr("&Shipping"),  (char*)shippingMenu,	mainMenu,	"true",	NULL, NULL, true , NULL },
-    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
+    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
     { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, "ViewShipping", NULL, NULL, true, NULL },
     { "separator", NULL, NULL, shippingMenu, "true", NULL, NULL, true, NULL },
     { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, "ShipOrders", NULL, NULL, true, NULL },
@@ -383,7 +383,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     
     //  Inventory| Reports | Inventory Availability
     { "menu",				tr("Inventory &Availability"),			  (char*)reportsInvAvailMenu,			reportsMenu,	 "ViewInventoryAvailability",	NULL, NULL, true , NULL },
-    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, "ViewInventoryAvailability", new QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , tr("Inventory Availability by Planner Code") },
+    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, "ViewInventoryAvailability", QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , tr("Inventory Availability by Planner Code") },
     { "im.dspInventoryAvailabilityByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryAvailabilityByClassCode()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL }, 
     { "im.dspInventoryAvailabilityBySourceVendor",	tr("by &Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
     { "im.dspInventoryAvailabilityByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL }, 
@@ -430,9 +430,9 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Item Site
     { "menu",				tr("&Item Site"),             		(char*)itemSitesMenu,	mainMenu,	"true",	NULL, NULL, true	, NULL },
     { "im.newItemSite",			tr("&New..."),		SLOT(sNewItemSite()),	itemSitesMenu,	"MaintainItemSites", NULL, NULL, true , NULL },
-    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	"MaintainItemSites ViewItemSites", new QPixmap(":/images/itemSites.png"), toolBar, true , tr("List Item Sites") },							  
+    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	"MaintainItemSites ViewItemSites", QPixmap(":/images/itemSites.png"), toolBar, true , tr("List Item Sites") },							  
     { "separator", NULL, NULL, itemSitesMenu,	"true", NULL, NULL, true , NULL },
-    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, "ViewItemAvailabilityWorkbench", new QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , tr("Item Availability Workbench") },
+    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, "ViewItemAvailabilityWorkbench", QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , tr("Item Availability Workbench") },
     
     //  Inventory | Lot/Serial Control
     { "menu",				tr("&Lot/Serial Control"),	(char*)lotSerialControlMenu,	mainMenu, "true",	NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
@@ -527,7 +527,7 @@ void menuInventory::addActionsToMenu(actionProperties acts[], unsigned int numEl
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -540,7 +540,7 @@ void menuInventory::addActionsToMenu(actionProperties acts[], unsigned int numEl
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }

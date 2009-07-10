@@ -98,18 +98,18 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	"AddIncidents MaintainIncidents", NULL, NULL, true , NULL },
     { "separator",		NULL,				NULL,			incidentMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", new QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
+    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
 
     // CRM / To Do
     { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	"MaintainPersonalTodoList", NULL, NULL, true	, NULL },
-    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", new QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
+    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
     { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", NULL, NULL, true, NULL},
 
     //  Project
     { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu, "true", NULL, NULL, true	, NULL },
     { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, "MaintainProjects", NULL, NULL, true , NULL },
-    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewProjects", new QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
+    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewProjects", QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
     
     // Opportunity
     { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
@@ -130,13 +130,13 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     // CRM | Account
     { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
     { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	"MaintainCRMAccounts", NULL, NULL, true , NULL },
-    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", new QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
+    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
     { "crm.crmaccountsearch",	tr("&Search..."),SLOT(sSearchForCRMAccount()),accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", NULL, NULL, true , NULL },
       
     // CRM | Contact
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
     { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	"MaintainContacts", NULL, NULL, true	, NULL },
-    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainContacts ViewContacts", new QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
+    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainContacts ViewContacts", QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
     { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	"MaintainContacts ViewContacts", NULL, NULL, true	, NULL },
     
     // CRM | Address
@@ -205,7 +205,7 @@ void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].toolTip) );
     }
@@ -218,7 +218,7 @@ void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 					  acts[i].slot,
 					  acts[i].menu,
 					  acts[i].priv,
-					  *(acts[i].pixmap),
+					  (acts[i].pixmap),
 					  acts[i].toolBar,
                       acts[i].actionTitle) );
     }
