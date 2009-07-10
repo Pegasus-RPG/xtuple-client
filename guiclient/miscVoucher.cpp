@@ -83,8 +83,8 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
 
       connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulateVendorInfo(int)));
 
-      q.prepare("INSERT INTO vohead (vohead_id, vohead_number, vohead_misc, vohead_posted, vohead_pohead_id)"
-                "            VALUES (:vohead_id, :vohead_number, true, false, -1);" );
+      q.prepare("INSERT INTO vohead (vohead_id, vohead_number, vohead_misc, vohead_posted, vohead_pohead_id, vohead_docdate)"
+                "            VALUES (:vohead_id, :vohead_number, true, false, -1, CURRENT_DATE);" );
       q.bindValue(":vohead_id",     _voheadid);
       q.bindValue(":vohead_number", _voucherNumber->text());
       q.exec();
