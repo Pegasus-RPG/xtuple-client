@@ -1072,9 +1072,10 @@ void workOrder::sInventoryAvailabilityByWorkOrder()
 
 void workOrder::sReprioritizeWo()
 {
+  bool _saveCaptive=_captive;
   _captive=false;
   sCreate();
-  _captive=true;
+  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
@@ -1086,9 +1087,10 @@ void workOrder::sReprioritizeWo()
 
 void workOrder::sRescheduleWO()
 {
+  bool _saveCaptive=_captive;
   _captive=false;
   sCreate();
-  _captive=true;
+  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
@@ -1100,9 +1102,10 @@ void workOrder::sRescheduleWO()
 
 void workOrder::sChangeWOQty()
 {
+  bool _saveCaptive=_captive;
   _captive=false;
   sCreate();
-  _captive=true;
+  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
