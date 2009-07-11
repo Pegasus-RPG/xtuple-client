@@ -295,6 +295,7 @@ void taxCode::sSave()
             "  FROM tax"
             " WHERE((tax_id!= :tax_id)"
 		    " AND (tax_code=:tax_code));");
+  q.bindValue(":tax_id", _taxid); 
   q.bindValue(":tax_code", _code->text().trimmed());
   q.exec();
   if(q.first())
