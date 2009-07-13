@@ -82,6 +82,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Balance"),      _moneyColumn, Qt::AlignRight,  true,  "balance");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   _aropen->addColumn(baseBalanceTitle,   _moneyColumn, Qt::AlignRight,  true,  "base_balance");
+  _aropen->addColumn(tr("Credit Card"),            -1, Qt::AlignLeft,   false, "ccard_number");
   
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
@@ -307,7 +308,7 @@ void dspAROpenItems::sApplyAropenCM()
 
 void dspAROpenItems::sCCRefundCM()
 {
-  if (_aropen->altId() < 0)
+  if (_aropen->id("ccard_number") < 0)
   {
     QMessageBox::warning(this, tr("Cannot Refund by Credit Card"),
 			 tr("<p>The application cannot refund this "
@@ -324,80 +325,36 @@ void dspAROpenItems::sCCRefundCM()
   bool    taxexempt = false;
   QString docnum;
   QString refnum;
-  int     ccpayid = -1;
+  int     ccpayid = _aropen->currentItem()->id("ccard_number");
 
-  q.prepare("SELECT cmhead_id "
-	    "FROM cmhead "
-	    "WHERE (cmhead_number=:cmheadnumber);");
-  q.bindValue(":cmheadnumber", _aropen->currentItem()->text("docnumber"));
+  q.prepare("SELECT ccpay_ccard_id, aropen_amount - aropen_paid AS balance, "
+	    "       aropen_curr_id, aropen_docnumber "
+            "FROM aropen "
+            "     JOIN payaropen ON (aropen_id=payaropen_aropen_id) "
+            "     JOIN ccpay ON (payaropen_ccpay_id=ccpay_id) "
+            "WHERE ((aropen_id=:aropen_id)"
+            "  AND  (ccpay_id=:ccpay_id));");
+  q.bindValue(":aropen_id", _aropen->id());
+  q.bindValue(":ccpay_id",  ccpayid);
   q.exec();
   if (q.first())
   {
-    ParameterList ccp;
-    ccp.append("cmhead_id", q.value("cmhead_id"));
-    MetaSQLQuery ccm = mqlLoad("creditMemoCreditCards", "detail");
-    XSqlQuery ccq = ccm.toQuery(ccp);
-    if (ccq.first())
-    {
-      ccardid = ccq.value("ccard_id").toInt();
-      total   = ccq.value("total").toDouble();
-      tax     = ccq.value("tax_in_cmcurr").toDouble();
-      taxexempt = ccq.value("cmhead_tax_id").isNull();
-      freight = ccq.value("cmhead_freight").toDouble();
-      currid  = ccq.value("cmhead_curr_id").toInt();
-      docnum  = ccq.value("cmhead_number").toString();
-      refnum  = ccq.value("cohead_number").toString();
-      ccpayid = ccq.value("ccpay_id").toInt();
-    }
-    else if (ccq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-    {
-      QMessageBox::critical(this, tr("Credit Card Processing Error"),
-			    tr("Could not find a Credit Card to use for "
-			       "this Credit transaction."));
-      return;
-    }
+    ccardid = q.value("ccpay_ccard_id").toInt();
+    total   = q.value("balance").toDouble();
+    currid  = q.value("aropen_curr_id").toInt();
+    docnum  = q.value("aropen_docnumber").toString();
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else // cmhead not found - maybe it's just an open item
+  else
   {
-    q.prepare("SELECT ccard_id, aropen_amount - aropen_paid AS balance,"
-	      "       aropen_curr_id, aropen_docnumber "
-	      "FROM aropen, ccard "
-	      "WHERE ((aropen_cust_id=ccard_cust_id)"
-	      "  AND  (ccard_active)"
-	      "  AND  (aropen_open)"
-	      "  AND  (aropen_id=:aropenid));");
-    q.bindValue(":aropenid", _aropen->id());
-    q.exec();
-
-    if (q.first())
-    {
-      ccardid = q.value("ccard_id").toInt();
-      total   = q.value("balance").toDouble();
-      currid  = q.value("aropen_curr_id").toInt();
-      docnum  = q.value("aropen_docnumber").toString();
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-    {
-      QMessageBox::critical(this, tr("Credit Card Processing Error"),
-			    tr("Could not find a Credit Card to use for "
-			       "this Credit transaction."));
-      return;
-    }
+    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+                          tr("Could not find a Credit Card to use for "
+                             "this Credit transaction."));
+    return;
   }
 
   CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
@@ -741,6 +698,8 @@ bool dspAROpenItems::setParams(ParameterList &params)
     params.append("showUnposted");
   if (_closed->isChecked())
     params.append("showClosed");
+
+  params.append("key", omfgThis->_key);
   return true;
 }
 
@@ -1186,11 +1145,10 @@ void dspAROpenItems::sHandleButtons(bool valid)
       _post->setEnabled(_aropen->altId() < 4 && _aropen->currentItem()->rawValue("posted") == 0 && _privileges->check("PostARDocuments"));
     }
     
-    // Handle Refund
-    _refund->setVisible(_metrics->boolean("CCAccept") && 
-                       (_aropen->altId() == 1 || _aropen->altId() == 3) && 
+    _refund->setVisible(_metrics->boolean("CCAccept") &&
+                        _privileges->check("ProcessCreditCards"));
+    _refund->setEnabled(_aropen->id("ccard_number") > 0 &&
                         _aropen->currentItem()->rawValue("balance").toDouble() < 0);
-    _refund->setEnabled(_privileges->check("ProcessCreditCards"));
       
   }
   else
