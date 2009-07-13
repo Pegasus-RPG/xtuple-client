@@ -99,14 +99,14 @@ void distributeToLocation::sDistribute()
   if ((_balance < 0) && (qty < _balance))
   {
     QMessageBox::warning( this, tr("Cannot Distribute Quantity"),
-                          tr("You must not distribute a quantity to this Location that is greater than to total quantity to distribute.") );
+                          tr("You must not distribute a quantity to this Location that is greater than the total quantity to distribute.") );
     _locationQty->setFocus();
     return;
   }
   else if ((_balance > 0) && (qty > _balance))
   {
     QMessageBox::warning( this, tr("Cannot Distribute Quantity"),
-                          tr("You may not distribute a quantity to this Location that is greater than to total quantity to distribute.") );
+                          tr("You may not distribute a quantity to this Location that is greater than the total quantity to distribute.") );
     _locationQty->setFocus();
     return;
   }
@@ -309,7 +309,7 @@ void distributeToLocation::populate()
     _qtyToDistribute->setDouble(q.value("qtydistrib").toDouble());
     _qtyTagged->setDouble(q.value("qtytagged").toDouble());
     _qtyBalance->setDouble(q.value("qtybalance").toDouble());
-    _balance = q.value("qtybalance").toDouble();
+    _balance = round(q.value("qtybalance").toDouble() * pow(10, decimalPlaces("qty"))) / pow(10, decimalPlaces("qty"));
 
     double locQty = _balance;
     if (_mode == cItemloc)	// lot/serial
