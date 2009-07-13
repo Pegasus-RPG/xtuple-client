@@ -149,7 +149,7 @@ void terms::sSave()
                "WHERE ( (UPPER(terms_code)=UPPER(:terms_code))"
                " AND (terms_id<>:terms_id) );" );
     q.bindValue(":terms_id", _termsid);
-    q.bindValue(":terms_code", _code->text());
+    q.bindValue(":terms_code", _code->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -172,7 +172,7 @@ void terms::sSave()
     q.bindValue(":terms_type", "P");
 
   q.bindValue(":terms_id", _termsid);
-  q.bindValue(":terms_code", _code->text());
+  q.bindValue(":terms_code", _code->text().trimmed());
   q.bindValue(":terms_descrip", _description->text().trimmed());
   q.bindValue(":terms_ap", QVariant(_ap->isChecked()));
   q.bindValue(":terms_ar", QVariant(_ar->isChecked()));

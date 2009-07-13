@@ -104,6 +104,24 @@ void rejectCode::sSave()
     return;
   }
 
+  if (_mode == cEdit)
+  {
+    q.prepare("SELECT rjctcode_id"
+              "  FROM rjctcode"
+              " WHERE((rjctcode_id != :rjctcode_id)"
+              " AND (rjctcode_code = :rjctcode_code));");
+    q.bindValue(":rjctcode_id", _rjctcodeid); 
+    q.bindValue(":rjctcode_code", _code->text());
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::critical(this, tr("Duplicate Reject Code"),
+        tr("A Reject Code already exists for the code specified.") );
+      _code->setFocus();
+      return;
+    }
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('rjctcode_rjctcode_id_seq') AS rjctcode_id");

@@ -144,6 +144,24 @@ void plannerCode::sSave()
     return;
   }
 
+  if (_mode == cEdit)
+  {
+    q.prepare("SELECT plancode_id"
+              "  FROM plancode"
+              " WHERE((plancode_id != :plancode_id)"
+              " AND (plancode_code = :plancode_code));");
+    q.bindValue(":plancode_id", _plancodeid); 
+    q.bindValue(":plancode_code", _code->text());
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::critical(this, tr("Duplicate Planner Code"),
+        tr("A Planner Code already exists for the code specified.") );
+      _code->setFocus();
+      return;
+    }
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('plancode_plancode_id_seq') AS plancode_id");

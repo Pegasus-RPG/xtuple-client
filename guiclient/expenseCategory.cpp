@@ -119,19 +119,22 @@ void expenseCategory::sSave()
     return;
   }
 
-  q.prepare( "SELECT expcat_id "
-             "  FROM expcat "
-             " WHERE((UPPER(expcat_code)=:expcat_code)"
-             "   AND (expcat_id != :expcat_id));" );
-  q.bindValue(":expcat_id", _expcatid);
-  q.bindValue(":expcat_code", _category->text().trimmed());
-  q.exec();
-  if (q.first())
+  if (_mode == cEdit)
   {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-      tr("The name you have specified is already in use."));
-    _category->setFocus();
-    return;
+    q.prepare( "SELECT expcat_id "
+               "  FROM expcat "
+               " WHERE((UPPER(expcat_code)=UPPER(:expcat_code))"
+               "   AND (expcat_id != :expcat_id));" );
+    q.bindValue(":expcat_id", _expcatid);
+    q.bindValue(":expcat_code", _category->text().trimmed());
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                                  tr("The name you have specified is already in use."));
+      _category->setFocus();
+      return;
+    }
   }
 
   if (!_expense->isValid())
