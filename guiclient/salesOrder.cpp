@@ -1585,7 +1585,7 @@ void salesOrder::sShipToList()
 void salesOrder::sParseShipToNumber()
 {
   XSqlQuery shiptoid;
-  shiptoid.prepare( "SELECT shipto_id "
+  shiptoid.prepare( "SELECT shipto_id, shipto_active "
                     "FROM shipto "
                     "WHERE ( (shipto_cust_id=:shipto_cust_id)"
                     " AND (UPPER(shipto_num)=UPPER(:shipto_num)) );" );
@@ -1595,7 +1595,19 @@ void salesOrder::sParseShipToNumber()
   if (shiptoid.first())
   {
     if (shiptoid.value("shipto_id").toInt() != _shiptoid)
-      populateShipto(shiptoid.value("shipto_id").toInt());
+    {
+      if (!shiptoid.value("shipto_active").toBool())
+      {
+          if (QMessageBox::warning(this, tr("Inactive Ship To"),
+                              tr("<p>This Ship To number is inactive, are you sure you want to proceed?"),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+          
+            populateShipto(shiptoid.value("shipto_id").toInt());
+          else
+            _shipToNumber->clear();
+      }
+    }
   }
   else if (_shiptoid != -1)
     populateShipto(-1);
