@@ -89,7 +89,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
-  connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
+  connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sEditVendor()));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
@@ -806,15 +806,19 @@ void crmaccount::sPopulate()
     {
       _vendor->setChecked(true);
       _vendorButton->setText("Vendor");
-      disconnect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
+      disconnect(_vendorButton, SIGNAL(clicked()), this, SLOT(sEditVendor()));
       
       QMenu * vendorMenu = new QMenu;
-      if (_mode == cEdit)
-        vendorMenu->addAction(tr("Edit..."), this, SLOT(sVendor()));
-      else
-        vendorMenu->addAction(tr("View..."), this, SLOT(sVendor()));
-      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
-      _vendorButton->setMenu(vendorMenu);   
+      int menuItem;
+      menuItem=vendorMenu->insertItem(tr("Edit..."), this, SLOT(sEditVendor()));
+      vendorMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors") && (_mode = cEdit));
+      menuItem=vendorMenu->insertItem(tr("View..."), this, SLOT(sViewVendor()));
+      vendorMenu->setItemEnabled(menuItem, _privileges->check("ViewVendors") || 
+                                           _privileges->check("MaintainVendors"));
+      menuItem=vendorMenu->insertItem(tr("Workbench..."),   this, SLOT(sVendorInfo()));
+      vendorMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors"));
+      _vendorButton->setMenu(vendorMenu);  
+      
     }
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
@@ -988,7 +992,7 @@ void crmaccount::sTaxAuth()
   newdlg.exec();
 }
 
-void crmaccount::sVendor()
+void crmaccount::sEditVendor()
 {
   if (saveNoErrorCheck() < 0)
   {
@@ -1000,22 +1004,30 @@ void crmaccount::sVendor()
   params.append("crmacct_id", _crmacctId);
   params.append("crmacct_number", _number->text());
   params.append("crmacct_name", _name->text());
-  if (_vendId <= 0 && _privileges->check("MaintainVendors") &&
-      (_mode == cEdit || _mode == cNew))
+  if (_vendId <= 0)
     params.append("mode", "new");
-  else if (_vendId <= 0)
-    systemError(this, tr("No existing Vendor to View"));
-  else if (_vendId > 0 && _privileges->check("MaintainVendors") &&
-	    (_mode == cEdit || _mode == cNew))
+  else
   {
     params.append("vend_id", _vendId);
-    params.append("mode", "edit");
+    params.append("mode", "edit]");
   }
-  else if (_vendId > 0 && _mode == cView)
+
+  vendor *newdlg = new vendor(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void crmaccount::sViewVendor()
+{
+  if (saveNoErrorCheck() < 0)
   {
-    params.append("vend_id", _vendId);
-    params.append("mode", "view");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+  
+  ParameterList params;
+  params.append("vend_id", _vendId);
+  params.append("mode", "view");
 
   vendor *newdlg = new vendor(this);
   newdlg->set(params);
