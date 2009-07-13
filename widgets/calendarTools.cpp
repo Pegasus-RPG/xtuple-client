@@ -12,7 +12,6 @@
 
 #include "calendarTools.h"
 
-
 CalendarComboBox::CalendarComboBox(QWidget *pParent, const char *pName) :
   XComboBox(pParent, pName)
 {
@@ -62,9 +61,23 @@ PeriodsListView::PeriodsListView(QWidget *pParent, const char *pName) :
   setObjectName(pName);
   _calheadid = -1;
 
-  addColumn(tr("Name"),             _itemColumn, Qt::AlignLeft   );
-  addColumn(tr("Selected Periods"), -1,          Qt::AlignCenter );
   setSelectionMode(QAbstractItemView::ExtendedSelection);
+    
+  // If we're in a Designer, don't populate
+  if (_x_metrics)
+  {
+    QObject *ancestor = this;
+    bool designMode;
+    for ( ; ancestor; ancestor = ancestor->parent())
+    {
+      designMode = ancestor->inherits("xTupleDesigner");
+      if (designMode)
+        return;
+    }
+  
+    addColumn(tr("Name"),             _itemColumn, Qt::AlignLeft   );
+    addColumn(tr("Selected Periods"), -1,          Qt::AlignCenter );
+  }
 }
 
 void PeriodsListView::populate(int pCalheadid)
