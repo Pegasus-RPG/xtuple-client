@@ -148,7 +148,8 @@ void shipToList::set(ParameterList &pParams)
     shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_address1,"
                     " (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode)  AS csz "
                     "FROM shipto "
-                    "WHERE (shipto_cust_id=:cust_id) "
+                    "WHERE ((shipto_cust_id=:cust_id) "
+                    " AND (shipto_active)) "
                     "ORDER BY shipto_num;" );
     shipto.bindValue(":cust_id", param.toInt());
     shipto.exec();
