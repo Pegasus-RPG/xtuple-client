@@ -45,6 +45,8 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_mainButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_altButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_checksButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _defaultCurr->setLabel(_defaultCurrLit);
   _routingNumber->setValidator(new QIntValidator(100000000, 999999999, this));
@@ -154,8 +156,6 @@ SetResponse vendor::set(const ParameterList &pParams)
 
       _comments->setId(_vendid);
       _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
-  
-      connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
       if (_privileges->check("MaintainVendorAddresses"))
       {
@@ -617,9 +617,9 @@ void vendor::sCheck()
 {
 //  Make sure that the newly entered vend_number is not already in use.
 //  Switch to cEdit and populate if so.
-  if (_number->text().length())
+
+  if (_number->text().length() && _cachedNumber != _number->text())
   {
-    _number->setText(_number->text().trimmed().toUpper());
     if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
     {
       XSqlQuery query;
@@ -629,18 +629,72 @@ void vendor::sCheck()
       _NumberGen = -1;
     }
 
-    q.prepare( "SELECT vend_id "
+    q.prepare( "SELECT vend_id, 1 AS type "
                "FROM vendinfo "
-               "WHERE (UPPER(vend_number)=UPPER(:vend_number));" );
+               "WHERE (vend_number=:vend_number) "
+               "UNION "
+               "SELECT crmacct_id, 2 AS type "
+               "FROM crmacct "
+               "WHERE (crmacct_number=:vend_number) "
+               "ORDER BY type; ");
     q.bindValue(":vend_number", _number->text());
     q.exec();
     if (q.first())
     {
-      _vendid = q.value("vend_id").toInt();
-      _mode = cEdit;
-      populate();
-
-      _number->setEnabled(FALSE);
+      if ((q.value("type").toInt() == 1) && (_notice))
+      {
+        if (QMessageBox::question(this, tr("Vendor Exists"),
+                tr("<p>This number is currently "
+                     "used by an existing Vendor. "
+                     "Do you want to edit "
+                     "that Vendor?"),
+                QMessageBox::Yes,
+                QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+        {
+          _number->setText(_cachedNumber);
+          _number->setFocus();
+          return;
+        }
+        else
+        {
+          _vendid = q.value("vend_id").toInt();
+          _mode = cEdit;
+          populate();
+          emit newId(_vendid);
+          _name->setFocus();
+        }
+      }
+      else if ( (_mode == cEdit) && 
+                ((q.value("type").toInt() == 2) ) && 
+                (_notice))
+      {
+        if (QMessageBox::critical(this, tr("Invalid Number"),
+                tr("<p>This number is currently "
+                     "assigned to another CRM account.")))
+        {
+          _number->setText(_cachedNumber);
+          _number->setFocus();
+          _notice = false;
+          return;
+        }
+      }
+      else if ((q.value("type").toInt() == 2) && (_notice))
+      {
+        if (QMessageBox::question(this, tr("Convert"),
+                tr("<p>This number is currently "
+                   "assigned to CRM Account. "
+                   "Do you want to convert the "
+                   "CRM Account to a Vendor?"),
+                QMessageBox::Yes,
+                QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+       {
+          _number->clear();
+          _number->setFocus();
+          return;
+        }
+        else
+          sLoadCrmAcct(q.value("vend_id").toInt());
+      }
     }
   }
 }
@@ -672,6 +726,7 @@ void vendor::populate()
   q = mql.toQuery(params);
   if (q.first())
   {
+    _notice = FALSE;
     _cachedNumber = q.value("vend_number").toString();
 
     _number->setText(q.value("vend_number"));
@@ -1030,3 +1085,28 @@ void vendor::sHandleButtons()
   else
     _transmitStack->setCurrentIndex(1);
 }
+
+void vendor::sLoadCrmAcct(int crmacctId )
+{
+  _notice = FALSE;
+  _crmacctid = crmacctId;
+  _contact1->setSearchAcct(_crmacctid);
+  _contact2->setSearchAcct(_crmacctid);
+  q.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
+  q.bindValue(":crmacct_id", crmacctId);
+  q.exec();
+  if (q.first())
+  {
+    _number->setText(q.value("crmacct_number").toString());
+    _name->setText(q.value("crmacct_name").toString());
+    _active->setChecked(q.value("crmacct_active").toBool());
+  }
+  _name->setFocus();
+}
+
+void vendor::sNumberEdited()
+{
+  _notice = TRUE;
+  _number->setText(_number->text().trimmed().toUpper());
+}
+

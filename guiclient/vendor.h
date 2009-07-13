@@ -45,6 +45,8 @@ public slots:
     virtual void sViewTaxreg();
     virtual void sDeleteTaxreg();
     virtual void sHandleButtons();
+    virtual void sLoadCrmAcct(int);
+    virtual void sNumberEdited();
 
     virtual void sNext();
     virtual void sPrevious();
@@ -69,6 +71,7 @@ private:
     int _NumberGen;
     QString _cachedNumber;
     bool _ignoreClose;
+    bool _notice;
 
 };
 
