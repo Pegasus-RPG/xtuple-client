@@ -1330,6 +1330,7 @@ void customer::populate()
     _allowFFShipto->setChecked(cust.value("cust_ffshipto").toBool());
     _allowFFBillto->setChecked(cust.value("cust_ffbillto").toBool());
     _usesPOs->setChecked(cust.value("cust_usespos").toBool());
+    _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
     _blanketPos->setChecked(cust.value("cust_blanketpos").toBool());
     _currency->setId(cust.value("cust_curr_id").toInt());
 
