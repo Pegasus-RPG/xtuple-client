@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>dspTimePhasedRoughCutByWorkCenter</class>
- <widget class="QWidget" name="dspTimePhasedRoughCutByWorkCenter" >
-  <property name="geometry" >
+ <widget class="QWidget" name="dspTimePhasedRoughCutByWorkCenter">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,55 +17,55 @@ to be bound by its terms.</comment>
     <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Time-Phased Planned Rough Cut by Work Center</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_3" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QGroupBox" name="_workCenterGroup" >
-         <property name="title" >
+        <widget class="QGroupBox" name="_workCenterGroup">
+         <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2" >
-          <item row="0" column="0" colspan="2" >
-           <widget class="QRadioButton" name="_allWorkCenters" >
-            <property name="text" >
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0" colspan="2">
+           <widget class="QRadioButton" name="_allWorkCenters">
+            <property name="text">
              <string>All Work Centers</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="_selectedWorkCenter" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="_selectedWorkCenter">
+            <property name="text">
              <string>Selected Work Center:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="XComboBox" name="_workCenters" >
-            <property name="enabled" >
+          <item row="1" column="1">
+           <widget class="XComboBox" name="_workCenters">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="type" >
+            <property name="type">
              <enum>XComboBox::WorkCenters</enum>
             </property>
            </widget>
@@ -73,21 +74,21 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="WarehouseGroup" name="_warehouse" >
-         <property name="title" >
+        <widget class="WarehouseGroup" name="_warehouse">
+         <property name="title">
           <string/>
          </property>
-         <property name="fixedSize" >
+         <property name="fixedSize">
           <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>0</width>
            <height>20</height>
@@ -96,43 +97,43 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>&amp;Close</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_query" >
-           <property name="text" >
+          <widget class="QPushButton" name="_query">
+           <property name="text">
             <string>&amp;Query</string>
            </property>
-           <property name="autoDefault" >
+           <property name="autoDefault">
             <bool>true</bool>
            </property>
-           <property name="default" >
+           <property name="default">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_print" >
-           <property name="text" >
+          <widget class="QPushButton" name="_print">
+           <property name="text">
             <string>&amp;Print</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -144,141 +145,122 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>7</number>
-       </property>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+        <layout class="QHBoxLayout">
+         <property name="spacing">
+          <number>7</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
+          <layout class="QVBoxLayout">
+           <property name="spacing">
+            <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_calendarLit" >
-             <property name="text" >
-              <string>Calendar:</string>
+            <layout class="QHBoxLayout">
+             <property name="spacing">
+              <number>5</number>
              </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
+             <item>
+              <widget class="QLabel" name="_calendarLit">
+               <property name="text">
+                <string>Calendar:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="CalendarComboBox" name="_calendar"/>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="CalendarComboBox" name="_calendar" >
-             <item>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-            </widget>
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>91</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>91</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="PeriodsListView" name="_periods" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+        <widget class="PeriodsListView" name="_periods">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
            <width>0</width>
            <height>120</height>
           </size>
          </property>
-         <column>
-          <property name="text" >
-           <string>Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Selected Periods</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="2" column="0" >
-      <widget class="QFrame" name="frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+     <item row="2" column="0">
+      <widget class="QFrame" name="frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="gridLayout" >
-        <property name="margin" >
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="0" >
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+        <item row="0" column="0">
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="_roughCutLit" >
-            <property name="text" >
+           <widget class="QLabel" name="_roughCutLit">
+            <property name="text">
              <string>Rough Cut:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="XTreeWidget" name="_roughCut" >
-            <property name="maximumSize" >
+           <widget class="XTreeWidget" name="_roughCut">
+            <property name="maximumSize">
              <size>
               <width>16777215</width>
               <height>16777215</height>
@@ -295,7 +277,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -322,6 +304,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -329,8 +312,6 @@ to be bound by its terms.</comment>
   <tabstop>_selectedWorkCenter</tabstop>
   <tabstop>_workCenters</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_calendar</tabstop>
-  <tabstop>_periods</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_roughCut</tabstop>
   <tabstop>_print</tabstop>
@@ -344,27 +325,11 @@ to be bound by its terms.</comment>
    <receiver>dspTimePhasedRoughCutByWorkCenter</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_calendar</sender>
-   <signal>newCalendarId(int)</signal>
-   <receiver>_periods</receiver>
-   <slot>populate(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -376,13 +341,29 @@ to be bound by its terms.</comment>
    <receiver>_workCenters</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_calendar</sender>
+   <signal>newCalendarId(int)</signal>
+   <receiver>_periods</receiver>
+   <slot>populate(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>590</x>
+     <y>204</y>
     </hint>
    </hints>
   </connection>
@@ -392,13 +373,13 @@ to be bound by its terms.</comment>
    <receiver>_periods</receiver>
    <slot>load(ParameterList&amp;)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>121</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+    <hint type="destinationlabel">
+     <x>590</x>
+     <y>204</y>
     </hint>
    </hints>
   </connection>
