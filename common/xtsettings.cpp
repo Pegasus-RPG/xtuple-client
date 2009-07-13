@@ -12,27 +12,30 @@
 
 #include <QSettings>
 
-static QSettings settings(QSettings::UserScope, "xTuple.com", "xTuple");
-static QSettings oldsettings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-
 QVariant xtsettingsValue(const QString & key, const QVariant & defaultValue)
 {
+  QSettings settings(QSettings::UserScope, "xTuple.com", "xTuple");
   QString key2 = key;
   if(key.startsWith("/xTuple/"))
     key2 = key2.replace(0, 8, QString("/OpenMFG/"));
   if(settings.contains(key))
     return settings.value(key, defaultValue);
-  else if(oldsettings.contains(key2))
+  else
   {
-    QVariant val = oldsettings.value(key2, defaultValue);
-    xtsettingsSetValue(key, val);
-    return val;
+    QSettings oldsettings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    if(oldsettings.contains(key2))
+    {
+      QVariant val = oldsettings.value(key2, defaultValue);
+      xtsettingsSetValue(key, val);
+      return val;
+    }
   }
   return defaultValue;
 }
 
 void xtsettingsSetValue(const QString & key, const QVariant & value)
 {
+  QSettings settings(QSettings::UserScope, "xTuple.com", "xTuple");
   settings.setValue(key, value);
 }
 
