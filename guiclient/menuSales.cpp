@@ -246,13 +246,13 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Billing | Invoice
     { "menu",	tr("&Invoice"),   (char*)billingInvoicesMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.uninvoicedShipments",		     tr("&Uninvoiced Shipments..."),			SLOT(sUninvoicedShipments()), 		billingInvoicesMenu, "SelectBilling",	 QPixmap(":/images/uninvoicedShipments"), toolBar, true, NULL },
+    { "so.uninvoicedShipments",		     tr("&Uninvoiced Shipments..."),			SLOT(sUninvoicedShipments()), 		billingInvoicesMenu, "SelectBilling",	 QPixmap(":/images/uninvoicedShipments"), toolBar, true, "Uninvoiced Shipments" },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.selectAllShippedOrdersForBilling", tr("Select &All Shipped Orders for Billing..."),	SLOT(sSelectShippedOrdersForBilling()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "so.selectOrderForBilling",	     tr("Select &Order for Billing..."),			SLOT(sSelectOrderForBilling()),		billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.billingEditList",		     tr("&Billing Edit List..."),	SLOT(sBillingEditList()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
-    { "so.dspBillingSelections",	     tr("Billing &Selections..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", QPixmap(":/images/billingSelections"), toolBar, true, NULL },
+    { "so.dspBillingSelections",	     tr("Billing &Selections..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", QPixmap(":/images/billingSelections"), toolBar, true, "Billing Selections" },
     { "so.postBillingSelections",	     tr("&Post Billing Selections..."),	SLOT(sPostBillingSelections()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.listUnpostedInvoices",	     tr("&List Unposted Invoices..."),	SLOT(sUnpostedInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
@@ -316,7 +316,7 @@ menuSales::menuSales(GUIClient *pParent) :
 
     // Sales | Reports
     { "menu",	tr("&Reports"),           (char*)reportsMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspSummarizedBacklogByWarehouse", tr("Su&mmarized Backlog..."),	SLOT(sDspSummarizedBacklogByWarehouse()), reportsMenu, "ViewSalesOrders",	QPixmap(":/images/dspSummarizedBacklogByWhse.png"), toolBar,  true, NULL },
+    { "so.dspSummarizedBacklogByWarehouse", tr("Su&mmarized Backlog..."),	SLOT(sDspSummarizedBacklogByWarehouse()), reportsMenu, "ViewSalesOrders",	QPixmap(":/images/dspSummarizedBacklogByWhse.png"), toolBar,  true, "Summarized Backlog" },
 
     // Sales | Reports | Backlog
     { "menu",	tr("&Backlog"),           (char*)reportsBacklogMenu,	reportsMenu,	"true",	NULL, NULL, true, NULL },

@@ -181,7 +181,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, "ScrapWoMaterials", 0, 0, true, NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	_metrics->boolean("Routings") , NULL },
-    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, "WoTimeClock", QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), NULL },
+    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, "WoTimeClock", QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), "Shop Floor Workbench" },
     { "wo.postOperations",		tr("&Post Operation..."),		SLOT(sPostOperations()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.correctOperationsPosting",	tr("Co&rrect Operation Posting..."),	SLOT(sCorrectOperationsPosting()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	true, NULL },
