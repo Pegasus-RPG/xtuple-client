@@ -314,10 +314,7 @@ void unpostedInvoices::sPost()
         else if (post.lastError().databaseText().contains("post to closed period"))
         {
 	    if (changeDate)
-	    {
 	      triedToClosed = selected;
-	      break;
-	    }
 	    else
 	      triedToClosed.append(selected[i]);
       }
