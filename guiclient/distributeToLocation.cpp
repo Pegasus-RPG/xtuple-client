@@ -28,7 +28,7 @@ distributeToLocation::distributeToLocation(QWidget* parent, const char* name, bo
   _qtyToDistribute->setPrecision(omfgThis->qtyVal());
   _qtyTagged->setPrecision(omfgThis->qtyVal());
   _qtyBalance->setPrecision(omfgThis->qtyVal());
-  _locationQty->setValidator(omfgThis->qtyVal());
+  _locationQty->setValidator(omfgThis->transQtyVal());
 }
 
 distributeToLocation::~distributeToLocation()
