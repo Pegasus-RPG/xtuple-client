@@ -80,7 +80,9 @@ void returnWoMaterialBatch::sReturn()
     }
     else
     {
-      if(q.value("wo_status").toString() == "E" || q.value("wo_status").toString() == "I")
+      if(q.value("wo_status").toString() == "E" || 
+         q.value("wo_status").toString() == "R" ||
+         q.value("wo_status").toString() == "I")
       {
         XSqlQuery rollback;
         rollback.prepare("ROLLBACK;");
