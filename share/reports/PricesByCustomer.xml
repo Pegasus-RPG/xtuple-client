@@ -15,20 +15,20 @@
        cust_address1,
        cust_address2,
        cust_address3,
-       &lt;? if exists(&quot;showExpired&quot;) ?>
+       &lt;? if exists("showExpired") ?>
          text('Yes')
        &lt;? else ?>
          text('No')
        &lt;? endif ?>
        AS f_showexpired,
-       &lt;? if exists(&quot;showFuture&quot;) ?>
+       &lt;? if exists("showFuture") ?>
          text('Yes')
        &lt;? else ?>
          text('No')
        &lt;? endif ?>
        AS f_showfuture,
-       &lt;? if exists(&quot;showCosts&quot;) ?>
-         &lt;? if exists(&quot;actualCosts&quot;) ?>
+       &lt;? if exists("showCosts") ?>
+         &lt;? if exists("actualCosts") ?>
            text('Show Costs and Margins using Actual Costs')
          &lt;? else ?>
            text('Show Costs and Margins using Standard Costs')
@@ -42,7 +42,7 @@
          text('') AS f_marginlabel
        &lt;? endif ?>
    FROM cust
-WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);
+WHERE (cust_id=&lt;? value("cust_id") ?>);
 </sql>
  </querysource>
  <querysource>
@@ -53,7 +53,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);
             ELSE formatQty(qtybreak)
        END AS f_qtybreak,
        price, formatPrice(price) AS f_price,
-       &lt;? if exists(&quot;showCosts&quot;) ?>
+       &lt;? if exists("showCosts") ?>
          cost AS cost,
          formatCost(cost) AS f_cost,
          CASE WHEN ((price = 0) OR (cost = 0)) THEN 'N/A'
@@ -69,7 +69,7 @@ FROM (
          ipshead_name AS schedulename, 'Customer' AS type,
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
-         &lt;? if exists(&quot;actualCosts&quot;) ?>
+         &lt;? if exists("actualCosts") ?>
            (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
            (stdcost(item_id) * iteminvpricerat(item_id))
@@ -79,11 +79,11 @@ FROM (
    WHERE ((ipsass_ipshead_id=ipshead_id)
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (ipsprice_item_id=item_id)
-     AND (ipsass_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
-&lt;? if not exists(&quot;showExpired&quot;) ?>
+     AND (ipsass_cust_id=&lt;? value("cust_id") ?>)
+&lt;? if not exists("showExpired") ?>
      AND (ipshead_expires > CURRENT_DATE)
 &lt;? endif ?>
-&lt;? if not exists(&quot;showFuture&quot;) ?>
+&lt;? if not exists("showFuture") ?>
      AND (ipshead_effective &lt;= CURRENT_DATE)
 &lt;? endif ?>
   )
@@ -93,7 +93,7 @@ FROM (
          ipshead_name AS schedulename, 'Cust. Type' AS type,
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
-         &lt;? if exists(&quot;actualCosts&quot;) ?>
+         &lt;? if exists("actualCosts") ?>
            (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
            (stdcost(item_id) * iteminvpricerat(item_id))
@@ -104,11 +104,11 @@ FROM (
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (ipsprice_item_id=item_id)
      AND (ipsass_custtype_id=cust_custtype_id)
-     AND (cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
-&lt;? if not exists(&quot;showExpired&quot;) ?>
+     AND (cust_id=&lt;? value("cust_id") ?>)
+&lt;? if not exists("showExpired") ?>
      AND (ipshead_expires > CURRENT_DATE)
 &lt;? endif ?>
-&lt;? if not exists(&quot;showFuture&quot;) ?>
+&lt;? if not exists("showFuture") ?>
      AND (ipshead_effective &lt;= CURRENT_DATE)
 &lt;? endif ?>
   )
@@ -118,7 +118,7 @@ FROM (
          ipshead_name AS schedulename, ('Sale' || '-' || sale_name) AS type,
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
-         &lt;? if exists(&quot;actualCosts&quot;) ?>
+         &lt;? if exists("actualCosts") ?>
            (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
            (stdcost(item_id) * iteminvpricerat(item_id))
@@ -128,10 +128,10 @@ FROM (
    WHERE ((sale_ipshead_id=ipshead_id)
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (ipsprice_item_id=item_id)
-&lt;? if not exists(&quot;showExpired&quot;) ?>
+&lt;? if not exists("showExpired") ?>
      AND (sale_enddate > CURRENT_DATE)
 &lt;? endif ?>
-&lt;? if not exists(&quot;showFuture&quot;) ?>
+&lt;? if not exists("showFuture") ?>
      AND (sale_startdate &lt;= CURRENT_DATE)
 &lt;? endif ?>
   )
@@ -140,15 +140,16 @@ FROM (
   SELECT item_id AS itemid, 0 AS sourcetype,
          '' AS schedulename, 'List Price' AS type,
          item_number AS itemnumber, item_descrip1, item_descrip2,
-         -1 AS qtybreak, item_listprice AS price,
-         &lt;? if exists(&quot;actualCosts&quot;) ?>
+         -1 AS qtybreak, (item_listprice - (item_listprice * cust_discntprcnt)) AS price,
+         &lt;? if exists("actualCosts") ?>
            (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
            (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
-    FROM item
+    FROM item, cust
    WHERE ( (item_sold)
+     AND (cust_id=&lt;? value("cust_id") ?>)
      AND (NOT item_exclusive) )
 ) AS data
 ORDER BY itemnumber, price;</sql>

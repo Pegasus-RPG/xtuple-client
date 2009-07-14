@@ -248,7 +248,7 @@ void dspPricesByCustomer::sFillList()
            "             '' AS schedulename, :listPrice AS type,"
            "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
            "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "             -1 AS qtybreak, item_listprice AS price, "
+           "	          -1 AS qtybreak, (item_listprice - (item_listprice * cust_discntprcnt)) AS price, " //add line, calculate list price with defualt discount
 	   "		 baseCurrId() AS curr_id, "
 	   "		 CURRENT_DATE AS effective ";
 
@@ -260,8 +260,9 @@ void dspPricesByCustomer::sFillList()
         sql += ", (actcost(item_id) * iteminvpricerat(item_id)) AS cost ";
     }
 
-    sql += "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
+    sql += "FROM cust, item JOIN uom ON (item_price_uom_id=uom_id)" //add cust table
            "WHERE ( (item_sold)"
+           " AND (cust_id=:cust_id)" //add line, use the customer that was seleted
            " AND (NOT item_exclusive) ) ) AS data "
            "ORDER BY itemnumber, price;";
 
