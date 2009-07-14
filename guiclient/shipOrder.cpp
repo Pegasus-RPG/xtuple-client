@@ -745,7 +745,8 @@ void shipOrder::sFillList()
                  " AND (coitem_qty_uom_id=uom_id)"
 		 " AND (shiphead_order_id=<? value(\"sohead_id\") ?>) ) "
 		 "GROUP BY coitem_id, coitem_linenumber, item_number,"
-		 "         uom_name, itemdescrip;"
+		 "         uom_name, itemdescrip, coitem_subnumber "
+                 "ORDER BY coitem_linenumber, coitem_subnumber;"
 		 "<? elseif exists(\"tohead_id\") ?>"
 		 "SELECT toitem_id,"
 		 "       toitem_linenumber AS linenumber, item_number,"
@@ -762,7 +763,8 @@ void shipOrder::sFillList()
                  " AND (item_inv_uom_id=uom_id)"
 		 " AND (shiphead_order_id=<? value(\"tohead_id\") ?>) ) "
 		 "GROUP BY toitem_id, toitem_linenumber, item_number,"
-		 "         uom_name, itemdescrip;"
+		 "         uom_name, itemdescrip "
+                 "ORDER BY toitem_linenumber;"
 		 "<? endif ?>" ;
     MetaSQLQuery itemm(items);
     shipq = itemm.toQuery(itemp);
@@ -790,7 +792,7 @@ void shipOrder::sFillList()
 	    "  AND  (shipitem_shiphead_id=shiphead_id)"
 	    "  AND  (NOT shiphead_shipped)"
 	    "  AND  (shiphead_order_type='TO')"
-	    "  AND  (shiphead_order_id=<? value(\"tohead_id\") ?>) );"
+	    "  AND  (shiphead_order_id=<? value(\"tohead_id\") ?>) ); "
 	    "<? endif ?>" ;
     MetaSQLQuery valm(vals);
     shipq = valm.toQuery(itemp);	// shared parameters
@@ -865,6 +867,7 @@ void shipOrder::sFillFreight()
 
 void shipOrder::sFillTracknum()
 {
+/* Let's not bother everybody all the time about this one possible problem
   if (_order->isTO())
   {
     QMessageBox::warning(this, tr("Not Supported in Transfer Order"),
@@ -872,7 +875,7 @@ void shipOrder::sFillTracknum()
 			    "not yet supported for Transfer Orders."));
     return;
   }
-
+*/
   if (_order->isSO())
   {
     XSqlQuery shipdataQ;

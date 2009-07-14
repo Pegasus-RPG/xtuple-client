@@ -615,7 +615,8 @@ void issueToShipping::sFillList()
              "       coitem_qtyord AS qtyord,"
              "       coitem_qtyshipped AS qtyshipped,"
              "       coitem_qtyreturned AS qtyreturned,"
-             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
+             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
+             "       coitem_linenumber AS seq1, coitem_subnumber AS seq2 "
              "FROM itemsite, item, site(), uom,"
              "     coitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
@@ -631,7 +632,8 @@ void issueToShipping::sFillList()
              "GROUP BY coitem_id, linenumber, item_number,"
              "         item_descrip1, item_descrip2, warehous_code,"
              "         coitem_scheddate, uom_name,"
-             "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
+             "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, "
+             "         coitem_linenumber, coitem_subnumber "
 	     "<? elseif exists(\"tohead_id\") ?>"
 	     "SELECT toitem_id AS lineitem_id,"
 	     "       toitem_linenumber AS linenumber, item_number,"
@@ -642,7 +644,8 @@ void issueToShipping::sFillList()
              "       toitem_qty_ordered AS qtyord,"
              "       toitem_qty_shipped AS qtyshipped,"
              "       0 AS qtyreturned,"
-             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
+             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
+             "       toitem_linenumber AS seq1, 0 AS seq2 "
              "FROM item, tohead, site(), uom,"
              "     toitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
@@ -660,7 +663,7 @@ void issueToShipping::sFillList()
              "         toitem_qty_ordered, toitem_qty_shipped "
 	     "<? endif ?>"
              ") AS sub "
-             "ORDER BY scheddate, linenumber;"
+             "ORDER BY scheddate, seq1, seq2;"
 	     ;
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
