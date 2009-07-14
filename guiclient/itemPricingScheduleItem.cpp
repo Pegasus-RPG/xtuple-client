@@ -16,13 +16,6 @@
 #include <QSqlError>
 #include <QValidator>
 
-/*
- *  Constructs a itemPricingScheduleItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -41,7 +34,9 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   connect(_price, SIGNAL(effectiveChanged(const QDate&)), _stdCost, SLOT(setEffective(const QDate&)));
   connect(_price, SIGNAL(effectiveChanged(const QDate&)), _listPrice, SLOT(setEffective(const QDate&)));
   connect(_price, SIGNAL(valueChanged()), this, SLOT(sUpdateMargins()));
-  connect(_itemSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
+  connect(_itemSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged(bool)));
+  connect(_prodcatSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged(bool)));
+  connect(_freightSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged(bool)));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -90,18 +85,11 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
                     "stop editing this Pricing Schedule.\n%1");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemPricingScheduleItem::~itemPricingScheduleItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemPricingScheduleItem::languageChange()
 {
   retranslateUi(this);
@@ -645,8 +633,11 @@ void itemPricingScheduleItem::sUpdateMargins()
   }
 }
 
-void itemPricingScheduleItem::sTypeChanged()
+void itemPricingScheduleItem::sTypeChanged(bool pChecked)
 {
+  if(!pChecked)
+    return;
+  
   if(_itemSelected->isChecked())
   {
     _widgetStack->setCurrentIndex(0);

@@ -32,7 +32,7 @@ public slots:
     virtual void populate();
     virtual void sUpdateCosts( int pItemid );
     virtual void sUpdateMargins();
-    virtual void sTypeChanged();
+    virtual void sTypeChanged(bool);
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sNew();
