@@ -738,6 +738,11 @@ void purchaseOrder::sDelete()
              "WHERE (poitem_id=:poitem_id);" );
   q.bindValue(":poitem_id", _poitem->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }

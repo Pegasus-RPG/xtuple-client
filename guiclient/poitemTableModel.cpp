@@ -205,7 +205,12 @@ bool PoitemTableModel::submitAll()
     XSqlQuery commit("COMMIT;");
   }
   else
+  {
     XSqlQuery rollback("ROLLBACK;");
+    systemError(0, lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  select();
 
   return returnVal;
 }
