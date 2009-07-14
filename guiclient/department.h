@@ -26,7 +26,7 @@ public:
     ~department();
 
 public slots:
-    virtual SetResponse set( ParameterList & );
+    virtual SetResponse set( const ParameterList & );
     virtual void sSave();
     virtual void sClose();
     virtual void populate();
@@ -37,9 +37,6 @@ protected slots:
 private:
     int _mode;
     int _deptid;
-
-    void init();
-
 };
 
 #endif // DEPARTMENT_H

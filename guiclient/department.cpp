@@ -10,171 +10,166 @@
 
 #include "department.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
 
-/*
- *  Constructs a department as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 department::department(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
+  _deptid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 department::~department()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void department::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <QSqlError>
-void department::init()
+enum SetResponse department::set(const ParameterList& pParams)
 {
-    //statusBar()->hide();
-}
+  QVariant        param;
+  bool        valid;
 
-enum SetResponse department::set(ParameterList& pParams)
-{
-    QVariant	param;
-    bool	valid;
+  param = pParams.value("dept_id", &valid);
+  if (valid)
+  {
+    _deptid = param.toInt();
+    populate();
+  }
 
-    param = pParams.value("dept_id", &valid);
-    if (valid)
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
     {
-	_deptid = param.toInt();
-	populate();
+      _mode = cNew;
+      _number->setFocus();
     }
-
-    param = pParams.value("mode", &valid);
-    if (valid)
+    else if (param.toString() == "edit")
     {
-	if (param.toString() == "new")
-	{
-	    _mode = cNew;
-	    _number->setFocus();
-	}
-	else if (param.toString() == "edit")
-	{
-	    _mode = cEdit;
-	    _name->setFocus();
-	}
-	else if (param.toString() == "view")
-	{
-	    _mode = cView;
-	    _close->setText(tr("&Close"));
-	    _number->setEnabled(false);
-	    _name->setEnabled(false);
-	    _save->hide();
-	    _close->setFocus();
-	}
+      _mode = cEdit;
+      _name->setFocus();
     }
+    else if (param.toString() == "view")
+    {
+       _mode = cView;
+       _close->setText(tr("&Close"));
+       _number->setEnabled(false);
+       _name->setEnabled(false);
+       _save->hide();
+       _close->setFocus();
+    }
+  }
 
-    return NoError;
+  return NoError;
 }
 
 void department::sSave()
 {
-    QString number = _number->text().trimmed().toUpper();
+  QString number = _number->text().trimmed().toUpper();
 
-    if (number.isEmpty())
-    {
-	QMessageBox::critical(this, tr("Cannot Save Department"),
-			      tr("You must enter a Department Number"));
-	_number->setFocus();
-	return;
-    }
-    if (_name->text().trimmed().isEmpty())
-    {
-	QMessageBox::critical(this, tr("Cannot Save Department"),
-			      tr("You must enter a Department Name"));
-	_name->setFocus();
-	return;
-    }
-    
-    if (_mode == cNew)
-    {
-	q.exec("SELECT NEXTVAL('dept_dept_id_seq') AS dept_id;");
-	if (q.first())
-	    _deptid =  q.value("dept_id").toInt();
-	else
-	{
-	    systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
-				.arg(__FILE__)
-				.arg(__LINE__)
-				.arg(q.lastError().databaseText()));
-	    return;
-	}
-	q.prepare("INSERT INTO dept ( dept_id,  dept_number,  dept_name ) "
-		  "       VALUES    (:dept_id, :dept_number, :dept_name );");
-    }
+  if (number.isEmpty())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Department"),
+                          tr("You must enter a Department Number"));
+    _number->setFocus();
+    return;
+  }
+  if (_name->text().trimmed().isEmpty())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Department"),
+                          tr("You must enter a Department Name"));
+    _name->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT dept_id"
+            "  FROM dept"
+            " WHERE((dept_id != :dept_id)"
+            "   AND (dept_number=:dept_number));");
+  q.bindValue(":dept_id", _deptid);
+  q.bindValue(":dept_number", number);
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Cannpt Save Department"),
+                          tr("The Number you entered already exists. Please choose a different Number."));
+    return;
+  }
+  
+  if (_mode == cNew)
+  {
+    q.exec("SELECT NEXTVAL('dept_dept_id_seq') AS dept_id;");
+    if (q.first())
+      _deptid =  q.value("dept_id").toInt();
     else
-	if (_mode == cEdit)
-	    q.prepare("UPDATE dept "
-		      "SET dept_id=:dept_id, "
-		      "    dept_number=:dept_number, "
-		      "    dept_name=:dept_name "
-		      "WHERE (dept_id=:dept_id);");
-    q.bindValue(":dept_id",	_deptid);
-    q.bindValue(":dept_number",	number);
-    q.bindValue(":dept_name",	_name->text().trimmed());
-
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
-			    .arg(__FILE__)
-			    .arg(__LINE__)
-			    .arg(q.lastError().databaseText()));
-	return;
+      systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
+                          .arg(__FILE__)
+                          .arg(__LINE__)
+                          .arg(q.lastError().databaseText()));
+      return;
     }
+    q.prepare("INSERT INTO dept ( dept_id,  dept_number,  dept_name ) "
+              "       VALUES    (:dept_id, :dept_number, :dept_name );");
+  }
+  else if (_mode == cEdit)
+  {
+    q.prepare("UPDATE dept "
+              "SET dept_id=:dept_id, "
+              "    dept_number=:dept_number, "
+              "    dept_name=:dept_name "
+              "WHERE (dept_id=:dept_id);");
+  }
+  q.bindValue(":dept_id",        _deptid);
+  q.bindValue(":dept_number",        number);
+  q.bindValue(":dept_name",        _name->text().trimmed());
 
-    close();
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
+                        .arg(__FILE__)
+                        .arg(__LINE__)
+                        .arg(q.lastError().databaseText()));
+    return;
+  }
+
+  close();
 }
 
 void department::sClose()
 {
-    close();
+  close();
 }
-
 
 void department::populate()
 {
-    q.prepare("SELECT dept_number, dept_name "
-	      "FROM dept "
-	      "WHERE (dept_id=:dept_id);");
-    q.bindValue(":dept_id", _deptid);
-    q.exec();
-    if (q.first())
-    {
-	_number->setText(q.value("dept_number"));
-	_name->setText(q.value("dept_name"));
-    }
-    else
-	systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
-			    .arg(__FILE__)
-			    .arg(__LINE__)
-			    .arg(q.lastError().databaseText()));
+  q.prepare("SELECT dept_number, dept_name "
+            "FROM dept "
+            "WHERE (dept_id=:dept_id);");
+  q.bindValue(":dept_id", _deptid);
+  q.exec();
+  if (q.first())
+  {
+    _number->setText(q.value("dept_number"));
+    _name->setText(q.value("dept_name"));
+  }
+  else
+    systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
+                        .arg(__FILE__)
+                        .arg(__LINE__)
+                        .arg(q.lastError().databaseText()));
 }
+
