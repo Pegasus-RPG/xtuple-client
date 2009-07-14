@@ -163,8 +163,8 @@ void dspCustomerARHistory::sFillList()
   _dates->appendValue(params);
   params.append("invoice", tr("Invoice"));
   params.append("zeroinvoice", tr("Zero Invoice"));
-  params.append("creditMemo", tr("C/M"));
-  params.append("debitMemo", tr("D/M"));
+  params.append("creditMemo", tr("Credit Memo"));
+  params.append("debitMemo", tr("Debit Memo"));
   params.append("check", tr("Check"));
   params.append("certifiedCheck", tr("Certified Check"));
   params.append("masterCard", tr("Master Card"));
@@ -174,7 +174,7 @@ void dspCustomerARHistory::sFillList()
   params.append("otherCreditCard", tr("Other Credit Card"));
   params.append("cash", tr("Cash"));
   params.append("wireTransfer", tr("Wire Transfer"));
-  params.append("cashdeposit", tr("Cash Deposit"));
+  params.append("cashdeposit", tr("Customer Deposit"));
   params.append("other", tr("Other"));
   params.append("cust_id", _cust->id());
   q = mql.toQuery(params);
