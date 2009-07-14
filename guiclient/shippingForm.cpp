@@ -17,20 +17,22 @@
 shippingForm::shippingForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_name,	SIGNAL(lostFocus()),	this, SLOT(sCheck()));
-    connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
+  _shipformid = -1;
+
+  connect(_name,	SIGNAL(lostFocus()),	this, SLOT(sCheck()));
+  connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
 }
 
 shippingForm::~shippingForm()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void shippingForm::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse shippingForm::set(const ParameterList &pParams)
@@ -78,10 +80,12 @@ void shippingForm::sCheck()
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) || (_name->text().length()))
   {
-    q.prepare( "SELECT shipform_id "
-               "FROM shipform "
-               "WHERE (UPPER(shipform_name)=UPPER(:shipform_name));" );
+    q.prepare( "SELECT shipform_id"
+               "  FROM shipform"
+               " WHERE((UPPER(shipform_name)=UPPER(:shipform_name))"
+               "   AND (shipform_id != :shipform_id));" );
     q.bindValue(":shipform_name", _name->text());
+    q.bindValue(":shipform_id", _shipformid);
     q.exec();
     if (q.first())
     {
@@ -109,7 +113,9 @@ void shippingForm::sSave()
     return;
   }
 
-  else if (_report->currentIndex() == -1)
+  sCheck();
+
+  if (_report->id() == -1)
   {
     QMessageBox::warning( this, tr("Report Name is Invalid"),
                           tr("You must enter a select report for this Bill of Lading Format.") );
