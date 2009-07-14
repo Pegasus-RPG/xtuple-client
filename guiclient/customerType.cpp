@@ -20,6 +20,8 @@ customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WF
 {
   setupUi(this);
 
+  _custtypeid = -1;
+
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -96,10 +98,12 @@ void customerType::sCheck()
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT custtype_id "
-               "FROM custtype "
-               "WHERE (UPPER(custtype_code)=UPPER(:custtype_code));" );
+    q.prepare( "SELECT custtype_id"
+               "  FROM custtype "
+               " WHERE((UPPER(custtype_code)=UPPER(:custtype_code))"
+               "   AND (custtype_id != :custtype_id));" );
     q.bindValue(":custtype_code", _code->text());
+    q.bindValue(":custtype_id", _custtypeid);
     q.exec();
     if (q.first())
     {
@@ -180,6 +184,23 @@ void customerType::sSave()
     _code->setFocus();
     return;
   }
+
+  q.prepare("SELECT custtype_id"
+            "  FROM custtype"
+            " WHERE((custtype_id != :custtype_id)"
+            "   AND (custtype_code=:custtype_name))");
+  q.bindValue(":custtype_id", _custtypeid);
+  q.bindValue(":custtype_name", _code->text().trimmed());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Customer Type"),
+                          tr("You have entered a duplicate Code for this Customer Type. "
+                             "Please select a different Code before saving."));
+    _code->setFocus();
+    return;
+  }
+
 
   if (_mode == cNew)
   {
