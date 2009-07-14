@@ -192,22 +192,36 @@ void XDateEdit::parseDate()
                tmp.year());
       }
     }
-    else if(twodigitformat)
+    else if (twodigitformat)
     {
       // try 4 digits, ignoring the possibility of '-literals in the format str
       dateFormatStr.replace(QRegExp("y{2}"), "yyyy");
       if (DEBUG)
-        qDebug("%s::parseDate() rewriting format string to %s",
+        qDebug("%s::parseDate() rewriting 2-digit year format string to %s",
                qPrintable(parent() ? parent()->objectName() : objectName()),
                qPrintable(dateFormatStr));
       tmp = QDate::fromString(dateString, dateFormatStr);
+
+      if (tmp.isValid())
+      {
+        if (tmp.year() < 10)
+          tmp = tmp.addYears(today.year() - today.year() % 100);
+        if (DEBUG)
+          qDebug("%s::parseDate() after changing to 4-digit year, year = %d",
+                 qPrintable(parent() ? parent()->objectName() : objectName()),
+                 tmp.year());
+      }
+      else if (DEBUG)
+        qDebug("%s::parseDate() after changing to 4-digit year, date still isn't valid",
+               qPrintable(parent() ? parent()->objectName() : objectName()));
+
     }
     else
     {
       // try 2 digits, ignoring the possibility of '-literals in the format str
       dateFormatStr.replace(QRegExp("y{4}"), "yy");
       if (DEBUG)
-        qDebug("%s::parseDate() rewriting format string to %s",
+        qDebug("%s::parseDate() rewriting 4-digit year format string to %s",
                qPrintable(parent() ? parent()->objectName() : objectName()),
                qPrintable(dateFormatStr));
       tmp = QDate::fromString(dateString, dateFormatStr);
@@ -244,6 +258,11 @@ void XDateEdit::parseDate()
         pos += rx2.matchedLength();
       }
 
+      if (DEBUG)
+        qDebug("%s::parseDate() aligning numberList %s with formatList %s",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               qPrintable(numberList.join(":")), qPrintable(formatList.join(":")));
+
       // if we don't have exactly 3 and the numberList is not 2 or 3 then don't bother
       if(formatList.size() == 3 && (numberList.size() == 2 || numberList.size() == 3))
       {
@@ -271,7 +290,11 @@ void XDateEdit::parseDate()
             pos++;
           }
         }
-        
+
+        // if single digit year, move it to the current century
+        if (year < 10)
+          year += today.year() - today.year() % 100;
+
         if(day > 0 && month > 0 && year > 0)
           tmp = QDate(year, month, day);
       }
