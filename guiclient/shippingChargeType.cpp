@@ -10,52 +10,33 @@
 
 #include "shippingChargeType.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a shippingChargeType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 shippingChargeType::shippingChargeType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _shipchrgid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 shippingChargeType::~shippingChargeType()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void shippingChargeType::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void shippingChargeType::init()
-{
-}
-
-enum SetResponse shippingChargeType::set(ParameterList &pParams)
+enum SetResponse shippingChargeType::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -128,7 +109,23 @@ void shippingChargeType::sSave()
                             tr("You must enter a valid Name.") );
       return;
   }
-  
+
+  q.prepare( "SELECT shipchrg_id "
+             "FROM shipchrg "
+             "WHERE ( (shipchrg_id<>:shipchrg_id)"
+             " AND (UPPER(shipchrg_name)=UPPER(:shipchrg_name)) );" );
+  q.bindValue(":shipchrg_id", _shipchrgid);
+  q.bindValue(":shipchrg_name", _name->text());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Charge Type"),
+                           tr( "The new Shipping Charge Type information cannot be saved as the new Shipping Charge Type that you\n"
+                               "entered conflicts with an existing Shipping Charge Type.  You must uniquely name this Shipping Charge Type\n"
+                               "before you may save it." ) );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('shipchrg_shipchrg_id_seq') AS shipchrg_id;");
@@ -142,22 +139,6 @@ void shippingChargeType::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT shipchrg_id "
-               "FROM shipchrg "
-               "WHERE ( (shipchrg_id<>:shipchrg_id)"
-               " AND (UPPER(shipchrg_name)=UPPER(:shipchrg_name)) );" );
-    q.bindValue(":shipchrg_id", _shipchrgid);
-    q.bindValue(":shipchrg_name", _name->text());
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Shipping Charge Type"),
-                             tr( "The new Shipping Charge Type information cannot be saved as the new Shipping Charge Type that you\n"
-                                 "entered conflicts with an existing Shipping Charge Type.  You must uniquely name this Shipping Charge Type\n"
-                                 "before you may save it." ) );
-      return;
-    }
-
     q.prepare( "UPDATE shipchrg "
                "SET shipchrg_name=:shipchrg_name, shipchrg_descrip=:shipchrg_descrip,"
                "    shipchrg_custfreight=:shipchrg_custfreight "

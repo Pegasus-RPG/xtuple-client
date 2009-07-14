@@ -10,52 +10,33 @@
 
 #include "shippingZone.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a shippingZone as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 shippingZone::shippingZone(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _shipzoneid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 shippingZone::~shippingZone()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void shippingZone::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void shippingZone::init()
-{
-}
-
-enum SetResponse shippingZone::set(ParameterList &pParams)
+enum SetResponse shippingZone::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -100,6 +81,22 @@ void shippingZone::sSave()
   {
     QMessageBox::information( this, tr("No Name Entered"),
                               tr("You must enter a valid name before saving this Shipping Zone.") );
+    _name->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT shipzone_id"
+            "  FROM shipzone"
+            " WHERE((shipzone_id != :shipzone_id)"
+            "   AND (shipzone_name=:shipzone_name))");
+  q.bindValue(":shipzone_id", _shipzoneid);
+  q.bindValue(":shipzone_name", _name->text().trimmed());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Shipping Zone"),
+                          tr("You have entered a duplicate Name for this Shipping Zone. "
+                             "Please select a different name before saving."));
     _name->setFocus();
     return;
   }

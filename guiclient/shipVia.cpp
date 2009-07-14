@@ -10,52 +10,33 @@
 
 #include "shipVia.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a shipVia as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 shipVia::shipVia(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _shipviaid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 shipVia::~shipVia()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void shipVia::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void shipVia::init()
-{
-}
-
-enum SetResponse shipVia::set(ParameterList &pParams)
+enum SetResponse shipVia::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -128,6 +109,22 @@ void shipVia::sSave()
       return;
   }
   
+  q.prepare( "SELECT shipvia_id"
+             "  FROM shipvia"
+             " WHERE((shipvia_id<>:shipvia_id)"
+             "   AND (UPPER(shipvia_code)=UPPER(:shipvia_code)) );" );
+  q.bindValue(":shipvia_id", _shipviaid);
+  q.bindValue(":shipvia_code", _code->text());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Ship Via"),
+                           tr( "The new Ship Via information cannot be saved as the new Ship Via Code that you\n"
+                               "entered conflicts with an existing Ship Via.  You must uniquely name this Ship Via\n"
+                               "before you may save it." ) );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('shipvia_shipvia_id_seq') AS _shipvia_id;");
@@ -141,22 +138,6 @@ void shipVia::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT shipvia_id "
-               "FROM shipvia "
-               "WHERE ( (shipvia_id<>:shipvia_id)"
-               " AND (UPPER(shipvia_code)=UPPER(:shipvia_code)) );" );
-    q.bindValue(":shipvia_id", _shipviaid);
-    q.bindValue(":shipvia_code", _code->text());
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Ship Via"),
-                             tr( "The new Ship Via information cannot be saved as the new Ship Via Code that you\n"
-                                 "entered conflicts with an existing Ship Via.  You must uniquely name this Ship Via\n"
-                                 "before you may save it." ) );
-      return;
-    }
-
     q.prepare( "UPDATE shipvia "
                "SET shipvia_code=:shipvia_code, shipvia_descrip=:shipvia_descrip "
                "WHERE (shipvia_id=:shipvia_id);" );
