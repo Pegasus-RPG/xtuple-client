@@ -135,12 +135,12 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT formatMoney( noNeg(invchead_freight + invchead_misc_amount +
-                          invchead_tax +
+                          head_tax + item_tax +
                           COALESCE(SUM(ROUND(((invcitem_billed * invcitem_qty_invuomratio) *
                                               (invcitem_price / COALESCE(invcitem_price_invuomratio,1))),2)), 0) -
                           MAX(total_allocated)) ) AS f_totaldue,
       formatMoney(invchead_misc_amount) AS f_misc,
-      formatMoney(invchead_tax) AS f_tax,
+      formatMoney(head_tax + item_tax) AS f_tax,
       formatMoney(invchead_freight) AS f_freight,
       formatMoney(invchead_payment +
                   (SELECT COALESCE(SUM(arapply_applied), 0) AS applied
@@ -154,6 +154,12 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
 FROM invchead
      LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id)
      LEFT OUTER JOIN item ON (invcitem_item_id=item_id),
+    (SELECT COALESCE(SUM(taxhist_tax), 0) AS head_tax
+     FROM invcheadtax
+     WHERE (taxhist_parent_id =  &lt;? value("invchead_id") ?>)) AS headtaxdata,
+    (SELECT COALESCE(SUM(taxhist_tax), 0) AS item_tax
+     FROM invcitem JOIN invcitemtax ON (taxhist_parent_id=invcitem_id)
+     WHERE (invcitem_invchead_id =  &lt;? value("invchead_id") ?>)) AS itemtaxdata,
     (SELECT COALESCE(SUM(CASE WHEN((aropen_amount - aropen_paid) >=
                        currToCurr(aropenco_curr_id, aropen_curr_id,
                           aropenco_amount, aropen_docdate))
@@ -182,7 +188,7 @@ FROM invchead
       AND   (invchead_id=&lt;? value("invchead_id") ?>) )
     ) AS totalalloc
 WHERE (invchead_id=&lt;? value("invchead_id") ?>)
-GROUP BY invchead_freight, invchead_misc_amount, invchead_tax, invchead_payment,
+GROUP BY invchead_freight, invchead_misc_amount, head_tax, item_tax, invchead_payment,
          invchead_notes, invchead_misc_descrip
 ;</sql>
  </querysource>
