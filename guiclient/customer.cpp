@@ -543,76 +543,96 @@ int customer::saveContact(ContactCluster* pContact)
   return saveResult;
 }
 
-bool customer::sSave(bool /*partial*/)
+bool customer::sSave(bool partial)
 {
-  if (true)
+  if (_number->text().trimmed().length() == 0)
   {
-    if (_number->text().trimmed().length() == 0)
-    {
-      QMessageBox::critical( this, tr("Enter Customer Number"),
+    QMessageBox::critical( this, tr("Enter Customer Number"),
                              tr("You must enter a number for this Customer before continuing") );
-      _number->setFocus();
-      return false;
-    }
+    _number->setFocus();
+    return false;
+  }
   
-    if (_name->text().trimmed().length() == 0)
-    {
-      QMessageBox::critical( this, tr("Enter Customer Name"),
+  if (_name->text().trimmed().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Enter Customer Name"),
                              tr("You must enter a name for this Customer before continuing") );
+    _number->setFocus();
+    return false;
+  }
+
+  if (_custtype->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Select Customer Type"),
+                             tr("You must select a Customer Type code for this Customer before continuing.") );
+    _terms->setFocus();
+    return false;
+  }
+
+  if (_terms->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Select Terms"),
+                           tr("You must select a Terms code for this Customer before continuing.") );
+    _terms->setFocus();
+    return false;
+  }
+
+  if (_salesrep->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Select Sales Rep."),
+                           tr("You must select a Sales Rep. for this Customer before continuing.") );
+    _salesrep->setFocus();
+    return false;
+  }
+
+  if (_shipform->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Select Default Shipping Form"),
+                           tr("You must select a default Shipping Form for this Customer before continuing.") );
+    _shipform->setFocus();
+    return false;
+  }
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  _billCntct->setAccount(_crmacctid);
+  _corrCntct->setAccount(_crmacctid);
+  if (_billCntct->sChanged())
+  {
+    if (saveContact(_billCntct) < 0)
+    {
+      _billCntct->setFocus();
+      return false;
+    }
+  }
+
+  if (_corrCntct->sChanged())
+  {
+    if (saveContact(_corrCntct) < 0)
+    {
+      _corrCntct->setFocus();
+      return false;
+    }
+  }
+  
+  if (_number->text().trimmed() != _cachedNumber)
+  {
+    q.prepare( "SELECT cust_name "
+               "FROM custinfo "
+               "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
+               "  AND (cust_id<>:cust_id);" );
+    q.bindValue(":cust_name", _number->text().trimmed());
+    q.bindValue(":cust_id", _custid);
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical( this, tr("Customer Number Used"),
+                             tr( "The newly entered Customer Number cannot be used as it is currently\n"
+                                 "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
+                                .arg(q.value("cust_name").toString()) );
       _number->setFocus();
       return false;
-    }
-
-    if (_custtype->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Select Customer Type"),
-                             tr("You must select a Customer Type code for this Customer before continuing.") );
-      _terms->setFocus();
-      return false;
-    }
-
-    if (_terms->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Select Terms"),
-                             tr("You must select a Terms code for this Customer before continuing.") );
-      _terms->setFocus();
-      return false;
-    }
-
-    if (_salesrep->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Select Sales Rep."),
-                             tr("You must select a Sales Rep. for this Customer before continuing.") );
-      _salesrep->setFocus();
-      return false;
-    }
-
-    if (_shipform->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Select Default Shipping Form"),
-                             tr("You must select a default Shipping Form for this Customer before continuing.") );
-      _shipform->setFocus();
-      return false;
-    }
-
-    if (_number->text().trimmed() != _cachedNumber)
-    {
-      q.prepare( "SELECT cust_name "
-                 "FROM custinfo "
-                 "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
-                 "  AND (cust_id<>:cust_id);" );
-      q.bindValue(":cust_name", _number->text().trimmed());
-      q.bindValue(":cust_id", _custid);
-      q.exec();
-      if (q.first())
-      {
-        QMessageBox::critical( this, tr("Customer Number Used"),
-                               tr( "The newly entered Customer Number cannot be used as it is currently\n"
-                                   "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
-                                  .arg(q.value("cust_name").toString()) );
-        _number->setFocus();
-        return false;
-      }
     }
   }
  
@@ -744,47 +764,6 @@ bool customer::sSave(bool /*partial*/)
     emit newId(_custid); // custcluster listeners couldn't handle set()'s emit
   }
   
-  setValid(true);
-  populate();
-  omfgThis->sCustomersUpdated(_custid, TRUE);
-  _autoSaved = true;
-  
-  return true;
-}
-   
-void customer::sSave()
-{                          
-  if (! q.exec("BEGIN"))
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  _billCntct->setAccount(_crmacctid);
-  _corrCntct->setAccount(_crmacctid);
-  if (_billCntct->sChanged())
-  {
-    if (saveContact(_billCntct) < 0)
-    {
-      rollback.exec();
-      _billCntct->setFocus();
-      return;
-    }
-  }
-
-  if (_corrCntct->sChanged())
-  {
-    if (saveContact(_corrCntct) < 0)
-    {
-      rollback.exec();
-      _corrCntct->setFocus();
-      return;
-    }
-  }
-  
   //Save characteristics
   if (_widgetStack->currentIndex() == 1)
   {
@@ -800,6 +779,22 @@ void customer::sSave()
       q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
       q.exec();
     }
+  }
+  
+  setValid(true);
+  populate();
+  omfgThis->sCustomersUpdated(_custid, TRUE);
+  _autoSaved = true;
+  
+  return true;
+}
+   
+void customer::sSave()
+{                          
+  if (! q.exec("BEGIN"))
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
   
   if (!sSave(false))
