@@ -398,9 +398,6 @@ void distributeInventory::sFillList()
       _default->setEnabled(FALSE);
       _defaultAndPost->setEnabled(FALSE);
     }
-    
-    if (q.value("qtytodistribute").toDouble() < 0)
-      _qtyOnly->hide();
 
     QString sql( "SELECT id, type, locationname, defaultlocation,"
 		 "       location_netable, lotserial, f_expiration, expired,"
@@ -495,8 +492,7 @@ void distributeInventory::sFillList()
     if (_taggedOnly->isChecked())
       params.append("showOnlyTagged");
       
-    if ( (_qtyOnly->isChecked())  ||
-        (q.value("qtytodistribute").toDouble() < 0) )
+    if (_qtyOnly->isChecked())
       params.append("showQtyOnly");
 
     params.append("locationType",   cLocation);
