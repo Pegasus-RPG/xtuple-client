@@ -37,7 +37,10 @@ class PoitemTableView : public QTableView
 
   public:
     PoitemTableView(QWidget* = 0);
-    virtual void		setModel(QAbstractItemModel* model);
+    virtual void setModel(QAbstractItemModel* model);
+
+  public slots:
+    virtual void sHeaderDataChanged(Qt::Orientation, int, int);
 
   protected slots:
     virtual void currentChanged(const QModelIndex &, const QModelIndex &) ;

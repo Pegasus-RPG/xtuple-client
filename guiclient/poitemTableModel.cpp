@@ -330,9 +330,17 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
     record.setValue(index, _poheadid);
 
   XSqlQuery ln;
-  ln.prepare("SELECT COUNT(*) + 1 AS newln "
+  /*
+  ln.prepare("SELECT MAX(poitem_linenumber) + 1 AS newln "
 	     "FROM poitem "
 	     "WHERE (poitem_pohead_id=:pohead_id);");
+             */
+  // get the smallest available line number
+  ln.prepare("SELECT MIN(sequence_value) AS newln "
+             "FROM sequence "
+             "WHERE sequence_value NOT IN (SELECT poitem_linenumber "
+             "                             FROM poitem"
+             "                             WHERE (poitem_pohead_id=:pohead_id));");
   ln.bindValue(":pohead_id", _poheadid);
   if (record.indexOf("poitem_linenumber") < 0)
   {

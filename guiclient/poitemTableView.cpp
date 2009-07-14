@@ -9,7 +9,6 @@
  */
 
 /*
-TODO:	make deleted line items more obvious
 TODO:	return to the editor if validation fails
 
 TODO:	refactor:
@@ -111,8 +110,21 @@ void PoitemTableView::setModel(QAbstractItemModel* model)
   for (int i = dest; i < header->count(); i++)
     header->hideSection(header->logicalIndex(i));
 
+  connect(model, SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
+          this,  SLOT(sHeaderDataChanged(Qt::Orientation, int, int)));
+
   //header->setStretchLastSection(true);
   if (DEBUG) qDebug("PoitemTableView::setModel returning");
+}
+
+void PoitemTableView::sHeaderDataChanged(Qt::Orientation porientation, int first, int last)
+{
+  if (Qt::Vertical == porientation)
+  {
+    for (int i = first; i <= last; i++)
+      if (model()->headerData(i, Qt::Vertical, Qt::DisplayRole) == "!")
+        hideRow(i);
+  }
 }
 
 void PoitemTableView::currentChanged(const QModelIndex &current, const QModelIndex &previous )
@@ -438,6 +450,9 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 		       "       itemsrc_minordqty,"
 		       "       itemsrc_multordqty,"
 		       "       itemsrc_invvendoruomratio,"
+                       "       itemsrc_manuf_name,"
+                       "       itemsrc_manuf_item_number,"
+                       "       itemsrc_manuf_item_descrip,"
 		       "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate "
 		       "FROM pohead, itemsrc "
 		       "WHERE ( (itemsrc_vend_id=pohead_vend_id)"
@@ -464,6 +479,9 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
                              "       itemsrc_minordqty,"
                              "       itemsrc_multordqty,"
                              "       itemsrc_invvendoruomratio,"
+                             "       itemsrc_manuf_name,"
+                             "       itemsrc_manuf_item_number,"
+                             "       itemsrc_manuf_item_descrip,"
                              "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate "
                              "FROM pohead, itemsrc "
                              "WHERE (itemsrc_id=:itemsrc_id);" );
