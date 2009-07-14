@@ -924,6 +924,8 @@ void initErrorLookupHash()
   { "postCashReceipt", -7, TR("The selected Cash Receipt cannot be posted, "
 			      "probably because the Customer's Prepaid Account "
 			      "was not found."),			0, "" },
+  { "postCashReceipt", -8, TR("Cannot post this Cash Receipt because the "
+                            "credit card records could not be found."),  0, "" },
 
   { "postCCcredit",  -1, TR("Cannot post this Credit Card refund because the "
                             "default Bank Account for Credit Card transactions "
