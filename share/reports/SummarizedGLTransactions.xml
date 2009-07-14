@@ -65,6 +65,11 @@
          &lt;? if exists("source") ?>
             AND (gltrans_source=&lt;? value("source") ?>)
          &lt;? endif ?>
+         &lt;? if exists("unpostedTransactions") ?>
+            AND (NOT gltrans_posted)
+         &lt;? elseif exists("postedTransactions") ?>
+            AND (gltrans_posted)
+         &lt;? endif ?>
          )
          GROUP BY accnt_id, accnt_number, accnt_profit, accnt_sub, accnt_descrip
        ) AS data LEFT OUTER JOIN
