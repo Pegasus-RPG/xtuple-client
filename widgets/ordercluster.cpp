@@ -700,6 +700,9 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   VirtualList(pParent, pFlags)
 {
   setAttribute(Qt::WA_DeleteOnClose, false);
+
+  resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
+
   QTreeWidgetItem *headerItem = _listTab->headerItem();
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
