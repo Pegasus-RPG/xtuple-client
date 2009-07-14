@@ -18,6 +18,7 @@ salesCategory::salesCategory(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
+  _salescatid = -1;
 
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -63,6 +64,7 @@ enum SetResponse salesCategory::set(const ParameterList &pParams)
     else if (param.toString() == "copy")
     {
       _mode = cCopy;
+      _salescatid = -1;
       _category->clear();
       _category->setFocus();
     }
