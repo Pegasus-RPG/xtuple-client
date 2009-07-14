@@ -23,24 +23,27 @@
        END AS prodcatcode,
        formatGLAccount(salesaccnt_sales_accnt_id) AS salesaccnt,
        formatGLAccount(salesaccnt_credit_accnt_id) AS creditaccnt,
-       formatGLAccount(salesaccnt_cos_accnt_id) AS costaccnt
+       formatGLAccount(salesaccnt_cos_accnt_id) AS costaccnt,
+       formatGLAccount(salesaccnt_returns_accnt_id) AS returnsaccnt,
+       formatGLAccount(salesaccnt_cor_accnt_id) AS coraccnt,
+       formatGLAccount(salesaccnt_cow_accnt_id) AS cowaccnt
   FROM salesaccnt
 ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
  </querysource>
  <rpthead>
   <height>87</height>
   <line>
-   <xstart>5</xstart>
-   <ystart>80</ystart>
-   <xend>745</xend>
-   <yend>80</yend>
+   <xstart>0</xstart>
+   <ystart>81</ystart>
+   <xend>740</xend>
+   <yend>81</yend>
    <weight>2</weight>
   </line>
   <label>
    <rect>
-    <x>505</x>
-    <y>65</y>
-    <width>120</width>
+    <x>315</x>
+    <y>66</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -50,13 +53,13 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Credit Account:</string>
+   <string>Credit Accnt:</string>
   </label>
   <label>
    <rect>
-    <x>380</x>
-    <y>65</y>
-    <width>120</width>
+    <x>230</x>
+    <y>66</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -66,7 +69,7 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Sales Account:</string>
+   <string>Sales Accnt:</string>
   </label>
   <label>
    <rect>
@@ -86,9 +89,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
   </label>
   <label>
    <rect>
-    <x>130</x>
-    <y>65</y>
-    <width>120</width>
+    <x>65</x>
+    <y>66</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -102,9 +105,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
   </label>
   <label>
    <rect>
-    <x>630</x>
-    <y>65</y>
-    <width>120</width>
+    <x>400</x>
+    <y>66</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -114,13 +117,13 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Cost Account:</string>
+   <string>COS Accnt:</string>
   </label>
   <label>
    <rect>
-    <x>255</x>
-    <y>65</y>
-    <width>120</width>
+    <x>155</x>
+    <y>66</y>
+    <width>65</width>
     <height>15</height>
    </rect>
    <font>
@@ -130,13 +133,13 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Product Category:</string>
+   <string>Product Cat:</string>
   </label>
   <label>
    <rect>
     <x>5</x>
     <y>65</y>
-    <width>120</width>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -147,6 +150,54 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    <left/>
    <vcenter/>
    <string>Site:</string>
+  </label>
+  <label>
+   <rect>
+    <x>485</x>
+    <y>66</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Returns Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>570</x>
+    <y>66</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>COR Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>655</x>
+    <y>66</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>COW Accnt:</string>
   </label>
  </rpthead>
  <pghead>
@@ -155,86 +206,6 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
  </pghead>
  <pghead>
   <height>27</height>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>5</y>
-    <width>120</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
-  <label>
-   <rect>
-    <x>630</x>
-    <y>5</y>
-    <width>120</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Cost Account:</string>
-  </label>
-  <label>
-   <rect>
-    <x>255</x>
-    <y>5</y>
-    <width>120</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Product Category:</string>
-  </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>5</y>
-    <width>120</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Credit Account:</string>
-  </label>
-  <label>
-   <rect>
-    <x>130</x>
-    <y>5</y>
-    <width>120</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer Type:</string>
-  </label>
   <line>
    <xstart>5</xstart>
    <ystart>20</ystart>
@@ -244,9 +215,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
   </line>
   <label>
    <rect>
-    <x>380</x>
-    <y>5</y>
-    <width>120</width>
+    <x>5</x>
+    <y>3</y>
+    <width>45</width>
     <height>15</height>
    </rect>
    <font>
@@ -256,7 +227,135 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Sales Account:</string>
+   <string>Site:</string>
+  </label>
+  <label>
+   <rect>
+    <x>65</x>
+    <y>3</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer Type:</string>
+  </label>
+  <label>
+   <rect>
+    <x>150</x>
+    <y>3</y>
+    <width>65</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Product Cat:</string>
+  </label>
+  <label>
+   <rect>
+    <x>230</x>
+    <y>3</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sales Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>315</x>
+    <y>3</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Credit Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>3</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>COS Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>485</x>
+    <y>3</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Returns Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>570</x>
+    <y>3</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>COR Accnt:</string>
+  </label>
+  <label>
+   <rect>
+    <x>655</x>
+    <y>3</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>COW Accnt:</string>
   </label>
  </pghead>
  <section>
@@ -268,9 +367,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    <height>17</height>
    <field>
     <rect>
-     <x>380</x>
-     <y>0</y>
-     <width>120</width>
+     <x>230</x>
+     <y>-1</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -289,7 +388,7 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
     <rect>
      <x>5</x>
      <y>0</y>
-     <width>120</width>
+     <width>50</width>
      <height>15</height>
     </rect>
     <font>
@@ -306,9 +405,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </field>
    <field>
     <rect>
-     <x>130</x>
-     <y>0</y>
-     <width>120</width>
+     <x>65</x>
+     <y>-1</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -325,9 +424,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </field>
    <field>
     <rect>
-     <x>505</x>
-     <y>0</y>
-     <width>120</width>
+     <x>315</x>
+     <y>-1</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -344,9 +443,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </field>
    <field>
     <rect>
-     <x>255</x>
-     <y>0</y>
-     <width>120</width>
+     <x>150</x>
+     <y>-1</y>
+     <width>70</width>
      <height>15</height>
     </rect>
     <font>
@@ -363,9 +462,9 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </field>
    <field>
     <rect>
-     <x>630</x>
-     <y>0</y>
-     <width>120</width>
+     <x>400</x>
+     <y>-1</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -378,6 +477,63 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
     <data>
      <query>detail</query>
      <column>costaccnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>485</x>
+     <y>-1</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>returnsaccnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>570</x>
+     <y>-1</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>coraccnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>655</x>
+     <y>-1</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cowaccnt</column>
     </data>
    </field>
   </detail>
@@ -440,8 +596,8 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
   </field>
   <label>
    <rect>
-    <x>615</x>
-    <y>0</y>
+    <x>610</x>
+    <y>2</y>
     <width>85</width>
     <height>15</height>
    </rect>
