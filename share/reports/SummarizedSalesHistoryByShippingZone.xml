@@ -41,16 +41,11 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT shipzone_name, cust_number, cust_name,
-       item_number, item_descrip1, item_descrip2,
+       item_number, itemdescription,
        formatQty(SUM(cohist_qtyshipped)) AS shipped,
-       formatMoney(SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2))) AS extprice 
-FROM cohist, cust, shipto, itemsite, item, shipzone 
-WHERE ((cohist_cust_id=cust_id)
- AND (cohist_shipto_id=shipto_id)
- AND (cohist_itemsite_id=itemsite_id)
- AND (itemsite_item_id=item_id)
- AND (shipto_shipzone_id=shipzone_id)
- AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
+       formatMoney(SUM(baseextprice)) AS extprice 
+FROM saleshistory 
+WHERE ((cohist_invcdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
 &lt;? if exists("warehous_id") ?>
  AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
@@ -63,7 +58,7 @@ WHERE ((cohist_cust_id=cust_id)
  AND (shipzone_id=&lt;? value("shipzone_id") ?>)
 &lt;? endif ?>
  )
-GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_number, item_descrip1, item_descrip2;</sql>
+GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_number, itemdescription;</sql>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -532,9 +527,9 @@ GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_numbe
    </field>
    <line>
     <xstart>5</xstart>
-    <ystart>45</ystart>
+    <ystart>32</ystart>
     <xend>745</xend>
-    <yend>45</yend>
+    <yend>32</yend>
     <weight>0</weight>
    </line>
    <field>
@@ -615,25 +610,6 @@ GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_numbe
    </field>
    <field>
     <rect>
-     <x>407</x>
-     <y>30</y>
-     <width>295</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>5</x>
      <y>15</y>
      <width>50</width>
@@ -655,7 +631,7 @@ GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_numbe
     <rect>
      <x>407</x>
      <y>15</y>
-     <width>295</width>
+     <width>333</width>
      <height>15</height>
     </rect>
     <font>
@@ -667,7 +643,7 @@ GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_numbe
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>itemdescription</column>
     </data>
    </field>
   </detail>
