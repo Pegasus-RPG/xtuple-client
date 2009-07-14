@@ -110,6 +110,13 @@ void scrapWoMaterialFromWIP::sScrap()
     _qty->setFocus();
     return;
   }
+  else if (_scrapComponent->isChecked() && _qty->toDouble() > _womatl->qtyIssued())
+  {
+    QMessageBox::critical( this, tr("Cannot Scrap from WIP"),
+                           tr("The component quantity to scrap must be less than or equal to quantity issued." ) );
+    _qty->setFocus();
+    return;
+  }
   else if (_scrapTopLevel->isChecked() && _topLevelQty->toDouble() <= 0)
   {
     QMessageBox::critical( this, tr("Cannot Scrap from WIP"),
