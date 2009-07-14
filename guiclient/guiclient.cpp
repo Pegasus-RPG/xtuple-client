@@ -648,7 +648,7 @@ void GUIClient::initMenuBar()
   if ( (_metrics->value("Application") == "Manufacturing")
     || (_metrics->value("Application") == "Standard") )
   {
-    findChild<QMenu*>("menu.sched")->menuAction()->setVisible(_metrics->boolean("MultiWhs") && _preferences->boolean("ShowMSMenu"));
+    findChild<QMenu*>("menu.sched")->menuAction()->setVisible(_preferences->boolean("ShowMSMenu"));
   }
   findChild<QMenu*>("menu.purch")->menuAction()->setVisible(_preferences->boolean("ShowPOMenu"));
   findChild<QMenu*>("menu.manu")->menuAction()->setVisible(_preferences->boolean("ShowWOMenu"));
