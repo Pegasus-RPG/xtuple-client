@@ -166,6 +166,22 @@ void miscVoucher::sSave()
     return;
   }
 
+  if (_amountToDistribute->isZero())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Voucher"),
+                           tr("You must enter an Amount to Distribute before you may save this Voucher.") );
+    _amountToDistribute->setFocus();
+    return;
+  }
+
+  if (!_balance->isZero())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Voucher"),
+                           tr("You must fully distribute the Amount before you may save this Voucher.") );
+    _amountToDistribute->setFocus();
+    return;
+  }
+
   if (_invoiceNum->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
