@@ -118,6 +118,29 @@ void Documents::setReadOnly(bool pReadOnly)
   _newFile->setEnabled(!pReadOnly);
   _editFile->setEnabled(!pReadOnly);
   _deleteFile->setEnabled(!pReadOnly);
+
+  disconnect(_files, SIGNAL(doubleClicked(QModelIndex)), _viewFile, SLOT(animateClick()));
+  disconnect(_images, SIGNAL(doubleClicked(QModelIndex)), _viewImage, SLOT(animateClick()));
+  disconnect(_files, SIGNAL(doubleClicked(QModelIndex)), _editFile, SLOT(animateClick()));
+  disconnect(_files, SIGNAL(valid(bool)), _editFile, SLOT(setEnabled(bool)));
+  disconnect(_files, SIGNAL(valid(bool)), _deleteFile, SLOT(setEnabled(bool)));
+  disconnect(_images, SIGNAL(doubleClicked(QModelIndex)), _editImage, SLOT(animateClick()));
+  disconnect(_images, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
+  disconnect(_images, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
+  if(pReadOnly)
+  {
+    connect(_files, SIGNAL(doubleClicked(QModelIndex)), _viewFile, SLOT(animateClick()));
+    connect(_images, SIGNAL(doubleClicked(QModelIndex)), _viewImage, SLOT(animateClick()));
+  }
+  else
+  {
+    connect(_files, SIGNAL(doubleClicked(QModelIndex)), _editFile, SLOT(animateClick()));
+    connect(_files, SIGNAL(valid(bool)), _editFile, SLOT(setEnabled(bool)));
+    connect(_files, SIGNAL(valid(bool)), _deleteFile, SLOT(setEnabled(bool)));
+    connect(_images, SIGNAL(doubleClicked(QModelIndex)), _editImage, SLOT(animateClick()));
+    connect(_images, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
+    connect(_images, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
+  }
 }
 
 void Documents::sNewFile()
