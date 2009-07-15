@@ -751,7 +751,7 @@ void menuSystem::sCommunityEditAccount()
 
 void menuSystem::sCommunityForums()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/phpBB3");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/forum");
 }
 
 void menuSystem::sCommunityBlogs()
