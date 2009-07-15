@@ -10,52 +10,33 @@
 
 #include "siteType.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a siteType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 siteType::siteType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _sitetypeid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 siteType::~siteType()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void siteType::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void siteType::init()
-{
-}
-
-enum SetResponse siteType::set(ParameterList &pParams)
+enum SetResponse siteType::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -103,10 +84,12 @@ void siteType::sCheck()
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().trimmed().length()))
   {
-    q.prepare( "SELECT sitetype_id "
-               "FROM sitetype "
-               "WHERE (UPPER(sitetype_name)=UPPER(:sitetype_name));" );
+    q.prepare( "SELECT sitetype_id"
+               "  FROM sitetype"
+               " WHERE((UPPER(sitetype_name)=UPPER(:sitetype_name))"
+               "   AND (sitetype_id != :sitetype_id));" );
     q.bindValue(":sitetype_name", _code->text());
+    q.bindValue(":sitetype_id", _sitetypeid);
     q.exec();
     if (q.first())
     {
@@ -130,6 +113,24 @@ void siteType::sSave()
     return;
   }
   
+  q.prepare( "SELECT sitetype_id"
+             "  FROM sitetype"
+             " WHERE((UPPER(sitetype_name)=UPPER(:sitetype_name))"
+             "   AND (sitetype_id != :sitetype_id));" );
+  q.bindValue(":sitetype_name", _code->text());
+  q.bindValue(":sitetype_id", _sitetypeid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Site Type"),
+                           tr( "The new Site Type information cannot be saved as the new Site Type Name that you\n"
+                               "entered conflicts with an existing Site Type.  You must uniquely name this Site Type\n"
+                               "before you may save it." ) );
+    _code->setFocus();
+    return;
+  }
+
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('sitetype_sitetype_id_seq') AS _sitetype_id;");
@@ -143,22 +144,6 @@ void siteType::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT sitetype_id "
-               "FROM sitetype "
-               "WHERE ( (sitetype_id<>:sitetype_id)"
-               " AND (UPPER(sitetype_name)=UPPER(:sitetype_name)) );" );
-    q.bindValue(":sitetype_id", _sitetypeid);
-    q.bindValue(":sitetype_name", _code->text());
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Site Type"),
-                             tr( "The new Site Type information cannot be saved as the new Site Type Name that you\n"
-                                 "entered conflicts with an existing Site Type.  You must uniquely name this Site Type\n"
-                                 "before you may save it." ) );
-      return;
-    }
-
     q.prepare( "UPDATE sitetype "
                "SET sitetype_name=:sitetype_name, sitetype_descrip=:sitetype_descrip "
                "WHERE (sitetype_id=:sitetype_id);" );
