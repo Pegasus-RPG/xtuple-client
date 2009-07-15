@@ -458,7 +458,8 @@ void purchaseOrder::createHeader()
 	     "  :pohead_orderdate, :pohead_curr_id, false );" );
   q.bindValue(":pohead_id", _poheadid);
   q.bindValue(":pohead_agent_username", _agent->currentText());
-  q.bindValue(":pohead_number", (!_orderNumber->text().isEmpty() ?_orderNumber->text() : "0"));
+  if (!_orderNumber->text().isEmpty())
+    q.bindValue(":pohead_number", _orderNumber->text());
   if (_vendor->isValid())
     q.bindValue(":pohead_vend_id", _vendor->id());
   if (_taxZone->isValid())
