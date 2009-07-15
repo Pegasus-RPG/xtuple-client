@@ -19,6 +19,8 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
 {
   setupUi(this);
 
+  _costcatid = -1;
+
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
@@ -104,10 +106,12 @@ void costCategory::sCheck()
 {
   if ((_mode == cNew) && (_category->text().length() != 0))
   {
-    q.prepare( "SELECT costcat_id "
-               "FROM costcat "
-               "WHERE (UPPER(costcat_code)=UPPER(:costcat_code));" );
+    q.prepare( "SELECT costcat_id"
+               "  FROM costcat"
+               " WHERE((UPPER(costcat_code)=UPPER(:costcat_code))"
+               "   AND (costcat_id != :costcat_id));" );
     q.bindValue(":costcat_code", _category->text().trimmed());
+    q.bindValue(":costcat_id", _costcatid);
     q.exec();
     if (q.first())
     {
@@ -199,6 +203,22 @@ void costCategory::sSave()
     QMessageBox::critical(this, tr("Cannot Save CRM Account"),
 			  error[errIndex].msg);
     error[errIndex].widget->setFocus();
+    return;
+  }
+
+  q.prepare( "SELECT costcat_id"
+             "  FROM costcat"
+             " WHERE((UPPER(costcat_code)=UPPER(:costcat_code))"
+             "   AND (costcat_id != :costcat_id));" );
+  q.bindValue(":costcat_code", _category->text().trimmed());
+  q.bindValue(":costcat_id", _costcatid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical(this, tr("Cannot Save CRM Account"),
+                          tr("The Name you have entered for this Cost Category is already in use. "
+                             "Please enter in a different Name for this Cost Category."));
+    _category->setFocus();
     return;
   }
 
