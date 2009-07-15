@@ -25,7 +25,7 @@ public:
     ~standardJournal();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sCheck();
     virtual void sNew();

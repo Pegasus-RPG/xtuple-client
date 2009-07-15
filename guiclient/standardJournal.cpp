@@ -19,6 +19,7 @@ standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
+  _stdjrnlid = -1;
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -27,7 +28,6 @@ standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, 
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_stdjrnlitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
@@ -47,10 +47,6 @@ standardJournal::~standardJournal()
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void standardJournal::languageChange()
 {
   retranslateUi(this);
@@ -67,7 +63,7 @@ void standardJournal::sReject()
   }
 }
 
-enum SetResponse standardJournal::set(ParameterList &pParams)
+enum SetResponse standardJournal::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -130,11 +126,27 @@ void standardJournal::sSave()
 {
   if (_name->text().length() == 0)
   {
-      QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
-                            tr("You must enter a valid Name.") );
-      return;
+    QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
+                          tr("You must enter a valid Name.") );
+    return;
   }
   
+  q.prepare( "SELECT stdjrnl_id"
+             "  FROM stdjrnl "
+             " WHERE((UPPER(stdjrnl_name)=UPPER(:stdjrnl_name))"
+             "   AND (stdjrnl_id != :stdjrnl_id));" );
+  q.bindValue(":stdjrnl_name", _name->text());
+  q.bindValue(":stdjrnl_id", _stdjrnlid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
+                          tr("The Name you have entered for this Standard Journal already exists. "
+                             "Please enter in a different Name for this Standard Journal."));
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
     q.prepare( "INSERT INTO stdjrnl "
                "(stdjrnl_id, stdjrnl_name, stdjrnl_descrip, stdjrnl_notes) "
@@ -159,10 +171,12 @@ void standardJournal::sCheck()
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT stdjrnl_id "
-               "FROM stdjrnl "
-               "WHERE (UPPER(stdjrnl_name)=UPPER(:stdjrnl_name));" );
+    q.prepare( "SELECT stdjrnl_id"
+               "  FROM stdjrnl"
+               " WHERE((UPPER(stdjrnl_name)=UPPER(:stdjrnl_name))"
+               "   AND (stdjrnl_id != :stdjrnl_id));" );
     q.bindValue(":stdjrnl_name", _name->text());
+    q.bindValue(":stdjrnl_id", _stdjrnlid);
     q.exec();
     if (q.first())
     {

@@ -10,58 +10,29 @@
 
 #include "standardJournalGroup.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <q3dragobject.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "standardJournalGroupItem.h"
 
-/*
- *  Constructs a standardJournalGroup as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 standardJournalGroup::standardJournalGroup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _stdjrnlgrpid = -1;
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-standardJournalGroup::~standardJournalGroup()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void standardJournalGroup::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void standardJournalGroup::init()
-{
   setAcceptDrops(TRUE);
 
   _stdjrnlgrpitem->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft,   true,  "stdjrnl_name"   );
@@ -72,7 +43,17 @@ void standardJournalGroup::init()
   _stdjrnlgrpitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "stdjrnlgrpitem_expires" );
 }
 
-enum SetResponse standardJournalGroup::set(ParameterList &pParams)
+standardJournalGroup::~standardJournalGroup()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void standardJournalGroup::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -136,10 +117,12 @@ void standardJournalGroup::sCheck()
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT stdjrnlgrp_id "
-               "FROM stdjrnlgrp "
-               "WHERE (UPPER(stdjrnlgrp_name)=UPPER(:stdjrnlgrp_name));" );
+    q.prepare( "SELECT stdjrnlgrp_id"
+               "  FROM stdjrnlgrp"
+               " WHERE((UPPER(stdjrnlgrp_name)=UPPER(:stdjrnlgrp_name))"
+               "   AND (stdjrnlgrp_id != :stdjrnlgrp_id));" );
     q.bindValue(":stdjrnlgrp_name", _name->text());
+    q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
     q.exec();
     if (q.first())
     {
@@ -173,6 +156,22 @@ void standardJournalGroup::sSave()
   {
     QMessageBox::warning( this, tr("Cannot Save Standard Journal Group"),
                           tr("You must enter a Name for this Standard Journal Group before you may save it.") );
+    _name->setFocus();
+    return;
+  }
+
+  q.prepare( "SELECT stdjrnlgrp_id"
+             "  FROM stdjrnlgrp"
+             " WHERE((UPPER(stdjrnlgrp_name)=UPPER(:stdjrnlgrp_name))"
+             "   AND (stdjrnlgrp_id != :stdjrnlgrp_id));" );
+  q.bindValue(":stdjrnlgrp_name", _name->text());
+  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Standard Journal Group"),
+                         tr("The Name you have entered for this Standard Journal Group is already in use. "
+                            "Please enter in a different Name for this Standard Journal Group."));
     _name->setFocus();
     return;
   }
