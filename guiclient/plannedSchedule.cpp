@@ -228,7 +228,9 @@ void plannedSchedule::sNumberChanged()
 
   q.prepare("SELECT pschhead_id "
             "  FROM pschhead "
-            " WHERE (pschhead_number=:pschhead_number);");
+            " WHERE ( (pschhead_id <> :pschhead_id)"
+            "   AND   (pschhead_number=:pschhead_number) );");
+  q.bindValue(":pschhead_id", _pschheadid);
   q.bindValue(":pschhead_number", str);
   q.exec();
   if(q.first())
