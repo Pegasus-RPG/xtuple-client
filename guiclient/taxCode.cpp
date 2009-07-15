@@ -341,6 +341,18 @@ void taxCode::sCheck()
     q.exec();
     if (q.first())
     {
+      // delete placeholder
+      XSqlQuery ph;
+      ph.prepare( " DELETE FROM taxrate "
+                  " WHERE (taxrate_tax_id=:tax_id);"
+                  " DELETE FROM tax "
+                  " WHERE (tax_id=:tax_id);");
+                
+      ph.bindValue(":tax_id", _taxid);
+      ph.exec();
+      if (ph.lastError().type() != QSqlError::NoError)
+        systemError(this, ph.lastError().databaseText(), __FILE__, __LINE__);
+        
       _taxid = q.value("tax_id").toInt();
       _mode = cEdit;
       populate();
