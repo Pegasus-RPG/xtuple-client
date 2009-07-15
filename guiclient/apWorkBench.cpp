@@ -132,7 +132,7 @@ void apWorkBench::sCalculateTotalOpen()
          "                                   AND (checkitem_apopen_id=apopen_id) "
          "                                   AND (NOT checkhead_void) "
          "                                   AND (NOT checkhead_posted)) "
-         "                               ), 0)) / round(apopen_curr_rate,5)) AS openamount_base,"
+         "                               ), 0)) / apopen_curr_rate) AS openamount_base,"
          "       SUM(COALESCE(currToBase(apselect_curr_id, apselect_amount,"
          "                               CURRENT_DATE), 0)) AS selected_base "
          "FROM vend, apopen"
@@ -169,7 +169,7 @@ void apWorkBench::sCalculateTotalOpen()
 
   // copied from unappliedAPCreditMemos and edited
   MetaSQLQuery cr(
-             "SELECT SUM((apopen_amount - apopen_paid)/ round(apopen_curr_rate,5)) AS basebalance "
+             "SELECT SUM((apopen_amount - apopen_paid)/ apopen_curr_rate) AS basebalance "
              "FROM apopen, vend "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"

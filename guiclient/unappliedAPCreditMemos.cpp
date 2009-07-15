@@ -115,7 +115,7 @@ void unappliedAPCreditMemos::sFillList()
              "       (vend_number || '-' || vend_name) AS vendor,"
              "       apopen_amount, apopen_paid,"
              "       (apopen_amount - apopen_paid) AS balance,"
-             "       (apopen_amount - apopen_paid) / round(apopen_curr_rate,5) AS basebalance,"
+             "       (apopen_amount - apopen_paid) / apopen_curr_rate AS basebalance,"
              "	     currConcat(apopen_curr_id) AS currAbbr,"
              "       'curr' AS apopen_amount_xtnumericrole,"
              "       'curr' AS apopen_paid_xtnumericrole,"

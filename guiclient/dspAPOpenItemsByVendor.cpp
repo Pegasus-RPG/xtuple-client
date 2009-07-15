@@ -191,7 +191,7 @@ void dspAPOpenItemsByVendor::sFillList()
              "       END AS balance,"
              "       currConcat(apopen_curr_id) AS currAbbr,"
              "       (apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) "
-             "       / round(apopen_curr_rate,5) * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 "
+             "       / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 "
              "            END) AS base_balance,"
              "       'curr' AS apopen_amount_xtnumericrole,"
              "       'curr' AS paid_xtnumericrole,"
