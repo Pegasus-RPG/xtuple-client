@@ -135,11 +135,16 @@ void dspSummarizedGLTransactions::sFillList()
                "       level AS xtindentrole "
                "FROM ( "
                "SELECT DISTINCT accnt_id, -1 AS gltrans_id, 0 AS level,"
+               "       accnt_number, accnt_profit, accnt_sub, "
                "       formatGLAccount(accnt_id) AS account, accnt_descrip,"
                "       CAST(NULL AS DATE) AS gltrans_date, '' AS gltrans_source, '' AS gltrans_doctype, '' AS gltrans_docnumber,"
                "       '' AS f_notes,"
-               "       0 AS debit,"
-               "       0 AS credit,"
+               "       SUM( CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1) "
+               "                        ELSE 0 "
+               "                   END ) AS debit, "
+               "       SUM( CASE WHEN (gltrans_amount > 0) THEN gltrans_amount "
+               "                       ELSE 0 "
+               "                  END ) AS credit, "
                "       '' AS gltrans_username, CAST(NULL AS TIMESTAMP) AS gltrans_created "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
@@ -153,8 +158,10 @@ void dspSummarizedGLTransactions::sFillList()
   else if (_postedTransactions->isChecked())
     sql += " AND (gltrans_posted)";
 
-  sql += ") UNION "
+  sql +=       ") GROUP BY accnt_id, accnt_number, accnt_profit, accnt_sub, accnt_descrip "
+               "UNION "
                "SELECT accnt_id, gltrans_id, 1 AS level,"
+               "       accnt_number, accnt_profit, accnt_sub, "
                "       '' AS account, '' AS accnt_descrip,"
                "       gltrans_date, gltrans_source, gltrans_doctype, gltrans_docnumber,"
                "       firstLine(gltrans_notes) AS f_notes,"
@@ -178,8 +185,7 @@ void dspSummarizedGLTransactions::sFillList()
     sql += " AND (gltrans_posted)";
 
   sql += ") ) AS data "
-         "ORDER BY accnt_id, gltrans_id, level, gltrans_date, gltrans_created;";
-
+         "ORDER BY accnt_number, accnt_profit, accnt_sub, level, gltrans_date DESC, gltrans_created;";
   q.prepare(sql);
   _dates->bindValue(q);
   q.bindValue(":source", _source->currentText());
