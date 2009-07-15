@@ -387,6 +387,7 @@ bool returnAuthorizationItem::sSave()
                " AND (rcv.itemsite_warehous_id=:warehous_id) );" );
   }
   else
+  {
     q.prepare( "UPDATE raitem "
                "SET raitem_disposition=:raitem_disposition, "
                "    raitem_qtyauthorized=:raitem_qtyauthorized, "
@@ -401,8 +402,37 @@ bool returnAuthorizationItem::sSave()
                "    raitem_cos_accnt_id=:raitem_cos_accnt_id, "
                "    raitem_scheddate=:raitem_scheddate, "
                "    raitem_warranty=:raitem_warranty, "
-               "    raitem_saleprice=:raitem_saleprice "
+               "    raitem_saleprice=:raitem_saleprice, "
+               "    raitem_coitem_itemsite_id=:coitem_itemsite_id "
                "WHERE (raitem_id=:raitem_id);" );
+    
+     if (_disposition->currentIndex() >= 2)
+     {     
+       if (_coitemitemsiteid == -1)
+       {
+         XSqlQuery coitemsite;
+         coitemsite.prepare("SELECT itemsite_id "
+                        "FROM itemsite "
+                        "WHERE ((itemsite_item_id=:item_id)"
+                        " AND (itemsite_warehous_id=:warehouse_id) "
+                        " AND (itemsite_active) "
+                        " AND (itmesite_sold));");
+         coitemsite.bindValue(":item_id", _item->id());
+         coitemsite.bindValue(":warehous_id",_shipWhs->id());
+         coitemsite.exec();
+         if (coitemsite.first())
+           _coitemitemsiteid=coitemsite.value("itemsite_id").toInt();
+         else
+         {
+             QMessageBox::critical( this, tr("Item site not found"),
+             tr("<p>No valid item site record was found for the selected "
+                "item at the selected shipping site.") );
+             return false;
+         }
+       }
+       q.bindValue(":coitem_itemsite_id",_coitemitemsiteid);
+     }
+  }
 
   q.bindValue(":raitem_id", _raitemid);
   q.bindValue(":rahead_id", _raheadid);
@@ -816,6 +846,7 @@ void returnAuthorizationItem::populate()
     _crmacctid = raitem.value("crmacct_id").toInt();
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
+    _coitemitemsiteid = raitem.value("raitem_coitem_itemsite_id").toInt();
     if (_coitemid != -1)
     {
       _origSoNumber->setText(raitem.value("orig_number").toString());

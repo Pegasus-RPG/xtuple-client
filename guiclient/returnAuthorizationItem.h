@@ -100,6 +100,7 @@ private:
     int      _preferredShipWarehousid;
     QString  _status;
     double   _soldQty;
+    int      _coitemitemsiteid;
 
 };
 
