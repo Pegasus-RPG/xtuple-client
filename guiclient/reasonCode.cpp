@@ -10,54 +10,35 @@
 
 #include "reasonCode.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
 const char *_docTypes[] = { "ARCM", "ARDM", "RA" };
 
-/*
- *  Constructs a reasonCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 reasonCode::reasonCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _rsncodeid = -1;
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 reasonCode::~reasonCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void reasonCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void reasonCode::init()
-{
-}
-
-enum SetResponse reasonCode::set(ParameterList &pParams)
+enum SetResponse reasonCode::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -106,6 +87,22 @@ void reasonCode::sSave()
     return;
   }
 
+  q.prepare( "SELECT rsncode_id"
+             "  FROM rsncode"
+             " WHERE((UPPER(rsncode_code)=UPPER(:rsncode_code))"
+             "   AND (rsncode_id != :rsncode_id));" );
+  q.bindValue(":rsncode_code", _code->text());
+  q.bindValue(":rsncode_id", _rsncodeid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::information( this, tr("Cannot Save Reason Code"),
+                              tr("The Code you have entered for this Reason Code already exists. "
+                                 "Please enter in a different Code for this Reason Code."));
+    _code->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('rsncode_rsncode_id_seq') AS rsncode_id");
@@ -139,10 +136,12 @@ void reasonCode::sCheck()
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT rsncode_id "
-               "FROM rsncode "
-               "WHERE (UPPER(rsncode_code)=UPPER(:rsncode_code));" );
+    q.prepare( "SELECT rsncode_id"
+               "  FROM rsncode"
+               " WHERE((UPPER(rsncode_code)=UPPER(:rsncode_code))"
+               "   AND (rsncode_id != :rsncode_id));" );
     q.bindValue(":rsncode_code", _code->text());
+    q.bindValue(":rsncode_id", _rsncodeid);
     q.exec();
     if (q.first())
     {
