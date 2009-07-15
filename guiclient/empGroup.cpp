@@ -201,6 +201,15 @@ bool empGroup::close()
 
 void empGroup::sSave(const bool pClose)
 {
+  _name->setText(_name->text().trimmed());
+  if (_name->text().length() == 0)
+  {
+    QMessageBox::information( this, tr("Invalid Name"),
+                              tr("You must enter a valid Name for this Employee Group.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
     q.prepare( "INSERT INTO empgrp "
                "(empgrp_id, empgrp_name, empgrp_descrip) "
