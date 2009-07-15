@@ -118,7 +118,7 @@ ORDER BY arapply_postdate
   <field>
    <rect>
     <x>491.06</x>
-    <y>186.717</y>
+    <y>184.717</y>
     <width>195</width>
     <height>25</height>
    </rect>
@@ -136,8 +136,8 @@ ORDER BY arapply_postdate
   </field>
   <field>
    <rect>
-    <x>145.06</x>
-    <y>68.9168</y>
+    <x>167.902</x>
+    <y>68.2357</y>
     <width>201</width>
     <height>25</height>
    </rect>
@@ -155,25 +155,25 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>17.6886</x>
-    <y>45.7125</y>
-    <width>83.0769</width>
-    <height>18.2647</height>
+    <x>34.5239</x>
+    <y>44.9813</y>
+    <width>126.032</width>
+    <height>18.3</height>
    </rect>
    <font>
     <face>Sans Serif</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Customer:</string>
   </label>
   <label>
    <rect>
-    <x>17.2597</x>
-    <y>185.694</y>
-    <width>141.72</width>
+    <x>18.2</x>
+    <y>184.717</y>
+    <width>142</width>
     <height>25</height>
    </rect>
    <font>
@@ -181,14 +181,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Order Number:</string>
   </label>
   <label>
    <rect>
-    <x>17.2222</x>
-    <y>92.7779</y>
+    <x>60.5562</x>
+    <y>91.1645</y>
     <width>100</width>
     <height>25</height>
    </rect>
@@ -197,14 +197,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Due Date:</string>
   </label>
   <field>
    <rect>
     <x>169.06</x>
-    <y>235.717</y>
+    <y>233</y>
     <width>175</width>
     <height>25</height>
    </rect>
@@ -222,9 +222,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>400.673</x>
-    <y>94.6693</y>
-    <width>85.757</width>
+    <x>399.729</x>
+    <y>91.8</y>
+    <width>85.8</width>
     <height>19.6</height>
    </rect>
    <font>
@@ -232,15 +232,15 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Sales Rep.:</string>
   </label>
   <label>
    <rect>
-    <x>435.254</x>
-    <y>72.4653</y>
-    <width>51.5325</width>
+    <x>434.029</x>
+    <y>68.9</y>
+    <width>51.5</width>
     <height>18.4</height>
    </rect>
    <font>
@@ -248,14 +248,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Terms:</string>
   </label>
   <field>
    <rect>
     <x>492.06</x>
-    <y>137.717</y>
+    <y>136</y>
     <width>216</width>
     <height>25</height>
    </rect>
@@ -274,7 +274,7 @@ ORDER BY arapply_postdate
   <field>
    <rect>
     <x>494.06</x>
-    <y>73.2168</y>
+    <y>68.8712</y>
     <width>247.562</width>
     <height>25</height>
    </rect>
@@ -292,9 +292,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>418.716</x>
-    <y>185.347</y>
-    <width>66.9782</width>
+    <x>416</x>
+    <y>185</y>
+    <width>67</width>
     <height>18.2</height>
    </rect>
    <font>
@@ -302,15 +302,15 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Balance:</string>
   </label>
   <label>
    <rect>
-    <x>17.1835</x>
-    <y>161.825</y>
-    <width>151.687</width>
+    <x>8.84</x>
+    <y>160.717</y>
+    <width>152</width>
     <height>25</height>
    </rect>
    <font>
@@ -318,14 +318,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Document Number:</string>
   </label>
   <field>
    <rect>
     <x>169.06</x>
-    <y>162.717</y>
+    <y>160.717</y>
     <width>176</width>
     <height>25</height>
    </rect>
@@ -343,8 +343,8 @@ ORDER BY arapply_postdate
   </field>
   <field>
    <rect>
-    <x>98.5597</x>
-    <y>91.8168</y>
+    <x>167.902</x>
+    <y>91.1813</y>
     <width>216</width>
     <height>25</height>
    </rect>
@@ -362,8 +362,8 @@ ORDER BY arapply_postdate
   </field>
   <field>
    <rect>
-    <x>97.3597</x>
-    <y>45.6168</y>
+    <x>167.902</x>
+    <y>44.9813</y>
     <width>432.315</width>
     <height>25</height>
    </rect>
@@ -381,9 +381,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>17.5342</x>
-    <y>68.8712</y>
-    <width>117.078</width>
+    <x>17.3649</x>
+    <y>68.2645</y>
+    <width>143.191</width>
     <height>25</height>
    </rect>
    <font>
@@ -391,15 +391,15 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Document Date:</string>
   </label>
   <label>
    <rect>
-    <x>17.7763</x>
-    <y>232.84</y>
-    <width>146.296</width>
+    <x>14.2</x>
+    <y>233</y>
+    <width>146</width>
     <height>25</height>
    </rect>
    <font>
@@ -407,30 +407,30 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Reason Code:</string>
   </label>
   <label>
    <rect>
-    <x>356.426</x>
-    <y>209.935</y>
-    <width>131.142</width>
-    <height>18.8492</height>
+    <x>352</x>
+    <y>209</y>
+    <width>131</width>
+    <height>18.8</height>
    </rect>
    <font>
     <face>Sans Serif</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Commission Due:</string>
   </label>
   <field>
    <rect>
     <x>169.06</x>
-    <y>136.717</y>
+    <y>136</y>
     <width>175</width>
     <height>25</height>
    </rect>
@@ -469,7 +469,7 @@ ORDER BY arapply_postdate
   <field>
    <rect>
     <x>169.06</x>
-    <y>210.717</y>
+    <y>209</y>
     <width>177</width>
     <height>25</height>
    </rect>
@@ -487,9 +487,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>17.3869</x>
-    <y>136.816</y>
-    <width>133.016</width>
+    <x>31.3131</x>
+    <y>136</y>
+    <width>133</width>
     <height>25</height>
    </rect>
    <font>
@@ -497,14 +497,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Document Type:</string>
   </label>
   <field>
    <rect>
     <x>490</x>
-    <y>234</y>
+    <y>233</y>
     <width>199</width>
     <height>25</height>
    </rect>
@@ -522,9 +522,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>423.676</x>
-    <y>136.837</y>
-    <width>61.4419</width>
+    <x>422</x>
+    <y>136</y>
+    <width>61.4</width>
     <height>17.2</height>
    </rect>
    <font>
@@ -532,15 +532,15 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Amount:</string>
   </label>
   <label>
    <rect>
-    <x>443.351</x>
-    <y>161.28</y>
-    <width>42.6187</width>
+    <x>441</x>
+    <y>161</y>
+    <width>42.6</width>
     <height>19.9</height>
    </rect>
    <font>
@@ -548,14 +548,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Paid:</string>
   </label>
   <field>
    <rect>
     <x>494.06</x>
-    <y>94.8168</y>
+    <y>91.8168</y>
     <width>242.264</width>
     <height>25</height>
    </rect>
@@ -573,9 +573,9 @@ ORDER BY arapply_postdate
   </field>
   <label>
    <rect>
-    <x>353.751</x>
-    <y>235.381</y>
-    <width>132.392</width>
+    <x>351</x>
+    <y>233</y>
+    <width>132</width>
     <height>20.8</height>
    </rect>
    <font>
@@ -583,14 +583,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Commission Paid:</string>
   </label>
   <field>
    <rect>
     <x>491.06</x>
-    <y>209.717</y>
+    <y>209</y>
     <width>198</width>
     <height>25</height>
    </rect>
@@ -643,9 +643,9 @@ ORDER BY arapply_postdate
   </label>
   <label>
    <rect>
-    <x>17.8372</x>
-    <y>208.922</y>
-    <width>166.202</width>
+    <x>-5.68</x>
+    <y>209</y>
+    <width>166</width>
     <height>25</height>
    </rect>
    <font>
@@ -653,14 +653,14 @@ ORDER BY arapply_postdate
     <size>12</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <top/>
    <string>Journal Number:</string>
   </label>
   <label>
    <rect>
     <x>9</x>
-    <y>411</y>
+    <y>416.355</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -676,7 +676,7 @@ ORDER BY arapply_postdate
   <label>
    <rect>
     <x>123</x>
-    <y>411</y>
+    <y>416.355</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -692,7 +692,7 @@ ORDER BY arapply_postdate
   <label>
    <rect>
     <x>242</x>
-    <y>410</y>
+    <y>416.355</y>
     <width>100</width>
     <height>21</height>
    </rect>
@@ -708,7 +708,7 @@ ORDER BY arapply_postdate
   <label>
    <rect>
     <x>351</x>
-    <y>410</y>
+    <y>416.355</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -724,7 +724,7 @@ ORDER BY arapply_postdate
   <label>
    <rect>
     <x>470</x>
-    <y>409</y>
+    <y>416.355</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -740,7 +740,7 @@ ORDER BY arapply_postdate
   <label>
    <rect>
     <x>608</x>
-    <y>411</y>
+    <y>416.355</y>
     <width>100</width>
     <height>19</height>
    </rect>
@@ -762,8 +762,8 @@ ORDER BY arapply_postdate
   </line>
   <field>
    <rect>
-    <x>40.3183</x>
-    <y>4.14</y>
+    <x>30.7855</x>
+    <y>9.22414</y>
     <width>698.682</width>
     <height>37.1</height>
    </rect>
@@ -790,7 +790,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>8</x>
-     <y>-2.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>
@@ -809,7 +809,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>124</x>
-     <y>-0.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>
@@ -828,7 +828,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>241</x>
-     <y>-0.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>
@@ -847,7 +847,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>352</x>
-     <y>-1.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>
@@ -866,7 +866,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>474</x>
-     <y>-2.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>
@@ -885,7 +885,7 @@ ORDER BY arapply_postdate
    <field>
     <rect>
      <x>611</x>
-     <y>-1.1</y>
+     <y>1.71311</y>
      <width>100</width>
      <height>25</height>
     </rect>

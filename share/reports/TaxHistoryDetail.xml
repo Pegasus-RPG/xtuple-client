@@ -80,8 +80,8 @@ SELECT
   formatSalesPrice(cohist_unitprice) AS f_unitprice, 
   formatMoney(cohist_qtyshipped * cohist_unitprice) AS f_amount,
   formatMoney(taxhist_tax) AS f_taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
-  formatMoney(taxhist_tax / round(taxhist_curr_rate, 5)) AS f_taxbase
+  taxhist_tax / taxhist_curr_rate AS taxbase,
+  formatMoney(taxhist_tax / taxhist_curr_rate) AS f_taxbase
 FROM cohisttax
  JOIN cohist ON (cohist_id=taxhist_parent_id)
  JOIN taxtype ON (taxtype_id=taxhist_taxtype_id)
@@ -149,8 +149,8 @@ SELECT
   formatQty(1) AS f_qty, 
   formatPurchPrice(apopen_amount) AS unitprice, formatMoney(apopen_amount) AS f_amount,
   formatMoney(taxhist_tax) AS f_taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
-  formatMoney(taxhist_tax / round(taxhist_curr_rate, 5)) AS f_taxbase
+  taxhist_tax / taxhist_curr_rate AS taxbase,
+  formatMoney(taxhist_tax / taxhist_curr_rate) AS f_taxbase
 FROM apopentax
  JOIN apopen ON (apopen_id=taxhist_parent_id)
  JOIN vendinfo ON (apopen_vend_id=vend_id)
@@ -201,8 +201,8 @@ SELECT
   formatQty(1) AS f_qty, 
   formatPurchPrice(0) AS f_unitprice, formatMoney(0) AS f_amount,
   formatMoney(taxhist_tax) AS f_taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
-  formatMoney(taxhist_tax / round(taxhist_curr_rate, 5)) AS f_taxbase
+  taxhist_tax / taxhist_curr_rate AS taxbase,
+  formatMoney(taxhist_tax / taxhist_curr_rate) AS f_taxbase
 FROM voheadtax
  JOIN vohead ON (vohead_id=taxhist_parent_id)
  LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)
@@ -256,8 +256,8 @@ SELECT
   formatPurchPrice(COALESCE(SUM(vodist_amount),0)/voitem_qty) AS unitprice, 
   formatMoney(COALESCE(SUM(vodist_amount),0)) AS f_amount,
   formatMoney(taxhist_tax) AS taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
-  formatMoney(taxhist_tax / round(taxhist_curr_rate, 5)) AS f_taxbase
+  taxhist_tax / taxhist_curr_rate AS taxbase,
+  formatMoney(taxhist_tax / taxhist_curr_rate) AS f_taxbase
 FROM voitemtax
  JOIN voitem ON (voitem_id=taxhist_parent_id)
  JOIN vohead ON (vohead_id=voitem_vohead_id)

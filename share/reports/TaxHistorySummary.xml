@@ -99,13 +99,13 @@ SELECT
   END AS freightbase,
   CASE
     WHEN (cohist_misc_type = 'F') THEN
-      taxhist_tax / round(taxhist_curr_rate, 5)
+      taxhist_tax / taxhist_curr_rate
     ELSE 0
   END AS freighttax,
   0 AS purchasebase,
   taxhist_tax AS taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS salestaxbase,
+  taxhist_tax / taxhist_curr_rate AS taxbase,
+  taxhist_tax / taxhist_curr_rate AS salestaxbase,
   0 AS purchasetaxbase
 FROM cohisttax
  JOIN cohist ON (cohist_id=taxhist_parent_id)
@@ -176,11 +176,11 @@ SELECT
   0 AS salesbase,
   0 AS freightbase,
   0 AS freighttax,
-  apopen_amount / round(apopen_curr_rate, 5) AS purchasebase,
+  apopen_amount / apopen_curr_rate AS purchasebase,
   taxhist_tax AS taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
+  taxhist_tax / taxhist_curr_rate AS taxbase,
   0 AS salestaxbase,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS purchasetaxbase
+  taxhist_tax / taxhist_curr_rate AS purchasetaxbase
 FROM apopentax
  JOIN apopen ON (apopen_id=taxhist_parent_id)
  JOIN vendinfo ON (apopen_vend_id=vend_id)
@@ -235,9 +235,9 @@ SELECT
   0 AS freighttax,
   0 AS purchasebase,
   taxhist_tax AS taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
+  taxhist_tax / taxhist_curr_rate AS taxbase,
   0 AS salestaxbase,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS purchasetaxbase
+  taxhist_tax / taxhist_curr_rate AS purchasetaxbase
 FROM voheadtax
  JOIN vohead ON (vohead_id=taxhist_parent_id)
  LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)
@@ -294,9 +294,9 @@ SELECT
   0 AS freighttax,
   currToBase(vohead_curr_id, COALESCE(SUM(vodist_amount),0), vohead_distdate)  AS purchasebase,
   taxhist_tax AS taxlocal,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS taxbase,
+  taxhist_tax / taxhist_curr_rate AS taxbase,
   0 AS salestaxbase,
-  taxhist_tax / round(taxhist_curr_rate, 5) AS purchasetaxbase
+  taxhist_tax / taxhist_curr_rate AS purchasetaxbase
 FROM voitemtax
  JOIN voitem ON (voitem_id=taxhist_parent_id)
  JOIN vohead ON (vohead_id=voitem_vohead_id)

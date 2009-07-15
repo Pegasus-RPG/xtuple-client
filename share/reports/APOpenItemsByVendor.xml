@@ -38,10 +38,10 @@
                     END) AS f_balance,
                     currConcat(apopen_curr_id) AS currAbbr,
                     (apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) 
-                    / round(apopen_curr_rate,5) * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
+                    / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
                          END) AS base_balance,
                     formatMoney((apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) 
-                    / round(apopen_curr_rate,5) * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
+                    / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
                          END)) AS f_base_balance
              FROM apopen 
                LEFT OUTER JOIN apapply ON (((apopen_id=apapply_target_apopen_id) 
