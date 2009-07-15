@@ -102,6 +102,30 @@ enum SetResponse plannedScheduleItem::set(const ParameterList & pParams)
 
 void plannedScheduleItem::sSave()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::information( this, tr("Invalid Item"),
+                              tr("You must enter a valid Item for this Schedule.") );
+    _item->setFocus();
+    return;
+  }
+
+  if (!_date->isValid())
+  {
+    QMessageBox::information( this, tr("Invalid Date"),
+                              tr("You must enter a valid Date for this Schedule.") );
+    _item->setFocus();
+    return;
+  }
+
+  if (_qty->toDouble() == 0.0)
+  {
+    QMessageBox::information( this, tr("Invalid Quantity"),
+                              tr("You must enter a valid Quantity for this Schedule.") );
+    _item->setFocus();
+    return;
+  }
+
   if(cNew == _mode)
     q.prepare("INSERT INTO pschitem"
               "      (pschitem_pschhead_id,"
