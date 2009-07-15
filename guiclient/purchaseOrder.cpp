@@ -1145,7 +1145,7 @@ void purchaseOrder::sTaxZoneChanged()
   {
     XSqlQuery taxq;
     taxq.prepare("UPDATE pohead SET "
-      "  pohead_taxzone_id=:taxzone_id, "
+      "  pohead_taxzone_id=:taxzone_id "
       "WHERE (pohead_id=:pohead_id) ");
     if (_taxZone->isValid())
       taxq.bindValue(":taxzone_id", _taxZone->id());
