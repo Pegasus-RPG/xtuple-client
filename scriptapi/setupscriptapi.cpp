@@ -53,6 +53,7 @@
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
 #include "qtreewidgetitemproto.h"
+#include "qtsetup.h"
 #include "qurlproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -122,6 +123,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
   setupQTreeWidgetItemProto(engine);
+  setupQt(engine);
   setupQUrlProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
