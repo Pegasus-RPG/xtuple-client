@@ -12,6 +12,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
+#include <QSqlError>
 
 /*
  *  Constructs a freightClass as a child of 'parent', with the
@@ -74,6 +75,7 @@ enum SetResponse freightClass::set(ParameterList &pParams)
     {
       _mode = cNew;
 
+      _save->setEnabled(FALSE);
       _freightClass->setFocus();
     }
     else if (param.toString() == "edit")
@@ -135,6 +137,11 @@ void freightClass::sSave()
   q.bindValue(":freightclass_code", _freightClass->text());
   q.bindValue(":freightclass_descrip", _description->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_freightclassid);
 }
@@ -158,6 +165,7 @@ void freightClass::sCheck()
       _freightClass->setEnabled(FALSE);
     }
   }
+  _save->setEnabled(TRUE);
 }
 
 void freightClass::populate()
