@@ -108,6 +108,7 @@ enum SetResponse empGroup::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _save->setEnabled(FALSE);
 
       q.exec("SELECT NEXTVAL('empgrp_empgrp_id_seq') AS empgrpid;");
       if (q.first())
@@ -170,6 +171,7 @@ void empGroup::sCheck()
       return;
     }
   }
+  _save->setEnabled(TRUE);
 }
 
 bool empGroup::close()
