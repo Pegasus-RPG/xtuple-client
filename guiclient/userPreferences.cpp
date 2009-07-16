@@ -183,6 +183,11 @@ void userPreferences::sPopulate()
     _interfaceTopLevel->setChecked(true);
   else
     _interfaceWorkspace->setChecked(true);
+    
+  if (_pref->boolean("CopyListsPlainText"))
+    _plainText->setChecked(true);
+  else
+    _richText->setChecked(true);
 
   //_rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
   
@@ -260,13 +265,6 @@ void userPreferences::sSave()
   _pref->set("ShowGLToolbar", _accountingToolbar->isChecked());
   
   _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
-  //_pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
-  /*
-     TO DO:  Remove infrastructure for pref for checkbox above.  This was put in place as a back stop
-     when XCheckBox was implemented in case of un-intended consequences.  There seem to be none, so
-     take out the option for now, but leave the infrastructure in case of other unintended consequences for 
-     removing.  Next time around, take this out alll together including at XCheckBox class.
-    */
  
   _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
   _pref->set("IngoreMissingTranslationFiles", _ignoreTranslation->isChecked());
@@ -283,7 +281,8 @@ void userPreferences::sSave()
     _pref->set("InterfaceWindowOption", QString("TopLevel"));
   else
     _pref->set("InterfaceWindowOption", QString("Workspace"));
-
+    
+  _pref->set("CopyListsPlainText", _plainText->isChecked());
   _pref->set("EmailEvents", _emailEvents->isChecked());
 
   _pref->set("AlarmEventDefault", _alarmEvent->isChecked());
