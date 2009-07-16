@@ -152,6 +152,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
 
   _qtyOrdered->setValidator(omfgThis->qtyVal());
   _orderQty->setPrecision(omfgThis->qtyVal());
+  _discountFromCust->setValidator(omfgThis->percentVal());
 
   _shippedToDate->setPrecision(omfgThis->qtyVal());
   _discountFromList->setPrecision(omfgThis->percentVal());
