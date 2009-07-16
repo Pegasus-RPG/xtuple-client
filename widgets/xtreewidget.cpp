@@ -1493,7 +1493,19 @@ void XTreeWidget::sCopyRowToClipboard()
   XTreeWidgetItem * item = currentItem();
   int  counter;
   int  colcnt = 0;
-                                                     
+         
+  if (_x_preferences->boolean("CopyListsPlainText"))
+  {
+    QString line = "";                                                                                                            
+    for(int counter = 0; counter < item->columnCount(); counter++)
+    {
+      if(!QTreeWidget::isColumnHidden(counter))
+       line = line + item->text(counter) + "\t";
+    }
+    clipboard->setText(line);
+    return;
+  }
+         
   cursor->insertTable(1, 1,tableFormat);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
   if(item)                                                                                                         
   {                                                                                                                                                                                                                   
@@ -1549,7 +1561,10 @@ void XTreeWidget::sCopyCellToClipboard()
      if (!font.isEmpty())
         text.setFont(QFont(font));
      text.setText(item->text(column));
-     mime->setHtml(text.toHtml());            
+     if (_x_preferences->boolean("CopyListsPlainText"))
+       mime->setText(text.toPlainText());
+     else
+       mime->setHtml(text.toHtml());            
      clipboard->setMimeData(mime) ; 
   }
 }
@@ -1559,7 +1574,10 @@ void XTreeWidget::sCopyVisibleToClipboard()
   QMimeData *mime = new QMimeData();                                                                                                                                                                                                       
   QClipboard * clipboard = QApplication::clipboard();                                                                   
     
-  mime->setHtml(toHtml());            
+  if (_x_preferences->boolean("CopyListsPlainText"))
+    mime->setText(toTxt());
+  else
+    mime->setHtml(toHtml());            
   clipboard->setMimeData(mime);                                                                                                                                                                                                                                                                                                             
 }    
 
