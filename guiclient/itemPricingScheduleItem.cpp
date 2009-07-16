@@ -199,35 +199,40 @@ void itemPricingScheduleItem::sSave()
 
 void itemPricingScheduleItem::sSave( bool pClose)
 {
+  if(_itemSelected->isChecked())
+  {
+    q.prepare( "SELECT ipsitem_id "
+               "  FROM ipsitem "
+               " WHERE((ipsitem_ipshead_id=:ipshead_id)"
+               "   AND (ipsitem_item_id=:item_id)"
+               "   AND (ipsitem_qty_uom_id=:uom_id)"
+               "   AND (ipsitem_qtybreak=:qtybreak)"
+               "   AND (ipsitem_id <> :ipsitem_id));" );
+    q.bindValue(":ipshead_id", _ipsheadid);
+    q.bindValue(":item_id", _item->id());
+    q.bindValue(":qtybreak", _qtyBreak->toDouble());
+    q.bindValue(":uom_id", _qtyUOM->id());
+    q.bindValue(":ipsitem_id", _ipsitemid);
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical( this, tr("Cannot Create Pricing Schedule Item"),
+                             tr( "There is an existing Pricing Schedule Item for the selected Pricing Schedule, Item and Quantity Break defined.\n"
+                                 "You may not create duplicate Pricing Schedule Items." ) );
+      return;
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+      done(-1);
+    }
+  }
+
   if (_mode == cNew)
   {
     if(_itemSelected->isChecked())
     {
-      q.prepare( "SELECT ipsitem_id "
-                 "  FROM ipsitem "
-                 " WHERE((ipsitem_ipshead_id=:ipshead_id)"
-                 "   AND (ipsitem_item_id=:item_id)"
-                 "   AND (ipsitem_qty_uom_id=:uom_id)"
-                 "   AND (ipsitem_qtybreak=:qtybreak));" );
-      q.bindValue(":ipshead_id", _ipsheadid);
-      q.bindValue(":item_id", _item->id());
-      q.bindValue(":qtybreak", _qtyBreak->toDouble());
-      q.bindValue(":uom_id", _qtyUOM->id());
-      q.exec();
-      if (q.first())
-      {
-        QMessageBox::critical( this, tr("Cannot Create Pricing Schedule Item"),
-                               tr( "There is an existing Pricing Schedule Item for the selected Pricing Schedule, Item and Quantity Break defined.\n"
-                                   "You may not create duplicate Pricing Schedule Items." ) );
-        return;
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
-      }
-
       q.exec("SELECT NEXTVAL('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
       if (q.first())
         _ipsitemid = q.value("ipsitem_id").toInt();
@@ -414,7 +419,8 @@ void itemPricingScheduleItem::populate()
 {
   if(_itemSelected->isChecked())
   {
-    q.prepare( "SELECT ipsitem_item_id,"
+    q.prepare( "SELECT ipsitem_ipshead_id,"
+               "       ipsitem_item_id,"
                "       ipsitem_qty_uom_id,"
                "       ipsitem_qtybreak,"
                "       ipsitem_price_uom_id,"
@@ -425,6 +431,7 @@ void itemPricingScheduleItem::populate()
     q.exec();
     if (q.first())
     {
+      _ipsheadid=q.value("ipsitem_ipshead_id").toInt();
       _item->setId(q.value("ipsitem_item_id").toInt());
       _qtyBreak->setDouble(q.value("ipsitem_qtybreak").toDouble());
       _price->setLocalValue(q.value("ipsitem_price").toDouble());
