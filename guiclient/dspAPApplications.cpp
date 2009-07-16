@@ -76,7 +76,7 @@ void dspAPApplications::sPrint()
 void dspAPApplications::sViewCheck()
 {
   int checkid = _apapply->currentItem()->id("apapply_source_docnumber");
-  if (checkid == -1)
+  if ((checkid == -1) || (checkid == 0))
   {
     XSqlQuery countq;
     countq.prepare("SELECT COUNT(*) AS count "
