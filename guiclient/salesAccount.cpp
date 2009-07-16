@@ -160,7 +160,61 @@ void salesAccount::sSave()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
- 
+  }
+    
+  q.prepare("SELECT salesaccnt_id"
+            "  FROM salesaccnt"
+            " WHERE((salesaccnt_warehous_id=:salesaccnt_warehous_id)"
+            "   AND (salesaccnt_custtype=:salesaccnt_custtype)"
+            "   AND (salesaccnt_custtype_id=:salesaccnt_custtype_id)"
+            "   AND (salesaccnt_prodcat=:salesaccnt_prodcat)"
+            "   AND (salesaccnt_prodcat_id=:salesaccnt_prodcat_id)"
+            "   AND (salesaccnt_id != :salesaccnt_id))");
+  q.bindValue(":salesaccnt_id", _salesaccntid);
+  q.bindValue(":salesaccnt_warehous_id", _warehouse->id());
+
+  if (_customerTypes->isAll())
+  {
+    q.bindValue(":salesaccnt_custtype", ".*");
+    q.bindValue(":salesaccnt_custtype_id", -1);
+  }
+  else if (_customerTypes->isSelected())
+  {
+    q.bindValue(":salesaccnt_custtype", "[^a-zA-Z0-9_]");
+    q.bindValue(":salesaccnt_custtype_id", _customerTypes->id());
+  }
+  else
+  {
+    q.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
+    q.bindValue(":salesaccnt_custtype_id", -1);
+  }
+
+  if (_productCategories->isAll())
+  {
+    q.bindValue(":salesaccnt_prodcat", ".*");
+    q.bindValue(":salesaccnt_prodcat_id", -1);
+  }
+  else if (_productCategories->isSelected())
+  {
+    q.bindValue(":salesaccnt_prodcat", "[^a-zA-Z0-9_]");
+    q.bindValue(":salesaccnt_prodcat_id", _productCategories->id());
+  }
+  else
+  {
+    q.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
+    q.bindValue(":salesaccnt_prodcat_id", -1);
+  }
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::warning(this, tr("Cannot Save Sales Account Assignment"),
+      tr("You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
+    _warehouse->setFocus();
+    return;
+  }
+
+  if (_mode == cNew)
+  {
     q.prepare( "INSERT INTO salesaccnt "
                "( salesaccnt_warehous_id,"
                "  salesaccnt_custtype, salesaccnt_custtype_id,"
