@@ -132,7 +132,7 @@ void postProduction::sHandleWoid(int pWoid)
   else
   {
     _qtyOrderedLit->setText(tr("Qty. Ordered:"));
-    _qtyReceivedLit->setText(tr("Qty. Receveived:"));
+    _qtyReceivedLit->setText(tr("Qty. Received:"));
     
     q.prepare( "SELECT womatl_issuemethod "
               "FROM womatl "
