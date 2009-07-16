@@ -45,10 +45,9 @@ void printLabelsByTo::languageChange()
 
 void printLabelsByTo::sPrint()
 {
-  q.prepare( "SELECT report_name "
-             "FROM labelform, report "
-             "WHERE ( (labelform_id=:labelform_id) "
-             " AND (report_id=labelform_report_id) );");
+  q.prepare( "SELECT labelform_report_name AS report_name "
+             "FROM labelform "
+             "WHERE ( (labelform_id=:labelform_id) );");
   q.bindValue(":labelform_id", _report->id());
   q.exec();
   if (q.first())

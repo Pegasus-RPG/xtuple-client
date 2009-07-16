@@ -105,12 +105,11 @@ void printShippingForms::sPrint()
     return;
   }
 
-  QString sql( "SELECT shiphead_id, report_name "
-               "FROM shiphead, cohead, shipform, report "
+  QString sql( "SELECT shiphead_id, shipform_report_name AS report_name "
+               "FROM shiphead, cohead, shipform "
                "WHERE ( (NOT shiphead_shipped)"
                " AND (shiphead_order_id=cohead_id)"
 	       " AND (shiphead_order_type='SO')"
-               " AND (shipform_report_id=report_id)"
                " AND (shipform_id=COALESCE(shiphead_shipform_id, cohead_shipform_id))"
                " AND (shiphead_sfstatus IN (" );
 

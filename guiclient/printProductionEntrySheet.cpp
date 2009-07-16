@@ -64,10 +64,9 @@ void printProductionEntrySheet::init()
 
 void printProductionEntrySheet::sPrint()
 {
-  q.prepare( "SELECT report_name "
-             "FROM report, form "
-             "WHERE ( (form_id=:form_id) "
-             " AND (report_id=form_report_id) );");
+  q.prepare( "SELECT form_report_name AS report_name "
+             "FROM form "
+             "WHERE ( (form_id=:form_id) );");
   q.bindValue(":form_id", _form->id());
   q.exec();
   if (q.first())

@@ -105,20 +105,20 @@ void checkFormat::sSave()
     }
 
     q.prepare( "INSERT INTO form "
-               "(form_id, form_name, form_descrip, form_report_id, form_key) "
+               "(form_id, form_name, form_descrip, form_report_name, form_key) "
                "VALUES "
-               "(:form_id, :form_name, :form_descrip, :form_report_id, 'Chck');" );
+               "(:form_id, :form_name, :form_descrip, :form_report_name, 'Chck');" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE form "
                "SET form_name=:form_name, form_descrip=:form_descrip,"
-               "    form_report_id=:form_report_id "
+               "    form_report_name=:form_report_name "
                "WHERE (form_id=:form_id);" );
 
   q.bindValue(":form_id", _formid);
   q.bindValue(":form_name", _name->text());
   q.bindValue(":form_descrip", _descrip->text());
-  q.bindValue(":form_report_id", _report->id());
+  q.bindValue(":form_report_name", _report->code());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -131,7 +131,7 @@ void checkFormat::sSave()
 
 void checkFormat::populate()
 {
-  q.prepare( "SELECT form_name, form_descrip, form_report_id "
+  q.prepare( "SELECT form_name, form_descrip, form_report_name "
        	     "FROM form "
 	     "WHERE (form_id=:form_id);" );
   q.bindValue(":form_id", _formid);
@@ -140,7 +140,7 @@ void checkFormat::populate()
   {
     _name->setText(q.value("form_name").toString());
     _descrip->setText(q.value("form_descrip").toString());
-    _report->setId(q.value("form_report_id").toInt());
+    _report->setCode(q.value("form_report_name").toString());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

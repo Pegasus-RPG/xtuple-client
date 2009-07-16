@@ -104,21 +104,21 @@ void form::sSave()
     }
 
     q.prepare( "INSERT INTO form "
-               "(form_id, form_name, form_descrip, form_report_id, form_key) "
+               "(form_id, form_name, form_descrip, form_report_name, form_key) "
                "VALUES "
-               "(:form_id, :form_name, :form_descrip, :form_report_id, :form_key);" );
+               "(:form_id, :form_name, :form_descrip, :form_report_name, :form_key);" );
 
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE form "
                "SET form_name=:form_name, form_descrip=:form_descrip,"
-               "    form_report_id=:form_report_id, form_key=:form_key "
+               "    form_report_name=:form_report_name, form_key=:form_key "
                "WHERE (form_id=:form_id);" );
 
   q.bindValue(":form_id", _formid);
   q.bindValue(":form_name", _name->text());
   q.bindValue(":form_descrip", _descrip->text());
-  q.bindValue(":form_report_id", _report->id());
+  q.bindValue(":form_report_name", _report->code());
 
   if (_key->currentIndex() == 0)
     q.bindValue(":form_key", "Cust");
@@ -164,7 +164,7 @@ void form::populate()
   {
     _name->setText(q.value("form_name").toString());
     _descrip->setText(q.value("form_descrip").toString());
-    _report->setId(q.value("form_report_id").toInt());
+    _report->setCode(q.value("form_report_name").toString());
   
     if (q.value("form_key").toString() == "Cust")
       _key->setCurrentIndex(0);

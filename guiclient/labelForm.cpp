@@ -122,20 +122,20 @@ void labelForm::sSave()
     }
 
     q.prepare( "INSERT INTO labelform "
-               "(labelform_id, labelform_name, labelform_report_id, labelform_perpage) "
+               "(labelform_id, labelform_name, labelform_report_name, labelform_perpage) "
                "VALUES "
-               "(:labelform_id, :labelform_name, :labelform_report_id, :labelform_perpage);" );
+               "(:labelform_id, :labelform_name, :labelform_report_name, :labelform_perpage);" );
 
   }
   if (_mode == cEdit)
     q.prepare( "UPDATE labelform "
-               "SET labelform_name=:labelform_name, labelform_report_id=:labelform_report_id,"
+               "SET labelform_name=:labelform_name, labelform_report_name=:labelform_report_name,"
                "    labelform_perpage=:labelform_perpage "
                "WHERE (labelform_id=:labelform_id);" );
 
   q.bindValue(":labelform_id", _labelformid);
   q.bindValue(":labelform_name", _name->text());
-  q.bindValue(":labelform_report_id", _report->id());
+  q.bindValue(":labelform_report_name", _report->code());
   q.bindValue(":labelform_perpage", _labelsPerPage->value());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -149,7 +149,7 @@ void labelForm::sSave()
 
 void labelForm::populate()
 {
-  q.prepare( "SELECT labelform_name, labelform_report_id, labelform_perpage "
+  q.prepare( "SELECT * "
        	     "FROM labelform "
 	     "WHERE (labelform_id=:labelform_id);" );
   q.bindValue(":labelform_id", _labelformid);
@@ -157,7 +157,7 @@ void labelForm::populate()
   if (q.first())
   {
     _name->setText(q.value("labelform_name").toString());
-    _report->setId(q.value("labelform_report_id").toInt());
+    _report->setCode(q.value("labelform_report_name").toString());
     _labelsPerPage->setValue(q.value("labelform_perpage").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)

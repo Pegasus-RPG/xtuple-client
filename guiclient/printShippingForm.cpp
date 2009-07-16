@@ -234,10 +234,9 @@ void printShippingForm::sPrint()
     return;
   }
 
-  q.prepare("SELECT report_name "
-	    "FROM shipform, report "
-	    "WHERE ((shipform_report_id=report_id)"
-	    " AND (shipform_id=:shipform_id) );" );
+  q.prepare("SELECT shipform_report_name AS report_name "
+	    "  FROM shipform "
+	    " WHERE((shipform_id=:shipform_id));" );
   q.bindValue(":shipform_id", _shippingForm->id());
   q.exec();
   if (q.first())

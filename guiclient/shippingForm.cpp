@@ -135,19 +135,19 @@ void shippingForm::sSave()
     }
 
     q.prepare( "INSERT INTO shipform "
-               "(shipform_id, shipform_name, shipform_report_id) "
+               "(shipform_id, shipform_name, shipform_report_name) "
                "VALUES "
-               "(:shipform_id, :shipform_name, :shipform_report_id);" );
+               "(:shipform_id, :shipform_name, :shipform_report_name);" );
 
   }
   if (_mode == cEdit)
     q.prepare( "UPDATE shipform "
-               "SET shipform_name=:shipform_name, shipform_report_id=:shipform_report_id "
+               "SET shipform_name=:shipform_name, shipform_report_name=:shipform_report_name "
                "WHERE (shipform_id=:shipform_id);" );
 
   q.bindValue(":shipform_id", _shipformid);
   q.bindValue(":shipform_name", _name->text());
-  q.bindValue(":shipform_report_id", _report->id());
+  q.bindValue(":shipform_report_name", _report->code());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -160,7 +160,7 @@ void shippingForm::sSave()
 
 void shippingForm::populate()
 {
-  q.prepare( "SELECT shipform_name, shipform_report_id "
+  q.prepare( "SELECT * "
        	     "FROM shipform "
 	     "WHERE (shipform_id=:shipform_id);" );
   q.bindValue(":shipform_id", _shipformid);
@@ -168,7 +168,7 @@ void shippingForm::populate()
   if (q.first())
   {
     _name->setText(q.value("shipform_name").toString());
-    _report->setId(q.value("shipform_report_id").toInt());
+    _report->setCode(q.value("shipform_report_name").toString());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

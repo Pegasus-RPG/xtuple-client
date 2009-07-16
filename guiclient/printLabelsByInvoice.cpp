@@ -47,10 +47,9 @@ void printLabelsByInvoice::languageChange()
 void printLabelsByInvoice::sPrint()
 {
   XSqlQuery query;
-  query.prepare( "SELECT report_name "
-                 "FROM labelform, report "
-                 "WHERE ( (labelform_id=:labelform_id) "
-                 " AND (report_id=labelform_report_id) );" );
+  query.prepare( "SELECT labelform_report_name AS report_name "
+                 "FROM labelform "
+                 "WHERE ( (labelform_id=:labelform_id) );" );
   query.bindValue(":labelform_id", _report->id());
   query.exec();
   if (query.first())

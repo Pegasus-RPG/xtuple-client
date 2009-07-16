@@ -89,11 +89,10 @@ void printCheck::sPrint()
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No) == QMessageBox::No)
     return;
-  q.prepare( "SELECT checkhead_printed, report_name, bankaccnt_id "
-             "FROM checkhead, bankaccnt, form, report "
+  q.prepare( "SELECT checkhead_printed, form_report_name AS report_name, bankaccnt_id "
+             "FROM checkhead, bankaccnt, form "
              "WHERE ((checkhead_bankaccnt_id=bankaccnt_id)"
              "  AND  (bankaccnt_check_form_id=form_id)"
-             "  AND  (form_report_id=report_id)"
              "  AND  (checkhead_id=:checkhead_id) );" );
   q.bindValue(":checkhead_id", _check->id());
   q.exec();
