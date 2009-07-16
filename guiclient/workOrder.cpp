@@ -118,6 +118,9 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
    //_tabs->removeTab(_tabs->indexOf(_costing));
    _costGroup->hide();
   }
+  
+  if (_metrics->value("JobItemCosDefault") == "P")
+    _proportional->setChecked(TRUE);
 
   _woIndentedList->addColumn(tr("WO#"),          110,  Qt::AlignLeft      , true,  "wonumber");
   _woIndentedList->addColumn(tr("Item#"),        100,  Qt::AlignLeft      , true,  "item_number" );
