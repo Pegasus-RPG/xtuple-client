@@ -29,7 +29,6 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sDeterminePrice();
-    virtual void sUpdateVendorQty();
     virtual void sCalculateTax();        // new function added
     virtual void sTaxDetail();           // new function added
 
@@ -59,6 +58,7 @@ private:
     double _invVendUOMRatio;
     double _minimumOrder;
     double _orderMultiple;
+    double _orderQtyCache;
     bool _overriddenUnitPrice;
     QString	_poStatus;
     QStandardItemModel * _itemchar;

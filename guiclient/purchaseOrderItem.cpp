@@ -37,7 +37,6 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sFindWarehouseItemsites(int)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateItemInfo(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_ordered, SIGNAL(lostFocus()), this, SLOT(sUpdateVendorQty()));
   connect(_vendorItemNumberList, SIGNAL(clicked()), this, SLOT(sVendorItemNumberList()));
   connect(_notesButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_listPrices, SIGNAL(clicked()), this, SLOT(sVendorListPrices()));
@@ -49,6 +48,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _parentso = -1;
   _itemsrcid = -1;
   _taxzoneid = -1;   //  _taxzoneid  added // 
+  _orderQtyCache = -1;
 
   _overriddenUnitPrice = false;
 
@@ -181,7 +181,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                    .arg(q.value("vend_id").toInt()) );
       }
       else
-	  {
+      {
         _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
         _item->setDefaultType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
       }
@@ -323,6 +323,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   if (valid)
   {
     _ordered->setDouble((param.toDouble()/_invVendUOMRatio));
+    _orderQtyCache = _ordered->toDouble();
 
     if (_item->isValid())
       sDeterminePrice();
@@ -396,6 +397,7 @@ void purchaseOrderItem::populate()
     _taxzoneid=q.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
     _dueDate->setDate(q.value("poitem_duedate").toDate());
     _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
+    _orderQtyCache = _ordered->toDouble();
     _received->setDouble(q.value("poitem_qty_received").toDouble());
     _unitPrice->set(q.value("poitem_unitprice").toDouble(),
 		    q.value("pohead_curr_id").toInt(),
@@ -959,10 +961,25 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
 
 void purchaseOrderItem::sDeterminePrice()
 {
-  if ( (!_overriddenUnitPrice) && (_itemsrcid != -1) && (_ordered->toDouble() != 0.0) )
+  if ((_orderQtyCache != -1) &&
+      (_orderQtyCache != _ordered->toDouble()))
+  {
+    if (QMessageBox::question(this, tr("Update Price?"),
+                tr("<p>The Item qty. has changed. Do you want to update the Price?"),
+                QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
+    {
+      _orderQtyCache = _ordered->toDouble();
+      return;
+    }
+  }
+   
+  if ( (!_overriddenUnitPrice) && 
+      (_itemsrcid != -1) && 
+      (_ordered->toDouble() != 0.0) &&
+      (_orderQtyCache != _ordered->toDouble()))
   {
     q.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
-		"AS new_itemsrcp_price "
+       	       "AS new_itemsrcp_price "
                "FROM itemsrcp "
                "WHERE ( (itemsrcp_itemsrc_id=:itemsrc_id)"
                " AND (itemsrcp_qtybreak <= :qty) ) "
@@ -976,14 +993,11 @@ void purchaseOrderItem::sDeterminePrice()
     if (q.first())
       _unitPrice->setLocalValue(q.value("new_itemsrcp_price").toDouble());
     else
-	_unitPrice->clear();
+      _unitPrice->clear();
   }
-
+  if (_ordered->toDouble() != 0.0)
+    _orderQtyCache = _ordered->toDouble();
   sPopulateExtPrice();
-}
-
-void purchaseOrderItem::sUpdateVendorQty()
-{
 }
 
 void purchaseOrderItem::sInventoryItemToggled( bool yes )
@@ -1052,6 +1066,7 @@ void purchaseOrderItem::sVendorListPrices()
   if ( (newdlg.exec() == XDialog::Accepted))
   {
     _ordered->setDouble(newdlg._selectedQty);
+    _orderQtyCache = _ordered->toDouble();
     sDeterminePrice();
   }
 }
