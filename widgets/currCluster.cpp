@@ -711,8 +711,8 @@ void CurrDisplay::setLocalValue(double newValue)
     if (ABS(_valueLocal - newValue) > EPSILON(_localScale) ||
 	newValue < EPSILON(_localScale))
     {
-       int prec = 10;
-       for (int cnt = 1; cnt < _decimals + _localScale; cnt++)
+       int prec = 1;
+       for (int cnt = 0; cnt < _decimals + _localScale; cnt++)
          prec = prec * 10;
          
 	_valueLocal = round(newValue*prec)/prec;
