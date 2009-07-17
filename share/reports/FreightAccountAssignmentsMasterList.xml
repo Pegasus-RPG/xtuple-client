@@ -14,8 +14,10 @@
   <sql>SELECT CASE WHEN araccnt_custtype_id=-1 THEN araccnt_custtype
             ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=araccnt_custtype_id))
        END AS custtypecode,
-       formatGLAccount(araccnt_ar_accnt_id) AS f_ar_accnt,
-       formatGLAccount(araccnt_freight_accnt_id) as f_freight_accnt
+       formatGLAccount(araccnt_ar_accnt_id) AS f_araccnt,
+       formatGLAccount(araccnt_freight_accnt_id) as f_freightaccnt,
+       formatGLAccount(araccnt_prepaid_accnt_id) AS f_prepaidaccnt,
+       formatGLAccount(araccnt_deferred_accnt_id) AS f_deferredaccnt
 FROM araccnt 
 ORDER BY custtypecode;</sql>
  </querysource>
@@ -62,8 +64,8 @@ ORDER BY custtypecode;</sql>
   </label>
   <label>
    <rect>
-    <x>435</x>
-    <y>65</y>
+    <x>290</x>
+    <y>64</y>
     <width>120</width>
     <height>15</height>
    </rect>
@@ -91,6 +93,38 @@ ORDER BY custtypecode;</sql>
    <left/>
    <vcenter/>
    <string>Customer Type Code</string>
+  </label>
+  <label>
+   <rect>
+    <x>610</x>
+    <y>64</y>
+    <width>120</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Deferred Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>450</x>
+    <y>64</y>
+    <width>120</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Prepaid Account</string>
   </label>
  </rpthead>
  <pghead>
@@ -133,8 +167,8 @@ ORDER BY custtypecode;</sql>
   </label>
   <label>
    <rect>
-    <x>435</x>
-    <y>5</y>
+    <x>290</x>
+    <y>7</y>
     <width>120</width>
     <height>15</height>
    </rect>
@@ -154,6 +188,38 @@ ORDER BY custtypecode;</sql>
    <yend>20</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>450</x>
+    <y>7</y>
+    <width>120</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Prepaid Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>7</y>
+    <width>120</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Deferred Account</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -164,9 +230,9 @@ ORDER BY custtypecode;</sql>
    <height>19</height>
    <field>
     <rect>
-     <x>435</x>
-     <y>0</y>
-     <width>300</width>
+     <x>290</x>
+     <y>1</y>
+     <width>125</width>
      <height>15</height>
     </rect>
     <font>
@@ -178,7 +244,7 @@ ORDER BY custtypecode;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_freight_accnt</column>
+     <column>f_freightaccnt</column>
     </data>
    </field>
    <field>
@@ -204,7 +270,7 @@ ORDER BY custtypecode;</sql>
     <rect>
      <x>130</x>
      <y>0</y>
-     <width>300</width>
+     <width>125</width>
      <height>15</height>
     </rect>
     <font>
@@ -216,7 +282,45 @@ ORDER BY custtypecode;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_ar_accnt</column>
+     <column>f_araccnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>610</x>
+     <y>1</y>
+     <width>125</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_deferredaccnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>450</x>
+     <y>1</y>
+     <width>125</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_prepaidaccnt</column>
     </data>
    </field>
   </detail>
