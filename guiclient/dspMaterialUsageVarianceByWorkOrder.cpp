@@ -52,7 +52,7 @@ dspMaterialUsageVarianceByWorkOrder::dspMaterialUsageVarianceByWorkOrder(QWidget
   _womatlvar->addColumn(tr("Qty. per Var."),      _qtyColumn,   Qt::AlignRight,  true,  "qtypervar"  );
   _womatlvar->addColumn(tr("%"),                  _prcntColumn, Qt::AlignRight,  true,  "qtypervarpercent");
   _womatlvar->addColumn(tr("Notes"),              -1,           Qt::AlignLeft,   false, "womatlvar_notes");
-  _womatlvar->addColumn(tr("Ref. Designator(s)"), -1,           Qt::AlignLeft,   false, "womatlvar_ref");
+  _womatlvar->addColumn(tr("Reference"), -1,           Qt::AlignLeft,   false, "womatlvar_ref");
 }
 
 /*
