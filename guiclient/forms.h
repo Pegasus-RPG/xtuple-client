@@ -23,8 +23,6 @@ public:
     forms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~forms();
 
-    virtual void init();
-
 public slots:
     virtual void sNew();
     virtual void sEdit();

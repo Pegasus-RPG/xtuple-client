@@ -34,9 +34,6 @@ protected:
 protected slots:
     virtual void languageChange();
 
-private:
-    virtual void init();
-
 };
 
 #endif // REVERSEGLSERIES_H

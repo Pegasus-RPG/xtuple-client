@@ -24,8 +24,6 @@ public:
     salesCategories(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~salesCategories();
 
-    virtual void init();
-
 public slots:
     virtual void sDelete();
     virtual void sNew();

@@ -10,50 +10,21 @@
 
 #include "systemMessage.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-
-/*
- *  Constructs a systemMessage as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-systemMessage::systemMessage(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
-{
-    setupUi(this);
-
-
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-systemMessage::~systemMessage()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void systemMessage::languageChange()
-{
-    retranslateUi(this);
-}
-
+#include <QVariant>
+#include <QMessageBox>
 
 #define cAcknowledge 0x80
 
-void systemMessage::init()
+systemMessage::systemMessage(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+  : XDialog(parent, name, modal, fl)
 {
+  setupUi(this);
+
+
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+
   _scheduledDate->setNullString(tr("ASAP"));
   _scheduledDate->setNullDate(omfgThis->startOfTime());
   _scheduledDate->setAllowNullDate(TRUE);
@@ -64,7 +35,17 @@ void systemMessage::init()
   _expiresDate->setNull();
 }
 
-enum SetResponse systemMessage::set(ParameterList &pParams)
+systemMessage::~systemMessage()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void systemMessage::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse systemMessage::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

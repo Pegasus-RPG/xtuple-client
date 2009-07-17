@@ -10,54 +10,34 @@
 
 #include "deletePlannedOrder.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "plCluster.h"
 
-/*
- *  Constructs a deletePlannedOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 deletePlannedOrder::deletePlannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_planord, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-deletePlannedOrder::~deletePlannedOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void deletePlannedOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void deletePlannedOrder::init()
-{
+  // signals and slots connections
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_planord, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   _captive = FALSE;
 }
 
-enum SetResponse deletePlannedOrder::set(ParameterList &pParams)
+deletePlannedOrder::~deletePlannedOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void deletePlannedOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse deletePlannedOrder::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

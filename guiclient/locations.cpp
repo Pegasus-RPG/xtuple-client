@@ -10,60 +10,29 @@
 
 #include "locations.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QWorkspace>
 #include <openreports.h>
 #include <parameter.h>
-//#include <qstatusbar.h>
 #include "location.h"
 
-/*
- *  Constructs a locations as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_location, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-locations::~locations()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void locations::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void locations::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_location, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+
   _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "name"   );
   _location->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "locationname"   );
@@ -83,6 +52,16 @@ void locations::init()
   }
 
   sFillList();
+}
+
+locations::~locations()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void locations::languageChange()
+{
+  retranslateUi(this);
 }
 
 void locations::sNew()

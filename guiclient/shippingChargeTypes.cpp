@@ -10,55 +10,24 @@
 
 #include "shippingChargeTypes.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
 #include "shippingChargeType.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a shippingChargeTypes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 shippingChargeTypes::shippingChargeTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-shippingChargeTypes::~shippingChargeTypes()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void shippingChargeTypes::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void shippingChargeTypes::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+
   if (_privileges->check("MaintainShippingChargeTypes"))
   {
     connect(_shipchrg, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -72,6 +41,16 @@ void shippingChargeTypes::init()
   _shipchrg->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "shipchrg_descrip" ); 
   
   sFillList();
+}
+
+shippingChargeTypes::~shippingChargeTypes()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void shippingChargeTypes::languageChange()
+{
+  retranslateUi(this);
 }
 
 void shippingChargeTypes::sNew()

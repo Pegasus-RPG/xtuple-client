@@ -10,52 +10,23 @@
 
 #include "postCountTags.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a postCountTags as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postCountTags::postCountTags(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    _codeGroup = new QButtonGroup(this);
-    _codeGroup->addButton(_plancode);
-    _codeGroup->addButton(_classcode);
+  _codeGroup = new QButtonGroup(this);
+  _codeGroup->addButton(_plancode);
+  _codeGroup->addButton(_classcode);
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-postCountTags::~postCountTags()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void postCountTags::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void postCountTags::init()
-{
   _parameter->setType(ParameterGroup::ClassCode);
   
   if(!_privileges->check("ThawInventory"))
@@ -63,6 +34,16 @@ void postCountTags::init()
     _thaw->setChecked(FALSE);
     _thaw->setEnabled(FALSE);
   }
+}
+
+postCountTags::~postCountTags()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void postCountTags::languageChange()
+{
+  retranslateUi(this);
 }
 
 void postCountTags::sPost()

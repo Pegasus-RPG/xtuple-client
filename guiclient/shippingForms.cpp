@@ -10,56 +10,25 @@
 
 #include "shippingForms.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
 #include "shippingForm.h"
 
-/*
- *  Constructs a shippingForms as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 shippingForms::shippingForms(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bolformat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-shippingForms::~shippingForms()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void shippingForms::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void shippingForms::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_bolformat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+
   _bolformat->addColumn(tr("Form Name"), -1, Qt::AlignLeft, true, "shipform_name");
 
   if (_privileges->check("MaintainShippingForms"))
@@ -75,6 +44,16 @@ void shippingForms::init()
   }
 
   sFillList();
+}
+
+shippingForms::~shippingForms()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void shippingForms::languageChange()
+{
+  retranslateUi(this);
 }
 
 void shippingForms::sNew()

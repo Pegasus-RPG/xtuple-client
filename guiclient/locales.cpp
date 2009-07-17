@@ -10,8 +10,8 @@
 
 #include "locales.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
 #include "sysLocale.h"
 

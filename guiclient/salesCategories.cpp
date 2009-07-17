@@ -10,58 +10,27 @@
 
 #include "salesCategories.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include "salesCategory.h"
 
-/*
- *  Constructs a salesCategories as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 salesCategories::salesCategories(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_salescat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesCategories::~salesCategories()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesCategories::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void salesCategories::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_salescat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+
   _salescat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft, true, "salescat_name"   );
   _salescat->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "salescat_descrip"  );
 
@@ -79,6 +48,16 @@ void salesCategories::init()
   }
 
   sFillList();
+}
+
+salesCategories::~salesCategories()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesCategories::languageChange()
+{
+  retranslateUi(this);
 }
 
 void salesCategories::sDelete()

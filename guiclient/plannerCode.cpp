@@ -10,64 +10,44 @@
 
 #include "plannerCode.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a plannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    if (_metrics->value("Application") == "Manufacturing")
-    {
-      QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
-      _explosionGroupInt->addButton(_singleLevel);
-      _explosionGroupInt->addButton(_multipleLevel);
-    }
-    else
-    {
-      _autoExplode->hide();
-      _explosionGroup->hide();
-    }
-    
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_autoExplode, SIGNAL(toggled(bool)), _explosionGroup, SLOT(setEnabled(bool)));
-    init();
+  if (_metrics->value("Application") == "Manufacturing")
+  {
+    QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
+    _explosionGroupInt->addButton(_singleLevel);
+    _explosionGroupInt->addButton(_multipleLevel);
+  }
+  else
+  {
+    _autoExplode->hide();
+    _explosionGroup->hide();
+  }
+  
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_autoExplode, SIGNAL(toggled(bool)), _explosionGroup, SLOT(setEnabled(bool)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 plannerCode::~plannerCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void plannerCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void plannerCode::init()
-{
-}
-
-enum SetResponse plannerCode::set(ParameterList &pParams)
+enum SetResponse plannerCode::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

@@ -10,58 +10,27 @@
 
 #include "laborRates.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
 #include "laborRate.h"
 
-/*
- *  Constructs a laborRates as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 laborRates::laborRates(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_lbrrate, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-laborRates::~laborRates()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void laborRates::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void laborRates::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_lbrrate, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+
   _lbrrate->addColumn(tr("Labor Rate"),  _itemColumn, Qt::AlignLeft,   true,  "lbrrate_code"  );
   _lbrrate->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "lbrrate_descrip"  );
   _lbrrate->addColumn(tr("Rate"),        _costColumn, Qt::AlignRight,  true,  "lbrrate_rate" );
@@ -80,6 +49,16 @@ void laborRates::init()
   }
 
   sFillList();
+}
+
+laborRates::~laborRates()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void laborRates::languageChange()
+{
+  retranslateUi(this);
 }
 
 void laborRates::sPrint()

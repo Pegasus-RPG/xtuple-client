@@ -25,7 +25,7 @@ public:
     ~workCenter();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sCheck();
     virtual void sSave();
     virtual void sPopulateOverheadRate();
@@ -36,9 +36,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 private:
     int _mode;

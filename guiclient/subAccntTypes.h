@@ -33,10 +33,6 @@ protected slots:
     virtual void sDelete();
     virtual void sFillList();
 
-
-private:
-    void init();
-
 };
 
 #endif // SUBACCNTTYPES_H

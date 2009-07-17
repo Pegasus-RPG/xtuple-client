@@ -26,7 +26,7 @@ public:
     ~cashReceiptMiscDistrib();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sSave();
 
@@ -37,8 +37,6 @@ private:
     int _mode;
     int _cashrcptmiscid;
     int _cashrcptid;
-
-    void init();
 
 };
 

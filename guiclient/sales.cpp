@@ -10,64 +10,43 @@
 
 #include "sales.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
 #include "sale.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a sales as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 sales::sales(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_sale, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_sale, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_sale, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-sales::~sales()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void sales::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void sales::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_sale, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_sale, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  connect(_sale, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+
   _sale->addColumn(tr("Name"),     _itemColumn, Qt::AlignLeft,   true, "sale_name"  );
   _sale->addColumn(tr("Schedule"), -1         , Qt::AlignLeft,   true, "ipshead_name"  );
   _sale->addColumn(tr("Start"),    _dateColumn, Qt::AlignCenter, true, "sale_startdate" );
   _sale->addColumn(tr("End"),      _dateColumn, Qt::AlignCenter, true, "sale_enddate" );
 
   sFillList();
+}
+
+sales::~sales()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void sales::languageChange()
+{
+  retranslateUi(this);
 }
 
 void sales::sNew()

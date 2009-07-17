@@ -25,10 +25,8 @@ public:
     bbomItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~bbomItem();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sHandleItemType( const QString & pItemType );
     virtual void populate();

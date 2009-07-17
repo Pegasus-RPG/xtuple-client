@@ -26,7 +26,7 @@ public:
     ~deletePlannedOrder();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();
@@ -36,8 +36,6 @@ protected slots:
 
 private:
     bool _captive;
-
-    void init();
 
 };
 

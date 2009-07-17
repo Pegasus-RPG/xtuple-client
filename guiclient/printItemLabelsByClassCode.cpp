@@ -10,49 +10,20 @@
 
 #include "printItemLabelsByClassCode.h"
 
-#include <qvariant.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
-#include <qmessagebox.h>
 
-/*
- *  Constructs a printItemLabelsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printItemLabelsByClassCode::printItemLabelsByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printItemLabelsByClassCode::~printItemLabelsByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printItemLabelsByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void printItemLabelsByClassCode::init()
-{
   _captive = FALSE;
 
   _classCode->setType(ParameterGroup::ClassCode);
@@ -62,7 +33,17 @@ void printItemLabelsByClassCode::init()
                      "ORDER BY labelform_name;" );
 }
 
-enum SetResponse printItemLabelsByClassCode::set(ParameterList &pParams)
+printItemLabelsByClassCode::~printItemLabelsByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void printItemLabelsByClassCode::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse printItemLabelsByClassCode::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

@@ -11,7 +11,7 @@
 #ifndef __XMESSAGEBOX_H__
 #define __XMESSAGEBOX_H__
 
-#include <qmessagebox.h>
+#include <QMessageBox>
 
 class XMessageBox {
   public:

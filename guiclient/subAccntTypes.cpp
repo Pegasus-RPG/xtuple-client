@@ -10,63 +10,42 @@
 
 #include "subAccntTypes.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "subAccntType.h"
 #include <openreports.h>
-//#include <qstatusbar.h>
 
-/*
- *  Constructs a subAccntTypes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 subAccntTypes::subAccntTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_subaccnttypes, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_subaccnttypes, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_subaccnttypes, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-subAccntTypes::~subAccntTypes()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void subAccntTypes::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void subAccntTypes::init()
-{
-//  statusBar()->hide();
+  // signals and slots connections
+  connect(_subaccnttypes, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_subaccnttypes, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  connect(_subaccnttypes, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
   _subaccnttypes->addColumn(tr("Code"),        70, Qt::AlignLeft,   true,  "subaccnttype_code" );
   _subaccnttypes->addColumn(tr("Type"),        50, Qt::AlignLeft,   true,  "type" );
   _subaccnttypes->addColumn(tr("Description"), -1, Qt::AlignLeft,   true,  "subaccnttype_descrip" );
   
   sFillList();
+}
+
+subAccntTypes::~subAccntTypes()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void subAccntTypes::languageChange()
+{
+  retranslateUi(this);
 }
 
 void subAccntTypes::sNew()

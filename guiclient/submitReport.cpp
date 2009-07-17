@@ -10,51 +10,22 @@
 
 #include "submitReport.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <xvariant.h>
 
-/*
- *  Constructs a submitReport as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 submitReport::submitReport(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    connect(_scheduled, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_scheduled, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-submitReport::~submitReport()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void submitReport::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void submitReport::init()
-{
   _error = 0;
 
   q.exec( "SELECT usr_email "
@@ -64,7 +35,17 @@ void submitReport::init()
     _fromEmail->setText(q.value("usr_email"));
 }
 
-enum SetResponse submitReport::set(ParameterList &pParams)
+submitReport::~submitReport()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void submitReport::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse submitReport::set(const ParameterList &pParams)
 {
   _params = pParams;
 

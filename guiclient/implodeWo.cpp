@@ -10,59 +10,39 @@
 
 #include "implodeWo.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
 #include "inputManager.h"
 
-/*
- *  Constructs a implodeWo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 implodeWo::implodeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(valid(bool)), _implode, SLOT(setEnabled(bool)));
-    connect(_implode, SIGNAL(clicked()), this, SLOT(sImplode()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_wo, SIGNAL(valid(bool)), _implode, SLOT(setEnabled(bool)));
+  connect(_implode, SIGNAL(clicked()), this, SLOT(sImplode()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-implodeWo::~implodeWo()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void implodeWo::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void implodeWo::init()
-{
   _captive = TRUE;
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoExploded);
 }
 
-enum SetResponse implodeWo::set(ParameterList &pParams)
+implodeWo::~implodeWo()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void implodeWo::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse implodeWo::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

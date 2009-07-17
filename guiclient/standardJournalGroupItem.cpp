@@ -10,50 +10,21 @@
 
 #include "standardJournalGroupItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a standardJournalGroupItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 standardJournalGroupItem::standardJournalGroupItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_limited, SIGNAL(toggled(bool)), _toApply, SLOT(setEnabled(bool)));
-    connect(_stdjrnl, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_limited, SIGNAL(toggled(bool)), _toApply, SLOT(setEnabled(bool)));
+  connect(_stdjrnl, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-standardJournalGroupItem::~standardJournalGroupItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void standardJournalGroupItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void standardJournalGroupItem::init()
-{
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
@@ -64,7 +35,17 @@ void standardJournalGroupItem::init()
                       "ORDER BY stdjrnl_name;" );
 }
 
-enum SetResponse standardJournalGroupItem::set(ParameterList &pParams)
+standardJournalGroupItem::~standardJournalGroupItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void standardJournalGroupItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

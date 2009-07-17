@@ -10,52 +10,23 @@
 
 #include "bbomItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 #include "bbomItem.h"
 
-/*
- *  Constructs a bbomItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 bbomItem::bbomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_item, SIGNAL(typeChanged(const QString &)), this, SLOT(sHandleItemType(const QString&)));
-    init();
-}
+  // signals and slots connections
+  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_item, SIGNAL(typeChanged(const QString &)), this, SLOT(sHandleItemType(const QString&)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-bbomItem::~bbomItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bbomItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void bbomItem::init()
-{
   _item->setType((ItemLineEdit::cCoProduct | ItemLineEdit::cByProduct));
 
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
@@ -66,7 +37,17 @@ void bbomItem::init()
   _costAbsorption->setValidator(omfgThis->percentVal());
 }
 
-enum SetResponse bbomItem::set(ParameterList &pParams)
+bbomItem::~bbomItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bbomItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse bbomItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

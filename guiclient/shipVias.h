@@ -22,8 +22,6 @@ public:
     shipVias(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~shipVias();
 
-    virtual void init();
-
 public slots:
     virtual void sNew();
     virtual void sEdit();

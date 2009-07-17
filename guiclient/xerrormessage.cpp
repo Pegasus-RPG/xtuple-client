@@ -11,9 +11,9 @@
 #include "xerrormessage.h"
 
 #include "guiclient.h"
-#include "qlayout.h"
-#include "qmessagebox.h"  
-#include "qpixmap.h"
+#include <QLayout>
+#include <QMessageBox>  
+#include <QPixmap>
 
 XErrorMessage::XErrorMessage(QWidget * parent)
     : QDialog(parent)

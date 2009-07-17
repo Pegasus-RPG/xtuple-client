@@ -10,63 +10,34 @@
 
 #include "standardOperation.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a standardOperation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 standardOperation::standardOperation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_stdTimes, SIGNAL(toggled(bool)), _setupTime, SLOT(setEnabled(bool)));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _runTime, SLOT(setEnabled(bool)));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _runQtyPer, SLOT(setEnabled(bool)));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _setupReport, SLOT(setEnabled(bool)));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _runReport, SLOT(setEnabled(bool)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sHandleWorkCenter()));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _reportSetup, SLOT(setEnabled(bool)));
-    connect(_stdTimes, SIGNAL(toggled(bool)), _reportRun, SLOT(setEnabled(bool)));
-    connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-      
-    _invProdUOMRatio->setValidator(omfgThis->ratioVal());
-    _setupTime->setValidator(omfgThis->runTimeVal());
-    _runTime->setValidator(omfgThis->runTimeVal());
-    _runQtyPer->setValidator(omfgThis->qtyPerVal());
+  // signals and slots connections
+  connect(_stdTimes, SIGNAL(toggled(bool)), _setupTime, SLOT(setEnabled(bool)));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _runTime, SLOT(setEnabled(bool)));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _runQtyPer, SLOT(setEnabled(bool)));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _setupReport, SLOT(setEnabled(bool)));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _runReport, SLOT(setEnabled(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sHandleWorkCenter()));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _reportSetup, SLOT(setEnabled(bool)));
+  connect(_stdTimes, SIGNAL(toggled(bool)), _reportRun, SLOT(setEnabled(bool)));
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
     
-    init();
-}
+  _invProdUOMRatio->setValidator(omfgThis->ratioVal());
+  _setupTime->setValidator(omfgThis->runTimeVal());
+  _runTime->setValidator(omfgThis->runTimeVal());
+  _runQtyPer->setValidator(omfgThis->qtyPerVal());
+    
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-standardOperation::~standardOperation()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void standardOperation::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void standardOperation::init()
-{
   _prodUOM->setType(XComboBox::UOMs);
 
   _wrkcnt->populate( "SELECT -1 AS wrkcnt_id, 'Any' AS wrkcnt_code, 1 AS orderby "
@@ -85,7 +56,17 @@ void standardOperation::init()
   _runReport->setCurrentIndex(-1);
 }
 
-enum SetResponse standardOperation::set(ParameterList &pParams)
+standardOperation::~standardOperation()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void standardOperation::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse standardOperation::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

@@ -10,53 +10,22 @@
 
 #include "bankAdjustment.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qsqlerror.h>
-//#include <qstatusbar.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
 
-/*
- *  Constructs a bankAdjustment as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bankAdjustment::bankAdjustment(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankAccount(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bankAdjustment::~bankAdjustment()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bankAdjustment::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void bankAdjustment::init()
-{
-//  statusBar()->hide();
-  
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankAccount(int)));
+
   _bankaccnt->populate("SELECT bankaccnt_id,"
                        "       (bankaccnt_name || '-' || bankaccnt_descrip),"
 		       "       bankaccnt_name "
@@ -71,7 +40,17 @@ void bankAdjustment::init()
   _bankadjid = -1;
 }
 
-SetResponse bankAdjustment::set( ParameterList & pParams )
+bankAdjustment::~bankAdjustment()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bankAdjustment::languageChange()
+{
+  retranslateUi(this);
+}
+
+SetResponse bankAdjustment::set( const ParameterList & pParams )
 {
   QVariant param;
   bool     valid;

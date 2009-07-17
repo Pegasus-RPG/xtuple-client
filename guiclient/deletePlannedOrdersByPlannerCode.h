@@ -34,8 +34,6 @@ protected slots:
 private:
     bool _captive;
 
-    void init();
-
 };
 
 #endif // DELETEPLANNEDORDERSBYPLANNERCODE_H

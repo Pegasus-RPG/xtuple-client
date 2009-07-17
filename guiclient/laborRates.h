@@ -24,8 +24,6 @@ public:
     laborRates(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~laborRates();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
     virtual void sNew();

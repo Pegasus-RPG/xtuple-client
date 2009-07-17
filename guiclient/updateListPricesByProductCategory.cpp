@@ -10,52 +10,33 @@
 
 #include "updateListPricesByProductCategory.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 
-/*
- *  Constructs a updateListPricesByProductCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 updateListPricesByProductCategory::updateListPricesByProductCategory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-updateListPricesByProductCategory::~updateListPricesByProductCategory()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void updateListPricesByProductCategory::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void updateListPricesByProductCategory::init()
-{
   _productCategory->setType(ParameterGroup::ProductCategory);
 
   _updateBy->setValidator(new QDoubleValidator(-100, 9999, 2, _updateBy));
+}
+
+updateListPricesByProductCategory::~updateListPricesByProductCategory()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void updateListPricesByProductCategory::languageChange()
+{
+  retranslateUi(this);
 }
 
 void updateListPricesByProductCategory::sUpdate()

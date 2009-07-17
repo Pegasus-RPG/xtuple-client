@@ -10,95 +10,56 @@
 
 #include "workCenter.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
-//#include <qstatusbar.h>
-/*
- *  Constructs a workCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
+
 workCenter::workCenter(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
-    setupUi(this);
-
-//    (void)statusBar();
-
-    QButtonGroup* _runRateGroupInt = new QButtonGroup(this);
-    _runRateGroupInt->addButton(_runSpecifyRate);
-    _runRateGroupInt->addButton(_runUseSelectedRate);
-
-    QButtonGroup* _setupRateGroupInt = new QButtonGroup(this);
-    _setupRateGroupInt->addButton(_setupSpecifyRate);
-    _setupRateGroupInt->addButton(_setupUseSelectedRate);
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_numOfMachines, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_numOfPeople, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_overheadPerLaborHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_overheadPerMachHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_overheadPrcntOfLabor, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_runRate, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_runSpecifyRate, SIGNAL(toggled(bool)), _runRate, SLOT(setEnabled(bool)));
-    connect(_runUseSelectedRate, SIGNAL(toggled(bool)), _stdRunRate, SLOT(setEnabled(bool)));
-    connect(_runUseSelectedRate, SIGNAL(clicked()), this, SLOT(sPopulateRunRate()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_setupRate, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
-    connect(_setupSpecifyRate, SIGNAL(toggled(bool)), _setupRate, SLOT(setEnabled(bool)));
-    connect(_setupUseSelectedRate, SIGNAL(toggled(bool)), _stdSetupRate, SLOT(setEnabled(bool)));
-    connect(_setupUseSelectedRate, SIGNAL(clicked()), this, SLOT(sPopulateSetupRate()));
-    connect(_stdRunRate, SIGNAL(newID(int)), this, SLOT(sPopulateRunRate()));
-    connect(_stdSetupRate, SIGNAL(newID(int)), this, SLOT(sPopulateSetupRate()));
-    connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
-    
-    _runRate->setValidator(omfgThis->runTimeVal());
-    _setupRate->setValidator(omfgThis->runTimeVal());
-    _overheadPrcntOfLabor->setValidator(omfgThis->percentVal());
-    _overheadPerLaborHour->setValidator(omfgThis->costVal());
-    _overheadPerMachHour->setValidator(omfgThis->costVal());
-    _overheadRate->setPrecision(omfgThis->costVal());
-    _overheadPerUnit->setValidator(omfgThis->costVal());
-    _avgSetup->setValidator(omfgThis->runTimeVal());
-    _dailyCapacity->setValidator(omfgThis->runTimeVal());
-    _efficiencyFactor->setValidator(omfgThis->percentVal());
-    
-    init();
-
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
-    sPopulateLocations();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-workCenter::~workCenter()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void workCenter::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void workCenter::init()
-{
-//  statusBar()->hide();
+  QButtonGroup* _runRateGroupInt = new QButtonGroup(this);
+  _runRateGroupInt->addButton(_runSpecifyRate);
+  _runRateGroupInt->addButton(_runUseSelectedRate);
+
+  QButtonGroup* _setupRateGroupInt = new QButtonGroup(this);
+  _setupRateGroupInt->addButton(_setupSpecifyRate);
+  _setupRateGroupInt->addButton(_setupUseSelectedRate);
+
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_numOfMachines, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_numOfPeople, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_overheadPerLaborHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_overheadPerMachHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_overheadPrcntOfLabor, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_runRate, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_runSpecifyRate, SIGNAL(toggled(bool)), _runRate, SLOT(setEnabled(bool)));
+  connect(_runUseSelectedRate, SIGNAL(toggled(bool)), _stdRunRate, SLOT(setEnabled(bool)));
+  connect(_runUseSelectedRate, SIGNAL(clicked()), this, SLOT(sPopulateRunRate()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_setupRate, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
+  connect(_setupSpecifyRate, SIGNAL(toggled(bool)), _setupRate, SLOT(setEnabled(bool)));
+  connect(_setupUseSelectedRate, SIGNAL(toggled(bool)), _stdSetupRate, SLOT(setEnabled(bool)));
+  connect(_setupUseSelectedRate, SIGNAL(clicked()), this, SLOT(sPopulateSetupRate()));
+  connect(_stdRunRate, SIGNAL(newID(int)), this, SLOT(sPopulateRunRate()));
+  connect(_stdSetupRate, SIGNAL(newID(int)), this, SLOT(sPopulateSetupRate()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
   
+  _runRate->setValidator(omfgThis->runTimeVal());
+  _setupRate->setValidator(omfgThis->runTimeVal());
+  _overheadPrcntOfLabor->setValidator(omfgThis->percentVal());
+  _overheadPerLaborHour->setValidator(omfgThis->costVal());
+  _overheadPerMachHour->setValidator(omfgThis->costVal());
+  _overheadRate->setPrecision(omfgThis->costVal());
+  _overheadPerUnit->setValidator(omfgThis->costVal());
+  _avgSetup->setValidator(omfgThis->runTimeVal());
+  _dailyCapacity->setValidator(omfgThis->runTimeVal());
+  _efficiencyFactor->setValidator(omfgThis->percentVal());
+    
   _lbrrate.exec( "SELECT lbrrate_id, lbrrate_code, lbrrate_rate "
                  "FROM lbrrate "
                  "ORDER BY lbrrate_code;" );
@@ -119,9 +80,27 @@ void workCenter::init()
   _overheadPerUnit->setValidator(omfgThis->moneyVal());
 
   _setupType->setCurrentIndex(-1);
+
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
+  sPopulateLocations();
 }
 
-enum SetResponse workCenter::set(ParameterList &pParams)
+workCenter::~workCenter()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void workCenter::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse workCenter::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

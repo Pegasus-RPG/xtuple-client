@@ -10,56 +10,37 @@
 
 #include "printStatementByCustomer.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 
-/*
- *  Constructs a printStatementByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_cust, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_cust, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printStatementByCustomer::~printStatementByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printStatementByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void printStatementByCustomer::init()
-{
   _captive = FALSE;
 
   _cust->setFocus();
 }
 
-enum SetResponse printStatementByCustomer::set(ParameterList &pParams)
+printStatementByCustomer::~printStatementByCustomer()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void printStatementByCustomer::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse printStatementByCustomer::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

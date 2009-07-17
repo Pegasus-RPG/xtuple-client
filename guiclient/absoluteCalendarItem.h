@@ -26,7 +26,7 @@ public:
     ~absoluteCalendarItem();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
 
@@ -37,8 +37,6 @@ private:
     int _mode;
     int _calitemid;
     int _calheadid;
-
-    void init();
 
 };
 

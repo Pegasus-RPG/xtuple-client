@@ -10,51 +10,32 @@
 
 #include "deletePlannedOrdersByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a deletePlannedOrdersByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 deletePlannedOrdersByPlannerCode::deletePlannedOrdersByPlannerCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-deletePlannedOrdersByPlannerCode::~deletePlannedOrdersByPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void deletePlannedOrdersByPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void deletePlannedOrdersByPlannerCode::init()
-{
   _captive = FALSE;
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
+}
+
+deletePlannedOrdersByPlannerCode::~deletePlannedOrdersByPlannerCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void deletePlannedOrdersByPlannerCode::languageChange()
+{
+  retranslateUi(this);
 }
 
 void deletePlannedOrdersByPlannerCode::sDelete()

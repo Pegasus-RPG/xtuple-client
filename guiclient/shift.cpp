@@ -10,53 +10,32 @@
 
 #include "shift.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
 
-/*
- *  Constructs a shift as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 shift::shift(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 shift::~shift()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void shift::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <QSqlError>
-void shift::init()
-{
-    //statusBar()->hide();
-}
-
-enum SetResponse shift::set(ParameterList& pParams)
+enum SetResponse shift::set(const ParameterList& pParams)
 {
     QVariant	param;
     bool	valid;

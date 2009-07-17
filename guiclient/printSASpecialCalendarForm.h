@@ -22,8 +22,6 @@ public:
     printSASpecialCalendarForm(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printSASpecialCalendarForm();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
 

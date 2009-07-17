@@ -10,50 +10,30 @@
 
 #include "purgeInvoices.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <QFile>
 #include <QProgressDialog>
 
-/*
- *  Constructs a purgeInvoices as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 purgeInvoices::purgeInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_purge, SIGNAL(clicked()), this, SLOT(sPurge()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  // signals and slots connections
+  connect(_purge, SIGNAL(clicked()), this, SLOT(sPurge()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 purgeInvoices::~purgeInvoices()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void purgeInvoices::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void purgeInvoices::init()
-{
+  retranslateUi(this);
 }
 
 void purgeInvoices::sPurge()

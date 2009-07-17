@@ -26,12 +26,11 @@ public:
     ~bankAdjustment();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sBankAccount( int accountId );
 
 protected:
-    virtual void init();
     virtual void populate();
 
 protected slots:

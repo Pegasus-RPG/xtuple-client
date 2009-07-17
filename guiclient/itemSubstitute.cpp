@@ -10,59 +10,38 @@
 
 #include "itemSubstitute.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-
-/*
- *  Constructs a itemSubstitute as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-itemSubstitute::itemSubstitute(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
-{
-    setupUi(this);
-
-
-    // signals and slots connections
-    connect(_substitute, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
-    _uomRatio->setValidator(omfgThis->percentVal());
-
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-itemSubstitute::~itemSubstitute()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void itemSubstitute::languageChange()
-{
-    retranslateUi(this);
-}
-
+#include <QVariant>
+#include <QMessageBox>
 
 #define cItemSub    0x01
 #define cBOMItemSub 0x02
 
-void itemSubstitute::init()
+itemSubstitute::itemSubstitute(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+  : XDialog(parent, name, modal, fl)
 {
+  setupUi(this);
+
+
+  // signals and slots connections
+  connect(_substitute, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+
+  _uomRatio->setValidator(omfgThis->percentVal());
   _uomRatio->setText("1.0");
 }
 
-enum SetResponse itemSubstitute::set(ParameterList &pParams)
+itemSubstitute::~itemSubstitute()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void itemSubstitute::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse itemSubstitute::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

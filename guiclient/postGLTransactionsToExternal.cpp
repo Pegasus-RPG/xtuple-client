@@ -10,57 +10,36 @@
 
 #include "postGLTransactionsToExternal.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qfile.h>
-#include <qtextstream.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
 #include <stdlib.h>
 
-/*
- *  Constructs a postGLTransactionsToExternal as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postGLTransactionsToExternal::postGLTransactionsToExternal(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
+  // signals and slots connections
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-postGLTransactionsToExternal::~postGLTransactionsToExternal()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void postGLTransactionsToExternal::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QTextStream>
-
-void postGLTransactionsToExternal::init()
-{
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Expires"));
+}
+
+postGLTransactionsToExternal::~postGLTransactionsToExternal()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void postGLTransactionsToExternal::languageChange()
+{
+  retranslateUi(this);
 }
 
 void postGLTransactionsToExternal::sPost()

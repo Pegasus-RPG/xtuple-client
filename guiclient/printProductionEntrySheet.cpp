@@ -10,56 +10,37 @@
 
 #include "printProductionEntrySheet.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
 #include "guiclient.h"
 #include "inputManager.h"
 
-/*
- *  Constructs a printProductionEntrySheet as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printProductionEntrySheet::printProductionEntrySheet(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printProductionEntrySheet::~printProductionEntrySheet()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printProductionEntrySheet::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void printProductionEntrySheet::init()
-{
   _form->populate( "SELECT form_id, form_name "
                    "FROM form "
                    "WHERE (form_key='PES') "
                    "ORDER BY form_name;" );
+}
+
+printProductionEntrySheet::~printProductionEntrySheet()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void printProductionEntrySheet::languageChange()
+{
+  retranslateUi(this);
 }
 
 void printProductionEntrySheet::sPrint()

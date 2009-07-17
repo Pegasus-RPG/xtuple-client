@@ -10,18 +10,11 @@
 
 #include "createPlannedOrdersByItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 
-/*
- *  Constructs a createPlannedOrdersByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 createPlannedOrdersByItem::createPlannedOrdersByItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -43,25 +36,17 @@ createPlannedOrdersByItem::createPlannedOrdersByItem(QWidget* parent, const char
   _captive = FALSE;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 createPlannedOrdersByItem::~createPlannedOrdersByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void createPlannedOrdersByItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-enum SetResponse createPlannedOrdersByItem::set(ParameterList &pParams)
+enum SetResponse createPlannedOrdersByItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

@@ -23,8 +23,6 @@ public:
     postCountSlips(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postCountSlips();
 
-    virtual void init();
-
 public slots:
     virtual void sPost();
 

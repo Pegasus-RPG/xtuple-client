@@ -26,7 +26,7 @@ public:
     ~classCode();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void populate();
 
 protected slots:
@@ -39,8 +39,6 @@ protected slots:
 private:
     int _classcodeid;
     int _mode;
-
-    void init();
 
 };
 

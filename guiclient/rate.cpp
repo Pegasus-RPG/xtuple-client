@@ -10,45 +10,16 @@
 
 #include "rate.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 
-/*
- *  Constructs a rate as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 rate::rate(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
-
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-rate::~rate()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void rate::languageChange()
-{
-    retranslateUi(this);
-}
+  setupUi(this);
 
 
-void rate::init()
-{
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
@@ -57,7 +28,17 @@ void rate::init()
   _price->setValidator(omfgThis->moneyVal());
 }
 
-enum SetResponse rate::set(ParameterList &pParams)
+rate::~rate()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void rate::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse rate::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
