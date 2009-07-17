@@ -582,9 +582,7 @@ void initErrorLookupHash()
   { "deleteSO",  -101, TR("This Sales Order cannot be deleted as some of its "
 			"line items have already been shipped."),	0, "" },
   { "deleteSO",  -102, TR("This Sales Order cannot be deleted as some of its "
-			"line items have already been issued to shipping.  "
-			"You must return this stock before "
-		        "you may delete this Sales Order."),		0, "" },
+			"line items have already been issued to shipping.  "),		0, "" },
   { "deleteSO",  -103, TR("This Sales Order cannot be deleted as some of its "
 			"line items are linked to a Return Authorization.  "
 			"You must resolve this conflict before "
@@ -593,6 +591,8 @@ void initErrorLookupHash()
 			"line items are linked to an In Process Work Order.  "
 			"You must resolve this conflict before "
 		        "you may delete this Sales Order."),		0, "" },
+  { "deleteSO",  -105, TR("This Sales Order cannot be deleted as some of its "
+			"line items have transaction history.  "),		0, "" },
 
   { "deleteSOItem",  -101, TR("This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
   { "deleteSOItem",  -102, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping.  "
