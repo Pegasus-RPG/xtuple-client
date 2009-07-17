@@ -30,6 +30,7 @@
        CASE WHEN(gltrans_doctype='IN') THEN text('Invoice')
             WHEN(gltrans_doctype='CM') THEN text('Credit Memo')
             WHEN(gltrans_doctype='DM') THEN text('Debit Memo')
+            WHEN(gltrans_doctype='CD') THEN text('Customer Deposit')
             ELSE gltrans_doctype
        END AS doctype,
        gltrans_docnumber,
@@ -58,7 +59,7 @@
        END AS credit
   FROM gltrans, accnt
  WHERE ((gltrans_accnt_id=accnt_id)
-   AND (gltrans_doctype IN ('IN', 'CM', 'DM'))
+   AND (gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))
    AND (gltrans_source = 'A/R')
    AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("accnt_id") ?>
