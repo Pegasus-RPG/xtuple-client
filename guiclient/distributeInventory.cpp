@@ -337,26 +337,62 @@ void distributeInventory::sPost()
   accept();
 }
 
-void distributeInventory::sDefault()
+bool distributeInventory::sDefault()
 {
-  if(_mode == cIncludeLotSerial)
-    q.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id) AS result;");
-  else
-    q.prepare("SELECT distributeToDefault(:itemlocdist_id) AS result;");
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  sFillList();
-  //prevent default from been changed after default distribute
-  //stopping the operator from thinking the inventory has been posted
-  //to the new default
-  _locations->setEnabled(false);
+   bool distribOk = true;
+   double qty = 0.0;
+   double availToDistribute = 0.0;
 
+   q.prepare("SELECT   itemlocdist_qty AS qty, "
+             "         qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS availToDistribute "
+             "   FROM   itemlocdist, location, itemsite "
+             "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+             "    AND (itemsite_loccntrl)"
+             "    AND (itemsite_warehous_id=location_warehous_id)"
+             "    AND (location_id=itemsite_location_id) "
+             "    AND (itemlocdist_id=:itemlocdist_id) ) ");
+   q.bindValue(":itemlocdist_id", _itemlocdistid);
+   q.exec();
+   if (q.first())
+   {
+       qty = q.value("qty").toDouble();
+       availToDistribute = q.value("availToDistribute").toDouble();
+   }
+
+   if(qty < 0 && availToDistribute < qAbs(qty))
+   {
+       if (QMessageBox::question(this,  tr("Distribute to Default"),
+                                tr("It appears you are trying to distribute more "
+                                   "than is available to be distributed. "
+                                   "<p>Are you sure you want to distribute this quantity?"),
+                                QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+            distribOk = true;
+       else
+            distribOk = false;
+   }
+   if(distribOk)
+   {
+      if(_mode == cIncludeLotSerial)
+        q.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id) AS result;");
+      else
+        q.prepare("SELECT distributeToDefault(:itemlocdist_id) AS result;");
+      q.bindValue(":itemlocdist_id", _itemlocdistid);
+      q.exec();
+      sFillList();
+      //prevent default from been changed after default distribute
+      //stopping the operator from thinking the inventory has been posted
+      //to the new default
+      _locations->setEnabled(false);
+      return true;
+    }
+    else
+       return false;
 }
 
 void distributeInventory::sDefaultAndPost()
 {
-  sDefault();
-  sPost();
+  if(sDefault())
+    sPost();
 }
 
 void distributeInventory::sFillList()

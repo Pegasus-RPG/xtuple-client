@@ -34,7 +34,7 @@ public slots:
     virtual void sBcChanged(const QString);
     virtual void sBcDistribute();
     virtual void sCatchLotSerialNumber(const QString);
-    virtual void sDefault();
+    virtual bool sDefault();
     virtual void sDefaultAndPost();
     virtual void sFillList();
     virtual void sPost();
