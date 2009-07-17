@@ -116,6 +116,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     virtual QVariant rawValue(const QString);
     Q_INVOKABLE virtual int id(const QString);
 
+    virtual bool operator<(const XTreeWidgetItem &other) const;
+    virtual bool operator==(const XTreeWidgetItem &other) const;
+
     inline XTreeWidgetItem *child(int idx) const
     {
       QTreeWidgetItem * item = QTreeWidgetItem::child(idx);
@@ -173,9 +176,6 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE QString toTxt() const;
     Q_INVOKABLE QString toCsv() const;
     Q_INVOKABLE QString toHtml() const;
-
-    static  bool itemAsc(const QVariant &, const QVariant &);
-    static  bool itemDesc(const QVariant &, const QVariant &);
 
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());

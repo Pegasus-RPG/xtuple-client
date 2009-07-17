@@ -716,10 +716,53 @@ XTreeWidgetItem *XTreeWidget::topLevelItem(int idx) const
   return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
 }
 
-bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)
+bool XTreeWidgetItem::operator==(const XTreeWidgetItem &other) const
 {
-  bool returnVal = false;
+  QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
+  QVariant v2 = other.data(other.treeWidget()->sortColumn(), RawRole);
 
+  bool returnVal = false;
+  switch (v1.type())
+  {
+    case QVariant::Bool:
+      returnVal = (v1.toBool() && v1 == v2);
+      break;
+    case QVariant::Date:
+      returnVal = (v1.toDate() == v2.toDate());
+      break;
+    case QVariant::DateTime:
+      returnVal = (v1.toDateTime() == v2.toDateTime());
+      break;
+    case QVariant::Double:
+      returnVal = (v1.toDouble() == v2.toDouble());
+      break;
+    case QVariant::Int:
+      returnVal = (v1.toInt() == v2.toInt());
+      break;
+    case QVariant::LongLong:
+      returnVal = (v1.toLongLong() == v2.toLongLong());
+      break;
+    case QVariant::String:
+      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
+        returnVal = (v1.toString() == v2.toString());
+      else
+        returnVal = (v1.toDouble() == v2.toDouble());
+      break;
+    default:            returnVal = false;
+  }
+
+  if (DEBUG)
+    qDebug("returning %d for %s == %s", returnVal,
+           qPrintable(v1.toString()), qPrintable(v2.toString()));
+  return returnVal;
+}
+
+bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
+{
+  QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
+  QVariant v2 = other.data(other.treeWidget()->sortColumn(), RawRole);
+
+  bool returnVal = false;
   switch (v1.type())
   {
     case QVariant::Bool:
@@ -749,12 +792,10 @@ bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)
     default:            returnVal = false;
   }
 
+  if (DEBUG)
+    qDebug("returning %d for %s < %s", returnVal,
+           qPrintable(v1.toString()), qPrintable(v2.toString()));
   return returnVal;
-}
-
-bool XTreeWidget::itemDesc(const QVariant &v1, const QVariant &v2)
-{
-  return !itemAsc(v1, v2);
 }
 
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
@@ -772,31 +813,68 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 
   header()->setSortIndicator(column, order);
 
-  // remove the top level items from the XTreeWidget
-  QList<QTreeWidgetItem*> itemlist;
-  while (topLevelItem(0))
-    if (topLevelItem(0)->data(0, Qt::UserRole).toString() == "totalrole")
-      takeTopLevelItem(0);
-    else
-      itemlist.append(takeTopLevelItem(0));
-
-  // grab the column of data we want to sort on
-  QList<QVariant> rawlist;
-  for (int i = 0; i < itemlist.size(); i++)
-    rawlist.append(itemlist.at(i)->data(column, RawRole));
-
-  // sort the data
-  if (order == Qt::AscendingOrder)
-    qStableSort(rawlist.begin(), rawlist.end(), itemAsc);
-  else if (order == Qt::DescendingOrder)
-    qStableSort(rawlist.begin(), rawlist.end(), itemDesc);
-
-  // and re-insert the rows in order
-  for (int i = 0; i < rawlist.size(); i++)
+  // simple insertion sort using binary search to find the right insertion pt
+  QString totalrole("totalrole");
+  int itemcount = topLevelItemCount();
+  XTreeWidgetItem *prev = dynamic_cast<XTreeWidgetItem*>(topLevelItem(0));
+  for (int i = 1; i < itemcount; i++)
   {
-    for (int j = 0; j < itemlist.size(); j++)
-      if (itemlist.at(j)->data(column, RawRole) == rawlist.at(i))
-        addTopLevelItem(itemlist.takeAt(j));
+    XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(topLevelItem(i));
+    if (! item)
+    {
+      qWarning("removing a non-XTreWidgetItem from an XTreeWidget");
+      takeTopLevelItem(i);
+      itemcount--;
+      i--;
+    }
+    else if (item->data(0, Qt::UserRole).toString() == totalrole)
+    {
+      if (DEBUG)
+        qDebug("sortItems() removing row %d because it's a totalrole", i);
+      takeTopLevelItem(i);
+      itemcount--;
+      i--;
+    }
+    else if (*item < *prev)
+    {
+      int left   = 0;
+      int right  = i;
+      int middle = 0;
+      XTreeWidgetItem *test = 0;
+      while (left <= right)
+      {
+        middle = (left + right) / 2;
+        test = static_cast<XTreeWidgetItem*>(topLevelItem(middle));
+        if (*test == *item)
+          break;
+        else if (*test < *item)
+        {
+          if (*item < *(static_cast<XTreeWidgetItem*>(topLevelItem(middle + 1))))
+            break;
+          else
+          left = middle + 1;
+        }
+        else
+          right = middle - 1;
+      }
+      // can't call takeTopLevelItem() until after < and == are done
+      if (*item < *test || *item == *test)
+      {
+        if (DEBUG)
+          qDebug("<= so moving %d to %d", i, middle);
+        takeTopLevelItem(i);
+        insertTopLevelItem(middle, item);
+      }
+      else
+      {
+        if (DEBUG)
+          qDebug("> so moving %d to %d", i, middle + 1);
+        takeTopLevelItem(i);
+        insertTopLevelItem(middle + 1, item);
+      }
+    }
+    // can't reuse item because the thing in position i may have changed
+    prev = static_cast<XTreeWidgetItem*>(topLevelItem(i));
   }
 
   populateCalculatedColumns();
