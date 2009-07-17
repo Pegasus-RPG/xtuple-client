@@ -40,6 +40,7 @@
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QBuffer>
+#include <QDesktopServices>
 
 #include <parameter.h>
 #include <dbtools.h>
@@ -1259,6 +1260,16 @@ void GUIClient::sCustomCommand()
         wnd->setWindowTitle(ui->windowTitle());
         handleNewWindow(wnd);
       }
+    }
+    else if(cmd.toLower().startsWith("!openurl"))
+    {
+      //allow a file or Url to be opened from a custom command directly
+      QString urltext = cmd.mid(8, cmd.length()).trimmed();
+      //If url scheme is missing, we'll assume it is "file" for now.
+      QUrl url(urltext);
+      if (url.scheme().isEmpty())
+        url.setScheme("file");
+      QDesktopServices::openUrl(url);
     }
     else
     {
