@@ -239,7 +239,11 @@ void viewCheckRun::sHandleItemSelection()
   else if (! selected->rawValue("checkhead_void").isNull() &&
            ! selected->rawValue("checkhead_void").toBool())
   {
-    _void->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
+    // This was not allowing voiding of ACH checks. No strong case could be
+    // made to disallow this since ACH is manuall at this time. Should that
+    // requirement change this is the original line
+    //_void->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
+    _void->setEnabled(true);
     _delete->setEnabled(FALSE);
     _replace->setEnabled(FALSE);
     select = selected->rawValue("checkhead_ach_batch").isNull();
