@@ -232,8 +232,6 @@ QString incident::arDoctype() const
 
 int incident::saveContact(ContactCluster* pContact)
 {
-  pContact->setAccount(_crmacct->id());
-
   int answer = 2;       // Cancel
   int saveResult = pContact->save(AddressCluster::CHECK);
 
@@ -509,8 +507,8 @@ void incident::populate()
   q.exec();
   if(q.first())
   {
-    _crmacct->setId(q.value("incdt_crmacct_id").toInt());
     _cntct->setId(q.value("incdt_cntct_id").toInt());
+    _crmacct->setId(q.value("incdt_crmacct_id").toInt());
     _owner->setUsername(q.value("incdt_owner_username").toString());
     _number->setText(q.value("incdt_number").toString());
     _assignedTo->setUsername(q.value("incdt_assigned_username").toString());
@@ -755,19 +753,8 @@ void incident::sViewAR()
 
 void incident::sContactChanged()
 {
-  XSqlQuery acctq;
-  acctq.prepare("SELECT cntct_crmacct_id "
-                "FROM cntct "
-                "WHERE cntct_id = :contact_id");
-  acctq.bindValue(":contact_id", _cntct->id());
-  acctq.exec();
-  if(acctq.first())
-    _crmacct->setId(acctq.value("cntct_crmacct_id").toInt());
-  else if (acctq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, acctq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  if (_cntct->crmAcctId() != -1 && _crmacct->id() == -1)
+    _crmacct->setId(_cntct->crmAcctId());
 }
 
 void incident::sAssigned()
