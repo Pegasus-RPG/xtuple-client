@@ -197,8 +197,6 @@ void correctProductionPosting::populate()
     {
       _backFlush->setEnabled(true);
       _backflushOperations->setEnabled(true);
-      _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
-      _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
     }
     
     _qtyOrdered->setText(_wo->qtyOrdered());
