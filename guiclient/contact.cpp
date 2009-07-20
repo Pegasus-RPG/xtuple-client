@@ -47,7 +47,7 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(omfgThis,      SIGNAL(prospectsUpdated()), this, SLOT(sFillList()));
   connect(omfgThis,     SIGNAL(warehousesUpdated()), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
-  connect(omfgThis, SIGNAL(customersUpdated(int,bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(customersUpdated(int,bool)), this, SLOT(sFillList())); 
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
@@ -267,6 +267,14 @@ void contact::sClose()
 
 void contact::sSave()
 {
+   if(_mode == cNew && _contact->first() == "")
+    {
+           QMessageBox::information(this, tr("Contact Blank"),
+                            tr("<p>You Must fill in the Contacts First Name as a minimum before saving."));
+           return;
+    }
+
+
   if (_activeCache && ! _contact->active())
   {
     q.prepare("SELECT EXISTS(SELECT 1 FROM crmacct WHERE(crmacct_active"
