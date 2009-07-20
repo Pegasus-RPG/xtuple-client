@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Item Image</title>
- <name>ItemImage</name>
+ <title>Image</title>
+ <name>Image</name>
  <description></description>
  <size>Letter</size>
  <portrait/>
