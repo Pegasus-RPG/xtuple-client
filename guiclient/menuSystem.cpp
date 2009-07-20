@@ -761,7 +761,7 @@ void menuSystem::sCommunityBlogs()
 
 void menuSystem::sCommunityIssues()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/bug_zapper/view_all_bug_page.php");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/issuetracker/view_all_bug_page.php");
 }
 
 void menuSystem::sCommunityWiki()
