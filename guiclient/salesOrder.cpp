@@ -130,6 +130,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxzoneidCache = -1;
   _custtaxzoneid = -1;
   _amountOutstanding = 0.0;
+  _crmacctid=-1;
 
   _captive = FALSE;
 
@@ -545,6 +546,27 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   return NoError;
 }
 
+void salesOrder::sSave()
+{
+  if (save(false))
+  {
+    if (_printSO->isChecked())
+    {
+      ParameterList params;
+      params.append("sohead_id", _soheadid);
+
+      printSoForm newdlgX(this, "", true);
+      newdlgX.set(params);
+      newdlgX.exec();
+    }
+
+    if (_captive)
+      close();
+    else
+      clear();
+  }
+}
+
 void salesOrder::sSaveAndAdd()
 {
   if (save(false))
@@ -565,27 +587,6 @@ void salesOrder::sSaveAndAdd()
       printSoForm newdlgS(this, "", true);
       newdlgS.set(params);
       newdlgS.exec();
-    }
-
-    if (_captive)
-      close();
-    else
-      clear();
-  }
-}
-
-void salesOrder::sSave()
-{
-  if (save(false))
-  {
-    if (_printSO->isChecked())
-    {
-      ParameterList params;
-      params.append("sohead_id", _soheadid);
-
-      printSoForm newdlgX(this, "", true);
-      newdlgX.set(params);
-      newdlgX.exec();
     }
 
     if (_captive)
@@ -724,6 +725,24 @@ bool salesOrder::save(bool partial)
     _salesOrderInformation->setCurrentPage(1);
     _miscChargeAccount->setFocus();
     return FALSE;
+  }
+  
+  if (_billToCntct->sChanged())
+  {
+    if (saveContact(_billToCntct) < 0)
+    {
+      _billToCntct->setFocus();
+      return false;
+    }
+  }
+
+  if (_shipToCntct->sChanged())
+  {
+    if (saveContact(_shipToCntct) < 0)
+    {
+      _shipToCntct->setFocus();
+      return false;
+    }
   }
 
   if ((_mode == cEdit) || ((_mode == cNew) && _saved))
@@ -1125,6 +1144,45 @@ bool salesOrder::save(bool partial)
   return TRUE;
 }
 
+int salesOrder::saveContact(ContactCluster* pContact)
+{
+  pContact->setAccount(_crmacctid);
+
+  int answer = 2;    // Cancel
+  int saveResult = pContact->save(AddressCluster::CHECK);
+
+  if (-1 == saveResult)
+    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
+                         "Check the database server log for errors.")
+                      .arg(pContact->label()).arg(saveResult),
+                __FILE__, __LINE__);
+  else if (-2 == saveResult)
+    answer = QMessageBox::question(this,
+                    tr("Question Saving Address"),
+                    tr("There are multiple Contacts sharing this address (%1).\n"
+                       "What would you like to do?")
+                    .arg(pContact->label()),
+                    tr("Change This One"),
+                    tr("Change for All"),
+                    tr("Cancel"),
+                    2, 2);
+  else if (-10 == saveResult)
+    answer = QMessageBox::question(this,
+                    tr("Question Saving %1").arg(pContact->label()),
+                    tr("Would you like to update the existing Contact or "
+                       "create a new one?"),
+                    tr("Create New"),
+                    tr("Change Existing"),
+                    tr("Cancel"),
+                    2, 2);
+  if (0 == answer)
+    return pContact->save(AddressCluster::CHANGEONE);
+  else if (1 == answer)
+    return pContact->save(AddressCluster::CHANGEALL);
+
+  return saveResult;
+}
+
 void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
   if ((_mode == cNew) || (_mode == cEdit))
@@ -1428,7 +1486,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
                 "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
-                "       cust_curr_id, crmacct_id "
+                "       cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id "
                 "FROM custtype, custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
                 "                 AND (shipto_default)) "
@@ -1446,7 +1504,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
                 "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                "       NULL AS cust_curr_id, crmacct_id "
+                "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id "
                 "FROM prospect "
                 "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
                 "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
@@ -1510,9 +1568,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _custtaxzoneid = cust.value("cust_taxzone_id").toInt();
 
       _billToCntct->setId(cust.value("cust_cntct_id").toInt());
-      if(cust.value("crmacct_id").toInt() > 0)
-        _billToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
-        _shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
+      _billToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
+      _shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
+      _crmacctid=cust.value("crmacct_id").toInt();
 
       if (ISNEW(_mode))
         _taxZone->setId(cust.value("cust_taxzone_id").toInt());

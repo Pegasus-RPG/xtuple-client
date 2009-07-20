@@ -24,16 +24,17 @@ public:
     salesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~salesOrder();
 
-    virtual bool save( bool partial );
-    virtual void setViewMode();
-    static void newSalesOrder( int pCustid );
-    static void editSalesOrder( int pId, bool enableSaveAndAdd );
-    static void viewSalesOrder( int pId );
+    Q_INVOKABLE virtual bool save( bool partial );
+    Q_INVOKABLE virtual int saveContact(ContactCluster* pContact);
+    Q_INVOKABLE virtual void setViewMode();
+    Q_INVOKABLE static void newSalesOrder( int pCustid );
+    Q_INVOKABLE static void editSalesOrder( int pId, bool enableSaveAndAdd );
+    Q_INVOKABLE static void viewSalesOrder( int pId );
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual void sSaveAndAdd();
     virtual void sSave();
+    virtual void sSaveAndAdd();
     virtual void sPopulateMenu(QMenu * pMenu);
     virtual void populateOrderNumber();
     virtual void sSetUserEnteredOrderNumber();
@@ -121,6 +122,7 @@ private:
     int _originalPrjid;
     int _custtaxzoneid;
     int _taxzoneidCache;
+    int _crmacctid;
 
 };
 
