@@ -36,6 +36,9 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   setTitles(tr("Revision"), tr("Revisions"));
   _type=All;
   _allowNew=FALSE;
+  int _targetId=-1;
+  QString _cachenum = "";
+  QString _typeText = "";
   if (_x_metrics)
     _isRevControl=(_x_metrics->boolean("RevControl"));
 }
