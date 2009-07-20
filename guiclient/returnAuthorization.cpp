@@ -513,21 +513,17 @@ bool returnAuthorization::sSave(bool partial)
 
 void returnAuthorization::sPostReceipts()
 {
-// TODO Recursive loop thru child items
-  for (int i = 0; i < _raitem->topLevelItemCount(); i++)
-  {
-    for (int j = 0; j < _raitem->topLevelItem(i)->childCount(); j++)
-    {
-      if (_raitem->topLevelItem(i)->child(j)->text(TO_RECEIVE_COL).toFloat() > 0)
-      {
-        enterPoReceipt::post("RA", _raheadid);
-        sFillList();
-        _mode = cEdit;
-        _cancel->setText("&Close");
-        break;
-      }
-    }
-  }
+   for (int i = 0; i < _raitem->topLevelItemCount(); i++)
+   {
+     if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
+     {
+       enterPoReceipt::post("RA", _raheadid);
+       sFillList();
+       _mode = cEdit;
+       _cancel->setText("&Close");
+       break;
+     }
+   }
 }
 
 void returnAuthorization::sSaveClick()
