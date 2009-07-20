@@ -53,6 +53,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _contacts->findChild<QWidget*>("_close")->hide();
   _contacts->findChild<QWidget*>("_activeOnly")->hide();
   _contacts->findChild<QWidget*>("_contactsLit")->hide();
+  _contacts->findChild<QWidget*>("_attach")->show();
+  _contacts->findChild<QWidget*>("_detach")->show();
   _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_number");
   _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_name");
   
