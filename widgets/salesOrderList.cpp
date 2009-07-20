@@ -57,6 +57,7 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
   _select->setEnabled( FALSE );
   _select->setDefault( TRUE );
   buttonsLayout->addWidget(_select);
+  buttonsLayout->addSpacerItem(new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
   topLayout->addLayout(buttonsLayout);
   mainLayout->addLayout(topLayout);
 
@@ -65,8 +66,8 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
 
   _so = new XTreeWidget(this);
   _so->setObjectName("_so");
-  listLayout->addWidget(_so);
-  mainLayout->addLayout(listLayout);
+  listLayout->addWidget(_so, 1);
+  mainLayout->addLayout(listLayout, 1);
 
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
 
