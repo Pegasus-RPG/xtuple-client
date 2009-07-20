@@ -142,7 +142,7 @@ void XMainWindow::showEvent(QShowEvent *event)
     QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
     QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
 
-    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
       resize(lsize);
 
     setAttribute(Qt::WA_DeleteOnClose);
