@@ -212,7 +212,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 
   if (pIndex < 0)
     pIndex = id();
-  
+
   clear();
 
   if (pQuery.first())
@@ -333,7 +333,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           else if (lastindent > indent)
           {
             XTreeWidgetItem *prev = (XTreeWidgetItem*)(last->parent());
-            while (prev && 
+            while (prev &&
                    prev->data(0, IndentRole).toInt() >= indent)
               prev = (XTreeWidgetItem*)(prev->parent());
             if (prev)
@@ -351,7 +351,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           {
             if (DEBUG)
               qDebug("%s::populate() found xthiddenrole, value = %s",
-                     qPrintable(objectName()), 
+                     qPrintable(objectName()),
                      qPrintable(pQuery.value(rowRole[ROWROLE_HIDDEN]).toString()));
             last->setHidden(pQuery.value(rowRole[ROWROLE_HIDDEN]).toBool());
           }
@@ -512,7 +512,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	    if (colRole[col][COLROLE_RUNNING])
             {
               last->setData(col, RunningSetRole,
-                            pQuery.value(colRole[col][COLROLE_RUNNING]).toInt()); 
+                            pQuery.value(colRole[col][COLROLE_RUNNING]).toInt());
             }
 
 	    if (colRole[col][COLROLE_TOTAL])
@@ -716,47 +716,6 @@ XTreeWidgetItem *XTreeWidget::topLevelItem(int idx) const
   return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
 }
 
-bool XTreeWidgetItem::operator==(const XTreeWidgetItem &other) const
-{
-  QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
-  QVariant v2 = other.data(other.treeWidget()->sortColumn(), RawRole);
-
-  bool returnVal = false;
-  switch (v1.type())
-  {
-    case QVariant::Bool:
-      returnVal = (v1.toBool() && v1 == v2);
-      break;
-    case QVariant::Date:
-      returnVal = (v1.toDate() == v2.toDate());
-      break;
-    case QVariant::DateTime:
-      returnVal = (v1.toDateTime() == v2.toDateTime());
-      break;
-    case QVariant::Double:
-      returnVal = (v1.toDouble() == v2.toDouble());
-      break;
-    case QVariant::Int:
-      returnVal = (v1.toInt() == v2.toInt());
-      break;
-    case QVariant::LongLong:
-      returnVal = (v1.toLongLong() == v2.toLongLong());
-      break;
-    case QVariant::String:
-      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
-        returnVal = (v1.toString() == v2.toString());
-      else
-        returnVal = (v1.toDouble() == v2.toDouble());
-      break;
-    default:            returnVal = false;
-  }
-
-  if (DEBUG)
-    qDebug("returning %d for %s == %s", returnVal,
-           qPrintable(v1.toString()), qPrintable(v2.toString()));
-  return returnVal;
-}
-
 bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
 {
   QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
@@ -798,6 +757,54 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
   return returnVal;
 }
 
+bool XTreeWidgetItem::operator==(const XTreeWidgetItem &other) const
+{
+  QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
+  QVariant v2 = other.data(other.treeWidget()->sortColumn(), RawRole);
+
+  bool returnVal = false;
+  switch (v1.type())
+  {
+    case QVariant::Bool:
+      returnVal = (v1.toBool() && v1 == v2);
+      break;
+    case QVariant::Date:
+      returnVal = (v1.toDate() == v2.toDate());
+      break;
+    case QVariant::DateTime:
+      returnVal = (v1.toDateTime() == v2.toDateTime());
+      break;
+    case QVariant::Double:
+      returnVal = (v1.toDouble() == v2.toDouble());
+      break;
+    case QVariant::Int:
+      returnVal = (v1.toInt() == v2.toInt());
+      break;
+    case QVariant::LongLong:
+      returnVal = (v1.toLongLong() == v2.toLongLong());
+      break;
+    case QVariant::String:
+      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
+        returnVal = (v1.toString() == v2.toString());
+      else
+        returnVal = (v1.toDouble() == v2.toDouble());
+      break;
+    default:            returnVal = false;
+  }
+
+  if (DEBUG)
+    qDebug("returning %d for %s == %s", returnVal,
+           qPrintable(v1.toString()), qPrintable(v2.toString()));
+  return returnVal;
+}
+
+/* don't need this yet
+bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
+{
+  return !(this < other || this == other);
+}
+*/
+
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
   // if old style then maintain backwards compatibility
@@ -835,7 +842,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
       itemcount--;
       i--;
     }
-    else if (*item < *prev)
+    else if (*item < *prev && order == Qt::AscendingOrder)
     {
       int left   = 0;
       int right  = i;
@@ -869,6 +876,48 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
       {
         if (DEBUG)
           qDebug("> so moving %d to %d", i, middle + 1);
+        takeTopLevelItem(i);
+        insertTopLevelItem(middle + 1, item);
+      }
+    }
+    else if (*item == *prev)
+    {
+      ; // nothing to do - make the > case easier to write
+    }
+    else if (!(*item < *prev) && order == Qt::DescendingOrder)
+    {
+      int left   = 0;
+      int right  = i;
+      int middle = 0;
+      XTreeWidgetItem *test = 0;
+      while (left <= right)
+      {
+        middle = (left + right) / 2;
+        test = static_cast<XTreeWidgetItem*>(topLevelItem(middle));
+        if (*test == *item)
+          break;
+        else if (!(*test < *item))
+        {
+          if (!(*item < *(static_cast<XTreeWidgetItem*>(topLevelItem(middle + 1)))))
+            break;
+          else
+          left = middle + 1;
+        }
+        else
+          right = middle - 1;
+      }
+      // can't call takeTopLevelItem() until after < and == are done
+      if (!(*item < *test) || *item == *test)
+      {
+        if (DEBUG)
+          qDebug(">= so moving %d to %d", i, middle);
+        takeTopLevelItem(i);
+        insertTopLevelItem(middle, item);
+      }
+      else
+      {
+        if (DEBUG)
+          qDebug("< so moving %d to %d", i, middle + 1);
         takeTopLevelItem(i);
         insertTopLevelItem(middle + 1, item);
       }
@@ -1054,8 +1103,8 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
         _menu->insertSeparator();
 
       _menu->insertItem(tr("Copy All"),  this, SLOT(sCopyVisibleToClipboard()));
-      _menu->insertItem(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));  
-      _menu->insertItem(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));                                                
+      _menu->insertItem(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));
+      _menu->insertItem(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));
       _menu->insertSeparator();
       _menu->insertItem(tr("Export Contents..."),  this, SLOT(sExport()));
     }
@@ -1116,9 +1165,9 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
 void XTreeWidget::sExport()
 {
   QString path = xtsettingsValue(_settingsName + "/exportPath").toString();
-  QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path, 
+  QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path,
                      tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)")));
-    
+
   if (!fi.filePath().isEmpty())
   {
     QTextDocument *doc = new QTextDocument();
@@ -1127,7 +1176,7 @@ void XTreeWidget::sExport()
       fi.setFile(fi.filePath() += ".txt");
     xtsettingsSetValue(_settingsName + "/exportPath", fi.path());
     writer.setFileName(fi.filePath());
-    
+
     if (fi.suffix() == "txt")
     {
       doc->setPlainText(toTxt());
@@ -1555,26 +1604,26 @@ double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
   for (int i = 0; i < childCount(); i++)
     total += child(i)->totalForItem(pcol, pset);
   return total;
-}                                                                                                                   
-                                                                                                                        
-void XTreeWidget::sCopyRowToClipboard()                                                                                 
-{                             
-  QMimeData *mime = new QMimeData(); 
-  QClipboard * clipboard = QApplication::clipboard();  
+}
+
+void XTreeWidget::sCopyRowToClipboard()
+{
+  QMimeData *mime = new QMimeData();
+  QClipboard * clipboard = QApplication::clipboard();
   QTextDocument *doc = new QTextDocument();
-  QTextCursor *cursor = new QTextCursor(doc);  
-  QTextTableFormat tableFormat;    
-  QTextTableCell cell;  
+  QTextCursor *cursor = new QTextCursor(doc);
+  QTextTableFormat tableFormat;
+  QTextTableCell cell;
   QTextCharFormat format;
   QString color;
   QString font;
   XTreeWidgetItem * item = currentItem();
   int  counter;
   int  colcnt = 0;
-         
+
   if (_x_preferences->boolean("CopyListsPlainText"))
   {
-    QString line = "";                                                                                                            
+    QString line = "";
     for(int counter = 0; counter < item->columnCount(); counter++)
     {
       if(!QTreeWidget::isColumnHidden(counter))
@@ -1583,44 +1632,44 @@ void XTreeWidget::sCopyRowToClipboard()
     clipboard->setText(line);
     return;
   }
-         
-  cursor->insertTable(1, 1,tableFormat);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-  if(item)                                                                                                         
-  {                                                                                                                                                                                                                   
-    for (counter = 0; counter < item->columnCount(); counter++)                                                    
-    {                       
-      if(!QTreeWidget::isColumnHidden(counter))                                                                    
-      {             
+
+  cursor->insertTable(1, 1,tableFormat);
+  if(item)
+  {
+    for (counter = 0; counter < item->columnCount(); counter++)
+    {
+      if(!QTreeWidget::isColumnHidden(counter))
+      {
         colcnt++;
-        if (colcnt > 1)   
-        {      
-          cursor->currentTable()->appendColumns(1); 
-          cursor->movePosition(QTextCursor::NextCell);  
-        }   
-        cell = cursor->currentTable()->cellAt(cursor->position()); 
-        format = cell.format(); 
+        if (colcnt > 1)
+        {
+          cursor->currentTable()->appendColumns(1);
+          cursor->movePosition(QTextCursor::NextCell);
+        }
+        cell = cursor->currentTable()->cellAt(cursor->position());
+        format = cell.format();
         color = item->data(counter,Qt::BackgroundRole).toString();
         if (!color.isEmpty())
-          format.setBackground(namedColor(color)); 
+          format.setBackground(namedColor(color));
         color = item->data(counter,Qt::ForegroundRole).toString();
         if (!color.isEmpty())
           format.setForeground(namedColor(color));
         font = item->data(counter,Qt::FontRole).toString();
         if (!font.isEmpty())
           format.setFont(QFont(font));
-        cell.setFormat(format);            
-        cursor->insertText(item->text(counter));                                                                                                                                            
-      }                                                                                                            
-    } 
-    mime->setHtml(doc->toHtml());            
-    clipboard->setMimeData(mime);      
-  }                                                                                                                                                                                                      
+        cell.setFormat(format);
+        cursor->insertText(item->text(counter));
+      }
+    }
+    mime->setHtml(doc->toHtml());
+    clipboard->setMimeData(mime);
+  }
 }
 
 void XTreeWidget::sCopyCellToClipboard()
 {
-  QTextEdit text;  
-  QMimeData *mime = new QMimeData();   
+  QTextEdit text;
+  QMimeData *mime = new QMimeData();
   QTreeWidgetItem* item = currentItem();
   QClipboard * clipboard = QApplication::clipboard();
   QString color;
@@ -1631,7 +1680,7 @@ void XTreeWidget::sCopyCellToClipboard()
   {
      color = item->data(column,Qt::BackgroundRole).toString();
      if (!color.isEmpty())
-        text.setTextBackgroundColor(namedColor(color)); 
+        text.setTextBackgroundColor(namedColor(color));
      color = item->data(column,Qt::ForegroundRole).toString();
      if (!color.isEmpty())
         text.setTextColor(namedColor(color));
@@ -1642,183 +1691,183 @@ void XTreeWidget::sCopyCellToClipboard()
      if (_x_preferences->boolean("CopyListsPlainText"))
        mime->setText(text.toPlainText());
      else
-       mime->setHtml(text.toHtml());            
-     clipboard->setMimeData(mime) ; 
+       mime->setHtml(text.toHtml());
+     clipboard->setMimeData(mime) ;
   }
 }
 
-void XTreeWidget::sCopyVisibleToClipboard()                                                                             
-{          
-  QMimeData *mime = new QMimeData();                                                                                                                                                                                                       
-  QClipboard * clipboard = QApplication::clipboard();                                                                   
-    
+void XTreeWidget::sCopyVisibleToClipboard()
+{
+  QMimeData *mime = new QMimeData();
+  QClipboard * clipboard = QApplication::clipboard();
+
   if (_x_preferences->boolean("CopyListsPlainText"))
     mime->setText(toTxt());
   else
-    mime->setHtml(toHtml());            
-  clipboard->setMimeData(mime);                                                                                                                                                                                                                                                                                                             
-}    
-
-QString XTreeWidget::toTxt() const                                                                            
-{                                                                                                                       
-  QString line;                                                                                                         
-  QString opText;                                                                                                                                                                          
-  int     counter;                                                                                                      
-                                                                                                                        
-  QTreeWidgetItem * header = headerItem();                                                                              
-  for (counter = 0; counter < header->columnCount(); counter++)                                                         
-  {                                                                                                                     
-    if(!QTreeWidget::isColumnHidden(counter))                                                                                                                                                                                              
-      line = line + header->text(counter).replace("\n"," ") + "\t";                                                                                                                                                                                         
-  }                                                                                                                     
-  opText = line + "\n";                                                                                                 
-                                                                                                                        
-  XTreeWidgetItem * item = topLevelItem(0);                                                                             
-  if(item)                                                                                                              
-  {                                                                                                                     
-    QModelIndex idx = indexFromItem(item);                                                                              
-    while(idx.isValid())                                                                                                
-    {                                                                                                                   
-       item = (XTreeWidgetItem*)itemFromIndex(idx);                                                                     
-       if(item)                                                                                                         
-       {                                                                                                                
-         line = "";                                                                                                     
-         for (counter = 0; counter < item->columnCount(); counter++)                                                    
-         {                                                                                                              
-           if(!QTreeWidget::isColumnHidden(counter))                                                                                                                                                                                
-             line = line + item->text(counter) + "\t";                                                                                                          
-         }                                                                                                              
-       }                                                                                                                
-       opText = opText + line + "\n";                                                                                   
-       idx = indexBelow(idx);                                                                                           
-    }                                                                                                                                                                                                          
-  }    
-   return opText;    
-} 
-
-QString XTreeWidget::toCsv() const                                                                      
-{                                                                                                                       
-  QString line;                                                                                                         
-  QString opText;                                                                                                                                                                        
-  int  counter;             
-  int  colcount = 0;  
-                                                                                                                        
-  QTreeWidgetItem * header = headerItem();                                                                              
-  for (counter = 0; counter < header->columnCount(); counter++)                                                         
-  {                                                                                                                     
-    if(!QTreeWidget::isColumnHidden(counter))                                                                           
-    {                            
-      if (colcount)
-        line = line + ",";   
-      line = line + header->text(counter).replace("\"","\"\"").replace("\n"," "); 
-      colcount++;      
-    }                                                                                                                   
-  }                                                                                                                     
-  opText = line + "\n";                                                                                                 
-                                                                                                                        
-  XTreeWidgetItem * item = topLevelItem(0);                                                                             
-  if(item)                                                                                                              
-  {                                                                                                                     
-    QModelIndex idx = indexFromItem(item);                                                                              
-    while(idx.isValid())                                                                                                
-    {                 
-       colcount = 0;    
-       item = (XTreeWidgetItem*)itemFromIndex(idx);                                                                     
-       if(item)                                                                                                         
-       {                                                                                                                
-         line = "";                                                                                                     
-         for (counter = 0; counter < item->columnCount(); counter++)                                                    
-         {                                                                                                              
-           if(!QTreeWidget::isColumnHidden(counter))                                                                    
-           {          
-             if (colcount)
-               line = line + ",";   
-             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
-               line = line + "\"";             
-             line = line + item->text(counter).replace("\"","\"\"");
-             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
-               line = line + "\"";  
-             colcount++;             
-           }                                                                                                            
-         }                                                                                                              
-       }                                                                                                                
-       opText = opText + line + "\n";                                                                                   
-       idx = indexBelow(idx);                                                                                           
-    }                                                                                                                                                                                                          
-  }    
-   return opText;    
+    mime->setHtml(toHtml());
+  clipboard->setMimeData(mime);
 }
 
-QString XTreeWidget::toHtml() const                                                                           
-{                                                                                                                       
+QString XTreeWidget::toTxt() const
+{
+  QString line;
+  QString opText;
+  int     counter;
+
+  QTreeWidgetItem * header = headerItem();
+  for (counter = 0; counter < header->columnCount(); counter++)
+  {
+    if(!QTreeWidget::isColumnHidden(counter))
+      line = line + header->text(counter).replace("\n"," ") + "\t";
+  }
+  opText = line + "\n";
+
+  XTreeWidgetItem * item = topLevelItem(0);
+  if(item)
+  {
+    QModelIndex idx = indexFromItem(item);
+    while(idx.isValid())
+    {
+       item = (XTreeWidgetItem*)itemFromIndex(idx);
+       if(item)
+       {
+         line = "";
+         for (counter = 0; counter < item->columnCount(); counter++)
+         {
+           if(!QTreeWidget::isColumnHidden(counter))
+             line = line + item->text(counter) + "\t";
+         }
+       }
+       opText = opText + line + "\n";
+       idx = indexBelow(idx);
+    }
+  }
+   return opText;
+}
+
+QString XTreeWidget::toCsv() const
+{
+  QString line;
+  QString opText;
+  int  counter;
+  int  colcount = 0;
+
+  QTreeWidgetItem * header = headerItem();
+  for (counter = 0; counter < header->columnCount(); counter++)
+  {
+    if(!QTreeWidget::isColumnHidden(counter))
+    {
+      if (colcount)
+        line = line + ",";
+      line = line + header->text(counter).replace("\"","\"\"").replace("\n"," ");
+      colcount++;
+    }
+  }
+  opText = line + "\n";
+
+  XTreeWidgetItem * item = topLevelItem(0);
+  if(item)
+  {
+    QModelIndex idx = indexFromItem(item);
+    while(idx.isValid())
+    {
+       colcount = 0;
+       item = (XTreeWidgetItem*)itemFromIndex(idx);
+       if(item)
+       {
+         line = "";
+         for (counter = 0; counter < item->columnCount(); counter++)
+         {
+           if(!QTreeWidget::isColumnHidden(counter))
+           {
+             if (colcount)
+               line = line + ",";
+             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
+               line = line + "\"";
+             line = line + item->text(counter).replace("\"","\"\"");
+             if (item->data(counter,Qt::DisplayRole).type() == QVariant::String)
+               line = line + "\"";
+             colcount++;
+           }
+         }
+       }
+       opText = opText + line + "\n";
+       idx = indexBelow(idx);
+    }
+  }
+   return opText;
+}
+
+QString XTreeWidget::toHtml() const
+{
   QTextDocument *doc = new QTextDocument();
-  QTextCursor *cursor = new QTextCursor(doc);  
-  QTextTableFormat tableFormat;    
-  QTextTableCell cell;  
+  QTextCursor *cursor = new QTextCursor(doc);
+  QTextTableFormat tableFormat;
+  QTextTableCell cell;
   QTextCharFormat format;
   QString color;
   QString font;
   int  counter;
   int  colcnt = 0;
-                                                   
+
   tableFormat.setHeaderRowCount(1);
-                                                                            
-  QTreeWidgetItem * header = headerItem();   
-  cursor->insertTable(1, 1,tableFormat);                                                                        
-  for (counter = 0; counter < header->columnCount(); counter++)                                                         
-  {                                                                                                                     
-    if(!QTreeWidget::isColumnHidden(counter))                                                                           
-    {      
+
+  QTreeWidgetItem * header = headerItem();
+  cursor->insertTable(1, 1,tableFormat);
+  for (counter = 0; counter < header->columnCount(); counter++)
+  {
+    if(!QTreeWidget::isColumnHidden(counter))
+    {
       colcnt++;
-      if (colcnt > 1)   
-      {      
-        cursor->currentTable()->appendColumns(1); 
-        cursor->movePosition(QTextCursor::NextCell);  
-      }    
-      cell = cursor->currentTable()->cellAt(cursor->position()); 
-      format = cell.format(); 
-      format.setBackground(Qt::lightGray); 
-      cell.setFormat(format); 
-      cursor->insertText(header->text(counter));  
-    }                                                                                                                   
-  }                                                                                                                                                                                                                     
-                                                                                                                        
-  XTreeWidgetItem * item = topLevelItem(0);                                                                             
-  if(item)                                                                                                              
-  {                                                                                                                     
-    QModelIndex idx = indexFromItem(item);                                                                              
-    while(idx.isValid())                                                                                                
-    {                                                                                                                   
-       item = (XTreeWidgetItem*)itemFromIndex(idx);                                                                     
-       if(item)                                                                                                         
-       {                                                                                                                
+      if (colcnt > 1)
+      {
+        cursor->currentTable()->appendColumns(1);
+        cursor->movePosition(QTextCursor::NextCell);
+      }
+      cell = cursor->currentTable()->cellAt(cursor->position());
+      format = cell.format();
+      format.setBackground(Qt::lightGray);
+      cell.setFormat(format);
+      cursor->insertText(header->text(counter));
+    }
+  }
+
+  XTreeWidgetItem * item = topLevelItem(0);
+  if(item)
+  {
+    QModelIndex idx = indexFromItem(item);
+    while(idx.isValid())
+    {
+       item = (XTreeWidgetItem*)itemFromIndex(idx);
+       if(item)
+       {
          cursor->currentTable()->appendRows(1);
          cursor->movePosition(QTextCursor::PreviousRow);
-         cursor->movePosition(QTextCursor::NextCell);                                                                                                    
-         for (counter = 0; counter < item->columnCount(); counter++)                                                    
-         {                       
-           if(!QTreeWidget::isColumnHidden(counter))                                                                    
-           {                    
-             cell = cursor->currentTable()->cellAt(cursor->position()); 
-             format = cell.format(); 
+         cursor->movePosition(QTextCursor::NextCell);
+         for (counter = 0; counter < item->columnCount(); counter++)
+         {
+           if(!QTreeWidget::isColumnHidden(counter))
+           {
+             cell = cursor->currentTable()->cellAt(cursor->position());
+             format = cell.format();
              color = item->data(counter,Qt::BackgroundRole).toString();
              if (!color.isEmpty())
-               format.setBackground(namedColor(color)); 
+               format.setBackground(namedColor(color));
              color = item->data(counter,Qt::ForegroundRole).toString();
              if (!color.isEmpty())
                format.setForeground(namedColor(color));
              font = item->data(counter,Qt::FontRole).toString();
              if (!font.isEmpty())
                format.setFont(QFont(font));
-             cell.setFormat(format);            
+             cell.setFormat(format);
              cursor->insertText(item->text(counter));
-             cursor->movePosition(QTextCursor::NextCell);                                                                                                                                            
-           }                                                                                                            
-         }                                                                                                              
-       }                                                                                                                                                                                                   
-       idx = indexBelow(idx);                                                                                           
-    }                                                                                                           
-  }    
-  return doc->toHtml();    
-}    
+             cursor->movePosition(QTextCursor::NextCell);
+           }
+         }
+       }
+       idx = indexBelow(idx);
+    }
+  }
+  return doc->toHtml();
+}
 
