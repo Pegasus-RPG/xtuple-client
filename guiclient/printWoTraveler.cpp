@@ -113,7 +113,6 @@ void printWoTraveler::sHandleOptions(int pWoid)
       return;
     }
     _pickList->setEnabled(check.first());
-    _pickList->setChecked(check.first());
   
     if (_metrics->boolean("Routings"))
     {
@@ -129,7 +128,6 @@ void printWoTraveler::sHandleOptions(int pWoid)
         return;
       }
       _routing->setEnabled(check.first());
-      _routing->setChecked(check.first());
     }
 
     check.prepare( "SELECT wo_id "
@@ -144,7 +142,6 @@ void printWoTraveler::sHandleOptions(int pWoid)
       return;
     }
     _packingList->setEnabled(check.first());
-    _packingList->setChecked(check.first()); 
     
   }
 }
