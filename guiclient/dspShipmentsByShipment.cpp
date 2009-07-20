@@ -90,7 +90,7 @@ void dspShipmentsByShipment::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 void dspShipmentsByShipment::sPrint()
 {
   ParameterList params;
-  params.append("sohead_id", _shipment->id());
+  params.append("shiphead_id", _shipment->id());
 
   orReport report("ShipmentsByShipment", params);
   if (report.isValid())
