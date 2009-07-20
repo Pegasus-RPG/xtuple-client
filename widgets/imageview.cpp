@@ -32,7 +32,6 @@
 imageview::imageview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-qDebug("a");
   setupUi(this);
 
 
