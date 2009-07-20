@@ -32,6 +32,7 @@
 imageview::imageview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
+qDebug("a");
   setupUi(this);
 
 
@@ -231,6 +232,10 @@ void imageview::sFileList()
       QMessageBox::warning(this, tr("Could not load file"),
                             tr( "Could not load the selected file.\n"
                                 "The file is not an image, an unknown image format or is corrupt" ) );
+    else
+        _save->setEnabled(true);
+
     _imageview->setPixmap(QPixmap::fromImage(__imageview));
+
   }
 }
