@@ -77,7 +77,15 @@ void ContactCluster::init()
     _titleLit		= new QLabel(tr("Job Title:"), this);
     _titleLit->setObjectName("_titleLit");
     _title		= new XLineEdit(this, "_title");
-    
+
+#ifdef Q_WS_MAC
+    _honorific->setMinimumHeight(26);
+    _first->setMinimumHeight(22);
+    _middle->setMinimumHeight(22);
+    _last->setMinimumHeight(22);
+    _suffix->setMinimumHeight(22);
+#endif
+
     _mapper		= new XDataWidgetMapper(this);
 
     //_nameBox->addWidget(_nameLit,	0);
