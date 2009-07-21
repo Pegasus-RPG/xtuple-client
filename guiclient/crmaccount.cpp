@@ -585,6 +585,10 @@ void crmaccount::sSave()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    if(spName == "deleteProspect")
+      _prospectId = -1;
+    else
+      _custId = -1;
   }
 
   if (! _taxauth->isChecked() && _taxauthId > 0)
