@@ -901,6 +901,7 @@ void returnAuthorization::sNew()
     ParameterList params;
     params.append("mode", "new");
     params.append("rahead_id", _raheadid);
+    params.append("orig_cohead_id", _origso->id());
     if (_warehouse->isValid())
       params.append("warehous_id", _warehouse->id());
     if (_shipWhs->isValid())
@@ -926,6 +927,7 @@ void returnAuthorization::sEdit()
       ParameterList params;
       params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
       params.append("rahead_id", _raheadid);
+      params.append("orig_cohead_id", _origso->id());
 
       if (_mode==cView || ((XTreeWidgetItem*)(selected[i]))->altId() == -1)
         params.append("mode", "view");
@@ -953,6 +955,7 @@ void returnAuthorization::sView()
     ParameterList params;
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("rahead_id", _raheadid);
+    params.append("orig_cohead_id", _origso->id());
     params.append("mode", "view");
 
     returnAuthorizationItem newdlg(this, "", TRUE);

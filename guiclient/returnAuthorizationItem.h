@@ -101,6 +101,9 @@ private:
     QString  _status;
     double   _soldQty;
     int      _coitemitemsiteid;
+    double   _unitcost;
+    int      _origsoid;
+    QString  _costmethod;
 
 };
 

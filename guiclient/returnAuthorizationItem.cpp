@@ -50,6 +50,9 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _soldQty = 0;
   _coitemid = -1;
   _crmacctid = -1;
+  _unitcost = 0;
+  _origsoid = -1;
+  _costmethod = ""; 
 
   connect(_discountFromSale,     SIGNAL(lostFocus()),                    this, SLOT(sCalculateFromDiscount()));
   connect(_saleDiscountFromSale, SIGNAL(lostFocus()),                    this, SLOT(sCalculateSaleFromDiscount()));
@@ -306,6 +309,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("orig_cohead_id", &valid);
+  if (valid)
+    _origsoid = param.toInt();
+
   param = pParams.value("raitem_id", &valid);
   if (valid)
   {
@@ -370,7 +377,7 @@ bool returnAuthorizationItem::sSave()
                "  raitem_unitprice, raitem_taxtype_id, "
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id, "
                "  raitem_scheddate, raitem_warranty, raitem_coitem_itemsite_id, "
-               "  raitem_saleprice ) "
+               "  raitem_saleprice, raitem_unitcost ) "
                "SELECT :raitem_id, :rahead_id, :raitem_linenumber, rcv.itemsite_id,"
                "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
@@ -378,7 +385,7 @@ bool returnAuthorizationItem::sSave()
                "       :raitem_unitprice, :raitem_taxtype_id, "
                "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id, "
                "       :raitem_scheddate, :raitem_warranty, shp.itemsite_id, "
-               "       :raitem_saleprice "
+               "       :raitem_saleprice, :raitem_unitcost "
                "FROM itemsite rcv "
                "  LEFT OUTER JOIN itemsite shp ON "
                "        (shp.itemsite_item_id=rcv.itemsite_item_id) "
@@ -403,7 +410,8 @@ bool returnAuthorizationItem::sSave()
                "    raitem_scheddate=:raitem_scheddate, "
                "    raitem_warranty=:raitem_warranty, "
                "    raitem_saleprice=:raitem_saleprice, "
-               "    raitem_coitem_itemsite_id=:coitem_itemsite_id "
+               "    raitem_coitem_itemsite_id=:coitem_itemsite_id, "
+               "    raitem_unitcost=:raitem_unitcost "
                "WHERE (raitem_id=:raitem_id);" );
     
      if (_disposition->currentIndex() >= 2)
@@ -459,6 +467,8 @@ bool returnAuthorizationItem::sSave()
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
   q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked()));
   q.bindValue(":raitem_saleprice", _saleNetUnitPrice->localValue());
+  if (_costmethod=="A")
+    q.bindValue(":raitem_unitcost", _unitCost->localValue());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -699,7 +709,8 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
   {
     XSqlQuery itemsite;
     itemsite.prepare( "SELECT itemsite_leadtime, itemsite_controlmethod, "
-                      "       itemsite_createwo, itemsite_createpr "
+                      "       itemsite_createwo, itemsite_createpr, "
+                      "       itemsite_costmethod, itemsite_id "
                       "FROM item, itemsite "
                       "WHERE ( (itemsite_item_id=item_id)"
                       " AND (itemsite_warehous_id=:warehous_id)"
@@ -710,6 +721,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
     if (itemsite.first())
     {
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
+      _costmethod = itemsite.value("itemsite_costmethod").toString();
 
       if (cNew == _mode)
       {
@@ -735,9 +747,45 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
         }
       }
       
-       _tab->setTabEnabled(_tab->indexOf(_lotserial),
-       (itemsite.value("itemsite_controlmethod").toString() == "L" ||
-        itemsite.value("itemsite_controlmethod").toString() == "S"));
+     if ( _disposition->currentIndex() == 1 || 
+          _disposition->currentIndex() == 2)
+     {
+      if (_costmethod == "A")
+      {
+        if (cNew != _mode)
+          _unitCost->setLocalValue(_unitcost);
+        else if (_origsoid != -1)
+        {
+          XSqlQuery uc;
+          uc.prepare("SELECT COALESCE(SUM(cohist_unitcost * cohist_qtyshipped) / "
+                     "  SUM(cohist_qtyshipped),0) AS unitcost "
+                     "FROM cohist "
+                     " JOIN cohead ON ((cohist_doctype='I') "
+                     "             AND (cohist_ordernumber=cohead_number)) "
+                     "WHERE ((cohead_id=:cohead_id) "
+                     "  AND (cohead_itemsite_id=:itemsite_id); ");
+          uc.bindValue(":cohead_id", _origsoid);
+          uc.bindValue(":itemsite_id", itemsite.value("itemsite_id").toInt());
+          uc.exec();
+          if (uc.first())
+            _unitCost->setLocalValue(uc.value("unitcost").toDouble());
+          else if (uc.lastError().type() != QSqlError::NoError)
+          {
+             systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
+             return;
+          }
+        }
+        _unitCost->setEnabled(cView != _mode);
+      }
+      else
+        _unitCost->setEnabled(_costmethod == "A");
+     }
+     else
+       _unitCost->setEnabled(false);
+      
+      _tab->setTabEnabled(_tab->indexOf(_lotserial),
+      (itemsite.value("itemsite_controlmethod").toString() == "L" ||
+       itemsite.value("itemsite_controlmethod").toString() == "S"));
     }
     else if (itemsite.lastError().type() != QSqlError::NoError)
     {
@@ -787,6 +835,7 @@ void returnAuthorizationItem::populate()
   if (raitem.first())
   {
     _authNumber->setText(raitem.value("rahead_number").toString());
+    _unitcost = raitem.value("raitem_unitcost").toDouble();
 
     if (raitem.value("new_number").toInt() > 0)
     {
@@ -1389,6 +1438,8 @@ void returnAuthorizationItem::sDispositionChanged()
   }
 
   _dispositionCache = _disposition->currentIndex();
+  sPopulateItemInfo();
+  sPopulateItemsiteInfo();
 }
 
 void returnAuthorizationItem::sHandleWo(bool pCreate)
