@@ -215,7 +215,7 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
       menuItem = pMenu->insertItem(tr("Edit Receivable Item..."), this, SLOT(sEditAropen()), 0);
       pMenu->setItemEnabled(menuItem, _privileges->check("EditAROpenItem"));
       menuItem = pMenu->insertItem(tr("View Receivable Item..."), this, SLOT(sViewAropen()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItem") || _privileges->check("EditAROpenItem"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItems") || _privileges->check("EditAROpenItem"));
     }
   }
 }
@@ -392,7 +392,7 @@ void dspCashReceipts::sHandleButtons(bool valid)
     if (_arapply->currentItem()->id("target") > -1)
     {
       viewMenu->insertItem(tr("Receivable Item..."), this, SLOT(sViewAropen()), 0);
-      viewMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItem") || _privileges->check("EditAROpenItem"));
+      viewMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItems") || _privileges->check("EditAROpenItem"));
     }   
     
     _edit->setMenu(editMenu);
