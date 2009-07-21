@@ -26,6 +26,8 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
 
 #ifndef Q_WS_MAC
   _vendorItemNumberList->setMaximumWidth(25);
+#else
+  _listPrices->setMinimumWidth(60);
 #endif
 
   _invVendUOMRatio = 1;
