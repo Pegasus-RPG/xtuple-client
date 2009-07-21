@@ -215,6 +215,10 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
     case User:
       _all->setText(QObject::tr("All Users"));
       _items->setType(XComboBox::Users);
+
+    case ActiveUser:
+      _all->setText(QObject::tr("All Users"));
+      _items->setType(XComboBox::ActiveUsers);
   }
 }
 
@@ -268,7 +272,7 @@ void ParameterGroup::appendValue(ParameterList &pParams)
       pParams.append("curr_id", _items->id());
     else if (_type == WorkCenter)
       pParams.append("wrkcnt_id", _items->id());
-    else if (_type == User)
+    else if (_type == User || _type == ActiveUser )
     {
       pParams.append("usr_id", _items->id());
       pParams.append("username", _items->itemText(_items->currentItem()));
@@ -294,7 +298,7 @@ void ParameterGroup::appendValue(ParameterList &pParams)
       pParams.append("currConcat_pattern", _pattern->text());
     else if (_type == WorkCenter)
       pParams.append("wrkcnt_pattern", _pattern->text());
-    else if (_type == User)
+    else if (_type == User || _type == ActiveUser)
       pParams.append("usr_pattern", _pattern->text());
   }
 }

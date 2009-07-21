@@ -39,7 +39,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  _usr->setType(ParameterGroup::User);
+  _usr->setType(ParameterGroup::ActiveUser);
   q.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");

@@ -40,7 +40,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
     enum ParameterGroupTypes
     {
       AdhocGroup, PlannerCode, ProductCategory, ClassCode, ItemGroup, CostCategory,
-      CustomerType, CustomerGroup, CurrencyNotBase, Currency, WorkCenter, User
+      CustomerType, CustomerGroup, CurrencyNotBase, Currency, WorkCenter, User, ActiveUser
     };
 
     enum ParameterGroupStates

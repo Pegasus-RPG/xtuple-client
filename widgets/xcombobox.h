@@ -84,7 +84,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       TaxAuths, TaxClasses, TaxCodes, TaxZones,
       TaxTypes, Terms, TaskCommentTypes, TodoItemCommentTypes,
       TransferOrderCommentTypes, TransferOrderItemCommentTypes,
-      UOMs, Users, VendorCommentTypes, VendorGroups,
+      UOMs, Users, ActiveUsers, VendorCommentTypes, VendorGroups,
       VendorTypes, WarehouseCommentTypes, WoProjects,
       WorkCenters, WorkOrderCommentTypes
       };

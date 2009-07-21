@@ -666,6 +666,13 @@ void XComboBox::setType(XComboBoxTypes pType)
       query.exec( "SELECT usr_id, usr_username, usr_username "
                   "FROM usr "
                   "ORDER BY usr_username;" );
+
+    case ActiveUsers:
+      query.exec( "SELECT usr_id, usr_username, usr_username "
+                  "FROM usr "
+                  "WHERE usr_active = true "
+                  "ORDER BY usr_username;" );
+
       break;
 
     case SalesCategories:
