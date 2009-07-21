@@ -98,6 +98,8 @@ enum SetResponse postOperations::set(const ParameterList &pParams)
     _wo->setId(param.toInt());
     _wo->setEnabled(false);
     _wooper->setFocus();
+    if(_wo->id() != param.toInt())
+      return UndefinedError;
   }
 
   param = pParams.value("wooper_id", &valid);

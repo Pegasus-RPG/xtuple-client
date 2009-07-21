@@ -227,7 +227,7 @@ int woTimeClock::callPostProduction()
 
 int woTimeClock::callPostOperations(int wotc_id)
 {
-  int returnCode;
+  int returnCode = XDialog::Rejected;
   
   ParameterList params;
   params.append("usr_id", _user->id());
@@ -241,8 +241,8 @@ int woTimeClock::callPostOperations(int wotc_id)
   params.append("fromWOTC", true);
   
   postOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
-  returnCode = newdlg.exec();
+  if(newdlg.set(params) != UndefinedError)
+    returnCode = newdlg.exec();
   if (returnCode == XDialog::Accepted)
     _lastEvent->setText(tr("User %1 posted operation at %2\n")
 			.arg(_user->username())

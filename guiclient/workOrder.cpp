@@ -911,11 +911,13 @@ void workOrder::sPostOperations()
   params.append("wo_id", _woIndentedList->id());
 
   postOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  int currentId = _woIndentedList->id();
-  sFillList();
-  _woIndentedList->setId(currentId);
+  if(newdlg.set(params) != UndefinedError)
+  {
+    newdlg.exec();
+    int currentId = _woIndentedList->id();
+    sFillList();
+    _woIndentedList->setId(currentId);
+  }
 }
 
 void workOrder::sCorrectOperationsPosting()

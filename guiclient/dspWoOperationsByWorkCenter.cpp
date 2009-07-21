@@ -366,8 +366,8 @@ void dspWoOperationsByWorkCenter::sPostOperations()
   params.append("wooper_id", _wooper->id());
 
   postOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+  if(newdlg.set(params) != UndefinedError)
+    newdlg.exec();
 }
 
 void dspWoOperationsByWorkCenter::sPrintPickLists()

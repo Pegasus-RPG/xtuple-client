@@ -173,8 +173,8 @@ void dspWoScheduleByItem::sPostOperations()
   params.append("wo_id", _wo->id());
 
   postOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+  if(newdlg.set(params) != UndefinedError)
+    newdlg.exec();
 }
 
 void dspWoScheduleByItem::sCorrectOperationsPosting()
