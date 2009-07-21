@@ -47,10 +47,6 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
 
-#ifndef Q_WS_MAC
-  _poList->setMaximumWidth(25);
-#endif
-
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
   _poNumber->setAllowedTypes(OrderLineEdit::Purchase);
