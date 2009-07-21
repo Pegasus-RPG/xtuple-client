@@ -59,7 +59,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _availabilityLastShowIndent	= false;
   _availabilityQtyOrdered	= 0.0;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cActive | (ItemLineEdit::cAllItemTypes_Mask ^ ItemLineEdit::cKit));
   _item->addExtraClause( QString("(itemsite_active)") ); // ItemLineEdit::cActive doesn't compare against the itemsite record
 
   _availability->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "bomitem_seqnumber");
