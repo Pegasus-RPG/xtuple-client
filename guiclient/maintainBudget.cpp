@@ -42,8 +42,6 @@ maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_table, SIGNAL(valueChanged(int,int)), this, SLOT(sValueChanged(int,int)));
   connect(_periodsAll, SIGNAL(clicked()), this, SLOT(sPeriodsAll()));
-  connect(_periodsInvert, SIGNAL(clicked()), _periods, SLOT(invertSelection()));
-  connect(_periodsNone, SIGNAL(clicked()), _periods, SLOT(clearSelection()));
 
   _dirty = false;
   _budgheadid = -1;
