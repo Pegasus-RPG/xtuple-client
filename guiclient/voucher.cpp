@@ -29,21 +29,20 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_poList, SIGNAL(clicked()), this, SLOT(sPoList()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_distributions, SIGNAL(clicked()), this, SLOT(sDistributions()));
   connect(_distributeline, SIGNAL(clicked()), this, SLOT(sDistributeLine()));
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_distributeall, SIGNAL(clicked()), this, SLOT(sDistributeAll()));
   connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
-  connect(_poNumber, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sFillList()));
+  connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sPopulatePoInfo()));
   connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditMiscDistribution()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDeleteMiscDistribution()));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
-  connect(_poNumber, SIGNAL(newId(int)), this, SLOT(sPopulatePoInfo()));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
@@ -53,7 +52,13 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 #endif
 
   _terms->setType(XComboBox::APTerms);
-  _poNumber->setType(cPOOpen);
+  _poNumber->setAllowedStatuses(OrderLineEdit::Open);
+  _poNumber->setAllowedTypes(OrderLineEdit::Purchase);
+  _poNumber->setInfoVisible(false);
+
+  /* a VendorCluster keeps the vend_id handy and handles address info easily */
+  _vendorLit->setVisible(false);
+  _vendor->setVisible(false);
 
   _poitem->addColumn(tr("#"),               _whsColumn,   Qt::AlignCenter, true,  "poitem_linenumber" );
   _poitem->addColumn(tr("Status"),          _uomColumn,   Qt::AlignCenter, true,  "poitemstatus" );
@@ -132,7 +137,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poList->hide();
+      _poNumber->setListVisible(false);
 
       _save->setFocus();
     }
@@ -140,11 +145,11 @@ enum SetResponse voucher::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _poNumber->setType(0); // allow any potype when viewing
+      _poNumber->setAllowedStatuses(OrderLineEdit::AnyStatus);
  
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poList->hide();
+      _poNumber->setListVisible(false);
       _taxzone->setEnabled(FALSE);
       _amountToDistribute->setEnabled(FALSE);
       _distributionDate->setEnabled(FALSE);
@@ -185,7 +190,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
 void voucher::sSave()
 {
-  if (_poNumber->text().trimmed().length() == 0)
+  if (! _poNumber->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("<p>You must enter an PO Number before you may "
@@ -238,7 +243,7 @@ void voucher::sSave()
                " AND (pohead_vend_id=:vend_id)"
                " AND (vohead_id<>:vohead_id) );" );
     q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
-    q.bindValue(":vend_id", _poNumber->vendId());
+    q.bindValue(":vend_id", _vendor->id());
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     if (q.first())
@@ -276,7 +281,7 @@ void voucher::sSave()
   q.bindValue(":vohead_pohead_id", _poNumber->id());
   if (_taxzone->isValid())
     q.bindValue(":vohead_taxzone_id", _taxzone->id());
-  q.bindValue(":vohead_vend_id", _poNumber->vendId());
+  q.bindValue(":vohead_vend_id",  _vendor->id());
   q.bindValue(":vohead_terms_id", _terms->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
@@ -347,7 +352,7 @@ void voucher::sHandleVoucherNumber()
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poList->hide();
+      _poNumber->setListVisible(false);
 
       _mode = cEdit;
       populate();
@@ -357,21 +362,9 @@ void voucher::sHandleVoucherNumber()
   }
 }
 
-void voucher::sPoList()
-{
-  ParameterList params;
-  params.append("pohead_id", _poNumber->id());
-  params.append("poType", cPOOpen);
-  
-  purchaseOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  _poNumber->setId(newdlg.exec());
-}
-
 void voucher::sPopulate()
 {
-  setWindowTitle(tr("Voucher for P/O #") + _poNumber->text());
+  setWindowTitle(tr("Voucher for P/O #") + _poNumber->number());
 }
 
 void voucher::sDistributions()
@@ -677,10 +670,10 @@ void voucher::sFillMiscList()
 
 void voucher::sPopulatePoInfo()
 {
-  q.prepare( "SELECT pohead_terms_id, pohead_taxzone_id, vend_1099, pohead_curr_id "
-             "FROM pohead, vendinfo "
-             "WHERE ( (pohead_vend_id=vend_id)"
-             " AND (pohead_id=:pohead_id) );" );
+  q.prepare( "SELECT pohead_terms_id, pohead_taxzone_id, vend_1099, "
+             "       pohead_curr_id, vend_id "
+             "FROM pohead JOIN vendinfo ON (pohead_vend_id=vend_id)"
+             "WHERE (pohead_id=:pohead_id);" );
   q.bindValue(":pohead_id", _poNumber->id());
   q.exec();
   if (q.first())
@@ -691,6 +684,7 @@ void voucher::sPopulatePoInfo()
     _terms->setId(q.value("pohead_terms_id").toInt());
     _taxzone->setId(q.value("pohead_taxzone_id").toInt());
     _amountToDistribute->setId(q.value("pohead_curr_id").toInt());
+    _vendor->setId(q.value("vend_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

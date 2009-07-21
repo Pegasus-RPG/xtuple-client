@@ -28,7 +28,6 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sHandleVoucherNumber();
-    virtual void sPoList();
     virtual void sPopulate();
     virtual void sDistributions();
     virtual void sDistributeLine();
