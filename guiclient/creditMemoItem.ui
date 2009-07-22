@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>552</height>
+    <width>779</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -437,7 +437,7 @@ to be bound by its terms.</comment>
              </size>
             </property>
             <property name="format">
-             <enum>CurrDisplay::Cost</enum>
+             <enum>CurrDisplay::SalesPrice</enum>
             </property>
             <property name="currencyEditable" stdset="0">
              <bool>false</bool>
