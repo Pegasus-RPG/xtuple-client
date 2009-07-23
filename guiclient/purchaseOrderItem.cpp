@@ -876,7 +876,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
   item.bindValue(":item_id", pItemid);
   item.exec();
 	if(item.first())
-    _taxRecoverable->setChecked(q.value("item_tax_recoverable").toBool());
+    _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
 
   }
 }
