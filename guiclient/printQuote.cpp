@@ -57,12 +57,6 @@ enum SetResponse printQuote::set(const ParameterList &pParams)
     populate();
   }
 
-  if (pParams.inList("print"))
-  {
-    sPrint();
-    return NoError_Print;
-  }
-
   return NoError;
 }
 
@@ -74,9 +68,8 @@ void printQuote::sPrint()
   orReport report(_report->code(), params);
   if (report.isValid())
   {
-    qDebug("sPrint() about to call report.print() with _captive = %d",
-           _captive);
     report.print();
+    emit finishedPrinting(_quheadid);
     if (_captive)
       accept();
   }

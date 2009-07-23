@@ -422,14 +422,12 @@ void prospect::sCheckNumber()
 
 void prospect::sPrintQuote()
 {
-
   ParameterList params;
   params.append("quhead_id", _quotes->id());
-  params.append("print");
 
   printQuote newdlg(this, "printQuote", true);
   newdlg.set(params);
-  // no newdlg.exec; newdlg.set does the work if given "print" param
+  newdlg.exec();
 }
 
 void prospect::sNewQuote()

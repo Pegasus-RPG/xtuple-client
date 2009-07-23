@@ -30,6 +30,9 @@ public slots:
   virtual void sHandleButtons();
   virtual void sPrint();
 
+signals:
+  virtual void finishedPrinting(int);
+
 protected slots:
     virtual void languageChange();
 

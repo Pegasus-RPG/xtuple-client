@@ -13,10 +13,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
-#include <QThread>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <parameter.h>
 #include <openreports.h>
@@ -146,6 +143,7 @@ void quotes::sPrint()
 			   "multiple reports."));
     return;
   }
+  QList<int> printedQuotes;
   for (int i = 0; i < selected.size(); i++)
   {
     int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
@@ -162,7 +160,7 @@ void quotes::sPrint()
         if (report.isValid() && report.print(&printer, setupPrinter))
         {
           setupPrinter = FALSE;
-          emit finishedPrinting(quheadid);
+          printedQuotes.append(quheadid);
         }
         else
         {
@@ -179,6 +177,9 @@ void quotes::sPrint()
   }
   if (selected.size() > 0)
     orReport::endMultiPrint(&printer);
+
+  for (int i = 0; i < printedQuotes.size(); i++)
+    emit finishedPrinting(printedQuotes.at(i));
 }
 
 void quotes::sConvert()
