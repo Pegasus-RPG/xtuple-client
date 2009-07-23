@@ -18,6 +18,7 @@
 
 #include <openreports.h>
 
+#include "printQuote.h"
 #include "salesOrder.h"
 #include "storedProcErrorLookup.h"
 
@@ -421,30 +422,14 @@ void prospect::sCheckNumber()
 
 void prospect::sPrintQuote()
 {
-  QString reportname;
-
-  q.prepare("SELECT findCustomerForm(:prospect_id, 'Q') AS reportname;");
-  q.bindValue(":prospect_id", _prospectid);
-  q.exec();
-  if (q.first())
-    reportname = q.value("reportname").toString();
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 
   ParameterList params;
   params.append("quhead_id", _quotes->id());
+  params.append("print");
 
-  orReport report(reportname, params);
-  if (report.isValid())
-    report.print();
-  else
-  {
-    report.reportError(this);
-    return;
-  }
+  printQuote newdlg(this, "printQuote", true);
+  newdlg.set(params);
+  // no newdlg.exec; newdlg.set does the work if given "print" param
 }
 
 void prospect::sNewQuote()

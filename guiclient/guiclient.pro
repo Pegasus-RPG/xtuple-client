@@ -272,7 +272,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printCheck.ui printChecks.ui printChecksReview.ui                                      \
                printCreditMemo.ui printCreditMemos.ui reprintCreditMemos.ui                           \
                printInvoice.ui printInvoices.ui printInvoicesByShipvia.ui reprintInvoices.ui          \
-               printPackingList.ui                                                                    \
+               printPackingList.ui printQuote.ui                                                      \
                printItemLabelsByClassCode.ui printLabelsByInvoice.ui printLabelsBySo.ui               \
                printLabelsByOrder.ui printLabelsByTo.ui printPackingListBatchByShipvia.ui printPoForm.ui \
                printProductionEntrySheet.ui printPurchaseOrder.ui                                     \
@@ -593,7 +593,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                printCheck.h printChecks.h printChecksReview.h                                         \
                printCreditMemo.h printCreditMemos.h reprintCreditMemos.h                              \
                printInvoice.h printInvoices.h printInvoicesByShipvia.h reprintInvoices.h              \
-               printPackingList.h                                                                     \
+               printPackingList.h printQuote.h                                                        \
                printItemLabelsByClassCode.h printLabelsByInvoice.h printLabelsBySo.h                  \
                printLabelsByOrder.h printLabelsByTo.h printPackingListBatchByShipvia.h printPoForm.h  \
                printProductionEntrySheet.h printPurchaseOrder.h                                       \
@@ -922,7 +922,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                printCheck.cpp printChecks.cpp printChecksReview.cpp                                   \
                printCreditMemo.cpp printCreditMemos.cpp reprintCreditMemos.cpp                        \
                printInvoice.cpp printInvoices.cpp printInvoicesByShipvia.cpp reprintInvoices.cpp      \
-               printPackingList.cpp                                                                   \
+               printPackingList.cpp printQuote.cpp                                                    \
                printItemLabelsByClassCode.cpp printLabelsByInvoice.cpp printLabelsBySo.cpp            \
                printLabelsByOrder.cpp printLabelsByTo.cpp printPackingListBatchByShipvia.cpp printPoForm.cpp \
                printProductionEntrySheet.cpp printPurchaseOrder.cpp                                   \

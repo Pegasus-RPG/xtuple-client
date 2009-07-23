@@ -36,6 +36,9 @@ public slots:
     virtual void sDelete();
     virtual void sFillList();
 
+signals:
+    void finishedPrinting(int);
+
 protected slots:
     virtual void languageChange();
 };

@@ -160,7 +160,10 @@ void quotes::sPrint()
 
         orReport report(q.value("reportname").toString(), params);
         if (report.isValid() && report.print(&printer, setupPrinter))
+        {
           setupPrinter = FALSE;
+          emit finishedPrinting(quheadid);
+        }
         else
         {
           report.reportError(this);
