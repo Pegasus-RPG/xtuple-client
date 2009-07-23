@@ -1033,7 +1033,9 @@ bool salesOrder::save(bool partial)
   q.bindValue(":fob", _fob->text());
   q.bindValue(":shipvia", _shipVia->currentText());
 
-  q.bindValue(":shipto_cntct_id", _shipToCntct->id());
+  if (_shipToCntct->isValid())
+    q.bindValue(":shipto_cntct_id", _shipToCntct->id());
+
   q.bindValue(":shipto_cntct_honorific", _shipToCntct->honorific());
   q.bindValue(":shipto_cntct_first_name", _shipToCntct->first());
   q.bindValue(":shipto_cntct_middle", _shipToCntct->middle());
@@ -1044,7 +1046,9 @@ bool salesOrder::save(bool partial)
   q.bindValue(":shipto_cntct_fax", _shipToCntct->fax());
   q.bindValue(":shipto_cntct_email ", _shipToCntct->emailAddress());
 
-  q.bindValue(":billto_cntct_id", _billToCntct->id());
+  if (_billToCntct->isValid())
+    q.bindValue(":billto_cntct_id", _billToCntct->id());
+
   q.bindValue(":billto_cntct_honorific", _billToCntct->honorific());
   q.bindValue(":billto_cntct_first_name", _billToCntct->first());
   q.bindValue(":billto_cntct_middle", _billToCntct->middle());
@@ -1053,7 +1057,7 @@ bool salesOrder::save(bool partial)
   q.bindValue(":billto_cntct_phone", _billToCntct->phone());
   q.bindValue(":billto_cntct_title", _billToCntct->title());
   q.bindValue(":billto_cntct_fax", _billToCntct->fax());
-  q.bindValue(":billto_cntct_email ", _billToCntct->emailAddress());
+  q.bindValue(":billto_cntct_email", _billToCntct->emailAddress());
 
   if (_salesRep->id() != -1)
     q.bindValue(":salesrep_id", _salesRep->id());
