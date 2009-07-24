@@ -17,12 +17,22 @@
 #include <QTextBrowser>
 #include <QDesktopServices>
 #include <QDebug>
+#include <QScrollBar>
 
 #include <parameter.h>
 #include <xsqlquery.h>
 
 #include "comment.h"
 #include "comments.h"
+
+void Comments::showEvent(QShowEvent *event)
+{
+  if (event)
+  {
+    QScrollBar * scrbar = _browser->verticalScrollBar();
+    scrbar->setValue(0);
+  }
+}
 
 
 // CAUTION: This will break if the order of this list does not match
@@ -115,6 +125,8 @@ Comments::Comments(QWidget *pParent, const char *name) :
   buttonsLayout->addItem(_buttonSpacer);
   buttons->setLayout(buttonsLayout);
   main->addWidget(buttons);
+  
+  _editmap = new QMultiMap<int, bool>();
 
   setLayout(main);
 
@@ -198,6 +210,7 @@ void Comments::sEdit()
 void Comments::refresh()
 {
   _browser->document()->clear();
+  _editmap->clear();
   if(-1 == _sourceid)
   {
     _comment->clear();
@@ -213,11 +226,13 @@ void Comments::refresh()
                      "       END AS type,"
                      "       comment_user,"
                      "       firstLine(detag(comment_text)) AS first,"
-                     "       comment_text "
+                     "       comment_text, "
+                     "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_user=CURRENT_USER AS self "
                      "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      "WHERE ( (comment_source=:source)"
                      " AND (comment_source_id=:sourceid) ) "
-                     "ORDER BY comment_date;" );
+                     "ORDER BY comment_date DESC;" );
   }
   else
   {
@@ -228,7 +243,9 @@ void Comments::refresh()
                      "       END AS type,"
                      "       comment_user,"
                      "       firstLine(detag(comment_text)) AS first,"
-                     "       comment_text "
+                     "       comment_text, "
+                     "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_user=CURRENT_USER AS self "
                      "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:source)"
                      "   AND (comment_source_id=:sourceid) ) "
@@ -238,7 +255,9 @@ void Comments::refresh()
                      "            ELSE :none"
                      "       END,"
                      "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_text "
+                     "       comment_text, "
+                     "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_user=CURRENT_USER AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceCust)"
                      "   AND (crmacct_id=:sourceid)"
@@ -249,7 +268,9 @@ void Comments::refresh()
                      "            ELSE :none"
                      "       END,"
                      "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_text "
+                     "       comment_text, "
+                     "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_user=CURRENT_USER AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceVend)"
                      "   AND (crmacct_id=:sourceid)"
@@ -260,12 +281,14 @@ void Comments::refresh()
                      "            ELSE :none"
                      "       END,"
                      "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_text "
+                     "       comment_text, "
+                     "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_user=CURRENT_USER AS self "
                      "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceContact)"
                      "   AND (cntct_crmacct_id=:sourceid)"
                      "   AND (comment_source_id=cntct_id) ) "
-                     "ORDER BY comment_date;" );
+                     "ORDER BY comment_date DESC;" );
     comment.bindValue(":sourceCust", _commentMap[Customer].ident);
     comment.bindValue(":sourceContact", _commentMap[Contact].ident);
     comment.bindValue(":sourceVend", _commentMap[Vendor].ident);
@@ -280,6 +303,9 @@ void Comments::refresh()
   _commentIDList.clear();
   while(comment.next())
   {
+    _editmap->insert(comment.value("comment_id").toInt(),comment.value("editable").toBool());
+    _editmap->insert(comment.value("comment_id").toInt(),comment.value("self").toBool());
+    
     int cid = comment.value("comment_id").toInt();
     _commentIDList.push_back(cid);
     lclHtml += comment.value("comment_date").toDateTime().toString();
@@ -352,17 +378,13 @@ void Comments::sCheckButtonPriv(bool pValid)
 
 bool Comments::userCanEdit(int id)
 {
-  XSqlQuery query;
-  query.prepare("SELECT COALESCE(cmnttype_editable,false) AS editable, comment_user=CURRENT_USER AS self"
-                "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id)"
-                " WHERE(comment_id=:comment_id);");
-  query.bindValue(":comment_id", id);
-  query.exec();
-  if(query.first() && query.value("editable").toBool())
+  QList<bool> values = _editmap->values(id);
+  
+  if(values.at(0))
   {
     if(_x_privileges && _x_privileges->check("EditOthersComments"))
       return true;
-    if(_x_privileges && _x_privileges->check("EditOwnComments") && query.value("self").toBool())
+    if(_x_privileges && _x_privileges->check("EditOwnComments") && values.at(1))
       return true;
   }
   return false;

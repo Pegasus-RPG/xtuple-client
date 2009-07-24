@@ -11,6 +11,8 @@
 #ifndef comments_h
 #define comments_h
 
+#include <QMultiMap>
+
 #include <xsqlquery.h>
 
 #include "xtreewidget.h"
@@ -90,6 +92,8 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     void commentAdded();
 
   private:
+    void showEvent(QShowEvent *event);
+  
     enum CommentSources _source;
     int                 _sourceid;
     QList<QVariant> _commentIDList;
@@ -100,6 +104,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     QPushButton *_newComment;
     QPushButton *_viewComment;
     QPushButton *_editComment;
+    QMultiMap<int, bool> *_editmap;
 };
 
 #endif
