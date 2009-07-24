@@ -61,7 +61,7 @@ void arCreditMemoApplication::sSave()
   // check to make sure the amount being applied does not exceed
   // the balance due on the target item.
   q.prepare( "SELECT ROUND(currToCurr(aropen_curr_id, :curr_id,"
-	     "     aropen_amount - aropen_paid, current_date), 2) AS balance "
+             "      (aropen_amount - aropen_paid - calcpendingarapplications(aropen_id)), current_date), 2) AS balance "
              "  FROM aropen "
              " WHERE (aropen_id=:aropen_id);");
   q.bindValue(":aropen_id", _targetAropenid);
@@ -171,9 +171,10 @@ void arCreditMemoApplication::populate()
   q.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype,"
              "       aropen_docdate, aropen_duedate, "
              "       aropen_amount, "
-			 "       aropen_paid, "
-             "       (aropen_amount - aropen_paid) AS f_balance, "
-	         "       aropen_curr_id "
+             "       aropen_paid, "
+             "       calcpendingarapplications(aropen_id) AS pending, "
+             "       (aropen_amount - aropen_paid - calcpendingarapplications(aropen_id)) AS f_balance, "
+             "       aropen_curr_id "
              "FROM aropen "
              "WHERE (aropen_id=:aropen_id);" );
   q.bindValue(":aropen_id", _targetAropenid);
@@ -189,6 +190,7 @@ void arCreditMemoApplication::populate()
 		       q.value("aropen_curr_id").toInt(),
 		       q.value("aropen_docdate").toDate(), false);
     _targetPaid->setLocalValue(q.value("aropen_paid").toDouble());
+    _targetPending->setLocalValue(q.value("pending").toDouble());
     _targetBalance->setLocalValue(q.value("f_balance").toDouble());
   }
   else if (q.lastError().type() != QSqlError::NoError)

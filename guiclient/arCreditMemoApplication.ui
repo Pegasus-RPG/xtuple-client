@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>503</width>
-    <height>391</height>
+    <width>599</width>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,15 +34,9 @@ to be bound by its terms.</comment>
        <property name="spacing">
         <number>7</number>
        </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
         <layout class="QHBoxLayout">
          <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -71,15 +65,9 @@ to be bound by its terms.</comment>
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
          <item>
           <layout class="QVBoxLayout">
            <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
             <number>0</number>
            </property>
            <item>
@@ -124,6 +112,72 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
+     <item row="2" column="0">
+      <layout class="QGridLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="_availableToApplyLit">
+         <property name="text">
+          <string>Available To Apply:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="CurrCluster" name="_availableToApply">
+         <property name="localControl">
+          <bool>false</bool>
+         </property>
+         <property name="currencyEditable" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="_amountToApplyLit">
+         <property name="text">
+          <string>Amount To Apply:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="CurrCluster" name="_amountToApply">
+         <property name="currencyEditable" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="currencyVisible">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" rowspan="2">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>132</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
      <item row="1" column="0">
       <widget class="QGroupBox" name="_applyToGroupBox">
        <property name="title">
@@ -160,9 +214,6 @@ to be bound by its terms.</comment>
          <layout class="QHBoxLayout">
           <property name="spacing">
            <number>5</number>
-          </property>
-          <property name="margin">
-           <number>0</number>
           </property>
           <item>
            <widget class="QLabel" name="_docTypeLit">
@@ -373,7 +424,7 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="5" column="0">
+        <item row="6" column="0">
          <widget class="QLabel" name="_targetBalanceLit">
           <property name="text">
            <string>Balance:</string>
@@ -383,7 +434,7 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item row="5" column="1" colspan="2">
+        <item row="6" column="1" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="CurrDisplay" name="_targetBalance"/>
@@ -403,77 +454,34 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
+        <item row="5" column="1">
+         <widget class="CurrDisplay" name="_targetPending"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="_targetPendingLit">
+          <property name="text">
+           <string>Pending:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
-     </item>
-     <item row="2" column="0">
-      <layout class="QGridLayout">
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <property name="spacing">
-        <number>5</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="_availableToApplyLit">
-         <property name="text">
-          <string>Available To Apply:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="CurrCluster" name="_availableToApply">
-         <property name="localControl">
-          <bool>false</bool>
-         </property>
-         <property name="currencyEditable" stdset="0">
-          <bool>false</bool>
-         </property>
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="_amountToApplyLit">
-         <property name="text">
-          <string>Amount To Apply:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="CurrCluster" name="_amountToApply">
-         <property name="currencyEditable" stdset="0">
-          <bool>false</bool>
-         </property>
-         <property name="currencyVisible">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" rowspan="2">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>132</width>
-           <height>16</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
      </item>
     </layout>
    </item>
@@ -668,6 +676,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>216</x>
      <y>364</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_targetAmount</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_targetPending</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_targetAmount</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_targetPending</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>317</y>
     </hint>
    </hints>
   </connection>
