@@ -1127,6 +1127,28 @@ void initErrorLookupHash()
 			       "Administrator to have this corrected before "
 			       "you may Return this Shipment."),
 								0, "" },
+
+  { "reverseCashReceipt", -1, TR("The selected Cash Receipt cannot be reversed as "
+			      "the amount distributed is greater than the "
+			      "amount received."),	0, "" },
+  { "reverseCashReceipt", -2, TR("The selected Cash Receipt cannot be reversed as "
+			      "the amount received must be greater than zero."),	0, "" },
+  { "reverseCashReceipt", -5, TR("The selected Cash Receipt cannot be reversed as "
+                               "the A/R Account cannot be determined. You must "
+			       "make an A/R Account Assignment for the "
+			       "Customer Type to which this Customer is "
+			       "assigned before you may reverse this Cash "
+			       "Receipt."),				0, "" },
+  { "reverseCashReceipt", -6, TR("The selected Cash Receipt cannot be reversed as "
+			      "the Bank Account cannot be determined. You must "
+			      "make a Bank Account Assignment for this Cash "
+			      "Receipt before you may reverse it." ),	0, "" },
+  { "reverseCashReceipt", -7, TR("The selected Cash Receipt cannot be reversed, "
+			      "probably because the Customer's Prepaid Account "
+			      "was not found."),			0, "" },
+  { "reverseCashReceipt", -8, TR("Cannot reverse this Cash Receipt because the "
+                            "credit card records could not be found."),  0, "" },
+
   { "selectForBilling",	-1, TR("The quantity you have selected for Billing is "
 			       "less than the quantity shipped. You may not "
 			       "bill for less than the quantity shipped."),
