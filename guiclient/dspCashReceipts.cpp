@@ -368,13 +368,17 @@ void dspCashReceipts::sHandleButtons(bool valid)
       editMenu->insertItem(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
       editMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
         
+      _post->show();
+      _reverse->show();
       _reverse->setEnabled(false);
       _post->setEnabled(_privileges->check("PostCashReceipts"));
     }
     else
     {
+      _post->show();
+      _reverse->show();
       _post->setEnabled(false);
-      _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt"));
+      _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt") && _cashreceipts->isChecked());
     } 
         
     if (_arapply->currentItem()->id("target") > -1)
