@@ -923,41 +923,77 @@ void salesOrderItem::sSave()
     {
       if (_scheduledDate->date() != _cScheduledDate)
       {
-        if (QMessageBox::question(this, tr("Reschedule W/O?"),
-                                  tr("<p>The Scheduled Date for this Line "
-                                      "Item has been changed.  Should the "
-                                      "W/O for this Line Item be Re-"
-                                      "Scheduled to reflect this change?"),
+        if((_item->itemType() == "M") || (_item->itemType() == "J"))
+        {
+          if (QMessageBox::question(this, tr("Reschedule W/O?"),
+                                          tr("<p>The Scheduled Date for this Line "
+                                             "Item has been changed.  Should the "
+                                             "W/O for this Line Item be Re-"
+                                             "Scheduled to reflect this change?"),
                                      QMessageBox::Yes | QMessageBox::Default,
                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-        {
-          q.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:schedDate-wo_duedate), :schedDate, TRUE) AS result "
-                    "FROM wo "
-                    "WHERE (wo_id=:wo_id);");
-          q.bindValue(":wo_id", _orderId);
-          q.bindValue(":schedDate", _scheduledDate->date());
-          q.exec();
-          if (q.first())
           {
-            int result = q.value("result").toInt();
-            if (result < 0)
+            q.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:schedDate-wo_duedate), :schedDate, TRUE) AS result "
+                      "FROM wo "
+                      "WHERE (wo_id=:wo_id);");
+            q.bindValue(":wo_id", _orderId);
+            q.bindValue(":schedDate", _scheduledDate->date());
+            q.exec();
+            if (q.first())
+            {
+              int result = q.value("result").toInt();
+              if (result < 0)
+              {
+                rollback.exec();
+                systemError(this, storedProcErrorLookup("changeWoDates", result),
+                            __FILE__, __LINE__);
+                return;
+              }
+            }
+            else if (q.lastError().type() != QSqlError::NoError)
             {
               rollback.exec();
-              systemError(this, storedProcErrorLookup("changeWoDates", result),
-                          __FILE__, __LINE__);
+              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           }
-          else if (q.lastError().type() != QSqlError::NoError)
+        }
+        else
+        {
+          if (QMessageBox::question(this, tr("Reschedule P/R?"),
+                                    tr("<p>The Scheduled Date for this Sales "
+                                       "Order Line Item has been changed. "
+                                       "Should the associated Purchase Request be changed "
+                                       "to reflect this?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
           {
-            rollback.exec();
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-            return;
+            q.prepare("SELECT changePrDate(:pr_id, :schedDate) AS result;");
+            q.bindValue(":pr_id", _orderId);
+            q.bindValue(":schedDate", _scheduledDate->date());
+            q.exec();
+            if (q.first())
+            {
+              int result = q.value("result").toInt();
+              if (result < 0)
+              {
+                rollback.exec();
+                systemError(this, storedProcErrorLookup("changePrDate", result),
+                            __FILE__, __LINE__);
+                return;
+              }
+            }
+            else if (q.lastError().type() != QSqlError::NoError)
+            {
+              rollback.exec();
+              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
           }
         }
       }
 
-      if (_qtyOrdered->toDouble() < _cQtyOrdered)
+      if (_qtyOrdered->toDouble() != _cQtyOrdered)
       {
         if((_item->itemType() == "M") || (_item->itemType() == "J"))
         {
