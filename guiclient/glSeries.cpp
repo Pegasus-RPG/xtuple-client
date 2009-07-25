@@ -379,6 +379,7 @@ void glSeries::sPost()
   _debits->clear();
   _credits->clear();
   _glseries->clear();
+  _docnumber->clear();
   
   ParameterList params;
   params.append("mode", "new");
