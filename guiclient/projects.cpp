@@ -30,6 +30,7 @@ projects::projects(QWidget* parent, const char* name, Qt::WFlags fl)
 //    (void)statusBar();
 
     // signals and slots connections
+    connect(_showComplete, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_prj, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -178,15 +179,18 @@ void projects::sPopulateMenu(QMenu *pMenu)
 
 void projects::sFillList()
 {
-  q.prepare( "SELECT prj_id,"
-             "       prj_number, prj_name,"
-             "       CASE WHEN(prj_status='P') THEN :planning"
-             "            WHEN(prj_status='O') THEN :open"
-             "            WHEN(prj_status='C') THEN :complete"
-             "            ELSE :undefined"
-             "       END AS prj_status "
-             "FROM prj "
-             "ORDER BY prj_number;" );
+  QString sql( "SELECT prj_id,"
+               "       prj_number, prj_name,"
+               "       CASE WHEN(prj_status='P') THEN :planning"
+               "            WHEN(prj_status='O') THEN :open"
+               "            WHEN(prj_status='C') THEN :complete"
+               "            ELSE :undefined"
+               "       END AS prj_status "
+               "FROM prj " );
+  if (!_showComplete->isChecked())
+    sql += " WHERE (prj_status <> 'C') ";
+  sql += "ORDER BY prj_number;";
+  q.prepare(sql);
   q.bindValue(":planning", tr("Concept"));
   q.bindValue(":open", tr("In-Process"));
   q.bindValue(":complete", tr("Complete"));
