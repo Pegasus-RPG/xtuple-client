@@ -38,6 +38,7 @@ glSeries::glSeries(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _credits->setPrecision(omfgThis->moneyVal());
   _debits->setPrecision(omfgThis->moneyVal());
+  _diff->setPrecision(omfgThis->moneyVal());
 
   _source->setText("G/L");
   _source->setEnabled(false);
@@ -378,6 +379,7 @@ void glSeries::sPost()
   _notes->clear();
   _debits->clear();
   _credits->clear();
+  _diff->clear();
   _glseries->clear();
   _docnumber->clear();
   
@@ -442,6 +444,7 @@ void glSeries::sFillList()
             "       SUM(CASE WHEN (glseries_amount > 0) THEN glseries_amount"
             "                              ELSE 0"
             "                         END ) AS credit,"
+            "       SUM(glseries_amount) AS diff,"
             "       (SUM(glseries_amount) <> 0) AS oob "
             "FROM glseries "
             "WHERE (glseries_sequence=:glseries_sequence);" );
@@ -451,16 +454,19 @@ void glSeries::sFillList()
   {
     _debits->setDouble(q.value("debit").toDouble());
     _credits->setDouble(q.value("credit").toDouble());
+    _diff->setDouble(q.value("diff").toDouble());
 
     if (q.value("oob").toBool())
     {
       _debits->setPaletteForegroundColor(namedColor("error"));
       _credits->setPaletteForegroundColor(namedColor("error"));
+      _diff->setPaletteForegroundColor(namedColor("error"));
     }
     else
     {
       _debits->setPaletteForegroundColor(QColor("black"));
       _credits->setPaletteForegroundColor(QColor("black"));
+      _diff->setPaletteForegroundColor(QColor("black"));
     }
   }
   else if (q.lastError().type() != QSqlError::NoError)
