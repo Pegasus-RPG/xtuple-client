@@ -80,6 +80,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     void setId(int);
     void setReadOnly(bool);
     void setVerboseCommentList(bool);
+    void setEditable(bool p) {_editable = p;};
 
     void sNew();
     void sView();
@@ -99,6 +100,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     int                 _sourceid;
     QList<QVariant> _commentIDList;
     bool _verboseCommentList;
+    bool _editable;
 
     QTextBrowser *_browser;
     XTreeWidget *_comment;

@@ -96,9 +96,13 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
 
   _comments = new Comments(this, "_comments");
   _comments->setReadOnly(true);
+  _comments->findChild<XCheckBox*>("_verbose")->setForgetful(true);
+  _comments->findChild<XCheckBox*>("_verbose")->hide();
+  _comments->findChild<XCheckBox*>("_verbose")->setChecked(false);
   _comments->_newComment->setVisible(false);
   _comments->setVerboseCommentList(true);
   _comments->setVisible(false);
+  _comments->setEditable(false);
   moreLayout->addWidget(_comments);
 
   resize( QSize(524, 270).expandedTo(minimumSizeHint()) );

@@ -81,6 +81,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
 {
   _source = Uninitialized;
   _sourceid = -1;
+  _editable = true;
 
   _verboseCommentList = false;
 
@@ -390,9 +391,9 @@ bool Comments::userCanEdit(int id)
   
   if(values.at(0))
   {
-    if(_x_privileges && _x_privileges->check("EditOthersComments"))
+    if(_x_privileges && _x_privileges->check("EditOthersComments") && _editable)
       return true;
-    if(_x_privileges && _x_privileges->check("EditOwnComments") && values.at(1))
+    if(_x_privileges && _x_privileges->check("EditOwnComments") && values.at(1) && _editable)
       return true;
   }
   return false;
