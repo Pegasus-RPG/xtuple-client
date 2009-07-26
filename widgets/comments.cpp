@@ -83,12 +83,19 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _sourceid = -1;
 
   _verboseCommentList = false;
-  if(_x_metrics)
-    _verboseCommentList = _x_metrics->boolean("VerboseCommentList");
 
-  QHBoxLayout *main = new QHBoxLayout(this);
-  main->setMargin(0);
-  main->setSpacing(7);
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+
+  QHBoxLayout *hbox = new QHBoxLayout();
+  hbox->setMargin(0);
+  hbox->setSpacing(7);
+  
+  _verbose = new XCheckBox(tr("Verbose Text"), this);
+  _verbose->setObjectName("_verbose");
+  _verboseCommentList = _verbose->isChecked();
+  vbox->addWidget(_verbose);
+      
+  vbox->addLayout(hbox);
 
   QWidget *buttons = new QWidget(this);
   QVBoxLayout * buttonsLayout = new QVBoxLayout(buttons);
@@ -102,13 +109,13 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment->addColumn(tr("Type"),    _itemColumn, Qt::AlignCenter,true, "type");
   _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
   _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
-  main->addWidget(_comment);
+  hbox->addWidget(_comment);
 
   _browser = new QTextBrowser(this);
   _browser->setObjectName("_browser");
   _browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   _browser->setOpenLinks(false);
-  main->addWidget(_browser);
+  hbox->addWidget(_browser);
 
   _newComment = new QPushButton(tr("New"), buttons, "_newComment");
   buttonsLayout->addWidget(_newComment);
@@ -124,11 +131,9 @@ Comments::Comments(QWidget *pParent, const char *name) :
   QSpacerItem *_buttonSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
   buttonsLayout->addItem(_buttonSpacer);
   buttons->setLayout(buttonsLayout);
-  main->addWidget(buttons);
+  hbox->addWidget(buttons);
   
   _editmap = new QMultiMap<int, bool>();
-
-  setLayout(main);
 
   connect(_newComment, SIGNAL(clicked()), this, SLOT( sNew()));
   connect(_viewComment, SIGNAL(clicked()), this, SLOT( sView()));
@@ -136,9 +141,9 @@ Comments::Comments(QWidget *pParent, const char *name) :
   connect(_comment, SIGNAL(valid(bool)), this, SLOT(sCheckButtonPriv(bool)));
   connect(_comment, SIGNAL(itemSelected(int)), _viewComment, SLOT(animateClick()));
   connect(_browser, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
+  connect(_verbose, SIGNAL(toggled(bool)), this, SLOT(setVerboseCommentList(bool)));
 
   setFocusProxy(_comment);
-
   setVerboseCommentList(_verboseCommentList);
 }
 
@@ -169,6 +174,7 @@ void Comments::sNew()
   params.append("source_id", _sourceid);
 
   comment newdlg(this, "", TRUE);
+  newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
@@ -188,6 +194,7 @@ void Comments::sView()
   params.append("commentIDList", _commentIDList);
 
   comment newdlg(this, "", TRUE);
+  newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -202,6 +209,7 @@ void Comments::sEdit()
   params.append("commentIDList", _commentIDList);
 
   comment newdlg(this, "", TRUE);
+  newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
   newdlg.exec();
   refresh();

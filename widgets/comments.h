@@ -16,6 +16,7 @@
 #include <xsqlquery.h>
 
 #include "xtreewidget.h"
+#include "xcheckbox.h"
 
 class QPushButton;
 class QTextBrowser;
@@ -105,6 +106,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     QPushButton *_viewComment;
     QPushButton *_editComment;
     QMultiMap<int, bool> *_editmap;
+    XCheckBox *_verbose;
 };
 
 #endif
