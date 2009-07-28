@@ -29,6 +29,7 @@
 #include "salesOrder.h"
 #include "dspWoHistoryByNumber.h"
 #include "transactionInformation.h"
+#include "storedProcErrorLookup.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -228,6 +229,14 @@ bool dspGLTransactions::setParams(ParameterList &params)
 
 void dspGLTransactions::sPrint()
 {
+  if (!_metrics->boolean("ManualForwardUpdate") && 
+       _selectedAccount->isChecked() && 
+       _showRunningTotal->isChecked())
+  {
+    if (!forwardUpdate())
+      return;
+  }
+  
   ParameterList params;
   if (! setParams(params))
     return;
@@ -242,6 +251,14 @@ void dspGLTransactions::sPrint()
 
 void dspGLTransactions::sFillList()
 {
+  if (!_metrics->boolean("ManualForwardUpdate") && 
+       _selectedAccount->isChecked() && 
+       _showRunningTotal->isChecked())
+  {
+    if (!forwardUpdate())
+      return;
+  }
+
   MetaSQLQuery mql("SELECT gltrans.*,"
                    "       CASE WHEN(gltrans_docnumber='Misc.' AND"
                    "              invhist_docnumber IS NOT NULL) THEN"
@@ -288,6 +305,7 @@ void dspGLTransactions::sFillList()
   if (_selectedAccount->isChecked() && _showRunningTotal->isChecked())
   {
     _gltrans->showColumn("running");
+    qDebug("begbal %f", params.value("beginningBalance").toDouble());
     _beginningBalance->setDouble(params.value("beginningBalance").toDouble());
   }
   else
@@ -485,4 +503,36 @@ void dspGLTransactions::sViewDocument()
     newdlg.set(params);
     newdlg.exec();
   }
+}
+
+bool dspGLTransactions::forwardUpdate()
+{
+  QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
+               "FROM accnt "
+               "  LEFT OUTER JOIN trialbal ON (trialbal_accnt_id=accnt_id) "
+               "WHERE ( (COALESCE(trialbal_dirty,true))"
+	             "<? if exists(\"accnt_id\") ?>"
+	             " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
+	             "<? endif ?>"
+	             ");" );
+
+  ParameterList params;
+  params.append("accnt_id", _account->id());
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  return true;
 }
