@@ -945,7 +945,7 @@ void XTreeWidget::populateCalculatedColumns()
       {
         int set = topLevelItem(row)->data(col, RunningSetRole).toInt();
         if (! subtotals.contains(set))
-          subtotals[set] = topLevelItem(row)->data(col, RunningInitRole).toInt();
+          subtotals[set] = topLevelItem(row)->data(col, RunningInitRole).toDouble();
         subtotals[set] += topLevelItem(row)->data(col, RawRole).toDouble();
         topLevelItem(row)->setData(col, Qt::DisplayRole,
                                    QLocale().toString(subtotals[set], 'f',
