@@ -267,10 +267,10 @@ void contact::sClose()
 
 void contact::sSave()
 {
-   if(_mode == cNew && _contact->first() == "")
+   if(_contact->first().isEmpty() && _contact->last().isEmpty()  )
     {
            QMessageBox::information(this, tr("Contact Blank"),
-                            tr("<p>You Must fill in the Contacts First Name as a minimum before saving."));
+                            tr("<p>You must fill in a contact first or last name as a minimum before saving."));
            return;
     }
 
