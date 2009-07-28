@@ -27,31 +27,17 @@
  <leftmargin>10</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT poitem_id, 
-       current_date AS date,
-       CASE WHEN location.location_name = 'AAAA NOT SET' THEN ''::text
-            ELSE location.location_name
-       END AS loc_name, 
-       item_number,
-       CASE WHEN item_descrip1 isnull THEN poitem_vend_item_descrip  
-            ELSE item_descrip1
-       END AS itemdesc1, 
+  <sql>SELECT formatDate(current_date) AS date, 
+       item_number, 
+       item_descrip1, 
        item_descrip2, 
        poitem_vend_item_number, 
        pohead_number     
   FROM pohead, poitem  
-  LEFT OUTER JOIN itemsite ON itemsite.itemsite_id = poitem.poitem_itemsite_id    
-  LEFT OUTER JOIN location ON itemsite.itemsite_location_id = location.location_id 
-  LEFT JOIN item  ON item.item_id = itemsite.itemsite_item_id
-  WHERE pohead.pohead_id = poitem.poitem_pohead_id  
-                    
-&lt;? if exists("poitem_id") ?>
-  AND poitem_id = &lt;? value("poitem_id") ?>
-&lt;? endif ?>
-
-GROUP BY poitem_id, date, loc_name, item_number, item_descrip1, item_descrip2,
-itemdesc1, poitem_vend_item_number, pohead_number
-ORDER BY item_number, pohead_number</sql>
+    JOIN itemsite ON (itemsite_id = poitem_itemsite_id)
+    JOIN item  ON (item_id = itemsite_item_id)  
+  WHERE ((pohead.pohead_id = poitem.poitem_pohead_id)
+    AND (poitem_id = &lt;? value("poitem_id") ?>))</sql>
  </querysource>
  <section>
   <name>detail</name>
@@ -60,22 +46,6 @@ ORDER BY item_number, pohead_number</sql>
     <query>detail</query>
    </key>
    <height>698</height>
-   <label>
-    <rect>
-     <x>5</x>
-     <y>42</y>
-     <width>35</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <string>Loc:</string>
-   </label>
    <field>
     <rect>
      <x>5</x>
@@ -98,8 +68,8 @@ ORDER BY item_number, pohead_number</sql>
    <label>
     <rect>
      <x>5</x>
-     <y>54</y>
-     <width>35</width>
+     <y>50</y>
+     <width>70</width>
      <height>15</height>
     </rect>
     <font>
@@ -109,27 +79,8 @@ ORDER BY item_number, pohead_number</sql>
     </font>
     <left/>
     <vcenter/>
-    <string>Supp#:</string>
+    <string>Vendor Item#:</string>
    </label>
-   <field>
-    <rect>
-     <x>45</x>
-     <y>42</y>
-     <width>130</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>loc_name</column>
-    </data>
-   </field>
    <text>
     <rect>
      <x>5</x>
@@ -147,15 +98,15 @@ ORDER BY item_number, pohead_number</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>itemdesc1</column>
+     <column>item_descrip1</column>
     </data>
    </text>
    <label>
     <rect>
      <x>5</x>
-     <y>64.8605</y>
+     <y>65</y>
      <width>30</width>
-     <height>19.1562</height>
+     <height>15</height>
     </rect>
     <font>
      <face>Helvetica</face>
@@ -168,9 +119,9 @@ ORDER BY item_number, pohead_number</sql>
    </label>
    <field>
     <rect>
-     <x>45</x>
-     <y>54</y>
-     <width>130</width>
+     <x>80</x>
+     <y>50</y>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -189,8 +140,8 @@ ORDER BY item_number, pohead_number</sql>
     <rect>
      <x>35</x>
      <y>65</y>
-     <width>40</width>
-     <height>16.9122</height>
+     <width>45</width>
+     <height>15</height>
     </rect>
     <font>
      <face>Helvetica</face>
@@ -206,10 +157,10 @@ ORDER BY item_number, pohead_number</sql>
    </field>
    <label>
     <rect>
-     <x>80</x>
-     <y>64.5232</y>
-     <width>30</width>
-     <height>20.3887</height>
+     <x>85</x>
+     <y>65</y>
+     <width>25</width>
+     <height>15</height>
     </rect>
     <font>
      <face>Helvetica</face>
@@ -222,10 +173,10 @@ ORDER BY item_number, pohead_number</sql>
    </label>
    <field>
     <rect>
-     <x>110</x>
-     <y>65.6264</y>
+     <x>115</x>
+     <y>65</y>
      <width>65</width>
-     <height>18.1824</height>
+     <height>15</height>
     </rect>
     <font>
      <face>Helvetica</face>
@@ -236,7 +187,7 @@ ORDER BY item_number, pohead_number</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>recvdate</column>
+     <column>date</column>
     </data>
    </field>
   </detail>
