@@ -197,6 +197,8 @@ void correctProductionPosting::populate()
     {
       _backFlush->setEnabled(true);
       _backflushOperations->setEnabled(true);
+      _qtyOrderedLit->setText(tr("Qty. Ordered:"));
+      _qtyReceivedLit->setText(tr("Qty. Received:"));
     }
     
     _qtyOrdered->setText(_wo->qtyOrdered());
