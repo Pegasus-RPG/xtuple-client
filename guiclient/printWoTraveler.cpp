@@ -112,7 +112,18 @@ void printWoTraveler::sHandleOptions(int pWoid)
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    _pickList->setEnabled(check.first());
+    if (check.first())
+    {
+      _pickList->setEnabled(true);
+      _pickList->setForgetful(false);
+      _pickList->setObjectName("_pickList");
+    }
+    else
+    {
+      _pickList->setEnabled(false);
+      _pickList->setForgetful(true);
+      _pickList->setChecked(false);
+    }
   
     if (_metrics->boolean("Routings"))
     {
@@ -127,7 +138,18 @@ void printWoTraveler::sHandleOptions(int pWoid)
         systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
-      _routing->setEnabled(check.first());
+      if (check.first())
+      {
+        _routing->setEnabled(true);
+        _routing->setForgetful(false);
+        _routing->setObjectName("_routing");
+      }
+      else
+      {
+        _routing->setEnabled(false);
+        _routing->setForgetful(true);
+        _routing->setChecked(false);
+      }
     }
 
     check.prepare( "SELECT wo_id "
@@ -141,7 +163,18 @@ void printWoTraveler::sHandleOptions(int pWoid)
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    _packingList->setEnabled(check.first());
+    if (check.first())
+    {
+      _packingList->setEnabled(true);
+      _packingList->setForgetful(false);
+      _packingList->setObjectName("_packingList");
+    }
+    else
+    {
+      _packingList->setEnabled(false);
+      _packingList->setForgetful(true);
+      _packingList->setChecked(false);
+    }
     
   }
 }
