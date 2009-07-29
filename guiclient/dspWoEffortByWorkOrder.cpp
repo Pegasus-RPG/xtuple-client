@@ -39,9 +39,9 @@ dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name
   _wotc->addColumn(tr("Operation"),            -1, Qt::AlignLeft, true, "wooper");
   _wotc->addColumn(tr("Time In"), _timeDateColumn, Qt::AlignLeft, true, "wotc_timein");
   _wotc->addColumn(tr("Time Out"),_timeDateColumn, Qt::AlignLeft, true, "wotc_timeout");
-  _wotc->addColumn(tr("Setup Time"),  _timeColumn, Qt::AlignLeft, true, "setup_time");
-  _wotc->addColumn(tr("Run Time"),    _timeColumn, Qt::AlignLeft, true, "run_time");
-  _wotc->addColumn(tr("Effort"),      _timeColumn, Qt::AlignLeft, true, "wo_effort");
+  _wotc->addColumn(tr("Setup Time"),  _timeColumn, Qt::AlignRight, true, "setup_time");
+  _wotc->addColumn(tr("Run Time"),    _timeColumn, Qt::AlignRight, true, "run_time");
+  _wotc->addColumn(tr("Effort"),      _timeColumn, Qt::AlignRight, true, "wo_effort");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int,bool)),  this,SLOT(sFillList()));
 }
@@ -175,7 +175,7 @@ void dspWoEffortByWorkOrder::sFillList()
 	       "       wotc_timein,"
 	       "       wotc_timeout,"
 	       "       NULL AS setup_time, NULL AS run_time,"
-	       "       wotcTime(wotc_id) AS wo_effort "
+	       "       formatInterval(wotcTime(wotc_id)) AS wo_effort "
 	       "  FROM wotc LEFT OUTER JOIN "
 	       "     wooper ON (wotc_wooper_id=wooper_id) "
 	       "WHERE ((wotc_wo_id=:wo_id)"
@@ -190,7 +190,7 @@ void dspWoEffortByWorkOrder::sFillList()
 	       "       wotc_timeout,"
 	       "       wooperpost_sutime AS setup_time,"
 	       "       wooperpost_rntime AS run_time,"
-	       "       wotcTime(wotc_id) AS wo_effort "
+	       "       formatInterval(wotcTime(wotc_id)) AS wo_effort "
 	       "  FROM wotc, wooperpost "
 	       "WHERE ((wotc_wo_id=:wo_id)"
 	       "  AND  (wooperpost_wotc_id=wotc_id)) "
@@ -211,7 +211,7 @@ void dspWoEffortByWorkOrder::sFillList()
 
     q.prepare("SELECT MIN(wotc_timein) AS timein,"
 	      "       MAX(wotc_timeout) AS timeout,"
-	      "       woTimeByWo(wotc_wo_id) AS wo_effort "
+	      "       formatInterval(woTimeByWo(wotc_wo_id)) AS wo_effort "
 	      "FROM wotc "
 	      "WHERE (wotc_wo_id=:wo_id) "
 	      "GROUP BY wotc_wo_id;");

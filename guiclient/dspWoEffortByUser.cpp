@@ -14,6 +14,9 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "implodeWo.h"
 #include "explodeWo.h"
@@ -50,9 +53,11 @@ dspWoEffortByUser::dspWoEffortByUser(QWidget* parent, const char* name, Qt::WFla
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
   _dates->setStartCaption(tr("Start W/O Start Date:"));
+  _dates->setEndCaption(tr("End W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _dates->setEndCaption(tr("End W/O Start Date:"));
+  _dates->setStartDate(QDate().currentDate());
+  _dates->setEndDate(QDate().currentDate());
 
   _wotc->addColumn(tr("W/O #"),       _orderColumn, Qt::AlignLeft, true, "wonumber");
   _wotc->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter,true, "wo_status");
@@ -90,6 +95,7 @@ void dspWoEffortByUser::sPrint()
 {
   ParameterList params;
   params.append("username", _user->username());
+  params.append("includeFormatted", true);
   _dates->appendValue(params);
 
   orReport report("WOEffortByUser", params);
@@ -261,74 +267,16 @@ void dspWoEffortByUser::sFillList()
 
   if ((_user->isValid()) && (_dates->allValid()))
   {
-    QString sql( "SELECT wotc_id, wo_id, formatWONumber(wo_id) AS wonumber,"
-                 " wo_status, wo_priority, warehous_code,"
-                 " wotc_timein,"
-                 " wotc_timeout,"
-                 " wooper_seqnumber || ' - ' || wooper_descrip1 || ' - ' || wooper_descrip2 AS wooper,"
-                 " wotcTime(wotc_id) AS wotcTime "
-                 "FROM wo, itemsite, site(), wotc, wooper "
-                 "WHERE ((wo_itemsite_id=itemsite_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (wotc_wooper_id=wooper_id)"
-                 " AND (wotc_wo_id=wo_id)"
-                 " AND (wotc_username=:username)"
-                 " AND (wo_startdate BETWEEN :startDate AND :endDate)) "
-                 "UNION "
-                 "SELECT wotc_id, wo_id, formatWONumber(wo_id) AS wonumber,"
-                 " wo_status, wo_priority, warehous_code,"
-                 " wotc_timein,"
-                 " wotc_timeout,"
-                 " CAST(wooperpost_seqnumber AS TEXT) AS wooper,"
-                 " wotcTime(wotc_id) AS wotcTime "
-                 "FROM wo, itemsite, site(), wotc "
-                 "LEFT OUTER JOIN wooperpost ON (wooperpost_wotc_id=wotc_id) "
-                 "WHERE ((wo_itemsite_id=itemsite_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (wotc_wooper_id IS NULL)"
-                 " AND (wotc_wo_id=wo_id)"
-                 " AND (wotc_username=:username)"
-                 " AND (wo_startdate BETWEEN :startDate AND :endDate)) "
-                 "ORDER BY wonumber, wotc_timein, wotc_timeout;");
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":username", _user->username());
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("woEffortByUser", "detail");
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("username", _user->username());
+    q = mql.toQuery(params);
     _wotc->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
-    }
-
-    // TODO: add this to the query above somehow?
-    XTreeWidgetItem *last = 0;
-    XSqlQuery total;
-    total.prepare("SELECT woTime(:wotc_wo_id, :wotc_username) AS total;");
-    for (int i = 0; i < _wotc->topLevelItemCount(); i++)
-    {
-      last = _wotc->topLevelItem(i);
-      if ((i == _wotc->topLevelItemCount() - 1) ||
-	  last->altId() != ((XTreeWidgetItem*)(_wotc->topLevelItem(i + 1)))->altId())
-      {
-	total.bindValue(":wotc_wo_id",  last->altId());
-	total.bindValue(":wotc_username", _user->username());
-	total.exec();
-	if (total.first())
-	{
-	  last = new XTreeWidgetItem(_wotc, last, -1, last->altId(),
-				   last->text(0), last->text(1), last->text(2),
-				   last->text(3), tr("Total"), "", "",
-				   total.value("total"));
-	  i++;
-	}
-	else if (total.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, total.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
-      }
     } 
   }
 }
