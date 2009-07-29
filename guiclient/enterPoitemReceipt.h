@@ -32,6 +32,7 @@ public slots:
     virtual void populate();
     virtual void sReceive();
     virtual void sDetermineToReceiveInv();
+    virtual void sPrintItemLabel();
 
 protected slots:
     virtual void languageChange();

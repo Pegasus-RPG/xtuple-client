@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
-    <height>682</height>
+    <width>671</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -199,7 +199,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0" colspan="3">
          <layout class="QHBoxLayout">
           <item>
-           <widget class="ItemCluster" name="_item" native="true">
+           <widget class="ItemCluster" name="_item">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -490,7 +490,7 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="CurrCluster" name="_freight" native="true">
+         <widget class="CurrCluster" name="_freight">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -535,7 +535,7 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="DLineEdit" name="_dueDate" native="true">
+         <widget class="DLineEdit" name="_dueDate">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -552,7 +552,7 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="DLineEdit" name="_receiptDate" native="true"/>
+         <widget class="DLineEdit" name="_receiptDate"/>
         </item>
        </layout>
       </widget>
@@ -578,6 +578,13 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
+     <item row="5" column="0">
+      <widget class="XCheckBox" name="_printLabel">
+       <property name="text">
+        <string>Print Label</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -585,6 +592,16 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
+   <header>currcluster.h</header>
+  </customwidget>
   <customwidget>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
@@ -598,6 +615,11 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLabel</class>
    <extends>QLabel</extends>
    <header>xlabel.h</header>
@@ -606,11 +628,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrCluster</class>
-   <extends>QWidget</extends>
-   <header>currcluster.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

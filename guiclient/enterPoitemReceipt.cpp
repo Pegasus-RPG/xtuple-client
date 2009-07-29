@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <openreports.h>
 
 #include <metasql.h>
 
@@ -336,9 +337,27 @@ void enterPoitemReceipt::sReceive()
 
   omfgThis->sPurchaseOrderReceiptsUpdated();
   accept();
+  
+  if (_printLabel->isChecked())
+    sPrintItemLabel();
 }
 
 void enterPoitemReceipt::sDetermineToReceiveInv()
 {
     _toReceiveInv->setDouble(_invVendorUOMRatio->toDouble() * _toReceive->toDouble());
+}
+
+void enterPoitemReceipt::sPrintItemLabel()
+{
+    ParameterList params;
+    params.append("vendorItemLit", tr("Vendor Item#:"));
+    params.append("ordertype", _ordertype);
+    params.append("orderitemid", _orderitemid);
+    orReport report("ReceivingLabel", params);
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+    }
 }

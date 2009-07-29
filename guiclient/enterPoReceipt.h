@@ -30,17 +30,13 @@ public:
 public slots:
     virtual void close();
     virtual enum SetResponse set(const ParameterList & pParams);
-    virtual void sEnter(bool printLabel);
-    virtual void sEnterandLabel();
-    virtual void sEnterOnly();
+    virtual void sEnter();
     virtual void sFillList();
     virtual void sPost();
     virtual void sPrint();
     virtual void sReceiveAll();
     virtual void sSave();
     virtual void setParams(ParameterList &);
-    virtual void sSearch( const QString & pTarget );
-    virtual void sSearchNext();
     virtual void sPrintItemLabel();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
 

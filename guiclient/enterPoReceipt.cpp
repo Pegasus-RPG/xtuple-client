@@ -31,14 +31,14 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_all,		SIGNAL(clicked()),	this, SLOT(sReceiveAll()));
-  connect(_enter,	SIGNAL(clicked()),	this, SLOT(sEnterOnly()));
+  connect(_enter,	SIGNAL(clicked()),	this, SLOT(sEnter()));
   connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
   connect(_post,	SIGNAL(clicked()),	this, SLOT(sPost()));
   connect(_print,	SIGNAL(clicked()),	this, SLOT(sPrint()));
   connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
-  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-  connect(_next, SIGNAL(clicked()), this, SLOT(sSearchNext()));
   connect(_orderitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(_printLabel, SIGNAL(clicked()), this, SLOT(sPrintItemLabel()));
+  connect(_orderitem, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Purchase |
@@ -78,6 +78,10 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _orderitem->addColumn(tr("To Receive"),   _qtyColumn,  Qt::AlignRight   , true,  "qty_toreceive");
 
   _captive = FALSE;
+  
+  //Remove lot/serial  if no lot/serial tracking
+  if (!_metrics->boolean("LotSerialControl"))
+    _singleLot->hide();
 }
 
 enterPoReceipt::~enterPoReceipt()
@@ -157,7 +161,9 @@ void enterPoReceipt::sPrint()
 void enterPoReceipt::sPrintItemLabel()
 {
     ParameterList params;
-    params.append("poitem_id", _orderitem->id());
+    params.append("vendorItemLit", tr("Vendor Item#:"));
+    params.append("ordertype", _order->type());
+    params.append("orderitemid", _orderitem->id());
     orReport report("ReceivingLabel", params);
     if (report.isValid())
       report.print();
@@ -301,17 +307,7 @@ void enterPoReceipt::sSave()
   XWidget::close();
 }
 
-void enterPoReceipt::sEnterandLabel()
-{
-  sEnter(true);
-}
-
-void enterPoReceipt::sEnterOnly()
-{
-  sEnter(false);
-}
-
-void enterPoReceipt::sEnter(bool printLabel)
+void enterPoReceipt::sEnter()
 {
   ParameterList params;
   params.append("lineitem_id", _orderitem->id());
@@ -322,11 +318,7 @@ void enterPoReceipt::sEnter(bool printLabel)
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
-  {
-    if(printLabel)
-       sPrintItemLabel();
     sFillList();
-  }
 }
 
 void enterPoReceipt::sFillList()
@@ -340,7 +332,7 @@ void enterPoReceipt::sFillList()
     setParams(params);
     MetaSQLQuery fillm = mqlLoad("receipt", "detail");
     q = fillm.toQuery(params);
-    _orderitem->populate(q);
+    _orderitem->populate(q,true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -423,57 +415,11 @@ void enterPoReceipt::sReceiveAll()
   sFillList();
 }
 
-void enterPoReceipt::sSearch( const QString &pTarget )
-{
-  _orderitem->clearSelection();
-  int i;
-  for (i = 0; i < _orderitem->topLevelItemCount(); i++)
-  {
-    if ( (_orderitem->topLevelItem(i)->text(2).startsWith(pTarget, Qt::CaseInsensitive) &&
-         _searchItemNum->isChecked()) ||
-         (_orderitem->topLevelItem(i)->text(3).contains(pTarget, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()) ||
-         (_orderitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) &&
-         _searchVendItem->isChecked()))
-      break;
-  }
-
-  if (i < _orderitem->topLevelItemCount())
-  {
-    _orderitem->setCurrentItem(_orderitem->topLevelItem(i));
-    _orderitem->scrollToItem(_orderitem->topLevelItem(i));
-  }
-}
-
-void enterPoReceipt::sSearchNext()
-{
-  QString target = _searchFor->text();
-  int i;
-  int currentIndex = _orderitem->indexOfTopLevelItem(_orderitem->currentItem()) + 1;
-  if(currentIndex < 0 || currentIndex > _orderitem->topLevelItemCount())
-    currentIndex = 0;
-  for (i = currentIndex; i < _orderitem->topLevelItemCount(); i++)
-  {
-    if ( (_orderitem->topLevelItem(i)->text(2).startsWith(target, Qt::CaseInsensitive) &&
-         _searchItemNum->isChecked()) ||
-         (_orderitem->topLevelItem(i)->text(3).contains(target, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()) ||
-         (_orderitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) &&
-         _searchVendItem->isChecked()))
-      break;
-  }
-
-  if (i < _orderitem->topLevelItemCount())
-  {
-    _orderitem->setCurrentItem(_orderitem->topLevelItem(i));
-    _orderitem->scrollToItem(_orderitem->topLevelItem(i));
-  }
-}
-
 void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem * /*selected*/)
 {
   int     menuItem;
-  menuItem = pMenu->insertItem(tr("Enter and Label..."), this, SLOT(sEnterandLabel()), 0);
-  menuItem = pMenu->insertItem(tr("Enter Only..."), this, SLOT(sEnterOnly()), 0);
-  menuItem = pMenu->insertItem(tr("Label Only..."), this, SLOT(sPrintItemLabel()), 0);
+  if (_orderitem->altId() != -1)
+    menuItem = pMenu->insertItem(tr("Print Label..."), this, SLOT(sPrintItemLabel()), 0);
+  menuItem = pMenu->insertItem(tr("Enter Receipt..."), this, SLOT(sEnter()), 0);
 }
+
