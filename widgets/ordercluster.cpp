@@ -744,6 +744,8 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
   
+  resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
+  
   _searchName->setText(tr("Search through Order Type"));
   _searchDescrip->setText(tr("Search through Status"));
 
