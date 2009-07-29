@@ -270,17 +270,17 @@ class xTupleCustInfoAction : public CustInfoAction
     {
       ParameterList params;
       params.append("cust_id", pCustid);
+      if (_privileges->check("ViewCustomerMasters"))
+        params.append("mode","edit");
+      else
+        params.append("mode","view");
 
       QWidget * w = parent;
       while(w && !w->isWindow())
         w = w->parentWidget();
       if(w && w->isModal())
       {
-    	  params.append("modal");
-        if (_privileges->check("ViewCustomerMasters"))
-          params.append("mode","edit");
-        else
-          params.append("mode","view");
+        params.append("modal");
         customer * newdlg = new customer(w, 0, Qt::Window);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
@@ -302,19 +302,19 @@ class xTupleCRMAcctInfoAction : public CRMAcctInfoAction
       ParameterList params;
       params.append("crmacct_id", pid);
       if (_privileges->check("MaintainCRMAccounts"))
-	params.append("mode", "edit");
+        params.append("mode", "edit");
       else if (_privileges->check("ViewCRMAccounts"))
-	params.append("mode", "view");
+        params.append("mode", "view");
       else
-	return;
+        return;
 
       QWidget *w = parent;
       while (w && !w->isWindow())
-	w = w->parentWidget();
+        w = w->parentWidget();
       if (w && w->isWindow())
       {
 /*
-      	params.append("modal");
+        params.append("modal");
         crmaccount * newdlg = new crmaccount(w);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
@@ -322,9 +322,9 @@ class xTupleCRMAcctInfoAction : public CRMAcctInfoAction
       else
       {
 */
-	    crmaccount* newdlg = new crmaccount(w);
-	    newdlg->set(params);
-	    omfgThis->handleNewWindow(newdlg);
+        crmaccount* newdlg = new crmaccount(w);
+        newdlg->set(params);
+        omfgThis->handleNewWindow(newdlg);
       }
     }
 };
@@ -427,8 +427,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 #endif
   XSqlQuery window;
   window.prepare("SELECT usr_window "
-		 "FROM usr "
-		 "WHERE (usr_username=CURRENT_USER);");
+                 "  FROM usr "
+                 " WHERE (usr_username=CURRENT_USER);");
   window.exec();
   // keep synchronized with user.ui.h
   _singleWindow = "";
@@ -521,15 +521,15 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
 bool GUIClient::singleCurrency()
 {
-    bool retValue = true;
+  bool retValue = true;
 
-    XSqlQuery currCount;
-    currCount.exec("SELECT count(*) AS count FROM curr_symbol;");
-    if (currCount.first())
-	retValue = (currCount.value("count").toInt() <= 1);
-    else
-	systemError(this, currCount.lastError().databaseText(), __FILE__, __LINE__);
-    return retValue;
+  XSqlQuery currCount;
+  currCount.exec("SELECT count(*) AS count FROM curr_symbol;");
+  if (currCount.first())
+    retValue = (currCount.value("count").toInt() <= 1);
+  else
+    systemError(this, currCount.lastError().databaseText(), __FILE__, __LINE__);
+  return retValue;
 }
 
 void GUIClient::setWindowTitle()
@@ -1073,9 +1073,9 @@ int systemError(QWidget *pParent, const QString &pMessage)
 int systemError(QWidget *pParent, const QString &pMessage, const QString &pFileName, const int lineNumber)
 {
   int result = QMessageBox::critical( pParent,
-				      QObject::tr("System Message (%1 at %2)")
-				      .arg(pFileName)
-				      .arg(lineNumber),
+                                      QObject::tr("System Message (%1 at %2)")
+                                      .arg(pFileName)
+                                      .arg(lineNumber),
                                       pMessage + QObject::tr("\nReport this to your Systems Administrator.") );
   return result;
 }
@@ -1428,7 +1428,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);
     if (mw)
       mw->statusBar()->show();
-	QRect r(pos, w->size());
+    QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
     w->show();
