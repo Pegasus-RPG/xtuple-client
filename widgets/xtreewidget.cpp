@@ -26,7 +26,6 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QSqlError>
-#include <QSqlField>
 #include <QSqlRecord>
 #include <QTextCharFormat>
 #include <QTextCursor>
@@ -393,16 +392,16 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                  and it will avoid formatting sales order numbers with decimal
                  and group separators
               */
-              QSqlField field = currRecord.field(role->value("qtdisplayrole").toString());
+              QVariant field = pQuery.value(colRole[col][COLROLE_DISPLAY]);
               if (field.type() == QVariant::Int)
                 last->setData(col, Qt::DisplayRole,
-                              QLocale().toString(field.value().toInt()));
+                              QLocale().toString(field.toInt()));
               else if (field.type() == QVariant::Double)
                 last->setData(col, Qt::DisplayRole,
-                              QLocale().toString(field.value().toDouble(),
+                              QLocale().toString(field.toDouble(),
                                                  'f', scale));
               else
-                last->setData(col, Qt::DisplayRole, field.value().toString());
+                last->setData(col, Qt::DisplayRole, field.toString());
             }
             else if (rawValue.isNull())
             {
