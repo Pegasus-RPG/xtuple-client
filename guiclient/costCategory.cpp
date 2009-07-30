@@ -72,6 +72,7 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
     {
       _mode = cCopy;
       _description->setFocus();
+      _costcatid = -1;
     }
     else if (param.toString() == "view")
     {
