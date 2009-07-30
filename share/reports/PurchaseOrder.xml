@@ -154,7 +154,7 @@ WHERE ((pohead_vend_id=vend_id) AND
    <rect>
     <x>550</x>
     <y>65</y>
-    <width>42</width>
+    <width>70</width>
     <height>16</height>
    </rect>
    <font>
@@ -164,7 +164,7 @@ WHERE ((pohead_vend_id=vend_id) AND
    </font>
    <left/>
    <vcenter/>
-   <string>DATE</string>
+   <string>ORDER DATE</string>
   </label>
   <line>
    <xstart>0</xstart>
@@ -273,8 +273,8 @@ WHERE ((pohead_vend_id=vend_id) AND
    <left/>
    <vcenter/>
    <data>
-    <query>Context Query</query>
-    <column>report_date</column>
+    <query>Head</query>
+    <column>f_orderdate</column>
    </data>
   </field>
   <text>
@@ -749,9 +749,9 @@ WHERE ((pohead_vend_id=vend_id) AND
   </label>
   <label>
    <rect>
-    <x>680</x>
+    <x>665</x>
     <y>265</y>
-    <width>67</width>
+    <width>95</width>
     <height>16</height>
    </rect>
    <font>
@@ -798,6 +798,41 @@ WHERE ((pohead_vend_id=vend_id) AND
     <column>vend_name</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>645</x>
+    <y>107</y>
+    <width>140</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>550</x>
+    <y>107</y>
+    <width>75</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>PRINT DATE</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
