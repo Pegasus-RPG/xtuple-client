@@ -78,7 +78,7 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
     {
       _item->setText(q.value("itemNumber").toString());
       _qty->setDouble(q.value("poreject_qty").toDouble());
-      _amount->set(q.value("itemAmount").toDouble(), q.value("pohead_curr_id").toInt(), QDate::currentDate());
+      _amount->set(q.value("itemAmount").toDouble(), q.value("pohead_curr_id").toInt(), QDate::currentDate(), FALSE);
     }
   }
 
