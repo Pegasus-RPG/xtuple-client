@@ -198,7 +198,10 @@ void enterPoitemReceipt::populate()
     if (_ordertype == "PO")
       _orderType->setText(tr("P/O"));
     else if (_ordertype == "TO")
+    {
+      _returnedLit->setText(tr("Qty. Shipped:"));
       _orderType->setText(tr("T/O"));
+    }
     else if (_ordertype == "RA")
       _orderType->setText(tr("R/A"));
 
