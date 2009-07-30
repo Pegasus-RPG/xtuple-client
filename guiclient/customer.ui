@@ -2343,11 +2343,7 @@ to be bound by its terms.</comment>
            <widget class="QWidget" name="_notesPage">
             <layout class="QGridLayout" name="gridLayout_15">
              <item row="0" column="0">
-              <widget class="QTextEdit" name="_notes">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <widget class="QTextEdit" name="_notes"/>
              </item>
             </layout>
            </widget>
