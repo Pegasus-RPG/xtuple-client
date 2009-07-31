@@ -37,6 +37,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems->findChild<QWidget*>("_print")->hide();
   _aritems->findChild<QWidget*>("_query")->hide();
   _aritems->findChild<QWidget*>("_asofGroup")->hide();
+  _aritems->findChild<DLineEdit*>("_asOf")->setDate(omfgThis->endOfTime());
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
   _aritems->findChild<QWidget*>("_showGroup")->hide();
   _aritems->findChild<QRadioButton*>("_dueDate")->click();
