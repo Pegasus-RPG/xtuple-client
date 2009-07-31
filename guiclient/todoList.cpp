@@ -81,7 +81,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
   _todoList->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
-  _todoList->addColumn(tr("Assined To"),_userColumn,  Qt::AlignLeft,   true, "usr");
+  _todoList->addColumn(tr("Assigned To"),_userColumn,  Qt::AlignLeft,   true, "usr");
   _todoList->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _todoList->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _todoList->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
