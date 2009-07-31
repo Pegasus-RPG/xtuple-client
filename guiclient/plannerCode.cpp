@@ -92,7 +92,7 @@ enum SetResponse plannerCode::set(const ParameterList &pParams)
   return NoError;
 }
 
-void plannerCode::sCheck()
+bool plannerCode::sCheck()
 {
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length() != 0))
@@ -109,8 +109,10 @@ void plannerCode::sCheck()
       populate();
 
       _code->setEnabled(FALSE);
+      return TRUE;
     }
   }
+  return FALSE;
 }
 
 void plannerCode::sSave()
@@ -124,26 +126,15 @@ void plannerCode::sSave()
     return;
   }
 
-  if (_mode == cEdit)
-  {
-    q.prepare("SELECT plancode_id"
-              "  FROM plancode"
-              " WHERE((plancode_id != :plancode_id)"
-              " AND (plancode_code = :plancode_code));");
-    q.bindValue(":plancode_id", _plancodeid); 
-    q.bindValue(":plancode_code", _code->text());
-    q.exec();
-    if(q.first())
-    {
-      QMessageBox::critical(this, tr("Duplicate Planner Code"),
-        tr("A Planner Code already exists for the code specified.") );
-      _code->setFocus();
-      return;
-    }
-  }
-
   if (_mode == cNew)
   {
+    if (sCheck())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Planner Code"),
+                            tr("This Planner code already exists.  You have been placed in edit mode.") );
+      return;
+    }
+
     q.exec("SELECT NEXTVAL('plancode_plancode_id_seq') AS plancode_id");
     if (q.first())
       _plancodeid = q.value("plancode_id").toInt();
@@ -163,6 +154,21 @@ void plannerCode::sSave()
                "  :plancode_mpsexplosion, :plancode_consumefcst );" );
   }
   else if (_mode == cEdit)
+    q.prepare("SELECT plancode_id"
+              "  FROM plancode"
+              " WHERE((plancode_id != :plancode_id)"
+              " AND (plancode_code = :plancode_code));");
+    q.bindValue(":plancode_id", _plancodeid); 
+    q.bindValue(":plancode_code", _code->text());
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Planner Code"),
+                            tr("You may not rename this Planner code with the entered name as it is in use by another Planner code.") );
+      _code->setFocus();
+      return;
+    }
+
     q.prepare( "UPDATE plancode "
                "SET plancode_code=:plancode_code, plancode_name=:plancode_name,"
                "    plancode_mpsexplosion=:plancode_mpsexplosion,"

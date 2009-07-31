@@ -28,7 +28,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sCheck();
+    virtual bool sCheck();
     virtual void sSave();
 
 protected slots:

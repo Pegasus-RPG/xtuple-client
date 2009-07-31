@@ -84,26 +84,15 @@ void rejectCode::sSave()
     return;
   }
 
-  if (_mode == cEdit)
-  {
-    q.prepare("SELECT rjctcode_id"
-              "  FROM rjctcode"
-              " WHERE((rjctcode_id != :rjctcode_id)"
-              " AND (rjctcode_code = :rjctcode_code));");
-    q.bindValue(":rjctcode_id", _rjctcodeid); 
-    q.bindValue(":rjctcode_code", _code->text());
-    q.exec();
-    if(q.first())
-    {
-      QMessageBox::critical(this, tr("Duplicate Reject Code"),
-        tr("A Reject Code already exists for the code specified.") );
-      _code->setFocus();
-      return;
-    }
-  }
-
   if (_mode == cNew)
   {
+    if (sCheck())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Reject Code"),
+                            tr("This Reject code already exists.  You have been placed in edit mode.") );
+      return;
+    }
+
     q.exec("SELECT NEXTVAL('rjctcode_rjctcode_id_seq') AS rjctcode_id");
     if (q.first())
       _rjctcodeid = q.value("rjctcode_id").toInt();
@@ -114,6 +103,20 @@ void rejectCode::sSave()
                "(:rjctcode_id, :rjctcode_code, :rjctcode_descrip);" );
   }
   else if (_mode == cEdit)
+    q.prepare("SELECT rjctcode_id"
+              "  FROM rjctcode"
+              " WHERE((rjctcode_id != :rjctcode_id)"
+              " AND (rjctcode_code = :rjctcode_code));");
+    q.bindValue(":rjctcode_id", _rjctcodeid); 
+    q.bindValue(":rjctcode_code", _code->text());
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Reject Code"),
+                            tr("You may not rename this Reject code with the entered name as it is in use by another Reject code.") );
+      return;
+    }
+
     q.prepare( "UPDATE rjctcode "
                "SET rjctcode_code=:rjctcode_code,"
                "    rjctcode_descrip=:rjctcode_descrip "
@@ -127,7 +130,7 @@ void rejectCode::sSave()
   done(_rjctcodeid);
 }
 
-void rejectCode::sCheck()
+bool rejectCode::sCheck()
 {
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
@@ -144,8 +147,10 @@ void rejectCode::sCheck()
       populate();
 
       _code->setEnabled(FALSE);
+      return TRUE;
     }
   }
+  return FALSE;
 }
 
 void rejectCode::populate()

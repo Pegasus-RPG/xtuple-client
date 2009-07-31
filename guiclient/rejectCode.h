@@ -27,7 +27,7 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
-    virtual void sCheck();
+    virtual bool sCheck();
     virtual void populate();
 
 protected slots:

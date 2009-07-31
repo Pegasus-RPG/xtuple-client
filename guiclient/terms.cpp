@@ -89,7 +89,7 @@ enum SetResponse terms::set(const ParameterList &pParams)
   return NoError;
 }
 
-void terms::sCheck()
+bool terms::sCheck()
 {
   _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
@@ -106,8 +106,10 @@ void terms::sCheck()
       populate();
 
       _code->setEnabled(FALSE);
+      return TRUE;
     }
   }
+  return FALSE;
 }
 
 void terms::sSave()
@@ -122,6 +124,13 @@ void terms::sSave()
 
   if (_mode == cNew)
   {
+    if (sCheck())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Terms Code"),
+                            tr("This Terms code already exists.  You have been placed in edit mode.") );
+      return;
+    }
+
     q.exec("SELECT NEXTVAL('terms_terms_id_seq') AS _terms_id");
     if (q.first())
       _termsid = q.value("_terms_id").toInt();
