@@ -211,7 +211,7 @@ void enterPoitemReceipt::populate()
     _item->setEnabled(false);
 
     if (_mode == cNew)
-      _toReceive->setText(q.value("f_qtytoreceive").toString());
+      _toReceive->setDouble(q.value("qtytoreceive").toDouble());
 
     if (q.value("inventoryitem").toBool() && itemsiteid <= 0)
     {
