@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -8,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>package</class>
- <widget class="QDialog" name="package" >
-  <property name="geometry" >
+ <widget class="QDialog" name="package">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -17,26 +17,26 @@ to be bound by its terms.</comment>
     <height>400</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Package</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QLabel" name="_nameLit" >
-     <property name="text" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="_nameLit">
+     <property name="text">
       <string>Name:</string>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item row="0" column="1" colspan="2">
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="XLineEdit" name="_name" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+      <widget class="XLineEdit" name="_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -44,18 +44,18 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="_versionLit" >
-       <property name="text" >
+      <widget class="QLabel" name="_versionLit">
+       <property name="text">
         <string>Version:</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="XLineEdit" name="_version" >
-       <property name="maximumSize" >
+      <widget class="XLineEdit" name="_version">
+       <property name="maximumSize">
         <size>
          <width>70</width>
          <height>16777215</height>
@@ -65,10 +65,10 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -78,23 +78,23 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item rowspan="5" row="0" column="3" >
-    <layout class="QVBoxLayout" >
+   <item row="0" column="3" rowspan="5">
+    <layout class="QVBoxLayout">
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
+        <widget class="QPushButton" name="_close">
+         <property name="text">
           <string>&amp;Cancel</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="_save" >
-         <property name="text" >
+        <widget class="QPushButton" name="_save">
+         <property name="text">
           <string>Save</string>
          </property>
         </widget>
@@ -103,10 +103,10 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>40</height>
@@ -116,32 +116,32 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="_descriptionLit" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QLabel" name="_descriptionLit">
+     <property name="text">
       <string>Description:</string>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2" >
-    <widget class="XLineEdit" name="_description" />
+   <item row="1" column="1" colspan="2">
+    <widget class="XLineEdit" name="_description"/>
    </item>
-   <item row="2" column="0" >
-    <widget class="QLabel" name="_developerLit" >
-     <property name="text" >
+   <item row="2" column="0">
+    <widget class="QLabel" name="_developerLit">
+     <property name="text">
       <string>Developer:</string>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="XLineEdit" name="_developer" >
-     <property name="minimumSize" >
+   <item row="2" column="1">
+    <widget class="XLineEdit" name="_developer">
+     <property name="minimumSize">
       <size>
        <width>200</width>
        <height>0</height>
@@ -149,59 +149,79 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="3" >
-    <widget class="QTabWidget" name="_tab" >
-     <property name="currentIndex" >
+   <item row="4" column="0" colspan="3">
+    <widget class="QTabWidget" name="_tab">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_notesTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_notesTab">
+      <attribute name="title">
        <string>Notes</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="XTextEdit" name="_notes" />
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="XTextEdit" name="_notes"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_recordsTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_recordsTab">
+      <attribute name="title">
        <string>Contents</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="XTreeWidget" name="_rec" />
+      <layout class="QGridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="XTreeWidget" name="_rec"/>
+       </item>
+       <item row="1" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1">
+        <widget class="XCheckBox" name="_showSystemDetails">
+         <property name="text">
+          <string>Show System Details</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_requirementsTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_requirementsTab">
+      <attribute name="title">
        <string>Requirements</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QLabel" name="_reqLit" >
-         <property name="text" >
+        <widget class="QLabel" name="_reqLit">
+         <property name="text">
           <string>This package requires the following packages:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="XTreeWidget" name="_req" />
+        <widget class="XTreeWidget" name="_req"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_dependenciesTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_dependenciesTab">
+      <attribute name="title">
        <string>Dependencies</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="1" column="0" >
-        <widget class="XTreeWidget" name="_dep" />
+      <layout class="QGridLayout">
+       <item row="1" column="0">
+        <widget class="XTreeWidget" name="_dep"/>
        </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_depLit" >
-         <property name="text" >
+       <item row="0" column="0">
+        <widget class="QLabel" name="_depLit">
+         <property name="text">
           <string>The following packages depend on this package:</string>
          </property>
         </widget>
@@ -210,16 +230,16 @@ to be bound by its terms.</comment>
      </widget>
     </widget>
    </item>
-   <item row="2" column="2" >
-    <widget class="QCheckBox" name="_enabled" >
-     <property name="text" >
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="_enabled">
+     <property name="text">
       <string>Enabled</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="2" >
-    <widget class="QCheckBox" name="_indev" >
-     <property name="text" >
+   <item row="3" column="2">
+    <widget class="QCheckBox" name="_indev">
+     <property name="text">
       <string>Modifications Allowed</string>
      </property>
     </widget>
@@ -227,6 +247,11 @@ to be bound by its terms.</comment>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
@@ -266,11 +291,11 @@ to be bound by its terms.</comment>
    <receiver>package</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>548</x>
      <y>29</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>501</x>
      <y>9</y>
     </hint>

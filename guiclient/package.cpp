@@ -14,6 +14,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+
+#include "mqlutil.h"
+
 #define DEBUG false
 
 // TODO: XDialog should have a default implementation that returns FALSE
@@ -73,7 +77,7 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _rec->addColumn(tr("Type"),       -1, Qt::AlignLeft, true, "type");
+  _rec->addColumn(tr("Type"),       -1, Qt::AlignLeft, true, "pkgitem_type");
   _rec->addColumn(tr("Name"),       -1, Qt::AlignLeft, true, "pkgitem_name");
   _rec->addColumn(tr("Description"),-1, Qt::AlignLeft, true, "pkgitem_descrip");
 
@@ -85,8 +89,8 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _dep->addColumn(tr("Description"),-1, Qt::AlignLeft, true, "pkghead_descrip");
   _dep->addColumn(tr("Version"),    -1, Qt::AlignRight,true, "pkghead_version");
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
+  connect(_save,                  SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_showSystemDetails, SIGNAL(toggled(bool)), this, SLOT(populate()));
 }
 
 package::~package()
@@ -259,36 +263,27 @@ void package::populate()
     return;
   }
 
-  q.prepare("SELECT *,"
-            "       CASE WHEN pkgitem_type='C' THEN :script"
-            "            WHEN pkgitem_type='D' THEN :cmd"
-            "            WHEN pkgitem_type='F' THEN :function"
-            "            WHEN pkgitem_type='G' THEN :trigger"
-            "            WHEN pkgitem_type='I' THEN :image"
-            "            WHEN pkgitem_type='M' THEN :metasql"
-            "            WHEN pkgitem_type='P' THEN :priv"
-            "            WHEN pkgitem_type='R' THEN :report"
-            "            WHEN pkgitem_type='S' THEN :schema"
-            "            WHEN pkgitem_type='T' THEN :table"
-            "            WHEN pkgitem_type='U' THEN :uiform"
-            "            WHEN pkgitem_type='V' THEN :view"
-            "       ELSE pkgitem_type END AS type "
-            "FROM pkgitem "
-            "WHERE (pkgitem_pkghead_id=:pkghead_id) "
-            "ORDER BY type, pkgitem_name;");
-  q.bindValue(":pkghead_id", _pkgheadid);
-  q.bindValue(":script",     tr("Script"));
-  q.bindValue(":cmd",        tr("Custom Command"));
-  q.bindValue(":function",   tr("Stored Procedure"));
-  q.bindValue(":trigger",    tr("Trigger"));
-  q.bindValue(":image",      tr("Image"));
-  q.bindValue(":metasql",    tr("MetaSQL"));
-  q.bindValue(":priv",       tr("Privilege"));
-  q.bindValue(":report",     tr("Report"));
-  q.bindValue(":schema",     tr("Schema"));
-  q.bindValue(":table",      tr("Table"));
-  q.bindValue(":uiform",     tr("Screen"));
-  q.bindValue(":view",       tr("View"));
+  ParameterList params;
+  params.append("pkgname", _name->text());
+  params.append("script",  tr("Script"));
+  params.append("cmd",     tr("Custom Command"));
+  params.append("function",tr("Stored Procedure"));
+  params.append("trigger", tr("Trigger"));
+  params.append("image",   tr("Image"));
+  params.append("metasql", tr("MetaSQL"));
+  params.append("priv",    tr("Privilege"));
+  params.append("report",  tr("Report"));
+  params.append("schema",  tr("Schema"));
+  params.append("table",   tr("Table"));
+  params.append("uiform",  tr("Screen"));
+  params.append("view",    tr("View"));
+  params.append("sequence",tr("Sequence"));
+  params.append("index",   tr("Index"));
+  if (_showSystemDetails->isChecked())
+    params.append("showsystemdetails");
+
+  MetaSQLQuery itemmql = mqlLoad("package", "items");
+  q = itemmql.toQuery(params);
 
   q.exec();
   if (DEBUG)    qDebug("package::populate() select pkgitem exec'ed");
