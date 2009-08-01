@@ -80,26 +80,20 @@ enum SetResponse userCostingElement::set(const ParameterList &pParams)
 
 void userCostingElement::sSave()
 {
+  if (_name->text().trimmed().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Save Costing Element"),
+                           tr( "You must enter a Name for this Costing Element." ) );
+    _name->setFocus();
+    return;
+  }
+    
   if (_mode == cNew)
   {
-    if (_name->text().length() == 0)
+    if (sCheck())
     {
-      QMessageBox::critical( this, tr("Cannot Save Costing Element"),
-                             tr( "You must enter a Name for this Costing Element." ) );
-      _name->setFocus();
-      return;
-    }
-    
-    q.prepare( "SELECT costelem_id "
-               "FROM costelem "
-               "WHERE (costelem_type=:costelem_type);" );
-    q.bindValue(":costelem_type", _name->text());
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Costing Element"),
-                             tr( "A Costing Elements with the entered code already exists.\n"
-                                 "You may not create a Costing Element with this code." ) );
+      QMessageBox::warning( this, tr("Cannot Save Costing Element"),
+                            tr("This Costing Element already exists.  You have been placed in edit mode.") );
       _name->setFocus();
       return;
     }
@@ -129,7 +123,7 @@ void userCostingElement::sSave()
                "WHERE ( (costelem_id <> :costelem_id)"
                "AND (costelem_type=:costelem_type) );" );
     q.bindValue(":costelem_id", _costelemid);
-    q.bindValue(":costelem_type", _name->text());
+    q.bindValue(":costelem_type", _name->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -148,7 +142,7 @@ void userCostingElement::sSave()
   }
 
   q.bindValue(":costelem_id", _costelemid);
-  q.bindValue(":costelem_type", _name->text());
+  q.bindValue(":costelem_type", _name->text().trimmed());
   q.bindValue(":costelem_active", QVariant(_active->isChecked()));
   q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
 
@@ -188,7 +182,7 @@ void userCostingElement::populate()
   }
 }
 
-void userCostingElement::sCheck()
+bool userCostingElement::sCheck()
 {
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
@@ -203,7 +197,9 @@ void userCostingElement::sCheck()
       _costelemid = q.value("costelem_id").toInt();
       _mode = cEdit;
       populate();
+      return TRUE;
     }
   }
+  return FALSE;
 }
 
