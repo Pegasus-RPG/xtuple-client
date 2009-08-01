@@ -63,6 +63,7 @@ public slots:
     virtual void sDeleteMatl();
     virtual void sViewMatlAvailability();
     virtual void sViewMatlSubstituteAvailability();
+    virtual void sViewWooper();
     virtual void sSubstituteMatl();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
 

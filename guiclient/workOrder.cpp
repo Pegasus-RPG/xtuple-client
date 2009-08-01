@@ -43,6 +43,7 @@
 #include "substituteList.h"
 #include "scrapWoMaterialFromWIP.h"
 #include "woMaterialItem.h"
+#include "dspWoOperationsByWorkOrder.h"
 
 
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -52,16 +53,15 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_create, SIGNAL(clicked()), this, SLOT(sCreate()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sCreate()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLeadTime(int)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateItemChar(int)));
   connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sUpdateStartDate()));
   connect(_leadTime, SIGNAL(valueChanged(int)), this, SLOT(sUpdateStartDate()));
   connect(_assembly, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_showMaterials, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_singleLevel, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_indented, SIGNAL(clicked()), this, SLOT(sFillList()));
-
+  connect(_showMaterials, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showOperations, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_indented, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _bomRevision->setMode(RevisionLineEdit::Use);
   _bomRevision->setType("BOM");
@@ -106,7 +106,11 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   //If not Routing, hide controls
   if (!_metrics->boolean("Routings"))
+  {
    _booGroup->hide();
+   _showOperations->setChecked(false);
+   _showOperations->hide();
+  }
 
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
@@ -122,21 +126,27 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->value("JobItemCosDefault") == "P")
     _proportional->setChecked(TRUE);
 
-  _woIndentedList->addColumn(tr("WO#"),          110,  Qt::AlignLeft      , true,  "wonumber");
-  _woIndentedList->addColumn(tr("Item#"),        100,  Qt::AlignLeft      , true,  "item_number" );
-  _woIndentedList->addColumn(tr("Description"),  200,  Qt::AlignLeft      , true,  "itemdescrip");
-  _woIndentedList->addColumn(tr("Status"),        55,  Qt::AlignCenter    , true,  "wodata_status");
-  _woIndentedList->addColumn(tr("QOH"),           70,  Qt::AlignRight     , true,  "qoh");
-  _woIndentedList->addColumn(tr("Qty Iss."),      70,  Qt::AlignRight     , true,  "qtyiss");
-  _woIndentedList->addColumn(tr("Scrap"),         70,  Qt::AlignRight     , true,  "scrap");
-  _woIndentedList->addColumn(tr("Matl Qty Per."), 70,  Qt::AlignRight     , true,  "qtyper");
-  _woIndentedList->addColumn(tr("Qty Ord/Req."),  80,  Qt::AlignRight     , true,  "qtyordreq");
-  _woIndentedList->addColumn(tr("Qty Rcv."),      70,  Qt::AlignRight     , true,  "qtyrcv");
-  _woIndentedList->addColumn(tr("Qty Short."),    70,  Qt::AlignRight     , true,  "short");
-  _woIndentedList->addColumn(tr("Start Date"),    80,  Qt::AlignCenter    , true,  "wodata_startdate");
-  _woIndentedList->addColumn(tr("Due Date"),      80,  Qt::AlignCenter    , true,  "wodata_duedate");
-  _woIndentedList->addColumn(tr("Ref"),           100, Qt::AlignLeft      , true,  "wodata_ref");
-  _woIndentedList->addColumn(tr("Notes"),         100, Qt::AlignLeft      , false, "wodata_notes");
+  _woIndentedList->addColumn(tr("Order#"),          _orderColumn,   Qt::AlignLeft      , true,   "wonumber");
+  _woIndentedList->addColumn(tr("Item#"),           _itemColumn,    Qt::AlignLeft      , true,   "wodata_itemnumber" );
+  _woIndentedList->addColumn(tr("Description"),      -1,            Qt::AlignLeft      , true,   "wodata_descrip");
+  _woIndentedList->addColumn(tr("Status"),          _statusColumn,  Qt::AlignCenter    , true,   "wodata_status");
+  _woIndentedList->addColumn(tr("Qty Per."),        _qtyColumn,     Qt::AlignRight     , false,  "qtyper");
+  _woIndentedList->addColumn(tr("Ord/Req."),        _qtyColumn,     Qt::AlignRight     , true,   "qtyordreq");
+  _woIndentedList->addColumn(tr("UOM"),             _uomColumn,     Qt::AlignLeft      , true,   "wodata_qtyuom");
+  _woIndentedList->addColumn(tr("Issued"),          _qtyColumn,     Qt::AlignRight     , true,   "qtyiss");
+  _woIndentedList->addColumn(tr("Scrap"),           _prcntColumn,   Qt::AlignRight     , false,  "scrap");
+  _woIndentedList->addColumn(tr("Received"),        _qtyColumn,     Qt::AlignRight     , true,   "qtyrcv");
+  _woIndentedList->addColumn(tr("On hand"),         _qtyColumn,     Qt::AlignRight     , false,  "qoh");
+  _woIndentedList->addColumn(tr("Short"),           _qtyColumn,     Qt::AlignRight     , false,  "short");
+  if (_metrics->boolean("Routings"))
+  {
+    _woIndentedList->addColumn(tr("Setup"),           _qtyColumn,     Qt::AlignRight     , false,  "wodata_setup");
+    _woIndentedList->addColumn(tr("Run"),             _qtyColumn,     Qt::AlignRight     , false,  "wodata_setup");
+  }
+  _woIndentedList->addColumn(tr("Start Date"),      _dateColumn,    Qt::AlignCenter    , false,  "wodata_startdate");
+  _woIndentedList->addColumn(tr("Due Date"),        _dateColumn,    Qt::AlignCenter    , true,   "wodata_duedate");
+  _woIndentedList->addColumn(tr("Reference"),        100,           Qt::AlignLeft      , false,  "wodata_ref");
+  _woIndentedList->addColumn(tr("Notes"),            100,           Qt::AlignLeft      , false,  "wodata_notes");
 }
 
 /*
@@ -279,7 +289,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _startDate->setEnabled(FALSE);
         _dueDate->setEnabled(FALSE);
         _productionNotes->setReadOnly(TRUE);
-        _create->hide();
+        _save->hide();
         _leadTimeLit->hide();
         _leadTime->hide();
         _daysLit->hide();
@@ -343,7 +353,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _leadTime->hide();
         _daysLit->hide();
 
-        _create->setFocus();
+        _save->setFocus();
       }
       else
       {
@@ -647,7 +657,7 @@ void workOrder::sCreate()
     {
         _mode=cEdit;
         _close->setText(tr("&Close"));
-        _create->setVisible(false);
+        _save->setVisible(false);
         _item->setEnabled(false);
         _warehouse->setEnabled(false);
         _comments->setReadOnly(false);
@@ -820,55 +830,67 @@ void workOrder::sFillList()
    //wodata_id_type = 2 = womatl_id
    //wodata_id_type = 3 = womatlvar_id
    QString sql(
-   "     SELECT wodata_id, "
+    "     SELECT wodata_id, "
     "           wodata_id_type, "
-    "           wodata_number || '-' || wodata_subnumber AS wonumber, "
-    "           item_number, "
-    "           item_descrip1 || ' ' || item_descrip2 AS itemdescrip, "
+    "           CASE WHEN wodata_id_type = 1 THEN "
+    "                  wodata_number || '-' || wodata_subnumber "
+    "                WHEN wodata_id_type = 3 THEN "
+    "                  wodata_subnumber::text "
+    "           END AS wonumber, "
+    "           wodata_itemnumber, "
+    "           wodata_descrip, "
     "           wodata_status, "
     "           wodata_startdate, "
     "           wodata_duedate, "
     "           wodata_adhoc,    "
     "           wodata_itemsite_id, "
-    "           formatqty(wodata_qoh) AS qoh, "
-    "           formatqty(wodata_short) AS short, "
-    "           CASE WHEN wodata_qtyper IS NULL THEN null "
-    "                ELSE formatqty(wodata_qtyper) END AS qtyper, "
-    "           formatqty(wodata_qtyiss) AS qtyiss,    "
-    "           formatqty(wodata_qtyrcv) AS qtyrcv,  "
-    "           formatqty(wodata_qtyordreq) AS qtyordreq, "
-    "           CASE WHEN wodata_scrap IS NULL THEN null "
-    "                ELSE formatscrap(wodata_scrap) END AS scrap, "
+    "           wodata_qoh AS qoh, "
+    "           wodata_short AS short, "
+    "           wodata_qtyper AS qtyper, "
+    "           wodata_qtyiss AS qtyiss,    "
+    "           wodata_qtyrcv AS qtyrcv,  "
+    "           wodata_qtyordreq AS qtyordreq, "
+    "           wodata_qtyuom, "
+    "           wodata_scrap AS scrap, "
+    "           wodata_setup, "
+    "           wodata_run, "
     "           wodata_notes, "
     "           wodata_ref, "
-    "           CASE WHEN (wodata_qoh = 0) THEN 'warning' "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_qoh = 0) THEN 'warning' "
     "                WHEN (wodata_qoh < 0) THEN 'error' "
-    "                ELSE null "
     "           END AS qoh_qtforegroundrole, "
-    "           CASE WHEN (wodata_qtyiss = 0) THEN 'warning' "
-    "                ELSE null "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_qtyiss = 0) THEN 'warning' "
     "           END AS qtyiss_qtforegroundrole, "
-    "           CASE WHEN (wodata_short > 0) THEN 'error' "
-    "                ELSE null "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_short > 0) THEN 'error' "
     "           END AS short_qtforegroundrole, "
-    "           CASE WHEN (wodata_startdate <= current_date) THEN 'error' "
-    "                ELSE null "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_startdate <= current_date) THEN 'error' "
     "           END AS wodata_startdate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_duedate <= current_date) THEN 'error' "
-    "                ELSE null "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_duedate <= current_date) THEN 'error' "
     "           END AS wodata_duedate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_id_type = 1) THEN text('lightskyblue') "
-    "                WHEN (wodata_status = 'C') THEN text('lightgray') "
-    "           ELSE null END AS qtbackgroundrole, "
+    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
+    "                WHEN (wodata_id_type = 3) THEN 'emphasis' "
+    "                WHEN (wodata_id_type = 1) THEN 'altemphasis' "
+    "           ELSE null END AS qtforegroundrole, "
+    "           'qty' AS wodata_qoh_xtnumericrole, "
+    "           'qty' AS wodata_short_xtnumericrole, "
+    "           'qtyper' AS qty_per_xtnumericrole, "
+    "           'qty' AS qtyiss_xtnumericrole, "
+    "           'qty' AS qtyrcv_xtnumericrole, "
+    "           'qty' AS qtyordreq_xtnumericrole, "
+    "           'qty' AS short_xtnumericrole, "
+    "           'scrap' AS scrap_xtnumericrole, "
     "           wodata_level AS xtindentrole "
-    "    FROM indentedwo(:wo_id, :showindent, :showmatl), item, itemsite "
-    "    WHERE wodata_itemsite_id = itemsite_id "
-    "    AND item_id = itemsite_item_id "
-    "    ORDER BY wodata_number, wodata_subnumber, wodata_level, item_number " );
+    "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
   q.prepare(sql);
   q.bindValue(":wo_id", _woid);
-  q.bindValue(":showindent", QVariant(_indented->isChecked()));
+  q.bindValue(":showops", QVariant(_showOperations->isChecked()));
   q.bindValue(":showmatl", QVariant(_showMaterials->isChecked()));
+  q.bindValue(":showindent", QVariant(_indented->isChecked()));
   q.exec();
   _woIndentedList->populate(q, true);
   _woIndentedList->expandAll();
@@ -1559,79 +1581,34 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
   //Check if row is a work order and id is vaild
   if(_woIndentedList->altId() == 1 && _woIndentedList->id() > -1)
   {
-      if (status == "O" ||status == "E" || status == "R" || status == "I")
-      {
-        if (_privileges->check("MaintainWoMaterials"))
-            menuItem = pMenu->insertItem(tr("New Matl..."), this, SLOT(sNewMatl()), 0);
-        if (_privileges->check("IssueWoMaterials"))
-            menuItem = pMenu->insertItem(tr("Issue Matl Batch..."), this, SLOT(sIssueMatlBatch()), 0);
-        if (status == "I")
-        {
-         if (_privileges->check("ReturnWoMaterials"))
-            menuItem = pMenu->insertItem(tr("Return Matl Batch..."), this, SLOT(sReturnMatlBatch()), 0);
-        }
-        pMenu->insertSeparator();
-      }
-
-      if (status == "E")
-      {
-        menuItem = pMenu->insertItem(tr("Release W/O"), this, SLOT(sReleaseWO()), 0);
-        if (!_privileges->check("ReleaseWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-      }
-      else if (status == "R")
-      {
-        menuItem = pMenu->insertItem(tr("Recall W/O"), this, SLOT(sRecallWO()), 0);
-        if (!_privileges->check("RecallWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-      }
-
-      if ((status == "E") || (status == "R") || (status == "I"))
-      {
-        menuItem = pMenu->insertItem(tr("Post W/O Production..."), this, SLOT(sPostProduction()), 0);
-        if (!_privileges->check("PostProduction"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-
-        if (status != "E")
-        {
-          menuItem = pMenu->insertItem(tr("Correct W/O Production Posting..."), this, SLOT(sCorrectProductionPosting()), 0);
-          if (!_privileges->check("PostProduction"))
-            pMenu->setItemEnabled(menuItem, FALSE);
-        }
-
-        if (_metrics->boolean("Routings"))
-        {
-          menuItem = pMenu->insertItem(tr("Post W/O Operations..."), this, SLOT(sPostOperations()), 0);
-          if (!_privileges->check("PostWoOperations"))
-            pMenu->setItemEnabled(menuItem, FALSE);
-
-          if (status != "E")
-          {
-            menuItem = pMenu->insertItem(tr("Correct W/O Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
-            if (!_privileges->check("PostWoOperations"))
-              pMenu->setItemEnabled(menuItem, FALSE);
-          }
-        }
-
-        pMenu->insertSeparator();
-      }
-
+    if (((XTreeWidgetItem *)selected)->parent())
+    {
       if (status == "O")
       {
-        menuItem = pMenu->insertItem(tr("Explode W/O..."), this, SLOT(sExplodeWO()), 0);
+        menuItem = pMenu->insertItem(tr("Explode..."), this, SLOT(sExplodeWO()), 0);
         if (!_privileges->check("ExplodeWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
       else if (status == "E")
       {
-        menuItem = pMenu->insertItem(tr("Implode W/O..."), this, SLOT(sImplodeWO()), 0);
+        menuItem = pMenu->insertItem(tr("Implode..."), this, SLOT(sImplodeWO()), 0);
         if (!_privileges->check("ImplodeWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
+          
+        menuItem = pMenu->insertItem(tr("Release"), this, SLOT(sReleaseWO()), 0);
+        if (!_privileges->check("ReleaseWorkOrders"))
+          pMenu->setItemEnabled(menuItem, FALSE);
       }
-
+      else if (status == "R")
+      {
+        menuItem = pMenu->insertItem(tr("Recall"), this, SLOT(sRecallWO()), 0);
+        if (!_privileges->check("RecallWorkOrders"))
+          pMenu->setItemEnabled(menuItem, FALSE);
+      }
+      
       if ((status == "O") || (status == "E"))
       {
-        menuItem = pMenu->insertItem(tr("Delete W/O..."), this, SLOT(sDeleteWO()), 0);
+        menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteWO()), 0);
         if (!_privileges->check("DeleteWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
@@ -1639,55 +1616,99 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
       {
        if ((status != "C"))
        {
-         menuItem = pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWO()), 0);
+         menuItem = pMenu->insertItem(tr("Close..."), this, SLOT(sCloseWO()), 0);
          if (!_privileges->check("CloseWorkOrders"))
            pMenu->setItemEnabled(menuItem, FALSE);
        }
       }
+      pMenu->insertSeparator();
+    }
+
+    if ((status == "E") || (status == "R") || (status == "I"))
+    {
+      menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
+      if (!_privileges->check("PrintWorkOrderPaperWork"))
+        pMenu->setItemEnabled(menuItem, FALSE);
 
       pMenu->insertSeparator();
-
-      if ((status == "E") || (status == "R") || (status == "I"))
+      
+      if (status == "O" ||status == "E" || status == "R" || status == "I")
       {
-        if (_metrics->boolean("Routings"))
+        if (_privileges->check("MaintainWoMaterials"))
+            menuItem = pMenu->insertItem(tr("New Material..."), this, SLOT(sNewMatl()), 0);
+        if (_privileges->check("IssueWoMaterials"))
+            menuItem = pMenu->insertItem(tr("Issue Batch..."), this, SLOT(sIssueMatlBatch()), 0);
+        if (status == "I")
         {
-          menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-          if (!_privileges->check("ViewWoOperations"))
+         if (_privileges->check("ReturnWoMaterials"))
+            menuItem = pMenu->insertItem(tr("Return Batch..."), this, SLOT(sReturnMatlBatch()), 0);
+        }
+        pMenu->insertSeparator();
+      }
+        
+      if (_metrics->boolean("Routings"))
+      {
+         menuItem = pMenu->insertItem(tr("View Operations..."), this, SLOT(sViewWooper()), 0);
+        if (!_privileges->check("ViewWoOperations"))
+          pMenu->setItemEnabled(menuItem, FALSE);
+          
+        menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
+        if (!_privileges->check("PostWoOperations"))
+          pMenu->setItemEnabled(menuItem, FALSE);
+
+        if (status == "I")
+        {
+          menuItem = pMenu->insertItem(tr("Correct Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
+          if (!_privileges->check("PostWoOperations"))
             pMenu->setItemEnabled(menuItem, FALSE);
         }
-
-        menuItem = pMenu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
-        if (!_privileges->check("ViewInventoryAvailability"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-
         pMenu->insertSeparator();
+      }
+      
+      menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
+      if (!_privileges->check("PostProduction"))
+        pMenu->setItemEnabled(menuItem, FALSE);
 
-        menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
-        if (!_privileges->check("PrintWorkOrderPaperWork"))
+      if (status == "I")
+      {
+        menuItem = pMenu->insertItem(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()), 0);
+        if (!_privileges->check("PostProduction"))
           pMenu->setItemEnabled(menuItem, FALSE);
-
       }
 
+      pMenu->insertSeparator();
+    }
+
+    pMenu->insertSeparator();
+
+    menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+
+    if ((status == "E") || (status == "R") || (status == "I"))
+    {
+      menuItem = pMenu->insertItem(tr("Inventory Availability..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
+      if (!_privileges->check("ViewInventoryAvailability"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+    }
+
+    if (((XTreeWidgetItem *)selected)->parent())
+    {
       if ((status == "O") || (status == "E"))
       {
         pMenu->insertSeparator();
 
-        menuItem = pMenu->insertItem(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()), 0);
+        menuItem = pMenu->insertItem(tr("Reprioritize..."), this, SLOT(sReprioritizeWo()), 0);
         if (!_privileges->check("ReprioritizeWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
 
-        menuItem = pMenu->insertItem(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()), 0);
+        menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sRescheduleWO()), 0);
         if (!_privileges->check("RescheduleWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
 
-        menuItem = pMenu->insertItem(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()), 0);
+        menuItem = pMenu->insertItem(tr("Change Quantity..."), this, SLOT(sChangeWOQty()), 0);
         if (!_privileges->check("ChangeWorkOrderQty"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
-
-      pMenu->insertSeparator();
-
-      menuItem = pMenu->insertItem(tr("Running WO Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+    }
   }
   //Check a womatl row is selected and the id is vaild
   if(_woIndentedList->altId() == 2 && _woIndentedList->id() > -1)
@@ -1697,50 +1718,50 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
     {
       if (_privileges->check("MaintainWoMaterials"))
       {
-         menuItem = pMenu->insertItem(tr("Edit Matl..."), this, SLOT(sEditMatl()), 0);
+         menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditMatl()), 0);
       }
     }
-      menuItem = pMenu->insertItem(tr("View Matl..."), this, SLOT(sViewMatl()), 0);
+    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewMatl()), 0);
     if (status == "O" || status == "E")
     {
       if (_privileges->check("MaintainWoMaterials"))
-      {
-         menuItem = pMenu->insertItem(tr("Delete Matl..."), this, SLOT(sDeleteMatl()), 0);
-      }
+         menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteMatl()), 0);
     }
+    
+    pMenu->insertSeparator();
+
     if (status == "O" || status == "E" || status == "R" || status == "I")
     {
       if (_privileges->check("IssueWoMaterials"))
       {
-         menuItem = pMenu->insertItem(tr("Issue Matl..."), this, SLOT(sIssueMatl()), 0);
+         menuItem = pMenu->insertItem(tr("Issue..."), this, SLOT(sIssueMatl()), 0);
       }
     }
     if (status == "I")
     {
       if (_privileges->check("ReturnWoMaterials"))
       {
-         menuItem = pMenu->insertItem(tr("Return Matl..."), this, SLOT(sReturnMatl()), 0);
+         menuItem = pMenu->insertItem(tr("Return..."), this, SLOT(sReturnMatl()), 0);
       }
       if (_privileges->check("ScrapWoMaterials"))
       {
-         menuItem = pMenu->insertItem(tr("Scrap Matl..."), this, SLOT(sScrapMatl()), 0);
+         menuItem = pMenu->insertItem(tr("Scrap..."), this, SLOT(sScrapMatl()), 0);
       }
     }
-    pMenu->insertSeparator();
-
-    menuItem = pMenu->insertItem(tr("View Matl Availability..."), this, SLOT(sViewMatlAvailability()), 0);
-
-    pMenu->insertSeparator();
-
-    menuItem = pMenu->insertItem(tr("View Matl Item-Defined Subsitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()), 0);
+    
     if (status == "O" || status == "E")
     {
         if (_privileges->check("MaintainWoMaterials"))
         {
-             menuItem = pMenu->insertItem(tr("Substitute Matl..."), this, SLOT(sSubstituteMatl()), 0);
+             menuItem = pMenu->insertItem(tr("Substitute..."), this, SLOT(sSubstituteMatl()), 0);
         }
     }
+    
+    pMenu->insertSeparator();
 
+    menuItem = pMenu->insertItem(tr("Availability..."), this, SLOT(sViewMatlAvailability()), 0);
+
+    menuItem = pMenu->insertItem(tr("Subsitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()), 0);
   }
 
 }
@@ -1818,7 +1839,6 @@ void workOrder::populate()
     _daysLit->hide();
     _printTraveler->hide();
     _bottomSpacer->hide();
-    _create->setText(tr("&Save"));
 
     _close->setFocus();
   }
@@ -1830,6 +1850,17 @@ void workOrder::populate()
                       .arg(_woid) );
     close();
   }
+}
+
+void workOrder::sViewWooper()
+{
+  ParameterList params;
+  params.append("wo_id", _woid);
+  params.append("run");
+
+  dspWoOperationsByWorkOrder *newdlg = new dspWoOperationsByWorkOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 
