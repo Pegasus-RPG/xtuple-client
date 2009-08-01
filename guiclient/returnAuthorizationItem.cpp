@@ -734,11 +734,11 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           _createOrder->setEnabled(FALSE);
         }
 
-        else if (_item->itemType() == "K")
-        {
-          _qtyAuth->setDouble(0);
-          _qtyAuth->setEnabled(FALSE);
-        }
+//        else if (_item->itemType() == "K")
+//        {
+//          _qtyAuth->setDouble(0);
+//          _qtyAuth->setEnabled(FALSE);
+//        }
 
         else
         {
