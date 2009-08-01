@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -8,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>lotSerial</class>
- <widget class="QDialog" name="lotSerial" >
-  <property name="geometry" >
+ <widget class="QDialog" name="lotSerial">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -17,38 +17,38 @@ to be bound by its terms.</comment>
     <height>479</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>600</width>
     <height>400</height>
    </size>
   </property>
-  <property name="maximumSize" >
+  <property name="maximumSize">
    <size>
     <width>1000</width>
     <height>1000</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Lot/Serial</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="ItemCluster" name="_item" >
-     <property name="focusPolicy" >
-      <enum>Qt::TabFocus</enum>
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="ItemCluster" name="_item">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
     </widget>
    </item>
-   <item rowspan="2" row="0" column="1" >
+   <item row="0" column="1" rowspan="2">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>76</width>
        <height>16</height>
@@ -56,37 +56,37 @@ to be bound by its terms.</comment>
      </property>
     </spacer>
    </item>
-   <item rowspan="2" row="0" column="2" >
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
+   <item row="0" column="2" rowspan="2">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="_close" >
-       <property name="text" >
+      <widget class="QPushButton" name="_close">
+       <property name="text">
         <string>&amp;Close</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_save" >
-       <property name="enabled" >
+      <widget class="QPushButton" name="_save">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Save</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>65</width>
          <height>51</height>
@@ -96,82 +96,82 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <widget class="LotserialCluster" name="_lotSerial" >
-     <property name="enabled" >
+   <item row="1" column="0">
+    <widget class="LotserialCluster" name="_lotSerial">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="focusPolicy" >
-      <enum>Qt::TabFocus</enum>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="label" >
+     <property name="label">
       <string>   Lot/Serial #:</string>
      </property>
-     <property name="infoVisible" >
+     <property name="infoVisible">
       <bool>false</bool>
      </property>
-     <property name="strict" >
+     <property name="strict">
       <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3" >
-    <widget class="QTabWidget" name="_tab" >
-     <property name="focusPolicy" >
+   <item row="2" column="0" colspan="3">
+    <widget class="QTabWidget" name="_tab">
+     <property name="focusPolicy">
       <enum>Qt::ClickFocus</enum>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_char" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_char">
+      <attribute name="title">
        <string>Characteristics</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+      <layout class="QGridLayout">
+       <item row="0" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_newChar" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_newChar">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;New</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_editChar" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_editChar">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_deleteChar" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_deleteChar">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -181,71 +181,71 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="0" column="0" >
-        <widget class="XTreeWidget" name="_charass" >
-         <property name="focusPolicy" >
+       <item row="0" column="0">
+        <widget class="XTreeWidget" name="_charass">
+         <property name="focusPolicy">
           <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_regTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_regTab">
+      <attribute name="title">
        <string>Registrations</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="XTreeWidget" name="_reg" >
-         <property name="focusPolicy" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="XTreeWidget" name="_reg">
+         <property name="focusPolicy">
           <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+       <item row="0" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_newReg" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_newReg">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;New</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_editReg" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_editReg">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_deleteReg" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="_deleteReg">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -257,31 +257,31 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabNotes" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabNotes">
+      <attribute name="title">
        <string>Notes</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QTextEdit" name="_notes" >
-         <property name="focusPolicy" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="_notes">
+         <property name="focusPolicy">
           <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_commentsTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="_commentsTab">
+      <attribute name="title">
        <string>Comments</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="Comments" name="_comments" >
-         <property name="focusPolicy" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="Comments" name="_comments">
+         <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
-         <property name="type" >
+         <property name="type">
           <enum>Comments::LotSerial</enum>
          </property>
         </widget>
@@ -292,7 +292,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -315,6 +315,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -342,11 +343,11 @@ to be bound by its terms.</comment>
    <receiver>lotSerial</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>550</x>
      <y>32</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>506</x>
      <y>21</y>
     </hint>
@@ -358,11 +359,11 @@ to be bound by its terms.</comment>
    <receiver>_editChar</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>263</x>
      <y>317</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>565</x>
      <y>210</y>
     </hint>
@@ -374,11 +375,11 @@ to be bound by its terms.</comment>
    <receiver>_deleteChar</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>263</x>
      <y>317</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>565</x>
      <y>210</y>
     </hint>
@@ -390,11 +391,11 @@ to be bound by its terms.</comment>
    <receiver>_editReg</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>458</x>
      <y>307</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>568</x>
      <y>216</y>
     </hint>
@@ -406,11 +407,11 @@ to be bound by its terms.</comment>
    <receiver>_deleteReg</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>471</x>
      <y>324</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>588</x>
      <y>251</y>
     </hint>
@@ -422,11 +423,11 @@ to be bound by its terms.</comment>
    <receiver>_comments</receiver>
    <slot>setId(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>202</x>
      <y>126</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>110</x>
      <y>201</y>
     </hint>
@@ -438,11 +439,11 @@ to be bound by its terms.</comment>
    <receiver>_lotSerial</receiver>
    <slot>setItemId(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>215</x>
      <y>50</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>215</x>
      <y>113</y>
     </hint>
@@ -454,11 +455,11 @@ to be bound by its terms.</comment>
    <receiver>_save</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>306</x>
      <y>103</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>597</x>
      <y>44</y>
     </hint>
@@ -470,11 +471,11 @@ to be bound by its terms.</comment>
    <receiver>_newReg</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>294</x>
      <y>122</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>529</x>
      <y>182</y>
     </hint>
@@ -486,11 +487,11 @@ to be bound by its terms.</comment>
    <receiver>_newChar</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>138</x>
      <y>110</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>565</x>
      <y>210</y>
     </hint>
@@ -502,11 +503,11 @@ to be bound by its terms.</comment>
    <receiver>_editReg</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>472</x>
      <y>289</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>549</x>
      <y>218</y>
     </hint>
