@@ -27,6 +27,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
   _bomitemid=-1;
+  _wooperid=-1;
 
 
   // signals and slots connections
@@ -99,6 +100,10 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
     _item->setId(param.toInt());
     _item->setReadOnly(TRUE);
   }
+  
+  param = pParams.value("wooper_id", &valid);
+  if (valid)
+    _wooperid=param.toInt();
 
   param = pParams.value("qtyPer", &valid);
   if (valid)
@@ -233,9 +238,18 @@ void woMaterialItem::sSave()
     q.bindValue(":bomitem_id", _bomitemid);
     q.bindValue(":notes", _notes->text());
     q.bindValue(":ref", _ref->text());
+    q.bindValue(":wooper_id", _wooperid);
     q.exec();
     if (q.first())
+    {
       _womatlid = q.value("womatlid").toInt();
+      
+      q.prepare("UPDATE womatl SET womatl_wooper_id=:wooper_id WHERE womatl_id=:womatl_id");
+      q.bindValue(":wooper_id",_wooperid);
+      q.bindValue(":womatl_id",_womatlid);
+      q.exec();
+    }
+    
 //  ToDo
   }
   else if (_mode == cEdit)

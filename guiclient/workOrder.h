@@ -36,8 +36,10 @@ public slots:
     virtual void sClose();
     virtual void sHandleButtons();
     virtual void sFillList();
+    virtual void sPostOperation();
     virtual void sPostOperations();
     virtual void sPostProduction();
+    virtual void sCorrectOperationPosting();
     virtual void sCorrectOperationsPosting();
     virtual void sCorrectProductionPosting();
     virtual void sRecallWO();
@@ -61,11 +63,15 @@ public slots:
     virtual void sEditMatl();
     virtual void sViewMatl();
     virtual void sDeleteMatl();
+    virtual void sNewWooper();
+    virtual void sEditWooper();
+    virtual void sViewWooper();
+    virtual void sDeleteWooper();
     virtual void sViewMatlAvailability();
     virtual void sViewMatlSubstituteAvailability();
-    virtual void sViewWooper();
     virtual void sSubstituteMatl();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sSave();
 
 protected slots:
     virtual void languageChange();
@@ -81,6 +87,7 @@ private:
     int _lastItemid;
     QStandardItemModel * _itemchar;
     int _woid;
+    int _wonumber;
 
     int _oldPriority;
     QDate _oldStartDate;

@@ -1034,22 +1034,6 @@ to be bound by its terms.</comment>
  <connections>
   <connection>
    <sender>_item</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_save</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>51</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>640</x>
-     <y>42</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
    <signal>newId(int)</signal>
    <receiver>_warehouse</receiver>
    <slot>findItemsites(int)</slot>

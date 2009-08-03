@@ -40,6 +40,7 @@ private:
     int _bomitemid;
     int _mode;
     int _womatlid;
+    int _wooperid;
     bool _captive;
 
 };

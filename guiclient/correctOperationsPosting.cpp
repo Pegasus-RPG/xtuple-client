@@ -80,6 +80,26 @@ enum SetResponse correctOperationsPosting::set(const ParameterList &pParams)
 
     _qty->setFocus();
   }
+  
+  param = pParams.value("wooper_id", &valid);
+  if (valid)
+  {
+    q.prepare("SELECT wooper_wo_id"
+              "  FROM wooper"
+              " WHERE (wooper_id=:wooper_id);");
+    q.bindValue(":wooper_id", param.toInt());
+    q.exec();
+    if(q.first())
+    {
+      _wo->setId(q.value("wooper_wo_id").toInt());
+      _wo->setEnabled(false);
+      _wooper->setId(param.toInt());
+      _wooper->setEnabled(false);
+      _qty->setFocus();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
 
   return NoError;
 }
