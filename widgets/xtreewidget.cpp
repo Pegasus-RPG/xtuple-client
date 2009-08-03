@@ -1042,6 +1042,24 @@ void XTreeWidget::setId(int pId)
   }
 }
 
+void XTreeWidget::setId(int pId, int pAltId)
+{
+  if (pId < 0)
+    return;
+
+  for (QModelIndex i = indexFromItem(topLevelItem(0)); i.isValid(); i = indexBelow(i))
+  {
+    XTreeWidgetItem *item = (XTreeWidgetItem*)itemFromIndex(i);
+    if(item && item->id() == pId && item->altId() == pAltId)
+    {
+      selectionModel()->setCurrentIndex(i,
+                                        QItemSelectionModel::ClearAndSelect |
+                                        QItemSelectionModel::Rows);
+      return;
+    }
+  }
+}
+
 QString XTreeWidget::dragString() const { return _dragString; }
 void XTreeWidget::setDragString(QString pDragString)
 {
