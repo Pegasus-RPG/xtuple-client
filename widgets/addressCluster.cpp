@@ -307,7 +307,8 @@ int AddressCluster::save(enum SaveFlags flag)
   datamodQ.prepare("SELECT saveAddr(:addr_id,:addr_number,:addr1,:addr2,:addr3," 
 		   ":city,:state,:postalcode,:country,:active,:notes,:flag) AS result;");
   datamodQ.bindValue(":addr_id", id());
-  datamodQ.bindValue(":addr_number", _number->text());
+  if (!_number->text().isEmpty())
+    datamodQ.bindValue(":addr_number", _number->text());
   datamodQ.bindValue(":addr1", _addr1->text());
   datamodQ.bindValue(":addr2", _addr2->text());
   datamodQ.bindValue(":addr3", _addr3->text());
