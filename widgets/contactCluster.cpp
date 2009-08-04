@@ -78,14 +78,6 @@ void ContactCluster::init()
     _titleLit->setObjectName("_titleLit");
     _title		= new XLineEdit(this, "_title");
 
-#ifdef Q_WS_MAC
-    _honorific->setMinimumHeight(26);
-    _first->setMinimumHeight(22);
-    _middle->setMinimumHeight(22);
-    _last->setMinimumHeight(22);
-    _suffix->setMinimumHeight(22);
-#endif
-
     _mapper		= new XDataWidgetMapper(this);
 
     //_nameBox->addWidget(_nameLit,	0);
@@ -110,7 +102,6 @@ void ContactCluster::init()
     _active->setObjectName("_active");
     _owner              = new UsernameCluster(this, "_owner");
 
-    _buttonBox->addWidget(_active,	0, 0, Qt::AlignTop);
     _buttonBox->addWidget(_crmAcct,	0, 1, Qt::AlignTop);
     _buttonBox->addWidget(_owner, 	0, 2, Qt::AlignTop);
 
@@ -133,7 +124,13 @@ void ContactCluster::init()
     _address		= new AddressCluster(this, "_address");
 
 #if defined Q_OS_MAC
+    _honorific->setMinimumHeight(26);
+    _first->setMinimumHeight(22);
+    _middle->setMinimumHeight(22);
+    _last->setMinimumHeight(22);
+    _suffix->setMinimumHeight(22);
     _phone->setMinimumWidth(140);
+    _crmAcct->setMinimumHeight(72);
 #endif    
 
     QPalette p = _email->palette();
