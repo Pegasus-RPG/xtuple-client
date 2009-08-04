@@ -43,6 +43,7 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
   _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
   _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
+  _invchead->addColumn(tr("Ship-to"),   100,          Qt::AlignLeft,   false,  "invchead_shipto_name" );
   _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
   _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
   _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
@@ -53,7 +54,7 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
-    _invchead->hideColumn(6);
+    _invchead->hideColumn(7);
 
   if (_privileges->check("MaintainMiscInvoices"))
   {
