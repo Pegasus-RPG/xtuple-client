@@ -389,7 +389,7 @@ void workOrder::sCreate()
       _qty->text().length() &&
       _dueDate->isValid())
   {
-    q.prepare( "SELECT itemsite_id "
+    q.prepare( "SELECT itemsite_id, itemsite_costmethod "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -403,6 +403,12 @@ void workOrder::sCreate()
              "a \"Supplied At\" Site. You must select a different\n"
              " Site before creating this Work Order.") );
       return;
+    }
+    else if (q.first())
+    {
+      if (q.value("itemsite_costmethod").toString() != "J" &&
+          q.value("itemsite_costmethod").toString() != "A")
+        _jobCosGroup->setEnabled(false);
     }
   
     int itemsiteid = q.value("itemsite_id").toInt();
