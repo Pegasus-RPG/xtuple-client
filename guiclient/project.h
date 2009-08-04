@@ -43,6 +43,7 @@ protected slots:
 private:
     int _mode;
     int _prjid;
+    bool _saved;
 
 };
 

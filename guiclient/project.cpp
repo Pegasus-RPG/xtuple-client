@@ -39,6 +39,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
+  
+  _saved=false;
 
   populate();
 }
@@ -154,6 +156,7 @@ void project::populate()
   q.exec();
   if (q.first())
   {
+    _saved = true;
     _owner->setUsername(q.value("prj_owner_username").toString());
     _number->setText(q.value("prj_number").toString());
     _name->setText(q.value("prj_name").toString());
@@ -183,8 +186,7 @@ void project::sClose()
 {
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM prjtask "
-               "WHERE (prjtask_prj_id=:prj_id);" );
+    q.prepare( "SELECT deleteproject(:prj_id);" );
     q.bindValue(":prj_id", _prjid);
     q.exec();
   }
@@ -201,7 +203,7 @@ void project::sSave()
     return;
   }
 
-  if (_mode == cNew)
+  if (!_saved)
     q.prepare( "INSERT INTO prj "
                "( prj_id, prj_number, prj_name, prj_descrip,"
                "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
@@ -212,7 +214,7 @@ void project::sSave()
                "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username,"
                "  :prj_start_date, :prj_due_date, :prj_assigned_date,"
                "  :prj_completed_date, :username  );" );
-  else if (_mode == cEdit)
+  else
     q.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
                "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status, "
@@ -249,8 +251,16 @@ void project::sSave()
       break;
   }
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-  done(_prjid);
+  if (_saved)
+    done(_prjid);
+  else
+    _saved=true;
 }
 
 void project::sPrintTasks()
@@ -268,6 +278,9 @@ void project::sPrintTasks()
 
 void project::sNewTask()
 {
+  if (!_saved)
+    sSave();
+    
   ParameterList params;
   params.append("mode", "new");
   params.append("prj_id", _prjid);
