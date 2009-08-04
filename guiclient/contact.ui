@@ -13,226 +13,233 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
-    <height>456</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Contact</string>
   </property>
-  <layout class="QVBoxLayout">
-   <property name="margin">
-    <number>5</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout">
-     <item>
-      <widget class="ContactCluster" name="_contact">
-       <property name="listVisible">
-        <bool>false</bool>
-       </property>
-       <property name="activeVisible">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>89</width>
-         <height>153</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="margin">
+      <number>12</number>
+     </property>
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="QPushButton" name="_close">
-         <property name="text">
-          <string>Cancel</string>
+        <widget class="ContactCluster" name="_contact">
+         <property name="listVisible">
+          <bool>false</bool>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_save">
-         <property name="text">
-          <string>Save</string>
+         <property name="activeVisible">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>89</width>
+           <height>153</height>
           </size>
          </property>
         </spacer>
        </item>
+       <item>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close">
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_save">
+           <property name="text">
+            <string>Save</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
+     <item row="1" column="0">
+      <widget class="QTabWidget" name="_tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="_tabNotes">
+        <attribute name="title">
+         <string>Notes</string>
+        </attribute>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QTextEdit" name="_notes"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_tabComments">
+        <attribute name="title">
+         <string>Comments</string>
+        </attribute>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="Comments" name="_comments">
+           <property name="type">
+            <enum>Comments::Contact</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_tabCharacteristics">
+        <attribute name="title">
+         <string>Characteristics</string>
+        </attribute>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="XTreeWidget" name="_charass">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_newCharacteristic">
+             <property name="text">
+              <string>New</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_editCharacteristic">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Edit</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_deleteCharacteristic">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_usesTab">
+        <attribute name="title">
+         <string>Uses of the Contact</string>
+        </attribute>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="XTreeWidget" name="_uses"/>
+         </item>
+         <item>
+          <layout class="QVBoxLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_editUse">
+             <property name="text">
+              <string>Edit</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_viewUse">
+             <property name="text">
+              <string>View</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_detachUse">
+             <property name="text">
+              <string>Detach</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="_tabWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="_tabNotes">
-      <attribute name="title">
-       <string>Notes</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QTextEdit" name="_notes"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_tabComments">
-      <attribute name="title">
-       <string>Comments</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="Comments" name="_comments">
-         <property name="type">
-          <enum>Comments::Contact</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_tabCharacteristics">
-      <attribute name="title">
-       <string>Characteristics</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="XTreeWidget" name="_charass">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_newCharacteristic">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_editCharacteristic">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_deleteCharacteristic">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_usesTab">
-      <attribute name="title">
-       <string>Uses of the Contact</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="XTreeWidget" name="_uses"/>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_editUse">
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_viewUse">
-           <property name="text">
-            <string>View</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_detachUse">
-           <property name="text">
-            <string>Detach</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
    </item>
   </layout>
  </widget>
