@@ -35,55 +35,55 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     };
     Q_DECLARE_FLAGS(OrderTypes, OrderType)
 
-    virtual OrderStatuses allowedStatuses()	const;
-    virtual OrderTypes	  allowedTypes()	const;
-    virtual void	  clear();
-    virtual QString	  from()		const;
-    virtual bool	  isClosed()		const;
-    virtual bool	  isOpen()		const;
-    virtual bool	  isPO()		const;
-    virtual bool	  isRA()		const;
-    virtual bool	  isSO()		const;
-    virtual bool	  isTO()		const;
-    virtual bool	  isUnposted()		const;
-    virtual bool          fromSitePrivsEnforced() const {return _fromPrivs; };
-    virtual bool          toSitePrivsEnforced()   const {return _toPrivs; };
-    virtual void          setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);};
-    virtual void	  setExtraClause(const QString &, const QString &);
-    virtual void	  setExtraClause(const OrderTypes, const QString &);
-    virtual void          setFromSitePrivsEnforced(const bool p);
-    virtual void          setToSitePrivsEnforced(const bool p);
-    virtual void	  sList();
-    virtual void	  sSearch();
-    virtual OrderStatus	  status();
-    virtual QString	  to()			const;
-    virtual QString	  type();
-    virtual QString       fromPrivsClause() {return _fromPrivsClause;};
-    virtual QString       toPrivsClause()   {return _toPrivsClause;};
+    Q_INVOKABLE virtual OrderStatuses allowedStatuses()        const;
+    Q_INVOKABLE virtual OrderTypes    allowedTypes()        const;
+    Q_INVOKABLE virtual void          clear();
+    Q_INVOKABLE virtual QString          from()                const;
+    Q_INVOKABLE virtual bool          isClosed()                const;
+    Q_INVOKABLE virtual bool          isOpen()                const;
+    Q_INVOKABLE virtual bool          isPO()                const;
+    Q_INVOKABLE virtual bool          isRA()                const;
+    Q_INVOKABLE virtual bool          isSO()                const;
+    Q_INVOKABLE virtual bool          isTO()                const;
+    Q_INVOKABLE virtual bool          isUnposted()                const;
+    Q_INVOKABLE virtual bool      fromSitePrivsEnforced() const {return _fromPrivs; };
+    Q_INVOKABLE virtual bool      toSitePrivsEnforced()   const {return _toPrivs; };
+    Q_INVOKABLE virtual void      setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);};
+    Q_INVOKABLE virtual void          setExtraClause(const QString &, const QString &);
+    Q_INVOKABLE virtual void          setExtraClause(const OrderTypes, const QString &);
+    Q_INVOKABLE virtual void      setFromSitePrivsEnforced(const bool p);
+    Q_INVOKABLE virtual void      setToSitePrivsEnforced(const bool p);
+    Q_INVOKABLE virtual OrderStatus          status();
+    Q_INVOKABLE virtual QString          to()                        const;
+    Q_INVOKABLE virtual QString          type();
+    Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;};
+    Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;};
 
   public slots:
-    virtual void	  setAllowedStatuses(const OrderStatuses);
-    virtual void	  setAllowedType(const QString &);
-    virtual void	  setAllowedTypes(const OrderTypes);
-    virtual void	  setId(const int, const QString & = "");
+    virtual void          setAllowedStatuses(const OrderStatuses);
+    virtual void          setAllowedType(const QString &);
+    virtual void          setAllowedTypes(const OrderTypes);
+    virtual void          setId(const int, const QString & = "");
+    virtual void          sList();
+    virtual void          sSearch();
 
   signals:
     void newId(const int, const QString &);
     void numberChanged(const QString &, const QString &);
 
   protected:
-    OrderStatuses	_allowedStatuses;
-    OrderTypes		_allowedTypes;
-    QString		_from;
-    QString		_to;
+    OrderStatuses        _allowedStatuses;
+    OrderTypes                _allowedTypes;
+    QString                _from;
+    QString                _to;
 
-    virtual QString	buildExtraClause();
-    virtual void	silentSetId(const int);
+    virtual QString        buildExtraClause();
+    virtual void        silentSetId(const int);
 
 
   protected slots:
-    virtual void	sNewId(const int);
-    virtual void	sParse();
+    virtual void        sNewId(const int);
+    virtual void        sParse();
 
 
   private:
@@ -91,13 +91,13 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     bool        _toPrivs;
     QString     _toPrivsClause;
     QString     _fromPrivsClause;
-    QString	_allClause;
-    QString	_poClause;
-    QString	_raClause;
-    QString	_soClause;
-    QString	_toClause;
-    QString	_statusClause;
-    QString	_typeClause;
+    QString        _allClause;
+    QString        _poClause;
+    QString        _raClause;
+    QString        _soClause;
+    QString        _toClause;
+    QString        _statusClause;
+    QString        _typeClause;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderStatuses)
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderTypes)
@@ -109,45 +109,45 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
   public:
     OrderCluster(QWidget*, const char* = 0);
 
-    virtual OrderLineEdit::OrderStatuses allowedStatuses()	const;
-    virtual OrderLineEdit::OrderTypes	 allowedTypes()		const;
-    virtual QString	from()		const;
-    virtual bool	isClosed()	const;
-    virtual bool	isOpen()	const;
-    virtual bool	isPO()		const;
-    virtual bool	isRA()		const;
-    virtual bool	isSO()		const;
-    virtual bool	isTO()		const;
-    virtual bool	isUnposted()	const;
-    virtual bool        fromSitePrivsEnforced() const;
-    virtual bool        toSitePrivsEnforced() const;
-    virtual void	setExtraClause(const QString &, const QString &);
-    virtual void	setExtraClause(const OrderLineEdit::OrderTypes,
-				       const QString &);
-    virtual OrderLineEdit::OrderStatus	 status()		const;
-    virtual QString	to()		const;
-    virtual QString	type()		const;
+    Q_INVOKABLE virtual OrderLineEdit::OrderStatuses allowedStatuses() const;
+    Q_INVOKABLE virtual OrderLineEdit::OrderTypes    allowedTypes()    const;
+    Q_INVOKABLE virtual QString from()                  const;
+    Q_INVOKABLE virtual bool    isClosed()              const;
+    Q_INVOKABLE virtual bool    isOpen()                const;
+    Q_INVOKABLE virtual bool    isPO()                  const;
+    Q_INVOKABLE virtual bool    isRA()                  const;
+    Q_INVOKABLE virtual bool    isSO()                  const;
+    Q_INVOKABLE virtual bool    isTO()                  const;
+    Q_INVOKABLE virtual bool    isUnposted()            const;
+    Q_INVOKABLE virtual bool    fromSitePrivsEnforced() const;
+    Q_INVOKABLE virtual bool    toSitePrivsEnforced()   const;
+    Q_INVOKABLE virtual void    setExtraClause(const QString &, const QString &);
+    Q_INVOKABLE virtual void    setExtraClause(const OrderLineEdit::OrderTypes,
+                                               const QString &);
+    Q_INVOKABLE virtual OrderLineEdit::OrderStatus status()            const;
+    Q_INVOKABLE virtual QString                    to()                const;
+    Q_INVOKABLE virtual QString                    type()              const;
 
   public slots:
-    virtual void	setAllowedStatuses(const OrderLineEdit::OrderStatuses);
-    virtual void	setAllowedStatuses(const int);
-    virtual void	setAllowedType(const QString &);
-    virtual void	setAllowedTypes(const OrderLineEdit::OrderTypes);
-    virtual void	setAllowedTypes(const int);
-    virtual void	setId(const int, const QString& = "");
+    virtual void        setAllowedStatuses(const OrderLineEdit::OrderStatuses);
+    virtual void        setAllowedStatuses(const int);
+    virtual void        setAllowedType(const QString &);
+    virtual void        setAllowedTypes(const OrderLineEdit::OrderTypes);
+    virtual void        setAllowedTypes(const int);
+    virtual void        setId(const int, const QString& = "");
     virtual void        setFromSitePrivsEnforced(const bool p);
     virtual void        setToSitePrivsEnforced(const bool p);
-    virtual void	sRefresh();
+    virtual void        sRefresh();
 
   signals:
     void newId(const int, const QString &);
     void numberChanged(const QString &, const QString &);
 
   protected:
-    QLabel	*_fromLit;
-    QLabel	*_from;
-    QLabel	*_toLit;
-    QLabel	*_to;
+    QLabel        *_fromLit;
+    QLabel        *_from;
+    QLabel        *_toLit;
+    QLabel        *_to;
     
 };
 
@@ -158,13 +158,13 @@ class XTUPLEWIDGETS_EXPORT OrderList : public VirtualList
   public:
     OrderList(QWidget*, Qt::WindowFlags = 0);
 
-    QString	type() const;
+    QString type() const;
 
   protected:
     QList<QTreeWidgetItem*> selectedAtDone;
 
   protected slots:
-    virtual void	  done(int);
+    virtual void done(int);
 };
 
 class XTUPLEWIDGETS_EXPORT OrderSearch : public VirtualSearch
@@ -174,13 +174,13 @@ class XTUPLEWIDGETS_EXPORT OrderSearch : public VirtualSearch
   public:
     OrderSearch(QWidget*, Qt::WindowFlags = 0);
 
-    QString	type() const;
+    QString     type() const;
 
   protected:
    QList<QTreeWidgetItem*> selectedAtDone;
 
   protected slots:
-    virtual void	  done(int);
+    virtual void done(int);
 };
 
 #endif

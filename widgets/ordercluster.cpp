@@ -14,6 +14,8 @@
 #include "ordercluster.h"
 #include "xsqlquery.h"
 
+#define DEBUG false
+
 OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
@@ -622,7 +624,10 @@ QString OrderLineEdit::buildExtraClause()
   if (! _soClause.isEmpty())	 clauses << _soClause;
   if (! _toClause.isEmpty())	 clauses << _toClause;
 
-  return clauses.join(" AND ");
+  QString tmpClause = clauses.join(" AND ");
+  if (DEBUG) qDebug("buildExtraClause returning %s",
+                    qPrintable(tmpClause));
+  return tmpClause;
 }
 
 void OrderLineEdit::silentSetId(const int pId)
