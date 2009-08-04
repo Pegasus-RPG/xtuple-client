@@ -232,6 +232,11 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
                          ItemLineEdit::cJob | ItemLineEdit::cActive);
+                         
+      connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+      connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
+      connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+      connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
       populate();
     }
     else if (param.toString() == "view")
@@ -516,6 +521,11 @@ void workOrder::sCreate()
       disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
       disconnect(_qty, SIGNAL(lostFocus()), this, SLOT(sCreate()));
       disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
+      
+      connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+      connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
+      connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+      connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
     }
      
     populate();
@@ -580,59 +590,6 @@ void workOrder::sSave()
     q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
     q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
     q.exec();
-  }
-
-  if(_startDate->date() != _oldStartDate || _dueDate->date() != _oldDueDate)
-  {
-    q.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":startDate", _startDate->date());
-    q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":rescheduleChildren", QVariant(true, 0));
-    q.exec();
-  }
-
-  if(_priority->value() != _oldPriority)
-  {
-    q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":newPriority", _priority->value());
-    q.bindValue(":reprioritizeChildren", QVariant(true, 0));
-    q.exec();
-  }
-
-  if(_qty->text().toDouble() != _oldQty)
-  {
-    double newQty = _qty->toDouble();
-    q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
-               "FROM wo "
-               "WHERE (wo_id=:wo_id);" );
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":qty", newQty);
-    q.exec();
-    if (q.first())
-    {
-      if (q.value("qty").toDouble() != newQty)
-      {
-        if ( QMessageBox::warning( this, tr("Invalid Order Qty"),
-                                   tr( "The new Order Quantity that you have entered does not meet the Order Parameters set\n"
-                                       "for the parent Item Site for this Work Order.  In order to meet the Item Site Order\n"
-                                       "Parameters the new Order Quantity must be increased to %1.\n"
-                                       "Do you want to change the Order Quantity for this Work Order to %2?" )
-                                   .arg(formatQty(q.value("qty").toDouble()))
-                                   .arg(formatQty(q.value("qty").toDouble())),
-                                   tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
-          return;
-        else
-          newQty = q.value("qty").toDouble();
-      }
-
-      q.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
-      q.bindValue(":wo_id", _woid);
-      q.bindValue(":qty", newQty);
-      q.bindValue(":sense", _sense);
-      q.exec();
-    }
   }
   
   if (_mode == cRelease)
@@ -896,6 +853,7 @@ void workOrder::sPostProduction()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -910,6 +868,7 @@ void workOrder::sCorrectProductionPosting()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);}
 
@@ -924,6 +883,7 @@ void workOrder::sPostOperation()
     newdlg.exec();
     int currentId = _woIndentedList->id();
     int currentAltId = _woIndentedList->altId();
+    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     populate();
     _woIndentedList->setId(currentId,currentAltId);
   }
@@ -940,6 +900,7 @@ void workOrder::sPostOperations()
     newdlg.exec();
     int currentId = _woIndentedList->id();
     int currentAltId = _woIndentedList->altId();
+    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     populate();
     _woIndentedList->setId(currentId,currentAltId);
   }
@@ -955,6 +916,7 @@ void workOrder::sCorrectOperationPosting()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);}
 
@@ -968,6 +930,7 @@ void workOrder::sCorrectOperationsPosting()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -981,6 +944,7 @@ void workOrder::sReleaseWO()
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -994,6 +958,7 @@ void workOrder::sRecallWO()
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1008,6 +973,7 @@ void workOrder::sExplodeWO()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1022,6 +988,7 @@ void workOrder::sImplodeWO()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1083,6 +1050,7 @@ void workOrder::sDeleteWO()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
 }
 
@@ -1094,7 +1062,11 @@ void workOrder::sCloseWO()
   closeWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  int currentId = _woIndentedList->id();
+  int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
+  _woIndentedList->setId(currentId,currentAltId);
 }
 
 void workOrder::sPrintTraveler()
@@ -1105,6 +1077,11 @@ void workOrder::sPrintTraveler()
   printWoTraveler newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  int currentId = _woIndentedList->id();
+  int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  populate();
+  _woIndentedList->setId(currentId,currentAltId);
 }
 
 void workOrder::sInventoryAvailabilityByWorkOrder()
@@ -1118,12 +1095,140 @@ void workOrder::sInventoryAvailabilityByWorkOrder()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void workOrder::sReprioritizeParent()
+{
+  if(_priority->value() != _oldPriority)
+  {
+    if ( QMessageBox::warning( this, tr("Change Priority"),
+                               tr( "A priority change fromm %1 to %2 will update all work order requirements.  "
+                                   "Are you sure you want to change the work order priority?" )
+                               .arg(QString().setNum(_oldPriority))
+                               .arg(QString().setNum(_priority->value())),
+                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
+    {
+      _priority->setValue(_oldPriority);
+      return;
+    }
+  
+    q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
+    q.bindValue(":wo_id", _woid);
+    q.bindValue(":newPriority", _priority->value());
+    q.bindValue(":reprioritizeChildren", QVariant(true, 0));
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+      _oldPriority=_priority->value();
+  }
+  populate();
+  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+}
+
+void workOrder::sRescheduleParent()
+{
+  if(_startDate->date() != _oldStartDate || _dueDate->date() != _oldDueDate)
+  {
+    if ( QMessageBox::warning( this, tr("Change Date"),
+                               tr( "Changing the start or end date will update all work order requirements.  "
+                                   "Are you sure you want to reschedule all dates?" ),
+                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
+    {
+      _startDate->setDate(_oldStartDate);
+      _dueDate->setDate(_oldDueDate);
+      return;
+    }
+  
+    q.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
+    q.bindValue(":wo_id", _woid);
+    q.bindValue(":startDate", _startDate->date());
+    q.bindValue(":dueDate", _dueDate->date());
+    q.bindValue(":rescheduleChildren", QVariant(true, 0));
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      _oldStartDate=_startDate->date();
+      _oldDueDate=_dueDate->date();
+    }
+  }
+  populate();
+  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+}
+
+void workOrder::sChangeParentQty()
+{
+  if(_qty->text().toDouble() != _oldQty)
+  {
+    double newQty = _qty->toDouble();
+    q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
+               "FROM wo "
+               "WHERE (wo_id=:wo_id);" );
+    q.bindValue(":wo_id", _woid);
+    q.bindValue(":qty", newQty);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else if (q.first())
+    {
+      if (q.value("qty").toDouble() != newQty)
+      {
+        if ( QMessageBox::warning( this, tr("Invalid Order Qty"),
+                                   tr( "The new Order Quantity that you have entered does not meet the Order Parameters set "
+                                       "for the parent Item Site for this Work Order.  In order to meet the Item Site Order "
+                                       "Parameters the new Order Quantity must be increased to %1. "
+                                       "Do you want to change the Order Quantity for this Work Order to %2?" )
+                                   .arg(formatQty(q.value("qty").toDouble()))
+                                   .arg(formatQty(q.value("qty").toDouble())),
+                                   tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
+          {
+            _qty->setText(_oldQty);
+            _qty->setFocus();
+            return;
+          }
+          else
+            newQty = q.value("qty").toDouble();
+      }
+      else if ( QMessageBox::warning( this, tr("Change Qty"),
+                                 tr( "A quantity change fromm %1 to %2 will update all work order requirements.  "
+                                     "Are you sure you want to change the work order quantity?" )
+                                 .arg(formatQty(_oldQty))
+                                 .arg(formatQty(_qty->text().toDouble())),
+                                 tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
+      {
+        _qty->setText(_oldQty);
+        return;
+      }
+
+      q.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
+      q.bindValue(":wo_id", _woid);
+      q.bindValue(":qty", newQty);
+      q.bindValue(":sense", _sense);
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      else
+        _oldQty=_qty->text().toDouble();
+    }
+  }  
+  populate();
+  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+}
+
 void workOrder::sReprioritizeWo()
 {
-  bool _saveCaptive=_captive;
-  _captive=false;
-  sSave();
-  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
@@ -1131,36 +1236,33 @@ void workOrder::sReprioritizeWo()
   newdlg.set(params);
   newdlg.exec();
   populate();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
 }
 
 void workOrder::sRescheduleWO()
 {
-  bool _saveCaptive=_captive;
-  _captive=false;
-  sSave();
-  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
   rescheduleWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
 }
 
 void workOrder::sChangeWOQty()
 {
-  bool _saveCaptive=_captive;
-  _captive=false;
-  sSave();
-  _captive=_saveCaptive;
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
   changeWoQty newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
 }
 
 void workOrder::sDspRunningAvailability()
@@ -1238,6 +1340,7 @@ void workOrder::sReturnMatlBatch()
         return;
       }
     }
+    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   }
   populate();
 }
@@ -1335,6 +1438,7 @@ void workOrder::sIssueMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1348,6 +1452,7 @@ void workOrder::sReturnMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1361,6 +1466,7 @@ void workOrder::sScrapMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1376,6 +1482,7 @@ void workOrder::sNewWooper()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1391,6 +1498,7 @@ void workOrder::sEditWooper()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1419,6 +1527,7 @@ void workOrder::sDeleteWooper()
 
     int currentId = _woIndentedList->id();
     int currentAltId = _woIndentedList->altId();
+    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     populate();
     _woIndentedList->setId(currentId,currentAltId);  }
 }
@@ -1434,6 +1543,7 @@ void workOrder::sNewMatl()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1449,6 +1559,7 @@ void workOrder::sEditMatl()
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1531,10 +1642,12 @@ void workOrder::sDeleteMatl()
   q.prepare("SELECT womatl_wo_id AS woid "
                   "FROM womatl "
                   "WHERE (womatl_id=:womatl_id) ");
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
-        if (q.first())
-           omfgThis->sWorkOrderMaterialsUpdated(q.value("woid").toInt(), womatlid, TRUE);
+  q.bindValue(":womatl_id", womatlid);
+  q.exec();
+  if (q.first())
+     omfgThis->sWorkOrderMaterialsUpdated(q.value("woid").toInt(), womatlid, TRUE);
+           
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
 }
 
@@ -1655,6 +1768,7 @@ void workOrder::sSubstituteMatl()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
 }
 

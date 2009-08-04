@@ -49,10 +49,13 @@ public slots:
     virtual void sDeleteWO();
     virtual void sCloseWO();
     virtual void sChangeWOQty();
+    virtual void sChangeParentQty();
     virtual void sInventoryAvailabilityByWorkOrder();
     virtual void sPrintTraveler();
     virtual void sReprioritizeWo();
+    virtual void sReprioritizeParent();
     virtual void sRescheduleWO();
+    virtual void sRescheduleParent();
     virtual void sDspRunningAvailability();
     virtual void sIssueMatlBatch();
     virtual void sReturnMatlBatch();
