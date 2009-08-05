@@ -17,8 +17,9 @@
 #include <metasql.h>
 
 #include "mqlutil.h"
+#include "storedProcErrorLookup.h"
 
-#define DEBUG false
+#define DEBUG true
 
 // TODO: XDialog should have a default implementation that returns FALSE
 bool package::userHasPriv(const int pMode)
@@ -91,6 +92,10 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_save,                  SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_showSystemDetails, SIGNAL(toggled(bool)), this, SLOT(populate()));
+
+  _mode              = cNew;
+  _pkgheadid         = -1;
+  _priorEnabledState = false;
 }
 
 package::~package()
@@ -233,6 +238,41 @@ void package::sSave()
     return;
   }
 
+  if (DEBUG) qDebug("_enabled->isChecked: %d\tprior state: %d",
+                    _enabled->isChecked(), _priorEnabledState);
+  if (_enabled->isChecked() != _priorEnabledState)
+  {
+    XSqlQuery eq;
+    QString funcname;
+    if (_enabled->isChecked())
+    {
+      eq.prepare("SELECT enablePackage(:id) AS result;");
+      funcname = "enablePackage";
+    }
+    else
+    {
+      eq.prepare("SELECT disablePackage(:id) AS result;");
+      funcname = "disablePackage";
+    }
+    eq.bindValue(":id", _pkgheadid);
+    eq.exec();
+    if (eq.first())
+    {
+      int result = eq.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup(funcname, result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (eq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, eq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
   done(_pkgheadid);
 }
 
@@ -254,6 +294,7 @@ void package::populate()
     _developer->setText(q.value("pkghead_developer").toString());
     _notes->setText(q.value("pkghead_notes").toString());
     _enabled->setChecked(q.value("enabled").toBool());
+    _priorEnabledState = _enabled->isChecked();
     _indev->setChecked(q.value("pkghead_indev").toBool());
     if (DEBUG)    qDebug("package::populate() select pkghead complete");
   }
