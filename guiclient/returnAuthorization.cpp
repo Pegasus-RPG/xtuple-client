@@ -845,7 +845,7 @@ void returnAuthorization::sCheckAuthorizationNumber()
     query.prepare( "SELECT rahead_id "
                    "FROM rahead "
                    "WHERE (rahead_number=:rahead_number)" );
-    query.bindValue(":rahead_number", _authNumber->text().toInt());
+    query.bindValue(":rahead_number", _authNumber->text());
     query.exec();
     if (query.first())
     {
