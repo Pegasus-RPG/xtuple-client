@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
       {
         haveEnhancedAuth = true;
         _enhancedAuth = true;
-        if(argument.contains("=no"))
+        if(argument.contains("=no") || argument.contains("=false"))
           _enhancedAuth = false;
       }
       else if (argument.contains("-requireSSL"))
