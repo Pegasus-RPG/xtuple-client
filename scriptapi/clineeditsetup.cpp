@@ -8,8 +8,20 @@
  * to be bound by its terms.
  */
 
-#include "custcluster.h"
+#include "clineeditsetup.h"
+
 #include <QtScript>
+
+QScriptValue CLineEditTypesToScriptValue(QScriptEngine *engine,
+                                         const CLineEdit::CLineEditTypes &type)
+{
+  return QScriptValue(engine, (int)type);
+}
+
+void CLineEditTypesFromScriptValue(const QScriptValue &obj, CLineEdit::CLineEditTypes &type)
+{
+  type = (CLineEdit::CLineEditTypes)obj.toInt32();
+}
 
 void setupCLineEdit(QScriptEngine *engine)
 {
@@ -23,4 +35,6 @@ void setupCLineEdit(QScriptEngine *engine)
   widget.setProperty("ActiveCustomersAndProspects",QScriptValue(engine, CLineEdit::ActiveCustomersAndProspects),QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("CLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
 }

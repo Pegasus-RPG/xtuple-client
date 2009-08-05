@@ -120,6 +120,12 @@ void CLineEdit::setSilentId(int pId)
                  "  <? if exists(\"active\") ?>"
                  "   AND (cust_active)"
                  "  <? endif ?>"
+                 "  <? if exists(\"customer_extraclause\") ?>"
+                 "  AND (<? literal(\"customer_extraclause\") ?>)"
+                 "  <? endif ?>"
+                 "  <? if exists(\"all_extraclause\") ?>"
+                 "  AND (<? literal(\"all_extraclause\") ?>)"
+                 "  <? endif ?>"
                  "  )"
                  "<? endif ?>"
                  "<? if exists(\"prospect\") ?>"
@@ -138,6 +144,12 @@ void CLineEdit::setSilentId(int pId)
                  "  WHERE ( (prospect_id=<? value(\"id\") ?>) "
                  "  <? if exists(\"active\") ?>"
                  "   AND (prospect_active)"
+                 "  <? endif ?>"
+                 "  <? if exists(\"prospect_extraclause\") ?>"
+                 "  AND (<? literal(\"prospect_extraclause\") ?>)"
+                 "  <? endif ?>"
+                 "  <? if exists(\"all_extraclause\") ?>"
+                 "  AND (<? literal(\"all_extraclause\") ?>)"
                  "  <? endif ?>"
                  "  )"
                  "<? endif ?>"
@@ -169,6 +181,12 @@ void CLineEdit::setSilentId(int pId)
         params.append("prospect");
         break;
     }
+    if (! _all_extraclause.isEmpty())
+      params.append("all_extraclause", _all_extraclause);
+    if (! _customer_extraclause.isEmpty())
+      params.append("customer_extraclause", _customer_extraclause);
+    if (! _prospect_extraclause.isEmpty())
+      params.append("prospect_extraclause", _prospect_extraclause);
 
     MetaSQLQuery mql(sql);
     XSqlQuery cust = mql.toQuery(params);
@@ -251,6 +269,40 @@ void CLineEdit::setType(CLineEditTypes pType)
   _type = pType;
 }
 
+void CLineEdit::setExtraClause(CLineEditTypes type, const QString &clause)
+{
+  switch (type)
+  {
+    case AllCustomers:
+    case ActiveCustomers:
+      _all_extraclause = QString::null;
+      _customer_extraclause = QString(clause);
+      _prospect_extraclause = QString::null;
+      break;
+
+    case AllProspects:
+    case ActiveProspects:
+      _all_extraclause = QString::null;
+      _customer_extraclause = QString::null;
+      _prospect_extraclause = QString(clause);
+      break;
+
+    case AllCustomersAndProspects:
+    case ActiveCustomersAndProspects:
+      _all_extraclause = QString(clause);
+      _customer_extraclause = QString::null;
+      _prospect_extraclause = QString::null;
+      break;
+
+    default:
+      _all_extraclause = QString::null;
+      _customer_extraclause = QString::null;
+      _prospect_extraclause = QString::null;
+      qWarning("%s::setExtraClause(%d, %s) called with bad type",
+               qPrintable(objectName()), type, qPrintable(clause));
+  }
+}
+
 void CLineEdit::sParse()
 {
   if (!_parsed)
@@ -267,6 +319,12 @@ void CLineEdit::sParse()
                 "  <? if exists(\"active\") ?>"
                 "   AND (cust_active)"
                 "  <? endif ?>"
+                "  <? if exists(\"customer_extraclause\") ?>"
+                "  AND (<? literal(\"customer_extraclause\") ?>)"
+                "  <? endif ?>"
+                "  <? if exists(\"all_extraclause\") ?>"
+                "  AND (<? literal(\"all_extraclause\") ?>)"
+                "  <? endif ?>"
                 "  )"
                 "<? endif ?>"
                 "<? if exists(\"prospect\") ?>"
@@ -279,6 +337,12 @@ void CLineEdit::sParse()
                 "  WHERE ((UPPER(prospect_number)=UPPER(<? value(\"number\") ?>))"
                 "  <? if exists(\"active\") ?>"
                 "   AND (prospect_active)"
+                "  <? endif ?>"
+                "  <? if exists(\"prospect_extraclause\") ?>"
+                "  AND (<? literal(\"prospect_extraclause\") ?>)"
+                "  <? endif ?>"
+                "  <? if exists(\"all_extraclause\") ?>"
+                "  AND (<? literal(\"all_extraclause\") ?>)"
                 "  <? endif ?>"
                 "  )"
                 "<? endif ?>"
@@ -490,12 +554,10 @@ void CustInfo::setReadOnly(bool pReadOnly)
   }
 }
 
-
 void CustInfo::setId(int pId)
 {
   _customerNumber->setId(pId);
 }
-
 
 void CustInfo::setSilentId(int pId)
 {
@@ -511,6 +573,11 @@ void CustInfo::sInfo()
 {
   if(_custInfoAction)
     _custInfoAction->customerInformation(parentWidget(), _customerNumber->_id);
+}
+
+void CustInfo::setExtraClause(CLineEdit::CLineEditTypes type, const QString &clause)
+{
+  _customerNumber->setExtraClause(type, clause);
 }
 
 void CustInfo::sHandleCreditStatus(const QString &pStatus)
@@ -596,4 +663,9 @@ void CustCluster::setSilentId(int pId)
 void CustCluster::setType(CLineEdit::CLineEditTypes pType)
 {
   _custInfo->setType(pType);
+}
+
+void CustCluster::setExtraClause(CLineEdit::CLineEditTypes type, const QString &clause)
+{
+  _custInfo->setExtraClause(type, clause);
 }

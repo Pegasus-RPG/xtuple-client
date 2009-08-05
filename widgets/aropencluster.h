@@ -31,6 +31,7 @@ class XTUPLEWIDGETS_EXPORT AropenLineEdit : public VirtualClusterLineEdit
     Q_DECLARE_FLAGS(DocTypes, DocType)
 
     Q_INVOKABLE virtual DocTypes allowedDocTypes()  const;
+    Q_INVOKABLE virtual void     setExtraClause(const QString &);
     Q_INVOKABLE virtual DocType  type()             const;
     Q_INVOKABLE virtual QString  typeString()       const;
 
@@ -47,6 +48,7 @@ class XTUPLEWIDGETS_EXPORT AropenLineEdit : public VirtualClusterLineEdit
     int      _custId;
     QString  _standardExtraClause;
     QString  _typeClause;
+    QString  _userExtraClause;
 
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(AropenLineEdit::DocTypes);
@@ -61,6 +63,7 @@ class XTUPLEWIDGETS_EXPORT AropenCluster : public VirtualCluster
     AropenCluster(QWidget *, const char * = 0);
 
     Q_INVOKABLE virtual AropenLineEdit::DocTypes allowedDocTypes()  const;
+    Q_INVOKABLE virtual void                     setExtraClause(const QString&);
     Q_INVOKABLE virtual AropenLineEdit::DocType  type()             const;
     Q_INVOKABLE virtual QString                  typeString()       const;
 

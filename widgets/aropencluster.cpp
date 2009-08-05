@@ -33,6 +33,16 @@ AropenLineEdit::DocTypes AropenCluster::allowedDocTypes()  const
   return (qobject_cast<AropenLineEdit*>(_number))->allowedDocTypes();
 }
 
+void AropenLineEdit::setExtraClause(const QString &clause)
+{
+  _userExtraClause = QString(clause);
+}
+
+void AropenCluster::setExtraClause(const QString &clause)
+{
+  (qobject_cast<AropenLineEdit*>(_number))->setExtraClause(clause);
+}
+
 AropenLineEdit::DocType  AropenCluster::type()             const
 {
   return (qobject_cast<AropenLineEdit*>(_number))->type();
@@ -148,8 +158,9 @@ QString AropenLineEdit::buildExtraClause()
   if (! _custClause.isEmpty())          clauses << _custClause;
   if (! _typeClause.isEmpty())          clauses << _typeClause;
   if (! _standardExtraClause.isEmpty()) clauses << _standardExtraClause;
+  if (! _userExtraClause.isEmpty())     clauses << _userExtraClause;
 
-  setExtraClause(clauses.join(" AND "));
+  VirtualClusterLineEdit::setExtraClause(clauses.join(" AND "));
 
   if (DEBUG)
     qDebug("%s::buildExtraClause() returning %s",

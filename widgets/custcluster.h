@@ -50,6 +50,8 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
     inline bool			autoFocus() const { return _autoFocus;  }
     inline CLineEditTypes	type()	    const { return _type;       }
 
+    Q_INVOKABLE void setExtraClause(CLineEditTypes type, const QString &clause);
+
   public slots:
     void sEllipses();
     void sSearch();
@@ -88,6 +90,10 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
     bool		_autoFocus;
     bool		_dragging;
     CLineEditTypes	_type;
+
+    QString _all_extraclause;
+    QString _customer_extraclause;
+    QString _prospect_extraclause;
 };
 
 class XTUPLEWIDGETS_EXPORT CustInfoAction
@@ -118,6 +124,8 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
     inline QString                   fieldName()     const  { return _fieldName;                   }
     inline QString                   number()        const  { return _customerNumber->text();      }
     inline CLineEdit::CLineEditTypes type()          const  { return _customerNumber->type();      }
+
+    Q_INVOKABLE void setExtraClause(CLineEdit::CLineEditTypes type, const QString &);
 
     static CustInfoAction * _custInfoAction;
 
@@ -182,7 +190,8 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public QWidget
     inline CLineEdit::CLineEditTypes type()          const { return _custInfo->type();          };
     Q_INVOKABLE inline QString       number()        const { return _custInfo->number();        };
 
-    void   setType(CLineEdit::CLineEditTypes);
+    Q_INVOKABLE void   setType(CLineEdit::CLineEditTypes);
+    Q_INVOKABLE void   setExtraClause(CLineEdit::CLineEditTypes type, const QString &);
     
   signals:
     void newId(int);

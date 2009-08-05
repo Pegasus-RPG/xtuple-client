@@ -11,7 +11,11 @@
 #ifndef __CLINEEDITSETUP_H__
 #define __CLINEEDITSETUP_H__
 
+#include "custcluster.h"
+
 class QScriptEngine;
+
+Q_DECLARE_METATYPE(enum CLineEdit::CLineEditTypes)
 
 void setupCLineEdit(QScriptEngine *engine);
 
