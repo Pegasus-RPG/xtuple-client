@@ -130,38 +130,38 @@ int main(int argc, char *argv[])
     {
       QString argument(argv[intCounter]);
 
-      if (argument.contains("-databaseURL="))
+      if (argument.contains("-databaseURL=", Qt::CaseInsensitive))
       {
         haveDatabaseURL = TRUE;
         databaseURL = argument.right(argument.length() - 13);
       }
-      else if (argument.contains("-username="))
+      else if (argument.contains("-username=", Qt::CaseInsensitive))
       {
         haveUsername = TRUE;
         username = argument.right(argument.length() - 10);
       }
-      else if (argument.contains("-passwd="))
+      else if (argument.contains("-passwd=", Qt::CaseInsensitive))
       {
         havePasswd = TRUE;
         passwd     = argument.right(argument.length() - 8);
       }
-      else if (argument.contains("-noAuth"))
+      else if (argument.contains("-noAuth", Qt::CaseInsensitive))
       {
         haveUsername = TRUE;
         havePasswd   = TRUE;
       } 
-      else if (argument.contains("-enhancedAuth"))
+      else if (argument.contains("-enhancedAuth", Qt::CaseInsensitive))
       {
         haveEnhancedAuth = true;
         _enhancedAuth = true;
-        if(argument.contains("=no") || argument.contains("=false"))
+        if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
           _enhancedAuth = false;
       }
-      else if (argument.contains("-requireSSL"))
+      else if (argument.contains("-requireSSL", Qt::CaseInsensitive))
       {
         haveRequireSSL = true;
         _requireSSL = true;
-        if(argument.contains("=no"))
+        if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
           _requireSSL = false;
       }
     }
