@@ -165,7 +165,7 @@ void distributeToLocation::sDistribute()
   {
     if (_metrics->boolean("LotSerialControl"))
       q.prepare( "SELECT itemlocdist_id "
-                 "FROM itemlocdist, ls "
+                 "FROM itemlocdist "
                  "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                  " AND (itemlocdist_source_type='L')"
                  " AND (itemlocdist_source_id=:location_id)"
