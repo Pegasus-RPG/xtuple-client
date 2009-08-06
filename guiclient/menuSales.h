@@ -150,6 +150,7 @@ class menuSales : public QObject
     void sNewCustomer();
     void sSearchForCustomer();
     void sCustomers();
+    void sCustomerWorkbench();
     void sUpdateCreditStatusByCustomer();
     void sCustomerGroups();
     void sCustomerTypes();
