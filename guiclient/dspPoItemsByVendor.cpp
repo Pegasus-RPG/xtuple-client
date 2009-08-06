@@ -5,7 +5,7 @@
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
- * to be bound by its terms.
+ * to be bound by its terms.:s
  */
 
 #include "dspPoItemsByVendor.h"
@@ -392,12 +392,9 @@ void dspPoItemsByVendor::sSearch( const QString &pTarget )
   int i;
   for (i = 0; i < _poitem->topLevelItemCount(); i++)
   {
-    if ( (_poitem->topLevelItem(i)->text(4).startsWith(pTarget, Qt::CaseInsensitive) &&
-         _searchItemNum->isChecked()) ||
-         (_poitem->topLevelItem(i)->text(5).contains(pTarget, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()) ||
-         (_poitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) &&
-         _searchVendItem->isChecked()))
+    if ( _poitem->topLevelItem(i)->text(4).startsWith(pTarget, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(5).contains(pTarget, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) )
       break;
   }
 
@@ -417,12 +414,9 @@ void dspPoItemsByVendor::sSearchNext()
     currentIndex = 0;
   for (i = currentIndex; i < _poitem->topLevelItemCount(); i++)
   {
-    if ( (_poitem->topLevelItem(i)->text(4).startsWith(target, Qt::CaseInsensitive) &&
-         _searchItemNum->isChecked()) ||
-         (_poitem->topLevelItem(i)->text(5).contains(target, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()) ||
-         (_poitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) &&
-         _searchVendItem->isChecked()))
+    if ( _poitem->topLevelItem(i)->text(4).startsWith(target, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(5).contains(target, Qt::CaseInsensitive)  ||
+         _poitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) )
       break;
   }
 
