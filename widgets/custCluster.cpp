@@ -459,39 +459,78 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
 {
 //  Create and place the component Widgets
-  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 2, "layoutMain"); 
+  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 6, "layoutMain"); 
   QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 6, "layoutNumber"); 
-  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 6, "layoutButtons"); 
+  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, -1, "layoutButtons"); 
 
-  QLabel *_customerNumberLit = new QLabel(tr("Customer #:"), this, "_customerNumberLit");
+  _customerNumberLit = new QLabel(tr("Customer #:"), this, "_customerNumberLit");
   _customerNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   layoutNumber->addWidget(_customerNumberLit);
 
   _customerNumber = new CLineEdit(this, "_customerNumber");
   _customerNumber->setMinimumWidth(100);
   layoutNumber->addWidget(_customerNumber);
+  
+  _customerNumberEdit = new XLineEdit(this, "_customerNumberEdit");
+  _customerNumberEdit->setMinimumWidth(100);
+  _customerNumberEdit->setMaximumWidth(100);
+  layoutNumber->addWidget(_customerNumberEdit);
+  _customerNumberEdit->hide();
   layoutMain->addLayout(layoutNumber);
 
   _list = new QPushButton(tr("..."), this, "_list");
-#ifndef Q_WS_MAC
-        _list->setMaximumWidth(25);
-#else
-    _list->setMinimumWidth(60);
-    _list->setMinimumHeight(32);
-#endif
   _list->setFocusPolicy(Qt::NoFocus);
+  if(_x_preferences)
+  {
+    if(_x_preferences->value("DefaultEllipsesAction") == "search")
+      _list->setToolTip(tr("Search"));
+    else
+      _list->setToolTip(tr("List"));
+  }
   layoutButtons->addWidget(_list);
 
   _info = new QPushButton(tr("?"), this, "_info");
-#ifndef Q_WS_MAC
-  _info->setMaximumWidth(25);
-#else
-    _info->setMinimumWidth(60);
-    _info->setMinimumHeight(32);
-#endif
   _info->setFocusPolicy(Qt::NoFocus);
-
+  _info->setToolTip(tr("Open"));
   layoutButtons->addWidget(_info);
+  
+  _delete = new QPushButton(tr("x"), this, "_delete");
+  _delete->setFocusPolicy(Qt::NoFocus);
+  _delete->setToolTip(tr("Delete"));
+  layoutButtons->addWidget(_delete);
+  
+  _new = new QPushButton(tr("+"), this, "_new");
+  _new->setFocusPolicy(Qt::NoFocus);
+  _new->setToolTip(tr("New"));
+  layoutButtons->addWidget(_new);
+
+  _edit = new QPushButton(tr("!"), this, "_edit");
+  _edit->setFocusPolicy(Qt::NoFocus);
+  _edit->setCheckable(true);
+  _edit->setToolTip(tr("Edit Mode"));
+  layoutButtons->addWidget(_edit);
+  
+#ifndef Q_WS_MAC
+  _list->setMaximumWidth(25);
+  _info->setMaximumWidth(25);
+  _new->setMaximumWidth(25);
+  _edit->setMaximumWidth(25);
+  _delete->setMaximumWidth(25);
+#else
+  _list->setMinimumWidth(60);
+  _list->setMinimumHeight(32);
+  _info->setMinimumWidth(60);
+  _info->setMinimumHeight(32);
+  _new->setMinimumWidth(60);
+  _new->setMinimumHeight(32);
+  _edit->setMinimumWidth(60);
+  _edit->setMinimumHeight(32);
+  _delete->setMinimumWidth(60);
+  _delete->setMinimumHeight(32);
+  layoutNumber->setContentsMargins(2,0,0,0);
+  layoutButtons->setContentsMargins(0,8,0,0);
+  layoutButtons->setSpacing(6);
+#endif
   
   layoutMain->addLayout(layoutButtons);
 
@@ -513,6 +552,12 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   connect(_customerNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
 
   connect(_customerNumber, SIGNAL(creditStatusChanged(const QString &)), this, SLOT(sHandleCreditStatus(const QString &)));
+  connect(_customerNumber, SIGNAL(textChanged(const QString &)), _customerNumberEdit, SLOT(setText(const QString &)));
+  connect(_customerNumberEdit, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(setMode()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNewClicked()));
+  connect(_delete, SIGNAL(clicked()), this, SIGNAL(deleteClicked()));
+  connect(_customerNumber, SIGNAL(newId(int)), this, SLOT(setMode()));
 
   if(_x_privileges && (!_x_privileges->check("MaintainCustomerMasters") && !_x_privileges->check("ViewCustomerMasters")))
     _info->setEnabled(false);
@@ -525,6 +570,9 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   setFocusProxy(_customerNumber);
 
   _mapper = new XDataWidgetMapper(this);
+  _labelVisible = true;
+  _canEdit=true;
+  setCanEdit(false);
 }
   
 void CustInfo::setAutoFocus(bool yes)
@@ -554,6 +602,12 @@ void CustInfo::setReadOnly(bool pReadOnly)
   }
 }
 
+void CustInfo::clear()
+{
+  setId(-1);
+  _customerNumberEdit->setText("");
+}
+
 void CustInfo::setId(int pId)
 {
   _customerNumber->setId(pId);
@@ -567,6 +621,90 @@ void CustInfo::setSilentId(int pId)
 void CustInfo::setType(CLineEdit::CLineEditTypes pType)
 {
   _customerNumber->setType(pType);
+}
+
+void CustInfo::setLabelVisible(bool p)
+{
+  _customerNumberLit->setVisible(p);
+  _labelVisible=p;
+}
+
+void CustInfo::setCanEdit(bool p)
+{
+  if (_canEdit == p)
+    return;
+    
+  if (!p)
+    _edit->setChecked(false);
+
+  _canEdit=p;
+    
+  _info->setHidden(p);
+  _edit->setVisible(p);
+  _new->setVisible(p);
+  if (!p)
+  {
+    _delete->setVisible(false);
+    setEditMode(false);
+  }
+}
+
+void CustInfo::setEditMode(bool p)
+{
+  _edit->setChecked(p);
+  setMode();
+}
+
+void CustInfo::setMode()
+{
+  _delete->setDisabled(id() == -1);
+    
+  if (_editMode == _edit->isChecked())
+    return;
+ 
+  _editMode = _edit->isChecked();
+
+  if (_editMode)
+  {
+   setCanEdit(true);
+   _list->hide();
+   _delete->show();
+   _customerNumber->hide();
+   _customerNumberEdit->show();
+  }
+  else
+  {
+   _customerNumber->setText(_customerNumberEdit->text());
+   _delete->hide();
+   _list->show();
+   _customerNumberEdit->hide();
+   _customerNumber->show();
+   setId(-1);
+  }
+
+  emit editable(_editMode);
+}
+
+QString CustInfo::number()
+{
+  if (_editMode)
+    return _customerNumberEdit->text();
+  else
+    return _customerNumber->text();
+}
+
+void CustInfo::setNumber(QString number)
+{
+  if (_editMode)
+    _customerNumberEdit->setText(number);
+  else
+    _customerNumber->setNumber(number);
+}
+
+void CustInfo::sNewClicked()
+{
+  setEditMode(true);
+  setId(-1);
 }
 
 void CustInfo::sInfo()

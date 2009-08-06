@@ -112,6 +112,8 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
   Q_PROPERTY(QString                    defaultNumber  READ defaultNumber WRITE setDefaultNumber DESIGNABLE false)
   Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
   Q_PROPERTY(QString                    number         READ number        WRITE setNumber        DESIGNABLE false)
+  Q_PROPERTY(bool                       labelVisible   READ labelVisible  WRITE setLabelVisible                  )
+  Q_PROPERTY(bool                       canEdit        READ canEdit       WRITE setCanEdit                       ) 
 
   public:
     CustInfo(QWidget *parent, const char *name = 0);
@@ -122,8 +124,15 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
     Q_INVOKABLE inline bool          isValid()              { return _customerNumber->_valid;      }
     inline QString                   defaultNumber() const  { return _default;                     }
     inline QString                   fieldName()     const  { return _fieldName;                   }
-    inline QString                   number()        const  { return _customerNumber->text();      }
+    QString                   number();
     inline CLineEdit::CLineEditTypes type()          const  { return _customerNumber->type();      }
+
+    inline bool canEdit()       { return _canEdit;                  }
+    inline bool editMode()      { return _editMode;                 }
+    inline bool labelVisible()  { return _labelVisible;             }
+    
+    void setLabelVisible(bool);
+    void setCanEdit(bool);
 
     Q_INVOKABLE void setExtraClause(CLineEdit::CLineEditTypes type, const QString &);
 
@@ -131,19 +140,23 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
 
   public slots:
     int  id()    { return _customerNumber->_id;         }
+    void setEditMode(bool);
     void setSilentId(int);
     void setId(int);
     void setType(CLineEdit::CLineEditTypes);
     void setAutoFocus(bool);
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setNumber(QString number) { _customerNumber->setNumber(number);}
+    void setNumber(QString number);
     void setDefaultNumber(const QString& p)     { _default=p; };
     void setFieldName(const QString& p)         { _fieldName=p; };
+    void clear();
 
   private slots:
+    void setMode();
     void sInfo();
     void sHandleCreditStatus(const QString &);
     void updateMapperData();
+    void sNewClicked();
 
   signals:
     void newId(int);
@@ -159,16 +172,27 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
     void addressChanged(const int);
     void contactChanged(const int);
     void valid(bool);
+    void editable(bool);
+    void editingFinished();
+    void deleteClicked();
 
   private:
+    bool _labelVisible;
+    bool _canEdit;
+    bool _editMode;
+    QLabel *_customerNumberLit;
     QPushButton *_list;
     QPushButton *_info;
+    QPushButton *_new;
+    QPushButton *_edit;
+    QPushButton *_delete;
     QString     _default;
     QString     _fieldName;
     XDataWidgetMapper *_mapper;
     
   protected:
     CLineEdit   *_customerNumber;
+    XLineEdit   *_customerNumberEdit;
 };
 
 
