@@ -77,7 +77,9 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   }
 
   _itemlocdistid = -1;
-
+  
+  _locationDefaultLit->hide();
+  _locations->hide();
 }
 
 distributeInventory::~distributeInventory()
@@ -240,7 +242,6 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
   {
     _itemlocdistid = param.toInt();
     populate();
-    sPopulateDefaultSelector();
   }
 
   return NoError;
@@ -295,6 +296,9 @@ void distributeInventory::populate()
   }
 
   sFillList();
+  if (_metrics->boolean("SetDefaultLocations"))
+    sPopulateDefaultSelector();
+  
 }
 
 void distributeInventory::sSelectLocation()

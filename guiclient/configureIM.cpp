@@ -103,7 +103,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
   else
     _lotSerial->hide();
-
+  _setDefLoc->setChecked(_metrics->boolean("SetDefaultLocations"));
 
 // Shipping and Receiving
   QString metric = _metrics->value("ShipmentNumberGeneration");
@@ -201,6 +201,7 @@ void configureIM::sSave()
   _metrics->set("PostCountTagToDefault", _postToDefault->isChecked());
   _metrics->set("MultiWhs", ((!_multiWhs->isCheckable()) || (_multiWhs->isChecked())));
   _metrics->set("LotSerialControl", _lotSerial->isChecked());
+  _metrics->set("SetDefaultLocations", _setDefLoc->isChecked());
   _metrics->set("AllowAvgCostMethod", _costAvg->isChecked());
   _metrics->set("AllowStdCostMethod", _costStd->isChecked());
   _metrics->set("AllowJobCostMethod", _costJob->isChecked());
