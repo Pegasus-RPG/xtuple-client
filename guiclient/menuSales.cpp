@@ -1133,7 +1133,10 @@ void menuSales::sPrintReturnAuthForm()
 void menuSales::sNewCustomer()
 {
   ParameterList params;
-//  params.append("mode", "new");
+  if (_privileges->check("MaintainCustomerMasters"))
+    params.append("mode", "edit");
+  else
+    params.append("mode", "view");
 
   customer *newdlg = new customer();
   newdlg->set(params);

@@ -70,8 +70,8 @@ public slots:
     virtual void sPopulateSummary();
     virtual void sPrint();
     virtual void sPrintShipto();
-    virtual bool sSave( bool partial );
-    virtual void sSave();
+    virtual bool sSave();
+    virtual void sSaveClicked();
     virtual void sViewCreditCard();
     virtual void sViewShipto();
     virtual void sViewTaxreg();
@@ -114,6 +114,7 @@ private:
     QString key;
     bool _notice;
     bool _autoSaved;
+    bool _captive;
     QStandardItemModel * _custchar;
 
 };

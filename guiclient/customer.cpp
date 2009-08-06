@@ -124,7 +124,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_name");
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
   connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
   connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberEdited()));
   connect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
@@ -184,6 +184,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _crmacctid = -1;
   _NumberGen = -1;
   _autoSaved = false;
+  _captive = false;
 
   _sellingWarehouse->setId(-1);
 
@@ -273,7 +274,11 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
   param = pParams.value("cust_id", &valid);
   if (valid)
+  {
+    _number->setEditMode(true);
     setId(param.toInt());
+    _captive=true;
+  }
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -281,7 +286,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _number->setEditMode(true);
       sClear();
 
       connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
@@ -300,7 +304,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-     _number->setEditMode(true);
 
       if(!_privileges->check("MaintainCustomerMastersCustomerType")
          && (_custtype->id() != -1))
@@ -323,7 +326,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _mode = cView;
 
       _number->setEditMode(FALSE);
-      _number->setCanEdit(FALSE);
       _name->setEnabled(FALSE);
       _custtype->setEnabled(FALSE);
       _active->setEnabled(FALSE);
@@ -373,38 +375,20 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
-  else
-  {
-    _mode = cNew;
-    _number->setEditMode(false);
-
-    if(!_privileges->check("MaintainCustomerMastersCustomerType")
-       && (_custtype->id() != -1))
-      _custtype->setEnabled(false);
-
-    connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
-    connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
-    connect(_shipto, SIGNAL(itemSelected(int)), _editShipto, SLOT(animateClick()));
-    connect(_cc, SIGNAL(valid(bool)), _editCC, SLOT(setEnabled(bool)));
-    connect(_cc, SIGNAL(itemSelected(int)), _editCC, SLOT(animateClick()));
-    connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-    connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-    connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setEnabled(bool)));
-    connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
-
-    _save->setFocus();
-  }
   
   param = pParams.value("crmacct_id", &valid);
   if (valid)
+  {
+    _number->setEditMode(true);
     sLoadCrmAcct(param.toInt());
+  }
 
   param = pParams.value("prospect_id", &valid);
   if (valid)
+  {
+    _number->setEditMode(true);
     sLoadProspect(param.toInt());
-
-  if(_metrics->value("CRMAccountNumberGeneration") == "A")
-    _number->setEnabled(FALSE);
+  }
 
   return NoError;
 }
@@ -518,7 +502,7 @@ int customer::saveContact(ContactCluster* pContact)
   return saveResult;
 }
 
-bool customer::sSave(bool partial)
+bool customer::sSave()
 {
   if (_number->number().trimmed().length() == 0)
   {
@@ -764,16 +748,21 @@ bool customer::sSave(bool partial)
   return true;
 }
    
-void customer::sSave()
-{                          
+void customer::sSaveClicked()
+{           
+  _save->setFocus();
+                 
   if (! q.exec("BEGIN"))
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
-  if (!sSave(false))
+  if (!sSave())
+  {
+    q.exec("ROLLBACK;");
     return;
+  }
   
   //Check to see if this is a prospect with quotes
   bool convertQuotes = false;
@@ -814,23 +803,29 @@ void customer::sSave()
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
+      q.exec("ROLLBACK;");
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       // not fatal
     }
   }
 
   q.exec("COMMIT;");
+  _autoSaved=false;
   _NumberGen = -1;
   omfgThis->sCustomersUpdated(_custid, TRUE);
-  if (_mode=cNew && !isModal())
-    sClear();
-  else
+  if (_captive || isModal())
     close();
+  else
+    sClear();
 }
 
 void customer::sCheck()
 {
   _number->setNumber(_number->number().trimmed().toUpper());
+  
+  if (_cachedNumber == _number->number())
+    return;
+    
   if(cNew == _mode && -1 != _NumberGen && _number->number().toInt() != _NumberGen)
   {
     XSqlQuery query;
@@ -962,7 +957,7 @@ void customer::sNewShipto()
 {
   if (_mode == cNew)
   {
-    if (!sSave(true))
+    if (!sSave())
       return;
   }
   
@@ -1029,7 +1024,7 @@ void customer::sNewCharacteristic()
 {
   if (_mode == cNew)
   {
-    if (!sSave(true))
+    if (!sSave())
       return;
   }
   
@@ -1150,7 +1145,7 @@ void customer::sNewTaxreg()
 {
   if (_mode == cNew)
   {
-    if (!sSave(true))
+    if (!sSave())
       return;
   }
   
@@ -1331,6 +1326,7 @@ void customer::populate()
     sFillList();
 
     emit populated();
+    _autoSaved=false;
     return;
   }
   else if (cust.lastError().type() != QSqlError::NoError)
@@ -1426,7 +1422,7 @@ void customer::sNewCreditCard()
 {
   if (_mode == cNew)
   {
-    if (!sSave(true))
+    if (!sSave())
       return;
   }
   
@@ -1624,7 +1620,7 @@ void customer::currentTabChanged(int index)
         index == _tab->indexOf(_salesTab) ||
         index == _tab->indexOf(_accountingTab)) &&
         (_mode == cNew) )
-    sSave(true);
+    sSave();
   else
     sFillList();
 }
@@ -1776,7 +1772,7 @@ void customer::sClear()
     sFillList();
     setValid(false);
       
-    if (_number->editMode())
+    if (_number->editMode() || _mode == cNew)
       sPrepare();
 
     _comments->setId(_custid);
@@ -1786,6 +1782,7 @@ void customer::sNumberEditable(bool p)
 {
   if (p && _number->id() == -1)
     sClear();
+  _number->setFocus();
 }
 
 void customer::sPrepare()
@@ -1803,19 +1800,9 @@ void customer::sPrepare()
                   .arg(__LINE__) );
     return;
   }
+  _number->findChild<QPushButton*>("_new")->click();
+  _NumberGen = _number->number().toInt();
 
-
-  if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
-      (_metrics->value("CRMAccountNumberGeneration") == "O"))
-   && _number->number().isEmpty() )
-  {
-    q.exec("SELECT fetchCRMAccountNumber() AS number;");
-    if (q.first())
-    {
-      _number->setNumber(q.value("number").toString());
-      _NumberGen = q.value("number").toInt();
-    }
-  }
 }
 
 void customer::sDelete()
