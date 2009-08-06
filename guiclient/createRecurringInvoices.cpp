@@ -10,9 +10,11 @@
 
 #include "createRecurringInvoices.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
+#include "storedProcErrorLookup.h"
 #include "submitAction.h"
 
 createRecurringInvoices::createRecurringInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -39,7 +41,23 @@ void createRecurringInvoices::languageChange()
 
 void createRecurringInvoices::sUpdate()
 {
-  q.exec("SELECT createRecurringInvoices();");
+  q.exec("SELECT createRecurringInvoices() AS result;");
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this,
+                  storedProcErrorLookup("createRecurringInvoices", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
