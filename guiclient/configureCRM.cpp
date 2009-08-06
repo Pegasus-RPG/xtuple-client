@@ -15,20 +15,11 @@
 
 #include "guiclient.h"
 
-/*
- *  Constructs a configureCRM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   _nextInNumber->setValidator(omfgThis->orderVal());
@@ -68,7 +59,6 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
     _incdtStatus->setChecked(_metrics->boolean("CRMIncidentEmailStatus"));
     _incdtUpdated->setChecked(_metrics->boolean("CRMIncidentEmailUpdated"));
     _incdtComments->setChecked(_metrics->boolean("CRMIncidentEmailComments"));
-    _incdtPreview->setChecked(_metrics->boolean("CRMIncidentEmailPreview"));
   }
   else
   {
@@ -80,18 +70,11 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
   adjustSize();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 configureCRM::~configureCRM()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void configureCRM::languageChange()
 {
     retranslateUi(this);
@@ -122,11 +105,9 @@ void configureCRM::sSave()
     _metrics->set("CRMIncidentEmailStatus"    , _incdtStatus->isChecked());
     _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
     _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
-    _metrics->set("CRMIncidentEmailPreview"   , _incdtPreview->isChecked());
   }
   
   _metrics->load();
 
   accept();
 }
-
