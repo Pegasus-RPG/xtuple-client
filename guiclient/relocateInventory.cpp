@@ -46,8 +46,11 @@ relocateInventory::relocateInventory(QWidget* parent, const char* name, bool mod
     _warehouse->hide();
   }
 
+  _defaultToTarget->hide();
+
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate());
+
 }
 
 relocateInventory::~relocateInventory()
@@ -305,17 +308,21 @@ void relocateInventory::sFillList()
 
 void relocateInventory::sShowHideDefaultToTarget()
 {
+   if (!_metrics->boolean("SetDefaultLocations"))
+     return;
+    
    XSqlQuery query;
    query.prepare(" SELECT itemsite_id, itemsite_loccntrl, itemsite_location_id "
                  "  FROM itemsite "
-                 "  WHERE (itemsite_item_id=:item_id) ");
+                 "  WHERE (itemsite_item_id=:item_id) "
+                 "  AND (itemsite_warehous_id=:warehous_id);");
    query.bindValue(":item_id", _item->id());
+    query.bindValue(":warehous_id", _warehouse->id());
    query.exec();
    if(query.first())
    {
       if(query.value("itemsite_id").toInt() != -1
-         && query.value("itemsite_loccntrl").toBool()
-         && query.value("itemsite_location_id").toInt() != -1)
+         && query.value("itemsite_loccntrl").toBool())
       {
          _defaultToTarget->show();
         //Allow default location update with correct privileges
