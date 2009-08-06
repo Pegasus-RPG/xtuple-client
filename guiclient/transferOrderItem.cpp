@@ -366,7 +366,7 @@ void transferOrderItem::sSave()
     return;
   }
 
-  if (_qtyOrdered->toDouble() < _shippedToDate->text().toDouble())
+  if (_qtyOrdered->toDouble() < _shippedToDate->toDouble())
   {
     QMessageBox::warning(this, tr("Cannot Save Transfer Order Item"),
 			 tr("<p>You cannot set the quantity of the order to "
@@ -797,10 +797,10 @@ void transferOrderItem::populate()
   else
   {
     item.prepare("SELECT toitem_linenumber,toitem_qty_ordered, "
-     "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
-     "       toitem_freight,toitem_item_id, "
-     "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
-     "       tohead_dest_warehous_id,tohead_number, "
+                 "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
+                 "       toitem_freight,toitem_item_id, toitem_status,"
+                 "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
+                 "       tohead_dest_warehous_id,tohead_number, "
 		 "       warehous_id, warehous_code,"
 		 "       stdCost(toitem_item_id) AS stdcost,"
 		 "       itemsite_id,"
@@ -822,7 +822,7 @@ void transferOrderItem::populate()
      "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
      "       tohead_dest_warehous_id,tohead_number,toitem_freight, "
 		 "       warehous_id, warehous_code,toitem_item_id,"
-		 "       stdcost, shipitem_qty, itemsite_id;");
+		 "       toitem_status, stdcost, shipitem_qty, itemsite_id;");
     item.bindValue(":id", _toitemid);
   }
 
@@ -845,7 +845,7 @@ void transferOrderItem::populate()
       _comments->setId(_toitemid);
       _lineNumber->setText(item.value("toitem_linenumber").toString());
       _stdcost->setBaseValue(item.value("stdcost").toDouble());
-      _shippedToDate->setText(formatQty(item.value("shipitem_qty").toDouble()));
+      _shippedToDate->setDouble(item.value("shipitem_qty").toDouble());
 
       // do tax stuff before _qtyOrdered so signal cascade has data to work with
       _qtyOrdered->setDouble(item.value("toitem_qty_ordered").toDouble());
@@ -870,7 +870,7 @@ void transferOrderItem::populate()
 
   if( (cNew == _mode) || ((cEdit == _mode) &&
 			  (item.value("toitem_status").toString() == "O")) )
-    _cancel->setEnabled(_shippedToDate->text().toDouble()==0.0);
+    _cancel->setEnabled(_shippedToDate->toDouble()==0.0);
   else
     _cancel->setEnabled(false);
 }
