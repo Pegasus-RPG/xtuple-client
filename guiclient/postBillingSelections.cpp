@@ -10,17 +10,14 @@
 
 #include "postBillingSelections.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 
-/*
- *  Constructs a postBillingSelections as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "storedProcErrorLookup.h"
+
 postBillingSelections::postBillingSelections(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -33,18 +30,11 @@ postBillingSelections::postBillingSelections(QWidget* parent, const char* name, 
   _post->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postBillingSelections::~postBillingSelections()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postBillingSelections::languageChange()
 {
   retranslateUi(this);
@@ -64,24 +54,22 @@ void postBillingSelections::sPost()
   q.exec();
   if (q.first())
   {
-    if (q.value("result").toInt() == -5)
-      QMessageBox::critical( this, tr("Cannot Post one or more Invoices"),
-                             tr( "The G/L Account Assignments for one or more of the Billing Selections that you are trying to post\n"
-                                 "are not configured correctly.  Because of this, G/L Transactions cannot be posted for these.\n"
-                                 "You must contact your Systems Administrator to have this corrected before you may\n"
-                                 "post these Billing Selections." ) );
-    else if (q.value("result").toInt() < 0)
-      systemError( this, tr("A System Error occurred at postBillingSelections::%1, Error #%2.")
-                         .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
-
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("postBillingSelections", result),
+                  __FILE__, __LINE__);
+      return;
+    }
     omfgThis->sInvoicesUpdated(-1, TRUE);
     omfgThis->sBillingSelectionUpdated(-1, TRUE);
     omfgThis->sSalesOrdersUpdated(-1);
   }
-  else
-    systemError( this, tr("A System Error occurred at postBillingSelections::%1.")
-                       .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }

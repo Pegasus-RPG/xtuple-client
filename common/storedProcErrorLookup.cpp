@@ -904,6 +904,14 @@ void initErrorLookupHash()
 			-1, TR("This Billing Selection cannot be posted "
 			       "because it has already been posted."),	0, "" },
 
+  { "postBillingSelections",
+                -5, TR("The G/L Account Assignments for one or more of the "
+                       "Billing Selections that you are trying to post are not "
+                       "configured correctly. Therefore, G/L Transactions "
+                       "cannot be posted for these. You must contact your "
+                       "Systems Administrator to have this corrected before "
+                       "you may post these Billing Selections."),       0, "" },
+
   { "postCashReceipt", -1, TR("The selected Cash Receipt cannot be posted as "
 			      "the amount distributed is greater than the "
 			      "amount received. You must correct this before "
