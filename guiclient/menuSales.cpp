@@ -427,12 +427,10 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.searchForProspect", tr("&Search..."),	SLOT(sSearchForProspect()), prospectMenu, "MaintainProspects ViewProspects",	NULL, NULL, true, NULL },
    
     // Sales | Customer
-//TO DO:  Just trying this out,  will finalize before final build
-    { "so.searchForCustomer", tr("&Customer..."),	SLOT(sNewCustomer()), mainMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer") }, 
- /*   { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
+    { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.enterNewCustomer", tr("&New..."),	SLOT(sNewCustomer()), customerMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
     { "so.customers", tr("&List..."),	SLOT(sCustomers()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-    { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Search") }, */
+    { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Search") }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
     { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, "MaintainCustomerTypes ViewCustomerTypes",	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, "MaintainCustomerGroups ViewCustomerGroups",	NULL, NULL, true, NULL },
@@ -1133,10 +1131,7 @@ void menuSales::sPrintReturnAuthForm()
 void menuSales::sNewCustomer()
 {
   ParameterList params;
-  if (_privileges->check("MaintainCustomerMasters"))
-    params.append("mode", "edit");
-  else
-    params.append("mode", "view");
+  params.append("mode", "new");
 
   customer *newdlg = new customer();
   newdlg->set(params);
