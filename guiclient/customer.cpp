@@ -125,8 +125,10 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-  connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
+  connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberEdited()));
+  connect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
+  connect(_number, SIGNAL(deleteClicked()), this, SLOT(sDelete()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission()));
   connect(_newShipto, SIGNAL(clicked()), this, SLOT(sNewShipto()));
   connect(_editShipto, SIGNAL(clicked()), this, SLOT(sEditShipto()));
@@ -157,7 +159,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_creditcardsButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
+  connect(_number,  SIGNAL(editingFinished()), this, SLOT(sCheckRequired()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
@@ -271,11 +273,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
   param = pParams.value("cust_id", &valid);
   if (valid)
-  {
-    _custid = param.toInt();
-    populate();
-    emit newId(_custid);
-  }
+    setId(param.toInt());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -283,57 +281,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      if (_custid <= 0 )
-      {
-        q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
-        if (q.first())
-          _custid = q.value("cust_id").toInt();
-        else
-        {
-          systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-          return UndefinedError;
-        }
-      }
-
-      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
-          (_metrics->value("CRMAccountNumberGeneration") == "O"))
-       && _number->text().isEmpty() )
-      {
-        q.exec("SELECT fetchCRMAccountNumber() AS number;");
-        if (q.first())
-        {
-          _number->setText(q.value("number"));
-          _NumberGen = q.value("number").toInt();
-        }
-      }
-
-      _comments->setId(_custid);
-
-      _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
-      _terms->setId(_metrics->value("DefaultTerms").toInt());
-      _taxzone->setCurrentIndex(-1);
-      _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
-      _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
-      _custtype->setId(_metrics->value("DefaultCustType").toInt());
-      _backorders->setChecked(_metrics->boolean("DefaultBackOrders"));
-      _partialShipments->setEnabled(_metrics->boolean("DefaultBackOrders"));
-      _partialShipments->setChecked(_metrics->boolean("DefaultPartialShipments"));
-      _allowFFShipto->setChecked(_metrics->boolean("DefaultFreeFormShiptos"));
-      _creditLimit->setBaseValue(_metrics->value("SOCreditLimit").toDouble());
-      _creditRating->setText(_metrics->value("SOCreditRate"));
-
-      if (_metrics->value("DefaultBalanceMethod") == "B")
-        _balanceMethod->setCurrentIndex(0);
-      else if (_metrics->value("DefaultBalanceMethod") == "O")
-        _balanceMethod->setCurrentIndex(1);
-
-      if(!_privileges->check("MaintainCustomerMastersCustomerType")
-         && !_privileges->check("MaintainCustomerMastersCustomerTypeOnCreate")
-         && (_custtype->id() != -1))
-        _custtype->setEnabled(false);
+      _number->setEditMode(true);
+      sClear();
 
       connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
       connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
@@ -351,6 +300,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+     _number->setEditMode(true);
 
       if(!_privileges->check("MaintainCustomerMastersCustomerType")
          && (_custtype->id() != -1))
@@ -372,7 +322,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _number->setEnabled(FALSE);
+      _number->setEditMode(FALSE);
+      _number->setCanEdit(FALSE);
       _name->setEnabled(FALSE);
       _custtype->setEnabled(FALSE);
       _active->setEnabled(FALSE);
@@ -421,6 +372,27 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
+  }
+  else
+  {
+    _mode = cNew;
+    _number->setEditMode(false);
+
+    if(!_privileges->check("MaintainCustomerMastersCustomerType")
+       && (_custtype->id() != -1))
+      _custtype->setEnabled(false);
+
+    connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
+    connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
+    connect(_shipto, SIGNAL(itemSelected(int)), _editShipto, SLOT(animateClick()));
+    connect(_cc, SIGNAL(valid(bool)), _editCC, SLOT(setEnabled(bool)));
+    connect(_cc, SIGNAL(itemSelected(int)), _editCC, SLOT(animateClick()));
+    connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+    connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+    connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setEnabled(bool)));
+    connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
+
+    _save->setFocus();
   }
   
   param = pParams.value("crmacct_id", &valid);
@@ -548,7 +520,7 @@ int customer::saveContact(ContactCluster* pContact)
 
 bool customer::sSave(bool partial)
 {
-  if (_number->text().trimmed().length() == 0)
+  if (_number->number().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Customer Number"),
                              tr("You must enter a number for this Customer before continuing") );
@@ -619,13 +591,13 @@ bool customer::sSave(bool partial)
     }
   }
   
-  if (_number->text().trimmed() != _cachedNumber)
+  if (_number->number().trimmed() != _cachedNumber)
   {
     q.prepare( "SELECT cust_name "
                "FROM custinfo "
                "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
                "  AND (cust_id<>:cust_id);" );
-    q.bindValue(":cust_name", _number->text().trimmed());
+    q.bindValue(":cust_name", _number->number().trimmed());
     q.bindValue(":cust_id", _custid);
     q.exec();
     if (q.first())
@@ -699,7 +671,7 @@ bool customer::sSave(bool partial)
                "  :cust_gracedays, :cust_curr_id ) " );
 
   q.bindValue(":cust_id", _custid);
-  q.bindValue(":cust_number", _number->text().trimmed());
+  q.bindValue(":cust_number", _number->number().trimmed());
   q.bindValue(":cust_name", _name->text().trimmed());
   q.bindValue(":cust_salesrep_id", _salesrep->id());
   if (_corrCntct->id() > 0)
@@ -850,13 +822,16 @@ void customer::sSave()
   q.exec("COMMIT;");
   _NumberGen = -1;
   omfgThis->sCustomersUpdated(_custid, TRUE);
-  close();
+  if (_mode=cNew && !isModal())
+    sClear();
+  else
+    close();
 }
 
 void customer::sCheck()
 {
-  _number->setText(_number->text().trimmed().toUpper());
-  if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+  _number->setNumber(_number->number().trimmed().toUpper());
+  if(cNew == _mode && -1 != _NumberGen && _number->number().toInt() != _NumberGen)
   {
     XSqlQuery query;
     query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
@@ -877,7 +852,7 @@ void customer::sCheck()
              "FROM crmacct "
              "WHERE (crmacct_number=:cust_number) "
              "ORDER BY type; ");
-  q.bindValue(":cust_number", _number->text());
+  q.bindValue(":cust_number", _number->number());
   q.exec();
   if (q.first())
   {
@@ -891,16 +866,14 @@ void customer::sCheck()
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
-        _number->clear();
+        _number->setNumber(_cachedNumber);
         _number->setFocus();
         return;
       }
       else
       {
-        _custid = q.value("cust_id").toInt();
+        _number->setId(q.value("cust_id").toInt());
         _mode = cEdit;
-        populate();
-        emit newId(_custid);
         _name->setFocus();
       }
     }
@@ -913,7 +886,7 @@ void customer::sCheck()
               tr("<p>This number is currently "
                    "assigned to another CRM account.")))
       {
-        _number->setText(_cachedNumber);
+        _number->setNumber(_cachedNumber);
         _number->setFocus();
         _notice = false;
         return;
@@ -929,7 +902,7 @@ void customer::sCheck()
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
-        _number->clear();
+        _number->setId(-1);
         _number->setFocus();
         return;
       }
@@ -946,7 +919,7 @@ void customer::sCheck()
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
-        _number->clear();
+        _number->setId(-1);
         _number->setFocus();
         return;
       }
@@ -958,7 +931,7 @@ void customer::sCheck()
 
 bool customer::sCheckRequired()
 {
-    if ( ( _number->text().trimmed().length() == 0) ||
+    if ( ( _number->number().trimmed().length() == 0) ||
          (_name->text().trimmed().length() == 0) ||
          (_custtype->id() == -1) ||
          (_terms->id() == -1) ||
@@ -1277,11 +1250,13 @@ void customer::populate()
   cust.exec();
   if (cust.first())
   {
+    if (_mode == cNew)
+      _mode = cEdit;
     setValid(true);
     
     _crmacctid = cust.value("crmacct_id").toInt();
 
-    _number->setText(cust.value("cust_number"));
+    _number->setNumber(cust.value("cust_number").toString());
     _cachedNumber = cust.value("cust_number").toString();
     _name->setText(cust.value("cust_name"));
     _corrCntct->setId(cust.value("cust_corrcntct_id").toInt());
@@ -1360,7 +1335,8 @@ void customer::populate()
   }
   else if (cust.lastError().type() != QSqlError::NoError)
     systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-  setValid(false);
+  
+  sClear();
   
 }
 
@@ -1594,7 +1570,7 @@ void customer::sLoadProspect(int prospectId)
   q.exec();
   if (q.first())
   {
-    _number->setText(q.value("prospect_number").toString());
+    _number->setNumber(q.value("prospect_number").toString());
     _name->setText(q.value("prospect_name").toString());
     _active->setChecked(q.value("prospect_active").toBool());
     _taxzone->setId(q.value("prospect_taxzone_id").toInt());
@@ -1616,7 +1592,7 @@ void customer::sLoadCrmAcct(int crmacctId )
   q.exec();
   if (q.first())
   {
-    _number->setText(q.value("crmacct_number").toString());
+    _number->setNumber(q.value("crmacct_number").toString());
     _name->setText(q.value("crmacct_name").toString());
     _active->setChecked(q.value("crmacct_active").toBool());
   }
@@ -1626,6 +1602,7 @@ void customer::sLoadCrmAcct(int crmacctId )
 void customer::sNumberEdited()
 {
   _notice = TRUE;
+  sCheck();
 }
 
 void customer::closeEvent(QCloseEvent *pEvent)
@@ -1709,4 +1686,166 @@ void customer::sCancel()
                            "saved to the database. The committed changes"
                            "will not be cancelled.") );
   close();
+}
+
+void customer::setId(int p)
+{
+  _custid=p;
+  populate();
+}
+
+void customer::sClear()
+{
+    _custid = -1;
+    _crmacctid = -1;
+
+    disconnect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
+    _number->clear();
+    connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
+  
+    _cachedNumber="";
+    _name->clear();
+    _corrCntct->setId(-1);
+    _billCntct->setId(-1);
+    _creditLimit->clear();
+    _creditRating->clear();    
+    _autoUpdateStatus->setChecked(false);
+    _autoHoldOrders->setChecked(false);
+    _defaultDiscountPrcnt->clear();
+    _warnLate->setChecked(false);
+    _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+
+    _notes->clear();
+    
+    _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
+    _terms->setId(_metrics->value("DefaultTerms").toInt());
+    _taxzone->setCurrentIndex(-1);
+    _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
+    _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
+    _custtype->setId(_metrics->value("DefaultCustType").toInt());
+    _backorders->setChecked(_metrics->boolean("DefaultBackOrders"));
+    _partialShipments->setEnabled(_metrics->boolean("DefaultBackOrders"));
+    _partialShipments->setChecked(_metrics->boolean("DefaultPartialShipments"));
+    _allowFFShipto->setChecked(_metrics->boolean("DefaultFreeFormShiptos"));
+    _creditLimit->setId(CurrCluster::baseId());
+    _creditLimit->setBaseValue(_metrics->value("SOCreditLimit").toDouble());
+    _creditRating->setText(_metrics->value("SOCreditRate"));
+
+    if (_metrics->value("DefaultBalanceMethod") == "B")
+      _balanceMethod->setCurrentIndex(0);
+    else if (_metrics->value("DefaultBalanceMethod") == "O")
+      _balanceMethod->setCurrentIndex(1);
+
+    if(!_privileges->check("MaintainCustomerMastersCustomerType")
+       && !_privileges->check("MaintainCustomerMastersCustomerTypeOnCreate")
+       && (_custtype->id() != -1))
+      _custtype->setEnabled(false);
+
+    _defaultCommissionPrcnt->setDouble(0);
+    _shipchrg->setId(-1);
+    _sellingWarehouse->setId(-1);
+    _active->setChecked(true);
+    _allowFFBillto->setChecked(false);
+    _usesPOs->setChecked(false);
+    _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
+    _blanketPos->setChecked(false);
+    _currency->setId(CurrCluster::baseId());
+    _inGoodStanding->setChecked(TRUE);
+
+    _shipto->clear();
+    _custchar->removeRows(0, _custchar->rowCount());
+    _charass->clear();
+    _widgetStack->setCurrentIndex(0);
+    
+    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
+    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
+    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
+    
+    _quotes->findChild<CustCluster*>("_cust")->setId(-1);
+    _orders->findChild<CustCluster*>("_cust")->setId(-1);
+    _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
+    _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
+    _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
+    _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
+    
+   // _comments->setId(-1);
+    _documents->setId(-1);
+    
+    _print->setEnabled(false);
+    
+    sFillList();
+    setValid(false);
+      
+    if (_number->editMode())
+      sPrepare();
+
+    _comments->setId(_custid);
+}
+
+void customer::sNumberEditable(bool p)
+{
+  if (p && _number->id() == -1)
+    sClear();
+}
+
+void customer::sPrepare()
+{
+  if (_mode == cEdit)
+    _mode = cNew;
+
+  q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
+  if (q.first())
+    _custid = q.value("cust_id").toInt();
+  else
+  {
+    systemError(this, tr("A System Error occurred at %1::%2.")
+                  .arg(__FILE__)
+                  .arg(__LINE__) );
+    return;
+  }
+
+
+  if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+      (_metrics->value("CRMAccountNumberGeneration") == "O"))
+   && _number->number().isEmpty() )
+  {
+    q.exec("SELECT fetchCRMAccountNumber() AS number;");
+    if (q.first())
+    {
+      _number->setNumber(q.value("number").toString());
+      _NumberGen = q.value("number").toInt();
+    }
+  }
+}
+
+void customer::sDelete()
+{
+  QString question = tr("Are you sure that you want to delete this customer?");
+  if (QMessageBox::question(this, tr("Delete Customer?"),
+                              question,
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
+  q.prepare("SELECT deleteCustomer(:cust_id) AS result;");
+  q.bindValue(":cust_id", _number->id());
+  q.exec();
+  if (q.first())
+  {
+    int returnVal = q.value("result").toInt();
+    if (returnVal < 0)
+    {
+      QMessageBox::critical(this, tr("Cannot Delete Customer"),
+			    storedProcErrorLookup("deleteCustomer", returnVal));
+      return;
+    }
+    sClear();
+    omfgThis->sCustomersUpdated(-1, TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  _number->setFocus();
 }

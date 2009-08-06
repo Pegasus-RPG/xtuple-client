@@ -41,6 +41,7 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
+    virtual void setId(int);
     virtual void currentTabChanged(int index);
     virtual void populate();
     virtual void sCancel();
@@ -77,6 +78,10 @@ public slots:
     virtual void sLoadProspect(int);
     virtual void sLoadCrmAcct(int);
     virtual void sHandleButtons();
+    virtual void sClear();
+    virtual void sNumberEditable(bool);
+    virtual void sPrepare();
+    virtual void sDelete();
 
 protected slots:
     virtual void languageChange();
