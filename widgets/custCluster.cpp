@@ -560,11 +560,23 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   connect(_customerNumber, SIGNAL(newId(int)), this, SLOT(setMode()));
 
   if(_x_privileges && (!_x_privileges->check("MaintainCustomerMasters") && !_x_privileges->check("ViewCustomerMasters")))
+  {
     _info->setEnabled(false);
+    _delete->setEnabled(false);
+    _edit->setEnabled(false);
+    _new->setEnabled(false);
+  }
   else
   {
     connect(_customerNumber, SIGNAL(valid(bool)), _info, SLOT(setEnabled(bool)));
     connect(_customerNumber, SIGNAL(requestInfo()), this, SLOT(sInfo()));
+  }
+  
+  if(_x_privileges && (!_x_privileges->check("MaintainCustomerMasters") ))
+  {
+    _delete->setEnabled(false);
+    _edit->setEnabled(false);
+    _new->setEnabled(false);
   }
 
   setFocusProxy(_customerNumber);
@@ -657,6 +669,9 @@ void CustInfo::setEditMode(bool p)
 
 void CustInfo::setMode()
 {
+  if(_x_privileges && (!_x_privileges->check("MaintainCustomerMasters")))
+    return;
+    
   _delete->setDisabled(id() == -1);
     
   if (_editMode == _edit->isChecked())
@@ -671,6 +686,7 @@ void CustInfo::setMode()
    _delete->show();
    _customerNumber->hide();
    _customerNumberEdit->show();
+   _customerNumberEdit->setEnabled(_x_metrics && _x_metrics->value("CRMAccountNumberGeneration") != "A");
   }
   else
   {
@@ -679,6 +695,7 @@ void CustInfo::setMode()
    _list->show();
    _customerNumberEdit->hide();
    _customerNumber->show();
+   _customerNumberEdit->setEnabled(true);
    setId(-1);
   }
 
@@ -705,6 +722,16 @@ void CustInfo::sNewClicked()
 {
   setEditMode(true);
   setId(-1);
+  if(((_x_metrics && 
+       _x_metrics->value("CRMAccountNumberGeneration") == "A") ||
+      (_x_metrics->value("CRMAccountNumberGeneration") == "O"))
+   && _customerNumberEdit->text().isEmpty() )
+  {
+    XSqlQuery num;
+    num.exec("SELECT fetchCRMAccountNumber() AS number;");
+    if (num.first())
+      _customerNumberEdit->setText(num.value("number").toString());
+  }
 }
 
 void CustInfo::sInfo()

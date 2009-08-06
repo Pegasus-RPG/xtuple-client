@@ -93,6 +93,7 @@ class XTUPLEWIDGETS_EXPORT CRMAcctSearch : public VirtualSearch
 	QWidget*	_parent;
 	XCheckBox*	_searchContact;
 	XCheckBox*	_searchPhone;
+        XCheckBox*      _searchEmail;
 	XCheckBox*	_searchStreet;
 	XCheckBox*	_searchCity;
 	XCheckBox*	_searchState;

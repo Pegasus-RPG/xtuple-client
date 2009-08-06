@@ -96,6 +96,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
   _listTab->addColumn(tr("First"),      100, Qt::AlignLeft,  true, "cntct_first_name");
   _listTab->addColumn(tr("Last"),       100, Qt::AlignLeft,  true, "cntct_last_name");
   _listTab->addColumn(tr("Phone"),      100, Qt::AlignLeft,  true, "cntct_phone");
+  _listTab->addColumn(tr("Email"),      100, Qt::AlignLeft,  true, "cntct_email");
   _listTab->addColumn(tr("Address"),    100, Qt::AlignLeft|Qt::AlignTop,true,"street");
   _listTab->addColumn(tr("City"),        75, Qt::AlignLeft,  true, "addr_city");
   _listTab->addColumn(tr("State"),       50, Qt::AlignLeft,  true, "addr_state");
@@ -363,6 +364,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _searchCountry    = new XCheckBox(tr("Country"),this);
   _searchContact    = new XCheckBox(tr("Contact Name"),this);
   _searchPhone	    = new XCheckBox(tr("Contact Phone #"),this);
+  _searchEmail	    = new XCheckBox(tr("Contact Email "),this);
   _showInactive	    = new QCheckBox(tr("Show Inactive"),this);
   _searchCombo      = new XCheckBox(tr("Search Combo"),this);
   _comboCombo       = new XComboBox(this, "_comboCombo");
@@ -375,6 +377,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _searchCountry->setObjectName("_searchCountry");
   _searchContact->setObjectName("_searchContact");
   _searchPhone->setObjectName("_searchPhone");
+  _searchEmail->setObjectName("_searchEmail");
   _showInactive->setObjectName("_showInactive");
   _searchCombo->setObjectName("_searchCombo");
 
@@ -387,6 +390,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   selectorsLyt->addWidget(_searchName,		2, 0);
   selectorsLyt->addWidget(_searchContact,	1, 1);
   selectorsLyt->addWidget(_searchPhone,		2, 1);
+  selectorsLyt->addWidget(_searchEmail,		3, 1);
   selectorsLyt->addWidget(_addressLit,		0, 2);
   selectorsLyt->addWidget(_searchStreet,	1, 2);
   selectorsLyt->addWidget(_searchCity,		2, 2);
@@ -402,6 +406,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _listTab->addColumn(tr("First"),      100, Qt::AlignLeft,  true, "cntct_first_name");
   _listTab->addColumn(tr("Last"),       100, Qt::AlignLeft,  true, "cntct_last_name");
   _listTab->addColumn(tr("Phone"),      100, Qt::AlignLeft,  true, "cntct_phone");
+  _listTab->addColumn(tr("Email"),      100, Qt::AlignLeft,  true, "cntct_email");
   _listTab->addColumn(tr("Address"),    100, Qt::AlignLeft|Qt::AlignTop,true,"street");
   _listTab->addColumn(tr("City"),        75, Qt::AlignLeft,  true, "addr_city");
   _listTab->addColumn(tr("State"),       50, Qt::AlignLeft,  true, "addr_state");
@@ -412,7 +417,8 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   setTabOrder(_searchNumber,	_searchName);
   setTabOrder(_searchName,	_searchContact);
   setTabOrder(_searchContact,	_searchPhone);
-  setTabOrder(_searchPhone,	_searchStreet);
+  setTabOrder(_searchPhone,	_searchEmail);
+  setTabOrder(_searchEmail,	_searchStreet);
   setTabOrder(_searchStreet,	_searchCity);
   setTabOrder(_searchCity,	_searchState);
   setTabOrder(_searchState,	_searchPostalCode);
@@ -490,6 +496,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   connect(_searchCountry,SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchContact,SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchPhone,	 SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
+  connect(_searchEmail,	 SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchCombo,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_comboCombo,   SIGNAL(newID(int)),    this, SLOT(sFillList()));
 
@@ -527,6 +534,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("Customer Name"));
     _searchContact->setText(tr("Billing Contact Name"));
     _searchPhone->setText(tr("Billing Contact Phone #"));
+    _searchEmail->setText(tr("Billing Contact Email"));
     _addressLit->setText(tr("Billing Contact Address:"));
     break;
 
@@ -542,6 +550,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("Tax Authority Name"));
     _searchContact->setVisible(false);
     _searchPhone->setVisible(false);
+    _searchEmail->setVisible(false);
     _addressLit->setText(tr("Tax Authority Address:"));
     _listTab->hideColumn(2);
     _listTab->hideColumn(3);
@@ -565,6 +574,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("Name"));
     _searchContact->setText(tr("Billing or Primary Contact Name"));
     _searchPhone->setText(tr("Billing or Primary Contact Phone #"));
+    _searchPhone->setText(tr("Billing or Primary Contact Email"));
     _addressLit->setText(tr("Billing or Primary Contact Address:"));
     break;
 
@@ -577,6 +587,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("CRM Account Name"));
     _searchContact->setText(tr("Primary Contact Name"));
     _searchPhone->setText(tr("Primary Contact Phone #"));
+    _searchPhone->setText(tr("Primary Contact Emai"));
     _addressLit->setText(tr("Primary Contact Address:"));
     break;
   }
@@ -615,6 +626,9 @@ void CRMAcctSearch::sFillList()
 	"    <? if exists(\"searchPhone\") ?>"
 	"       OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
 	"                 cntct_fax) ~ <? value(\"searchString\") ?>)"
+	"    <? endif ?>"
+	"    <? if exists(\"searchEmail\") ?>"
+	"       OR (cntct_email ~* <? value(\"searchString\") ?>)"
 	"    <? endif ?>"
 	"    <? if exists(\"searchStreetAddr\") ?>"
 	"       OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
@@ -657,6 +671,9 @@ void CRMAcctSearch::sFillList()
 	"    <? if exists(\"searchPhone\") ?>"
 	"       OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
 	"                 cntct_fax) ~ <? value(\"searchString\") ?>)"
+	"    <? endif ?>"
+	"    <? if exists(\"searchEmail\") ?>"
+	"       OR (cntct_email ~* <? value(\"searchString\") ?>)"
 	"    <? endif ?>"
 	"    <? if exists(\"searchStreetAddr\") ?>"
 	"       OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
@@ -771,6 +788,9 @@ void CRMAcctSearch::sFillList()
 	"   OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
 	"             cntct_fax) ~ <? value(\"searchString\") ?>)"
 	"<? endif ?>"
+	"<? if exists(\"searchEmail\") ?>"
+	"   OR (cntct_email ~* <? value(\"searchString\") ?>)"
+	"<? endif ?>"
 	"<? if exists(\"searchStreetAddr\") ?>"
 	"   OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
 	"             addr_line3) ~ <? value(\"searchString\") ?>)"
@@ -842,6 +862,9 @@ void CRMAcctSearch::sFillList()
 
     if (_searchPhone->isChecked())
       params.append("searchPhone");
+      
+    if (_searchEmail->isChecked())
+      params.append("searchEmail");
   }
 
   if (_searchStreet->isChecked())
