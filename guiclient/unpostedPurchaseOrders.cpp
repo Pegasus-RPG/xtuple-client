@@ -360,10 +360,8 @@ void unpostedPurchaseOrders::sSearch( const QString &pTarget )
   int i;
   for (i = 0; i < _pohead->topLevelItemCount(); i++)
   {
-    if ( (_pohead->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive) &&
-         _searchPo->isChecked()) ||
-         (_pohead->topLevelItem(i)->text(1).contains(pTarget, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()))
+    if ( _pohead->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive) ||
+         _pohead->topLevelItem(i)->text(1).contains(pTarget, Qt::CaseInsensitive) )
       break;
   }
 
@@ -383,10 +381,8 @@ void unpostedPurchaseOrders::sSearchNext()
     currentIndex = 0;
   for (i = currentIndex; i < _pohead->topLevelItemCount(); i++)
   {
-    if ( (_pohead->topLevelItem(i)->text(0).startsWith(target, Qt::CaseInsensitive) &&
-         _searchPo->isChecked()) ||
-         (_pohead->topLevelItem(i)->text(1).contains(target, Qt::CaseInsensitive) &&
-          _searchDesc->isChecked()))
+    if ( _pohead->topLevelItem(i)->text(0).startsWith(target, Qt::CaseInsensitive) ||
+         _pohead->topLevelItem(i)->text(1).contains(target, Qt::CaseInsensitive) )
       break;
   }
 
