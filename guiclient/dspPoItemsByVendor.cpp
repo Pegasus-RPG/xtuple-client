@@ -5,7 +5,7 @@
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
- * to be bound by its terms.:s
+ * to be bound by its terms.
  */
 
 #include "dspPoItemsByVendor.h"
