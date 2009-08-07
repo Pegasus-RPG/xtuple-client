@@ -796,7 +796,7 @@ void transferOrderItem::populate()
   }
   else
   {
-    item.prepare("SELECT toitem_linenumber,toitem_qty_ordered, "
+    item.prepare("SELECT toitem_linenumber,toitem_status,toitem_qty_ordered, "
                  "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
                  "       toitem_freight,toitem_item_id, toitem_status,"
                  "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
@@ -817,7 +817,7 @@ void transferOrderItem::populate()
 		 "  AND  (itemsite_item_id=toitem_item_id)"
 		 "  AND  (itemsite_warehous_id=tohead_src_warehous_id)"
 		 "  AND  (toitem_id=:id)) "
-     "GROUP BY toitem_linenumber,toitem_qty_ordered, "
+     "GROUP BY toitem_linenumber,toitem_status,toitem_qty_ordered, "
      "       toitem_schedshipdate,toitem_notes,toitem_schedrecvdate,"
      "       tohead_id,tohead_taxzone_id,tohead_trns_warehous_id,"
      "       tohead_dest_warehous_id,tohead_number,toitem_freight, "

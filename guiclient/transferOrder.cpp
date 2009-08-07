@@ -52,7 +52,7 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete,	    SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_dstWhs,         SIGNAL(newID(int)), this, SLOT(sHandleDstWhs(int)));
   connect(_edit,	    SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_freight,    SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+//  connect(_freight,    SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   connect(_freightCurrency, SIGNAL(newID(int)), this, SLOT(sCurrencyChanged()));
   connect(_issueLineBalance, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
   connect(_issueStock,	     SIGNAL(clicked()), this, SLOT(sIssueStock()));
