@@ -27,8 +27,6 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_deleteQuote,SIGNAL(clicked()),	this,	SLOT(sDeleteQuote()));
   connect(_editQuote,	SIGNAL(clicked()),	this,	SLOT(sEditQuote()));
   connect(_newQuote,	SIGNAL(clicked()),	this,	SLOT(sNewQuote()));
@@ -547,6 +545,7 @@ void prospect::populate()
   }
 
   sFillQuotesList();
+  emit populated();
 }
 
 void prospect::closeEvent(QCloseEvent *pEvent)
