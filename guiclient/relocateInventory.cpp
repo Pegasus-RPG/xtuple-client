@@ -165,13 +165,13 @@ void relocateInventory::sMove()
     { _qty->text().length() == 0 || _qty->toDouble() <= 0,
       tr("<p>You must enter a positive Quantity before posting this Transaction."),
       _qty },
-    { _source->currentItem() == 0,
+    { _source->id() < 0,
       tr("<p>You must select a Source Location before relocating Inventory."),
       _source },
-    { _target->currentItem() == 0,
+    { _target->id() < 0,
       tr("<p>You must select a Target Location before relocating Inventory."),
       _target },
-    { _source->currentItem() && _target->currentItem() &&
+    { _source->id() > 0 && _target->id() > 0 &&
       ((XTreeWidgetItem *)_source->currentItem())->id() ==
         ((XTreeWidgetItem *)_target->currentItem())->id(),
       tr("<p>Please select different Locations for the Source and Target."),
