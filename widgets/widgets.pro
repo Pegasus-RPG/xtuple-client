@@ -72,6 +72,7 @@ HEADERS += \
            plugins/polineeditplugin.h \
            plugins/projectclusterplugin.h \
            plugins/projectlineeditplugin.h \
+           plugins/quoteclusterplugin.h\
            plugins/raclusterplugin.h\
            plugins/revisionclusterplugin.h\
            plugins/shiftclusterplugin.h \
@@ -156,6 +157,7 @@ SOURCES    += widgets.cpp \
               alarms.cpp alarmMaint.cpp \
               cmheadcluster.cpp \
               invoiceCluster.cpp \
+              quotecluster.cpp \
               xspinbox.cpp \
               xsqlrelationaldelegate.cpp \
 
@@ -210,6 +212,7 @@ HEADERS    += widgets.h \
               file.h \
               alarms.h alarmMaint.h \
               cmheadcluster.h \
+              quotecluster.h \
               invoicecluster.h \
               xspinbox.h \
               xsqlrelationaldelegate.h \
