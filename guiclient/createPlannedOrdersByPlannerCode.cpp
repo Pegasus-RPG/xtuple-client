@@ -51,7 +51,6 @@ void createPlannedOrdersByPlannerCode::sCreate()
     return;
   MetaSQLQuery mql = mqlLoad("schedule", "create");
   q = mql.toQuery(params);
-  q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
