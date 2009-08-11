@@ -53,6 +53,7 @@
 #include "version.h"
 #include "xmainwindow.h"
 #include "xdialog.h"
+#include "errorLog.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -517,6 +518,12 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   }
 
   collectMetrics();
+}
+
+GUIClient::~GUIClient()
+{
+  errorLogListener::destroy();
+  //omfgThis = 0;
 }
 
 bool GUIClient::singleCurrency()

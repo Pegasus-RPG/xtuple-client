@@ -26,6 +26,13 @@ void errorLogListener::initialize()
   listener = new errorLogListener();
 }
 
+void errorLogListener::destroy()
+{
+  if(listener)
+    delete listener;
+  listener = 0;
+}
+
 errorLog::errorLog(QWidget* parent, const char * name, Qt::WFlags flags)
     : XWidget(parent, name, flags)
 {
@@ -62,7 +69,10 @@ errorLogListener::errorLogListener(QObject * parent)
   XSqlQuery::addErrorListener(this);
 }
 
-errorLogListener::~errorLogListener() {}
+errorLogListener::~errorLogListener()
+{
+  XSqlQuery::removeErrorListener(this);
+}
 
 void errorLogListener::error(const QString & sql, const QSqlError & error)
 {

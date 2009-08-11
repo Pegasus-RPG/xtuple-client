@@ -41,6 +41,7 @@ class errorLogListener : public QObject, public XSqlQueryErrorListener {
 
     virtual void error(const QString &, const QSqlError&);
     static void initialize();
+    static void destroy();
 
   public slots:
     void clear();

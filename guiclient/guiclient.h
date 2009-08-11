@@ -184,6 +184,7 @@ class GUIClient : public QMainWindow
   
   public:
     GUIClient(const QString &, const QString &);
+    virtual ~GUIClient();
 
     void setCaption();
     void initMenuBar();
