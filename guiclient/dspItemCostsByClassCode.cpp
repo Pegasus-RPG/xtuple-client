@@ -10,33 +10,26 @@
 
 #include "dspItemCostsByClassCode.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "updateActualCostsByItem.h"
 #include "postCostsByItem.h"
 
-/*
- *  Constructs a dspItemCostsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ParameterGroup::ClassCode);
@@ -49,18 +42,11 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* na
   _itemcost->addColumn(tr("% Var."),      _costColumn,  Qt::AlignRight,  false,  "percent_variance" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemCostsByClassCode::~dspItemCostsByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemCostsByClassCode::languageChange()
 {
   retranslateUi(this);
@@ -85,10 +71,8 @@ enum SetResponse dspItemCostsByClassCode::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspItemCostsByClassCode::sPrint()
+bool dspItemCostsByClassCode::setParams(ParameterList &params)
 {
-  ParameterList params;
-
   _classCode->appendValue(params);
 
   if(_onlyShowZero->isChecked())
@@ -96,6 +80,15 @@ void dspItemCostsByClassCode::sPrint()
 
   if(_onlyShowDiff->isChecked())
     params.append("onlyShowDiffCosts");
+
+  return true;
+}
+
+void dspItemCostsByClassCode::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("ItemCostsByClassCode", params);
 
@@ -169,42 +162,59 @@ void dspItemCostsByClassCode::sPostCosts()
 
 void dspItemCostsByClassCode::sFillList()
 {
-  QString sql( "SELECT item_id, item_number, description, "
-               "       uom_name, scost, acost, "
-	       "CASE WHEN (scost = 0) THEN NULL " 
-	       "ELSE ((acost - scost) / scost)"      
-	       "END AS percent_variance,  "
-	       "'percent' AS percent_variance_xtnumericrole, "
-	       "CASE WHEN (scost = 0) THEN NULL "
-	       "WHEN (((acost - scost) / scost) < 0) THEN 'error' "    
-	       "ELSE NULL "
-	       "END AS percent_variance_qtforegroundrole, "
-               "       'cost' AS scost_xtnumericrole,"
-               "       'cost' AS acost_xtnumericrole "
-               "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "              uom_name, stdcost(item_id) AS scost, actcost(item_id) AS acost"
-               "       FROM item, classcode, uom"
-               "       WHERE ((item_classcode_id=classcode_id)"
-               "         AND  (item_inv_uom_id=uom_id)" );
 
-  if (_classCode->isSelected())
-    sql += " AND (classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (classcode_code ~ :classcode_pattern)";
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q.exec("SELECT locale_cost_scale "
+         "FROM locale, usr "
+         "WHERE ((usr_locale_id=locale_id) AND (usr_username=CURRENT_USER));");
+  if (q.first())
+    params.append("costscale", q.value("locale_cost_scale").toInt());
+  else
+    params.append("costscale", decimalPlaces("cost"));
 
-  sql += ") ) AS data "
-         "WHERE ( (true) ";
-
-  if (_onlyShowZero->isChecked())
-    sql += "AND ((scost=0) OR (acost=0)) ";
-
-  if (_onlyShowDiff->isChecked())
-    sql += "AND (scost != acost) ";
-
-  sql += ") ORDER BY item_number";
-
-  q.prepare(sql);
-  _classCode->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql("SELECT item_id, item_number, description, "
+                   "       uom_name, scost, acost, "
+                   "       CASE WHEN (scost = 0) THEN NULL " 
+                   "       ELSE ((acost - scost) / scost)"      
+                   "       END AS percent_variance,  "
+                   "       'percent' AS percent_variance_xtnumericrole, "
+                   "       CASE WHEN (scost = 0) THEN NULL "
+                   "       WHEN (((acost - scost) / scost) < 0) THEN 'error' "
+                   "       ELSE NULL "
+                   "       END AS percent_variance_qtforegroundrole, "
+                   " <? if exists(\"onlyShowDiffCosts\") ?>"
+                   "       CASE WHEN (scost != acost"
+                   "              AND ABS(scost - acost) < 10 ^ (-1 * <? value(\"costscale\") ?>))"
+                   "            THEN 'altemphasis' END AS qtforegroundrole,"
+                   " <? endif ?>" 
+                   "       'cost' AS scost_xtnumericrole,"
+                   "       'cost' AS acost_xtnumericrole "
+                   "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+                   "              uom_name, stdcost(item_id) AS scost, actcost(item_id) AS acost"
+                   "       FROM item, classcode, uom"
+                   "       WHERE ((item_classcode_id=classcode_id)"
+                   "         AND  (item_inv_uom_id=uom_id)"
+                   " <? if exists(\"classcode_id\") ?>"
+                   "      AND (classcode_id=<? value(\"classcode_id\") ?>)"
+                   " <? elseif exists(\"classcode_pattern\") ?>"
+                   "      AND (classcode_code ~ <? value(\"classcode_pattern\") ?>)"
+                   " <? endif ?>" 
+                   ") ) AS data "
+                   "WHERE ( true "
+                   " <? if exists(\"onlyShowZeroCosts\") ?>"
+                   "    AND ((scost=0) OR (acost=0)) "
+                   " <? endif ?>" 
+                   " <? if exists(\"onlyShowDiffCosts\") ?>"
+                   "    AND (scost != acost) "
+                   " <? endif ?>" 
+                   ") ORDER BY item_number;");
+  q = mql.toQuery(params);
   _itemcost->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
