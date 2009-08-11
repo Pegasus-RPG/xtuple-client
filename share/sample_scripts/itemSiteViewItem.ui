@@ -66,6 +66,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="_viewItemSite">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Item Site</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -106,6 +116,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>330</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_itemsite</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_viewItemSite</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>334</x>
      <y>57</y>
     </hint>
    </hints>

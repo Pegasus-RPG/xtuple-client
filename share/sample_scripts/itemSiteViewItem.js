@@ -9,6 +9,7 @@
 var _itemsite = mywindow.findChild("_itemsite");
 var _site     = mywindow.findChild("_site");
 var _view     = mywindow.findChild("_view");
+var _viewis   = mywindow.findChild("_viewItemSite");
 
 _itemsite.addColumn(qsTr("Item Number"),     -1, Qt.AlignLeft, true, "item_number");
 _itemsite.addColumn(qsTr("Loc. Controlled"), -1, Qt.AlignRight,true, "itemsite_loccntrl");
@@ -19,14 +20,14 @@ function sFillList()
   var params = new Object;
   params.site = _site.id();
 
-  var qry = toolbox.executeQuery('SELECT item_id, item_number, '
+  var qry = toolbox.executeQuery('SELECT item_id, itemsite_id, item_number, '
                                + '       itemsite_loccntrl, itemsite_controlmethod '
                                + 'FROM itemsite '
                                + '     JOIN item ON (itemsite_item_id=item_id) '
                                + 'WHERE itemsite_warehous_id=<? value("site") ?> '
                                + 'ORDER BY item_number;',
                                params);
-  _itemsite.populate(qry);
+  _itemsite.populate(qry, true);
 }
 
 function sViewItem()
@@ -37,10 +38,10 @@ function sViewItem()
 
   // here's the interesting line:    
   var newdlg = toolbox.openWindow("item", 0, 0, 0);
-  /*                               ^^^^   ^  ^  ^- window flag
-                                    |     |  +- modality
-                                    |     +- parent
-                                    +- open an instance of this class
+  /*                               ^      ^  ^  ^- window flag
+                                   |      |  +- modality
+                                   |      +- parent
+                                   +- open an instance of this class
    The "item" class is defined as a QWidget (look at item.ui). If we set the
    parent to mywindow then the item window will appear as a widget within
    mywindow, which we don't want. Therefore set the parent to 0, which means
@@ -54,7 +55,34 @@ function sViewItem()
   newdlg.set(params);
 }
 
+function sViewItemSite()
+{
+  var params = new Object();
+  params.itemsite_id= _itemsite.altId();
+  params.mode       = "view";
+
+  // here's one interesting line for opening a QDialog:    
+  var newdlg = toolbox.openWindow("itemSite", mywindow, Qt.WindowModal, Qt.Sheet);
+  /*                               ^          ^         ^               ^- window flag
+                                   |          |         +- modality
+                                   |          +- parent
+                                   +- open an instance of this class
+   The "itemsite" class is defined as a QDialog (look at itemsite.ui). By
+   setting the parent to mywindow we're saying that the itemsite window
+   should be cleaned up when mywindow eventually gets closed. We're also
+   saying how the Window modality should work: block input to mywindow
+   until the Item Site window gets closed.
+  */
+ 
+  newdlg.set(params);
+
+  // QDialog objects have the exec() method, so we can capture the result
+  var result = newdlg.exec();
+  print("Item Site window returned " + result); // here we send it to stderr
+}
+
 _site["newID(int)"].connect(sFillList);
 _view.clicked.connect(sViewItem);
+_viewis.clicked.connect(sViewItemSite);
 
 sFillList();
