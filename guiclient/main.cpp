@@ -52,6 +52,8 @@ Q_IMPORT_PLUGIN(xTuplePlugin)
 
 QString __password;
 
+#define DEBUG false
+
 int main(int argc, char *argv[])
 {
   Q_INIT_RESOURCE(guiclient);
@@ -118,7 +120,7 @@ int main(int argc, char *argv[])
 #endif
 
   // Try and load a default translation file and install it
-  QTranslator defaultTranslator(0);
+  QTranslator defaultTranslator(&app);
   if (defaultTranslator.load("default.qm", app.applicationDirPath()))
     app.installTranslator(&defaultTranslator);
 
@@ -286,7 +288,6 @@ int main(int argc, char *argv[])
   _privileges = new Privileges();
 
   // Load the translator and set the locale from the User's preferences
-  QTranslator translator(0);
   _splash->showMessage(QObject::tr("Loading Translation Dictionary"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   XSqlQuery langq("SELECT * "
@@ -341,16 +342,21 @@ int main(int argc, char *argv[])
     {
       bool langFound = false;
 
+      QTranslator *translator = new QTranslator(&app);
       for (QStringList::Iterator fit = files.begin(); fit != files.end(); ++fit)
       {
         for(QStringList::Iterator pit = paths.begin(); pit != paths.end(); ++pit)
         {
-          qDebug("looking for %s in %s",
+          if (DEBUG)
+            qDebug("looking for %s in %s",
                    (*fit).toAscii().data(), (*pit).toAscii().data());
-          if (translator.load(*fit, *pit))
+          if (translator->load(*fit, *pit))
           {
-            app.installTranslator(&translator);
+            app.installTranslator(translator);
             langFound = true;
+            qDebug("installed %s/%s",
+                   (*pit).toAscii().data(), (*fit).toAscii().data());
+            translator = new QTranslator(&app);
             break;
           }
         }
