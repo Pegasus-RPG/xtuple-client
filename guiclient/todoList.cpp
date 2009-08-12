@@ -118,7 +118,7 @@ void todoList::languageChange()
 
 void todoList::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem; 
+  int menuItem;
 
   bool editPriv =
       (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
@@ -128,12 +128,12 @@ void todoList::sPopulateMenu(QMenu *pMenu)
       (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
 
-  menuItem = pMenu->insertItem(tr("New To-do..."), this, SLOT(sNew()), 0);
+  menuItem = pMenu->insertItem(tr("New To-Do..."), this, SLOT(sNew()), 0);
   pMenu->setItemEnabled(menuItem, editPriv);
 
   if (_todoList->currentItem()->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Edit To-do..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->insertItem(tr("Edit To-Do..."), this, SLOT(sEdit()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
 
     menuItem = pMenu->insertItem(tr("View To-Do..."), this, SLOT(sView()), 0);
@@ -144,10 +144,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
   }
 
   pMenu->addSeparator();
-  
+
   menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sNewIncdt()), 0);
   pMenu->setItemEnabled(menuItem,  _privileges->check("MaintainIncidents"));
-  
+
   if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty()) ||
        _todoList->altId() == 2)
   {
@@ -158,7 +158,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 				    _privileges->check("MaintainIncidents"));
   }
   pMenu->addSeparator();
-  
+
   if (_todoList->altId() == 3)
   {
     menuItem = pMenu->insertItem(tr("Edit Task"), this, SLOT(sEditTask()), 0);
@@ -168,8 +168,8 @@ void todoList::sPopulateMenu(QMenu *pMenu)
       _privileges->check("MaintainProjects"));
     pMenu->addSeparator();
   }
-    
-  if (_todoList->altId() >= 3)  
+
+  if (_todoList->altId() >= 3)
   {
     menuItem = pMenu->insertItem(tr("Edit Project"), this, SLOT(sEditProject()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProjects"));
@@ -200,7 +200,7 @@ enum SetResponse todoList::set(const ParameterList& pParams)
     handlePrivs();
     sFillList();
   }
-  
+
   param = pParams.value("run", &valid);
   if (valid)
     sFillList();
@@ -386,14 +386,14 @@ void todoList::setParams(ParameterList &params)
     params.append("incidents");
   if (_projects->isChecked())
     params.append("projects");
-  
-    
+
+
   if (_assignedTo->isChecked())
     params.append("assignedTo");
   else
-    params.append("ownedBy");  
+    params.append("ownedBy");
   _usr->appendValue(params);
-  
+
   if (_duedateGroup->isChecked())
   {
     params.append("dueStartDate", _dueDates->startDate());
@@ -429,7 +429,7 @@ void todoList::sFillList()
     _todoList->clear();
     return;
   }
-     
+
   MetaSQLQuery mql = mqlLoad("todolist", "detail");
   ParameterList params;
   setParams(params);
