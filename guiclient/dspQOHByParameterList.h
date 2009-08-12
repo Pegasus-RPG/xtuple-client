@@ -45,7 +45,6 @@ protected slots:
 private:
     QButtonGroup* _costsGroupInt;
     QButtonGroup* _showGroupInt;
-    QButtonGroup* _orderByGroupInt;
 };
 
 #endif // DSPQOHBYPARAMETERLIST_H

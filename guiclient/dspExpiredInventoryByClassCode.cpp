@@ -31,26 +31,17 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
   _costsGroupInt->addButton(_usePostedCosts);
 
-  _orderByGroupInt = new QButtonGroup(this);
-  _orderByGroupInt->addButton(_itemNumber);
-  _orderByGroupInt->addButton(_expirationDate);
-  _orderByGroupInt->addButton(_inventoryValue);
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ParameterGroup::ClassCode);
-  _inventoryValue->setEnabled(_showValue->isChecked());
 
   _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
@@ -105,13 +96,6 @@ void dspExpiredInventoryByClassCode::sPrint()
 
   if (_usePostedCosts->isChecked())
     params.append("usePostedCosts");
-
-  if (_inventoryValue->isChecked())
-    params.append("orderByInventoryValue");
-  else if(_expirationDate->isChecked())
-    params.append("orderByExpirationDate");
-  else
-    params.append("orderByItemNumber");
 
   orReport report("ExpiredInventoryByClassCode", params);
   if (report.isValid())
@@ -284,12 +268,7 @@ void dspExpiredInventoryByClassCode::sFillList()
 
   sql += ") ) AS data ";
 
-  if (_itemNumber->isChecked())
-    sql += "ORDER BY warehous_code, item_number;";
-  else if (_expirationDate->isChecked())
-    sql += "ORDER BY warehous_code, itemloc_expiration;";
-  else
-    sql += "ORDER BY warehous_code, noNeg(cost * itemloc_qty) DESC;";
+  sql += "ORDER BY warehous_code, item_number;";
 
   q.prepare(sql);
   if (_perishability->isChecked())

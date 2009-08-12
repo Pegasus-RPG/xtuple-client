@@ -168,12 +168,8 @@ void dspTimePhasedSalesByCustomerGroup::sFillList()
   else if (_customerGroup->isPattern())
     sql += " AND (custgrp_name ~ :custgrp_pattern)";
 
-  if (_byCustomer->isChecked())
-    sql += ") "
-           "ORDER BY cust_number;";
-  else if (_bySales->isChecked())
-    sql += ") "
-           "ORDER BY bucket1 DESC;";
+  sql += ") "
+         "ORDER BY cust_number;";
 
   q.prepare(sql);
   _customerGroup->bindValue(q);
@@ -218,10 +214,7 @@ ParameterList dspTimePhasedSalesByCustomerGroup::buildParameters()
     periodList.append(((XTreeWidgetItem*)selected[i])->id());
   params.append("period_id_list", periodList);
 
-  if (_byCustomer->isChecked())
-    params.append("orderByCustomer");
-  else if (_bySales->isChecked())
-    params.append("orderBySales");
+  params.append("orderByCustomer");
 
   return params;
 }

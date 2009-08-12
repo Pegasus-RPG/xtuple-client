@@ -39,7 +39,6 @@ protected slots:
 
 private:
     QButtonGroup* _costsGroupInt;
-    QButtonGroup* _orderByGroupInt;
 
 };
 

@@ -173,10 +173,7 @@ void dspTimePhasedSalesByCustomer::sCalculate()
   else if (_customerType->isPattern())
     sql += "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern))) ";
 
-  if (_byCustomer->isChecked())
-    sql += "ORDER BY cust_number;";
-  else if (_bySales->isChecked())
-    sql += "ORDER BY bucket1 DESC;";
+  sql += "ORDER BY cust_number;";
 
   q.prepare(sql);
   _customerType->bindValue(q);
@@ -221,10 +218,7 @@ ParameterList dspTimePhasedSalesByCustomer::buildParameters()
 
   params.append("period_id_list", periodList);
 
-  if (_bySales->isChecked())
-    params.append("orderBySales");
-  else /*if(_byCustomer->isChecked())*/
-    params.append("orderByCustomer");
+  params.append("orderByCustomer");
 
   return params;
 }

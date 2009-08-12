@@ -36,10 +36,6 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _showGroupInt->addButton(_showPositive);
   _showGroupInt->addButton(_showNegative);
 
-  _orderByGroupInt = new QButtonGroup(this);
-  _orderByGroupInt->addButton(_byItemNumber);
-  _orderByGroupInt->addButton(_byValue);
-
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -376,10 +372,7 @@ void dspQOHByParameterList::sFillList()
   sql += ") ) AS data "
          "ORDER BY warehous_code";
 
-  if (_byItemNumber->isChecked())
-    sql += ", item_number;";
-  else
-    sql += ", noNeg(cost * qoh) DESC;";
+  sql += ", item_number;";
 
   q.prepare(sql);
   q.bindValue(":none", tr("None"));
