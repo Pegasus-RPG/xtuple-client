@@ -1271,12 +1271,31 @@ void GUIClient::sCustomCommand()
     else if(cmd.toLower().startsWith("!openurl"))
     {
       //allow a file or Url to be opened from a custom command directly
+      // backwards compatibility with original patch - deprecated usage
       QString urltext = cmd.mid(8, cmd.length()).trimmed();
-      //If url scheme is missing, we'll assume it is "file" for now.
-      QUrl url(urltext);
-      if (url.scheme().isEmpty())
-        url.setScheme("file");
-      QDesktopServices::openUrl(url);
+      if (! urltext.isEmpty())
+      {
+        qWarning("Deprecated usage of !openurl. Use cmdarg.");
+        //If url scheme is missing, we'll assume it is "file" for now.
+        QUrl url(urltext);
+        if (url.scheme().isEmpty())
+          url.setScheme("file");
+        QDesktopServices::openUrl(url);
+      }
+      // end of deprecated usage
+      q.prepare("SELECT cmdarg_arg "
+                "FROM cmdarg "
+                "WHERE (cmdarg_cmd_id=:cmd_id) "
+                "ORDER BY cmdarg_order;");
+      q.bindValue(":cmd_id", it.value());
+      q.exec();
+      while (q.next())
+      {
+        QUrl url(q.value("cmdarg_arg").toString());
+        if (url.scheme().isEmpty())
+          url.setScheme("file");
+        QDesktopServices::openUrl(url);
+      }
     }
     else
     {
