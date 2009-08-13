@@ -134,63 +134,59 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
-  <sql>SELECT formatMoney( noNeg(invchead_freight + invchead_misc_amount +
-                          head_tax + item_tax +
-                          COALESCE(SUM(ROUND(((invcitem_billed * invcitem_qty_invuomratio) *
-                                              (invcitem_price / COALESCE(invcitem_price_invuomratio,1))),2)), 0) -
-                          MAX(total_allocated)) ) AS f_totaldue,
-      formatMoney(invchead_misc_amount) AS f_misc,
-      formatMoney(head_tax + item_tax) AS f_tax,
-      formatMoney(invchead_freight) AS f_freight,
-      formatMoney(invchead_payment +
-                  (SELECT COALESCE(SUM(arapply_applied), 0) AS applied
-                   FROM arapply LEFT OUTER JOIN
-                        invchead ON (arapply_target_docnumber = invchead_invcnumber)
-                   WHERE ((invchead_id = &lt;? value("invchead_id") ?>)
-                      AND (arapply_source_doctype = 'K')))) AS f_payment,
-      formatMoney(MAX(total_allocated)) AS f_allocated,
-      invchead_notes,
-      invchead_misc_descrip
-FROM invchead
-     LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id)
-     LEFT OUTER JOIN item ON (invcitem_item_id=item_id),
-    (SELECT COALESCE(SUM(taxhist_tax), 0) AS head_tax
-     FROM invcheadtax
-     WHERE (taxhist_parent_id =  &lt;? value("invchead_id") ?>)) AS headtaxdata,
-    (SELECT COALESCE(SUM(taxhist_tax), 0) AS item_tax
-     FROM invcitem JOIN invcitemtax ON (taxhist_parent_id=invcitem_id)
-     WHERE (invcitem_invchead_id =  &lt;? value("invchead_id") ?>)) AS itemtaxdata,
-    (SELECT COALESCE(SUM(CASE WHEN((aropen_amount - aropen_paid) >=
-                       currToCurr(aropenco_curr_id, aropen_curr_id,
-                          aropenco_amount, aropen_docdate))
-           THEN currToCurr(aropenco_curr_id, invchead_curr_id,
-                   aropenco_amount, aropen_docdate)
-           ELSE currToCurr(aropen_curr_id, invchead_curr_id,
-                   aropen_amount - aropen_paid, aropen_docdate)
-           END),0) AS total_allocated
-     FROM aropenco, aropen, cohead, invchead
-    WHERE ( (aropenco_aropen_id=aropen_id)
-      AND   (aropenco_cohead_id=cohead_id)
-      AND   ((aropen_amount - aropen_paid) > 0)
-      AND   (cohead_number=invchead_ordernumber)
-      AND   (NOT invchead_posted)
-      AND   (invchead_id=&lt;? value("invchead_id") ?>) )
-    UNION
-    SELECT COALESCE(SUM(currToCurr(arapply_curr_id, t.aropen_curr_id,
-                                   arapply_applied, t.aropen_docdate)),0) AS total_allocated
-     FROM arapply, aropen s, aropen t, invchead
-    WHERE ( (s.aropen_id=arapply_source_aropen_id)
-      AND   (arapply_target_aropen_id=t.aropen_id)
-      AND   (arapply_target_doctype='I')
-      AND   (arapply_target_docnumber=invchead_invcnumber)
-      AND   (arapply_source_aropen_id=s.aropen_id)
-      AND   (invchead_posted)
-      AND   (invchead_id=&lt;? value("invchead_id") ?>) )
-    ) AS totalalloc
-WHERE (invchead_id=&lt;? value("invchead_id") ?>)
-GROUP BY invchead_freight, invchead_misc_amount, head_tax, item_tax, invchead_payment,
-         invchead_notes, invchead_misc_descrip
-;</sql>
+  <sql>SELECT *,
+        formatMoney(invchead_misc_amount) AS f_misc,
+        formatMoney(invchead_tax)         AS f_tax,
+        formatMoney(invchead_freight)     AS f_freight,
+        formatMoney(invchead_payment)     AS f_payment,
+        formatMoney(noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
+                          itemtotal - total_allocated)) AS f_totaldue,
+        formatMoney(noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
+                          itemtotal - total_allocated) - (invchead_payment+applied)) AS f_netdue,
+        formatMoney(total_allocated) AS f_allocated
+  FROM (SELECT invchead_misc_amount, invchead_tax, invchead_freight,
+               invchead_payment, invchead_notes, invchead_misc_descrip,
+               SUM(COALESCE(ROUND(invcitem_billed *
+                                  invcitem_qty_invuomratio *
+                                  invcitem_price /
+                                  COALESCE(invcitem_price_invuomratio,1), 2), 0))
+               AS itemtotal,
+               SUM(COALESCE(arapply_applied, 0)) AS applied,
+               COALESCE(
+               CASE WHEN invchead_posted THEN
+                  (SELECT SUM(COALESCE(currToCurr(arapply_curr_id, t.aropen_curr_id,
+                                                  arapply_applied, t.aropen_docdate), 0))
+                   FROM arapply, aropen s, aropen t
+                   WHERE ( (s.aropen_id=arapply_source_aropen_id)
+                     AND   (arapply_target_aropen_id=t.aropen_id)
+                     AND   (arapply_target_doctype='I')
+                     AND   (arapply_target_docnumber=invchead_invcnumber)
+                     AND   (arapply_source_aropen_id=s.aropen_id)))
+               ELSE
+                  (SELECT SUM(COALESCE(CASE WHEN((aropen_amount - aropen_paid) >=
+                                                 currToCurr(aropenco_curr_id, aropen_curr_id,
+                                                            aropenco_amount, aropen_docdate))
+                                            THEN currToCurr(aropenco_curr_id, invchead_curr_id,
+                                                            aropenco_amount, aropen_docdate)
+                                            ELSE currToCurr(aropen_curr_id, invchead_curr_id,
+                                                            aropen_amount - aropen_paid,
+                                                            aropen_docdate)
+                                       END, 0))
+                    FROM aropenco, aropen, cohead
+                   WHERE ( (aropenco_aropen_id=aropen_id)
+                     AND   (aropenco_cohead_id=cohead_id)
+                     AND   ((aropen_amount - aropen_paid) > 0)
+                     AND   (cohead_number=invchead_ordernumber)))
+               END, 0) AS total_allocated
+        FROM invchead
+             LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id)
+             LEFT OUTER JOIN arapply ON (arapply_target_docnumber=invchead_invcnumber AND arapply_source_doctype='K')
+        WHERE (invchead_id=&lt;? value("invchead_id") ?>)
+        GROUP BY invchead_freight, invchead_misc_amount, invchead_tax,
+                 invchead_payment, invchead_notes, invchead_misc_descrip,
+                 total_allocated
+  ) AS dummy_outer
+  ;</sql>
  </querysource>
  <querysource>
   <name>allocatedCMs</name>
