@@ -28,9 +28,6 @@ to be bound by its terms.</comment>
        <property name="text">
         <string>Show Complete</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
