@@ -283,7 +283,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory | Receiving
     { "menu",	tr("R&eceiving"),  (char*)receivingMenu,	mainMenu,	"true",	NULL, NULL, true , NULL },
     { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, "EnterReceipts", NULL, NULL, true, NULL },
-    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, "EnterReceipts", QPixmap(":/images/postReceipts.png"), toolBar,  true, "List Unposted Receipts" },
+    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, "EnterReceipts", QPixmap(":/images/postReceipts.png"), toolBar,  true, tr("List Unposted Receipts") },
     { "separator", NULL, NULL, receivingMenu, "true", NULL, NULL, true, NULL },
     { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, "EnterReturns", NULL, NULL, true, NULL },
     { "separator",			NULL,				  NULL,				receivingMenu, "true", NULL, NULL, true , NULL },
@@ -294,7 +294,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Shipping
     { "menu",	tr("&Shipping"),  (char*)shippingMenu,	mainMenu,	"true",	NULL, NULL, true , NULL },
-    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, "Issue to Shipping" },
+    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, tr("Issue to Shipping") },
     { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, "ViewShipping", NULL, NULL, true, NULL },
     { "separator", NULL, NULL, shippingMenu, "true", NULL, NULL, true, NULL },
     { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, "ShipOrders", NULL, NULL, true, NULL },

@@ -122,7 +122,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
  
     // Schedule | Schedule | MRP
     { "menu",	tr("Run &MRP"), (char*)plannedOrdersMrpMenu,	plannedOrdersMenu,	"true",	NULL, NULL, true	, NULL },
-    { "ms.runMRPByPlannerCode", tr("by &Planner Code..."), SLOT(sCreatePlannedReplenOrdersByPlannerCode()), plannedOrdersMrpMenu, "CreatePlannedOrders", QPixmap(":/images/runMrpByPlannerCode.png"), toolBar, true , "Run MRP by Planner Code" },
+    { "ms.runMRPByPlannerCode", tr("by &Planner Code..."), SLOT(sCreatePlannedReplenOrdersByPlannerCode()), plannedOrdersMrpMenu, "CreatePlannedOrders", QPixmap(":/images/runMrpByPlannerCode.png"), toolBar, true , tr("Run MRP by Planner Code") },
     { "ms.runMRPByItem", tr("by &Item..."), SLOT(sCreatePlannedReplenOrdersByItem()), plannedOrdersMrpMenu, "CreatePlannedOrders", NULL, NULL, true , NULL },
     
     { "separator", NULL, NULL, plannedOrdersMenu, "true", NULL, NULL, true , NULL },
