@@ -30,6 +30,8 @@
 #include "xTupleDesignerActions.h"
 #include "xmainwindow.h"
 
+QDesignerFormEditorInterface *xTupleDesigner::_formeditor = 0;
+
 class WidgetBoxWindow : public XMainWindow
 {
   public:
@@ -131,13 +133,16 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _propinspwindow = 0;
   _slotedwindow = 0;
 
-  _formeditor = QDesignerComponents::createFormEditor(omfgThis);
-  if (! _formeditor)
+  if(!_formeditor)
   {
-    QMessageBox::information(this, QString("Cannot edit the UI"), 
-                             QString("<p>The application could not open the "
-                                     "form editor."));
-    return;
+    _formeditor = QDesignerComponents::createFormEditor(omfgThis);
+    if (! _formeditor)
+    {
+      QMessageBox::information(this, QString("Cannot edit the UI"), 
+                               QString("<p>The application could not open the "
+                                       "form editor."));
+      return;
+    }
   }
 
   QDesignerComponents::createTaskMenu(_formeditor, this);
@@ -174,7 +179,6 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
     _formmenu->addAction(a);
 
   _toolmenu = _menubar->addMenu(tr("&Tool"));
-  QDesignerComponents::initializeResources();
 
   _widgetwindow   = new WidgetBoxWindow(this);
   _objinspwindow  = new ObjectInspectorWindow(this);

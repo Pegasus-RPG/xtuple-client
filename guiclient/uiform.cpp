@@ -17,6 +17,7 @@
 #include <QSqlError>
 #include <QTextStream>
 #include <QVariant>
+#include <QtDesigner/QDesignerComponents>
 
 #include "customCommand.h"
 #include "package.h"
@@ -302,6 +303,12 @@ void uiform::sImport()
 
 void uiform::sEdit()
 {
+  static bool xdinit = false;
+  if(!xdinit)
+  {
+    QDesignerComponents::initializeResources();
+    xdinit = true;
+  }
   xTupleDesigner *designer = new xTupleDesigner(this, "xTupleDesigner", Qt::Window);
   designer->setFormEnabled(_enabled->isChecked());
   designer->setFormId(_uiformid);

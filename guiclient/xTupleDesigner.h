@@ -69,7 +69,7 @@ class xTupleDesigner : public XMainWindow
   private:
     friend class WidgetBoxWindow;
     QWidget                             *_designer;
-    QDesignerFormEditorInterface        *_formeditor;
+    static QDesignerFormEditorInterface *_formeditor;
     bool                                 _formEnabled;
     int                                  _formId;
     QDesignerFormWindowInterface        *_formwindow;
