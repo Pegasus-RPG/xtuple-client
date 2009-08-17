@@ -850,11 +850,13 @@ void invoice::sTaxDetail()
   {
     taxq.prepare("UPDATE invchead SET invchead_taxzone_id = :taxzone,"
                  " invchead_freight = :freight,"
-		         " invchead_invcdate = :invchead_invcdate "
-		         "WHERE (invchead_id = :invchead_id);");
+                 " invchead_invcdate = :invchead_invcdate, "
+                 " invchead_curr_id = :curr_id "
+                 "WHERE (invchead_id = :invchead_id);");
     if (_taxzone->isValid())
       taxq.bindValue(":taxzone",	_taxzone->id());
     taxq.bindValue(":freight",		_freight->localValue());
+    taxq.bindValue(":curr_id",          _custCurrency->id());
     taxq.bindValue(":invchead_id",	_invcheadid);
     taxq.bindValue(":invchead_invcdate",_invoiceDate->date());
     taxq.exec();
