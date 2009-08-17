@@ -4,4 +4,7 @@
 
 SELECT noneg(itemprice(<? value("item_id") ?>,
                  <? value("cust_id") ?>,
-                 CAST(<? value("qty") ?> AS numeric))) AS itemprice;
+                 -1,
+                 CAST(<? value("qty") ?> AS numeric),
+                 basecurrid(),
+                 current_date)) AS itemprice;

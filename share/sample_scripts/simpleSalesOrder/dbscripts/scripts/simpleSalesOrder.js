@@ -16,32 +16,32 @@ var _editMode   = 1;
 var _viewMode   = 2;
 
 var _add		= mywindow.findChild("_add");
-var _address	= mywindow.findChild("_address");
+var _address           = mywindow.findChild("_address");
 var _cancel		= mywindow.findChild("_cancel");
-var _cust      	= mywindow.findChild("_cust");
-var _custTab	= mywindow.findChild("_custTab");
+var _cust              = mywindow.findChild("_cust");
+var _custTab           = mywindow.findChild("_custTab");
 var _extendedPrice	= mywindow.findChild("_extendedPrice");
 var _item		= mywindow.findChild("_item");
 var _itemGroup    	= mywindow.findChild("_itemGroup");
-var _itemsTab	= mywindow.findChild("_itemsTab");
+var _itemsTab          = mywindow.findChild("_itemsTab");
 var _number		= mywindow.findChild("_number");
 var _qty		= mywindow.findChild("_qty");
 var _remove		= mywindow.findChild("_remove");
 var _sale		= mywindow.findChild("_sale");
-var _saleitem	= mywindow.findChild("_saleitem");
-var _saleitems	= mywindow.findChild("_saleitems");
-var _salesrep	= mywindow.findChild("_salesrep");
+var _saleitem          = mywindow.findChild("_saleitem");
+var _saleitems         = mywindow.findChild("_saleitems");
+var _salesrep          = mywindow.findChild("_salesrep");
 var _save		= mywindow.findChild("_save");
-var _scheddate	= mywindow.findChild("_scheddate");
+var _scheddate         = mywindow.findChild("_scheddate");
 var _shipto		= mywindow.findChild("_shipto");
 var _shiptoGroup	= mywindow.findChild("_shiptoGroup");
-var _shipvia	= mywindow.findChild("_shipvia")
+var _shipvia           = mywindow.findChild("_shipvia")
 var _site		= mywindow.findChild("_site");
-var _siteLit	= mywindow.findChild("_siteLit");
+var _siteLit           = mywindow.findChild("_siteLit");
 var _subtotal   	= mywindow.findChild("_subtotal");
 var _tab		= mywindow.findChild("_tab");
 var _tax		= mywindow.findChild("_tax");
-var _taxauth	= mywindow.findChild("_taxauth");
+var _taxzone           = mywindow.findChild("_taxzone");
 var _total		= mywindow.findChild("_total");	
 var _unitPrice  	= mywindow.findChild("_unitPrice");
 
@@ -87,7 +87,7 @@ _saleitems["rowSelected(int)"].connect(rowSelected);
 _saleitems["valid(bool)"].connect(_remove["setEnabled(bool)"]);
 _salesrep["newID(int)"].connect(handleButtons);
 _save.clicked.connect(save);
-_taxauth["newID(int)"].connect(handleButtons);
+_taxzone["newID(int)"].connect(handleButtons);
 _unitPrice.valueChanged.connect(extension);
 
 // Misc Defaults
@@ -149,10 +149,9 @@ function extension()
 
     // Recalculate tax
     var params = new Object;
-    params.taxauth_id = _taxauth.id();
+    params.taxzone_id = _taxzone.id();
     params.item_number = _item.itemNumber();
-    params.qty = _qty.text - 0;
-    params.unit_price = _unitPrice.localValue - 0;
+    params.extension = (_qty.text - 0) * (_unitPrice.localValue - 0);
   
     var data = toolbox.executeDbQuery("simplesalesorder","itemtax",params);
     if (data.first())
@@ -167,6 +166,7 @@ function extension()
   }
   catch (e)
   {
+    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   } 
 }
@@ -175,15 +175,15 @@ function handleButtons()
 {
   var state = (_cust.id() != -1 && 
                _salesrep.id() != -1 &&
-               _taxauth.id() != -1 &&
+               _taxzone.id() != -1 &&
               (_saleitems.rowCountVisible() > 1 ||
                _item.number.length))
   _save.enabled = (state);
   _site.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
-  _taxauth.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
+  _taxzone.enabled = (!_saleitems.rowCountVisible() || !_item.isValid());
   toolbox.tabSetTabEnabled(_tab, 
 		toolbox.tabTabIndex(_tab,_itemsTab),
-		_taxauth.id() != -1)
+		_taxzone.id() != -1);
 }
 
 function itemCheck()
@@ -231,6 +231,7 @@ function itemPrice()
   }
   catch (e)
   {
+    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
 }
@@ -265,7 +266,7 @@ function populateCustomer()
     if (_populating)
       return;
     _address.setNumber(data.value("address_number"));
-    _taxauth.code = data.value("taxauth");
+    _taxzone.code = data.value("taxzone");
     _salesrep.code = data.value("salesrep");
     _shipvia.code = data.value("shipvia");
     _site.code = data.value("site");
@@ -276,7 +277,7 @@ function populateCustomer()
   {
     _address.clear();
     _salesrep.code = "";
-    _taxauth.code = "";
+    _taxzone.code = "";
     _shipvia.code = "";
   }
 }
@@ -327,10 +328,9 @@ function recalcTotals()
     _extList[i] = ext;
     _subtotal.localValue = _subtotal.localValue + ext;
 
-    params.taxauth_id = _taxauth.id();
+    params.taxzone_id = _taxzone.id();
     params.item_number = _saleitems.value(i,_itemCol);
-    params.qty = _saleitems.value(i,_qtyCol) - 0;
-    params.unit_price = _saleitems.value(i,_priceCol) - 0;
+    params.qty = (_saleitems.value(i,_qtyCol) - 0) * (_saleitems.value(i,_priceCol) - 0);
     data = toolbox.executeDbQuery("simplesalesorder","itemtax",params);
     if (data.first())
       tax = data.value("item_tax") - 0;
@@ -394,7 +394,6 @@ function rowSelected(row)
     var currentRow = _saleitem.currentIndex(row);
     if (row == currentRow)
       return;
-
     if (_itemGroup.enabled)
     {
       if (_item.isValid() == false)
@@ -404,15 +403,16 @@ function rowSelected(row)
       else if (!_qty.text.length)
         throw "You must enter a valid quantity or remove the current line."
     }
- 
     _populating = true;
     _saleitem.setCurrentIndex(row);
-    _item.enabled = !_saleitems.value(row,_statusCol).length;
+     var test = _saleitems.value(row,_statusCol);
+    _item.enabled = (test == null || !test.length);
     _itemGroup.enabled = (_saleitems.value(row,_statusCol) != "X");
     _populating = false;
   }
   catch (e)
   {
+    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
     _saleitems.selectRow(currentRow);
   }
@@ -440,6 +440,7 @@ function save()
   catch (e)
   {
     toolbox.executeRollback();
+    print(e);
     toolbox.messageBox("critical", mywindow, mywindow.windowTitle, e);
   }
   finally

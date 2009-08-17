@@ -73,11 +73,6 @@ function orderOpen(mode,number)
 {
   try
   {
-    // Make sure we can support the functionality here
-    if (mode == 0 && metrics.value("CONumberGeneration") != "O")
-      throw "Simple sales order requires that sales order numbering be set to "
-	+ "'Automatic, Allow override' to create new orders."
-
     if (metrics.value("CalculateFreight") == "t")
       throw "Simple sales order does not support freight calculations.  Please "
           	+ "use the standard sales order window or disable calculated freight " 		  	+ "values in Sales Configuration.";
@@ -88,7 +83,7 @@ function orderOpen(mode,number)
     if (data.first())
       throw data.value("message");
 
-    var childwnd = toolbox.openWindow("simpleSalesOrder", mywindow, 0, 1);
+    var childwnd = toolbox.openWindow("simpleSalesOrder", mywindow, 1, 1);
     var wparams = new Object;
 
     wparams.mode = mode;

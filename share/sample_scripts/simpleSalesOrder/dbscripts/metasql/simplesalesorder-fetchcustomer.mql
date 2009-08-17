@@ -4,7 +4,7 @@
 
 SELECT COALESCE(salesrep_number,'') AS salesrep, 
   cust_shipvia AS shipvia, 
-  taxauth_code AS taxauth,
+  taxzone_code AS taxzone,
   cust_ffshipto,
   COALESCE(sa.addr_number,ba.addr_number,'') AS address_number,
   COALESCE(cw.warehous_code,pw.warehous_code,'') AS site
@@ -18,5 +18,5 @@ FROM custinfo
   LEFT OUTER JOIN addr ba ON (ba.addr_id=bc.cntct_addr_id)
   LEFT OUTER JOIN whsinfo cw ON (cust_preferred_warehous_id=cw.warehous_id)
   LEFT OUTER JOIN whsinfo pw ON (fetchprefwarehousid()=pw.warehous_id)
-  LEFT OUTER JOIN taxauth ON (taxauth_id=cust_taxauth_id)
+  LEFT OUTER JOIN taxzone ON (taxzone_id=cust_taxzone_id)
 WHERE (cust_id=<? value("cust_id") ?>);
