@@ -1274,7 +1274,7 @@ void workOrder::sChangeWOQty()
 void workOrder::sDspRunningAvailability()
 {
   q.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
-  q.bindValue(":id", _woid);
+  q.bindValue(":id", _woIndentedList->id());
   q.exec();
   if (q.first())
   {
@@ -1481,7 +1481,7 @@ void workOrder::sNewWooper()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("wo_id", _woid);
+  params.append("wo_id", _woIndentedList->id());
 
   woOperation newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -1542,7 +1542,7 @@ void workOrder::sNewMatl()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("wo_id", _woid);
+  params.append("wo_id", _woIndentedList->id());
 
   woMaterialItem newdlg(this, "", TRUE);
   newdlg.set(params);
