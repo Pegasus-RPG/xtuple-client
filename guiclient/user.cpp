@@ -219,8 +219,7 @@ bool user::save()
     q.exec();
     if (!q.first())
     {
-      q.prepare( QString( "SELECT createUser(:username, :createUsers); ")
-                 .arg(username) );
+      q.prepare("SELECT createUser(:username, :createUsers);");
       q.bindValue(":username", username);
       q.bindValue(":createUsers", QVariant(_createUsers->isChecked()));
       q.exec();

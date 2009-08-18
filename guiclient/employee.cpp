@@ -274,7 +274,7 @@ void employee::sSave(const bool pClose)
   if (_user->isChecked() && pClose)
   {
     q.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
-    q.bindValue(":username", _code->text());
+    q.bindValue(":username", _code->text().lower());
     q.exec();
     if (q.first())
     {
@@ -300,7 +300,7 @@ void employee::sSave(const bool pClose)
         // don't use sUser() because it asks too many questions
         ParameterList params;
         params.append("mode",     "new");
-        params.append("username", _code->text());
+        params.append("username", _code->text().lower());
         user newdlg(this);
         newdlg.set(params);
         newdlg.exec();
@@ -739,13 +739,13 @@ void employee::sUser()
   usrq.prepare("SELECT usr_username "
                "FROM usr "
                "WHERE (usr_username=:empcode);");
-  usrq.bindValue(":empcode", _code->text());
+  usrq.bindValue(":empcode", _code->text().lower());
   usrq.exec();
   if (usrq.first() && _privileges->check("MaintainUsers"))
   {
     ParameterList params;
     params.append("mode",     (_mode == cView) ? "view" : "edit");
-    params.append("username", _code->text());
+    params.append("username", _code->text().lower());
     user newdlg(this);
     newdlg.set(params);
     newdlg.exec();
@@ -767,7 +767,7 @@ void employee::sUser()
       sSave(false);
       ParameterList params;
       params.append("mode",     "new");
-      params.append("username", _code->text());
+      params.append("username", _code->text().lower());
       user newdlg(this);
       newdlg.set(params);
       newdlg.exec();
@@ -858,7 +858,7 @@ void employee::sHandleButtons()
 {
   XSqlQuery usrq;
   usrq.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
-  usrq.bindValue(":username", _code->text());
+  usrq.bindValue(":username", _code->text().lower());
   usrq.exec();
   if (usrq.first())
   {
