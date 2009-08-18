@@ -297,7 +297,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QCheckBox" name="_setDefLoc">
              <property name="text">
-              <string>Set default location while transacting location controlled items</string>
+              <string>Set default Location while transacting Location-controlled Items</string>
              </property>
             </widget>
            </item>
