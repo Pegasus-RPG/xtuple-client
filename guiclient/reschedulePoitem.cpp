@@ -13,15 +13,8 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a reschedulePoitem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 reschedulePoitem::reschedulePoitem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -37,21 +30,14 @@ reschedulePoitem::reschedulePoitem(QWidget* parent, const char* name, bool modal
   _po->setType(cPOOpen);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 reschedulePoitem::~reschedulePoitem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void reschedulePoitem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
@@ -119,7 +105,6 @@ void reschedulePoitem::sPopulate(int pPoitemid)
 {
   if (pPoitemid == -1)
   {
-    _original->clear();
     _current->clear();
     _new->clear();
   }
@@ -132,7 +117,6 @@ void reschedulePoitem::sPopulate(int pPoitemid)
     q.exec();
     if (q.first())
     {
-      _original->setDate(q.value("poitem_duedate").toDate());
       _current->setDate(q.value("poitem_duedate").toDate());
     }
   }
