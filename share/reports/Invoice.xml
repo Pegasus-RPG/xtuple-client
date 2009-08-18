@@ -136,16 +136,22 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
   <name>GroupExtended</name>
   <sql>SELECT *,
         formatMoney(invchead_misc_amount) AS f_misc,
-        formatMoney(invchead_tax)         AS f_tax,
+        formatMoney(head_tax + item_tax)  AS f_tax,
         formatMoney(invchead_freight)     AS f_freight,
         formatMoney(invchead_payment)     AS f_payment,
-        formatMoney(noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
+        formatMoney(noNeg(invchead_freight + invchead_misc_amount + head_tax + item_tax +
                           itemtotal - total_allocated)) AS f_totaldue,
-        formatMoney(noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
+        formatMoney(noNeg(invchead_freight + invchead_misc_amount + head_tax + item_tax +
                           itemtotal - total_allocated) - (invchead_payment+applied)) AS f_netdue,
         formatMoney(total_allocated) AS f_allocated
-  FROM (SELECT invchead_misc_amount, invchead_tax, invchead_freight,
+  FROM (SELECT invchead_misc_amount, invchead_freight,
                invchead_payment, invchead_notes, invchead_misc_descrip,
+               (SELECT COALESCE(SUM(taxhist_tax), 0) -- COALESCE(SUM()) because taxhist_tax is NOT NULL
+                FROM invcheadtax                     -- and we want 0 if there is no taxhist
+                WHERE (taxhist_parent_id=invchead_id)) AS head_tax,
+               (SELECT COALESCE(SUM(taxhist_tax), 0)
+                FROM invcitem JOIN invcitemtax ON (taxhist_parent_id=invcitem_id)
+                WHERE (invcitem_invchead_id=invchead_id)) AS item_tax,
                SUM(COALESCE(ROUND(invcitem_billed *
                                   invcitem_qty_invuomratio *
                                   invcitem_price /
@@ -182,7 +188,7 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
              LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id)
              LEFT OUTER JOIN arapply ON (arapply_target_docnumber=invchead_invcnumber AND arapply_source_doctype='K')
         WHERE (invchead_id=&lt;? value("invchead_id") ?>)
-        GROUP BY invchead_freight, invchead_misc_amount, invchead_tax,
+        GROUP BY invchead_freight, invchead_misc_amount, head_tax, item_tax,
                  invchead_payment, invchead_notes, invchead_misc_descrip,
                  total_allocated
   ) AS dummy_outer
@@ -1578,7 +1584,8 @@ order by cosmisc_shipdate;</sql>
       <query>allocatedCMs</query>
       <column>allocated_invccurr</column>
      </data>
-     <tracktotal builtin="true" >extprice</tracktotal>
+     <format builtin="true" >extprice</format>
+     <tracktotal/>
     </field>
    </foot>
   </group>
