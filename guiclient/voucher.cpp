@@ -51,7 +51,15 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
   _poNumber->setAllowedTypes(OrderLineEdit::Purchase);
   _poNumber->setInfoVisible(false);
-
+  _poNumber->setLabel("");
+  _poNumber->findChild<QWidget*>("_name")->hide();
+  _poNumber->findChild<QWidget*>("_description")->hide();
+  _poNumber->findChild<QWidget*>("_fromLit")->hide();
+  _poNumber->findChild<QWidget*>("_from")->hide();
+  _poNumber->findChild<QWidget*>("_toLit")->hide();
+  _poNumber->findChild<QWidget*>("_to")->hide();
+  _poNumber->setMinimumHeight(32);
+  
   /* a VendorCluster keeps the vend_id handy and handles address info easily */
   _vendorLit->setVisible(false);
   _vendor->setVisible(false);
