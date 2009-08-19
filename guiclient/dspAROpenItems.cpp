@@ -47,7 +47,6 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_print,          SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_printItem,      SIGNAL(clicked()), this, SLOT(sPrintItem()));
-//  connect(_printStatement, SIGNAL(clicked()), this, SLOT(sPrintStatement()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_customerSelector, SIGNAL(updated()), _aropen, SLOT(clear()));
@@ -1076,8 +1075,6 @@ void dspAROpenItems::sHandleStatementButton()
     _print->setMenu(0);
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   }
-//  _printStatement->setEnabled(_customerSelector->isValid() &&
-//                              _customerSelector->isSelectedCust());
 }
 
 
