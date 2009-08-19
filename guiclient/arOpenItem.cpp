@@ -341,6 +341,8 @@ void arOpenItem::sSave()
         reset();
 	return;
       }
+      if(_printOnPost->isChecked())
+        sPrintOnPost(_aropenid); 
       reset();
     }
   }
@@ -350,15 +352,6 @@ void arOpenItem::sSave()
     if (_mode == cNew)
       reset();
     return;
-  }
-
-  q.exec("SELECT MAX(aropen_id) AS max_aropen_id FROM aropen;");
-  if (q.first())
-  {
-    if(_printOnPost->isChecked())
-    {
-      sPrintOnPost(q.value("max_aropen_id").toInt()); 
-    }
   }
 }
 
@@ -576,6 +569,7 @@ void arOpenItem::populate()
 
 void arOpenItem::reset()
 {
+  _aropenid = -1;
   _cust->setId(-1);
   _docDate->clear();
   _dueDate->clear();
