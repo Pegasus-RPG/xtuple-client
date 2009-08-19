@@ -204,6 +204,9 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <layout class="QVBoxLayout" name="_buttonLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="_close">
            <property name="text">
@@ -228,32 +231,6 @@ to be bound by its terms.</comment>
           <widget class="QPushButton" name="_print">
            <property name="text">
             <string>&amp;Print</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>10</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_printStatement">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Print Statement</string>
            </property>
           </widget>
          </item>

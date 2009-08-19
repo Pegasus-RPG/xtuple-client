@@ -47,7 +47,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_print,          SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_printItem,      SIGNAL(clicked()), this, SLOT(sPrintItem()));
-  connect(_printStatement, SIGNAL(clicked()), this, SLOT(sPrintStatement()));
+//  connect(_printStatement, SIGNAL(clicked()), this, SLOT(sPrintStatement()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_customerSelector, SIGNAL(updated()), _aropen, SLOT(clear()));
@@ -1058,8 +1058,26 @@ void dspAROpenItems::sFillList()
 
 void dspAROpenItems::sHandleStatementButton()
 {
-  _printStatement->setEnabled(_customerSelector->isValid() &&
-                              _customerSelector->isSelectedCust());
+  if (_customerSelector->isValid() &&
+      _customerSelector->isSelectedCust())
+  {
+    if (_print->menu())
+      return;
+    else
+      disconnect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+
+    QMenu * printMenu = new QMenu;
+    printMenu->insertItem(tr("&List..."), this, SLOT(sPrint()), 0);
+    printMenu->insertItem(tr("&Statement..."), this, SLOT(sPrintStatement()), 0);
+    _print->setMenu(printMenu);
+  }
+  else if (_print->menu())
+  {
+    _print->setMenu(0);
+    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  }
+//  _printStatement->setEnabled(_customerSelector->isValid() &&
+//                              _customerSelector->isSelectedCust());
 }
 
 
