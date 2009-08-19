@@ -498,7 +498,7 @@ menuSales::menuSales(GUIClient *pParent) :
   parent->populateCustomMenu(mainMenu, "Sales");
   QAction * m = parent->menuBar()->addMenu(mainMenu);
   if(m)
-    m->setText(tr("&Sales"));
+    m->setText(tr("S&ales"));
 }
 
 void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)

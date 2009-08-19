@@ -284,7 +284,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   parent->populateCustomMenu(mainMenu, "Products");
   QAction * m = parent->menuBar()->addMenu(mainMenu);
   if(m)
-    m->setText(tr("&Products"));
+    m->setText(tr("Produc&ts"));
 }
 
 void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numElems)

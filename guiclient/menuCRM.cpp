@@ -174,7 +174,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
   parent->populateCustomMenu(crmMenu, "CRM");
   QAction * m = parent->menuBar()->addMenu(crmMenu);
   if(m)
-    m->setText(tr("&CRM"));
+    m->setText(tr("C&RM"));
 }
   
 void menuCRM::addActionsToMenu(actionProperties acts[], unsigned int numElems)
