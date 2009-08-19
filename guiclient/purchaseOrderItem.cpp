@@ -325,7 +325,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   if (valid)
   {
     _ordered->setDouble((param.toDouble()/_invVendUOMRatio));
-    _orderQtyCache = _ordered->toDouble();
 
     if (_item->isValid())
       sDeterminePrice();
