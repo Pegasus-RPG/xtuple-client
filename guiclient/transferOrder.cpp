@@ -182,6 +182,12 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     {
       setObjectName("transferOrder new");
       _mode = cNew;
+      if ( (_metrics->value("TONumberGeneration") == "A") ||
+           (_metrics->value("TONumberGeneration") == "O")   )
+      {
+        if (! insertPlaceholder())
+          return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -348,13 +354,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     _ignoreSignals = FALSE;
 
     _status->setCurrentIndex(0);
-
-    if ( (_metrics->value("TONumberGeneration") == "A") ||
-         (_metrics->value("TONumberGeneration") == "O")   )
-    {
-      if (! insertPlaceholder())
-        return UndefinedError;
-    }
 
     setAcceptDrops(true);
     _captive = FALSE;
