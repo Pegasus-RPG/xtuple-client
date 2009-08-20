@@ -848,7 +848,9 @@ void purchaseOrder::sHandleVendor(int pVendid)
     q.bindValue(":pohead_curr_id", _poCurrency->id());
     q.exec();
 
-    q.prepare( "SELECT vend_terms_id, vend_curr_id, "
+    XSqlQuery vq;
+    // TODO: replace vend with vendinfo JOIN addr
+    vq.prepare("SELECT vend_terms_id, vend_curr_id, "
                "       vend_fobsource, vend_fob, vend_shipvia,"
                "       vend_name, vend_address1, vend_address2, vend_address3,"
                "       vend_city, vend_state, vend_zip, vend_country,"
@@ -857,23 +859,23 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "FROM vend LEFT OUTER JOIN vendaddr ON (vendaddr_vend_id=vend_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
-    q.bindValue(":vend_id", pVendid);
-    q.exec();
-    if (q.first())
+    vq.bindValue(":vend_id", pVendid);
+    vq.exec();
+    if (vq.first())
     {
-      _taxZone->setId(q.value("vendtaxzoneid").toInt());
-      _poCurrency->setId(q.value("vend_curr_id").toInt());
-      
+      _taxZone->setId(vq.value("vendtaxzoneid").toInt());
+      _poCurrency->setId(vq.value("vend_curr_id").toInt());
+
       if (_terms->id() == -1)
-        _terms->setId(q.value("vend_terms_id").toInt());
+        _terms->setId(vq.value("vend_terms_id").toInt());
 
       if (_shipVia->text().length() == 0)
-        _shipVia->setText(q.value("vend_shipvia"));
+        _shipVia->setText(vq.value("vend_shipvia"));
 
-      if (q.value("vend_fobsource").toString() == "V")
+      if (vq.value("vend_fobsource").toString() == "V")
       {
         _useWarehouseFOB = FALSE;
-        _fob->setText(q.value("vend_fob"));
+        _fob->setText(vq.value("vend_fob"));
       }
       else
       {
@@ -881,18 +883,18 @@ void purchaseOrder::sHandleVendor(int pVendid)
         _fob->setText(tr("Destination"));
       }
 
-      if (q.value("vendaddrid").toInt())
+      if (vq.value("vendaddrid").toInt())
       {
         _vendaddrid = -1;
         _vendaddrCode->setText(tr("Main"));
-        _vendaddrName->setText(q.value("vend_name"));
-        _vendaddrAddr1->setText(q.value("vend_address1"));
-        _vendaddrAddr2->setText(q.value("vend_address2"));
-        _vendaddrAddr3->setText(q.value("vend_address3"));
-        _vendaddrCity->setText(q.value("vend_city"));
-        _vendaddrState->setText(q.value("vend_state"));
-        _vendaddrZipCode->setText(q.value("vend_zip"));
-        _vendaddrCountry->setText(q.value("vend_country"));
+        _vendaddrName->setText(vq.value("vend_name"));
+        _vendaddrAddr1->setText(vq.value("vend_address1"));
+        _vendaddrAddr2->setText(vq.value("vend_address2"));
+        _vendaddrAddr3->setText(vq.value("vend_address3"));
+        _vendaddrCity->setText(vq.value("vend_city"));
+        _vendaddrState->setText(vq.value("vend_state"));
+        _vendaddrZipCode->setText(vq.value("vend_zip"));
+        _vendaddrCountry->setText(vq.value("vend_country"));
       }
     }
   }
