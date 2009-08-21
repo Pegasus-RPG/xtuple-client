@@ -135,6 +135,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
   hbox->addWidget(buttons);
   
   _editmap = new QMultiMap<int, bool>();
+  _editmap2 = new QMultiMap<int, bool>();
 
   connect(_newComment, SIGNAL(clicked()), this, SLOT( sNew()));
   connect(_viewComment, SIGNAL(clicked()), this, SLOT( sView()));
@@ -220,6 +221,7 @@ void Comments::refresh()
 {
   _browser->document()->clear();
   _editmap->clear();
+  _editmap2->clear();
   if(-1 == _sourceid)
   {
     _comment->clear();
@@ -313,7 +315,7 @@ void Comments::refresh()
   while(comment.next())
   {
     _editmap->insert(comment.value("comment_id").toInt(),comment.value("editable").toBool());
-    _editmap->insert(comment.value("comment_id").toInt(),comment.value("self").toBool());
+    _editmap2->insert(comment.value("comment_id").toInt(),comment.value("self").toBool());
     
     int cid = comment.value("comment_id").toInt();
     _commentIDList.push_back(cid);
@@ -388,12 +390,13 @@ void Comments::sCheckButtonPriv(bool pValid)
 bool Comments::userCanEdit(int id)
 {
   QList<bool> values = _editmap->values(id);
+  QList<bool> values2 = _editmap2->values(id);
   
   if(values.at(0))
   {
     if(_x_privileges && _x_privileges->check("EditOthersComments") && _editable)
       return true;
-    if(_x_privileges && _x_privileges->check("EditOwnComments") && values.at(1) && _editable)
+    if(_x_privileges && _x_privileges->check("EditOwnComments") && values2.at(0) && _editable)
       return true;
   }
   return false;

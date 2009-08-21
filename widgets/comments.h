@@ -108,6 +108,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     QPushButton *_viewComment;
     QPushButton *_editComment;
     QMultiMap<int, bool> *_editmap;
+    QMultiMap<int, bool> *_editmap2;
     XCheckBox *_verbose;
 };
 
