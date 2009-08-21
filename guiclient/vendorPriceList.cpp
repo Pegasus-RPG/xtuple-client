@@ -99,12 +99,11 @@ void vendorPriceList::sQtyEntered()
 {
   for (int i = 0; i < _price->topLevelItemCount(); i++)
   {
-    if ( _qty->toDouble() >= _price->topLevelItem(i)->text(0).toDouble() )
-    {
     _price->setCurrentItem(_price->topLevelItem(i));
     _price->scrollToItem(_price->topLevelItem(i));
+
+    if ( _qty->toDouble() >= _price->currentItem()->rawValue("itemsrcp_qtybreak").toDouble() )
       break;
-    }
   }
 
   sPopulatePricing();

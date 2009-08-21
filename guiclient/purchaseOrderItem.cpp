@@ -1066,9 +1066,17 @@ void purchaseOrderItem::sVendorListPrices()
   newdlg.set(params);
   if ( (newdlg.exec() == XDialog::Accepted))
   {
-    _ordered->setDouble(newdlg._selectedQty);
-    _orderQtyCache = _ordered->toDouble();
-    sDeterminePrice();
+    if (_ordered->text().toDouble() < newdlg._selectedQty)
+    {
+      if (QMessageBox::question(this, tr("Update Quantity?"),
+                  tr("<p>You must order at least %1 to qualify for this price. Do you want to update the Quantity?").arg(QString().setNum(newdlg._selectedQty)),
+                  QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
+        return;
+  
+      _ordered->setDouble(newdlg._selectedQty);
+      _orderQtyCache = -1;
+      sDeterminePrice();
+    }
   }
 }
 
