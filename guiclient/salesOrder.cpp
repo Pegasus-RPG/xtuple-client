@@ -598,6 +598,7 @@ void salesOrder::sSaveAndAdd()
 
 bool salesOrder::save(bool partial)
 {
+qDebug("saving...");
 //  Make sure that all of the required field have been populated
   if (!_orderDate->isValid())
   {
@@ -2131,7 +2132,7 @@ void salesOrder::populate()
     so.prepare( "SELECT cohead.*,"
                 "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id,"
                 "       cohead_commission AS commission,"
-                "       COALESCE(cohead_taxzone_id,-1) AS cohead_taxzone_id,"
+                "       COALESCE(cohead_taxzone_id,-1) AS taxzone_id,"
                 "       COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id,"
@@ -2162,8 +2163,8 @@ void salesOrder::populate()
       _warehouse->setId(so.value("cohead_warehous_id").toInt());
       _salesRep->setId(so.value("cohead_salesrep_id").toInt());
       _commission->setDouble(so.value("commission").toDouble() * 100);
-      _taxzoneidCache = so.value("cohead_taxzone_id").toInt();
-      _taxZone->setId(so.value("cohead_taxzone_id").toInt());
+      _taxzoneidCache = so.value("taxzone_id").toInt();
+      _taxZone->setId(so.value("taxzone_id").toInt());
       _terms->setId(so.value("cohead_terms_id").toInt());
       _orderCurrency->setId(so.value("cohead_curr_id").toInt());
       _project->setId(so.value("cohead_prj_id").toInt());
@@ -4040,9 +4041,11 @@ void salesOrder::sCalculateTax()
 
 void salesOrder::sTaxZoneChanged()
 {
-  if (_saved)
+  if (_saved && _taxZone->id() != _taxzoneidCache)
     save(true);
+
   sCalculateTax();
+  _taxzoneidCache=_taxZone->id();
 }
 
 void salesOrder::sReserveStock()
