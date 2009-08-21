@@ -1015,7 +1015,7 @@ void crmaccount::sEditVendor()
   else
   {
     params.append("vend_id", _vendId);
-    params.append("mode", "edit]");
+    params.append("mode", "edit");
   }
 
   vendor *newdlg = new vendor(this);
