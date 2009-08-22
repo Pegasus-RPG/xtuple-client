@@ -432,7 +432,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.customers", tr("&List..."),	SLOT(sCustomers()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
     { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL  }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.CustomerWorkBench", tr("&Workbench..."),	SLOT(sCustomerWorkbench()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Workbench") }, 
+    { "so.customerWorkbench", tr("&Workbench..."),	SLOT(sCustomerWorkbench()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Workbench") }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
     { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, "MaintainCustomerTypes ViewCustomerTypes",	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, "MaintainCustomerGroups ViewCustomerGroups",	NULL, NULL, true, NULL },
