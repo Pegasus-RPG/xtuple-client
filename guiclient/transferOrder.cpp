@@ -343,15 +343,10 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 
   if (cNew == _mode)
   {
-    _ignoreSignals = TRUE;
-
-    populateOrderNumber();
     if (_orderNumber->text().isEmpty())
       _orderNumber->setFocus();
     else
       _packDate->setFocus();
-
-    _ignoreSignals = FALSE;
 
     _status->setCurrentIndex(0);
 
@@ -445,6 +440,10 @@ bool transferOrder::insertPlaceholder()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return UndefinedError;
   }
+
+  _ignoreSignals = TRUE;
+  populateOrderNumber();
+  _ignoreSignals = FALSE;
 
   q.prepare("INSERT INTO tohead ("
 	    "          tohead_id, tohead_number, tohead_src_warehous_id,"
@@ -1516,12 +1515,6 @@ void transferOrder::clear()
     _orderDate->setDate(omfgThis->dbDate(), true);
   }
 
-  populateOrderNumber();
-  if (_orderNumber->text().isEmpty())
-    _orderNumber->setFocus();
-  else
-    _srcWhs->setFocus();
-
   if ( (_metrics->value("TONumberGeneration") == "A") ||
        (_metrics->value("TONumberGeneration") == "O")   )
   {
@@ -1529,6 +1522,11 @@ void transferOrder::clear()
       return;
   }
   
+  if (_orderNumber->text().isEmpty())
+    _orderNumber->setFocus();
+  else
+    _srcWhs->setFocus();
+
   _toitem->clear();
 
   _saved = false;
