@@ -1019,7 +1019,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
                xTupleDesigner.cpp xTupleDesignerActions.cpp getscreen.cpp                             \
 
-QT += xml sql script network
+QT += xml sql script scripttools network
 QT += webkit
 
 RESOURCES += guiclient.qrc

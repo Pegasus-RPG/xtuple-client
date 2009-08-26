@@ -18,6 +18,7 @@
 #include <QShowEvent>
 #include <QtScript>
 #include <QDebug>
+#include <QScriptEngineDebugger>
 
 #include "xtsettings.h"
 #include "guiclient.h"
@@ -36,6 +37,7 @@ class XMainWindowPrivate
 
     bool _shown;
     QScriptEngine * _engine;
+    QScriptEngineDebugger * _debugger;
     QAction *_action;
 };
 
@@ -188,6 +190,11 @@ void XMainWindow::showEvent(QShowEvent *event)
         if(!_private->_engine)
         {
           _private->_engine = new QScriptEngine(this);
+          if (_preferences->boolean("EnableScriptDebug"))
+          {
+            _private->_debugger = new QScriptEngineDebugger(this);
+            _private->_debugger->attachTo(_private->_engine);
+          }
           omfgThis->loadScriptGlobals(_private->_engine);
           QScriptValue mywindow = _private->_engine->newQObject(this);
           _private->_engine->globalObject().setProperty("mywindow", mywindow);

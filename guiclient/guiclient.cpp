@@ -41,6 +41,7 @@
 #include <QScriptValue>
 #include <QBuffer>
 #include <QDesktopServices>
+#include <QScriptEngineDebugger>
 
 #include <parameter.h>
 #include <dbtools.h>
@@ -709,6 +710,8 @@ void GUIClient::showEvent(QShowEvent *event)
         if(!engine)
         {
           engine = new QScriptEngine(this);
+          QScriptEngineDebugger debugger;
+          debugger.attachTo(engine);
           loadScriptGlobals(engine);
         }
   

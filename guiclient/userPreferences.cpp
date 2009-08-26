@@ -234,6 +234,8 @@ void userPreferences::sPopulate()
   
   if (!_metrics->boolean("MultiWhs"))
     _warehouseGroup->hide();
+    
+  _debug->setChecked(_pref->boolean("EnableScriptDebug"));
 
   sFillList();
   sFillWarehouseList();
@@ -288,6 +290,8 @@ void userPreferences::sSave()
   _pref->set("AlarmEventDefault", _alarmEvent->isChecked());
   _pref->set("AlarmEmailDefault", _alarmEmail->isChecked());
   _pref->set("AlarmSysmsgDefault", _alarmSysmsg->isChecked());
+
+  _pref->set("EnableScriptDebug", _debug->isChecked());
 
   if (_currentUser->isChecked())
   {
