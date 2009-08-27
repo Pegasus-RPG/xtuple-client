@@ -68,7 +68,7 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
 
     Q_INVOKABLE inline int  id()      const { return _username->id();  }
 
-    Q_INVOKABLE inline const QString & username() const { return _username->username(); }
+    Q_INVOKABLE inline const QString username() const { return _username->username(); }
 
     Q_INVOKABLE inline bool isValid() const { return _username->_valid; }
 
