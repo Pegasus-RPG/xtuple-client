@@ -704,14 +704,15 @@ void GUIClient::showEvent(QShowEvent *event)
       sq.bindValue(":script_name", "initMenu");
       sq.exec();
       QScriptEngine * engine = 0;
+      QScriptEngineDebugger * debugger = 0;
       while(sq.next())
       {
         QString script = sq.value("script_source").toString();
         if(!engine)
         {
           engine = new QScriptEngine(this);
-          QScriptEngineDebugger debugger;
-          debugger.attachTo(engine);
+          debugger = new QScriptEngineDebugger(this);
+          debugger->attachTo(engine);
           loadScriptGlobals(engine);
         }
   
