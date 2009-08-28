@@ -316,7 +316,7 @@ void login2::sLogin()
       if (_splash)
         _splash->hide();
       QMessageBox::critical(this, tr("System Error"),
-                            tr("A System Error occurred at %1::%2:\n%1")
+                            tr("A System Error occurred at %1::%2:\n%3")
                               .arg(__FILE__).arg(__LINE__)
                               .arg(login.lastError().databaseText()));
     }
