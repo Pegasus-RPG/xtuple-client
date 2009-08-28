@@ -711,8 +711,11 @@ void GUIClient::showEvent(QShowEvent *event)
         if(!engine)
         {
           engine = new QScriptEngine(this);
-          debugger = new QScriptEngineDebugger(this);
-          debugger->attachTo(engine);
+          if (_preferences->boolean("EnableScriptDebug"))
+          {
+            debugger = new QScriptEngineDebugger(this);
+            debugger->attachTo(engine);
+          }
           loadScriptGlobals(engine);
         }
   
