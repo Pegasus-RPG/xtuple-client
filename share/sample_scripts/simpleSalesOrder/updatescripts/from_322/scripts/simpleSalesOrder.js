@@ -437,7 +437,7 @@ function save()
     if (_sale.mode == _newMode)
       prepare();
     else
-      mydialog.accept();
+      mywindow.close();
   }
   catch (e)
   {
