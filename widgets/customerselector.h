@@ -35,18 +35,18 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
       All, Selected, SelectedType, TypePattern
     };
 
-    virtual void           appendValue(ParameterList &);
-    virtual void           bindValue(XSqlQuery &);
-    virtual QString        typePattern() { return _customerType->text(); }
+    Q_INVOKABLE virtual void           appendValue(ParameterList &);
+    Q_INVOKABLE virtual void           bindValue(XSqlQuery &);
+    Q_INVOKABLE virtual QString        typePattern() { return _customerType->text(); }
     enum CustomerSelectorState  state()      { return (CustomerSelectorState)_select->currentIndex(); }
-    virtual int            custId()     { return _cust->id(); }
-    virtual int            custTypeId() { return _customerTypes->id(); }
+    Q_INVOKABLE virtual int            custId()     { return _cust->id(); }
+    Q_INVOKABLE virtual int            custTypeId() { return _customerTypes->id(); }
 
-    inline bool isAll()          { return _select->currentIndex() == All; }
-    inline bool isSelectedCust() { return _select->currentIndex() == Selected; }
-    inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
-    inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
-    virtual bool isValid();
+    Q_INVOKABLE inline bool isAll()          { return _select->currentIndex() == All; }
+    Q_INVOKABLE inline bool isSelectedCust() { return _select->currentIndex() == Selected; }
+    Q_INVOKABLE inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
+    Q_INVOKABLE inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
+    Q_INVOKABLE virtual bool isValid();
 
   public slots:
     virtual void setCustId(int p);

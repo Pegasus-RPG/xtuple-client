@@ -35,18 +35,18 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
       All, Selected, SelectedType, TypePattern
     };
 
-    virtual void           appendValue(ParameterList &);
-    virtual void           bindValue(XSqlQuery &);
-    virtual QString        typePattern() { return _vendorType->text(); }
-    enum VendorGroupState  state()      { return (VendorGroupState)_select->currentIndex(); }
-    virtual int            vendId()     { return _vend->id(); }
-    virtual int            vendTypeId() { return _vendorTypes->id(); }
+    Q_INVOKABLE virtual void           appendValue(ParameterList &);
+    Q_INVOKABLE virtual void           bindValue(XSqlQuery &);
+    Q_INVOKABLE virtual QString        typePattern() { return _vendorType->text(); };
+    enum VendorGroupState  state()      { return (VendorGroupState)_select->currentIndex(); };
+    Q_INVOKABLE virtual int            vendId()     { return _vend->id(); };
+    Q_INVOKABLE virtual int            vendTypeId() { return _vendorTypes->id(); };
 
-    inline bool isAll()          { return _select->currentIndex() == All; }
-    inline bool isSelectedVend() { return _select->currentIndex() == Selected; }
-    inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
-    inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
-    virtual bool isValid();
+    Q_INVOKABLE inline bool isAll()          { return _select->currentIndex() == All; };
+    Q_INVOKABLE inline bool isSelectedVend() { return _select->currentIndex() == Selected; };
+    Q_INVOKABLE inline bool isSelectedType() { return _select->currentIndex() == SelectedType; };
+    Q_INVOKABLE inline bool isTypePattern() { return _select->currentIndex() == TypePattern; };
+    Q_INVOKABLE virtual bool isValid();
 
   public slots:
     virtual void setVendId(int p);
