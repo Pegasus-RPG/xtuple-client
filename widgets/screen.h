@@ -14,8 +14,10 @@
 #include "widgets.h"
 #include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
+#include <xsqlquery.h>
 
 #include <QWidget>
+#include <QSqlDatabase>
 #include <QSqlIndex>
 #include <QList>
 
@@ -31,27 +33,30 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
         Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
 	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)              
-        Q_PROPERTY (Disposition         check                 READ check                DESIGNABLE false)
+        Q_PROPERTY (bool                lockRecords           READ lockRecords          WRITE setLockRecords);
 
 	public:
 		Screen(QWidget * = 0);
                 ~Screen();
 		
-                Q_INVOKABLE bool submit();
                 bool throwScriptException(const QString &message);
 		enum Modes { New, Edit, View };
                 enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
-                Disposition check();
-	
+
+                Q_INVOKABLE bool submit();
+                Q_INVOKABLE bool locked()                { return _locked;};
+                Q_INVOKABLE bool lockRecords()           { return _lock;};
+                Q_INVOKABLE Disposition check();
                 Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
-                Q_INVOKABLE XSqlTableModel    *model()   {return static_cast<XSqlTableModel*>(_mapper->model());};
+                Q_INVOKABLE XSqlTableModel    *model()   { return static_cast<XSqlTableModel*>(_mapper->model());};
                 
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
                 bool cancel();
                 bool isDirty();
+                bool tryLock();
                 int  currentIndex();
                 int  primaryKeyColumns()    const { return _keyColumns;       };
 	        QString schemaName()        const { return _schemaName;       };
@@ -73,18 +78,21 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 		void select();
                 void setCurrentIndex(int index);
 		void setFilter(QString filter)          { _model->setFilter(filter);      };
+                void setLockRecords(bool lock);
                 void setModel(XSqlTableModel *model);
 		void setMode(Modes p);
                 void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
 		void setSchemaName(QString schema);
 		void setSortColumn(QString p);
- 
 		void setTableName(QString table);
 		void setTable(QString schema, QString table);
 		void setDataWidgetMapper(XSqlTableModel *model);
+                void setWidgetsEnabled(bool enabled);
+                void unlock();
 	
 	signals:
                 void currentIndexChanged(int index);
+                void isLocked(bool);
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
 		void saved();
@@ -95,6 +103,9 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
                 bool                    _shown;
 		enum  Modes		_mode;
                 int                     _keyColumns;
+                bool                    _lock;
+                bool                    _locked;
+                qint64                  _key;
 		QString			_schemaName;
                 QString                 _sortColumn;
 		QString			_tableName;

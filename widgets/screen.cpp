@@ -15,25 +15,30 @@
 #include <QSqlField>
 #include <QScriptContext>
 #include <QScriptEngine>
+#include <QSqlDatabase>
 
 #include <openreports.h>
-
+#include <qmd5.h>
 
 Screen::Screen(QWidget *parent) : 
   QWidget(parent)
 {
   _keyColumns=1;
-  _shown=false;
+  _lock=false;
+  _locked=false;
   _mode=Edit;
+  _shown=false;
+  _key=0;
   
   _model = new XSqlTableModel;
   _mapper = new XDataWidgetMapper;
-  
+    
   connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
 }
 
 Screen::~Screen()
-{
+{ 
+  unlock();
 }
 
 Screen::Disposition Screen::check()
@@ -111,6 +116,26 @@ bool Screen::isDirty()
   return false;
 }
 
+bool Screen::submit()
+{
+  bool isSaved;
+  disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+  int i=_mapper->currentIndex();
+  _mapper->submit();  // Make sure changes committed even if user hasn't tabbed off widget
+  isSaved=_model->submitAll(); // Apply to the database
+  _mapper->setCurrentIndex(i);
+  if (!isSaved)
+  {
+    if(!throwScriptException(_model->lastError().databaseText()))
+        QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
+                          tr("Error saving %1 at %2::%3\n\n%4")
+                          .arg(_tableName).arg(__FILE__).arg(__LINE__)
+                          .arg(_model->lastError().databaseText()));
+  }
+  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+  return isSaved;
+}
+
 bool Screen::throwScriptException(const QString &message)
 { 
    QObject *ancestor = this;
@@ -130,25 +155,59 @@ bool Screen::throwScriptException(const QString &message)
    return false;
 }
 
-bool Screen::submit()
+/* Build a uinque key, then attempt to lock on postgres */
+bool Screen::tryLock()
 {
-  bool isSaved;
-  disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
-  int i=_mapper->currentIndex();
-  _mapper->submit();  // Make sure changes committed even if user hasn't tabbed off widget
-  isSaved=_model->submitAll(); // Apply to the database
-  _mapper->setCurrentIndex(i);
-  if (!isSaved)
-  {
-    if(!throwScriptException(_model->lastError().databaseText()))
-        QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
-                          tr("Error saving %1 at %2::%3\n\n%4")
-                          .arg(_tableName).arg(__FILE__).arg(__LINE__)
-                          .arg(_model->lastError().databaseText()));
-  }
-  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+  if (locked())
+    unlock();
+    
+  if (!lockRecords())
+    return false;
   
-  return isSaved;
+  if (_model && _mode != View)
+  {
+    QStringList keys;
+    QSqlIndex idx=_model->primaryKey();
+
+    // Build a unique key string by concatenating primary key table name and column values
+    keys.insert(0,idx.name());
+    for (int i = 0; i < idx.count(); ++i)
+      keys.insert(i+1,_model->data(_model->index(currentIndex(),i)).toString());
+      
+    // Convert to a uinque 128 bit number
+    QString qkey = QMd5(keys.join(";"));
+    
+    // Have to get this number <= 64 bits.
+    qkey.resize(15); 
+    bool ok;
+    _key = qkey.toLongLong(&ok,16);
+    if (!ok)
+      qDebug("Conversion to LongLong failed");  
+      
+    // Split 64 bit key in two integers by shifting 32 bits to the right
+    int upper = _key >> 32;
+    int lower = _key;
+    
+    XSqlQuery lockQuery;
+    lockQuery.prepare("SELECT tryLock(:upper,:lower) AS result;");
+    lockQuery.bindValue(":upper", upper);
+    lockQuery.bindValue(":lower", lower);
+    lockQuery.exec();
+    if (lockQuery.first())
+      _locked = lockQuery.value("result").toBool();
+      
+    setWidgetsEnabled(_locked && _mode != View); 
+    
+    if (!_locked)
+    {
+      _key = 0;
+      QMessageBox::information(this, tr("Record locked"),
+        tr("This record is currently in use by another user.  It will be opened in view mode."));
+    }
+  }
+
+  emit isLocked(_locked);
+  return _locked;
 }
 
 int Screen::currentIndex()
@@ -158,17 +217,25 @@ int Screen::currentIndex()
 
 void Screen::deleteCurrent()
 {
-  removeCurrent();
-  save();
+  if (!locked())
+  {
+    removeCurrent();
+    save();
+  }
+  else
+    QMessageBox::information(this, tr("Record locked"),
+        tr("This record is currently in use by another user.  It may not be edited or deleted at this time."));
 }
 
 void Screen::clear()
 {
+  unlock();
   _mapper->clear();
 }
 
 void Screen::insert()
 {
+  unlock();
   _mapper->model()->insertRows(_model->rowCount(),1);
   _mapper->toLast();
   _mapper->clear();
@@ -181,6 +248,7 @@ void Screen::newMappedWidget(QWidget *widget)
 
 void Screen::removeCurrent()
 {
+  unlock();
   removeRows(_mapper->currentIndex(),1);
 }
 
@@ -208,6 +276,9 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 { 
+  if (locked())
+    return;
+  
   if (submit())
   {
     emit saved();
@@ -239,24 +310,35 @@ void Screen::select()
 {
   _model->select();
   if (_model->rowCount())
+  {
     _mapper->toFirst();
+    tryLock();
+  }
+}
+
+void Screen::setLockRecords(bool lock)
+{
+  if (primaryKeyColumns())
+    _lock = lock;
+  else
+    _lock = false;
 }
 
 void Screen::setMode(Modes p)
 {
-  if (p==New)
-  {
-    _mode=New;
+  if (_mode == p)
+    return;
+    
+  unlock();
+  
+  _mode = p;
+  if (_mode == New)
     insert();
-  }
-  else if (p==Edit)
-    _mode=Edit;
+    
+  if (_mode == Edit)
+    tryLock();
   else
-    _mode=View;
-
-  for (int i = 0; _mapper->model() && i < _mapper->model()->columnCount(); i++)
-    if (_mapper->mappedWidgetAt(i))
-      _mapper->mappedWidgetAt(i)->setEnabled(_mode != View);
+    setWidgetsEnabled(_mode != View);
 }
 
 void Screen::setModel(XSqlTableModel *model)
@@ -277,20 +359,27 @@ void Screen::setCurrentIndex(int index)
 {
   _mode=Screen::Edit;
   _mapper->setCurrentIndex(index);
+  if (lockRecords())
+    tryLock();
 }
 
 void Screen::toNext()
 {
   if (_mapper->currentIndex() < _model->rowCount()-1)
+  {
     _mapper->toNext();
+    if (lockRecords())
+      tryLock();
+  }
 }
 
 void Screen::toPrevious()
 {
   if (_mapper->currentIndex() > 0)
   {
-    _mode=Screen::Edit;
     _mapper->toPrevious(); 
+    if (lockRecords())
+      tryLock();
   }
 }
 
@@ -328,4 +417,29 @@ void Screen::setDataWidgetMapper(XSqlTableModel *model)
 {
   _mapper->setModel(model);
   emit newDataWidgetMapper(_mapper);
+}
+
+void Screen::setWidgetsEnabled(bool enabled)
+{
+  for (int i = 0; _mapper->model() && i < _mapper->model()->columnCount(); i++)
+    if (_mapper->mappedWidgetAt(i))
+      _mapper->mappedWidgetAt(i)->setEnabled(enabled);
+}
+
+void Screen::unlock()
+{
+  if (_key)
+  {    
+    int upper = _key >> 32;
+    int lower = _key;
+    
+    XSqlQuery unlock;
+    unlock.prepare("SELECT pg_advisory_unlock(:upper, :lower);");
+    unlock.bindValue(":upper", upper);
+    unlock.bindValue(":lower", lower);
+    unlock.exec();
+    _key = 0;
+  }
+  _locked = false;
+  emit isLocked(false);
 }
