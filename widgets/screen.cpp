@@ -206,7 +206,7 @@ bool Screen::tryLock()
     }
   }
 
-  emit isLocked(_locked);
+  emit lockGranted(_locked);
   return _locked;
 }
 
@@ -428,6 +428,9 @@ void Screen::setWidgetsEnabled(bool enabled)
 
 void Screen::unlock()
 {
+  if (!locked())
+    return;
+    
   if (_key)
   {    
     int upper = _key >> 32;
@@ -441,5 +444,6 @@ void Screen::unlock()
     _key = 0;
   }
   _locked = false;
-  emit isLocked(false);
+  setWidgetsEnabled(_mode != View); 
+  emit lockGranted(false);
 }

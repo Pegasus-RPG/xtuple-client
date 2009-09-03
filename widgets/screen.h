@@ -92,7 +92,7 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 	
 	signals:
                 void currentIndexChanged(int index);
-                void isLocked(bool);
+                void lockGranted(bool);
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
 		void saved();
