@@ -10,7 +10,7 @@
 
 #include "aropencluster.h"
 
-#define DEBUG true
+#define DEBUG false
 
 #define EXTRACLAUSE " (aropen_open) "	                        \
           " AND aropen_amount - aropen_paid - "	                \
