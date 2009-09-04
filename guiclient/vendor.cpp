@@ -702,7 +702,7 @@ void vendor::sCheck()
 void vendor::populate()
 {
   MetaSQLQuery mql(
-            "SELECT *, crmacct_id, "
+            "SELECT vendinfo.*, crmacct_id, "
             "<? if exists(\"key\") ?>"
             "       CASE WHEN LENGTH(vend_ach_routingnumber) > 0 THEN"
             "       formatbytea(decrypt(setbytea(vend_ach_routingnumber),"
@@ -775,25 +775,22 @@ void vendor::populate()
     sFillAddressList();
     sFillTaxregList();
     _comments->setId(_vendid);
-  }
-  else if (q.lastError().type() == QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 
-  q.prepare("SELECT crmacct_id "
-	    "FROM crmacct "
-	    "WHERE (crmacct_vend_id=:vend_id);");
-  q.bindValue(":vend_id", _vendid);
-  q.exec();
-  if (q.first())
     _crmacctid = q.value("crmacct_id").toInt();
+  }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  else
+  {
+    systemError(this, tr("Could not find the Vendor information. Perhaps the "
+                         "Vendor and CRM Account have been disconnected."),
+                __FILE__, __LINE__);
+    return;
+  }
+
   emit populated();
 }
 
