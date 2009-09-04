@@ -8,6 +8,84 @@
  * to be bound by its terms.
  */
 
+/*! \mainpage xTuple ERP Programmer Reference Index Page
+
+  \section intro_sec Introduction
+
+  xTuple ERP is an application written in C++ using the \Qt
+  cross-platform application and \user interface framework. This
+  document provides reference information for people who want to
+  either understand the core application code or develop \scripts
+  and \packages to extend the xTuple ERP core.
+
+  To navigate this documentation you should know the following:
+  <ul>
+    <li>Most xTuple classes are derived from \Qt classes. Much of the
+        behavior that is available to you is provided by the \Qt
+        classes.
+    </li>
+    <li>Most classes with names starting with the letter 'Q'
+        are \Qt classes while the others are xTuple classes.
+        The documentation of \Qt classes comes directly from \Qt and
+        so has a different visual style than the xTuple documentation.
+    </li>
+    <li>Most windows and widgets implemented by xTuple use
+	multiple inheritance.  An application window class might
+	inherit properties and behavior from QMainWindow (probably
+        indirectly through XMainWindow) and its collection of
+        widgets from a related class in the Ui namespace.
+        Look for the following xTuple conventions:
+        <ul>
+          <li>Widget names typically begin with an underscore ('_').
+              If a widget name does not begin with this character then
+              it's probably not important for manipulation (e.g. it's a
+              layout or spacer).
+          </li>
+	  <li>Widget names that end with 'Lit' are usually given
+	      to the labels for widgets that do something interesting.
+	      For example, if you see a QLabel named '_currencyLit',
+	      then there is probably another widget named '_currency'
+	      that you might want to manipulate. If you hide a
+	      widget then you should probably hide the corresponding
+	      label, too.
+          </li>
+        </ul>
+    </li>
+    <li>Because of these inheritance relationships, you should use
+        the 'List of all members' link frequently. The page documenting
+        an xTuple class only shows the slots, signals, methods, and
+        properties unique to or overridden by that class. The inherited
+        features are only displayed if you look up the inheritance hierarchy
+        either directly or through the 'List of all members.'
+    </li>
+    <li>If you are writing \scripts, you can use any slots, signals,
+        and properties displayed on these pages. You can also use
+        any methods marked Q_INVOKABLE. Methods which are <i>not</i>
+        Q_INVOKABLE are not available for scripting.
+    </li>
+    <li>The documentation for xTuple classes is sparse at the moment.
+	The addition of details is a work in progress.  If you would
+	like to help with this effort, please send email to
+        <a href="mailto:devdocs@xtuple.com?subject=xTuple%20ERP%20Programmer%20Reference%20contributions">devdocs@xtuple.com</a>.
+	You can attach \f\ile diffs with \comment changes to the email
+	for us to review and hopefully merge into the core.
+
+        See the
+        <a href="http://www.stack.nl/~dimitri/doxygen/commands.html">Special Commands</a>
+        chapter in the
+        <a href="http://www.stack.nl/~dimitri/doxygen/manual.html">Doxygen Manual</a>
+        for information on how to tag the documentation.
+    </li>
+    <li>The application code is continually changing as we improve
+	the product. Classes and object and method names <i>will</i>
+	change over time. Each page in this documentation is marked
+	with the xTuple ERP version for which it applies. The fact
+	that it is documented is not meant to imply that it will
+	remain unchanged in future versions.
+    </li>
+  </ul>
+*/
+
 #include <stdlib.h>
 
 #include <QApplication>
