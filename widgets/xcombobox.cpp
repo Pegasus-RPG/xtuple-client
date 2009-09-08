@@ -93,7 +93,6 @@ QString XComboBox::currentDefault()
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
   disconnect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
-  disconnect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
 
   if (!_listTableName.isEmpty())
   {
@@ -119,7 +118,6 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 
   _mapper=m;
   connect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
-  connect(this, SIGNAL(newID(int)), this, SLOT(updateMapperData()));
 }
 
 void XComboBox::setListSchemaName(QString p)
@@ -1011,6 +1009,7 @@ void XComboBox::setId(int pTarget)
           if(_lastId!=id)
           {
             _lastId = id;
+            updateMapperData();
             emit newID(pTarget);
             emit valid(TRUE);
 
@@ -1034,6 +1033,7 @@ void XComboBox::setId(int pTarget)
         if(_lastId!=pTarget)
         {
           _lastId = pTarget;
+          updateMapperData();
           emit newID(pTarget);
           emit valid(TRUE);
 
@@ -1066,6 +1066,7 @@ void XComboBox::setText(const QString &pString)
       if (text(counter) == pString)
       {
         setCurrentIndex(counter);
+        updateMapperData();
         emit newID(id());
         return;
       }
@@ -1099,6 +1100,7 @@ void XComboBox::setNull()
     _lastId = -1;
 
     setCurrentIndex(0);
+    updateMapperData();
     emit newID(-1);
     emit valid(FALSE);
     emit notNull(FALSE);
@@ -1227,6 +1229,7 @@ void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
       emit notNull(FALSE);
   }
 
+  updateMapperData();
   emit newID(_lastId);
   emit valid((_lastId != -1));
 }
@@ -1325,6 +1328,7 @@ void XComboBox::sHandleNewIndex(int pIndex)
   if ((pIndex >= 0) && (pIndex < _ids.count()) && (_ids.at(pIndex) != _lastId))
   {
     _lastId = _ids.at(pIndex);
+    updateMapperData();
     emit newID(_lastId);
 
     if (DEBUG)
