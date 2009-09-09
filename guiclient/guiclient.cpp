@@ -1546,6 +1546,8 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
 
+  engine->globalObject().setProperty("startOfTime", engine->newDate(QDateTime(_startOfTime)));
+  engine->globalObject().setProperty("endOfTime", engine->newDate(QDateTime(_endOfTime)));
+
   setupScriptApi(engine);
 }
-

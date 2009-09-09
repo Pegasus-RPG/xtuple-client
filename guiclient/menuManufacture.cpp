@@ -75,8 +75,6 @@
 #include "dspLaborVarianceByItem.h"
 #include "dspLaborVarianceByWorkCenter.h"
 #include "dspLaborVarianceByWorkOrder.h"
-#include "dspBreederDistributionVarianceByItem.h"
-#include "dspBreederDistributionVarianceByWarehouse.h"
 #include "dspWoSoStatus.h"
 #include "dspWoSoStatusMismatch.h"
 #include "dspWoEffortByUser.h"
@@ -268,11 +266,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.dspLaborVarianceByItem",		tr("by &Item..."),	SLOT(sDspLaborVarianceByItem()), reportsLaborVarMenu, "ViewLaborVariances", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspLaborVarianceByBOOItem",		tr("by &BOO Item..."),	SLOT(sDspLaborVarianceByBOOItem()), reportsLaborVarMenu, "ViewLaborVariances", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspLaborVarianceByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspLaborVarianceByWorkOrder()), reportsLaborVarMenu, "ViewLaborVariances", 0, 0, _metrics->boolean("Routings"), NULL },
-
-    //  Production | Reports | Breeder Distribution Variance
-    { "menu",				tr("Breeder &Distribution Variance"),	(char*)reportsBrdrDistVarMenu,	reportsMenu,	"true",	0, 0,	_metrics->boolean("BBOM"), NULL },
-    { "wo.dspBreederDistributionVarianceByWarehouse",	tr("by &Site..."),	SLOT(sDspBreederDistributionVarianceByWarehouse()), reportsBrdrDistVarMenu, "ViewBreederVariances", 0, 0, _metrics->boolean("BBOM"), NULL },
-    { "wo.dspBreederDistributionVarianceByItem",	tr("by &Item..."),	SLOT(sDspBreederDistributionVarianceByItem()), reportsBrdrDistVarMenu, "ViewBreederVariances", 0, 0, _metrics->boolean("BBOM"), NULL },
 
     { "separator",					NULL,	NULL,	reportsMenu,	"true",	0, 0,	true, NULL },
     
@@ -695,16 +688,6 @@ void menuManufacture::sDspLaborVarianceByWorkCenter()
 void menuManufacture::sDspLaborVarianceByWorkOrder()
 {
   omfgThis->handleNewWindow(new dspLaborVarianceByWorkOrder());
-}
-
-void menuManufacture::sDspBreederDistributionVarianceByItem()
-{
-  omfgThis->handleNewWindow(new dspBreederDistributionVarianceByItem());
-}
-
-void menuManufacture::sDspBreederDistributionVarianceByWarehouse()
-{
-  omfgThis->handleNewWindow(new dspBreederDistributionVarianceByWarehouse());
 }
 
 void menuManufacture::sDspWoSoStatusMismatch()

@@ -163,8 +163,6 @@
 #include "dspBookingsByProductCategory.h"
 #include "dspBookingsBySalesRep.h"
 #include "dspBookingsByShipTo.h"
-#include "dspBreederDistributionVarianceByItem.h"
-#include "dspBreederDistributionVarianceByWarehouse.h"
 #include "dspBriefEarnedCommissions.h"
 #include "dspBriefSalesHistoryByCustomer.h"
 #include "dspBriefSalesHistoryByCustomerType.h"

@@ -102,8 +102,6 @@ class menuManufacture : public QObject
     void sDspLaborVarianceByItem();
     void sDspLaborVarianceByWorkCenter();
     void sDspLaborVarianceByWorkOrder();
-    void sDspBreederDistributionVarianceByItem();
-    void sDspBreederDistributionVarianceByWarehouse();
     void sDspWoSoStatus();
     void sDspWoSoStatusMismatch();
 

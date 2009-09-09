@@ -47,6 +47,7 @@
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qsqldatabaseproto.h"
+#include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
@@ -117,6 +118,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQSqlDatabaseProto(engine);
+  setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);

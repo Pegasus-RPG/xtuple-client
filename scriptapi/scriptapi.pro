@@ -42,6 +42,7 @@ HEADERS +=  setupscriptapi.h                    \
             qnetworkreplyproto.h                \
             qnetworkrequestproto.h              \
             qsqldatabaseproto.h                 \
+            qsqlerrorproto.h                    \
             qsqlrecordproto.h                   \
             qstackedwidgetproto.h               \
             qtabwidgetproto.h                   \
@@ -109,6 +110,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qnetworkreplyproto.cpp              \
             qnetworkrequestproto.cpp            \
             qsqldatabaseproto.cpp               \
+            qsqlerrorproto.cpp                  \
             qsqlrecordproto.cpp                 \
             qstackedwidgetproto.cpp             \
             qtabwidgetproto.cpp                 \

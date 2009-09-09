@@ -51,12 +51,10 @@ QScriptValue constructQAction(QScriptContext *context,
     qWarning("QActionProto's constructQAction(): can't convert arg 0 from "
              "QScriptValue to QIcon; using QAction(%s, QObject).",
              qPrintable(context->argument(1).toString()));
-    /*
-    QIcon icon = dynamic_cast<QIcon>(context->argument(0).toObject());
-    obj = new QAction(icon,
-                      context->argument(1).toString(),
-                      context->argument(2).toQObject());
-    */
+    // QIcon icon = dynamic_cast<QIcon>(context->argument(0).toObject());
+    // obj = new QAction(icon,
+    //                   context->argument(1).toString(),
+    //                   context->argument(2).toQObject());
     obj = new QAction(context->argument(1).toString(),
                       context->argument(2).toQObject());
   }
@@ -200,12 +198,12 @@ QMenu *QActionProto::menu() const
   return 0;
 }
 
-int QActionProto::menuRole() const
+QAction::MenuRole QActionProto::menuRole() const
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
     return item->menuRole();
-  return 0;
+  return QAction::NoRole;
 }
 
 QWidget *QActionProto::parentWidget() const
@@ -237,11 +235,25 @@ void QActionProto::setCheckable(bool b)
     item->setCheckable(b);
 }
 
+void QActionProto::setChecked(bool b)
+{
+  QAction *item = qscriptvalue_cast<QAction*>(thisObject());
+  if (item)
+    item->setChecked(b);
+}
+
 void QActionProto::setData(const QVariant &userData)
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
     item->setData(userData);
+}
+
+void QActionProto::setEnabled(bool b)
+{
+  QAction *item = qscriptvalue_cast<QAction*>(thisObject());
+  if (item)
+    item->setEnabled(b);
 }
 
 void QActionProto::setFont(const QFont &font)
@@ -279,7 +291,7 @@ void QActionProto::setMenu(QMenu *menu)
     item->setMenu(menu);
 }
 
-void QActionProto::setMenuRole(int menuRole)
+void QActionProto::setMenuRole(QAction::MenuRole menuRole)
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
@@ -300,11 +312,11 @@ void QActionProto::setShortcut(const QKeySequence &shortcut)
     item->setShortcut(shortcut);
 }
 
-void QActionProto::setShortcutContext(int context)
+void QActionProto::setShortcutContext(Qt::ShortcutContext context)
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
-    item->setShortcutContext((Qt::ShortcutContext)context);
+    item->setShortcutContext(context);
 }
 
 void QActionProto::setShortcuts(const QList<QKeySequence> &shortcuts)
@@ -342,6 +354,13 @@ void QActionProto::setToolTip(const QString &tip)
     item->setToolTip(tip);
 }
 
+void QActionProto::setVisible(bool b)
+{
+  QAction *item = qscriptvalue_cast<QAction*>(thisObject());
+  if (item)
+    item->setVisible(b);
+}
+
 void QActionProto::setWhatsThis(const QString &what)
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
@@ -357,12 +376,12 @@ QKeySequence QActionProto::shortcut() const
   return QKeySequence();
 }
 
-int QActionProto::shortcutContext() const
+Qt::ShortcutContext QActionProto::shortcutContext() const
 {
   QAction *item = qscriptvalue_cast<QAction*>(thisObject());
   if (item)
     return item->shortcutContext();
-  return 0;
+  return (Qt::ShortcutContext)0;
 }
 
 QList<QKeySequence> QActionProto::shortcuts() const

@@ -114,7 +114,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                billingEditList.ui dspBillingSelections.ui                                             \
                dspBookingsByCustomer.ui dspBookingsByCustomerGroup.ui dspBookingsByItem.ui            \
                dspBookingsByProductCategory.ui dspBookingsBySalesRep.ui dspBookingsByShipTo.ui        \
-               dspBreederDistributionVarianceByItem.ui dspBreederDistributionVarianceByWarehouse.ui   \
                dspBriefEarnedCommissions.ui                                                           \
                dspBriefSalesHistoryByCustomer.ui dspBriefSalesHistoryByCustomerType.ui                \
                dspBriefSalesHistoryBySalesRep.ui                                                      \
@@ -432,7 +431,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                billingEditList.h dspBillingSelections.h                                               \
                dspBookingsByCustomer.h dspBookingsByCustomerGroup.h dspBookingsByItem.h               \
                dspBookingsByProductCategory.h dspBookingsBySalesRep.h dspBookingsByShipTo.h           \
-               dspBreederDistributionVarianceByItem.h dspBreederDistributionVarianceByWarehouse.h     \
                dspBriefEarnedCommissions.h                                                            \
                dspBriefSalesHistoryByCustomer.h dspBriefSalesHistoryByCustomerType.h                  \
                dspBriefSalesHistoryBySalesRep.h dspCapacityBufferStatusByWorkCenter.h                 \
@@ -760,7 +758,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                billingEditList.cpp dspBillingSelections.cpp                                           \
                dspBookingsByCustomer.cpp dspBookingsByCustomerGroup.cpp dspBookingsByItem.cpp         \
                dspBookingsByProductCategory.cpp dspBookingsBySalesRep.cpp dspBookingsByShipTo.cpp     \
-               dspBreederDistributionVarianceByItem.cpp dspBreederDistributionVarianceByWarehouse.cpp \
                dspBriefEarnedCommissions.cpp                                                          \
                dspBriefSalesHistoryByCustomer.cpp dspBriefSalesHistoryByCustomerType.cpp              \
                dspBriefSalesHistoryBySalesRep.cpp                                                     \
