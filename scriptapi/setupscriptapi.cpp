@@ -41,6 +41,7 @@
 #include "qdomnotationproto.h"
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
+#include "qdoublevalidatorproto.h"
 #include "qfontproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
@@ -56,6 +57,7 @@
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
 #include "qurlproto.h"
+#include "qvalidatorproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
 #include "revisionlineeditsetup.h"
@@ -111,6 +113,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomNotationProto(engine);
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
+  setupQDoubleValidatorProto(engine);
   setupQFontProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
@@ -127,6 +130,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);
   setupQUrlProto(engine);
+  setupQValidatorProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
   setupRevisionLineEdit(engine);

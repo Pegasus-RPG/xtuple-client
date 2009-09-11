@@ -36,6 +36,7 @@ HEADERS +=  setupscriptapi.h                    \
             qdomnotationproto.h                 \
             qdomprocessinginstructionproto.h    \
             qdomtextproto.h                     \
+            qdoublevalidatorproto.h             \
             qfontproto.h                        \
             qmenuproto.h                        \
             qmessageboxsetup.h                  \
@@ -51,6 +52,7 @@ HEADERS +=  setupscriptapi.h                    \
             qtreewidgetitemproto.h              \
             qtsetup.h                           \
             qurlproto.h                         \
+            qvalidatorproto.h                   \
             qwidgetproto.h                      \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
@@ -104,6 +106,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdomnotationproto.cpp               \
             qdomprocessinginstructionproto.cpp  \
             qdomtextproto.cpp                   \
+            qdoublevalidatorproto.cpp           \
             qfontproto.cpp                      \
             qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \
@@ -119,6 +122,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qtreewidgetitemproto.cpp            \
             qtsetup.cpp                         \
             qurlproto.cpp                       \
+            qvalidatorproto.cpp                 \
             qwidgetproto.cpp                    \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \

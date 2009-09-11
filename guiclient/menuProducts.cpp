@@ -77,9 +77,6 @@
 #include "productCategories.h"
 #include "freightClasses.h"
 #include "characteristics.h"
-#include "laborRates.h"
-#include "workCenters.h"
-#include "standardOperations.h"
 
 #include "dspUndefinedManufacturedItems.h"
 #include "dspUnusedPurchasedItems.h"
@@ -264,10 +261,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.productCategories", tr("&Product Categories..."), SLOT(sProductCategories()), masterInfoMenu, "MaintainProductCategories ViewProductCategories", NULL, NULL, true , NULL },
   { "pd.freightClasses", tr("&Freight Classes..."), SLOT(sFreightClasses()), masterInfoMenu, "MaintainFreightClasses ViewFreightClasses", NULL, NULL, true , NULL },
   { "pd.characteristics", tr("C&haracteristics..."), SLOT(sCharacteristics()), masterInfoMenu, "MaintainCharacteristics ViewCharacteristics", NULL, NULL, true , NULL },
-  { "separator", NULL, NULL, masterInfoMenu,	"true", NULL, NULL, _metrics->boolean("Routings")  , NULL },
-  { "pd.standardLaborRates", tr("Standard &Labor Rates..."), SLOT(sStandardLaborRates()), masterInfoMenu, "MaintainLaborRates ViewLaborRates", NULL, NULL, _metrics->boolean("Routings") , NULL },
-  { "pd.workCenters", tr("&Work Centers..."), SLOT(sWorkCenters()), masterInfoMenu, "MaintainWorkCenters ViewWorkCenters", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.standardOperations", tr("Standard &Operations..."), SLOT(sStandardOperations()), masterInfoMenu, "MaintainStandardOperations ViewStandardOperations", NULL, NULL, _metrics->boolean("Routings") , NULL },
 
   //  Produt | Utilies
   { "menu",	tr("&Utilities"), (char*)utilitiesMenu, mainMenu, "true", NULL, NULL, true , NULL },
@@ -637,21 +630,6 @@ void menuProducts::sFreightClasses()
 void menuProducts::sCharacteristics()
 {
   omfgThis->handleNewWindow(new characteristics());
-}
-
-void menuProducts::sStandardLaborRates()
-{
-  omfgThis->handleNewWindow(new laborRates());
-}
-
-void menuProducts::sWorkCenters()
-{
-  omfgThis->handleNewWindow(new workCenters());
-}
-
-void menuProducts::sStandardOperations()
-{
-  omfgThis->handleNewWindow(new standardOperations());
 }
 
 //  Utilities

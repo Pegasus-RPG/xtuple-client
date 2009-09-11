@@ -199,21 +199,21 @@ class GUIClient : public QMainWindow
     inline const QDate &endOfTime()        { return _endOfTime;    }
     inline const QDate &dbDate()           { return _dbDate;       }
 
-    inline QDoubleValidator *qtyVal()      { return _qtyVal;       }
-    inline QDoubleValidator *transQtyVal() { return _transQtyVal;  }
-    inline QDoubleValidator *qtyPerVal()   { return _qtyPerVal;    }
-    inline QDoubleValidator *scrapVal()    { return _scrapVal;     } 
-    inline QDoubleValidator *percentVal()  { return _percentVal;   }
-    inline QDoubleValidator *negPercentVal()  { return _negPercentVal;   }
-    inline QDoubleValidator *moneyVal()    { return _moneyVal;     }
-    inline QDoubleValidator *negMoneyVal() { return _negMoneyVal;  }
-    inline QDoubleValidator *priceVal()    { return _priceVal;     }
-    inline QDoubleValidator *costVal()     { return _costVal;      }
-    inline QDoubleValidator *ratioVal()    { return _ratioVal;     }
-    inline QDoubleValidator *weightVal()   { return _weightVal;    }
-    inline QDoubleValidator *runTimeVal()  { return _runTimeVal;   }
-    inline QIntValidator *orderVal()       { return _orderVal;     }
-    inline QIntValidator *dayVal()         { return _dayVal;       }
+    Q_INVOKABLE inline QDoubleValidator *qtyVal()      { return _qtyVal;       }
+    Q_INVOKABLE inline QDoubleValidator *transQtyVal() { return _transQtyVal;  }
+    Q_INVOKABLE inline QDoubleValidator *qtyPerVal()   { return _qtyPerVal;    }
+    Q_INVOKABLE inline QDoubleValidator *scrapVal()    { return _scrapVal;     } 
+    Q_INVOKABLE inline QDoubleValidator *percentVal()  { return _percentVal;   }
+    Q_INVOKABLE inline QDoubleValidator *negPercentVal()  { return _negPercentVal;   }
+    Q_INVOKABLE inline QDoubleValidator *moneyVal()    { return _moneyVal;     }
+    Q_INVOKABLE inline QDoubleValidator *negMoneyVal() { return _negMoneyVal;  }
+    Q_INVOKABLE inline QDoubleValidator *priceVal()    { return _priceVal;     }
+    Q_INVOKABLE inline QDoubleValidator *costVal()     { return _costVal;      }
+    Q_INVOKABLE inline QDoubleValidator *ratioVal()    { return _ratioVal;     }
+    Q_INVOKABLE inline QDoubleValidator *weightVal()   { return _weightVal;    }
+    Q_INVOKABLE inline QDoubleValidator *runTimeVal()  { return _runTimeVal;   }
+    Q_INVOKABLE inline QIntValidator *orderVal()       { return _orderVal;     }
+    Q_INVOKABLE inline QIntValidator *dayVal()         { return _dayVal;       }
 
     inline QFont systemFont()              { return *_systemFont;  }
     inline QFont fixedFont()               { return *_fixedFont;   }

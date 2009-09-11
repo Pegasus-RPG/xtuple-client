@@ -243,7 +243,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                itemSite.ui itemSites.ui itemSourceSearch.ui                                           \
                itemSource.ui itemSources.ui itemSourceList.ui itemSourcePrice.ui itemSubstitute.ui    \
                itemtax.ui itemUOM.ui                                                                  \
-               forms.ui form.ui labelForm.ui labelForms.ui laborRate.ui laborRates.ui                 \
+               forms.ui form.ui labelForm.ui labelForms.ui                                            \
                forwardUpdateAccounts.ui                                                               \
                sysLocale.ui locales.ui location.ui locations.ui                                       \
                lotSerial.ui lotSerialRegistration.ui maintainBudget.ui                                \
@@ -561,7 +561,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                itemSite.h itemSites.h itemSourceSearch.h                                              \
                itemSource.h itemSources.h itemSourceList.h itemSourcePrice.h itemSubstitute.h         \
                itemtax.h itemUOM.h                                                                    \
-               forms.h form.h labelForm.h labelForms.h laborRate.h laborRates.h                       \
+               forms.h form.h labelForm.h labelForms.h                                                \
                forwardUpdateAccounts.h                                                                \
                sysLocale.h locales.h location.h locations.h                                           \
                lotSerial.h lotSerialRegistration.h maintainBudget.h                                   \
@@ -889,7 +889,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                itemSite.cpp itemSites.cpp itemSourceSearch.cpp                                        \
                itemSource.cpp itemSources.cpp itemSourceList.cpp itemSourcePrice.cpp itemSubstitute.cpp \
                itemtax.cpp itemUOM.cpp                                                                \
-               forms.cpp form.cpp labelForm.cpp labelForms.cpp laborRate.cpp laborRates.cpp           \
+               forms.cpp form.cpp labelForm.cpp labelForms.cpp                                        \
                forwardUpdateAccounts.cpp                                                              \
                sysLocale.cpp locales.cpp location.cpp locations.cpp                                   \
                lotSerial.cpp lotSerialRegistration.cpp maintainBudget.cpp                             \

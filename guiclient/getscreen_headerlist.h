@@ -454,8 +454,6 @@
 #include "itemUOM.h"
 #include "labelForm.h"
 #include "labelForms.h"
-#include "laborRate.h"
-#include "laborRates.h"
 #include "locales.h"
 #include "location.h"
 #include "locations.h"

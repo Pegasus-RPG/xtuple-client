@@ -30,13 +30,13 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
 
     Q_INVOKABLE bool isValid();
     Q_INVOKABLE int  id();
-    Q_INVOKABLE void setValidator(const QValidator * v) { QLineEdit::setValidator(v); };
+    Q_INVOKABLE void setValidator(QValidator * v) { QLineEdit::setValidator(v); };
 
-    double toDouble(bool * = 0);
+    Q_INVOKABLE double toDouble(bool * = 0);
     virtual QString defaultText() const { return _default; };
     virtual QString fieldName()   const { return _fieldName; };
     virtual void   setText(const QVariant &);
-    virtual void   setDouble(const double, const int = -1);
+    Q_INVOKABLE virtual void   setDouble(const double, const int = -1);
 
   public slots:
     virtual void sParse();

@@ -96,9 +96,6 @@ class menuProducts : public QObject
     void sProductCategories();
     void sFreightClasses();
     void sCharacteristics();
-    void sStandardLaborRates();
-    void sWorkCenters();
-    void sStandardOperations();
 
     void sDspUnusedPurchasedItems();
     void sDspUndefinedManufacturedItems();
