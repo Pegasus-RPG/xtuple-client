@@ -116,6 +116,13 @@ enum SetResponse scriptEditor::set(const ParameterList &pParams)
     _scriptid = param.toInt();
     populate();
   }
+  
+  param = pParams.value("script_name", &valid);
+  if (valid)
+  {
+    _name->setText(param.toString());
+    _name->setEnabled(false);
+  }
 
   return NoError;
 }

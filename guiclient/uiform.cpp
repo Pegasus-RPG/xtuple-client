@@ -362,6 +362,7 @@ void uiform::sScriptNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  params.append("script_name", _name->text());
 
   scriptEditor *newdlg = new scriptEditor(this, "", Qt::Window);
   newdlg->set(params);
