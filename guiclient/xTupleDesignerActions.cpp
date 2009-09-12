@@ -188,14 +188,20 @@ bool xTupleDesignerActions::sClose()
 
 void xTupleDesignerActions::sOpen()
 {
+  QSettings settings("xTuple.com", "xTupleDesigner");
+  QString path = settings.value("LastDirectory").toString();
+  
   QString filename = QFileDialog::getOpenFileName(_designer, tr("Open File"),
-                                                  QString::null,
+                                                  path,
                                                   tr("UI (*.ui)"));
   if (! filename.isNull())
   {
     _designer->setSource(new QFile(filename), filename);
     _designer->formwindow()->setDirty(false);
   }
+  
+  QFileInfo fi(filename);
+  settings.setValue("LastDirectory", fi.path());
 }
 
 void xTupleDesignerActions::sRevert()
@@ -302,11 +308,14 @@ bool xTupleDesignerActions::sSaveToDB()
 
 bool xTupleDesignerActions::sSaveFile()
 {
+  QSettings settings("xTuple.com", "xTupleDesigner");
+  QString path = settings.value("LastDirectory").toString();
+
   QString filename = _designer->formwindow()->fileName();
   if (_designer->formwindow()->fileName().isEmpty())
   {
     filename = QFileDialog::getSaveFileName(_designer, tr("Save File"),
-                                            _designer->name() + ".ui",
+                                            path + QDir::separator() + _designer->name() + ".ui",
                                             tr("UI (*.ui)"));
     if (filename.isNull())
       return false;
@@ -332,6 +341,8 @@ bool xTupleDesignerActions::sSaveFile()
   file.close();
   _designer->setSource(_designer->source());
   _designer->formwindow()->setDirty(false);
+
+  settings.setValue("LastDirectory", fi.path());
 
   return true;
 }

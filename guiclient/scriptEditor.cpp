@@ -54,10 +54,15 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _scriptid      = -1;
   _pkgheadidOrig = -1;
+  
+  QSettings settings("xTuple.com", "scriptEditor");
+  lastSaveDir = settings.value("LastDirectory").toString();
 }
 
 scriptEditor::~scriptEditor()
 {
+  QSettings settings("xTuple.com", "scriptEditor");
+  settings.setValue("LastDirectory",lastSaveDir);
   // no need to delete child widgets, Qt does it all for us
 }
 
@@ -331,7 +336,7 @@ void scriptEditor::populate()
 
 void scriptEditor::sImport()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QString::null, tr("Script (*.script *.js)"));
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), lastSaveDir, tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
 
@@ -344,6 +349,9 @@ void scriptEditor::sImport()
   QTextStream ts(&file);
   _source->setText(ts.readAll());
   file.close();
+  
+  QFileInfo fi(filename);
+  lastSaveDir = fi.absolutePath();
 }
 
 bool scriptEditor::sSaveFile()

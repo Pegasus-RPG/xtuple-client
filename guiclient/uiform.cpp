@@ -285,7 +285,10 @@ void uiform::populate()
 
 void uiform::sImport()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QString::null, tr("UI (*.ui)"));
+  QSettings settings("xTuple.com", "xTupleDesigner");
+  QString path = settings.value("LastDirectory").toString();
+  
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), path, tr("UI (*.ui)"));
   if(filename.isNull())
     return;
 
@@ -299,6 +302,9 @@ void uiform::sImport()
   _source=ts.readAll();
   file.close();
   _changed = true;
+  
+  QFileInfo fi(filename);
+  settings.setValue("LastDirectory", fi.path());
 }
 
 void uiform::sEdit()
@@ -330,11 +336,17 @@ void uiform::sEdit()
 
 void uiform::sExport()
 {
-  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), QString::null, tr("UI (*.ui)"));
+  QSettings settings("xTuple.com", "xTupleDesigner");
+  QString path = settings.value("LastDirectory").toString();
+  
+  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), path, tr("UI (*.ui)"));
   if(filename.isNull())
     return;
 
   (void)saveFile(_source, filename);
+
+  QFileInfo fi(filename);
+  settings.setValue("LastDirectory", fi.path());
 }
 
 bool uiform::saveFile(const QString &source, QString &filename)
