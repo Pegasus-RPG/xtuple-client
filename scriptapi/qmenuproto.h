@@ -46,6 +46,8 @@ class QMenuProto : public QObject, public QScriptable
     Q_INVOKABLE QAction *exec(const QPoint &p, QAction *action = 0);
     Q_INVOKABLE void     hideTearOffMenu();
     Q_INVOKABLE QIcon    icon()	                        const;
+    Q_INVOKABLE void     insertAction(QAction *before, QAction *action);
+    Q_INVOKABLE void     insertActions(QAction *before, QList<QAction*>actions);
     Q_INVOKABLE QAction *insertMenu(QAction *before, QMenu *menu);
     Q_INVOKABLE QAction *insertSeparator(QAction *before);
     Q_INVOKABLE bool     isEmpty()	                const;
@@ -53,6 +55,7 @@ class QMenuProto : public QObject, public QScriptable
     Q_INVOKABLE bool     isTearOffMenuVisible()	        const;
     Q_INVOKABLE QAction *menuAction()	                const;
     Q_INVOKABLE void     popup(const QPoint &p, QAction *atAction = 0);
+    Q_INVOKABLE void     removeAction(QAction *action);
     Q_INVOKABLE bool     separatorsCollapsible()	const;
     Q_INVOKABLE void     setActiveAction(QAction *act);
     Q_INVOKABLE void     setDefaultAction(QAction *act);

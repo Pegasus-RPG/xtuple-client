@@ -188,6 +188,20 @@ QIcon QMenuProto::icon() const
   return QIcon();
 }
 
+void QMenuProto::insertAction(QAction *before, QAction *action)
+{
+  QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
+  if (item)
+    item->insertAction(before, action);
+}
+
+void QMenuProto::insertActions(QAction *before, QList<QAction *>actions)
+{
+  QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
+  if (item)
+    item->insertActions(before, actions);
+}
+
 QAction *QMenuProto::insertMenu(QAction *before, QMenu *menu)
 {
   QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
@@ -241,6 +255,13 @@ void QMenuProto::popup(const QPoint &p, QAction *atAction)
   QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
   if (item)
     item->popup(p, atAction);
+}
+
+void QMenuProto::removeAction(QAction *action)
+{
+  QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
+  if (item)
+    item->removeAction(action);
 }
 
 bool QMenuProto::separatorsCollapsible() const
