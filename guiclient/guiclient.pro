@@ -164,7 +164,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspPurchaseReqsByItem.ui dspPurchaseReqsByPlannerCode.ui                               \
                dspQOHByParameterList.ui dspQOHByItem.ui dspQOHByLocation.ui                           \
                dspQuotesByCustomer.ui dspQuotesByItem.ui dspOrderActivityByProject.ui                 \
-               dspOperationsByWorkCenter.ui dspPartiallyShippedOrders.ui                              \
+               dspPartiallyShippedOrders.ui                                                           \
                dspPricesByItem.ui dspPricesByCustomer.ui dspPricesByCustomerType.ui                   \
                dspFreightPricesByCustomer.ui dspFreightPricesByCustomerType.ui                        \
                dspReorderExceptionsByPlannerCode.ui dspRoughCutByWorkCenter.ui                        \
@@ -178,7 +178,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSequencedBOM.ui dspSingleLevelBOM.ui dspSingleLevelWhereUsed.ui                     \
                dspShipmentsByDate.ui dspShipmentsBySalesOrder.ui dspShipmentsByShipment.ui            \
                dspSlowMovingInventoryByClassCode.ui                                                   \
-               dspStandardJournalHistory.ui dspStandardOperationsByWorkCenter.ui maintainShipping.ui  \
+               dspStandardJournalHistory.ui maintainShipping.ui                                       \
                dspSubstituteAvailabilityByItem.ui dspSummarizedBacklogByWarehouse.ui                  \
                dspSummarizedBankrecHistory.ui                                                         \
                dspSummarizedBOM.ui dspSummarizedGLTransactions.ui                                     \
@@ -316,14 +316,14 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                shippingChargeType.ui shippingChargeTypes.ui                                           \
                shippingZones.ui shippingZone.ui                                                       \
                shipVias.ui shipVia.ui siteType.ui siteTypes.ui splitReceipt.ui                        \
-               standardOperations.ui standardOperation.ui standardJournal.ui standardJournals.ui      \
+               standardJournal.ui standardJournals.ui                                                 \
                standardJournalGroup.ui standardJournalGroupItem.ui standardJournalGroups.ui           \
                standardJournalItem.ui subaccount.ui subaccounts.ui subAccntTypes.ui subAccntType.ui   \
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
                syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
-           taxAdjustment.ui    taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxCodeRate.ui   \
-            taxDetail.ui    taxBreakdown.ui taxZones.ui taxZone.ui taxClass.ui taxClasses.ui                       \
+               taxAdjustment.ui taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxCodeRate.ui \
+               taxDetail.ui taxBreakdown.ui taxZones.ui taxZone.ui taxClass.ui taxClasses.ui          \
                taxRegistration.ui taxRegistrations.ui                                                 \
                taxAssignment.ui taxAssignments.ui                                                     \
                taxType.ui taxTypes.ui                                                                 \
@@ -480,7 +480,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspPurchaseReqsByItem.h dspPurchaseReqsByPlannerCode.h                                 \
                dspQOHByParameterList.h dspQOHByItem.h dspQOHByLocation.h                              \
                dspQuotesByCustomer.h dspQuotesByItem.h dspOrderActivityByProject.h                    \
-               dspOperationsByWorkCenter.h dspPartiallyShippedOrders.h                                \
+               dspPartiallyShippedOrders.h                                                            \
                dspPricesByItem.h dspPricesByCustomer.h dspPricesByCustomerType.h                      \
                dspFreightPricesByCustomer.h dspFreightPricesByCustomerType.h                          \
                dspReorderExceptionsByPlannerCode.h dspRoughCutByWorkCenter.h                          \
@@ -494,7 +494,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspSequencedBOM.h dspSingleLevelBOM.h dspSingleLevelWhereUsed.h                        \
                dspShipmentsByDate.h dspShipmentsBySalesOrder.h dspShipmentsByShipment.h               \
                dspSlowMovingInventoryByClassCode.h                                                    \
-               dspStandardJournalHistory.h dspStandardOperationsByWorkCenter.h maintainShipping.h     \
+               dspStandardJournalHistory.h maintainShipping.h                                         \
                dspSubstituteAvailabilityByItem.h dspSummarizedBacklogByWarehouse.h                    \
                dspSummarizedBankrecHistory.h                                                          \
                dspSummarizedBOM.h dspSummarizedGLTransactions.h                                       \
@@ -637,7 +637,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                shippingChargeType.h shippingChargeTypes.h                                             \
                shippingZones.h shippingZone.h                                                         \
                shipVias.h shipVia.h siteType.h siteTypes.h splitReceipt.h                             \
-               standardOperations.h standardOperation.h standardJournal.h standardJournals.h          \
+               standardJournal.h standardJournals.h                                                   \
                standardJournalGroup.h standardJournalGroupItem.h standardJournalGroups.h              \
                standardJournalItem.h subaccount.h subaccounts.h subAccntTypes.h subAccntType.h        \
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
@@ -806,7 +806,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPurchaseReqsByItem.cpp dspPurchaseReqsByPlannerCode.cpp                             \
                dspQOHByParameterList.cpp dspQOHByItem.cpp dspQOHByLocation.cpp                        \
                dspQuotesByCustomer.cpp dspQuotesByItem.cpp dspOrderActivityByProject.cpp              \
-               dspOperationsByWorkCenter.cpp dspPartiallyShippedOrders.cpp                            \
+               dspPartiallyShippedOrders.cpp                                                          \
                dspPricesByItem.cpp dspPricesByCustomer.cpp dspPricesByCustomerType.cpp                \
                dspFreightPricesByCustomer.cpp dspFreightPricesByCustomerType.cpp                      \
                dspReorderExceptionsByPlannerCode.cpp dspRoughCutByWorkCenter.cpp                      \
@@ -820,7 +820,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspSequencedBOM.cpp dspSingleLevelBOM.cpp dspSingleLevelWhereUsed.cpp                  \
                dspShipmentsByDate.cpp dspShipmentsBySalesOrder.cpp dspShipmentsByShipment.cpp         \
                dspSlowMovingInventoryByClassCode.cpp                                                  \
-               dspStandardJournalHistory.cpp dspStandardOperationsByWorkCenter.cpp maintainShipping.cpp \
+               dspStandardJournalHistory.cpp maintainShipping.cpp                                     \
                dspSubstituteAvailabilityByItem.cpp dspSummarizedBacklogByWarehouse.cpp                \
                dspSummarizedBankrecHistory.cpp                                                        \
                dspSummarizedBOM.cpp dspSummarizedGLTransactions.cpp                                   \
@@ -965,14 +965,14 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                shippingChargeType.cpp shippingChargeTypes.cpp                                         \
                shippingZones.cpp shippingZone.cpp                                                     \
                shipVias.cpp shipVia.cpp siteType.cpp siteTypes.cpp splitReceipt.cpp                   \
-               standardOperations.cpp standardOperation.cpp standardJournal.cpp standardJournals.cpp  \
+               standardJournal.cpp standardJournals.cpp                                               \
                standardJournalGroup.cpp standardJournalGroupItem.cpp standardJournalGroups.cpp        \
                standardJournalItem.cpp subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp \
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
                syncCompanies.cpp                                                                      \
                systemMessage.cpp                                                                      \
-             taxAdjustment.cpp  taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp          \
-              taxCodeRate.cpp  taxDetail.cpp taxBreakdown.cpp                                                         \
+               taxAdjustment.cpp taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp         \
+               taxCodeRate.cpp taxDetail.cpp taxBreakdown.cpp                                         \
                taxRegistration.cpp taxRegistrations.cpp                                               \
                taxAssignment.cpp taxAssignments.cpp                                                   \
                taxType.cpp taxTypes.cpp taxZones.cpp taxZone.cpp taxClass.cpp taxClasses.cpp          \

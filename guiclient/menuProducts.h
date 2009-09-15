@@ -85,8 +85,6 @@ class menuProducts : public QObject
     void sDspSingleLevelWhereUsed();
     void sDspIndentedWhereUsed();
     void sDspPendingBOMChanges();
-    void sDspOperationsByWorkCenter();
-    void sDspStandardOperByWorkCenter();
     void sDspCapacityUOMsByClassCode();
     void sDspCapacityUOMsByProductCategory();
     void sDspItemAvailabilityWorkbench();

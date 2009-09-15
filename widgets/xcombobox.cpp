@@ -720,7 +720,7 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case WorkCenters:
       query.exec( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip), wrkcnt_code"
-                  "  FROM wrkcnt "
+                  "  FROM xtmfg.wrkcnt "
                   "ORDER BY wrkcnt_code;" );
       break;
 

@@ -65,8 +65,6 @@
 #include "dspSingleLevelWhereUsed.h"
 #include "dspIndentedWhereUsed.h"
 #include "dspPendingBOMChanges.h"
-#include "dspOperationsByWorkCenter.h"
-#include "dspStandardOperationsByWorkCenter.h"
 #include "dspCapacityUOMsByClassCode.h"
 #include "dspCapacityUOMsByProductCategory.h"
 
@@ -165,9 +163,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   { "pd.dspPendingBOMChanges", tr("&Pending BOM Changes..."), SLOT(sDspPendingBOMChanges()), reportsMenu, "ViewBOMs", NULL, NULL, true , NULL },
   { "separator", NULL, NULL, reportsMenu,	"true", NULL, NULL, true , NULL },
-  { "pd.dspOperationsByWorkCenter", tr("&Operations..."), SLOT(sDspOperationsByWorkCenter()), reportsMenu, "ViewBOOs", NULL, NULL, _metrics->boolean("Routings") , NULL },
-  { "pd.dspStandardOperationsByWorkCenter", tr("&Standard Operations..."), SLOT(sDspStandardOperByWorkCenter()), reportsMenu, "ViewStandardOperations", NULL, NULL, _metrics->boolean("Routings") , NULL },
-  { "separator", NULL, NULL, reportsMenu,	"true", NULL, NULL,  _metrics->boolean("Routings") , NULL },
 
   // Product | Reports | Capacity UOMs
   { "menu",	tr("Capacity &UOMs"), (char*)reportsCapUomMenu,	reportsMenu, "true", NULL, NULL, true , NULL },
@@ -579,16 +574,6 @@ void menuProducts::sDspIndentedWhereUsed()
 void menuProducts::sDspPendingBOMChanges()
 {
   omfgThis->handleNewWindow(new dspPendingBOMChanges());
-}
-
-void menuProducts::sDspOperationsByWorkCenter()
-{
-  omfgThis->handleNewWindow(new dspOperationsByWorkCenter());
-}
-
-void menuProducts::sDspStandardOperByWorkCenter()
-{
-  omfgThis->handleNewWindow(new dspStandardOperationsByWorkCenter());
 }
 
 void menuProducts::sDspCapacityUOMsByClassCode()
