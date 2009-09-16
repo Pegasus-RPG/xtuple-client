@@ -61,8 +61,6 @@
 #include "dspReorderExceptionsByPlannerCode.h"
 
 #include "plannerCodes.h"
-#include "whseWeek.h"
-#include "whseCalendars.h"
 
 #include "menuSchedule.h"
 
@@ -202,8 +200,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     //  Master Information
     { "menu",	tr("&Master Information"), (char*)masterInfoMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "ms.plannerCodes", tr("&Planner Codes..."), SLOT(sPlannerCodes()), masterInfoMenu, "MaintainPlannerCodes ViewPlannerCodes", NULL, NULL, true , NULL },
-    { "ms.warehouseWeek", tr("Site &Week..."), SLOT(sWarehouseWeek()),masterInfoMenu, "MaintainWarehouseWorkWeek", NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
-    { "ms.warehouseCalendarExceptions", tr("Site Calendar &Exceptions..."), SLOT(sWarehouseCalendarExceptions()), masterInfoMenu, "MaintainWarehouseCalendarExceptions ViewWarehouseCalendarExceptions", NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
   };
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
@@ -511,15 +507,5 @@ void menuSchedule::sNewProductionPlan()
   plannedSchedule newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void menuSchedule::sWarehouseWeek()
-{
-  omfgThis->handleNewWindow(new whseWeek());
-}
-
-void menuSchedule::sWarehouseCalendarExceptions()
-{
-  omfgThis->handleNewWindow(new whseCalendars());
 }
 

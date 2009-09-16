@@ -83,8 +83,6 @@ class menuSchedule : public QObject
     void sDspReorderExceptionsByPlannerCode();
 
     void sPlannerCodes();
-    void sWarehouseWeek();
-    void sWarehouseCalendarExceptions();
 
   private:
     GUIClient *parent;
