@@ -280,7 +280,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printShippingForm.ui printShippingForms.ui                                             \
                printStatementByCustomer.ui printStatementsByCustomerType.ui                           \
                printVendorForm.ui                                                                     \
-               printWoForm.ui printWoPickList.ui printWoRouting.ui printWoTraveler.ui                 \
+               printWoForm.ui printWoPickList.ui printWoTraveler.ui                                   \
                printJournal.ui                                                                        \
                productCategory.ui productCategories.ui profitCenter.ui profitCenters.ui               \
                project.ui projects.ui purchaseOrder.ui purchaseOrderItem.ui                           \
@@ -600,7 +600,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                printShippingForm.h printShippingForms.h                                               \
                printStatementByCustomer.h printStatementsByCustomerType.h                             \
                printVendorForm.h                                                                      \
-               printWoForm.h printWoPickList.h printWoRouting.h printWoTraveler.h                     \
+               printWoForm.h printWoPickList.h printWoTraveler.h                                      \
                printJournal.h                                                                         \
                productCategory.h productCategories.h profitCenter.h profitCenters.h                   \
                project.h projects.h purchaseOrder.h purchaseOrderItem.h                               \
@@ -928,7 +928,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                printShippingForm.cpp printShippingForms.cpp                                           \
                printStatementByCustomer.cpp printStatementsByCustomerType.cpp                         \
                printVendorForm.cpp                                                                    \
-               printWoForm.cpp printWoPickList.cpp printWoRouting.cpp printWoTraveler.cpp             \
+               printWoForm.cpp printWoPickList.cpp printWoTraveler.cpp                                \
                printJournal.cpp                                                                       \
                productCategory.cpp productCategories.cpp profitCenter.cpp profitCenters.cpp           \
                project.cpp projects.cpp purchaseOrder.cpp purchaseOrderItem.cpp                       \

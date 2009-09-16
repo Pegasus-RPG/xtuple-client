@@ -46,7 +46,6 @@ class menuManufacture : public QObject
 
     void sPrintTraveler();
     void sPrintPickList();
-    void sPrintRouting();
 
     void sReleaseWorkOrdersByPlannerCode();
     void sReprioritizeWorkOrder();

@@ -25,7 +25,6 @@
 
 #include "printWoTraveler.h"
 #include "printWoPickList.h"
-#include "printWoRouting.h"
 
 #include "releaseWorkOrdersByPlannerCode.h"
 #include "reprioritizeWo.h"
@@ -195,7 +194,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "menu",			tr("&Forms"),		(char*)formsMenu,	  mainMenu,    "true",	0, 0, true, NULL },
     { "wo.printTraveler",	tr("Print &Traveler..."),	SLOT(sPrintTraveler()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
     { "wo.printPickList",	tr("Print &Pick List..."),	SLOT(sPrintPickList()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
-    { "wo.printRouting",	tr("Print &Routing..."),		SLOT(sPrintRouting()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",		NULL,				NULL,			  formsMenu, "true",	0, 0,	true, NULL },
     { "wo.rptPrintWorkOrderForm",		tr("Print &Work Order Form..."),	SLOT(sPrintWorkOrderForm()), formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
     { "wo.rptPrintProductionEntrySheet",	tr("Print Production &Entry Sheet..."),	SLOT(sPrintProductionEntrySheet()), formsMenu, "PrintWorkOrderPaperWork", 0, 0, _metrics->boolean("Routings"), NULL },
@@ -378,11 +376,6 @@ void menuManufacture::sPrintTraveler()
 void menuManufacture::sPrintPickList()
 {
   printWoPickList(parent, "", TRUE).exec();
-}
-
-void menuManufacture::sPrintRouting()
-{
-  printWoRouting(parent, "", TRUE).exec();
 }
 
 void menuManufacture::sCloseWorkOrder()

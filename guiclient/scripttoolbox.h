@@ -147,6 +147,7 @@ class ScriptToolbox : public QObject
 
     bool printReport(const QString & name, const ParameterList & params, const QString & pdfFilename = QString::null);
     bool printReport(const QString & name, const ParameterList & params, const bool preview);
+    bool printReportCopies(const QString & name, const ParameterList & params, int copies);
 
     bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);
 

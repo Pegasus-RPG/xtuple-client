@@ -514,6 +514,34 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
   return true;
 }
 
+bool ScriptToolbox::printReportCopies(const QString & name, const ParameterList & params, int copies)
+{
+  QPrinter printer(QPrinter::HighResolution);
+
+  orReport report(name, params);
+  bool userCanceled = false;
+  if (orReport::beginMultiPrint(&printer, userCanceled) == false)
+  {
+    if(!userCanceled)
+      systemError(NULL, tr("Could not initialize printing system for multiple reports."));
+    return userCanceled;
+  }
+  userCanceled = false;
+  if (report.isValid())
+  {
+    userCanceled = true;
+    for (int counter = 0; counter < copies; counter++)
+      if (!report.print(&printer, (counter == 0)))
+      {
+        report.reportError(NULL);
+        userCanceled = false;
+        break;
+      }
+  }
+  orReport::endMultiPrint(&printer);
+  return userCanceled;
+}
+
 bool ScriptToolbox::coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method)
 {
   return QObject::disconnect(sender, QString("2%1").arg(signal).toUtf8().data(), receiver, QString("1%1").arg(method).toUtf8().data());
