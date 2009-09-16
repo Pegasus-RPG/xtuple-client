@@ -85,7 +85,6 @@ class menuSchedule : public QObject
     void sPlannerCodes();
     void sWarehouseWeek();
     void sWarehouseCalendarExceptions();
-    void sWorkCenters();
 
   private:
     GUIClient *parent;

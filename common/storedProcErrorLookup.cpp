@@ -687,29 +687,6 @@ void initErrorLookupHash()
 			       "instead of trying to Delete it."),
 								 0, "" },
 
-  { "deleteWorkCenter",  -1, TR("The selected Work Center cannot be deleted "
-				"because there has been history posted against "
-				"it."),	0, "" },
-  { "deleteWorkCenter",  -2, TR("The selected Work Center cannot be deleted "
-				"because Standard Operations exist that use "
-				"it. You must reassign all Standard Operations "
-				"that use the selected Work Center to a "
-				"different Work Center before you may delete "
-				"it."),					0, "" },
-
-  { "deleteWorkCenter",  -3, TR("The selected Work Center cannot be deleted "
-				"because Bill of Operations items exist that "
-				"use it. You must reassign all Bill of "
-				"Operations items that use the selected Work "
-				"Center to a different Work Center before you "
-				"may delete it." ),			0, "" },
-
-  { "deleteWorkCenter",  -4, TR("The selected Work Center cannot be deleted "
-				"because Work Orders exist that use it. You "
-				"must complete or close all Work Orders that "
-				"use the selected Work Center before you may "
-				"delete it." ),				0, "" },
-
   { "disablePackage", -1, TR("This version of the PostgreSQL database server "
                              "does not support package enabling or disabling. "
                              "Upgrade to PostgreSQL 8.2 or later."),    0, "" },
