@@ -138,16 +138,17 @@ void XDialog::showEvent(QShowEvent *event)
 
       // load and run an QtScript that applies to this window
       qDebug() << "Looking for a script on dialog " << oName;
-      q.prepare("SELECT script_source, script_order"
+      XSqlQuery scriptq;
+      scriptq.prepare("SELECT script_source, script_order"
                 "  FROM script"
                 " WHERE((script_name=:script_name)"
                 "   AND (script_enabled))"
                 " ORDER BY script_order;");
-      q.bindValue(":script_name", oName);
-      q.exec();
-      while(q.next())
+      scriptq.bindValue(":script_name", oName);
+      scriptq.exec();
+      while(scriptq.next())
       {
-        QString script = scriptHandleIncludes(q.value("script_source").toString());
+        QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
         if(!_private->_engine)
         {
           _private->_engine = new QScriptEngine();

@@ -443,15 +443,16 @@ QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
   if(screenName.isEmpty())
     return 0;
 
-  q.prepare("SELECT *"
-            "  FROM uiform"
-            " WHERE((uiform_name=:uiform_name)"
-            "   AND (uiform_enabled))"
-            " ORDER BY uiform_order"
-            " LIMIT 1;");
-  q.bindValue(":uiform_name", screenName);
-  q.exec();
-  if(!q.first())
+  XSqlQuery qui;
+  qui.prepare("SELECT *"
+              "  FROM uiform"
+              " WHERE((uiform_name=:uiform_name)"
+              "   AND (uiform_enabled))"
+              " ORDER BY uiform_order"
+              " LIMIT 1;");
+  qui.bindValue(":uiform_name", screenName);
+  qui.exec();
+  if(!qui.first())
   {
     QMessageBox::critical(0, tr("Could Not Create Form"),
       tr("Could not create the required form. Either an error occurred or the specified form does not exist.") );
@@ -459,7 +460,7 @@ QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
   }
 
   XUiLoader loader;
-  QByteArray ba = q.value("uiform_source").toByteArray();
+  QByteArray ba = qui.value("uiform_source").toByteArray();
   QBuffer uiFile(&ba);
   if(!uiFile.open(QIODevice::ReadOnly))
   {
