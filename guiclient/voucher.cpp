@@ -878,15 +878,37 @@ void voucher::saveDetail()
 {
   if (_mode != cView)
   {
-    q.prepare("UPDATE vohead SET vohead_taxzone_id = :taxzone_id,"
-              "                  vohead_docdate = COALESCE(:vohead_docdate, CURRENT_DATE),"
-              "                  vohead_curr_id = :vohead_curr_id "
-              "WHERE (vohead_id = :vohead_id);");
+    q.prepare( "UPDATE vohead "
+               "SET vohead_pohead_id=:vohead_pohead_id,"
+               "    vohead_taxzone_id=:vohead_taxzone_id,  "
+               "    vohead_vend_id=:vohead_vend_id,"
+               "    vohead_terms_id=:vohead_terms_id,"
+               "    vohead_distdate=COALESCE(:vohead_distdate, CURRENT_DATE),"
+               "    vohead_docdate=COALESCE(:vohead_docdate, CURRENT_DATE),"
+               "    vohead_duedate=COALESCE(:vohead_duedate, CURRENT_DATE),"
+               "    vohead_invcnumber=:vohead_invcnumber,"
+               "    vohead_reference=:vohead_reference,"
+               "    vohead_amount=:vohead_amount,"
+               "    vohead_1099=:vohead_1099, "
+               "    vohead_curr_id=:vohead_curr_id, "
+               "    vohead_notes=:vohead_notes "
+               "WHERE (vohead_id=:vohead_id);" );
+
+    q.bindValue(":vohead_id", _voheadid);
+    q.bindValue(":vohead_pohead_id", _poNumber->id());
     if (_taxzone->isValid())
-      q.bindValue(":taxzone_id",	_taxzone->id());
-    q.bindValue(":vohead_id",	_voheadid);
-    q.bindValue(":vohead_docdate", _distributionDate->date());
+      q.bindValue(":vohead_taxzone_id", _taxzone->id());
+    q.bindValue(":vohead_vend_id",  _vendor->id());
+    q.bindValue(":vohead_terms_id", _terms->id());
+    q.bindValue(":vohead_distdate", _distributionDate->date());
+    q.bindValue(":vohead_docdate", _invoiceDate->date());
+    q.bindValue(":vohead_duedate", _dueDate->date());
+    q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
+    q.bindValue(":vohead_reference", _reference->text().trimmed());
+    q.bindValue(":vohead_amount", _amountToDistribute->localValue());
+    q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
     q.bindValue(":vohead_curr_id", _amountToDistribute->id());
+    q.bindValue(":vohead_notes", _notes->text());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
