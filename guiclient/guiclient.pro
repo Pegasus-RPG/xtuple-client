@@ -354,7 +354,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                voucher.ui voucheringEditList.ui voucherItemDistrib.ui voucherItem.ui                  \
                voucherMiscDistrib.ui                                                                  \
                warehouses.ui warehouse.ui warehouseZone.ui                                            \
-               whseCalendar.ui whseCalendars.ui whseWeek.ui                                           \
+               whseCalendar.ui whseCalendars.ui                                                       \
                workCenter.ui                                                                          \
                workOrder.ui workOrderMaterials.ui woTimeClock.ui wotc.ui                              \
                woOperation.ui workOrderOperations.ui                                                  \
@@ -677,7 +677,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                voucher.h voucheringEditList.h voucherItemDistrib.h voucherItem.h                      \
                voucherMiscDistrib.h                                                                   \
                warehouses.h warehouse.h warehouseZone.h                                               \
-               whseCalendar.h whseCalendars.h whseWeek.h workCenter.h                                 \
+               whseCalendar.h whseCalendars.h workCenter.h                                            \
                workOrder.h workOrderMaterials.h woTimeClock.h wotc.h                                  \
                woOperation.h workOrderOperations.h                                                    \
                zeroUncountedCountTagsByWarehouse.h                                                    \
@@ -1005,7 +1005,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                voucher.cpp voucheringEditList.cpp voucherItemDistrib.cpp voucherItem.cpp              \
                voucherMiscDistrib.cpp                                                                 \
                warehouses.cpp warehouse.cpp warehouseZone.cpp                                         \
-               whseCalendar.cpp whseCalendars.cpp whseWeek.cpp workCenter.cpp                         \
+               whseCalendar.cpp whseCalendars.cpp workCenter.cpp                                      \
                workOrder.cpp workOrderMaterials.cpp woTimeClock.cpp wotc.cpp                          \
                woOperation.cpp workOrderOperations.cpp                                                \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \

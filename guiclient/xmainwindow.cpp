@@ -24,6 +24,8 @@
 #include "guiclient.h"
 #include "scripttoolbox.h"
 
+#include "../scriptapi/qeventproto.h"
+
 //
 // XMainWindowPrivate
 //
@@ -119,14 +121,23 @@ ParameterList XMainWindow::get() const
 
 void XMainWindow::closeEvent(QCloseEvent *event)
 {
-  QString objName = objectName();
-  xtsettingsSetValue(objName + "/geometry/size", size());
-  if(omfgThis->showTopLevel() || isModal())
-    xtsettingsSetValue(objName + "/geometry/pos", pos());
-  else
-    xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
+  event->accept(); // we have no reason not to accept and let the script change it if needed
+  if(engine(this) && (engine(this)->globalObject().property("closeEvent").isFunction()))
+  {
+    QScriptValueList args;
+    args << engine(this)->toScriptValue((QEvent*)event);
+    engine(this)->globalObject().property("closeEvent").call(QScriptValue(), args);
+  }
 
-  QMainWindow::closeEvent(event);
+  if(event->isAccepted())
+  {
+    QString objName = objectName();
+    xtsettingsSetValue(objName + "/geometry/size", size());
+    if(omfgThis->showTopLevel() || isModal())
+      xtsettingsSetValue(objName + "/geometry/pos", pos());
+    else
+      xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
+  }
 }
 
 void XMainWindow::showEvent(QShowEvent *event)

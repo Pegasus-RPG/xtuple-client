@@ -37,6 +37,7 @@ HEADERS +=  setupscriptapi.h                    \
             qdomprocessinginstructionproto.h    \
             qdomtextproto.h                     \
             qdoublevalidatorproto.h             \
+            qeventproto.h                       \
             qfontproto.h                        \
             qmenuproto.h                        \
             qmessageboxsetup.h                  \
@@ -107,6 +108,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdomprocessinginstructionproto.cpp  \
             qdomtextproto.cpp                   \
             qdoublevalidatorproto.cpp           \
+            qeventproto.cpp                     \
             qfontproto.cpp                      \
             qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \

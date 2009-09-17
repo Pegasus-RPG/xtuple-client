@@ -836,8 +836,6 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
       QDialog *innerdlg = qobject_cast<QDialog*>(ui);
 
       connect(innerdlg, SIGNAL(finished(int)), window, SLOT(close()));
-      connect(innerdlg, SIGNAL(accepted()),    window, SLOT(close()));
-      connect(innerdlg, SIGNAL(rejected()),    window, SLOT(close()));
 
       // alternative to creating mydialog object:
       // for each property of mydialog (including functions)

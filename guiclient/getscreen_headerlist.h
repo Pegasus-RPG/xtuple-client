@@ -736,7 +736,6 @@
 #include "warehouseZone.h"
 #include "whseCalendar.h"
 #include "whseCalendars.h"
-#include "whseWeek.h"
 #include "woMaterialItem.h"
 #include "woOperation.h"
 #include "workCenter.h"

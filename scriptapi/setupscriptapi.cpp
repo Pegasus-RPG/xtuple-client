@@ -42,6 +42,7 @@
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
 #include "qdoublevalidatorproto.h"
+#include "qeventproto.h"
 #include "qfontproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
@@ -114,6 +115,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDomProcessingInstructionProto(engine);
   setupQDomTextProto(engine);
   setupQDoubleValidatorProto(engine);
+  setupQEventProto(engine);
   setupQFontProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
