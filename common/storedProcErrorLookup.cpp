@@ -1003,10 +1003,15 @@ void initErrorLookupHash()
 			       " the Item Site has no Control Method or the "
 			       "Item has an Item Type of Reference."),
 								0, "" },
+  { "postInvTrans",	-2, TR("Could not post an inventory transaction because"
+			       " the transaction will cause an Average Costed "
+			       "Item to go negative which is not allowed."),
+								0, "" },
   { "postInvTrans",	-3, "",	 -3, "insertGLTransaction" },
   { "postInvTrans",	-4, "",	 -4, "insertGLTransaction" },
 
   { "postPoReceipt",	-1, "",	 -1, "postReceipt" },
+  { "postPoReceipt",	-2, "",	 -2, "postReceipt" },
   { "postPoReceipt",	-3, "",	 -3, "postReceipt" },
   { "postPoReceipt",	-4, "",	 -4, "postReceipt" },
   { "postPoReceipt",   -10, "",	-10, "postReceipt" },
@@ -1014,6 +1019,7 @@ void initErrorLookupHash()
   { "postPoReceipt",   -12, "", -12, "postReceipt" },
 
   { "postReceipt",  -1, "",	 -1, "postInvTrans" },
+  { "postReceipt",  -2, "",	 -2, "postInvTrans" },
   { "postReceipt",  -3, "",	 -3, "insertGLTransaction" },
   { "postReceipt",  -4, "",	 -4, "insertGLTransaction" },
   { "postReceipt", -10, TR("This Receipt Line has already been posted."),
