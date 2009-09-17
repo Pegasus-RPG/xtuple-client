@@ -263,9 +263,9 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="0" column="0" >
-                 <widget class="QLabel" name="_taxauthLit" >
+                 <widget class="QLabel" name="_taxzoneLit" >
                   <property name="text" >
-                   <string>Tax Authority:</string>
+                   <string>Tax Zone:</string>
                   </property>
                   <property name="alignment" >
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -275,7 +275,7 @@ to be bound by its terms.</comment>
                 <item row="0" column="1" >
                  <layout class="QHBoxLayout" name="horizontalLayout_2" >
                   <item>
-                   <widget class="XComboBox" name="_taxauth" >
+                   <widget class="XComboBox" name="_taxzone" >
                     <property name="allowNull" >
                      <bool>true</bool>
                     </property>
@@ -283,7 +283,7 @@ to be bound by its terms.</comment>
                      <string>None</string>
                     </property>
                     <property name="type" >
-                     <enum>XComboBox::TaxAuths</enum>
+                     <enum>XComboBox::TaxZones</enum>
                     </property>
                    </widget>
                   </item>
@@ -360,7 +360,7 @@ to be bound by its terms.</comment>
                 </item>
                </layout>
                <zorder>_shipcommlit</zorder>
-               <zorder>_taxauthLit</zorder>
+               <zorder>_taxzoneLit</zorder>
                <zorder></zorder>
                <zorder>_defaultFOBLit</zorder>
                <zorder></zorder>
@@ -1191,7 +1191,7 @@ to be bound by its terms.</comment>
   <tabstop>_shipping</tabstop>
   <tabstop>_useSlips</tabstop>
   <tabstop>_useZones</tabstop>
-  <tabstop>_taxauth</tabstop>
+  <tabstop>_taxzone</tabstop>
   <tabstop>_defaultFOB</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_shipform</tabstop>

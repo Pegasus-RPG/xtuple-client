@@ -102,7 +102,6 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       connect(_whsezone, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_whsezone, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
 
-      _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
     }
     else if (param.toString() == "edit")
     {
@@ -136,7 +135,7 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       _new->setEnabled(FALSE);
       _account->setEnabled(FALSE);
       _shipcomm->setEnabled(FALSE);
-      _taxauth->setEnabled(FALSE);
+      _taxzone->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
       _transit->setEnabled(FALSE);
       _shipform->setEnabled(FALSE);
@@ -347,7 +346,7 @@ void warehouse::sSave()
                "  warehous_locationsize, warehous_locationalpha,"
                "  warehous_enforcearbl, warehous_usezones, "
                "  warehous_default_accnt_id, warehous_shipping_commission, "
-               "  warehous_addr_id, warehous_taxauth_id, warehous_transit,"
+               "  warehous_addr_id, warehous_taxzone_id, warehous_transit,"
                "  warehous_shipform_id, warehous_shipvia_id,"
                "  warehous_shipcomments, warehous_costcat_id, warehous_sitetype_id,"
                "  warehous_sequence ) "
@@ -362,7 +361,7 @@ void warehouse::sSave()
                "  :warehous_locationsize, :warehous_locationalpha,"
                "  :warehous_enforcearbl, :warehous_usezones, "
                "  :warehous_default_accnt_id, :warehous_shipping_commission, "
-               "  :warehous_addr_id, :warehous_taxauth_id, :warehous_transit,"
+               "  :warehous_addr_id, :warehous_taxzone_id, :warehous_transit,"
                "  :warehous_shipform_id, :warehous_shipvia_id,"
                "  :warehous_shipcomments, :warehous_costcat_id, :warehous_sitetype_id,"
                "  :warehous_sequence );" );
@@ -392,7 +391,7 @@ void warehouse::sSave()
                "    warehous_default_accnt_id=:warehous_default_accnt_id, "
                "    warehous_shipping_commission=:warehous_shipping_commission,"
                "    warehous_addr_id=:warehous_addr_id,"
-               "    warehous_taxauth_id=:warehous_taxauth_id,"
+               "    warehous_taxzone_id=:warehous_taxzone_id,"
                "    warehous_transit=:warehous_transit,"
                "    warehous_shipform_id=:warehous_shipform_id,"
                "    warehous_shipvia_id=:warehous_shipvia_id,"
@@ -436,8 +435,8 @@ void warehouse::sSave()
     q.bindValue(":warehous_locationalpha", QVariant(_locationAlpha->isChecked()));
     q.bindValue(":warehous_usezones",	   QVariant(_useZones->isChecked()));
     q.bindValue(":warehous_shipping_commission", (_shipcomm->toDouble() / 100));
-    if(_taxauth->isValid())
-      q.bindValue(":warehous_taxauth_id",	_taxauth->id());
+    if(_taxzone->isValid())
+      q.bindValue(":warehous_taxzone_id",	_taxzone->id());
   }
 
   q.bindValue(":warehous_transit",	QVariant(_transit->isChecked()));
@@ -500,7 +499,7 @@ void warehouse::populate()
     _useZones->setChecked(q.value("warehous_usezones").toBool());
     _account->setId(q.value("warehous_default_accnt_id").toInt());
     _shipcomm->setText(q.value("f_commission").toString());
-    _taxauth->setId(q.value("warehous_taxauth_id").toInt());
+    _taxzone->setId(q.value("warehous_taxzone_id").toInt());
     _transit->setChecked(q.value("warehous_transit").toBool());
     _shipform->setId(q.value("warehous_shipform_id").toInt());
     _shipvia->setId(q.value("warehous_shipvia_id").toInt());
