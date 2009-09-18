@@ -721,13 +721,13 @@ int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QStr
 {
   int btn;
   if(type == "critical")
-    btn = QMessageBox::critical(parent, title, text, buttons, defaultButton);
+    btn = QMessageBox::critical(parent, title, text, (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
   else if(type == "information")
-    btn = QMessageBox::information(parent, title, text, buttons, defaultButton);
+    btn = QMessageBox::information(parent, title, text, (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
   else if(type == "question")
-    btn = QMessageBox::question(parent, title, text, buttons, defaultButton);
+    btn = QMessageBox::question(parent, title, text, (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
   else //if(type == "warning")
-    btn = QMessageBox::warning(parent, title, text, buttons, defaultButton);
+    btn = QMessageBox::warning(parent, title, text, (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
   return btn;
 }
 
