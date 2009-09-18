@@ -155,7 +155,7 @@ void printPurchaseOrdersByAgent::sPrint()
   }
   else
     QMessageBox::information( this, tr("No Purchase Orders to Print"),
-                              tr("There are no unprinted Purchase Orders entered by the selected Purchasing Agent to print.") );
+                              tr("There are no posted, unprinted Purchase Orders entered by the selected Purchasing Agent to print.") );
 
   accept();
 }
