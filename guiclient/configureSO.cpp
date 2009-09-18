@@ -176,8 +176,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   this->setWindowTitle("Sales Configuration");
 
   //Set status of Returns Authorization based on context
-  if ( (_metrics->value("Application") != "Manufacturing")
-    && (_metrics->value("Application") != "Standard") )
+  if(_metrics->value("Application") == "PostBooks")
   {
     _authNumGenerationLit->setVisible(false);
     _returnAuthorizationNumGeneration->setVisible(false);

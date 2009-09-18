@@ -226,7 +226,7 @@ void userPreferences::sPopulate()
     _ellipsesAction->setId(1);
     
   //Hide for PostBooks 
-  if (_metrics->value("Application") != "Manufacturing")
+  if (_metrics->value("Application") == "PostBooks")
   {
     _scheduleMenu->hide();
     _scheduleToolbar->hide();

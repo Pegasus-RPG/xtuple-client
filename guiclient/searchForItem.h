@@ -29,10 +29,6 @@ public slots:
     virtual void sEdit();
     virtual void sViewBOM();
     virtual void sEditBOM();
-    virtual void sViewBOO();
-    virtual void sEditBOO();
-    virtual void sViewBBOM();
-    virtual void sEditBBOM();
     virtual void sFillList();
 
 protected slots:

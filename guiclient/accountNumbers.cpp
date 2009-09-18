@@ -203,8 +203,7 @@ void accountNumbers::sBuildList()
   _account->addColumn(tr("Sub. Type"),      100, Qt::AlignLeft,  false, "subaccnttype_descrip");
   _externalCol++;
 
-  if (_metrics->value("Application") == "xTuple" ||
-      _metrics->value("Application") == "Manufacturing")
+  if (_metrics->value("Application") != "PostBooks")
   {
     _account->addColumn(tr("External"), _ynColumn, Qt::AlignCenter, false, "company_external");
     _externalCol++;

@@ -611,8 +611,7 @@ void GUIClient::initMenuBar()
     qApp->processEvents();
     inventoryMenu = new menuInventory(this);
         
-    if ( (_metrics->value("Application") == "Manufacturing")
-      || (_metrics->value("Application") == "Standard") )
+    if(_metrics->value("Application") != "PostBooks")
     {
       _splash->showMessage(tr("Initializing the Scheduling Module"), SplashTextAlignment, SplashTextColor);
       qApp->processEvents();
@@ -654,8 +653,7 @@ void GUIClient::initMenuBar()
 
   findChild<QMenu*>("menu.prod")->menuAction()->setVisible(_preferences->boolean("ShowPDMenu"));
   findChild<QMenu*>("menu.im")->menuAction()->setVisible(_preferences->boolean("ShowIMMenu"));
-  if ( (_metrics->value("Application") == "Manufacturing")
-    || (_metrics->value("Application") == "Standard") )
+  if(_metrics->value("Application") != "PostBooks")
   {
     findChild<QMenu*>("menu.sched")->menuAction()->setVisible(_preferences->boolean("ShowMSMenu"));
   }
@@ -803,8 +801,7 @@ void GUIClient::sTick()
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
 
-      if ( (_metrics->value("Application") != "Manufacturing")
-        && (_metrics->value("Application") != "Standard") )
+      if (_metrics->value("Application") == "PostBooks")
       {
         if(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes")
         {

@@ -104,8 +104,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   // GL
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
 
-  bool extConsolAllowed = _metrics->value("Application") == "Manufacturing" ||
-                          _metrics->value("Application") == "Standard";
+  bool extConsolAllowed = _metrics->value("Application") != "PostBooks";
   _externalConsolidation->setVisible(extConsolAllowed);
   if (_metrics->value("GLCompanySize").toInt() == 0)
   {

@@ -37,7 +37,7 @@ customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::
   _module->clear();
   _module->addItem("Products");
   _module->addItem("Inventory");
-  if (_metrics->value("Application") == "Manufacturing")
+  if (_metrics->value("Application") != "PostBooks")
     _module->addItem("Schedule");
   _module->addItem("Purchase");
   _module->addItem("Manufacture");

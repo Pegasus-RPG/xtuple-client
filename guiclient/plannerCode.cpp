@@ -18,7 +18,7 @@ plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  if (_metrics->value("Application") == "Manufacturing")
+  if (_metrics->value("Application") != "PostBooks")
   {
     QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
     _explosionGroupInt->addButton(_singleLevel);

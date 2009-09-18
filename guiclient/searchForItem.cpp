@@ -11,19 +11,11 @@
 #include "searchForItem.h"
 
 #include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
 #include <parameter.h>
 #include "item.h"
 #include "bom.h"
-#include "boo.h"
-#include "bbom.h"
 
-/*
- *  Constructs a searchForItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -62,18 +54,11 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
   _search->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 searchForItem::~searchForItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void searchForItem::languageChange()
 {
   retranslateUi(this);
@@ -92,18 +77,6 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if(q.first())
     hasBOM = q.value("hasBOM").toBool();
 
-  bool hasBOO = false;
-  if (_metrics->value("Application") == "Manufacturing")
-  {
-    q.prepare("SELECT (count(*) != 0) AS hasBOO"
-              "  FROM boohead"
-              " WHERE (boohead_item_id=:item_id); ");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if(q.first())
-      hasBOO = q.value("hasBOO").toBool();
-  }
-  
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
@@ -124,35 +97,6 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
     menuItem = pMenu->insertItem(tr("Edit BOM..."), this, SLOT(sEditBOM()), 0);
     if (!hasBOM || !_privileges->check("MaintainBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-  }
-
-  if ((((XTreeWidgetItem *)pSelected)->text(2) == tr("Purchased") ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Job")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured")))
-      && _metrics->boolean("Routings"))
-  {
-    pMenu->insertSeparator();
-
-    menuItem = pMenu->insertItem(tr("View BOO..."), this, SLOT(sViewBOO()), 0);
-    if (!hasBOO || !_privileges->check("ViewBOOs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    menuItem = pMenu->insertItem(tr("Edit BOO..."), this, SLOT(sEditBOO()), 0);
-    if (!hasBOO || !_privileges->check("MaintainBOOs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-  }
-
-  if (((XTreeWidgetItem *)pSelected)->text(2) == tr("Breeder"))
-  {
-    pMenu->insertSeparator();
-
-    menuItem = pMenu->insertItem(tr("View Breeder BOM..."), this, SLOT(sViewBBOM()), 0);
-    if (!_privileges->check("ViewBBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    menuItem = pMenu->insertItem(tr("Edit Breeder BOM..."), this, SLOT(sEditBBOM()), 0);
-    if (!_privileges->check("MaintainBBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
@@ -185,50 +129,6 @@ void searchForItem::sEditBOM()
   params.append("item_id", _item->id());
   
   BOM *newdlg = new BOM();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void searchForItem::sViewBOO()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("item_id", _item->id());
-  
-  boo *newdlg = new boo();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void searchForItem::sEditBOO()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _item->id());
-  
-  boo *newdlg = new boo();
-  newdlg->set(params);
-  newdlg->show();
-}
-
-void searchForItem::sViewBBOM()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("item_id", _item->id());
-  
-  bbom *newdlg = new bbom();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void searchForItem::sEditBBOM()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _item->id());
-  
-  bbom *newdlg = new bbom();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

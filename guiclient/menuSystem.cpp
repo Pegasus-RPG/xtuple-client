@@ -173,7 +173,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configurePD",	tr("&Products..."),	SLOT(sConfigurePD()),	configModulesMenu,	"ConfigurePD",	NULL,	NULL,	true	},
     { "sys.configureIM",	tr("&Inventory..."),	SLOT(sConfigureIM()),	configModulesMenu,	"ConfigureIM",	NULL,	NULL,	true	},
     { "sys.configurePO",	tr("P&urchase..."),	SLOT(sConfigurePO()),	configModulesMenu,	"ConfigurePO",	NULL,	NULL,	true	},
-    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	"ConfigureMS",	NULL,	NULL,	 (_metrics->value("Application") == "Manufacturing" || _metrics->value("Application") == "Standard")	},
+    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	"ConfigureMS",	NULL,	NULL,	 (_metrics->value("Application") != "PostBooks")	},
     { "sys.configureWO",	tr("&Manufacture..."),	SLOT(sConfigureWO()),	configModulesMenu,	"ConfigureWO",	NULL,	NULL,	true	},
     { "sys.configureCRM",	tr("&CRM..."),		SLOT(sConfigureCRM()),	configModulesMenu,	"ConfigureCRM",	NULL,	NULL,	true	},
     { "sys.configureSO",	tr("&Sales..."),	SLOT(sConfigureSO()),	configModulesMenu,	"ConfigureSO",	NULL,	NULL,	true	},
@@ -235,7 +235,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", NULL, NULL, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
-    { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "Manufacturing" },
+    { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") == "PostBooks" },
     { "community.editAccount", tr("My Online User &Account"),      SLOT(sCommunityEditAccount()), communityMenu, "true", NULL, NULL, true },
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
