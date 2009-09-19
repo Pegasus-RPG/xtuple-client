@@ -27,9 +27,36 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(populateLocations()));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
+  connect(_planningType, SIGNAL(activated(int)), this, SLOT(sHandlePlanningType()));
   connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupply(bool)));
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupply(bool)));
 
+  _planningType->append(0, "None", "N");
+  if (_metrics->value("Application") != "Manufacturing" && _metrics->value("Application") != "Standard")
+  {
+    _planningType->setCurrentIndex(0);
+    _planningType->hide();
+    _planningTypeLit->hide();
+    _createPlannedTransfers->hide();
+
+    _orderGroupLit->hide();
+    _orderGroup->hide();
+    _orderGroupDaysLit->hide();
+    _orderGroupFirst->hide();
+    _mpsTimeFenceLit->hide();
+    _mpsTimeFence->hide();
+    _mpsTimeFenceDaysLit->hide();
+  }
+  else
+  {
+    _planningType->append(1, "MRP", "M");
+    if (_metrics->value("Application") == "Manufacturing")
+      _planningType->append(2, "MPS", "S");
+    if (!_metrics->boolean("MultiWhs"))
+      _createPlannedTransfers->hide();
+  }
+  sHandlePlanningType();
+  
   _reorderLevel->setValidator(omfgThis->qtyVal());
   _orderUpToQty->setValidator(omfgThis->qtyVal());
   _minimumOrder->setValidator(omfgThis->qtyVal());
@@ -181,7 +208,7 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_location_comments, itemsite_notes,"
                "  itemsite_abcclass, itemsite_freeze, itemsite_datelastused,"
                "  itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence, "
-               "  itemsite_autoabcclass, itemsite_costmethod ) "
+               "  itemsite_autoabcclass, itemsite_planning_type, itemsite_costmethod ) "
                "SELECT item_id,"
                "       :warehous_id, 0.0, 0.0,"
                "       :itemsite_useparams, :itemsite_useparamsmanual,"
@@ -198,7 +225,9 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_location_comments, '',"
                "       :itemsite_abcclass, FALSE, startOfTime(),"
                "       :itemsite_ordergroup, :itemsite_ordergroup_first, :itemsite_mps_timefence, "
-               "       FALSE, CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END "
+               "       FALSE, "
+			   "       CASE WHEN(item_type='L') THEN 'M' ELSE :itemsite_planning_type END, "
+			   "       CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END "
                "FROM item "
                "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
                "                          FROM itemsite"
@@ -237,6 +266,7 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
   q.bindValue(":itemsite_abcclass", _abcClass->currentText());
 
+  q.bindValue(":itemsite_planning_type", _planningType->code());
   q.bindValue(":itemsite_ordergroup", _orderGroup->value());
   q.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
   q.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
@@ -348,6 +378,29 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _perishable->setEnabled(FALSE);
   }
 }
+
+void createItemSitesByClassCode::sHandlePlanningType()
+{
+  if (_planningType->code() == "M" || _planningType->code() == "S")
+  {
+    _createPlannedTransfers->setEnabled(TRUE);
+    _orderGroup->setEnabled(TRUE);
+    _orderGroupFirst->setEnabled(TRUE);
+
+    if (_planningType->code() == "S")
+      _mpsTimeFence->setEnabled(TRUE);
+    else
+      _mpsTimeFence->setEnabled(FALSE);
+  }
+  else
+  {
+    _createPlannedTransfers->setEnabled(FALSE);
+    _orderGroup->setEnabled(FALSE);
+    _orderGroupFirst->setEnabled(FALSE);
+    _mpsTimeFence->setEnabled(FALSE);
+  }
+
+} 
 
 void createItemSitesByClassCode::populateLocations()
 {

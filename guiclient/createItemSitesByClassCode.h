@@ -30,6 +30,7 @@ public slots:
     virtual void sHandlePOSupply( bool pSupplied );
     virtual void sHandleWOSupply( bool pSupplied );
     virtual void sHandleControlMethod();
+    virtual void sHandlePlanningType();
     virtual void populateLocations();
     virtual void clear();
 

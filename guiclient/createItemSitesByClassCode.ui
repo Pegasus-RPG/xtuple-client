@@ -1029,23 +1029,7 @@ to be bound by its terms.</comment>
                 <item row="0" column="1" colspan="4" >
                  <layout class="QHBoxLayout" name="horizontalLayout_11" >
                   <item>
-                   <widget class="QComboBox" name="_planningType" >
-                    <item>
-                     <property name="text" >
-                      <string>None</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
-                      <string>MRP</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
-                      <string>MPS</string>
-                     </property>
-                    </item>
-                   </widget>
+                   <widget class="XComboBox" name="_planningType" />
                   </item>
                   <item>
                    <spacer>
@@ -1200,7 +1184,7 @@ to be bound by its terms.</comment>
                 <item row="5" column="0" colspan="5" >
                  <layout class="QHBoxLayout" name="horizontalLayout_12" >
                   <item>
-                   <widget class="QGroupBox" name="groupBox_2" >
+                   <widget class="QGroupBox" name="_createPlannedTransfers" >
                     <property name="title" >
                      <string>Create Planned Transfer Orders</string>
                     </property>
