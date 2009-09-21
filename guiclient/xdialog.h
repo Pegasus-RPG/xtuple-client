@@ -27,18 +27,26 @@ class XDialog : public QDialog
     XDialog(QWidget * parent, const char * name, bool modal = false, Qt::WindowFlags flags = 0);
     virtual ~XDialog();
 
+    Q_INVOKABLE virtual ParameterList get() const;
+
   public slots:
-    virtual SetResponse set(const ParameterList &);
-    virtual void done(int);
-    void setRememberPos(bool);
-    void setRememberSize(bool);
+    virtual enum SetResponse set(const ParameterList &);
+    virtual void setRememberPos(bool);
+    virtual void setRememberSize(bool);
 
   protected:
-    virtual void showEvent ( QShowEvent * event );
+    virtual void closeEvent(QCloseEvent * event);
+    virtual void showEvent(QShowEvent * event);
+
+  protected slots:
+    virtual enum SetResponse postSet();
 
   private:
     friend class XDialogPrivate;
     XDialogPrivate *_private;
+
+    ParameterList _lastSetParams;
+    void loadScriptEngine();
 };
 
 #endif // __XDIALOG_H__

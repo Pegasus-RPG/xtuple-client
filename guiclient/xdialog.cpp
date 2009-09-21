@@ -22,6 +22,8 @@
 #include "guiclient.h"
 #include "scripttoolbox.h"
 
+#include "../scriptapi/qeventproto.h"
+
 //
 // XDialogPrivate
 //
@@ -34,15 +36,18 @@ class XDialogPrivate
     ~XDialogPrivate();
 
     bool _shown;
+    bool _scriptLoaded;
     QScriptEngine * _engine;
     QScriptEngineDebugger * _debugger;
     QAction *_rememberPos;
     QAction *_rememberSize;
+    ParameterList lastSetParams;
 };
 
 XDialogPrivate::XDialogPrivate()
 {
   _shown = false;
+  _scriptLoaded = false;
   _engine = 0;
   _rememberPos = 0;
   _rememberSize = 0;
@@ -86,12 +91,21 @@ XDialog::~XDialog()
     delete _private;
 }
 
-void XDialog::done(int r)
+void XDialog::closeEvent(QCloseEvent * event)
 {
-  xtsettingsSetValue(objectName() + "/geometry/size", size());
-  xtsettingsSetValue(objectName() + "/geometry/pos", pos());
+  event->accept(); // we have no reason not to accept and let the script change it if needed
+  if(_private->_engine && (_private->_engine->globalObject().property("closeEvent").isFunction()))
+  {
+    QScriptValueList args;
+    args << _private->_engine->toScriptValue((QEvent*)event);
+    _private->_engine->globalObject().property("closeEvent").call(QScriptValue(), args);
+  }
 
-  QDialog::done(r);
+  if(event->isAccepted())
+  {
+    xtsettingsSetValue(objectName() + "/geometry/size", size());
+    xtsettingsSetValue(objectName() + "/geometry/pos", pos());
+  }
 }
 
 void XDialog::showEvent(QShowEvent *event)
@@ -128,48 +142,7 @@ void XDialog::showEvent(QShowEvent *event)
     addAction(_private->_rememberSize);
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    QStringList parts = objectName().split(" ");
-    QStringList search_parts;
-    QString oName;
-    while(!parts.isEmpty())
-    {
-      search_parts.append(parts.takeFirst());
-      oName = search_parts.join(" ");
-
-      // load and run an QtScript that applies to this window
-      qDebug() << "Looking for a script on dialog " << oName;
-      XSqlQuery scriptq;
-      scriptq.prepare("SELECT script_source, script_order"
-                "  FROM script"
-                " WHERE((script_name=:script_name)"
-                "   AND (script_enabled))"
-                " ORDER BY script_order;");
-      scriptq.bindValue(":script_name", oName);
-      scriptq.exec();
-      while(scriptq.next())
-      {
-        QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
-        if(!_private->_engine)
-        {
-          _private->_engine = new QScriptEngine();
-          if (_preferences->boolean("EnableScriptDebug"))
-          {
-            _private->_debugger = new QScriptEngineDebugger(this);
-            _private->_debugger->attachTo(_private->_engine);
-          }
-          omfgThis->loadScriptGlobals(_private->_engine);
-          QScriptValue mywindow = _private->_engine->newQObject(this);
-          _private->_engine->globalObject().setProperty("mywindow", mywindow);
-        }
-  
-        QScriptValue result = _private->_engine->evaluate(script, objectName());
-        if (_private->_engine->hasUncaughtException())
-        {
-          int line = _private->_engine->uncaughtExceptionLineNumber();
-          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
-        }
-      }
-    }
+    loadScriptEngine();
   }
   QDialog::showEvent(event);
 }
@@ -188,8 +161,84 @@ void XDialog::setRememberSize(bool b)
     _private->_rememberSize->setChecked(b);
 }
 
-SetResponse XDialog::set(const ParameterList & /*pParams*/)
+enum SetResponse XDialog::set(const ParameterList & pParams)
 {
+  _lastSetParams = pParams;
+
+  loadScriptEngine();
+
+  QTimer::singleShot(0, this, SLOT(postSet()));
+
   return NoError;
 }
 
+enum SetResponse XDialog::postSet()
+{
+  loadScriptEngine();
+
+  enum SetResponse returnValue = NoError;
+  if(_private->_engine && _private->_engine->globalObject().property("set").isFunction())
+  {
+    QScriptValueList args;
+    args << ParameterListtoScriptValue(_private->_engine, _lastSetParams);
+    QScriptValue tmp = _private->_engine->globalObject().property("set").call(QScriptValue(), args);
+    SetResponsefromScriptValue(tmp, returnValue);
+  }
+
+  return returnValue;
+}
+
+ParameterList XDialog::get() const
+{
+  return _lastSetParams;
+}
+
+void XDialog::loadScriptEngine()
+{
+  if(_private->_scriptLoaded)
+    return;
+  _private->_scriptLoaded = true;
+
+  QStringList parts = objectName().split(" ");
+  QStringList search_parts;
+  QString oName;
+  while(!parts.isEmpty())
+  {
+    search_parts.append(parts.takeFirst());
+    oName = search_parts.join(" ");
+
+    // load and run an QtScript that applies to this window
+    qDebug() << "Looking for a script on dialog " << oName;
+    XSqlQuery scriptq;
+    scriptq.prepare("SELECT script_source, script_order"
+              "  FROM script"
+              " WHERE((script_name=:script_name)"
+              "   AND (script_enabled))"
+              " ORDER BY script_order;");
+    scriptq.bindValue(":script_name", oName);
+    scriptq.exec();
+    while(scriptq.next())
+    {
+      QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
+      if(!_private->_engine)
+      {
+        _private->_engine = new QScriptEngine();
+        if (_preferences->boolean("EnableScriptDebug"))
+        {
+          _private->_debugger = new QScriptEngineDebugger(this);
+          _private->_debugger->attachTo(_private->_engine);
+        }
+        omfgThis->loadScriptGlobals(_private->_engine);
+        QScriptValue mywindow = _private->_engine->newQObject(this);
+        _private->_engine->globalObject().setProperty("mywindow", mywindow);
+      }
+
+      QScriptValue result = _private->_engine->evaluate(script, objectName());
+      if (_private->_engine->hasUncaughtException())
+      {
+        int line = _private->_engine->uncaughtExceptionLineNumber();
+        qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+      }
+    }
+  }
+}

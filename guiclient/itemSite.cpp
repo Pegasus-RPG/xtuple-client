@@ -39,7 +39,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
   _planningType->append(0, "None", "N");
-  if (_metrics->value("Application") != "Manufacturing" && _metrics->value("Application") != "Standard")
+  if(_metrics->value("Application") == "PostBooks")
   {
     _planningType->setCurrentIndex(0);
     _planningType->hide();
@@ -57,8 +57,6 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   else
   {
     _planningType->append(1, "MRP", "M");
-    if (_metrics->value("Application") == "Manufacturing")
-      _planningType->append(2, "MPS", "S");
     if (!_metrics->boolean("MultiWhs"))
       _createPlannedTransfers->hide();
   }
@@ -128,6 +126,8 @@ void itemSite::languageChange()
 
 enum SetResponse itemSite::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
+
   QVariant param;
   bool     valid;
   bool     check;

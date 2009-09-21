@@ -27,16 +27,24 @@ class XWidget : public QWidget
     XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags = 0);
     ~XWidget();
 
+    Q_INVOKABLE virtual ParameterList get() const;
+
   public slots:
-    virtual SetResponse set( const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList &);
 
   protected:
     void closeEvent(QCloseEvent * event);
     void showEvent(QShowEvent * event);
 
+  protected slots:
+    virtual enum SetResponse postSet();
+
   private:
     friend class XWidgetPrivate;
     XWidgetPrivate *_private;
+
+    ParameterList _lastSetParams;
+    void loadScriptEngine();
 };
 
 #endif // __XWIDGET_H__

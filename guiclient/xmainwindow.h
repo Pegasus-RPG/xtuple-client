@@ -42,13 +42,17 @@ class XMainWindow : public QMainWindow
     virtual void hideEvent(QHideEvent *);
     virtual void changeEvent(QEvent *);
 
+  protected slots:
+    virtual enum SetResponse postSet();
+
   private:
     friend class XMainWindowPrivate;
     friend class ScriptToolbox;
     XMainWindowPrivate *_private;
     friend QScriptEngine *engine(XMainWindow*);
 
-    ParameterList _params;
+    ParameterList _lastSetParams;
+    void loadScriptEngine();
 
   private slots:
     void showMe(bool);

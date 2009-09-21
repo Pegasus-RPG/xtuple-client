@@ -38,6 +38,7 @@ class XMainWindowPrivate
     ~XMainWindowPrivate();
 
     bool _shown;
+    bool _scriptLoaded;
     QScriptEngine * _engine;
     QScriptEngineDebugger * _debugger;
     QAction *_action;
@@ -46,6 +47,7 @@ class XMainWindowPrivate
 XMainWindowPrivate::XMainWindowPrivate()
 {
   _shown = false;
+  _scriptLoaded = false;
   _engine = 0;
   _action = 0;
 }
@@ -95,20 +97,25 @@ XMainWindow::~XMainWindow()
 
 enum SetResponse XMainWindow::set(const ParameterList &params)
 {
-  enum SetResponse returnValue = NoError;
-  _params = params;
+  _lastSetParams = params;
 
-  if (engine(this))
+  loadScriptEngine();
+  QTimer::singleShot(0, this, SLOT(postSet()));
+
+  return NoError;
+}
+
+enum SetResponse XMainWindow::postSet()
+{
+  loadScriptEngine();
+
+  enum SetResponse returnValue = NoError;
+  if(_private->_engine && _private->_engine->globalObject().property("set").isFunction())
   {
-    if (engine(this)->globalObject().property("set").isFunction())
-    {
-      QScriptValueList args;
-      args << ParameterListtoScriptValue(engine(this), _params);
-      QScriptValue tmp = engine(this)->globalObject().property("set").call(QScriptValue(), args);
-      SetResponsefromScriptValue(tmp, returnValue);
-    }
-    else
-      qDebug("engine's script doesn't have a set function");
+    QScriptValueList args;
+    args << ParameterListtoScriptValue(_private->_engine, _lastSetParams);
+    QScriptValue tmp = _private->_engine->globalObject().property("set").call(QScriptValue(), args);
+    SetResponsefromScriptValue(tmp, returnValue);
   }
 
   return returnValue;
@@ -116,17 +123,17 @@ enum SetResponse XMainWindow::set(const ParameterList &params)
 
 ParameterList XMainWindow::get() const
 {
-  return _params;
+  return _lastSetParams;
 }
 
 void XMainWindow::closeEvent(QCloseEvent *event)
 {
   event->accept(); // we have no reason not to accept and let the script change it if needed
-  if(engine(this) && (engine(this)->globalObject().property("closeEvent").isFunction()))
+  if(_private->_engine && (_private->_engine->globalObject().property("closeEvent").isFunction()))
   {
     QScriptValueList args;
-    args << engine(this)->toScriptValue((QEvent*)event);
-    engine(this)->globalObject().property("closeEvent").call(QScriptValue(), args);
+    args << _private->_engine->toScriptValue((QEvent*)event);
+    _private->_engine->globalObject().property("closeEvent").call(QScriptValue(), args);
   }
 
   if(event->isAccepted())
@@ -179,47 +186,7 @@ void XMainWindow::showEvent(QShowEvent *event)
         fw->setFocus();
     }
 
-    QStringList parts = objectName().split(" ");
-    QStringList search_parts;
-    QString oName;
-    while(!parts.isEmpty())
-    {
-      search_parts.append(parts.takeFirst());
-      oName = search_parts.join(" ");
-      // load and run an QtScript that applies to this window
-      qDebug() << "Looking for a script on window " << oName;
-      XSqlQuery scriptq;
-      scriptq.prepare("SELECT script_source, script_order"
-                "  FROM script"
-                " WHERE((script_name=:script_name)"
-                "   AND (script_enabled))"
-                " ORDER BY script_order;");
-      scriptq.bindValue(":script_name", oName);
-      scriptq.exec();
-      while(scriptq.next())
-      {
-        QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
-        if(!_private->_engine)
-        {
-          _private->_engine = new QScriptEngine(this);
-          if (_preferences->boolean("EnableScriptDebug"))
-          {
-            _private->_debugger = new QScriptEngineDebugger(this);
-            _private->_debugger->attachTo(_private->_engine);
-          }
-          omfgThis->loadScriptGlobals(_private->_engine);
-          QScriptValue mywindow = _private->_engine->newQObject(this);
-          _private->_engine->globalObject().setProperty("mywindow", mywindow);
-        }
-  
-        QScriptValue result = _private->_engine->evaluate(script, objectName());
-        if (_private->_engine->hasUncaughtException())
-        {
-          int line = _private->_engine->uncaughtExceptionLineNumber();
-          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
-        }
-      }
-    }
+    loadScriptEngine();
   }
 
   bool blocked = _private->_action->blockSignals(true);
@@ -269,16 +236,62 @@ void XMainWindow::showMe(bool v)
   target->setVisible(v);
 }
 
+void XMainWindow::loadScriptEngine()
+{
+  if(_private->_scriptLoaded)
+    return;
+  _private->_scriptLoaded = true;
+
+  QStringList parts = objectName().split(" ");
+  QStringList search_parts;
+  QString oName;
+  while(!parts.isEmpty())
+  {
+    search_parts.append(parts.takeFirst());
+    oName = search_parts.join(" ");
+    // load and run an QtScript that applies to this window
+    qDebug() << "Looking for a script on window " << oName;
+    XSqlQuery scriptq;
+    scriptq.prepare("SELECT script_source, script_order"
+              "  FROM script"
+              " WHERE((script_name=:script_name)"
+              "   AND (script_enabled))"
+              " ORDER BY script_order;");
+    scriptq.bindValue(":script_name", oName);
+    scriptq.exec();
+    while(scriptq.next())
+    {
+      QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
+      if(!_private->_engine)
+      {
+        _private->_engine = new QScriptEngine(this);
+        if (_preferences->boolean("EnableScriptDebug"))
+        {
+          _private->_debugger = new QScriptEngineDebugger(this);
+          _private->_debugger->attachTo(_private->_engine);
+        }
+        omfgThis->loadScriptGlobals(_private->_engine);
+        QScriptValue mywindow = _private->_engine->newQObject(this);
+        _private->_engine->globalObject().setProperty("mywindow", mywindow);
+      }
+
+      QScriptValue result = _private->_engine->evaluate(script, objectName());
+      if (_private->_engine->hasUncaughtException())
+      {
+        int line = _private->_engine->uncaughtExceptionLineNumber();
+        qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+      }
+    }
+  }
+}
+
 QScriptEngine *engine(XMainWindow *win)
 {
-  // copied from showEvent - why is it hidden there and not in the constructor?
-  if(!win->_private->_engine)
+  if(win)
   {
-    win->_private->_engine = new QScriptEngine(win);
-    omfgThis->loadScriptGlobals(win->_private->_engine);
-    QScriptValue mywindow = win->_private->_engine->newQObject(win);
-    win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
+    win->loadScriptEngine();
+    return win->_private->_engine;
   }
-
-  return win->_private->_engine;
+  return 0;
 }
+
