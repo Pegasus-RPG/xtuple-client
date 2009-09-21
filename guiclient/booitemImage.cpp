@@ -41,6 +41,7 @@ void booitemImage::languageChange()
 
 enum SetResponse booitemImage::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

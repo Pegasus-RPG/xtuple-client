@@ -112,6 +112,7 @@ void invoice::languageChange()
 
 enum SetResponse invoice::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

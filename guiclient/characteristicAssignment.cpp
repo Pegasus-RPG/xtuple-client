@@ -44,6 +44,7 @@ void characteristicAssignment::languageChange()
 
 enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

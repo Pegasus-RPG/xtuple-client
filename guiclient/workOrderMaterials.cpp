@@ -102,6 +102,7 @@ void workOrderMaterials::languageChange()
 
 enum SetResponse workOrderMaterials::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

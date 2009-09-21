@@ -46,6 +46,7 @@ void splitReceipt::languageChange()
 
 enum SetResponse splitReceipt::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

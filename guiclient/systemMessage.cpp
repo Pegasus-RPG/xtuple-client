@@ -47,6 +47,7 @@ void systemMessage::languageChange()
 
 enum SetResponse systemMessage::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

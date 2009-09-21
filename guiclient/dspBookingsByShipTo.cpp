@@ -55,6 +55,7 @@ void dspBookingsByShipTo::languageChange()
 
 enum SetResponse dspBookingsByShipTo::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -50,6 +50,7 @@ void changeWoQty::languageChange()
 
 enum SetResponse changeWoQty::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

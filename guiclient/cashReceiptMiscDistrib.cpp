@@ -37,6 +37,7 @@ void cashReceiptMiscDistrib::languageChange()
 
 enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

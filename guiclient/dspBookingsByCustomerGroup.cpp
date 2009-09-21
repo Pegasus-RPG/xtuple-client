@@ -59,6 +59,7 @@ void dspBookingsByCustomerGroup::languageChange()
 
 enum SetResponse dspBookingsByCustomerGroup::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

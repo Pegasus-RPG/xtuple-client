@@ -37,6 +37,7 @@ void subAccntType::languageChange()
 
 enum SetResponse subAccntType::set( const ParameterList & pParams )
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

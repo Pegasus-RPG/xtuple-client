@@ -49,6 +49,7 @@ void printLabelsByOrder::languageChange()
 
 enum SetResponse printLabelsByOrder::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

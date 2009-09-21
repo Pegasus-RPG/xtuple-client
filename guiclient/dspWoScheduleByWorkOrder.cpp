@@ -82,6 +82,7 @@ void dspWoScheduleByWorkOrder::languageChange()
 
 enum SetResponse dspWoScheduleByWorkOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid = false;
 

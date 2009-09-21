@@ -63,6 +63,7 @@ void expenseTrans::languageChange()
 
 enum SetResponse expenseTrans::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      invhistid = -1;

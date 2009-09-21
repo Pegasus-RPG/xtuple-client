@@ -44,6 +44,7 @@ void implodeWo::languageChange()
 
 enum SetResponse implodeWo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

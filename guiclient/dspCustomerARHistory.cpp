@@ -71,6 +71,7 @@ void dspCustomerARHistory::languageChange()
 
 enum SetResponse dspCustomerARHistory::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

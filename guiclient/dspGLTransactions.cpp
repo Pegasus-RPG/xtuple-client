@@ -74,6 +74,7 @@ void dspGLTransactions::languageChange()
 
 enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

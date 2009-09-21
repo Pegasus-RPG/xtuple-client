@@ -54,6 +54,7 @@ void closeWo::languageChange()
 
 enum SetResponse closeWo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

@@ -60,6 +60,7 @@ void printCheck::languageChange()
 
 enum SetResponse printCheck::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QVariant param;

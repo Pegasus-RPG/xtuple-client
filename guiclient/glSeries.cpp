@@ -76,6 +76,7 @@ void glSeries::languageChange()
 
 enum SetResponse glSeries::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

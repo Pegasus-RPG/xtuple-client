@@ -53,6 +53,7 @@ void honorific::languageChange()
 
 enum SetResponse honorific::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

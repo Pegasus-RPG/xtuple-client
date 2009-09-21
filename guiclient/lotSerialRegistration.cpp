@@ -73,6 +73,7 @@ void lotSerialRegistration::languageChange()
 
 enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

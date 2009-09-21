@@ -34,6 +34,7 @@ void XDateInputDialog::languageChange()
 
 enum SetResponse XDateInputDialog::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

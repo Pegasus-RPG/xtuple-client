@@ -145,6 +145,7 @@ void vendorWorkBench::languageChange()
 
 enum SetResponse vendorWorkBench::set(const ParameterList & pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

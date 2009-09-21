@@ -127,7 +127,6 @@ void itemSite::languageChange()
 enum SetResponse itemSite::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
-
   QVariant param;
   bool     valid;
   bool     check;

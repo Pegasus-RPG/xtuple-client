@@ -148,6 +148,7 @@ void crmaccount::languageChange()
 
 enum SetResponse crmaccount::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

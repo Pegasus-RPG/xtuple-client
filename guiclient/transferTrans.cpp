@@ -61,6 +61,7 @@ void transferTrans::languageChange()
 
 enum SetResponse transferTrans::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      invhistid = -1;

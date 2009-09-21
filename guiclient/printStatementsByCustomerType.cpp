@@ -46,6 +46,7 @@ void printStatementsByCustomerType::languageChange()
 
 enum SetResponse printStatementsByCustomerType::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
 
   if (pParams.inList("print"))

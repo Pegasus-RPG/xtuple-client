@@ -117,6 +117,7 @@ void purchaseOrder::languageChange()
 
 enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      itemsiteid;

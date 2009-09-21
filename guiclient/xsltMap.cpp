@@ -63,6 +63,7 @@ void xsltMap::languageChange()
 
 enum SetResponse xsltMap::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

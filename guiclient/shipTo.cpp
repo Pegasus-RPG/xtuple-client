@@ -47,6 +47,7 @@ void shipTo::languageChange()
 
 enum SetResponse shipTo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

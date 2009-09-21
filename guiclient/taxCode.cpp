@@ -219,6 +219,7 @@ void taxCode::sExpire()
 
 enum SetResponse taxCode::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

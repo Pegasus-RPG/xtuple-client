@@ -67,6 +67,7 @@ void invoiceList::init()
 
 enum SetResponse invoiceList::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

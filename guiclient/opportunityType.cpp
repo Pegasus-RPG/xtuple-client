@@ -50,6 +50,7 @@ void opportunityType::languageChange()
 
 enum SetResponse opportunityType::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

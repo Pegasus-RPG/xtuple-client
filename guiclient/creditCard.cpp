@@ -300,6 +300,7 @@ const int _fundsTypeCount2 = 4;
 
 enum SetResponse creditCard::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

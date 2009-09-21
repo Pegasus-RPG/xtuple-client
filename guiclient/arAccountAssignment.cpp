@@ -47,6 +47,7 @@ void arAccountAssignment::languageChange()
 
 enum SetResponse arAccountAssignment::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

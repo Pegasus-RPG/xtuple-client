@@ -65,6 +65,7 @@ void itemImages::init()
 
 enum SetResponse itemImages::set(ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

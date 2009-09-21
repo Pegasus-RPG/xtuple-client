@@ -58,6 +58,7 @@ void miscVoucher::languageChange()
 
 enum SetResponse miscVoucher::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

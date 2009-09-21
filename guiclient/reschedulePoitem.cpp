@@ -42,6 +42,7 @@ void reschedulePoitem::languageChange()
 
 enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

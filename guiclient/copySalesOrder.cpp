@@ -56,6 +56,7 @@ void copySalesOrder::languageChange()
 
 enum SetResponse copySalesOrder::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -40,6 +40,7 @@ void archRestoreSalesHistory::languageChange()
 
 enum SetResponse archRestoreSalesHistory::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

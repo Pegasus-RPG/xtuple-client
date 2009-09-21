@@ -73,6 +73,7 @@ void contact::languageChange()
 
 enum SetResponse contact::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

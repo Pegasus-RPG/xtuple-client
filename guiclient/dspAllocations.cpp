@@ -61,6 +61,7 @@ void dspAllocations::languageChange()
 
 enum SetResponse dspAllocations::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

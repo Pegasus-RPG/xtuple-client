@@ -71,6 +71,7 @@ void bankAccount::languageChange()
 
 enum SetResponse bankAccount::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

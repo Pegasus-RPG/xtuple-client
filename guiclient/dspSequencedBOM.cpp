@@ -60,6 +60,7 @@ void dspSequencedBOM::languageChange()
 
 enum SetResponse dspSequencedBOM::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

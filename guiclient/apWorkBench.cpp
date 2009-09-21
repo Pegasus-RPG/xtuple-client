@@ -80,6 +80,7 @@ void apWorkBench::languageChange()
 
 enum SetResponse apWorkBench::set(const ParameterList & pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool    valid;
 

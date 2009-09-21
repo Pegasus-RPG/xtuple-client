@@ -46,6 +46,7 @@ void transactionInformation::languageChange()
 
 enum SetResponse transactionInformation::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

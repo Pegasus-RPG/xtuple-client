@@ -40,6 +40,7 @@ void country::languageChange()
 
 enum SetResponse country::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

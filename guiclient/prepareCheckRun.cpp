@@ -38,6 +38,7 @@ void prepareCheckRun::languageChange()
 
 enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

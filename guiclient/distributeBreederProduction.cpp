@@ -43,6 +43,7 @@ void distributeBreederProduction::languageChange()
 
 enum SetResponse distributeBreederProduction::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

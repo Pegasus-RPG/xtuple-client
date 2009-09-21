@@ -49,6 +49,7 @@ void plannerCode::languageChange()
 
 enum SetResponse plannerCode::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

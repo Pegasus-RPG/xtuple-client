@@ -55,6 +55,7 @@ void postPoReturnCreditMemo::languageChange()
 
 enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

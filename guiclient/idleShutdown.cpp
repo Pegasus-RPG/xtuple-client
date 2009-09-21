@@ -37,6 +37,7 @@ void idleShutdown::languageChange()
 
 enum SetResponse idleShutdown::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

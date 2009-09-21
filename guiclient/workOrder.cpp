@@ -171,6 +171,7 @@ void workOrder::languageChange()
 
 enum SetResponse workOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QString  returnValue;

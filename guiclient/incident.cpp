@@ -91,6 +91,7 @@ void incident::languageChange()
 
 enum SetResponse incident::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

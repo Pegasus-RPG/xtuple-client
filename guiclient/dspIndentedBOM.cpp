@@ -71,6 +71,7 @@ void dspIndentedBOM::languageChange()
 
 enum SetResponse dspIndentedBOM::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

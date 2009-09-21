@@ -66,6 +66,7 @@ void dspSingleLevelWhereUsed::languageChange()
 
 enum SetResponse dspSingleLevelWhereUsed::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

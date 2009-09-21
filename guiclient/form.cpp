@@ -34,6 +34,7 @@ void form::languageChange()
 
 enum SetResponse form::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

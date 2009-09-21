@@ -63,6 +63,7 @@ void scrapTrans::languageChange()
 
 enum SetResponse scrapTrans::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      invhistid = -1;

@@ -59,6 +59,7 @@ void dspReservations::languageChange()
 
 enum SetResponse dspReservations::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

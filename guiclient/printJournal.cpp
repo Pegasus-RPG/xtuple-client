@@ -51,6 +51,7 @@ void printJournal::languageChange()
 
 enum SetResponse printJournal::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

@@ -36,6 +36,7 @@ void accountingYearPeriod::languageChange()
 
 enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -54,6 +54,7 @@ void dspItemCostsByClassCode::languageChange()
 
 enum SetResponse dspItemCostsByClassCode::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   

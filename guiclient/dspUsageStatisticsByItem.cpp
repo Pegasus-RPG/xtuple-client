@@ -55,6 +55,7 @@ void dspUsageStatisticsByItem::languageChange()
 
 enum SetResponse dspUsageStatisticsByItem::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

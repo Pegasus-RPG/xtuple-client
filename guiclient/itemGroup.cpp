@@ -69,6 +69,7 @@ void itemGroup::init()
 
 enum SetResponse itemGroup::set(ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

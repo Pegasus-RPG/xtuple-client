@@ -33,6 +33,7 @@ void salesOrderInformation::languageChange()
 
 enum SetResponse salesOrderInformation::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -110,6 +110,7 @@ void package::languageChange()
 
 enum SetResponse package::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

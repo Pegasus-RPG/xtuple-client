@@ -68,6 +68,7 @@ void dspMPSDetail::languageChange()
 
 enum SetResponse dspMPSDetail::set(const ParameterList & pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

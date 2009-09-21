@@ -45,6 +45,7 @@ void costCategory::languageChange()
 
 enum SetResponse costCategory::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

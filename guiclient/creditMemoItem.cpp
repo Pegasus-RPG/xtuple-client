@@ -85,6 +85,7 @@ void creditMemoItem::languageChange()
 
 enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   bool     vrestrict = FALSE;

@@ -89,6 +89,7 @@ void todoListCalendar::languageChange()
 
 enum SetResponse todoListCalendar::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool           valid;
 

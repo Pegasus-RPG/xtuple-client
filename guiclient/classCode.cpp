@@ -37,6 +37,7 @@ void classCode::languageChange()
 
 enum SetResponse classCode::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

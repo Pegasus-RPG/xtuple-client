@@ -64,6 +64,7 @@ void financialLayoutGroup::languageChange()
 
 enum SetResponse financialLayoutGroup::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

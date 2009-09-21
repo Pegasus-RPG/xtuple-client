@@ -65,6 +65,7 @@ void rescheduleSoLineItems::languageChange()
 
 enum SetResponse rescheduleSoLineItems::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

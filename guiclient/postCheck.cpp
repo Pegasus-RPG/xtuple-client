@@ -43,6 +43,7 @@ void postCheck::languageChange()
 
 enum SetResponse postCheck::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

@@ -40,6 +40,7 @@ void rate::languageChange()
 
 enum SetResponse rate::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

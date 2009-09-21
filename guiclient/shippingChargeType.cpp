@@ -38,6 +38,7 @@ void shippingChargeType::languageChange()
 
 enum SetResponse shippingChargeType::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

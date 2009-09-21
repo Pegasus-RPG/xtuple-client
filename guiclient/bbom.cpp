@@ -69,6 +69,7 @@ void bbom::languageChange()
 
 enum SetResponse bbom::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

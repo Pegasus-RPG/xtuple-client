@@ -56,6 +56,7 @@ void salesHistoryInformation::languageChange()
 
 enum SetResponse salesHistoryInformation::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -66,6 +66,7 @@ void applyARCreditMemo::languageChange()
 
 enum SetResponse applyARCreditMemo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

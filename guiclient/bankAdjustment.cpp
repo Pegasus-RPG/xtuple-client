@@ -52,6 +52,7 @@ void bankAdjustment::languageChange()
 
 SetResponse bankAdjustment::set( const ParameterList & pParams )
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

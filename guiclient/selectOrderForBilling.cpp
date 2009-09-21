@@ -105,6 +105,7 @@ void selectOrderForBilling::languageChange()
 
 SetResponse selectOrderForBilling::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

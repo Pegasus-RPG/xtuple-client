@@ -55,6 +55,7 @@ void buyCard::languageChange()
 
 enum SetResponse buyCard::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

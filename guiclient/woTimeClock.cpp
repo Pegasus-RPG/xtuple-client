@@ -76,6 +76,7 @@ void woTimeClock::languageChange()
 
 enum SetResponse woTimeClock::set(ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QString  returnValue;
   QVariant param;
   bool     valid;

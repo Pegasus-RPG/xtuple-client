@@ -44,6 +44,7 @@ void selectPayment::languageChange()
 
 enum SetResponse selectPayment::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

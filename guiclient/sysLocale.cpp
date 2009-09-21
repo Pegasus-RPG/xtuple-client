@@ -55,6 +55,7 @@ void sysLocale::languageChange()
 
 enum SetResponse sysLocale::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

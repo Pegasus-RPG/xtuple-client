@@ -72,6 +72,7 @@ void itemListPrice::languageChange()
 
 enum SetResponse itemListPrice::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

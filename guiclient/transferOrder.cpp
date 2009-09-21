@@ -160,6 +160,7 @@ void transferOrder::languageChange()
 
 enum SetResponse transferOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      itemid;
@@ -714,7 +715,7 @@ bool transferOrder::save(bool partial)
   }
 
   // keep the status of toitems in synch with tohead
-  if (_statusTypes[_status->currentIndex()] == "U")
+  if (_statusTypes[_status->currentIndex()] == QString("U"))
   {
     q.prepare("SELECT unreleaseTransferOrder(:head_id) AS result;");
     q.bindValue(":head_id", _toheadid);
@@ -725,7 +726,7 @@ bool transferOrder::save(bool partial)
       return false;
     }
   }
-  else if (_statusTypes[_status->currentIndex()] == "O")
+  else if (_statusTypes[_status->currentIndex()] == QString("O"))
   {
     q.prepare("SELECT releaseTransferOrder(:head_id) AS result;");
     q.bindValue(":head_id", _toheadid);
@@ -736,7 +737,7 @@ bool transferOrder::save(bool partial)
       return false;
     }
   }
-  else if (_statusTypes[_status->currentIndex()] == "C")
+  else if (_statusTypes[_status->currentIndex()] == QString("C"))
   {
     q.prepare("SELECT closeTransferOrder(:head_id) AS result;");
     q.bindValue(":head_id", _toheadid);

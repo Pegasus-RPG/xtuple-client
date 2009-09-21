@@ -69,6 +69,7 @@ void voucherItemDistrib::init()
 
 enum SetResponse voucherItemDistrib::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -38,6 +38,7 @@ void copyItem::languageChange()
 
 enum SetResponse copyItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

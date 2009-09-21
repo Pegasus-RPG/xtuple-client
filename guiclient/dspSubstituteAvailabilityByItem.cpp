@@ -55,6 +55,7 @@ void dspSubstituteAvailabilityByItem::languageChange()
 
 enum SetResponse dspSubstituteAvailabilityByItem::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

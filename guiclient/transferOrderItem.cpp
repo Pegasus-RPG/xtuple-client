@@ -122,6 +122,7 @@ void transferOrderItem::languageChange()
 
 enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant  param;
   bool      valid;
 

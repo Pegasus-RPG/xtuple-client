@@ -68,6 +68,7 @@ void createBufferStatusByItem::languageChange()
 
 enum SetResponse createBufferStatusByItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

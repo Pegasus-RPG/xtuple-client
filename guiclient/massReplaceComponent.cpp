@@ -48,6 +48,7 @@ void massReplaceComponent::languageChange()
 
 enum SetResponse massReplaceComponent::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QVariant param;

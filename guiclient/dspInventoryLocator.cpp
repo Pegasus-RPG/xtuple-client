@@ -53,6 +53,7 @@ void dspInventoryLocator::languageChange()
 
 enum SetResponse dspInventoryLocator::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

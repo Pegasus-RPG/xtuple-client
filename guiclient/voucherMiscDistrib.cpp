@@ -52,6 +52,7 @@ void voucherMiscDistrib::languageChange()
 
 enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

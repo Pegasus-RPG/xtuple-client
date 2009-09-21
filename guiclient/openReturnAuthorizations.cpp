@@ -87,6 +87,7 @@ void openReturnAuthorizations::languageChange()
 
 enum SetResponse openReturnAuthorizations::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
   

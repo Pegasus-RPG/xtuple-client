@@ -57,6 +57,7 @@ void copyBOO::languageChange()
 
 enum SetResponse copyBOO::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

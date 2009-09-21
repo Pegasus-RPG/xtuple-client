@@ -51,6 +51,7 @@ void check::languageChange()
 
 enum SetResponse check::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

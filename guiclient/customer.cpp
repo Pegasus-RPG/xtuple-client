@@ -269,6 +269,7 @@ void customer::languageChange()
 
 enum SetResponse customer::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

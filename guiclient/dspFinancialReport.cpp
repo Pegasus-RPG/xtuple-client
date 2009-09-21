@@ -36,7 +36,7 @@
 #define cDiff     5
 
 dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QWidget(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -81,6 +81,7 @@ void dspFinancialReport::languageChange()
 
 enum SetResponse dspFinancialReport::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

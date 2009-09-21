@@ -72,6 +72,7 @@ void currencyConversion::languageChange()
 
 enum SetResponse currencyConversion::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

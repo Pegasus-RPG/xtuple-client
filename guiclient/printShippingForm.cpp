@@ -68,6 +68,7 @@ void printShippingForm::languageChange()
 
 enum SetResponse printShippingForm::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

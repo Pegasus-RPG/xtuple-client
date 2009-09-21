@@ -45,6 +45,7 @@ void taxRegistration::languageChange()
 
 enum SetResponse taxRegistration::set(const ParameterList pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool	   valid;
 

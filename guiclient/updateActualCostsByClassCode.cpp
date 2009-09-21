@@ -77,6 +77,7 @@ void updateActualCostsByClassCode::languageChange()
 
 enum SetResponse updateActualCostsByClassCode::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

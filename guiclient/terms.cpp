@@ -42,6 +42,7 @@ void terms::languageChange()
 
 enum SetResponse terms::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

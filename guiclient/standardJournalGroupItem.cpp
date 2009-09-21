@@ -47,6 +47,7 @@ void standardJournalGroupItem::languageChange()
 
 enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

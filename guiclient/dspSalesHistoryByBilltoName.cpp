@@ -74,6 +74,7 @@ void dspSalesHistoryByBilltoName::languageChange()
 
 enum SetResponse dspSalesHistoryByBilltoName::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

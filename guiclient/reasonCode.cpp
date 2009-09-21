@@ -40,6 +40,7 @@ void reasonCode::languageChange()
 
 enum SetResponse reasonCode::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

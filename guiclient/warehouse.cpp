@@ -71,6 +71,7 @@ void warehouse::languageChange()
 
 enum SetResponse warehouse::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

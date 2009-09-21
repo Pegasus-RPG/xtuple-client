@@ -48,6 +48,7 @@ void enterMiscCount::languageChange()
 
 enum SetResponse enterMiscCount::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

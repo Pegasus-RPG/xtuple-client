@@ -80,6 +80,7 @@ void dspQuotesByItem::init()
 
 enum SetResponse dspQuotesByItem::set(ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

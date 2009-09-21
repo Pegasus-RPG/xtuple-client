@@ -62,6 +62,7 @@ void dspIncidentsByCRMAccount::languageChange()
 
 enum SetResponse dspIncidentsByCRMAccount::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -59,6 +59,7 @@ void countTag::languageChange()
 
 enum SetResponse countTag::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

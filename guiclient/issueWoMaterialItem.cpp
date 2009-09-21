@@ -65,6 +65,7 @@ void issueWoMaterialItem::languageChange()
 
 enum SetResponse issueWoMaterialItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

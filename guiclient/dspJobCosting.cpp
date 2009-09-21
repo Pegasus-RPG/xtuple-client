@@ -82,6 +82,7 @@ void dspJobCosting::languageChange()
 
 enum SetResponse dspJobCosting::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

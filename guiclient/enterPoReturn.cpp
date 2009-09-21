@@ -62,6 +62,7 @@ void enterPoReturn::languageChange()
 
 enum SetResponse enterPoReturn::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -52,6 +52,7 @@ void copyBudget::languageChange()
 
 enum SetResponse copyBudget::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

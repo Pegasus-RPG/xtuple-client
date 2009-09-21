@@ -84,6 +84,7 @@ void quotes::languageChange()
 
 enum SetResponse quotes::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
   

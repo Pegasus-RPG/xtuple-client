@@ -83,6 +83,7 @@ void openSalesOrders::languageChange()
 
 enum SetResponse openSalesOrders::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
   

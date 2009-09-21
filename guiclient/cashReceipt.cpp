@@ -159,6 +159,7 @@ void cashReceipt::languageChange()
 
 enum SetResponse cashReceipt::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

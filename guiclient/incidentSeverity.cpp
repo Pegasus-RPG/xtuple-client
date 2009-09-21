@@ -44,6 +44,7 @@ void incidentSeverity::languageChange()
 
 enum SetResponse incidentSeverity::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

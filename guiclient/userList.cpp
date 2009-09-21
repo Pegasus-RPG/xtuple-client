@@ -58,6 +58,7 @@ void userList::languageChange()
 
 enum SetResponse userList::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

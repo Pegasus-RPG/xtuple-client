@@ -72,6 +72,7 @@ void printInvoice::languageChange()
 
 enum SetResponse printInvoice::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

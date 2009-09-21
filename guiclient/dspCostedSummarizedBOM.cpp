@@ -68,6 +68,7 @@ void dspCostedSummarizedBOM::languageChange()
 
 enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

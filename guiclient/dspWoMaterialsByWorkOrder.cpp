@@ -72,6 +72,7 @@ void dspWoMaterialsByWorkOrder::languageChange()
 
 enum SetResponse dspWoMaterialsByWorkOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

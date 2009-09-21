@@ -55,6 +55,7 @@ void task::languageChange()
 
 enum SetResponse task::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

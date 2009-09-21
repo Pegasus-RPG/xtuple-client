@@ -83,6 +83,7 @@ void updateReorderLevels::languageChange()
 
 enum SetResponse updateReorderLevels::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

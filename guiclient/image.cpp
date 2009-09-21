@@ -72,6 +72,7 @@ void image::languageChange()
 
 enum SetResponse image::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

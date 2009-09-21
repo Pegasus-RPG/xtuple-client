@@ -70,6 +70,7 @@ void dspCreditCardTransactions::languageChange()
 
 enum SetResponse dspCreditCardTransactions::set( const ParameterList & pParams )
 {
+  XWidget::set(pParams);
   QVariant param;
   bool    valid;
   

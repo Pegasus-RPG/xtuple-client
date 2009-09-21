@@ -37,6 +37,7 @@ void shift::languageChange()
 
 enum SetResponse shift::set(const ParameterList& pParams)
 {
+  XDialog::set(pParams);
     QVariant	param;
     bool	valid;
 

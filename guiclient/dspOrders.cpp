@@ -61,6 +61,7 @@ void dspOrders::languageChange()
 
 enum SetResponse dspOrders::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

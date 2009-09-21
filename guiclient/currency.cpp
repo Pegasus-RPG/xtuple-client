@@ -61,6 +61,7 @@ bool currency::isBaseSet()
 
 enum SetResponse currency::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

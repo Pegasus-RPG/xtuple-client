@@ -67,6 +67,7 @@ void dspBacklogByParameterList::languageChange()
 
 enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -81,6 +81,7 @@ void contacts::languageChange()
 
 enum SetResponse contacts::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
   

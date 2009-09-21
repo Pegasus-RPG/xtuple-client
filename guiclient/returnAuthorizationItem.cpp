@@ -143,6 +143,7 @@ void returnAuthorizationItem::languageChange()
 
 enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

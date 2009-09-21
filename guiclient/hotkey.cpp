@@ -110,6 +110,7 @@ void hotkey::languageChange()
 
 enum SetResponse hotkey::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

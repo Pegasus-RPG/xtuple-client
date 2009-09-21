@@ -66,6 +66,7 @@ void itemSourceSearch::languageChange()
 
 enum SetResponse itemSourceSearch::set(const ParameterList & pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

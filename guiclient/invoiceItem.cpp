@@ -77,6 +77,7 @@ void invoiceItem::languageChange()
 
 enum SetResponse invoiceItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -226,6 +226,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
 
 enum SetResponse distributeInventory::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

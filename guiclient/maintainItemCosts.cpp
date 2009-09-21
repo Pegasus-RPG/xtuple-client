@@ -77,6 +77,7 @@ void maintainItemCosts::languageChange()
 
 enum SetResponse maintainItemCosts::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

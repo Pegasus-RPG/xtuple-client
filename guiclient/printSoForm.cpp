@@ -46,6 +46,7 @@ void printSoForm::languageChange()
 
 enum SetResponse printSoForm::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

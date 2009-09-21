@@ -57,6 +57,7 @@ void updateCycleCountFrequency::init()
 
 enum SetResponse updateCycleCountFrequency::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

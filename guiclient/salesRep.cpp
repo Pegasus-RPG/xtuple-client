@@ -40,6 +40,7 @@ void salesRep::languageChange()
 
 enum SetResponse salesRep::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

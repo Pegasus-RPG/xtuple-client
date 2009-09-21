@@ -43,6 +43,7 @@ void applyDiscount::languageChange()
 
 enum SetResponse applyDiscount::set( const ParameterList & pParams )
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

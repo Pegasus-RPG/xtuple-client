@@ -92,6 +92,7 @@ void empGroup::languageChange()
 
 enum SetResponse empGroup::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

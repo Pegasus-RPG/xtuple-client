@@ -115,6 +115,7 @@ void opportunityList::sPopulateMenu(QMenu *pMenu)
 
 enum SetResponse opportunityList::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
 

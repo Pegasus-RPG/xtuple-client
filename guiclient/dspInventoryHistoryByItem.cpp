@@ -87,6 +87,7 @@ void dspInventoryHistoryByItem::languageChange()
 
 enum SetResponse dspInventoryHistoryByItem::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

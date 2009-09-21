@@ -42,6 +42,7 @@ void calendar::languageChange()
 
 enum SetResponse calendar::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -63,6 +63,7 @@ void dspInvoiceInformation::languageChange()
 
 enum SetResponse dspInvoiceInformation::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

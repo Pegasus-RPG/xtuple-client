@@ -69,6 +69,7 @@ void massExpireComponent::init()
 
 enum SetResponse massExpireComponent::set(ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QVariant param;

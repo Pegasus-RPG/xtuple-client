@@ -164,6 +164,7 @@ void returnAuthorization::languageChange()
 
 enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   QString metric;

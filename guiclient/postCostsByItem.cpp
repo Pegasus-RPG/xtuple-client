@@ -84,6 +84,7 @@ void postCostsByItem::init()
 
 enum SetResponse postCostsByItem::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

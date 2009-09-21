@@ -53,6 +53,7 @@ void commentType::languageChange()
 
 enum SetResponse commentType::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

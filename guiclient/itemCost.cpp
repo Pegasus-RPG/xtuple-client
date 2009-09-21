@@ -47,6 +47,7 @@ void itemCost::languageChange()
 
 enum SetResponse itemCost::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = true;
 
   QVariant param;

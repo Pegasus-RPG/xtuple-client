@@ -59,6 +59,7 @@ void dspIndentedWhereUsed::languageChange()
 
 enum SetResponse dspIndentedWhereUsed::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

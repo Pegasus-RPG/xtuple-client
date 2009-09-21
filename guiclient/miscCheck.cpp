@@ -50,6 +50,7 @@ void miscCheck::languageChange()
 
 enum SetResponse miscCheck::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QVariant param;

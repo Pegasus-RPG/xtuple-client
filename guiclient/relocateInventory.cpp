@@ -65,6 +65,7 @@ void relocateInventory::languageChange()
 
 enum SetResponse relocateInventory::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

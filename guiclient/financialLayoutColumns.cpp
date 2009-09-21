@@ -53,6 +53,7 @@ void financialLayoutColumns::languageChange()
 
 enum SetResponse financialLayoutColumns::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

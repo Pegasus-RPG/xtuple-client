@@ -37,6 +37,7 @@ void subaccount::languageChange()
 
 enum SetResponse subaccount::set(const ParameterList &pParams )
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

@@ -64,6 +64,7 @@ void dspBriefSalesHistoryBySalesRep::languageChange()
 
 enum SetResponse dspBriefSalesHistoryBySalesRep::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

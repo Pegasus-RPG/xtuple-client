@@ -91,6 +91,7 @@ void issueToShipping::languageChange()
 
 enum SetResponse issueToShipping::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

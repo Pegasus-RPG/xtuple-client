@@ -63,6 +63,7 @@ void uom::languageChange()
 
 enum SetResponse uom::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

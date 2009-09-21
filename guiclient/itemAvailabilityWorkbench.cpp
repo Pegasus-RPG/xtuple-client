@@ -246,6 +246,7 @@ void itemAvailabilityWorkbench::languageChange()
 
 enum SetResponse itemAvailabilityWorkbench::set( const ParameterList & pParams )
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -38,6 +38,7 @@ void printArOpenItem::languageChange()
 
 enum SetResponse printArOpenItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

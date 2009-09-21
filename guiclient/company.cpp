@@ -51,6 +51,7 @@ void company::languageChange()
 
 enum SetResponse company::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

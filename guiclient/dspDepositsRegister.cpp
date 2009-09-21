@@ -66,6 +66,7 @@ void dspDepositsRegister::languageChange()
 
 enum SetResponse dspDepositsRegister::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

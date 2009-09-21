@@ -43,6 +43,7 @@ void distributeToLocation::languageChange()
 
 enum SetResponse distributeToLocation::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

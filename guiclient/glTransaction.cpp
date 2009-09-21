@@ -40,6 +40,7 @@ void glTransaction::languageChange()
 
 enum SetResponse glTransaction::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

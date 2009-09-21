@@ -66,6 +66,7 @@ void woOperation::languageChange()
 
 enum SetResponse woOperation::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

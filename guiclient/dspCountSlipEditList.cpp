@@ -82,6 +82,7 @@ void dspCountSlipEditList::languageChange()
 
 enum SetResponse dspCountSlipEditList::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

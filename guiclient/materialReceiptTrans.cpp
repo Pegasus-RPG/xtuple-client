@@ -71,6 +71,7 @@ void materialReceiptTrans::languageChange()
 
 enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
   int      _invhistid = -1;

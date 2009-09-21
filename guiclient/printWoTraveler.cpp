@@ -74,6 +74,7 @@ void printWoTraveler::languageChange()
 
 enum SetResponse printWoTraveler::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

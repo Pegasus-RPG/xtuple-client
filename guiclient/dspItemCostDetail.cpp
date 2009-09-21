@@ -56,6 +56,7 @@ void dspItemCostDetail::languageChange()
 
 enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

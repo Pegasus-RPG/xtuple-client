@@ -39,6 +39,7 @@ void booItemList::languageChange()
 
 enum SetResponse booItemList::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -46,6 +46,7 @@ void copyTransferOrder::languageChange()
 
 enum SetResponse copyTransferOrder::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -75,6 +75,7 @@ void boo::languageChange()
 
 enum SetResponse boo::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

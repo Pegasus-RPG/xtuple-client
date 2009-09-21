@@ -36,6 +36,7 @@ void vendorAddress::languageChange()
 
 enum SetResponse vendorAddress::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

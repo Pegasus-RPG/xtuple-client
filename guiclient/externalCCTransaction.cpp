@@ -35,6 +35,7 @@ void externalCCTransaction::languageChange()
 
 enum SetResponse externalCCTransaction::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

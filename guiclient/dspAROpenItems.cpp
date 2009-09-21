@@ -123,6 +123,7 @@ void dspAROpenItems::languageChange()
 
 enum SetResponse dspAROpenItems::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

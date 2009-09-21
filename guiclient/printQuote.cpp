@@ -44,6 +44,7 @@ void printQuote::languageChange()
 
 enum SetResponse printQuote::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = true;
   _cust->setEnabled(false);
 

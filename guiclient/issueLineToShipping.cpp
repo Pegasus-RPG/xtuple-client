@@ -56,6 +56,7 @@ void issueLineToShipping::languageChange()
 
 enum SetResponse issueLineToShipping::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

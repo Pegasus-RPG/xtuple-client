@@ -52,6 +52,7 @@ void printPurchaseOrder::languageChange()
 
 enum SetResponse printPurchaseOrder::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

@@ -84,6 +84,7 @@ void creditMemo::languageChange()
 
 enum SetResponse creditMemo::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

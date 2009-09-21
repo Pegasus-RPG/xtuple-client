@@ -64,6 +64,7 @@ void purchaseRequest::languageChange()
 
 enum SetResponse purchaseRequest::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   int      prid = -1;

@@ -48,6 +48,7 @@ void enterPoitemReturn::languageChange()
 
 enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -74,6 +74,7 @@ void dspInventoryAvailabilityByWorkOrder::languageChange()
 
 enum SetResponse dspInventoryAvailabilityByWorkOrder::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

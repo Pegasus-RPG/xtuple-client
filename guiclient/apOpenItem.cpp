@@ -56,6 +56,7 @@ void apOpenItem::languageChange()
 
 enum SetResponse apOpenItem::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

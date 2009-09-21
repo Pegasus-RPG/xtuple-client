@@ -38,6 +38,7 @@ void shippingZone::languageChange()
 
 enum SetResponse shippingZone::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

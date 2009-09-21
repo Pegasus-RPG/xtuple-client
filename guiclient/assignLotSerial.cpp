@@ -54,6 +54,7 @@ void assignLotSerial::languageChange()
 
 enum SetResponse assignLotSerial::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

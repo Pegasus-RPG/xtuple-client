@@ -66,6 +66,7 @@ void postMiscProduction::languageChange()
 
 enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

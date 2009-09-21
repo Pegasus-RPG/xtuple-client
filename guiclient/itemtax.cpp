@@ -51,6 +51,7 @@ void itemtax::languageChange()
 
 enum SetResponse itemtax::set(const ParameterList & pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

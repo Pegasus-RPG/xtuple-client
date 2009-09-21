@@ -84,6 +84,7 @@ void dspWoOperationsByWorkCenter::languageChange()
 
 enum SetResponse dspWoOperationsByWorkCenter::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

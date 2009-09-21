@@ -56,6 +56,7 @@ void group::languageChange()
 
 enum SetResponse group::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

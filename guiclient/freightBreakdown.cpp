@@ -47,6 +47,7 @@ void freightBreakdown::languageChange()
 
 SetResponse freightBreakdown::set(const ParameterList& pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool	   valid;
 

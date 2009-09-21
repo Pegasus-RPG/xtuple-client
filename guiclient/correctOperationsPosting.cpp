@@ -67,6 +67,7 @@ void correctOperationsPosting::languageChange()
 
 enum SetResponse correctOperationsPosting::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -57,6 +57,7 @@ void characteristicPrice::languageChange()
 
 enum SetResponse characteristicPrice::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

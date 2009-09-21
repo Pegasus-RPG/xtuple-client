@@ -73,6 +73,7 @@ void arOpenItem::languageChange()
 
 enum SetResponse arOpenItem::set( const ParameterList &pParams )
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
   

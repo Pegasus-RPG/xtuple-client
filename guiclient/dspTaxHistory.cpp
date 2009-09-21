@@ -73,6 +73,7 @@ void dspTaxHistory::languageChange()
 
 enum SetResponse dspTaxHistory::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

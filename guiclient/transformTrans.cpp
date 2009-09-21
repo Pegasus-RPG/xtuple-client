@@ -75,6 +75,7 @@ void transformTrans::languageChange()
 
 enum SetResponse transformTrans::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   _captive = TRUE;
 
   QVariant param;

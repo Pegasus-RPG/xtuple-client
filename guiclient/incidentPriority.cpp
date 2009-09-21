@@ -44,6 +44,7 @@ void incidentPriority::languageChange()
 
 enum SetResponse incidentPriority::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -58,6 +58,7 @@ void printWoPickList::languageChange()
 
 enum SetResponse printWoPickList::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

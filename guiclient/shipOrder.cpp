@@ -79,6 +79,7 @@ void shipOrder::languageChange()
 
 enum SetResponse shipOrder::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QString  returnValue;
   QVariant param;
   bool     valid;

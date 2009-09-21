@@ -57,6 +57,7 @@ void createCycleCountTags::languageChange()
 
 enum SetResponse createCycleCountTags::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

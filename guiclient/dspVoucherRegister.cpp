@@ -72,6 +72,7 @@ void dspVoucherRegister::languageChange()
 
 enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

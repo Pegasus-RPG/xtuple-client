@@ -42,6 +42,7 @@ void rescheduleWo::languageChange()
 
 enum SetResponse rescheduleWo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

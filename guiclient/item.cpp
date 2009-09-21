@@ -246,6 +246,7 @@ void item::languageChange()
 
 enum SetResponse item::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

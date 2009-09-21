@@ -57,6 +57,7 @@ void printChecks::languageChange()
 
 enum SetResponse printChecks::set(const ParameterList & pParams )
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

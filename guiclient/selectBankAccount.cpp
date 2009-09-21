@@ -56,6 +56,7 @@ void selectBankAccount::init()
 
 enum SetResponse selectBankAccount::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

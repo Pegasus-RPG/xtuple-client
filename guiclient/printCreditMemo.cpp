@@ -74,6 +74,7 @@ void printCreditMemo::languageChange()
 
 enum SetResponse printCreditMemo::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

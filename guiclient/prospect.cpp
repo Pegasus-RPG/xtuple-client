@@ -66,6 +66,7 @@ void prospect::languageChange()
 
 enum SetResponse prospect::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

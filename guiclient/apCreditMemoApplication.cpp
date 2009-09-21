@@ -39,6 +39,7 @@ void apCreditMemoApplication::languageChange()
 
 enum SetResponse apCreditMemoApplication::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

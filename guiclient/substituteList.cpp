@@ -79,6 +79,7 @@ void substituteList::init()
 
 enum SetResponse substituteList::set( ParameterList &pParams )
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -36,6 +36,7 @@ void submitAction::languageChange()
 
 enum SetResponse submitAction::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _params = pParams;
 
   QVariant param;

@@ -102,6 +102,7 @@ void workCenter::languageChange()
 
 enum SetResponse workCenter::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

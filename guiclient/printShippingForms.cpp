@@ -58,8 +58,9 @@ void printShippingForms::languageChange()
     retranslateUi(this);
 }
 
-enum SetResponse printShippingForms::set(const ParameterList &)
+enum SetResponse printShippingForms::set(const ParameterList & pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
   return NoError;
 }

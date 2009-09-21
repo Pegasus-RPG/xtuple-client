@@ -56,6 +56,7 @@ void plannedOrder::languageChange()
 
 enum SetResponse plannedOrder::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

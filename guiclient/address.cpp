@@ -63,6 +63,7 @@ void address::languageChange()
 
 enum SetResponse address::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

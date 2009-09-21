@@ -92,6 +92,7 @@ void dspAPOpenItemsByVendor::languageChange()
 
 enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

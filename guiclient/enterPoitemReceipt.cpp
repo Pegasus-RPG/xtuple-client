@@ -94,6 +94,7 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
 
 enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

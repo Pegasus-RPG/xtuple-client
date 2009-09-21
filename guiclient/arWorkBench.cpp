@@ -134,6 +134,7 @@ void arWorkBench::languageChange()
 
 enum SetResponse arWorkBench::set( const ParameterList & pParams )
 {
+  XWidget::set(pParams);
   QVariant param;
   bool    valid;
   

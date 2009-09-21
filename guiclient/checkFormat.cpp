@@ -36,6 +36,7 @@ void checkFormat::languageChange()
 
 enum SetResponse checkFormat::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

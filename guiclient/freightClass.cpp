@@ -38,6 +38,7 @@ void freightClass::languageChange()
 
 enum SetResponse freightClass::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

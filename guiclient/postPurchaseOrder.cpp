@@ -59,6 +59,7 @@ void postPurchaseOrder::init()
 
 enum SetResponse postPurchaseOrder::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _captive = TRUE;
 
   QVariant param;

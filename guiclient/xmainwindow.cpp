@@ -95,9 +95,9 @@ XMainWindow::~XMainWindow()
     delete _private;
 }
 
-enum SetResponse XMainWindow::set(const ParameterList &params)
+enum SetResponse XMainWindow::set(const ParameterList &pParams)
 {
-  _lastSetParams = params;
+  _lastSetParams = pParams;
 
   loadScriptEngine();
   QTimer::singleShot(0, this, SLOT(postSet()));

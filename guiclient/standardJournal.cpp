@@ -65,6 +65,7 @@ void standardJournal::sReject()
 
 enum SetResponse standardJournal::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

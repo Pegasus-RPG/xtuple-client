@@ -47,6 +47,7 @@ void submitReport::languageChange()
 
 enum SetResponse submitReport::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   _params = pParams;
 
   QVariant param;

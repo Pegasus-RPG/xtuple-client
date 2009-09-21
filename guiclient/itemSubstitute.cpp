@@ -43,6 +43,7 @@ void itemSubstitute::languageChange()
 
 enum SetResponse itemSubstitute::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -89,6 +89,7 @@ void dspInventoryAvailabilityByCustomerType::languageChange()
 
 enum SetResponse dspInventoryAvailabilityByCustomerType::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -14,13 +14,13 @@
 class GroupBalances;
 
 #include "guiclient.h"
-#include <QWidget>
+#include "xwidget.h"
 #include <QMap>
 #include <parameter.h>
 
 #include "ui_dspFinancialReport.h"
 
-class dspFinancialReport : public QWidget, public Ui::dspFinancialReport
+class dspFinancialReport : public XWidget, public Ui::dspFinancialReport
 {
     Q_OBJECT
 

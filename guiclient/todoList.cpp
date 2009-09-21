@@ -190,6 +190,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 
 enum SetResponse todoList::set(const ParameterList& pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool	   valid;
 

@@ -62,6 +62,7 @@ void itemSourceList::init()
 
 enum SetResponse itemSourceList::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 

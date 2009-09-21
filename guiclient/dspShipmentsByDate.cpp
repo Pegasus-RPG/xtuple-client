@@ -59,6 +59,7 @@ void dspShipmentsByDate::languageChange()
 
 enum SetResponse dspShipmentsByDate::set(const ParameterList &pParams)
 { 
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

@@ -100,6 +100,7 @@ void vendor::languageChange()
 
 SetResponse vendor::set(const ParameterList &pParams)
 {
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 

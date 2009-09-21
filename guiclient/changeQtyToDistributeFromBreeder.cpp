@@ -41,6 +41,7 @@ void changeQtyToDistributeFromBreeder::languageChange()
 
 enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
 {
+  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 
