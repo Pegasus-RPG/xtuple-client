@@ -38,13 +38,9 @@ class menuSchedule : public QObject
     menuSchedule(GUIClient *);
 
   public slots:
-    void sListProductionPlans();
-    void sNewProductionPlan();
-
     void sCreatePlannedReplenOrdersByItem();
     void sCreatePlannedReplenOrdersByPlannerCode();
     void sCreatePlannedOrder();
-    void sRunMPSByPlannerCode();
     void sDeletePlannedOrder();
     void sDeletePlannedOrdersByPlannerCode();
     void sFirmPlannedOrdersByPlannerCode();
@@ -89,7 +85,6 @@ class menuSchedule : public QObject
 
     QToolBar   *toolBar;
     QMenu *mainMenu;
-    QMenu *planningMenu;
     QMenu *plannedOrdersMenu;
     QMenu *plannedOrdersMrpMenu;
     QMenu *capacityPlanMenu;

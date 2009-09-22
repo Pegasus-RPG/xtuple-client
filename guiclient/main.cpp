@@ -300,15 +300,20 @@ int main(int argc, char *argv[])
   metric.exec("SELECT metric_value"
            "  FROM metric"
            " WHERE (metric_name = 'Application')" );
-  if(!metric.first() || (metric.value("metric_value").toString() == "Manufacturing"))
+  if(!metric.first() || (metric.value("metric_value").toString() == "Standard") || (metric.value("metric_value").toString() == "Manufacturing"))
   {
-    _splash->setPixmap(QPixmap(":/images/splashMfgEdition.png"));
-    _Name = _Name.arg("Manufacturing");
-  }
-  else if(!metric.first() || (metric.value("metric_value").toString() == "Standard"))
-  {
-    _splash->setPixmap(QPixmap(":/images/splashStdEdition.png"));
-    _Name = _Name.arg("Standard");
+    // check if the xtmfg package is installed
+    metric.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    if(metric.first())
+    {
+      _splash->setPixmap(QPixmap(":/images/splashMfgEdition.png"));
+      _Name = _Name.arg("Manufacturing");
+    }
+    else
+    {
+      _splash->setPixmap(QPixmap(":/images/splashStdEdition.png"));
+      _Name = _Name.arg("Standard");
+    }
   }
   else
   {

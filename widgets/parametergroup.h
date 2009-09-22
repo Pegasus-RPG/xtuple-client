@@ -50,15 +50,15 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
 
     bool fixedSize() {return _fixed;};
     enum ParameterGroupStates state();
-    Q_INVOKABLE int                       id();
-    QString                   pattern();
+    Q_INVOKABLE int           id();
+    QString       pattern();
     void                      appendValue(ParameterList &);
     void                      bindValue(XSqlQuery &);
 
     enum ParameterGroupTypes  type()       { return _type;                    }
-    inline bool               isAll()      { return _all->isChecked();        }
-    inline bool               isSelected() { return _selected->isChecked();   }
-    inline bool               isPattern()  { return _usePattern->isChecked(); }
+    Q_INVOKABLE inline bool   isAll()      { return _all->isChecked();        }
+    Q_INVOKABLE inline bool   isSelected() { return _selected->isChecked();   }
+    Q_INVOKABLE inline bool   isPattern()  { return _usePattern->isChecked(); }
 
   public slots:
     void setFixedSize(bool);

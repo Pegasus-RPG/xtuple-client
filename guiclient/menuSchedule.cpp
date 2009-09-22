@@ -20,13 +20,9 @@
 #include "guiclient.h"
 #include "inputManager.h"
 
-#include "plannedSchedules.h"
-#include "plannedSchedule.h"
-
 #include "plannedOrder.h"
 #include "createPlannedOrdersByItem.h"
 #include "createPlannedOrdersByPlannerCode.h"
-#include "runMPSByPlannerCode.h"
 #include "deletePlannedOrder.h"
 #include "deletePlannedOrdersByPlannerCode.h"
 #include "firmPlannedOrdersByPlannerCode.h"
@@ -77,7 +73,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     parent->addToolBar(toolBar);
 
   mainMenu = new QMenu(parent);
-  planningMenu = new QMenu(parent);
   plannedOrdersMenu = new QMenu(parent);
   plannedOrdersMrpMenu = new QMenu(parent);
   capacityPlanMenu = new QMenu(parent);
@@ -91,7 +86,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   masterInfoMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.sched");
-  planningMenu->setObjectName("menu.sched.planning");
   plannedOrdersMenu->setObjectName("menu.sched.plannedorders");
   plannedOrdersMrpMenu->setObjectName("menu.sched.plannedordersmrp");
   capacityPlanMenu->setObjectName("menu.sched.capacityplan");
@@ -106,16 +100,10 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
 
   actionProperties acts[] = {
   
-    // Schedule | Planning
-    { "menu",	tr("&Production Plan"), (char*)planningMenu,	mainMenu,	"true",	NULL, NULL, _metrics->value("Application") == "Manufacturing"	, NULL },
-    { "ms.newProductionPlan", tr("&New..."), SLOT(sNewProductionPlan()), planningMenu, "MaintainPlannedSchedules", NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
-    { "ms.listProductionPlans", tr("&List..."), SLOT(sListProductionPlans()), planningMenu, "MaintainPlannedSchedules ViewPlannedSchedules", NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
-
     // Schedule | Schedule  
     { "menu",	tr("&Scheduling"), (char*)plannedOrdersMenu,	mainMenu,	"true",	NULL, NULL, true	, NULL },
     { "ms.createPlannedOrder", tr("&New Planned Order..."), SLOT(sCreatePlannedOrder()), plannedOrdersMenu, "CreatePlannedOrders", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, plannedOrdersMenu, "true", NULL, NULL, true , NULL },
-    { "ms.runMPSByPlannerCode", tr("Run M&PS..."), SLOT(sRunMPSByPlannerCode()),plannedOrdersMenu, "CreatePlannedOrders", NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
  
     // Schedule | Schedule | MRP
     { "menu",	tr("Run &MRP"), (char*)plannedOrdersMrpMenu,	plannedOrdersMenu,	"true",	NULL, NULL, true	, NULL },
@@ -285,11 +273,6 @@ void menuSchedule::sCreatePlannedReplenOrdersByItem()
 void menuSchedule::sCreatePlannedReplenOrdersByPlannerCode()
 {
   createPlannedOrdersByPlannerCode(parent, "", TRUE).exec();
-}
-
-void menuSchedule::sRunMPSByPlannerCode()
-{
-  runMPSByPlannerCode(parent, "", TRUE).exec();
 }
 
 void menuSchedule::sDeletePlannedOrder()
@@ -492,20 +475,5 @@ void menuSchedule::sDspReorderExceptionsByPlannerCode()
 void menuSchedule::sPlannerCodes()
 {
   omfgThis->handleNewWindow(new plannerCodes());
-}
-
-void menuSchedule::sListProductionPlans()
-{
-  omfgThis->handleNewWindow(new plannedSchedules());
-}
-
-void menuSchedule::sNewProductionPlan()
-{
-  ParameterList params;
-  params.append("mode", "new");
-
-  plannedSchedule newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 

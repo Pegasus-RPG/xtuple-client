@@ -18,7 +18,6 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -32,11 +31,6 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
   int cid = _metrics->value("DefaultMSCalendar").toInt();
   if(cid > 0)
     _calendar->setId(cid);
-    
-  if (_metrics->value("Application") == "Manufacturing")  
-    _bufferMgt->setChecked(_metrics->boolean("BufferMgt"));
-  else
-    _bufferMgt->hide();
     
   this->setWindowTitle("Schedule Configuration");
 }
@@ -58,7 +52,6 @@ void configureMS::sSave()
   q.exec();
 
   _metrics->set("DefaultMSCalendar", _calendar->id());
-  _metrics->set("BufferMgt", _bufferMgt->isChecked());
 
   _metrics->load();
 

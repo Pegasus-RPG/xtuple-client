@@ -32,7 +32,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupply(bool)));
 
   _planningType->append(0, "None", "N");
-  if (_metrics->value("Application") != "Manufacturing" && _metrics->value("Application") != "Standard")
+  if(_metrics->value("Application") == "PostBooks")
   {
     _planningType->setCurrentIndex(0);
     _planningType->hide();
@@ -50,8 +50,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   else
   {
     _planningType->append(1, "MRP", "M");
-    if (_metrics->value("Application") == "Manufacturing")
-      _planningType->append(2, "MPS", "S");
     if (!_metrics->boolean("MultiWhs"))
       _createPlannedTransfers->hide();
   }

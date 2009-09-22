@@ -302,7 +302,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                returnAuthorizationItem.ui returnAuthItemLotSerial.ui                                  \
                returnAuthorizationWorkbench.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui       \
                reverseGLSeries.ui                                                                     \
-               runMPSByPlannerCode.ui                                                                 \
                sales.ui sale.ui salesAccount.ui salesAccounts.ui salesCategories.ui salesCategory.ui  \
                salesOrder.ui salesOrderInformation.ui salesOrderItem.ui                               \
                salesReps.ui salesRep.ui                                                               \
@@ -621,7 +620,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       returnAuthItemLotSerial.h                                                              \
                returnAuthorizationWorkbench.h returnWoMaterialBatch.h returnWoMaterialItem.h          \
                reverseGLSeries.h                                                                      \
-               runMPSByPlannerCode.h                                                                  \
                sales.h sale.h salesAccount.h salesAccounts.h salesCategories.h salesCategory.h        \
                salesOrder.h salesOrderInformation.h salesOrderItem.h                                  \
                salesReps.h salesRep.h                                                                 \
@@ -949,7 +947,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                returnAuthorizationItem.cpp returnAuthItemLotSerial.cpp                                \
                returnAuthorizationWorkbench.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp    \
                reverseGLSeries.cpp                                                                    \
-               runMPSByPlannerCode.cpp                                                                \
                sales.cpp sale.cpp salesAccount.cpp salesAccounts.cpp salesCategories.cpp salesCategory.cpp \
                salesOrder.cpp salesOrderInformation.cpp salesOrderItem.cpp                            \
                salesReps.cpp salesRep.cpp                                                             \
