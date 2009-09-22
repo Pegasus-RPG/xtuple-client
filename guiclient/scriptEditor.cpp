@@ -201,12 +201,22 @@ bool scriptEditor::sSave()
   save.setEscapeButton((QAbstractButton*)cancel);
 
   save.exec();
-  if (save.clickedButton() == (QAbstractButton*)db)
-    return sSaveToDB();
-  else if (save.clickedButton() == (QAbstractButton*)file)
-    return sSaveFile();
-  else if (save.clickedButton() == (QAbstractButton*)both)
-    return sSaveFile() && sSaveToDB();
+  if (save.clickedButton() == (QAbstractButton*)db && sSaveToDB())
+  {
+    close();
+    return true;
+  }
+  else if (save.clickedButton() == (QAbstractButton*)file && sSaveFile())
+  {
+    close();
+    return true;
+  }
+  else if (save.clickedButton() == (QAbstractButton*)both
+           && sSaveFile() && sSaveToDB())
+  {
+    close();
+    return true;
+  }
   else if (save.clickedButton() == (QAbstractButton*)cancel)
     return false;
   else
@@ -215,7 +225,7 @@ bool scriptEditor::sSave()
     return false;
   }
 
-  return false; // should never reach here!
+  return false;
 }
   
 bool scriptEditor::sSaveToDB()
