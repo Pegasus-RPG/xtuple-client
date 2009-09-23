@@ -208,7 +208,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
     _costsGroup->setChecked(true);
     
   //If not Manufacturing, hide show planned option
-  if (_metrics->value("Application") != "Manufacturing")
+  if (_metrics->value("Application") != "Standard")
     _showPlanned->hide();
     
   //If not multi-warehouse hide whs control
@@ -278,7 +278,7 @@ void itemAvailabilityWorkbench::setParams(ParameterList & params)
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  if (_metrics->value("Application") == "Manufacturing")
+  if (_metrics->value("Application") == "Standard")
   {
     params.append("Manufacturing");
     params.append("showMRPplan");

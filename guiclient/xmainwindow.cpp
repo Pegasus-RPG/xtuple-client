@@ -261,25 +261,15 @@ void XMainWindow::loadScriptEngine()
     scriptq.exec();
     while(scriptq.next())
     {
-      QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
-      if(!_private->_engine)
+      if(engine(this))
       {
-        _private->_engine = new QScriptEngine(this);
-        if (_preferences->boolean("EnableScriptDebug"))
+        QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
+        QScriptValue result = _private->_engine->evaluate(script, objectName());
+        if (_private->_engine->hasUncaughtException())
         {
-          _private->_debugger = new QScriptEngineDebugger(this);
-          _private->_debugger->attachTo(_private->_engine);
+          int line = _private->_engine->uncaughtExceptionLineNumber();
+          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
         }
-        omfgThis->loadScriptGlobals(_private->_engine);
-        QScriptValue mywindow = _private->_engine->newQObject(this);
-        _private->_engine->globalObject().setProperty("mywindow", mywindow);
-      }
-
-      QScriptValue result = _private->_engine->evaluate(script, objectName());
-      if (_private->_engine->hasUncaughtException())
-      {
-        int line = _private->_engine->uncaughtExceptionLineNumber();
-        qDebug() << "uncaught exception at line" << line << ":" << result.toString();
       }
     }
   }
@@ -289,7 +279,18 @@ QScriptEngine *engine(XMainWindow *win)
 {
   if(win)
   {
-    win->loadScriptEngine();
+    if(!win->_private->_engine)
+    {
+      win->_private->_engine = new QScriptEngine(win);
+      if (_preferences->boolean("EnableScriptDebug"))
+      {
+        win->_private->_debugger = new QScriptEngineDebugger(win);
+        win->_private->_debugger->attachTo(win->_private->_engine);
+      }
+      omfgThis->loadScriptGlobals(win->_private->_engine);
+      QScriptValue mywindow = win->_private->_engine->newQObject(win);
+      win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
+    }
     return win->_private->_engine;
   }
   return 0;

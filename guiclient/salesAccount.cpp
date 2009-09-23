@@ -123,7 +123,7 @@ void salesAccount::sSave()
     return;
   }
 
-  if (_metrics->value("Application") == "Manufacturing" && _metrics->boolean("EnableReturnAuth"))
+  if (_metrics->boolean("EnableReturnAuth"))
   {
 
     if (!_returns->isValid())

@@ -67,6 +67,7 @@ XDialog::XDialog(QWidget * parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
   connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
+  connect(this, SIGNAL(finished(int)), this, SLOT(saveSize()));
   _private = new XDialogPrivate();
   ScriptToolbox::setLastWindow(this);
 }
@@ -80,6 +81,7 @@ XDialog::XDialog(QWidget * parent, const char * name, bool modal, Qt::WindowFlag
     setModal(modal);
 
   connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
+  connect(this, SIGNAL(finished(int)), this, SLOT(saveSize()));
 
   _private = new XDialogPrivate();
   ScriptToolbox::setLastWindow(this);
@@ -89,6 +91,12 @@ XDialog::~XDialog()
 {
   if(_private)
     delete _private;
+}
+
+void XDialog::saveSize()
+{
+  xtsettingsSetValue(objectName() + "/geometry/size", size());
+  xtsettingsSetValue(objectName() + "/geometry/pos", pos());
 }
 
 void XDialog::closeEvent(QCloseEvent * event)
@@ -103,8 +111,7 @@ void XDialog::closeEvent(QCloseEvent * event)
 
   if(event->isAccepted())
   {
-    xtsettingsSetValue(objectName() + "/geometry/size", size());
-    xtsettingsSetValue(objectName() + "/geometry/pos", pos());
+    saveSize();
   }
 }
 
@@ -231,6 +238,8 @@ void XDialog::loadScriptEngine()
         omfgThis->loadScriptGlobals(_private->_engine);
         QScriptValue mywindow = _private->_engine->newQObject(this);
         _private->_engine->globalObject().setProperty("mywindow", mywindow);
+        QScriptValue mydialog = _private->_engine->newQObject(this);
+        _private->_engine->globalObject().setProperty("mydialog", mydialog);
       }
 
       QScriptValue result = _private->_engine->evaluate(script, objectName());

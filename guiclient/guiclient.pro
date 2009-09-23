@@ -82,7 +82,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                configureIE.ui configureEncryption.ui                                                  \
                confirmAchOK.ui                                                                        \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
-               copyBOM.ui copyBOO.ui copyItem.ui copyPlannedSchedule.ui copySalesOrder.ui             \
+               copyBOM.ui copyBOO.ui copyItem.ui copySalesOrder.ui                                    \
                copyTransferOrder.ui                                                                   \
                costCategory.ui costCategories.ui countries.ui country.ui                              \
                countTagList.ui correctOperationsPosting.ui correctProductionPosting.ui                \
@@ -256,7 +256,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                package.ui packages.ui                                                                 \
                packingListBatch.ui                                                                    \
                plannedOrder.ui plannerCodes.ui plannerCode.ui                                         \
-               plannedSchedules.ui plannedSchedule.ui plannedScheduleItem.ui                          \
+               plannedScheduleItem.ui                                                                 \
                poLiabilityDistrib.ui postCheck.ui postChecks.ui postCashReceipts.ui                   \
                postCostsByClassCode.ui postCostsByItem.ui                                             \
                postCountSlips.ui postCountTags.ui postBillingSelections.ui                            \
@@ -397,7 +397,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                configureIE.h configureEncryption.h                                                    \
                confirmAchOK.h                                                                         \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
-               copyBOM.h copyBOO.h copyItem.h copyPlannedSchedule.h copySalesOrder.h                  \
+               copyBOM.h copyBOO.h copyItem.h copySalesOrder.h                                        \
                copyTransferOrder.h                                                                    \
                costCategory.h costCategories.h countries.h country.h                                  \
                countTagList.h correctOperationsPosting.h correctProductionPosting.h                   \
@@ -573,7 +573,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                package.h packages.h                                                                   \
                packingListBatch.h                                                                     \
                plannedOrder.h plannerCodes.h plannerCode.h                                            \
-               plannedSchedules.h plannedSchedule.h plannedScheduleItem.h                             \
+               plannedScheduleItem.h                                                                  \
                poitemTableModel.h poitemTableView.h poLiabilityDistrib.h                              \
                postCheck.h postChecks.h postCashReceipts.h                                            \
                postCostsByClassCode.h postCostsByItem.h                                               \
@@ -722,7 +722,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                configureIE.cpp configureEncryption.cpp                                                \
                confirmAchOK.cpp                                                                       \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
-               copyBOM.cpp copyBOO.cpp copyItem.cpp copyPlannedSchedule.cpp copySalesOrder.cpp        \
+               copyBOM.cpp copyBOO.cpp copyItem.cpp copySalesOrder.cpp                                \
                copyTransferOrder.cpp                                                                  \
                costCategory.cpp costCategories.cpp countries.cpp country.cpp                          \
                countTagList.cpp correctOperationsPosting.cpp correctProductionPosting.cpp             \
@@ -900,7 +900,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                package.cpp packages.cpp                                                               \
                packingListBatch.cpp                                                                   \
                plannedOrder.cpp plannerCodes.cpp plannerCode.cpp                                      \
-               plannedSchedules.cpp plannedSchedule.cpp plannedScheduleItem.cpp                       \
+               plannedScheduleItem.cpp                                                                \
                poitemTableModel.cpp poitemTableView.cpp poLiabilityDistrib.cpp                        \
                postCheck.cpp postChecks.cpp postCashReceipts.cpp                                      \
                postCostsByClassCode.cpp postCostsByItem.cpp                                           \

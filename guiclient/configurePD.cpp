@@ -26,11 +26,6 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-  if (_metrics->value("TrackMachineOverhead") == "M")
-    _machineOverhead->setChecked(TRUE);
-  else
-    _generalOverhead->setChecked(TRUE);
-
   _inactiveBomItems->setChecked(_metrics->boolean("AllowInactiveBomItems"));
   _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
   _changeLog->setChecked(_metrics->boolean("ItemChangeLog"));
@@ -43,40 +38,6 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   else if (issueMethod == "M")
     _issueMethod->setCurrentIndex(2);
     
-  
-  if (_metrics->value("Application") != "Manufacturing")
-  {
-    _routings->hide();
-    _routings->setChecked(FALSE);
-    _bbom->hide();
-  }
-  else
-  {
-    q.exec("SELECT booitem_id FROM booitem "
-             "UNION "
-             "SELECT wooper_id FROM wooper, wo "
-             "WHERE ((wo_id=wooper_wo_id) "
-             "AND (wo_status <> 'C')) "
-             "LIMIT 1;");
-    if (q.first())
-    {
-      _routings->setCheckable(FALSE);
-      _routings->setTitle("Work Center Routings");
-    } 
-    else
-      _routings->setChecked(_metrics->boolean("Routings"));
-      
-    q.exec("SELECT item_id FROM item WHERE (item_type IN ('B','C','Y')) LIMIT 1;");
-    if (q.first())
-    {
-      _bbom->setChecked(TRUE);
-      _bbom->setEnabled(FALSE);
-    }
-    else
-      _bbom->setChecked(_metrics->boolean("BBOM"));
-  }
-  
-  
   if(_metrics->value("Application") == "PostBooks")
   {
     _revControl->hide();
@@ -105,7 +66,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   
   this->setWindowTitle("Products Configuration");
 
-  adjustSize();
+  //adjustSize();
 }
 
 configurePD::~configurePD()
@@ -135,7 +96,7 @@ void configurePD::sSave()
                      "  FROM bomhead "
                      " WHERE((COALESCE(bomhead_revision,'') <> '') "
                      "   AND (bomhead_rev_id=-1))";
-      if (_metrics->value("Application") == "Manufacturing")
+      if (_metrics->value("Application") != "Standard" && _metrics->value("Application") != "PostBooks")
         rsql += " UNION "
                 "SELECT createboorev(boohead_item_id,boohead_revision) "
                 "  FROM boohead "
@@ -163,9 +124,6 @@ void configurePD::sSave()
       return;
   }
 
-  _metrics->set("TrackMachineOverhead", ((_machineOverhead->isChecked()) ? QString("M") : QString("G")));
-  _metrics->set("Routings", ((_routings->isChecked()) || (!_routings->isCheckable())));
-  _metrics->set("BBOM", ((_bbom->isChecked()) && (!_bbom->isHidden())));
   _metrics->set("Transforms", ((_transforms->isChecked()) && (!_transforms->isHidden())));
   _metrics->set("RevControl", ((_revControl->isChecked()) && (!_revControl->isHidden())));
   _metrics->set("AllowInactiveBomItems", _inactiveBomItems->isChecked());

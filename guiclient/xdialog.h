@@ -40,6 +40,7 @@ class XDialog : public QDialog
 
   protected slots:
     virtual enum SetResponse postSet();
+    virtual void saveSize();
 
   private:
     friend class XDialogPrivate;
