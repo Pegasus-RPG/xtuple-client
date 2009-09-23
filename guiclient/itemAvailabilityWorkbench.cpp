@@ -279,7 +279,10 @@ void itemAvailabilityWorkbench::setParams(ParameterList & params)
     params.append("MultiWhs");
 
   if (_metrics->value("Application") == "Manufacturing")
+  {
+    params.append("Manufacturing");
     params.append("showMRPplan");
+  }
 }
 
 void itemAvailabilityWorkbench::sFillListWhereUsed()

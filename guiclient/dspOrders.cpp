@@ -229,6 +229,9 @@ void dspOrders::sFillList()
       params.append("endDate",   _endDate->date());
     }
 
+    if (_metrics->value("Application") == "Manufacturing")
+      params.append("Manufacturing");
+
     q = mql.toQuery(params);
     _orders->populate(q, true);
   }

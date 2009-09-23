@@ -89,6 +89,7 @@ WHERE ((wo_status&lt;>'C')
   AND  (itemsite_item_id=&lt;? value("item_id") ?>)
   AND  (item_type NOT IN ('C', 'Y')))
 
+&lt;? if exists("Manufacturing") ?>
 UNION
 SELECT wo_id AS orderid, -1 AS altorderid,
        'W/O' AS ordertype,
@@ -102,7 +103,7 @@ SELECT wo_id AS orderid, -1 AS altorderid,
        formatQty(wo_qtyrcv * brddist_stdqtyper) AS f_qtyreceived,
        formatQty(noNeg((wo_qtyord - wo_qtyrcv) * brddist_stdqtyper)) AS f_balance,
        noNeg((wo_qtyord - wo_qtyrcv) * brddist_stdqtyper) AS balance
-FROM brddist, wo, itemsite, item
+FROM xtmfg.brddist, wo, itemsite, item
 WHERE ((wo_status&lt;>'C')
   AND  (brddist_wo_id=wo_id)
   AND  (wo_itemsite_id=itemsite_id)
@@ -111,6 +112,7 @@ WHERE ((wo_status&lt;>'C')
   AND  (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
   AND  (itemsite_item_id=&lt;? value("item_id") ?>)
   AND  (item_type IN ('C', 'Y')) )
+&lt;? endif ?>
 
 UNION
 SELECT wo_id AS orderid, womatl_id AS altorderid,
