@@ -81,6 +81,9 @@
 #include "xsqltablemodelproto.h"
 #include "xtreewidget.h"
 
+//TODO: remove this after checkin of new xtreewidget.cpp
+void setupXTreeWidgetItem(QScriptEngine * /*engine*/) { }
+
 void setupScriptApi(QScriptEngine *engine)
 {
   setupAddressCluster(engine);
