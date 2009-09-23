@@ -8,9 +8,13 @@
  * to be bound by its terms.
  */
 
-#ifndef __WOLINEEDITSETUP_H__
-#define __WOLINEEDITSETUP_H__
+#ifndef __INCLUDE_H__
+#define __INCLUDE_H__
 
-void setupWoLineEdit(QScriptEngine *engine);
+#include <QObject>
+#include <QtScript>
+
+void setupInclude(QScriptEngine *engine);
+QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine);
 
 #endif

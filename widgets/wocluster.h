@@ -12,7 +12,9 @@
 #define woCluster_h
 
 #include "widgets.h"
+
 #include <QDate>
+
 #include <xsqlquery.h>
 #include "xlineedit.h"
 #include "ui_womatlcluster.h"
@@ -23,16 +25,21 @@ class WoCluster;
 class XComboBox;
 
 //  Possible Work Order Status
-#define cWoOpen     0x01
-#define cWoExploded 0x02
-#define cWoIssued   0x04
-#define cWoReleased 0x08
-#define cWoClosed   0x10
+#define cWoOpen     WoLineEdit::Open
+#define cWoExploded WoLineEdit::Exploded
+#define cWoIssued   WoLineEdit::Issued
+#define cWoReleased WoLineEdit::Released
+#define cWoClosed   WoLineEdit::Closed
 
+class QScriptEngine;
+
+void setupWoCluster(QScriptEngine *engine);
 
 class XTUPLEWIDGETS_EXPORT WoLineEdit : public XLineEdit
 {
   Q_OBJECT
+
+  Q_ENUMS(WoStatus)
 
   Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false)
 
@@ -41,6 +48,14 @@ friend class WoCluster;
   public:
     WoLineEdit(QWidget *, const char * = 0);
     WoLineEdit(int, QWidget *, const char * = 0);
+
+    enum WoStatus {
+      Open      = 0x01,
+      Exploded  = 0x02,
+      Issued    = 0x04,
+      Released  = 0x08,
+      Closed    = 0x10
+    };
 
     inline void setQuery(const QString  &pSql) { _sql = pSql; _useQuery = TRUE; }
     inline int  type() const                   { return _woType;              }

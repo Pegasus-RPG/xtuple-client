@@ -230,5 +230,5 @@ FORMS += accountSearch.ui \
 
 RESOURCES += widgets.qrc
 
-QT +=  sql
+QT +=  sql script
 #QT += qt3support 

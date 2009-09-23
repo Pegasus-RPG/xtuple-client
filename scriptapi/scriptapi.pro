@@ -17,8 +17,10 @@ OBJECTS_DIR = tmp
 UI_DIR      = tmp
 
 HEADERS +=  setupscriptapi.h                    \
+            include.h                           \
             metasqlhighlighterproto.h           \
             qactionproto.h                      \
+            qdialogsetup.h                      \
             qdomattrproto.h                     \
             qdomcdatasectionproto.h             \
             qdomcharacterdataproto.h            \
@@ -58,7 +60,6 @@ HEADERS +=  setupscriptapi.h                    \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
             xsqltablemodelproto.h               \
-            xtreewidgetitemproto.h              \
             addressclustersetup.h		\
             alarmssetup.h			\
             clineeditsetup.h			\
@@ -82,14 +83,15 @@ HEADERS +=  setupscriptapi.h                    \
             usernamelineeditsetup.h		\
             vendorgroupsetup.h			\
             wcomboboxsetup.h			\
-            wolineeditsetup.h			\
             womatlclustersetup.h		\
             xcomboboxsetup.h			\
             xdateeditsetup.h			\
 
 SOURCES +=  setupscriptapi.cpp                  \
+            include.cpp                         \
             metasqlhighlighterproto.cpp         \
             qactionproto.cpp                    \
+            qdialogsetup.cpp                    \
             qdomattrproto.cpp                   \
             qdomcdatasectionproto.cpp           \
             qdomcharacterdataproto.cpp          \
@@ -129,7 +131,6 @@ SOURCES +=  setupscriptapi.cpp                  \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \
             xsqltablemodelproto.cpp             \
-            xtreewidgetitemproto.cpp            \
             addressclustersetup.cpp		\
             alarmssetup.cpp			\
             clineeditsetup.cpp			\
@@ -153,7 +154,6 @@ SOURCES +=  setupscriptapi.cpp                  \
             usernamelineeditsetup.cpp		\
             vendorgroupsetup.cpp		\
             wcomboboxsetup.cpp			\
-            wolineeditsetup.cpp			\
             womatlclustersetup.cpp		\
             xcomboboxsetup.cpp			\
             xdateeditsetup.cpp			\

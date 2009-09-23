@@ -13,6 +13,7 @@
 #include <QLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QtScript>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -25,6 +26,19 @@
 #include "wocluster.h"
 
 #include "../common/format.h"
+
+void setupWoCluster(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+
+  widget.setProperty("Open", QScriptValue(engine, WoLineEdit::Open), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Exploded", QScriptValue(engine, WoLineEdit::Exploded), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Issued", QScriptValue(engine, WoLineEdit::Issued), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Released", QScriptValue(engine, WoLineEdit::Released), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Closed", QScriptValue(engine, WoLineEdit::Closed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("WoLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
 
 WoLineEdit::WoLineEdit(QWidget *pParent, const char *name) :
   XLineEdit(pParent, name)

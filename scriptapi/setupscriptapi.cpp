@@ -17,6 +17,7 @@
 #include "currdisplaysetup.h"
 #include "documentssetup.h"
 #include "glclustersetup.h"
+#include "include.h"
 #include "itemlineeditsetup.h"
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
@@ -24,6 +25,7 @@
 #include "polineeditsetup.h"
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
+#include "qdialogsetup.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
 #include "qdomcharacterdataproto.h"
@@ -70,14 +72,14 @@
 #include "usernamelineeditsetup.h"
 #include "vendorgroupsetup.h"
 #include "wcomboboxsetup.h"
-#include "wolineeditsetup.h"
+#include "wocluster.h"
 #include "womatlclustersetup.h"
 #include "xcomboboxsetup.h"
 #include "xdatawidgetmapperproto.h"
 #include "xdateeditsetup.h"
 #include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
-#include "xtreewidgetitemproto.h"
+#include "xtreewidget.h"
 
 void setupScriptApi(QScriptEngine *engine)
 {
@@ -90,6 +92,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupCurrDisplay(engine);
   setupDocuments(engine);
   setupGLCluster(engine);
+  setupInclude(engine);
   setupItemLineEdit(engine);
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
@@ -97,6 +100,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupPoLineEdit(engine);
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
+  setupQDialog(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
   setupQDomCharacterDataProto(engine);
@@ -143,12 +147,12 @@ void setupScriptApi(QScriptEngine *engine)
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
   setupWComboBox(engine);
-  setupWoLineEdit(engine);
+  setupWoCluster(engine);
   setupWomatlCluster(engine);
   setupXComboBox(engine);
   setupXDataWidgetMapperProto(engine);
   setupXDateEdit(engine);
   setupXSqlTableModelProto(engine);
-  setupXTreeWidgetItemProto(engine);
+  setupXTreeWidgetItem(engine);
 
 }
