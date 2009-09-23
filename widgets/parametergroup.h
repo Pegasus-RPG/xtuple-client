@@ -30,6 +30,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
   Q_ENUMS(ParameterGroupStates)
 
   Q_PROPERTY(bool fixedSize READ fixedSize WRITE setFixedSize)
+  Q_PROPERTY(QString selected READ selected WRITE setSelected)
   Q_PROPERTY(QString pattern READ pattern WRITE setPattern)
   Q_PROPERTY(enum ParameterGroupTypes type READ type WRITE setType)
   Q_PROPERTY(enum ParameterGroupStates state READ state WRITE setState)
@@ -51,7 +52,8 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
     bool fixedSize() {return _fixed;};
     enum ParameterGroupStates state();
     Q_INVOKABLE int           id();
-    QString       pattern();
+    Q_INVOKABLE QString       selected();
+    Q_INVOKABLE QString       pattern();
     void                      appendValue(ParameterList &);
     void                      bindValue(XSqlQuery &);
 
@@ -64,6 +66,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
     void setFixedSize(bool);
     void setId(int);
     void setPattern(const QString &);
+    void setSelected(const QString &);
     void setType(enum ParameterGroupTypes);
     void setState(enum ParameterGroupStates);
     void repopulateSelected();

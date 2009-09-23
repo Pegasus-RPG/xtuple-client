@@ -430,3 +430,16 @@ QString ParameterGroup::pattern()
     return QString::null;
 }
 
+QString ParameterGroup::selected()
+{
+  if (_selected->isChecked())
+    return _items->code();
+  else
+    return QString::null;
+}
+
+void ParameterGroup::setSelected(const QString &p)
+{
+  _selected->setChecked(TRUE);
+  _items->setCode(p);
+}
