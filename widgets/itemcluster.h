@@ -168,10 +168,10 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
     void setEnabled(bool);
     void setDisabled(bool);
 
-    Q_INVOKABLE inline void    setType(unsigned int pType)             { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
-    Q_INVOKABLE inline unsigned int type() const                       { return _itemNumber->type();                 }
-    inline void setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
-    Q_INVOKABLE inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
+    Q_INVOKABLE inline void    setType(unsigned int pType)    { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
+    Q_INVOKABLE inline unsigned int type() const              { return _itemNumber->type();                 }
+    Q_INVOKABLE inline void setDefaultType(unsigned int pType){ _itemNumber->setDefaultType(pType); } 
+    Q_INVOKABLE inline void    setQuery(const QString &pSql)  { _itemNumber->setQuery(pSql); }
     Q_INVOKABLE inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
     Q_INVOKABLE QString itemNumber() const                 { return _itemNumber->itemNumber();           }
     Q_INVOKABLE QString itemType() const                   { return _itemNumber->itemType();             }
@@ -183,9 +183,9 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
     inline QString  defaultNumber()  const                 { return _default; };
     inline QString  fieldName()      const                 { return _fieldName;                          }
 
-    inline void addExtraClause(const QString & pClause)    { _itemNumber->addExtraClause(pClause);       }
-    inline QStringList getExtraClauseList() const          { return _itemNumber->getExtraClauseList();   }
-    inline void clearExtraClauseList()                     { _itemNumber->clearExtraClauseList();        }
+    Q_INVOKABLE inline void addExtraClause(const QString & pClause) { _itemNumber->addExtraClause(pClause);     }
+    Q_INVOKABLE inline QStringList getExtraClauseList() const       { return _itemNumber->getExtraClauseList(); }
+    Q_INVOKABLE inline void clearExtraClauseList()                  { _itemNumber->clearExtraClauseList();      }
 
   public slots:
     void setDataWidgetMap(XDataWidgetMapper* m);
