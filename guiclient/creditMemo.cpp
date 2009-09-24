@@ -179,6 +179,8 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _new->hide();
       _delete->hide();
       _edit->setText(tr("&View"));
+      disconnect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+      connect(_edit, SIGNAL(clicked()), this, SLOT(sView()));
 
       _close->setFocus();
     }
@@ -297,7 +299,19 @@ void creditMemo::sSave()
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
+  
+  // finally save the cmhead
+  if (!save())
+    return;
+	
+  omfgThis->sCreditMemosUpdated();
 
+  _cmheadid = -1;
+  close();
+}
+
+bool creditMemo::save()
+{
   q.prepare( "UPDATE cmhead "
 	     "SET cmhead_invcnumber=:cmhead_invcnumber, cmhead_cust_id=:cmhead_cust_id,"
        "    cmhead_number=:cmhead_number,"
@@ -365,13 +379,10 @@ void creditMemo::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
-  omfgThis->sCreditMemosUpdated();
-
-  _cmheadid = -1;
-  close();
+  return true;
 }
 
 void creditMemo::sShipToList()
@@ -715,16 +726,12 @@ void creditMemo::sCopyToShipto()
 
 void creditMemo::sNew()
 {
+  if (!save())
+    return;
+	
   ParameterList params;
   params.append("mode", "new");
   params.append("cmhead_id", _cmheadid);
-  params.append("shipto_id", _shiptoid);
-  params.append("cust_id", _cust->id());
-  params.append("invoiceNumber", _invoiceNumber->invoiceNumber());
-  params.append("creditMemoNumber", _memoNumber->text());
-  params.append("rsncode_id", _rsnCode->id());
-  params.append("curr_id", _currency->id());
-  params.append("effective", _memoDate->date());
 
   creditMemoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -735,24 +742,31 @@ void creditMemo::sNew()
 
 void creditMemo::sEdit()
 {
+  if (!save())
+    return;
+	
   ParameterList params;
+  params.append("mode", "edit");
+  params.append("cmhead_id", _cmheadid);
   params.append("cmitem_id", _cmitem->id());
-  params.append("cust_id", _cust->id());
-  params.append("invoiceNumber", _invoiceNumber->invoiceNumber());
-  params.append("creditMemoNumber", _memoNumber->text());
-  params.append("curr_id", _currency->id());
-  params.append("effective", _memoDate->date());
-
-  if (_mode == cView)
-    params.append("mode", "view");
-  else
-    params.append("mode", "edit");
 
   creditMemoItem newdlg(this, "", TRUE);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
+}
+
+void creditMemo::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("cmhead_id", _cmheadid);
+  params.append("cmitem_id", _cmitem->id());
+
+  creditMemoItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void creditMemo::sDelete()
@@ -983,22 +997,8 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
 
 void creditMemo::sTaxDetail()
 {
-  XSqlQuery taxq;
-  taxq.prepare("UPDATE cmhead SET cmhead_taxzone_id=:taxzone_id,"
-	             "  cmhead_freight=:freight,"
-	             "  cmhead_docdate=:docdate "
-	             "WHERE (cmhead_id=:cmhead_id);");
-  if (_taxzone->isValid())
-    taxq.bindValue(":taxzone_id",	_taxzone->id());
-  taxq.bindValue(":freight",	_freight->localValue());
-  taxq.bindValue(":docdate",	_memoDate->date());
-  taxq.bindValue(":cmhead_id",	_cmheadid);
-  taxq.exec();
-  if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+  if (!save())
     return;
-  }
 
   ParameterList params;
   params.append("order_id",	_cmheadid);
@@ -1043,21 +1043,8 @@ void creditMemo::sTaxZoneChanged()
 {
   if (_cmheadid != -1 && _taxzoneidCache != _taxzone->id())
   {
-    XSqlQuery taxq;
-    taxq.prepare("UPDATE cmhead SET "
-      "  cmhead_taxzone_id=:taxzone_id, "
-      "  cmhead_freight=:freight "
-      "WHERE (cmhead_id=:cmhead_id) ");
-    if (_taxzone->id() != -1)
-      taxq.bindValue(":taxzone_id", _taxzone->id());
-    taxq.bindValue(":cmhead_id", _cmheadid);
-    taxq.bindValue(":freight", _freight->localValue());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+    if (!save())
       return;
-    }
     _taxzoneidCache = _taxzone->id();
     sCalculateTax();
   }
@@ -1067,18 +1054,8 @@ void creditMemo::sFreightChanged()
 {
   if (_cmheadid != -1 && _freightCache != _freight->localValue())
   {
-    XSqlQuery taxq;
-    taxq.prepare("UPDATE cmhead SET "
-      "  cmhead_freight=:freight "
-      "WHERE (cmhead_id=:cmhead_id) ");
-    taxq.bindValue(":cmhead_id", _cmheadid);
-    taxq.bindValue(":freight", _freight->localValue());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+    if (!save())
       return;
-    }
     _freightCache = _freight->localValue();
     sCalculateTax();
   }   

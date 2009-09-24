@@ -42,6 +42,7 @@ public slots:
     virtual void sCopyToShipto();
     virtual void sNew();
     virtual void sEdit();
+    virtual void sView();
     virtual void sDelete();
     virtual void sFillList();
     virtual void sCalculateSubtotal();
@@ -66,6 +67,7 @@ private:
     double _subtotalCache;
     double _freightCache;
     int _taxzoneidCache;
+	bool save();
 };
 
 #endif // CREDITMEMO_H

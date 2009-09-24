@@ -94,15 +94,28 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _cmheadid = param.toInt();
-    q.prepare("SELECT cmhead_taxzone_id, cmhead_curr_id "
-	            "FROM cmhead "
-	            "WHERE (cmhead_id=:cmhead_id);");
+    q.prepare("SELECT cmhead_cust_id, cmhead_shipto_id, "
+			  "       cmhead_number, COALESCE(cmhead_invcnumber, '-1') AS cmhead_invcnumber, "
+			  "       cmhead_docdate, cmhead_curr_id, "
+			  "       cmhead_taxzone_id, cmhead_rsncode_id "
+              "FROM cmhead "
+              "WHERE (cmhead_id=:cmhead_id);");
     q.bindValue(":cmhead_id", _cmheadid);
     q.exec();
     if (q.first())
     {
+      _custid = q.value("cmhead_cust_id").toInt();
+      _shiptoid = q.value("cmhead_shipto_id").toInt();
+      _orderNumber->setText(q.value("cmhead_number").toString());
+	  _invoiceNumber = q.value("cmhead_invcnumber").toInt();
+	  if ( (_invoiceNumber != -1) && (_metrics->boolean("RestrictCreditMemos")) )
+        vrestrict = TRUE;
       _taxzoneid = q.value("cmhead_taxzone_id").toInt();
       _tax->setId(q.value("cmhead_curr_id").toInt());
+      _tax->setEffective(q.value("cmhead_docdate").toDate());
+      _netUnitPrice->setId(q.value("cmhead_curr_id").toInt());
+      _netUnitPrice->setEffective(q.value("cmhead_docdate").toDate());
+      _rsnCode->setId(q.value("cmhead_rsncode_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -110,44 +123,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       return UndefinedError;
     }
   }
-
-  param = pParams.value("rsncode_id", &valid);
-  if (valid)
-    _rsnCode->setId(param.toInt());
-
-  param = pParams.value("cust_id", &valid);
-  if (valid)
-    _custid = param.toInt();
-
-  param = pParams.value("shipto_id", &valid);
-  if (valid)
-    _shiptoid = param.toInt();
-
-  param = pParams.value("invoiceNumber", &valid);
-  if (valid)
-  {
-    if ( (param.toInt() == 0) || (param.toInt() == -1) )
-      _invoiceNumber = -1;
-    else
-    {
-      _invoiceNumber = param.toInt();
-
-      if (_metrics->boolean("RestrictCreditMemos"))
-        vrestrict = TRUE;
-    }
-  }
-
-  param = pParams.value("creditMemoNumber", &valid);
-  if (valid)
-    _orderNumber->setText(param.toString());
-
-  param = pParams.value("curr_id", &valid);
-  if (valid)
-    _netUnitPrice->setId(param.toInt());
-
-  param = pParams.value("effective", &valid);
-  if (valid)
-    _netUnitPrice->setEffective(param.toDate());
 
   param = pParams.value("cmitem_id", &valid);
   if (valid)
@@ -430,17 +405,13 @@ void creditMemoItem::sPopulateItemInfo()
 void creditMemoItem::populate()
 {
   XSqlQuery cmitem;
-  cmitem.prepare("SELECT cmitem_cmhead_id,cmitem_itemsite_id,cmitem_linenumber,cmitem_unitprice, "
-                 "  cmitem_qtycredit,cmitem_qtyreturned,cmitem_comments,cmitem_taxtype_id, "
-		             "  cmitem_rsncode_id,cmhead_taxzone_id,cmhead_curr_id, "
-                 "  sum(taxhist_tax * -1) AS tax "
+  cmitem.prepare("SELECT cmitem.*,  "
+                 "       cmhead_taxzone_id, cmhead_curr_id, "
+                 "      (SELECT SUM(taxhist_tax * -1) "
+				 "       FROM cmitemtax WHERE (cmitem_id=taxhist_parent_id)) AS tax "
                  "FROM cmhead, cmitem "
-                 "  LEFT OUTER JOIN cmitemtax ON (cmitem_id=taxhist_parent_id) "
-                 "WHERE ((cmitem_cmhead_id=cmhead_id)"
-		             "  AND  (cmitem_id=:cmitem_id)) "
-                 "GROUP BY cmitem_cmhead_id,cmitem_itemsite_id,cmitem_linenumber,cmitem_unitprice, "
-                 "  cmitem_qtycredit,cmitem_qtyreturned,cmitem_comments,cmitem_taxtype_id, "
-		             "  cmitem_rsncode_id,cmhead_taxzone_id,cmhead_curr_id;" );
+                 "WHERE ( (cmitem_cmhead_id=cmhead_id)"
+                 "  AND   (cmitem_id=:cmitem_id) );" );
   cmitem.bindValue(":cmitem_id", _cmitemid);
   cmitem.exec();
   if (cmitem.first())
@@ -453,6 +424,10 @@ void creditMemoItem::populate()
     _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     _qtyToCredit->setDouble(cmitem.value("cmitem_qtycredit").toDouble());
     _qtyReturned->setDouble(cmitem.value("cmitem_qtyreturned").toDouble());
+    _qtyUOM->setId(cmitem.value("cmitem_qty_uom_id").toInt());
+    _ratio=cmitem.value("cmitem_qty_invuomratio").toDouble();
+    _pricingUOM->setId(cmitem.value("cmitem_price_uom_id").toInt());
+    _priceinvuomratio = cmitem.value("cmitem_price_invuomratio").toDouble();
     _comments->setText(cmitem.value("cmitem_comments").toString());
     _taxType->setId(cmitem.value("cmitem_taxtype_id").toInt());
     _tax->setId(cmitem.value("cmhead_curr_id").toInt());
