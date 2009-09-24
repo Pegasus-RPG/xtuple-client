@@ -246,7 +246,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                package.ui packages.ui                                                                 \
                packingListBatch.ui                                                                    \
                plannedOrder.ui plannerCodes.ui plannerCode.ui                                         \
-               plannedScheduleItem.ui                                                                 \
                poLiabilityDistrib.ui postCheck.ui postChecks.ui postCashReceipts.ui                   \
                postCostsByClassCode.ui postCostsByItem.ui                                             \
                postCountSlips.ui postCountTags.ui postBillingSelections.ui                            \
@@ -555,7 +554,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                package.h packages.h                                                                   \
                packingListBatch.h                                                                     \
                plannedOrder.h plannerCodes.h plannerCode.h                                            \
-               plannedScheduleItem.h                                                                  \
                poitemTableModel.h poitemTableView.h poLiabilityDistrib.h                              \
                postCheck.h postChecks.h postCashReceipts.h                                            \
                postCostsByClassCode.h postCostsByItem.h                                               \
@@ -873,7 +871,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                package.cpp packages.cpp                                                               \
                packingListBatch.cpp                                                                   \
                plannedOrder.cpp plannerCodes.cpp plannerCode.cpp                                      \
-               plannedScheduleItem.cpp                                                                \
                poitemTableModel.cpp poitemTableView.cpp poLiabilityDistrib.cpp                        \
                postCheck.cpp postChecks.cpp postCashReceipts.cpp                                      \
                postCostsByClassCode.cpp postCostsByItem.cpp                                           \
