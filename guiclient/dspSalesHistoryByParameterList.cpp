@@ -248,6 +248,7 @@ void dspSalesHistoryByParameterList::sPrint()
   _parameter->appendValue(params);
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+  params.append("includeFormatted");
 
   if ( (_parameter->isAll()) && (_parameter->type() == ParameterGroup::CustomerGroup) )
     params.append("custgrp");

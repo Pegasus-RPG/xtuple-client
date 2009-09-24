@@ -222,6 +222,7 @@ void dspSalesHistoryBySalesrep::sPrint()
   _productCategory->appendValue(params);
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+  params.append("includeFormatted");
 
   if (_showCosts->isChecked())
     params.append("showCosts");

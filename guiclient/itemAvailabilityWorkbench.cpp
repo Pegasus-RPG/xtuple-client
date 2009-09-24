@@ -705,6 +705,7 @@ void itemAvailabilityWorkbench::sPrintRunning()
 {
   ParameterList params;
   setParams(params);
+  params.append("includeFormatted");
 
   orReport report("RunningAvailability", params);
   if (report.isValid())

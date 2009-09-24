@@ -234,6 +234,7 @@ void dspSalesHistoryByItem::sPrint()
   _customerType->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
+  params.append("includeFormatted");
 
   if (_showCosts->isChecked())
     params.append("showCosts");

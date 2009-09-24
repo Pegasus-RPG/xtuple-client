@@ -91,6 +91,7 @@ void dspEarnedCommissions::sPrint()
     params.append("salesrep_id", _salesrep->id());
   if (_includeMisc->isChecked())
     params.append("includeMisc");
+  params.append("includeFormatted");
 
   orReport report("EarnedCommissions", params);
   if (report.isValid())
