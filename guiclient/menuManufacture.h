@@ -96,7 +96,6 @@ class menuManufacture : public QObject
     void sDspWoSoStatusMismatch();
 
     void sPrintWorkOrderForm();
-    void sPrintProductionEntrySheet();
 
   private:
     GUIClient *parent;

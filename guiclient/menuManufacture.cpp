@@ -74,7 +74,6 @@
 #include "dspWoEffortByWorkOrder.h"
 
 #include "printWoForm.h"
-#include "printProductionEntrySheet.h"
 
 #include "menuManufacture.h"
 
@@ -188,7 +187,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.printPickList",	tr("Print &Pick List..."),	SLOT(sPrintPickList()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
     { "separator",		NULL,				NULL,			  formsMenu, "true",	0, 0,	true, NULL },
     { "wo.rptPrintWorkOrderForm",		tr("Print &Work Order Form..."),	SLOT(sPrintWorkOrderForm()), formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
-    { "wo.rptPrintProductionEntrySheet",	tr("Print Production &Entry Sheet..."),	SLOT(sPrintProductionEntrySheet()), formsMenu, "PrintWorkOrderPaperWork", 0, 0, _metrics->boolean("Routings"), NULL },
     
     //  Production | Reports
     { "menu",				tr("&Reports"),	(char*)reportsMenu,	mainMenu,	"true",	0, 0,	true, NULL },
@@ -613,7 +611,3 @@ void menuManufacture::sPrintWorkOrderForm()
   printWoForm(parent, "", TRUE).exec();
 }
 
-void menuManufacture::sPrintProductionEntrySheet()
-{
-  printProductionEntrySheet(parent, "", TRUE).exec();
-}
