@@ -141,10 +141,6 @@ class menuInventory : public QObject
     void sDspItemUsageStatisticsByItemGroup();
     void sDspItemUsageStatisticsByWarehouse();
     void sDspTimePhasedUsageStatisticsByItem();
-    void sDspInventoryBufferStatusByItem();
-    void sDspInventoryBufferStatusByItemGroup();
-    void sDspInventoryBufferStatusByClassCode();
-    void sDspInventoryBufferStatusByPlannerCode();
 
     void sPrintItemLabelsByClassCode();
 

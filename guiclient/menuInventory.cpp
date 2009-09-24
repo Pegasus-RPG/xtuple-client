@@ -103,7 +103,6 @@
 #include "dspInventoryAvailabilityByParameterList.h"
 #include "dspInventoryAvailabilityBySourceVendor.h"
 #include "dspSubstituteAvailabilityByItem.h"
-#include "dspInventoryBufferStatusByParameterList.h"
 #include "dspInventoryHistoryByItem.h"
 #include "dspInventoryHistoryByOrderNumber.h"
 #include "dspInventoryHistoryByParameterList.h"
@@ -389,14 +388,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.dspInventoryAvailabilityByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL }, 
     { "im.dspInventoryAvailabilityByItem",		tr("by &Item..."),	 SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
     { "im.dspSubstituteAvailabilityByRootItem",		tr("&Substitute Availability..."),	 SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL }, 
-    
-    //  Inventory | Reports | Inventory Status
-    { "menu",				tr("Inventory S&tatus"),			  (char*)reportsInvBufrStsMenu,			reportsMenu,	"ViewInventoryBufferStatus",	NULL, NULL,  _metrics->boolean("BufferMgt") , NULL },
-    { "im.dspInventoryBufferStatusByPlannerCode",	tr("by &Planner Code..."),SLOT(sDspInventoryBufferStatusByPlannerCode()), reportsInvBufrStsMenu, "ViewInventoryBufferStatus",	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },
-    { "im.dspInventoryBufferStatusByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryBufferStatusByClassCode()), reportsInvBufrStsMenu, "ViewInventoryBufferStatus" ,	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },  
-    { "im.dspInventoryBufferStatusByItemGroup",		tr("by &Item Group..."),	 SLOT(sDspInventoryBufferStatusByItemGroup()), reportsInvBufrStsMenu, "ViewInventoryBufferStatus",	NULL, NULL, _metrics->boolean("BufferMgt"), NULL }, 
-
-    { "separator",					NULL,						 NULL,	reportsMenu,	"true", NULL, NULL,  true , NULL },
     
     //  Inventory| Reports | Inventory History
     { "menu",				tr("Inventory &History"),			  (char*)reportsInvHistMenu,			reportsMenu,	"ViewInventoryHistory",	NULL, NULL, true , NULL },
@@ -1069,41 +1060,6 @@ void menuInventory::sDspInventoryAvailabilityBySourceVendor()
 void menuInventory::sDspSubstituteAvailabilityByRootItem()
 {
   omfgThis->handleNewWindow(new dspSubstituteAvailabilityByItem());
-}
-
-void menuInventory::sDspInventoryBufferStatusByItem()
-{
-  //omfgThis->handleNewWindow(new dspInventoryBufferStatusByItem());
-}
-
-void menuInventory::sDspInventoryBufferStatusByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  dspInventoryBufferStatusByParameterList *newdlg = new dspInventoryBufferStatusByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryBufferStatusByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspInventoryBufferStatusByParameterList *newdlg = new dspInventoryBufferStatusByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryBufferStatusByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  dspInventoryBufferStatusByParameterList *newdlg = new dspInventoryBufferStatusByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuInventory::sDspInventoryHistoryByItem()

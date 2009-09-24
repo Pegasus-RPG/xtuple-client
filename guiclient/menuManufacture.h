@@ -75,10 +75,6 @@ class menuManufacture : public QObject
     void sDspWoScheduleByPlannerCode();
     void sDspWoScheduleByWorkCenter();
     void sDspWoScheduleByWorkOrder();
-    void sDspWoBufferStatusByItem();
-    void sDspWoBufferStatusByItemGroup();
-    void sDspWoBufferStatusByClassCode();
-    void sDspWoBufferStatusByPlannerCode();
     void sDspWoHistoryByItem();
     void sDspWoHistoryByNumber();
     void sDspWoHistoryByClassCode();
@@ -87,9 +83,8 @@ class menuManufacture : public QObject
     void sDspInventoryAvailabilityByWorkOrder();
     void sDspWoOperationsByWorkCenter();
     void sDspWoOperationsByWo();
-    void sDspWoOperationBufrStsByWorkCenter();
     void sDspPendingAvailability();
-	void sDspJobCosting();
+    void sDspJobCosting();
     void sDspWoEffortByUser();
     void sDspWoEffortByWorkOrder();
     void sDspMaterialUsageVarianceByBOMItem();
@@ -97,10 +92,6 @@ class menuManufacture : public QObject
     void sDspMaterialUsageVarianceByComponentItem();
     void sDspMaterialUsageVarianceByWorkOrder();
     void sDspMaterialUsageVarianceByWarehouse();
-    void sDspLaborVarianceByBOOItem();
-    void sDspLaborVarianceByItem();
-    void sDspLaborVarianceByWorkCenter();
-    void sDspLaborVarianceByWorkOrder();
     void sDspWoSoStatus();
     void sDspWoSoStatusMismatch();
 
@@ -127,7 +118,6 @@ class menuManufacture : public QObject
     QMenu  *reportsOperationsMenu;
     QMenu  *reportsWoTcMenu;
     QMenu  *reportsMatlUseVarMenu;
-    QMenu  *reportsLaborVarMenu;
     QMenu  *reportsBrdrDistVarMenu;
     QMenu  *reportsOpenWoMenu;
     QMenu  *utilitiesMenu;

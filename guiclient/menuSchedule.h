@@ -46,25 +46,6 @@ class menuSchedule : public QObject
     void sFirmPlannedOrdersByPlannerCode();
     void sReleasePlannedOrdersByPlannerCode();
 
-    void sCreateBufferStatusByItem();
-    void sCreateBufferStatusByPlannerCode();
-    void sDspInventoryBufferStatusByItemGroup();
-    void sDspInventoryBufferStatusByClassCode();
-    void sDspInventoryBufferStatusByPlannerCode();
-    void sDspCapacityBufferStatusByWorkCenter();
-    void sDspWoBufferStatusByItemGroup();
-    void sDspWoBufferStatusByClassCode();
-    void sDspWoBufferStatusByPlannerCode();
-    void sDspWoOperationBufrStsByWorkCenter();
-    void sDspPoItemsByBufferStatus();
-
-    void sDspTimePhasedCapacityByWorkCenter();
-    void sDspTimePhasedLoadByWorkCenter();
-    void sDspTimePhasedAvailableCapacityByWorkCenter();
-    void sDspTimePhasedDemandByPlannerCode();
-    void sDspTimePhasedProductionByItem();
-    void sDspTimePhasedProductionByPlannerCode();
-
     void sDspPlannedOrdersByItem();
     void sDspPlannedOrdersByPlannerCode();
     void sDspMPSDetail();

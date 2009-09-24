@@ -49,7 +49,6 @@
 #include "dspPoItemsByVendor.h"
 #include "dspPoItemsByItem.h"
 #include "dspPoItemsByDate.h"
-#include "dspPoItemsByBufferStatus.h"
 #include "dspPoHistory.h"
 #include "dspItemSourcesByVendor.h"
 #include "dspItemSourcesByItem.h"
@@ -197,7 +196,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.dspPoLineItemsByDate", tr("by &Date..."), SLOT(sDspPoItemsByDate()), reportsPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
     { "po.dspPoLineItemsByItem", tr("by &Item..."), SLOT(sDspPoItemsByItem()), reportsPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
     
-    { "po.dspPoLineItemsByBufferStatus", tr("P/O Item Sta&tus..."), SLOT(sDspPoItemsByBufferStatus()), reportsMenu, "ViewPurchaseOrders", NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "po.dspPoHistory", tr("Purchase Order &History..."), SLOT(sDspPoHistory()), reportsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
@@ -481,11 +479,6 @@ void menuPurchase::sDspPoItemsByItem()
 void menuPurchase::sDspPoItemsByDate()
 {
   omfgThis->handleNewWindow(new dspPoItemsByDate());
-}
-
-void menuPurchase::sDspPoItemsByBufferStatus()
-{
-  omfgThis->handleNewWindow(new dspPoItemsByBufferStatus());
 }
 
 void menuPurchase::sDspPoHistory()

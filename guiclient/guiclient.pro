@@ -86,7 +86,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                copyTransferOrder.ui                                                                   \
                costCategory.ui costCategories.ui countries.ui country.ui                              \
                countTagList.ui correctOperationsPosting.ui correctProductionPosting.ui                \
-               createBufferStatusByItem.ui createBufferStatusByPlannerCode.ui                         \
                createCycleCountTags.ui                                                                \
                createCountTagsByParameterList.ui createCountTagsByItem.ui                             \
                createItemSitesByClassCode.ui                                                          \
@@ -117,7 +116,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspBriefEarnedCommissions.ui                                                           \
                dspBriefSalesHistoryByCustomer.ui dspBriefSalesHistoryByCustomerType.ui                \
                dspBriefSalesHistoryBySalesRep.ui                                                      \
-               dspCapacityBufferStatusByWorkCenter.ui                                                 \
                dspCapacityUOMsByClassCode.ui dspCapacityUOMsByProductCategory.ui                      \
                dspCheckRegister.ui dspCashReceipts.ui dspCreditCardTransactions.ui                    \
                dspCostedSingleLevelBOM.ui dspCostedSummarizedBOM.ui dspCostedIndentedBOM.ui           \
@@ -136,7 +134,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspInventoryAvailabilityByItem.ui dspInventoryAvailabilityByParameterList.ui           \
                dspInventoryAvailabilityBySalesOrder.ui dspInventoryAvailabilityBySourceVendor.ui      \
                dspInventoryAvailabilityByWorkOrder.ui dspInventoryAvailabilityByCustomerType.ui       \
-               dspInventoryBufferStatusByParameterList.ui                                             \
                dspInventoryHistoryByItem.ui dspInventoryHistoryByOrderNumber.ui                       \
                dspInventoryHistoryByParameterList.ui dspIncidentsByCRMAccount.ui                      \
                dspInventoryLocator.ui dspInvoiceInformation.ui                                        \
@@ -145,8 +142,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspItemsByCharacteristic.ui dspItemsByClassCode.ui dspItemsByProductCategory.ui        \
                dspItemsWithoutItemSources.ui dspItemSitesByItem.ui dspItemSitesByParameterList.ui     \
                dspItemSourcesByItem.ui dspItemSourcesByVendor.ui dspJobCosting.ui                     \
-               dspLaborVarianceByBOOItem.ui dspLaborVarianceByItem.ui                                 \
-               dspLaborVarianceByWorkCenter.ui dspLaborVarianceByWorkOrder.ui                         \
                dspMaterialUsageVarianceByBOMItem.ui dspMaterialUsageVarianceByItem.ui                 \
                dspMaterialUsageVarianceByComponentItem.ui                                             \
                dspMaterialUsageVarianceByWorkOrder.ui dspMaterialUsageVarianceByWarehouse.ui          \
@@ -155,7 +150,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspPendingBOMChanges.ui dspPlannedOrdersByItem.ui dspPlannedOrdersByPlannerCode.ui     \
                dspPlannedRevenueExpensesByPlannerCode.ui dspPoHistory.ui                              \
                dspPoDeliveryDateVariancesByItem.ui dspPoDeliveryDateVariancesByVendor.ui              \
-               dspPoItemsByBufferStatus.ui dspWoBufferStatusByParameterList.ui                        \
                dspPoItemsByDate.ui dspPoItemsByItem.ui dspPoItemsByVendor.ui                          \
                dspPoItemReceivingsByDate.ui dspPoItemReceivingsByItem.ui                              \
                dspPoItemReceivingsByVendor.ui                                                         \
@@ -187,14 +181,11 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSummarizedSalesByItem.ui                                                            \
                dspSummarizedSalesBySalesRep.ui dspTaxHistory.ui                                       \
                dspSummarizedSalesHistoryByShippingZone.ui                                             \
-               dspTimePhasedAvailability.ui dspTimePhasedAvailableCapacityByWorkCenter.ui             \
+               dspTimePhasedAvailability.ui \
                dspTimePhasedBookingsByCustomer.ui dspTimePhasedBookingsByItem.ui                      \
                dspTimePhasedBookingsByProductCategory.ui                                              \
-               dspTimePhasedCapacityByWorkCenter.ui dspTimePhasedDemandByPlannerCode.ui               \
-               dspTimePhasedLoadByWorkCenter.ui                                                       \
                dspTimePhasedOpenARItems.ui dspTimePhasedOpenAPItems.ui                                \
                dspTimePhasedRoughCutByWorkCenter.ui dspTimePhasedPlannedREByPlannerCode.ui            \
-               dspTimePhasedProductionByPlannerCode.ui dspTimePhasedProductionByItem.ui               \
                dspTimePhasedSalesByCustomer.ui dspTimePhasedSalesByCustomerGroup.ui                   \
                dspTimePhasedSalesByCustomerByItem.ui dspTimePhasedSalesByItem.ui                      \
                dspTimePhasedSalesByProductCategory.ui                                                 \
@@ -209,7 +200,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspVoucherRegister.ui  dspWoEffortByUser.ui dspWoEffortByWorkOrder.ui                  \
                dspWoHistoryByClassCode.ui dspWoHistoryByItem.ui dspWoHistoryByNumber.ui               \
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
-               dspWoOperationBufrStsByWorkCenter.ui                                                   \
                dspWoOperationsByWorkCenter.ui dspWoOperationsByWorkOrder.ui                           \
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
@@ -401,7 +391,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                copyTransferOrder.h                                                                    \
                costCategory.h costCategories.h countries.h country.h                                  \
                countTagList.h correctOperationsPosting.h correctProductionPosting.h                   \
-               createBufferStatusByItem.h createBufferStatusByPlannerCode.h                           \
                createCycleCountTags.h                                                                 \
                createCountTagsByParameterList.h createCountTagsByItem.h                               \
                createItemSitesByClassCode.h                                                           \
@@ -431,7 +420,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspBookingsByProductCategory.h dspBookingsBySalesRep.h dspBookingsByShipTo.h           \
                dspBriefEarnedCommissions.h                                                            \
                dspBriefSalesHistoryByCustomer.h dspBriefSalesHistoryByCustomerType.h                  \
-               dspBriefSalesHistoryBySalesRep.h dspCapacityBufferStatusByWorkCenter.h                 \
+               dspBriefSalesHistoryBySalesRep.h                                                       \
                dspCapacityUOMsByClassCode.h dspCapacityUOMsByProductCategory.h                        \
                dspCheckRegister.h dspCashReceipts.h                                                   \
                dspCostedSingleLevelBOM.h dspCostedSummarizedBOM.h dspCostedIndentedBOM.h              \
@@ -450,7 +439,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspInventoryAvailabilityByItem.h dspInventoryAvailabilityByParameterList.h             \
                dspInventoryAvailabilityBySalesOrder.h dspInventoryAvailabilityBySourceVendor.h        \
                dspInventoryAvailabilityByWorkOrder.h dspInventoryAvailabilityByCustomerType.h         \
-               dspInventoryBufferStatusByParameterList.h                                              \
                dspInventoryHistoryByItem.h dspInventoryHistoryByOrderNumber.h                         \
                dspInventoryHistoryByParameterList.h dspIncidentsByCRMAccount.h                        \
                dspInventoryLocator.h dspInvoiceInformation.h                                          \
@@ -460,8 +448,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspItemsByCharacteristic.h dspItemsByClassCode.h dspItemsByProductCategory.h           \
                dspItemsWithoutItemSources.h dspItemSitesByItem.h dspItemSitesByParameterList.h        \
                dspItemSourcesByItem.h dspItemSourcesByVendor.h dspJobCosting.h                        \
-               dspLaborVarianceByBOOItem.h dspLaborVarianceByItem.h                                   \
-               dspLaborVarianceByWorkCenter.h dspLaborVarianceByWorkOrder.h                           \
                dspMaterialUsageVarianceByBOMItem.h dspMaterialUsageVarianceByItem.h                   \
                dspMaterialUsageVarianceByComponentItem.h                                              \
                dspMaterialUsageVarianceByWorkOrder.h dspMaterialUsageVarianceByWarehouse.h            \
@@ -472,7 +458,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspPoDeliveryDateVariancesByItem.h dspPoDeliveryDateVariancesByVendor.h                \
                dspPoItemsByDate.h dspPoItemsByItem.h dspPoItemsByVendor.h                             \
                dspPoItemReceivingsByDate.h dspPoItemReceivingsByItem.h                                \
-               dspPoItemReceivingsByVendor.h dspPoItemsByBufferStatus.h                               \
+               dspPoItemReceivingsByVendor.h \
                dspPoPriceVariancesByItem.h dspPoPriceVariancesByVendor.h dspPoReturnsByVendor.h       \
                dspPOsByDate.h dspPOsByVendor.h                                                        \
                dspPurchaseReqsByItem.h dspPurchaseReqsByPlannerCode.h                                 \
@@ -501,14 +487,11 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspSummarizedSalesByItem.h                                                             \
                dspSummarizedSalesBySalesRep.h dspTaxHistory.h                                         \
                dspSummarizedSalesHistoryByShippingZone.h                                              \
-               dspTimePhasedAvailability.h dspTimePhasedAvailableCapacityByWorkCenter.h               \
+               dspTimePhasedAvailability.h \
                dspTimePhasedBookingsByCustomer.h dspTimePhasedBookingsByItem.h                        \
                dspTimePhasedBookingsByProductCategory.h                                               \
-               dspTimePhasedCapacityByWorkCenter.h dspTimePhasedDemandByPlannerCode.h                 \
-               dspTimePhasedLoadByWorkCenter.h                                                        \
                dspTimePhasedOpenARItems.h dspTimePhasedOpenAPItems.h                                  \
                dspTimePhasedRoughCutByWorkCenter.h dspTimePhasedPlannedREByPlannerCode.h              \
-               dspTimePhasedProductionByPlannerCode.h dspTimePhasedProductionByItem.h                 \
                dspTimePhasedSalesByCustomer.h dspTimePhasedSalesByCustomerGroup.h                     \
                dspTimePhasedSalesByCustomerByItem.h dspTimePhasedSalesByItem.h                        \
                dspTimePhasedSalesByProductCategory.h                                                  \
@@ -520,11 +503,10 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspUndefinedManufacturedItems.h                                                        \
                dspUninvoicedReceivings.h uninvoicedShipments.h unpostedPurchaseOrders.h               \
                dspUnusedPurchasedItems.h  dspVendorAPHistory.h dspValidLocationsByItem.h              \
-               dspVoucherRegister.h dspWoBufferStatusByParameterList.h                                \
+               dspVoucherRegister.h \
                dspWoEffortByUser.h dspWoEffortByWorkOrder.h                                           \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
-               dspWoOperationBufrStsByWorkCenter.h                                                    \
                dspWoOperationsByWorkCenter.h dspWoOperationsByWorkOrder.h                             \
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
@@ -726,7 +708,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                copyTransferOrder.cpp                                                                  \
                costCategory.cpp costCategories.cpp countries.cpp country.cpp                          \
                countTagList.cpp correctOperationsPosting.cpp correctProductionPosting.cpp             \
-               createBufferStatusByItem.cpp createBufferStatusByPlannerCode.cpp                       \
                createCycleCountTags.cpp                                                               \
                createCountTagsByParameterList.cpp createCountTagsByItem.cpp                           \
                createItemSitesByClassCode.cpp                                                         \
@@ -785,8 +766,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspItemsByCharacteristic.cpp dspItemsByClassCode.cpp dspItemsByProductCategory.cpp     \
                dspItemsWithoutItemSources.cpp dspItemSitesByItem.cpp dspItemSitesByParameterList.cpp  \
                dspItemSourcesByItem.cpp dspItemSourcesByVendor.cpp dspJobCosting.cpp                  \
-               dspLaborVarianceByBOOItem.cpp dspLaborVarianceByItem.cpp                               \
-               dspLaborVarianceByWorkCenter.cpp dspLaborVarianceByWorkOrder.cpp                       \
                dspMaterialUsageVarianceByBOMItem.cpp dspMaterialUsageVarianceByItem.cpp               \
                dspMaterialUsageVarianceByComponentItem.cpp                                            \
                dspMaterialUsageVarianceByWorkOrder.cpp dspMaterialUsageVarianceByWarehouse.cpp        \
@@ -826,14 +805,11 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspSummarizedSalesByItem.cpp                                                           \
                dspSummarizedSalesBySalesRep.cpp dspTaxHistory.cpp                                     \
                dspSummarizedSalesHistoryByShippingZone.cpp                                            \
-               dspTimePhasedAvailability.cpp dspTimePhasedAvailableCapacityByWorkCenter.cpp           \
+               dspTimePhasedAvailability.cpp \
                dspTimePhasedBookingsByCustomer.cpp dspTimePhasedBookingsByItem.cpp                    \
                dspTimePhasedBookingsByProductCategory.cpp                                             \
-               dspTimePhasedCapacityByWorkCenter.cpp dspTimePhasedDemandByPlannerCode.cpp             \
-               dspTimePhasedLoadByWorkCenter.cpp                                                      \
                dspTimePhasedOpenARItems.cpp dspTimePhasedOpenAPItems.cpp                              \
                dspTimePhasedRoughCutByWorkCenter.cpp dspTimePhasedPlannedREByPlannerCode.cpp          \
-               dspTimePhasedProductionByPlannerCode.cpp dspTimePhasedProductionByItem.cpp             \
                dspTimePhasedSalesByCustomer.cpp dspTimePhasedSalesByCustomerGroup.cpp                 \
                dspTimePhasedSalesByCustomerByItem.cpp dspTimePhasedSalesByItem.cpp                    \
                dspTimePhasedSalesByProductCategory.cpp                                                \
@@ -851,9 +827,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspWoOperationsByWorkCenter.cpp dspWoOperationsByWorkOrder.cpp                         \
                dspWoScheduleByItem.cpp dspWoScheduleByParameterList.cpp dspWoScheduleByWorkOrder.cpp  \
                dspWoSoStatusMismatch.cpp dspWoSoStatus.cpp                                            \
-               dspCapacityBufferStatusByWorkCenter.cpp dspInventoryBufferStatusByParameterList.cpp    \
-               dspPoItemsByBufferStatus.cpp dspWoBufferStatusByParameterList.cpp                      \
-               dspWoOperationBufrStsByWorkCenter.cpp                                                  \
                duplicateAccountNumbers.cpp                                                            \
                editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
                employee.cpp employees.cpp empGroup.cpp empGroups.cpp                                  \

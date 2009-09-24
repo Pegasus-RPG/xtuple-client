@@ -67,7 +67,6 @@ class menuPurchase : public QObject
     void sDspPoItemsByVendor();
     void sDspPoItemsByItem();
     void sDspPoItemsByDate();
-    void sDspPoItemsByBufferStatus();
     void sDspPoHistory();
     void sDspItemSourcesByVendor();
     void sDspItemSourcesByItem();
