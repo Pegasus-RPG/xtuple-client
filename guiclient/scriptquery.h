@@ -30,6 +30,7 @@ class ScriptQuery : public QObject
     Q_INVOKABLE XSqlQuery query() const;
     Q_INVOKABLE void setQuery(XSqlQuery query);
     Q_INVOKABLE QSqlRecord record() const;
+    Q_INVOKABLE QString    toString() const;
 
   public slots:
     bool isActive();

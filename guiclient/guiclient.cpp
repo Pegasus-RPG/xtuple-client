@@ -581,6 +581,10 @@ void GUIClient::setWindowTitle()
     QMainWindow::setWindowTitle(_Name);
 }
 
+void GUIClient::setCaption()
+{
+}
+
 void GUIClient::initMenuBar()
 {
   static bool firstRun = true;
@@ -1530,6 +1534,21 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   QScriptValue mainwindowval = engine->newQObject(this);
   engine->globalObject().setProperty("mainwindow", mainwindowval);
+  mainwindowval.setProperty("NoError",  QScriptValue(engine, NoError),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("NoError_Cancel",  QScriptValue(engine, NoError_Cancel),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("NoError_Run",  QScriptValue(engine, NoError_Run),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("NoError_Print",  QScriptValue(engine, NoError_Print),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("NoError_Submit",  QScriptValue(engine, NoError_Submit),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("Error_NoSetup",  QScriptValue(engine, Error_NoSetup),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
 
   QScriptValue metricsval = engine->newQObject(_metrics);
   engine->globalObject().setProperty("metrics", metricsval);
@@ -1545,6 +1564,101 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   engine->globalObject().setProperty("startOfTime", engine->newDate(QDateTime(_startOfTime)));
   engine->globalObject().setProperty("endOfTime", engine->newDate(QDateTime(_endOfTime)));
+
+
+  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  // #defines from guiclient.h
+  mainwindowval.setProperty("cNew", QScriptValue(engine, cNew),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cEdit", QScriptValue(engine, cEdit),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cView", QScriptValue(engine, cView),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cCopy", QScriptValue(engine, cCopy),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cRelease", QScriptValue(engine, cRelease),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cPost", QScriptValue(engine, cPost),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cReplace", QScriptValue(engine, cReplace),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cPostedCounts", QScriptValue(engine, cPostedCounts),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cUnpostedCounts", QScriptValue(engine, cUnpostedCounts),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cAllCounts", QScriptValue(engine, cAllCounts),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cLocation", QScriptValue(engine, cLocation),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cItemloc", QScriptValue(engine, cItemloc),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransAll", QScriptValue(engine, cTransAll),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransReceipts", QScriptValue(engine, cTransReceipts),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransIssues", QScriptValue(engine, cTransIssues),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransShipments", QScriptValue(engine, cTransShipments),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransAdjCounts", QScriptValue(engine, cTransAdjCounts),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransTransfers", QScriptValue(engine, cTransTransfers),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cTransScraps", QScriptValue(engine, cTransScraps),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("SalesJournal", QScriptValue(engine, SalesJournal),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("CreditMemoJournal", QScriptValue(engine, CreditMemoJournal),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("CashReceiptsJournal", QScriptValue(engine, CashReceiptsJournal),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("PayablesJournal", QScriptValue(engine, PayablesJournal),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("CheckJournal", QScriptValue(engine, CheckJournal),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  QScriptValue inputmanagerval = engine->newQObject(_inputManager);
+  engine->globalObject().setProperty("InputManager", inputmanagerval);
+
+  // #defines from inputmanager.h
+  inputmanagerval.setProperty("cBCWorkOrder", QScriptValue(engine, cBCWorkOrder),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCWorkOrderMaterial", QScriptValue(engine, cBCWorkOrderMaterial),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCWorkOrderOperation", QScriptValue(engine, cBCWorkOrderOperation),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCSalesOrder", QScriptValue(engine, cBCSalesOrder),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCSalesOrderLineItem", QScriptValue(engine, cBCSalesOrderLineItem),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCItemSite", QScriptValue(engine, cBCItemSite),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCItem", QScriptValue(engine, cBCItem),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCUPCCode", QScriptValue(engine, cBCUPCCode),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCEANCode", QScriptValue(engine, cBCEANCode),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCCountTag", QScriptValue(engine, cBCCountTag),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCLocation", QScriptValue(engine, cBCLocation),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCLocationIssue", QScriptValue(engine, cBCLocationIssue),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCLocationContents", QScriptValue(engine, cBCLocationContents),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCUser", QScriptValue(engine, cBCUser),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCTransferOrder", QScriptValue(engine, cBCTransferOrder),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCTransferOrderLineItem", QScriptValue(engine, cBCTransferOrderLineItem),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  inputmanagerval.setProperty("cBCLotSerialNumber", QScriptValue(engine, cBCLotSerialNumber),
+                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   setupScriptApi(engine);
 }

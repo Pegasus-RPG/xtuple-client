@@ -186,18 +186,18 @@ class GUIClient : public QMainWindow
     GUIClient(const QString &, const QString &);
     virtual ~GUIClient();
 
-    void setCaption();
-    void initMenuBar();
-    void saveToolbarPositions();
+    Q_INVOKABLE void setCaption();
+    Q_INVOKABLE void initMenuBar();
+    Q_INVOKABLE void saveToolbarPositions();
 
-    inline QWorkspace *workspace()         { return _workspace;    }
-    inline InputManager *inputManager()    { return _inputManager; }
-    inline QString databaseURL()           { return _databaseURL;  }
-    inline QString username()              { return _username;     }
+    Q_INVOKABLE inline QWorkspace *workspace()         { return _workspace;    }
+    Q_INVOKABLE inline InputManager *inputManager()    { return _inputManager; }
+    Q_INVOKABLE inline QString databaseURL()           { return _databaseURL;  }
+    Q_INVOKABLE inline QString username()              { return _username;     }
 
-    inline const QDate &startOfTime()      { return _startOfTime;  }
-    inline const QDate &endOfTime()        { return _endOfTime;    }
-    inline const QDate &dbDate()           { return _dbDate;       }
+    Q_INVOKABLE inline const QDate startOfTime()       { return _startOfTime;  }
+    Q_INVOKABLE inline const QDate endOfTime()         { return _endOfTime;    }
+    Q_INVOKABLE inline const QDate dbDate()            { return _dbDate;       }
 
     Q_INVOKABLE inline QDoubleValidator *qtyVal()      { return _qtyVal;       }
     Q_INVOKABLE inline QDoubleValidator *transQtyVal() { return _transQtyVal;  }
@@ -215,16 +215,16 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE inline QIntValidator *orderVal()       { return _orderVal;     }
     Q_INVOKABLE inline QIntValidator *dayVal()         { return _dayVal;       }
 
-    inline QFont systemFont()              { return *_systemFont;  }
-    inline QFont fixedFont()               { return *_fixedFont;   }
+    Q_INVOKABLE inline QFont systemFont()              { return *_systemFont;  }
+    Q_INVOKABLE inline QFont fixedFont()               { return *_fixedFont;   }
 
-    bool singleCurrency();
-    bool showTopLevel() const { return _showTopLevel; }
-    QWidgetList windowList();
-    void populateCustomMenu(QMenu*, const QString &);
+    Q_INVOKABLE bool singleCurrency();
+    Q_INVOKABLE bool showTopLevel() const { return _showTopLevel; }
+    Q_INVOKABLE QWidgetList windowList();
+    Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
-    void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal);
-    QMenuBar *menuBar();
+    Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal);
+    Q_INVOKABLE QMenuBar *menuBar();
 
     XSqlQuery        _q;
     ActionSet        actions;
@@ -239,12 +239,12 @@ class GUIClient : public QMainWindow
     QMap<const QObject*,int> _customCommands;
 
     QString _key;
-    QString key() { return _key; }
+    Q_INVOKABLE QString key() { return _key; }
 
     QString _singleWindow;
 
-    void launchBrowser(QWidget*, const QString &);
-    QWidget * myActiveWindow();
+    Q_INVOKABLE void launchBrowser(QWidget*, const QString &);
+    Q_INVOKABLE QWidget * myActiveWindow();
 
     void loadScriptGlobals(QScriptEngine * engine);
 

@@ -41,7 +41,8 @@ class InputManager : public QObject
   public:
     InputManager();
 
-    void notify(int, QObject *, QObject *, const QString &);
+    Q_INVOKABLE void notify(int, QObject *, QObject *, const QString &);
+    Q_INVOKABLE QString slotName(const QString &);
 
   public slots:
     void sRemove(QObject *);

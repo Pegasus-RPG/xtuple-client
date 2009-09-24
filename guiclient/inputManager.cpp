@@ -142,6 +142,16 @@ void InputManager::notify(int pType, QObject *pParent, QObject *pTarget, const Q
   connect(pTarget, SIGNAL(destroyed(QObject *)), this, SLOT(sRemove(QObject *)));
 }
 
+/* Application scripts need to pass strings as the last argument to
+   InputManager::notify() but don't have access to the C++ SLOT() macro
+   to generate it. This function mimics the SLOT() macro and will need
+   to be maintained as Qt changes.
+ */
+QString InputManager::slotName(const QString &slotname)
+{
+  return QString("1") + slotname;
+}
+
 void InputManager::sRemove(QObject *pTarget)
 {
   for (int counter = 0; counter < _private->_receivers.count(); counter++)

@@ -116,3 +116,7 @@ QVariantMap ScriptQuery::lastError()
   return m;
 }
 
+QString ScriptQuery::toString() const
+{
+  return _query.lastQuery();
+}
