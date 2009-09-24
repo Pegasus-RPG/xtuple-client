@@ -148,7 +148,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       q.prepare("INSERT INTO invchead ("
 				"    invchead_id, invchead_invcnumber, invchead_orderdate,"
-		                "    invchead_invcdate, invchead_cust_id, invchead_posted,"
+                "    invchead_invcdate, invchead_cust_id, invchead_posted,"
 				"    invchead_printed, invchead_commission, invchead_freight,"
 				"    invchead_misc_amount, invchead_shipchrg_id "
 				") VALUES ("
@@ -466,7 +466,19 @@ void invoice::sSave()
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
+  
+  // finally save the invchead
+  if (!save())
+    return;
 
+  omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
+
+  _invcheadid = -1;
+  close();
+}
+
+bool invoice::save()
+{
   q.prepare( "UPDATE invchead "
 	     "SET invchead_cust_id=:invchead_cust_id,"
 	     "    invchead_invcdate=:invchead_invcdate,"
@@ -562,24 +574,20 @@ void invoice::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
-  omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
-
-  _invcheadid = -1;
-  close();
+  return true;
 }
 
 void invoice::sNew()
 {
+  if (!save())
+    return;
+	
   ParameterList params;
   params.append("mode", "new");
   params.append("invchead_id", _invcheadid);
-  params.append("invoiceNumber", _invoiceNumber->text());
-  params.append("cust_id", _cust->id());
-  params.append("cust_curr_id", _custCurrency->id());
-  params.append("curr_date", _invoiceDate->date());
 
   invoiceItem newdlg(this);
   newdlg.set(params);
@@ -589,13 +597,12 @@ void invoice::sNew()
 
 void invoice::sEdit()
 {
+  if (!save())
+    return;
+	
   ParameterList params;
   params.append("mode", "edit");
   params.append("invcitem_id", _invcitem->id());
-  params.append("invoiceNumber", _invoiceNumber->text());
-  params.append("cust_id", _cust->id());
-  params.append("cust_curr_id", _custCurrency->id());
-  params.append("curr_date", _orderDate->date());
 
   invoiceItem newdlg(this);
   newdlg.set(params);
@@ -608,10 +615,6 @@ void invoice::sView()
   ParameterList params;
   params.append("mode", "view");
   params.append("invcitem_id", _invcitem->id());
-  params.append("invoiceNumber", _invoiceNumber->text());
-  params.append("cust_id", _cust->id());
-  params.append("cust_curr_id", _custCurrency->id());
-  params.append("curr_date", _orderDate->date());
 
   invoiceItem newdlg(this);
   newdlg.set(params);
@@ -849,23 +852,8 @@ void invoice::sTaxDetail()
   XSqlQuery taxq;
   if (_mode != cView)
   {
-    taxq.prepare("UPDATE invchead SET invchead_taxzone_id = :taxzone,"
-                 " invchead_freight = :freight,"
-                 " invchead_invcdate = :invchead_invcdate, "
-                 " invchead_curr_id = :curr_id "
-                 "WHERE (invchead_id = :invchead_id);");
-    if (_taxzone->isValid())
-      taxq.bindValue(":taxzone",	_taxzone->id());
-    taxq.bindValue(":freight",		_freight->localValue());
-    taxq.bindValue(":curr_id",          _custCurrency->id());
-    taxq.bindValue(":invchead_id",	_invcheadid);
-    taxq.bindValue(":invchead_invcdate",_invoiceDate->date());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    if (!save())
+	  return;
   }
 
   ParameterList params;
@@ -1176,21 +1164,8 @@ void invoice::sTaxZoneChanged()
 {
   if (_invcheadid != -1 && _taxzoneidCache != _taxzone->id())
   {
-    XSqlQuery taxq;
-    taxq.prepare("UPDATE invchead SET "
-      "  invchead_taxzone_id=:taxzone_id, "
-      "  invchead_freight=:freight "
-      "WHERE (invchead_id=:invchead_id) ");
-    if (_taxzone->id() != -1)
-      taxq.bindValue(":taxzone_id", _taxzone->id());
-    taxq.bindValue(":invchead_id", _invcheadid);
-    taxq.bindValue(":freight", _freight->localValue());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    if (!save())
+	  return;
     _taxzoneidCache = _taxzone->id();
     sCalculateTax();
   }
@@ -1200,18 +1175,8 @@ void invoice::sFreightChanged()
 {
   if (_invcheadid != -1 && _freightCache != _freight->localValue())
   {
-    XSqlQuery taxq;
-    taxq.prepare("UPDATE invchead SET "
-      "  invchead_freight=:freight "
-      "WHERE (invchead_id=:invchead_id) ");
-    taxq.bindValue(":invchead_id", _invcheadid);
-    taxq.bindValue(":freight", _freight->localValue());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    if (!save())
+	  return;
     _freightCache = _freight->localValue();
     sCalculateTax();
   }   

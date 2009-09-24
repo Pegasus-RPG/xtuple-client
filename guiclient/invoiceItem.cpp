@@ -86,16 +86,22 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   {
     _invcheadid = param.toInt();
 
-    q.prepare("SELECT taxzone_id, invchead_curr_id AS curr_id "
-              "FROM invchead LEFT OUTER JOIN taxzone "
-			  "ON (invchead_taxzone_id = taxzone_id) "
-			  "WHERE ((invchead_id = :invchead_id));");
+    q.prepare("SELECT invchead_invcnumber, invchead_cust_id, "
+	          "       invchead_curr_id, invchead_invcdate, "
+			  "       invchead_taxzone_id "
+              "FROM invchead "
+			  "WHERE (invchead_id = :invchead_id);");
     q.bindValue(":invchead_id", _invcheadid);
     q.exec();
     if (q.first())
     {
-      _taxzoneid = q.value("taxzone_id").toInt();
-	  _tax->setId(q.value("curr_id").toInt());
+      _invoiceNumber->setText(q.value("invchead_invcnumber").toString());
+      _custid = q.value("invchead_cust_id").toInt();
+      _taxzoneid = q.value("invchead_taxzone_id").toInt();
+	  _tax->setId(q.value("invchead_curr_id").toInt());
+      _price->setId(q.value("invchead_curr_id").toInt());
+      _price->setEffective(q.value("invchead_invcdate").toDate());
+      sPriceGroup();
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -103,25 +109,6 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       return UndefinedError;
     }
   }
-
-  param = pParams.value("invoiceNumber", &valid);
-  if (valid)
-    _invoiceNumber->setText(param.toString());
-
-  param = pParams.value("cust_id", &valid);
-  if (valid)
-    _custid = param.toInt();
-
-  param = pParams.value("cust_curr_id", &valid);
-  if (valid)
-  {
-    _price->setId(param.toInt());
-    sPriceGroup();
-  }
-
-  param = pParams.value("curr_date", &valid);
-  if (valid)
-    _price->setEffective(param.toDate());
 
   param = pParams.value("invcitem_id", &valid);
   if (valid)

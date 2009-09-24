@@ -72,6 +72,7 @@ private:
     int		_taxzoneidCache;
     bool        _loading;
     double      _freightCache;
+	bool		save();
 
 };
 
