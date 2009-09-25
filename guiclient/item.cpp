@@ -67,7 +67,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteSubstitute, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
   connect(_newTransform, SIGNAL(clicked()), this, SLOT(sNewTransformation()));
   connect(_deleteTransform, SIGNAL(clicked()), this, SLOT(sDeleteTransformation()));
-  connect(_boo, SIGNAL(clicked()), this, SLOT(sEditBOO()));
   connect(_bom, SIGNAL(clicked()), this, SLOT(sEditBOM()));
   connect(_site, SIGNAL(clicked()), this, SLOT(sEditItemSite()));
   connect(_workbench, SIGNAL(clicked()), this, SLOT(sWorkbench()));
@@ -153,9 +152,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemtax->addColumn(tr("Tax Type"),_itemColumn, Qt::AlignLeft,true,"taxtype_name");
   _itemtax->addColumn(tr("Tax Zone"),    -1, Qt::AlignLeft,true,"taxzone");
 
-  if(!_privileges->check("MaintainBOOs") || !_metrics->boolean("Routings"))
-    _boo->hide();
-    
   if(!_privileges->check("MaintainBOMs"))
     _bom->hide();
     
@@ -202,14 +198,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   else
     _tab->setTabEnabled(_tab->indexOf(_itemsitesTab), FALSE);
 
-  
-  if (!_metrics->boolean("BBOM"))
-  {
-    _itemtype->removeItem(12);
-    _itemtype->removeItem(11);
-    _itemtype->removeItem(10);
-  }
-    
   q.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
   if (q.first())
   {
@@ -227,18 +215,11 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxRecoverable->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 item::~item()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void item::languageChange()
 {
     retranslateUi(this);
@@ -268,7 +249,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       _mode = cNew;
 
       _bom->hide();
-      _boo->hide();
       _workbench->hide();
       _site->hide();
       _newUOM->setEnabled(false);
@@ -1265,8 +1245,6 @@ void item::sHandleItemtype()
     _fractional->setChecked(false);
   }
   _fractional->setEnabled(itemType!="K");
-  if(_privileges->check("MaintainBOOs") && _metrics->boolean("Routings"))
-    _boo->setVisible(itemType!="K");
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
   _transformationsButton->setEnabled(itemType!="K");
@@ -1546,39 +1524,6 @@ void item::viewItem( int pId )
   item *newdlg = new item();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void item::sEditBOO()
-{
-  XSqlQuery booQuery;
-  booQuery.prepare("SELECT * FROM booitem WHERE booitem_item_id=:item_id");
-  booQuery.bindValue(":item_id", _itemid);
-  booQuery.exec();
-
-  ParameterList params;
-
-  if(booQuery.size() > 0)
-  {
-    params.append("mode", "edit");
-    params.append("item_id", _itemid);
-    
-    boo *newdlg = new boo();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else
-  {
-    if(_mode == cNew)
-    {
-      saveCore();
-    }
-    params.append("mode", "new");
-    params.append("item_id", _itemid);  
-        
-    boo *newdlg = new boo();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
 }
 
 void item::sEditBOM()

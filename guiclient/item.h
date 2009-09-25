@@ -54,7 +54,6 @@ public slots:
     virtual void sNewTransformation();
     virtual void sDeleteTransformation();
     virtual void sFillTransformationList();
-    virtual void sEditBOO();
     virtual void sEditBOM();
     virtual void sWorkbench();
     virtual void sNewItemSite();

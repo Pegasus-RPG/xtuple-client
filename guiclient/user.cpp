@@ -70,12 +70,6 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
     _verify->setEnabled(false);
   }
   
-  if (!_metrics->boolean("Routings"))
-  {
-    _woTimeClockOnly->setChecked(FALSE);
-    _woTimeClockOnly->hide();
-  }
-  
   if (!_metrics->boolean("MultiWhs"))
     _tab->removeTab(_tab->indexOf(_siteTab));
 }
@@ -285,8 +279,7 @@ bool user::save()
             "       setUserPreference(:username, 'initials', :initials),"
             "       setUserPreference(:username, 'locale_id', text(:locale_id)),"
             "       setUserPreference(:username, 'agent', :agent),"
-            "       setUserPreference(:username, 'active', :active),"
-            "       setUserPreference(:username, 'window', :window);");
+            "       setUserPreference(:username, 'active', :active);");
   q.bindValue(":username", username);
   q.bindValue(":export", (_exportContents->isChecked() ? "t" : "f"));
   q.bindValue(":enhanced", (_enhancedAuth->isChecked() ? "t" : "f"));
@@ -297,8 +290,6 @@ bool user::save()
   q.bindValue(":locale_id", _locale->id());
   q.bindValue(":agent", (_agent->isChecked() ? "t" : "f"));
   q.bindValue(":active", (_active->isChecked() ? "t" : "f"));
-  // keep synchronized with the select below, GUIClient, and main
-  q.bindValue(":window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -537,8 +528,6 @@ void user::populate()
     _agent->setChecked(q.value("usr_agent").toBool());
     _createUsers->setChecked(q.value("createusers").toBool());
     _createUsers->setEnabled(q.value("enablecreateusers").toBool());
-    // keep synchronized with the insert/update above, GUIClient, and main
-    _woTimeClockOnly->setChecked(q.value("usr_window").toString()==("woTimeClock"));
     _employee->setId(q.value("emp_id").toInt());
 
     _passwd->setText("        ");

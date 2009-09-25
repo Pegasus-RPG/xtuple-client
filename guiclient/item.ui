@@ -207,13 +207,6 @@ to be bound by its terms.</comment>
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_boo">
-           <property name="text">
-            <string>Operations...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="_bom">
            <property name="text">
             <string>Materials...</string>
@@ -281,7 +274,7 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QComboBox" name="_itemtype">
+             <widget class="XComboBox" name="_itemtype">
               <item>
                <property name="text">
                 <string>Purchased</string>
@@ -330,21 +323,6 @@ to be bound by its terms.</comment>
               <item>
                <property name="text">
                 <string>Kit</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Breeder</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Co-Product</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>By-Product</string>
                </property>
               </item>
              </widget>
@@ -1661,7 +1639,6 @@ to be bound by its terms.</comment>
   <tabstop>_save</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_boo</tabstop>
   <tabstop>_bom</tabstop>
   <tabstop>_site</tabstop>
   <tabstop>_workbench</tabstop>
@@ -1702,8 +1679,8 @@ to be bound by its terms.</comment>
      <y>557</y>
     </hint>
     <hint type="destinationlabel">
-     <x>800</x>
-     <y>506</y>
+     <x>676</x>
+     <y>456</y>
     </hint>
    </hints>
   </connection>
@@ -1718,8 +1695,8 @@ to be bound by its terms.</comment>
      <y>503</y>
     </hint>
     <hint type="destinationlabel">
-     <x>800</x>
-     <y>506</y>
+     <x>676</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1734,8 +1711,8 @@ to be bound by its terms.</comment>
      <y>532</y>
     </hint>
     <hint type="destinationlabel">
-     <x>800</x>
-     <y>506</y>
+     <x>676</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1746,12 +1723,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>328</x>
-     <y>547</y>
+     <x>78</x>
+     <y>420</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>536</y>
+     <x>184</x>
+     <y>438</y>
     </hint>
    </hints>
   </connection>
@@ -1762,12 +1739,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>336</x>
-     <y>547</y>
+     <x>78</x>
+     <y>420</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>554</y>
+     <x>184</x>
+     <y>438</y>
     </hint>
    </hints>
   </connection>
@@ -1778,12 +1755,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>334</x>
-     <y>547</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>546</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1794,12 +1771,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>547</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>536</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1810,12 +1787,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>348</x>
-     <y>547</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>554</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1826,12 +1803,12 @@ to be bound by its terms.</comment>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>335</x>
-     <y>547</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>536</y>
+     <x>131</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -1842,12 +1819,12 @@ to be bound by its terms.</comment>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>327</x>
-     <y>547</y>
+     <x>78</x>
+     <y>420</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>536</y>
+     <x>184</x>
+     <y>438</y>
     </hint>
    </hints>
   </connection>
