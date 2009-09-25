@@ -229,7 +229,9 @@ void dspOrders::sFillList()
       params.append("endDate",   _endDate->date());
     }
 
-    if (_metrics->value("Application") == "Manufacturing")
+    XSqlQuery xtmfg;
+    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    if (xtmfg.first())
       params.append("Manufacturing");
 
     q = mql.toQuery(params);

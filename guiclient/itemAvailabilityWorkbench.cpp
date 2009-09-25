@@ -280,7 +280,10 @@ void itemAvailabilityWorkbench::setParams(ParameterList & params)
 
   if (_metrics->value("Application") == "Standard")
   {
-    params.append("Manufacturing");
+    XSqlQuery xtmfg;
+    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    if (xtmfg.first())
+      params.append("Manufacturing");
     params.append("showMRPplan");
   }
 }
