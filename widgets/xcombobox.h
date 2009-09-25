@@ -121,6 +121,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 
     QSize             sizeHint()             const;
 
+    Q_INVOKABLE inline void removeItem(int idx) { QComboBox::removeItem(idx); }
+
   public slots:
     void clear();
     void append(int, const QString &);
