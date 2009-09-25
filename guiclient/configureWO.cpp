@@ -30,6 +30,8 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_autoExplode, SIGNAL(toggled(bool)), _WOExplosionGroup, SLOT(setDisabled(bool)));
+  connect(_autoExplode, SIGNAL(toggled(bool)), _multiLevel, SLOT(setChecked(bool)));
 
   _nextWoNumber->setValidator(omfgThis->orderVal());
 

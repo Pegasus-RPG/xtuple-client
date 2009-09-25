@@ -362,7 +362,7 @@ to be bound by its terms.</comment>
     </widget>
    </item>
    <item row="2" column="1" >
-    <widget class="QGroupBox" name="QButtonGroup_1" >
+    <widget class="QGroupBox" name="_WOExplosionGroup" >
      <property name="title" >
       <string>Default W/O Explosion Level:</string>
      </property>
