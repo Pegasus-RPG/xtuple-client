@@ -94,6 +94,7 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      _currency->setEnabled(FALSE);
       _description->setFocus();
     }
     else if (param.toString() == "view")
