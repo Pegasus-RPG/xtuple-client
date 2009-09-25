@@ -35,6 +35,7 @@
 #include <QTextTable>
 #include <QTextTableCell>
 #include <QTextTableFormat>
+#include <QtScript>
 
 #include "xtsettings.h"
 #include "xsqlquery.h"
@@ -125,6 +126,9 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(sShowHeaderMenu(const QPoint &)));
   connect(header(), SIGNAL(sectionResized(int, int, int)),
           this,     SLOT(sColumnSizeChanged(int, int, int)));
+  connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), SLOT(sCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+  connect(this, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(sItemChanged(QTreeWidgetItem*, int)));
+  connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(sItemClicked(QTreeWidgetItem*, int)));
 
   emit valid(FALSE);
   setColumnCount(0);
@@ -328,13 +332,13 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           else if (lastindent < indent)
             last = new XTreeWidgetItem(last, id, altId);
           else if (lastindent == indent)
-            last = new XTreeWidgetItem((XTreeWidgetItem*)(last->parent()), id, altId);
+            last = new XTreeWidgetItem((XTreeWidgetItem*)(last->QTreeWidgetItem::parent()), id, altId);
           else if (lastindent > indent)
           {
-            XTreeWidgetItem *prev = (XTreeWidgetItem*)(last->parent());
+            XTreeWidgetItem *prev = (XTreeWidgetItem*)(last->QTreeWidgetItem::parent());
             while (prev &&
                    prev->data(0, IndentRole).toInt() >= indent)
-              prev = (XTreeWidgetItem*)(prev->parent());
+              prev = (XTreeWidgetItem*)(prev->QTreeWidgetItem::parent());
             if (prev)
               last = new XTreeWidgetItem(prev, id, altId);
             else
@@ -715,6 +719,11 @@ XTreeWidgetItem *XTreeWidget::topLevelItem(int idx) const
   return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
 }
 
+QString XTreeWidgetItem::toString() const
+{
+  return QString(id());
+}
+
 bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
 {
   QVariant v1 = data(treeWidget()->sortColumn(), RawRole);
@@ -990,10 +999,10 @@ void XTreeWidget::populateCalculatedColumns()
 
 int XTreeWidget::id() const
 {
-  QList<QTreeWidgetItem*> items = selectedItems();
+  QList<XTreeWidgetItem*> items = selectedItems();
   if(items.count() > 0)
   {
-    XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
+    XTreeWidgetItem * item = items.at(0);
     return item->_id;
   }
   return -1;
@@ -1001,7 +1010,7 @@ int XTreeWidget::id() const
 
 int XTreeWidget::id(const QString p) const
 {
-  QList<QTreeWidgetItem*> items = selectedItems();
+  QList<XTreeWidgetItem*> items = selectedItems();
   if(items.count() > 0)
   {
     int id = items.at(0)->data(column(p), IdRole).toInt();
@@ -1015,10 +1024,10 @@ int XTreeWidget::id(const QString p) const
 
 int XTreeWidget::altId() const
 {
-  QList<QTreeWidgetItem*> items = selectedItems();
+  QList<XTreeWidgetItem*> items = selectedItems();
   if(items.count() > 0)
   {
-    XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
+    XTreeWidgetItem * item = items.at(0);
     return item->_altId;
   }
   return -1;
@@ -1081,10 +1090,10 @@ void XTreeWidget::clear()
 
 void XTreeWidget::sSelectionChanged()
 {
-  QList<QTreeWidgetItem*> items = selectedItems();
+  QList<XTreeWidgetItem*> items = selectedItems();
   if(items.count() > 0)
   {
-    XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
+    XTreeWidgetItem * item = items.at(0);
     emit valid(true);
     emit newId(item->_id);
   }
@@ -1108,6 +1117,8 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
   if (item)
   {
     _menu->clear();
+    emit populateMenu(_menu, (QTreeWidgetItem*)item);
+    emit populateMenu(_menu, (QTreeWidgetItem*)item, logicalColumn);
     emit populateMenu(_menu, item);
     emit populateMenu(_menu, item, logicalColumn);
 
@@ -1440,7 +1451,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidgetItem *itm, int pId, QVariant v0,
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(itm)
+  QObject(), QTreeWidgetItem(itm)
 {
   constructor(pId, -1, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1451,7 +1462,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidgetItem *itm, int pId, int pAltId, QVa
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(itm)
+  QObject(), QTreeWidgetItem(itm)
 {
   constructor(pId, pAltId, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1462,7 +1473,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidget *pParent, int pId, QVariant v0,
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent)
+  QObject(), QTreeWidgetItem(pParent)
 {
   constructor(pId, -1, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1473,7 +1484,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidget *pParent, int pId, int pAltId, QVa
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent)
+  QObject(), QTreeWidgetItem(pParent)
 {
   constructor(pId, pAltId, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1484,7 +1495,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidget *pParent, XTreeWidgetItem *itm, in
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent, itm)
+  QObject(), QTreeWidgetItem(pParent, itm)
 {
   constructor(pId, -1, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1495,7 +1506,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidget *pParent, XTreeWidgetItem *itm, in
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent, itm)
+  QObject(), QTreeWidgetItem(pParent, itm)
 {
   constructor(pId, pAltId, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1506,7 +1517,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidgetItem *pParent, XTreeWidgetItem *itm
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent, itm)
+  QObject(), QTreeWidgetItem(pParent, itm)
 {
   constructor(pId, -1, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1517,7 +1528,7 @@ XTreeWidgetItem::XTreeWidgetItem( XTreeWidgetItem *pParent, XTreeWidgetItem *itm
                               QVariant v5, QVariant v6,
                               QVariant v7, QVariant v8,
                               QVariant v9, QVariant v10 ) :
-  QTreeWidgetItem(pParent, itm)
+  QObject(), QTreeWidgetItem(pParent, itm)
 {
   constructor(pId, pAltId, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
 }
@@ -1621,6 +1632,43 @@ double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
   for (int i = 0; i < childCount(); i++)
     total += child(i)->totalForItem(pcol, pset);
   return total;
+}
+
+QScriptValue XTreeWidgetItemtoScriptValue(QScriptEngine *engine, XTreeWidgetItem* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void XTreeWidgetItemfromScriptValue(const QScriptValue &obj, XTreeWidgetItem* &item)
+{
+  item = qobject_cast<XTreeWidgetItem*>(obj.toQObject());
+}
+
+QScriptValue XTreeWidgetItemListtoScriptValue(QScriptEngine *engine, QList<XTreeWidgetItem*> const &cpplist)
+{
+  QScriptValue scriptlist = engine->newArray(cpplist.size());
+  for (int i = 0; i < cpplist.size(); i++)
+    scriptlist.setProperty(i, engine->newQObject(cpplist.at(i)));
+  return scriptlist;
+}
+
+void XTreeWidgetItemListfromScriptValue(const QScriptValue &scriptlist, QList<XTreeWidgetItem*> &cpplist)
+{
+  cpplist.clear();
+  int listlen = scriptlist.property("length").toInt32();
+  for (int i = 0; i < listlen; i++)
+  {
+    XTreeWidgetItem *tmp = qobject_cast<XTreeWidgetItem*>(scriptlist.property(i).toQObject());
+    cpplist.append(tmp);
+  }
+}
+
+Q_DECLARE_METATYPE(QList<XTreeWidgetItem*>)
+
+void setupXTreeWidgetItem(QScriptEngine *engine)
+{
+ qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue, XTreeWidgetItemfromScriptValue);
+ qScriptRegisterMetaType(engine, XTreeWidgetItemListtoScriptValue, XTreeWidgetItemListfromScriptValue);
 }
 
 void XTreeWidget::sCopyRowToClipboard()
@@ -1888,3 +1936,114 @@ QString XTreeWidget::toHtml() const
   return doc->toHtml();
 }
 
+QList<XTreeWidgetItem *> XTreeWidget::selectedItems() const
+{
+  QList<QTreeWidgetItem *> qlist = QTreeWidget::selectedItems();
+  QList<XTreeWidgetItem *> *xlist = new QList<XTreeWidgetItem *>();
+
+  for (int i = 0; i < qlist.size(); i++)
+  {
+    if (dynamic_cast<XTreeWidgetItem*>(qlist.at(i)))
+        xlist->append(dynamic_cast<XTreeWidgetItem*>(qlist.at(i)));
+  }
+  return *xlist;
+}
+
+void  XTreeWidget::addTopLevelItems(const QList<XTreeWidgetItem *> &items)
+{
+  QList<QTreeWidgetItem *> qlist = QTreeWidget::selectedItems();
+
+  for (int i = 0; i < items.size(); i++)
+      qlist.append(items.at(i));
+  QTreeWidget::addTopLevelItems(qlist);
+}
+
+XTreeWidgetItem *XTreeWidget::itemAbove(const XTreeWidgetItem *item) const
+{
+  return dynamic_cast<XTreeWidgetItem*>(QTreeWidget::itemAbove(item));
+}
+
+QList<XTreeWidgetItem*> XTreeWidget::findItems(const QString &text, Qt::MatchFlags flags, int column) const
+{
+  QList<QTreeWidgetItem *> qlist = QTreeWidget::findItems(text, flags, column);
+  QList<XTreeWidgetItem *> *xlist = new QList<XTreeWidgetItem *>();
+
+  for (int i = 0; i < qlist.size(); i++)
+  {
+    if (dynamic_cast<XTreeWidgetItem*>(qlist.at(i)))
+        xlist->append(dynamic_cast<XTreeWidgetItem*>(qlist.at(i)));
+  }
+  return *xlist;
+}
+
+void  XTreeWidget::insertTopLevelItems(int index, const QList<XTreeWidgetItem*> &items)
+{
+  QList<QTreeWidgetItem *> qlist = QTreeWidget::selectedItems();
+
+  for (int i = 0; i < items.size(); i++)
+      qlist.append(items.at(i));
+
+  QTreeWidget::insertTopLevelItems(index, qlist);
+}
+
+XTreeWidgetItem *XTreeWidget::invisibleRootItem() const
+{
+  return dynamic_cast<XTreeWidgetItem*>(QTreeWidget::invisibleRootItem());
+}
+
+void XTreeWidget::sCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(current) &&
+      dynamic_cast<XTreeWidgetItem*>(previous))
+
+    emit currentItemChanged(dynamic_cast<XTreeWidgetItem*>(current),
+                            dynamic_cast<XTreeWidgetItem*>(previous));
+}
+
+void XTreeWidget::sItemActivated(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemActivated(dynamic_cast<XTreeWidgetItem*>(item), column);
+}
+
+void XTreeWidget::sItemChanged(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemChanged(dynamic_cast<XTreeWidgetItem*>(item), column);
+}
+
+void XTreeWidget::sItemClicked(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemClicked(dynamic_cast<XTreeWidgetItem*>(item), column);
+}
+
+void XTreeWidget::sItemCollapsed(QTreeWidgetItem *item)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemCollapsed(dynamic_cast<XTreeWidgetItem*>(item));
+}
+
+void XTreeWidget::sItemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemDoubleClicked(dynamic_cast<XTreeWidgetItem*>(item), column);
+}
+
+void XTreeWidget::sItemEntered(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemEntered(dynamic_cast<XTreeWidgetItem*>(item), column);
+}
+
+void XTreeWidget::sItemExpanded(QTreeWidgetItem *item)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemExpanded(dynamic_cast<XTreeWidgetItem*>(item));
+}
+
+void XTreeWidget::sItemPressed(QTreeWidgetItem *item, int column)
+{
+  if (dynamic_cast<XTreeWidgetItem*>(item))
+    emit itemPressed(dynamic_cast<XTreeWidgetItem*>(item), column);
+}

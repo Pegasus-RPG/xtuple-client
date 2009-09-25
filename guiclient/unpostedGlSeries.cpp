@@ -81,7 +81,7 @@ void unpostedGlSeries::sNew()
 
 void unpostedGlSeries::sEdit()
 {
-  QList<QTreeWidgetItem*>selected = _glseries->selectedItems();
+  QList<XTreeWidgetItem*>selected = _glseries->selectedItems();
   removeDupAltIds(selected);
   for (int i = 0; i < selected.size(); i++)
   {
@@ -105,7 +105,7 @@ void unpostedGlSeries::sDelete()
   {
     q.prepare( "DELETE FROM glseries "
 	       "WHERE (glseries_sequence=:id);");
-    QList<QTreeWidgetItem*>selected = _glseries->selectedItems();
+    QList<XTreeWidgetItem*>selected = _glseries->selectedItems();
     removeDupAltIds(selected);
     for (int i = 0; i < selected.size(); i++)
     {
@@ -123,7 +123,7 @@ void unpostedGlSeries::sDelete()
 
 void unpostedGlSeries::sView()
 {
-  QList<QTreeWidgetItem*>selected = _glseries->selectedItems();
+  QList<XTreeWidgetItem*>selected = _glseries->selectedItems();
   removeDupAltIds(selected);
   for (int i = 0; i < selected.size(); i++)
   {
@@ -141,9 +141,9 @@ void unpostedGlSeries::sPost()
 {
   QDate newDate = QDate::currentDate();
 
-  QList<QTreeWidgetItem*>selected = _glseries->selectedItems();
+  QList<XTreeWidgetItem*>selected = _glseries->selectedItems();
   removeDupAltIds(selected);
-  QList<QTreeWidgetItem*>triedToClosed;
+  QList<XTreeWidgetItem*>triedToClosed;
 
   XSqlQuery post;
   post.prepare("SELECT postGLSeriesNoSumm(:sequence) AS result;");
@@ -230,7 +230,7 @@ void unpostedGlSeries::sFillList()
   }
 }
 
-void unpostedGlSeries::removeDupAltIds(QList<QTreeWidgetItem*> & list)
+void unpostedGlSeries::removeDupAltIds(QList<XTreeWidgetItem*> & list)
 {
   for (int i = 0; i < list.size(); i++)
   {

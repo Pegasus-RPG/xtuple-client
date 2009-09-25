@@ -79,7 +79,7 @@ void dspTimePhasedPlannedREByPlannerCode::sPrint()
     params.append("endEvalDate", _endEvalDate->date());
   }
 
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   if(selected.isEmpty())
   {
     QMessageBox::information(this, tr("No Periods Selected"),
@@ -116,7 +116,7 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
 
   bool show    = FALSE;
   int  columns = 1;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   if(selected.isEmpty())
   {
     QMessageBox::information(this, tr("No Periods Selected"),

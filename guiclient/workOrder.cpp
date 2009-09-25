@@ -1812,7 +1812,7 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
           pMenu->setItemEnabled(menuItem, FALSE);
       }
       
-      if (((XTreeWidgetItem *)selected)->parent() && ((status == "O") || (status == "E")))
+      if (((XTreeWidgetItem *)selected)->QTreeWidgetItem::parent() && ((status == "O") || (status == "E")))
       {
         menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteWO()), 0);
         if (!_privileges->check("DeleteWorkOrders"))

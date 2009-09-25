@@ -104,7 +104,7 @@ ParameterList dspTimePhasedUsageStatisticsByItem::buildParameters()
   params.append("calendar_id", _calendar->id());
 
   QList<QVariant> periodList;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());
   params.append("period_id_list", periodList);
@@ -162,7 +162,7 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
     QString sql("SELECT itemsite_id, warehous_code");
 
     int columns = 1;
-    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];

@@ -134,7 +134,7 @@ void PeriodsListView::populate(int pCalheadid)
 
 void PeriodsListView::getSelected(ParameterList &pParams)
 {
-  QList<QTreeWidgetItem *>list = selectedItems();
+  QList<XTreeWidgetItem *>list = selectedItems();
   int           counter = 0;
 
   for (int i = 0; i < list.size(); i++)
@@ -143,7 +143,7 @@ void PeriodsListView::getSelected(ParameterList &pParams)
 
 bool PeriodsListView::isPeriodSelected()
 {
-  QList<QTreeWidgetItem *>list = selectedItems();
+  QList<XTreeWidgetItem *>list = selectedItems();
 
   return (list.size() > 0);
 }
@@ -151,7 +151,7 @@ bool PeriodsListView::isPeriodSelected()
 QString PeriodsListView::periodString()
 {
   QString     returnString;
-  QList<QTreeWidgetItem *>list = selectedItems();
+  QList<XTreeWidgetItem *>list = selectedItems();
 
   for (int i = 0; i < list.size(); i++)
   {
@@ -167,7 +167,7 @@ QString PeriodsListView::periodString()
 QList<QVariant> PeriodsListView::periodList()
 {
   QList<QVariant>     returnList;
-  QList<QTreeWidgetItem *>list = selectedItems();
+  QList<XTreeWidgetItem *>list = selectedItems();
 
   for (int i = 0; i < list.size(); i++)
     returnList.append(((XTreeWidgetItem*)(list[i]))->id());
@@ -177,7 +177,7 @@ QList<QVariant> PeriodsListView::periodList()
 
 PeriodListViewItem *PeriodsListView::getSelected(int pIndex)
 {
-  QList<QTreeWidgetItem *>list = selectedItems();
+  QList<XTreeWidgetItem *>list = selectedItems();
 
   int i;
   for (i = 0; i < list.size(); i++)

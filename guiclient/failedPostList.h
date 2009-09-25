@@ -26,7 +26,7 @@ public:
     ~failedPostList();
 
 public slots:
-    virtual void sSetList(QList<QTreeWidgetItem*>, QTreeWidgetItem*, QHeaderView*);
+    virtual void sSetList(QList<XTreeWidgetItem*>, QTreeWidgetItem*, QHeaderView*);
     virtual void setLabel(const QString&);
 
 protected slots:

@@ -72,7 +72,7 @@ void dspMRPDetail::sPrint()
       _plannerCode->appendValue(params);
       _warehouse->appendValue(params);
 
-      QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+      QList<XTreeWidgetItem*> selected = _periods->selectedItems();
       QList<QVariant> periodList;
       for (int i = 0; i < selected.size(); i++)
 	periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -251,7 +251,7 @@ void dspMRPDetail::sFillMRPDetail()
 
   int           counter = 1;
   bool          show    = FALSE;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

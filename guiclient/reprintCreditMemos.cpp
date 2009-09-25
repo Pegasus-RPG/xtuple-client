@@ -80,7 +80,7 @@ void reprintCreditMemos::sPrint()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  QList<QTreeWidgetItem*> selected = _cmhead->selectedItems();
+  QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

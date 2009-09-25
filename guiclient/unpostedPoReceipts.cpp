@@ -133,7 +133,7 @@ void unpostedPoReceipts::sDelete()
   {
     q.prepare( "DELETE FROM recv "
 	       "WHERE (recv_id IN (:id));" );
-    QList<QTreeWidgetItem*>selected = _recv->selectedItems();
+    QList<XTreeWidgetItem*>selected = _recv->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       q.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->id() );
@@ -197,8 +197,8 @@ void unpostedPoReceipts::sPost()
   setDate.prepare("UPDATE recv SET recv_gldistdate=:distdate "
 		  "WHERE recv_id=:recv_id;");
 
-  QList<QTreeWidgetItem*>selected = _recv->selectedItems();
-  QList<QTreeWidgetItem*>triedToClosed;
+  QList<XTreeWidgetItem*>selected = _recv->selectedItems();
+  QList<XTreeWidgetItem*>triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
   {

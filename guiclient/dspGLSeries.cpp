@@ -87,7 +87,7 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
   if(0 != item)
   {
     if(item->altId() != -1)
-      item = (XTreeWidgetItem*)item->parent();
+      item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
     if(0 != item)
     {
       if(item->text(3) == "ST" || item->text(3) == "JE")

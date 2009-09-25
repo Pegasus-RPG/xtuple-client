@@ -268,7 +268,7 @@ void selectPayments::sSelect()
 {
   _ignoreUpdates = true;
   bool update = false;
-  QList<QTreeWidgetItem*> list = _apopen->selectedItems();
+  QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   for(int i = 0; i < list.size(); i++)
   {
@@ -305,7 +305,7 @@ void selectPayments::sSelectLine()
   if (bankaccntid != -1)
   {
     bool update = FALSE;
-    QList<QTreeWidgetItem*> list = _apopen->selectedItems();
+    QList<XTreeWidgetItem*> list = _apopen->selectedItems();
     XTreeWidgetItem * cursor = 0;
     q.prepare("SELECT selectPayment(:apopen_id, :bankaccnt_id) AS result;");
     for(int i = 0; i < list.size(); i++)
@@ -341,7 +341,7 @@ void selectPayments::sSelectLine()
 void selectPayments::sClear()
 {
   bool update = FALSE;
-  QList<QTreeWidgetItem*> list = _apopen->selectedItems();
+  QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   q.prepare("SELECT clearPayment(:apopen_id) AS result;");
   for(int i = 0; i < list.size(); i++)

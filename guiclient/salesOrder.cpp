@@ -1830,7 +1830,7 @@ void salesOrder::sHandleButtons()
   XTreeWidgetItem *selected = 0;
   _numSelected = 0;
 
-  QList<QTreeWidgetItem*> selectedlist = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selectedlist = _soitem->selectedItems();
   _numSelected = selectedlist.size();
   if (_numSelected > 0)
     selected = (XTreeWidgetItem*)(selectedlist[0]);
@@ -3788,7 +3788,7 @@ void salesOrder::sReturnStock()
 
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT returnItemShipments(:soitem_id) AS result;");
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
@@ -3828,7 +3828,7 @@ void salesOrder::sReturnStock()
 void salesOrder::sIssueStock()
 {
   bool update  = FALSE;
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* soitem = (XTreeWidgetItem*)(selected[i]);
@@ -3853,7 +3853,7 @@ void salesOrder::sIssueStock()
 
 void salesOrder::sIssueLineBalance()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* soitem = (XTreeWidgetItem*)(selected[i]);
@@ -4051,7 +4051,7 @@ void salesOrder::sTaxZoneChanged()
 
 void salesOrder::sReserveStock()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
@@ -4068,7 +4068,7 @@ void salesOrder::sReserveStock()
 void salesOrder::sReserveLineBalance()
 {
   q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
@@ -4098,7 +4098,7 @@ void salesOrder::sReserveLineBalance()
 void salesOrder::sUnreserveStock()
 {
   q.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
@@ -4125,7 +4125,7 @@ void salesOrder::sUnreserveStock()
 
 void salesOrder::sShowReservations()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;

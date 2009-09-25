@@ -81,7 +81,7 @@ void unpostedPurchaseOrders::sNew()
 
 void unpostedPurchaseOrders::sEdit()
 {
-  QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+  QList<XTreeWidgetItem*> list = _pohead->selectedItems();
   bool done = false;
   for (int i = 0; i < list.size(); i++)
   {
@@ -111,7 +111,7 @@ void unpostedPurchaseOrders::sEdit()
 
 void unpostedPurchaseOrders::sView()
 {
-  QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+  QList<XTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
@@ -139,7 +139,7 @@ void unpostedPurchaseOrders::sDelete()
   {
     q.prepare("SELECT deletePo(:pohead_id) AS result;");
 
-    QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+    QList<XTreeWidgetItem*> list = _pohead->selectedItems();
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
@@ -174,7 +174,7 @@ void unpostedPurchaseOrders::sDelete()
 
 void unpostedPurchaseOrders::sPrint()
 {
-  QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+  QList<XTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
@@ -200,7 +200,7 @@ void unpostedPurchaseOrders::sPost()
   {
     q.prepare("SELECT postPurchaseOrder(:pohead_id) AS result;");
 
-    QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+    QList<XTreeWidgetItem*> list = _pohead->selectedItems();
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
@@ -264,7 +264,7 @@ void unpostedPurchaseOrders::sHandleButtons()
   // see if the selected items list contains both unposted and open/posted items
   bool unposted = false;
   bool open = false;
-  QList<QTreeWidgetItem*> list = _pohead->selectedItems();
+  QList<XTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
     if (! unposted && list[i]->text(3) == "U")

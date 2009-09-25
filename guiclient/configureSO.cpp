@@ -452,7 +452,7 @@ void configureSO::sHandleCreditMemoCopies(int pValue)
 
 void configureSO::sEditInvoiceWatermark()
 {
-  QList<QTreeWidgetItem *>selected = _invoiceWatermarks->selectedItems();
+  QList<XTreeWidgetItem*>selected = _invoiceWatermarks->selectedItems();
   for (int counter = 0; counter < selected.size(); counter++)
   {
     XTreeWidgetItem *cursor = static_cast<XTreeWidgetItem*>(selected[counter]);
@@ -473,7 +473,7 @@ void configureSO::sEditInvoiceWatermark()
 
 void configureSO::sEditCreditMemoWatermark()
 {
-  QList<QTreeWidgetItem *>selected = _creditMemoWatermarks->selectedItems();
+  QList<XTreeWidgetItem*>selected = _creditMemoWatermarks->selectedItems();
   for (int counter = 0; counter < selected.size(); counter++)
   {
     XTreeWidgetItem *cursor = static_cast<XTreeWidgetItem*>(selected[counter]);

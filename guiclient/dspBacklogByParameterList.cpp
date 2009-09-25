@@ -249,7 +249,7 @@ void dspBacklogByParameterList::sViewItem()
 
 void dspBacklogByParameterList::sPrintPackingList()
 {
-  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
@@ -263,7 +263,7 @@ void dspBacklogByParameterList::sPrintPackingList()
 
 void dspBacklogByParameterList::sAddToPackingListBatch()
 {
-  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
@@ -279,7 +279,7 @@ void dspBacklogByParameterList::sAddToPackingListBatch()
 
 void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
 {
-  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
 
   int menuItem;
 

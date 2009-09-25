@@ -30,9 +30,9 @@ public slots:
     virtual void sUpdate();
     virtual void sSubmit();
     virtual void sPost();
-    virtual void sOpenEdit(QTreeWidgetItem *item, const int col);
-    virtual void sCloseEdit(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-    virtual void sItemChanged(QTreeWidgetItem *item, const int col);
+    virtual void sOpenEdit(XTreeWidgetItem *item, const int col);
+    virtual void sCloseEdit(XTreeWidgetItem *current, XTreeWidgetItem *previous);
+    virtual void sItemChanged(XTreeWidgetItem *item, const int col);
     virtual void sHandleButtons();
 
 protected slots:

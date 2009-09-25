@@ -31,7 +31,7 @@ void failedPostList::setLabel(const QString& pText)
   _label->setText(pText);
 }
 
-void failedPostList::sSetList(QList<QTreeWidgetItem*> itemList, QTreeWidgetItem* hitem, QHeaderView* header)
+void failedPostList::sSetList(QList<XTreeWidgetItem*> itemList, QTreeWidgetItem* hitem, QHeaderView* header)
 {
   if (itemList.size() > 0)
   {
@@ -44,7 +44,7 @@ void failedPostList::sSetList(QList<QTreeWidgetItem*> itemList, QTreeWidgetItem*
     //_doclist->addTopLevelItems(itemList);
     for (int i = 0; i < itemList.size(); i++)
     {
-      QTreeWidgetItem* tmp = itemList[i]->clone();
+      XTreeWidgetItem* tmp = (XTreeWidgetItem*)(itemList[i]->clone());
       _doclist->addTopLevelItem(tmp);
     }
   }

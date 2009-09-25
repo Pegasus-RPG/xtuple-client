@@ -137,7 +137,7 @@ void dspFinancialReport::sFillListStatement()
   if (q.first())
   {
     //Find which period selected
-    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     for (int i = 0; i < selected.size(); i++)
       periodsRef.prepend(((XTreeWidgetItem*)(selected[i]))->id());
     if(periodsRef.count() < 1)

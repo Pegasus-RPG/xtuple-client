@@ -79,7 +79,7 @@ void closePurchaseOrder::sClosePo()
 {
   q.prepare("SELECT closePo(:pohead_id) AS result;");
 
-  QList<QTreeWidgetItem*>selected = _po->selectedItems();
+  QList<XTreeWidgetItem*>selected = _po->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))

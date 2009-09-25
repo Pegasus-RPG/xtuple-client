@@ -307,7 +307,7 @@ void cashReceipt::sApply()
   }
 	  
   bool update  = FALSE;
-  QList<QTreeWidgetItem*> list = _aropen->selectedItems();
+  QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
   for(int i = 0; i < list.size(); i++)
   {
@@ -344,7 +344,7 @@ void cashReceipt::sApplyLineBalance()
     if(!save(true))
       return;
 	  
-  QList<QTreeWidgetItem*> list = _aropen->selectedItems();
+  QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
   for(int i = 0; i < list.size(); i++)
   {
@@ -377,7 +377,7 @@ void cashReceipt::sApplyLineBalance()
 
 void cashReceipt::sClear()
 {
-  QList<QTreeWidgetItem*> list = _aropen->selectedItems();
+  QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
   for(int i = 0; i < list.size(); i++)
   {
@@ -842,7 +842,7 @@ void cashReceipt::sSearchDocNumChanged()
   if(sub.isEmpty())
     return;
 
-  QList<QTreeWidgetItem*> list = _aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchCaseSensitive, 1);
+  QList<XTreeWidgetItem*> list = _aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchCaseSensitive, 1);
   if(list.isEmpty())
     list = _aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchStartsWith|Qt::MatchCaseSensitive, 1);
 

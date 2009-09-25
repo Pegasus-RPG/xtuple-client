@@ -99,7 +99,7 @@ void dspMPSDetail::sPrint()
       _warehouse->appendValue(params);
       _plannerCode->appendValue(params);
 
-      QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+      QList<XTreeWidgetItem*> selected = _periods->selectedItems();
       QList<QVariant> periodList;
       for (int i = 0; i < selected.size(); i++)
 	periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -280,7 +280,7 @@ void dspMPSDetail::sFillMPSDetail()
     int           counter = 1;
     QString       sql( "SELECT itemsite_qtyonhand, itemsite_safetystock" );
 
-    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

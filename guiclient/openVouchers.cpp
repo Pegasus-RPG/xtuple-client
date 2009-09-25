@@ -167,7 +167,7 @@ void openVouchers::sDelete()
   {
     q.prepare("SELECT deleteVoucher(:vohead_id) AS result;");
 
-    QList<QTreeWidgetItem*>selected = _vohead->selectedItems();
+    QList<XTreeWidgetItem*>selected = _vohead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
@@ -217,8 +217,8 @@ void openVouchers::sPost()
   setDate.prepare("UPDATE vohead SET vohead_gldistdate=:distdate "
 		  "WHERE vohead_id=:vohead_id;");
 
-  QList<QTreeWidgetItem*>selected = _vohead->selectedItems();
-  QList<QTreeWidgetItem*>triedToClosed;
+  QList<XTreeWidgetItem*>selected = _vohead->selectedItems();
+  QList<XTreeWidgetItem*>triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
   {
@@ -272,7 +272,7 @@ void openVouchers::sPost()
 		            __FILE__, __LINE__);
         }
       // contains() string is hard-coded in stored procedure
-        else if (post.lastError().databaseText().contains("posted to closed period"))
+        else if (post.lastError().databaseText().contains("post to closed period"))
         {
 	      if (changeDate)
 	      {

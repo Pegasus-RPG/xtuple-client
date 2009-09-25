@@ -51,7 +51,7 @@ void dspTimePhasedRoughCutByWorkCenter::sPrint()
     if(_selectedWorkCenter->isChecked())
       params.append("wrkcnt_id", _workCenters->id());
 
-    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     QList<QVariant> periodList;
     for (int i = 0; i < selected.size(); i++)
       periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -80,7 +80,7 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
   QString sql("SELECT");
   int     columns = 1;
   bool    show    = FALSE;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++, columns++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];

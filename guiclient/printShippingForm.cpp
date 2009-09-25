@@ -197,7 +197,7 @@ void printShippingForm::sHandleShippingFormCopies(int pValue)
 
 void printShippingForm::sEditShippingFormWatermark()
 {
-  QList<QTreeWidgetItem*>selected = _shipformWatermarks->selectedItems();
+  QList<XTreeWidgetItem*>selected = _shipformWatermarks->selectedItems();
   for (int counter = 0; counter < selected.size(); counter++)
   {
     XTreeWidgetItem *cursor = static_cast<XTreeWidgetItem*>(selected[counter]);

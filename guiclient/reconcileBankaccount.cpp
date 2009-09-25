@@ -661,7 +661,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     {
       item->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
 
-      item = (XTreeWidgetItem*)item->parent();
+      item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
       if(item != 0 && item->altId() == 3)
       {
         setto = true;

@@ -375,7 +375,7 @@ void voucher::sPopulate()
 void voucher::sDistributions()
 {
   saveDetail();
-  QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
       ParameterList params;
@@ -400,7 +400,7 @@ void voucher::sDistributions()
 void voucher::sDistributeLine()
 {
   saveDetail();
-  QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "
@@ -429,7 +429,7 @@ void voucher::sDistributeLine()
 
 void voucher::sClear()
 {
-    QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
+    QList<XTreeWidgetItem*> selected = _poitem->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
         QString sql( "DELETE FROM vodist "
@@ -467,7 +467,7 @@ void voucher::sDistributeAll()
 {
   saveDetail();
   _poitem->selectAll();
-  QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "

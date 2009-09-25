@@ -240,7 +240,7 @@ void issueToShipping::sCatchWoid(int pWoid)
 void issueToShipping::sIssueStock()
 {
   bool update  = FALSE;
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
@@ -346,7 +346,7 @@ bool issueToShipping::sufficientInventory(int porderheadid)
 
 void issueToShipping::sIssueLineBalance()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
@@ -447,7 +447,7 @@ void issueToShipping::sIssueAllBalance()
 
 void issueToShipping::sReturnStock()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

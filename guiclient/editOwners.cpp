@@ -202,7 +202,7 @@ void editOwners::sModifyAll()
   if(ret == QMessageBox::Yes)
   {
 
-    QList<QTreeWidgetItem*> all = _list->findItems("", Qt::MatchContains);
+    QList<XTreeWidgetItem*> all = _list->findItems("", Qt::MatchContains);
 
     for (int i = 0; i < all.size(); i++)
     {

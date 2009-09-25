@@ -181,7 +181,7 @@ void dspQuotesByCustomer::sConvert()
     int counter = 0;
     int soheadid = -1;
 
-    QList<QTreeWidgetItem*> selected = _so->selectedItems();
+    QList<XTreeWidgetItem*> selected = _so->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))

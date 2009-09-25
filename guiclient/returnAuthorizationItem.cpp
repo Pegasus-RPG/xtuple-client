@@ -1655,7 +1655,7 @@ void returnAuthorizationItem::sEdit()
 	{
 		bool fill;
 		fill = FALSE;
-		QList<QTreeWidgetItem*> selected = _raitemls->selectedItems();
+		QList<XTreeWidgetItem*> selected = _raitemls->selectedItems();
 		for (int i = 0; i < selected.size(); i++)
 		{
 			ParameterList params;
@@ -1686,7 +1686,7 @@ void returnAuthorizationItem::sEdit()
 
 void returnAuthorizationItem::sDelete()
 {
-  QList<QTreeWidgetItem*> selected = _raitemls->selectedItems();
+  QList<XTreeWidgetItem*> selected = _raitemls->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
         QString sql ( "DELETE FROM raitemls WHERE (raitemls_id=:raitemls_id);" );

@@ -161,7 +161,7 @@ class XTUPLEWIDGETS_EXPORT OrderList : public VirtualList
     QString type() const;
 
   protected:
-    QList<QTreeWidgetItem*> selectedAtDone;
+    QList<XTreeWidgetItem*> selectedAtDone;
 
   protected slots:
     virtual void done(int);
@@ -177,7 +177,7 @@ class XTUPLEWIDGETS_EXPORT OrderSearch : public VirtualSearch
     QString     type() const;
 
   protected:
-   QList<QTreeWidgetItem*> selectedAtDone;
+   QList<XTreeWidgetItem*> selectedAtDone;
 
   protected slots:
     virtual void done(int);

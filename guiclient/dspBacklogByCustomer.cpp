@@ -149,7 +149,7 @@ void dspBacklogByCustomer::sViewItem()
 
 void dspBacklogByCustomer::sPrintPackingList()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)(selected[i]);
@@ -167,7 +167,7 @@ void dspBacklogByCustomer::sPrintPackingList()
 
 void dspBacklogByCustomer::sAddToPackingListBatch()
 {
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)(selected[i]);
@@ -189,7 +189,7 @@ void dspBacklogByCustomer::sPopulateMenu(QMenu *pMenu)
 {
   bool hasParents     = FALSE;
   bool hasChildren    = FALSE;
-  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)(selected[i]);

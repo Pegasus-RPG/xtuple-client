@@ -228,7 +228,7 @@ void itemSites::sFillList()
 
 void itemSites::sSearch(const QString &pTarget)
 {
-  QList<QTreeWidgetItem*> items = _itemSite->findItems(pTarget, Qt::MatchStartsWith, 0);
+  QList<XTreeWidgetItem*> items = _itemSite->findItems(pTarget, Qt::MatchStartsWith, 0);
 
   if (items.count() > 0)
   {

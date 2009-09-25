@@ -137,7 +137,7 @@ void syncCompanies::sSync()
   }
 
   int errorCount = 0;
-  QList<QTreeWidgetItem*> company = _company->selectedItems();
+  QList<XTreeWidgetItem*> company = _company->selectedItems();
   for (int i = 0; i < company.size(); i++)
   {
     XTreeWidgetItem *c = (XTreeWidgetItem*)(company[i]);
@@ -396,7 +396,7 @@ void syncCompanies::sSync()
       XSqlQuery ltxn;
       ltxn.exec("BEGIN;");
 
-      QList<QTreeWidgetItem*> period = _period->selectedItems();
+      QList<XTreeWidgetItem*> period = _period->selectedItems();
       for (int j = 0; j < period.size(); j++)
       {
         XTreeWidgetItem *p = (XTreeWidgetItem*)(period[j]);

@@ -93,7 +93,7 @@ void reprintInvoices::sPrint()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  QList<QTreeWidgetItem*> selected = _invoice->selectedItems();
+  QList<XTreeWidgetItem*> selected = _invoice->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

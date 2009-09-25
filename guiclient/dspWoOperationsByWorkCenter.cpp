@@ -382,7 +382,7 @@ void dspWoOperationsByWorkCenter::sPrintPickLists()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  QList<QTreeWidgetItem*> selected = _wooper->selectedItems();
+  QList<XTreeWidgetItem*> selected = _wooper->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;

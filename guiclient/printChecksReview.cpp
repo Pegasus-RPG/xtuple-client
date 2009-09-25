@@ -173,7 +173,7 @@ void printChecksReview::markSelected( int actionId )
       action = "";
   };
 
-  QList<QTreeWidgetItem*> selected = _checks->selectedItems();
+  QList<XTreeWidgetItem*> selected = _checks->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];

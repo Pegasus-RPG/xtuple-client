@@ -123,7 +123,7 @@ ParameterList dspTimePhasedAvailability::buildParameters()
   _plannerCode->appendValue(params);
   _warehouse->appendValue(params);
 
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
   for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -242,7 +242,7 @@ void dspTimePhasedAvailability::sCalculate()
                "       reorderlevel " );
 
   int columns = 1;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     QString bucketname = QString("bucket%1").arg(columns++);

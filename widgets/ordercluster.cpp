@@ -767,7 +767,7 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
 
 QString OrderSearch::type() const
 {
-  QList<QTreeWidgetItem*> items = (selectedAtDone.size() > 0) ? selectedAtDone :
+  QList<XTreeWidgetItem*> items = (selectedAtDone.size() > 0) ? selectedAtDone :
 						      _listTab->selectedItems();
   if(items.count() > 0)
     return items.at(0)->text(1);

@@ -242,7 +242,7 @@ void maintainBudget::sAccountsAdd()
   if (accnt_id == -1)
     return;
 
-  QList<QTreeWidgetItem*> selected = newdlg._accnt->selectedItems();
+  QList<XTreeWidgetItem*> selected = newdlg._accnt->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *child = (XTreeWidgetItem*)selected[i];

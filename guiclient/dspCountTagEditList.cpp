@@ -239,7 +239,7 @@ void dspCountTagEditList::sEdit()
     sEditSlip();
   else
   {
-    QList<QTreeWidgetItem*> selected = _cnttag->selectedItems();
+    QList<XTreeWidgetItem*> selected = _cnttag->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       ParameterList params;
@@ -292,7 +292,7 @@ void dspCountTagEditList::sDelete()
     sDeleteSlip();
   else
   {
-    QList<QTreeWidgetItem*> selected = _cnttag->selectedItems();
+    QList<XTreeWidgetItem*> selected = _cnttag->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       int itemsiteid = -1;
@@ -472,7 +472,7 @@ void dspCountTagEditList::sPost()
     sPostSlip();
   else
   {
-    QList<QTreeWidgetItem*> selected = _cnttag->selectedItems();
+    QList<XTreeWidgetItem*> selected = _cnttag->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (((XTreeWidgetItem*)(selected[i]))->altId() == -1)
@@ -521,7 +521,7 @@ void dspCountTagEditList::sPostSlip()
 
 void dspCountTagEditList::sSearch(const QString &pTarget)
 {
-  QList<QTreeWidgetItem*> search = _cnttag->findItems(pTarget,
+  QList<XTreeWidgetItem*> search = _cnttag->findItems(pTarget,
 						      Qt::MatchStartsWith, 3);
 
   if (search.size() > 0)

@@ -346,7 +346,7 @@ void enterPoReceipt::sFillList()
 
 void enterPoReceipt::close()
 {
-  QList<QTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 9);
+  QList<XTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 9);
   if (_order->isValid() &&
       zeroItems.size() != _orderitem->topLevelItemCount())
   {

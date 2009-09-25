@@ -44,12 +44,17 @@
 
 #include "xsqlquery.h"
 
-class XTreeWidget;
-class QMenu;
 class QAction;
+class QMenu;
+class QScriptEngine;
+class XTreeWidget;
 
-class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
+void setupXTreeWidgetItem(QScriptEngine *engine);
+
+class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
+  Q_OBJECT
+
   friend class XTreeWidget;
 
   public:
@@ -102,28 +107,30 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
                      QVariant = QVariant(), QVariant = QVariant(),
                      QVariant = QVariant(), QVariant = QVariant() );
 
-    void setText(int, const QVariant &);
-    virtual QString text(int p) const { return QTreeWidgetItem::text(p); }
-    virtual QString text(const QString &) const;
-    inline void setTextColor(int column, const QColor & color) { QTreeWidgetItem::setTextColor(column, color); }
-    void setTextColor(const QColor &);
+    Q_INVOKABLE virtual void    setText(int, const QVariant &);
+    Q_INVOKABLE virtual QString text(int p) const { return QTreeWidgetItem::text(p); }
+    Q_INVOKABLE virtual QString text(const QString &) const;
+    Q_INVOKABLE inline void     setTextColor(int column, const QColor &color) { QTreeWidgetItem::setTextColor(column, color); }
+    Q_INVOKABLE void setTextColor(const QColor &);
 
-    Q_INVOKABLE inline int id() const         { return _id;    }
-    Q_INVOKABLE inline int altId() const      { return _altId; }
+    Q_INVOKABLE inline int  id() const        { return _id;    }
+    Q_INVOKABLE inline int  altId() const     { return _altId; }
     Q_INVOKABLE inline void setId(int pId)    { _id = pId;     }
     Q_INVOKABLE inline void setAltId(int pId) { _altId = pId;  }
 
-    virtual QVariant rawValue(const QString);
-    Q_INVOKABLE virtual int id(const QString);
+    Q_INVOKABLE virtual QVariant rawValue(const QString);
+    Q_INVOKABLE virtual int      id(const QString);
 
     virtual bool operator<(const XTreeWidgetItem &other) const;
     virtual bool operator==(const XTreeWidgetItem &other) const;
 
-    inline XTreeWidgetItem *child(int idx) const
+    Q_INVOKABLE inline XTreeWidgetItem *child(int idx) const
     {
       QTreeWidgetItem * item = QTreeWidgetItem::child(idx);
       return ((XTreeWidgetItem*)item);
     }    
+
+    virtual QString toString() const;
 
   protected:
     virtual double totalForItem(const int, const int) const;
@@ -136,6 +143,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     int                _id;
     int                _altId;
 };
+
+Q_DECLARE_METATYPE(XTreeWidgetItem*)
+//Q_DECLARE_METATYPE(XTreeWidgetItem)
 
 class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 {
@@ -165,10 +175,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     Q_INVOKABLE virtual int              column(const QString) const;
     Q_INVOKABLE virtual XTreeWidgetItem *currentItem()         const;
-    Q_INVOKABLE virtual void             setColumnCount(int);
+    Q_INVOKABLE virtual void             setColumnCount(int columns);
     Q_INVOKABLE virtual void             setColumnLocked(int, bool);
     Q_INVOKABLE virtual void             setColumnVisible(int, bool);
-    Q_INVOKABLE virtual void             sortItems(int, Qt::SortOrder);
+    Q_INVOKABLE virtual void             sortItems(int column, Qt::SortOrder order);
     Q_INVOKABLE virtual XTreeWidgetItem *topLevelItem(int idx) const;
 
     Q_INVOKABLE XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
@@ -177,6 +187,42 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE QString toTxt() const;
     Q_INVOKABLE QString toCsv() const;
     Q_INVOKABLE QString toHtml() const;
+
+    // just for scripting exposure:
+    Q_INVOKABLE inline void  addTopLevelItem(XTreeWidgetItem *item)                            {        QTreeWidget::addTopLevelItem(item); }
+    Q_INVOKABLE void         addTopLevelItems(const QList<XTreeWidgetItem *> &items);
+    Q_INVOKABLE inline void  closePersistentEditor(XTreeWidgetItem *item, int column = 0)      {        QTreeWidget::closePersistentEditor(item, column); }
+    Q_INVOKABLE inline int   columnCount() const                                               { return QTreeWidget::columnCount(); }
+    Q_INVOKABLE inline int   currentColumn() const                                             { return QTreeWidget::currentColumn(); }
+    Q_INVOKABLE inline void  editItem(XTreeWidgetItem *item, int column = 0)                   {        QTreeWidget:: editItem(item, column); }
+    Q_INVOKABLE        QList<XTreeWidgetItem*> findItems(const QString &text, Qt::MatchFlags flags, int column = 0) const;
+    Q_INVOKABLE inline QTreeWidgetItem *headerItem() const                                     { return QTreeWidget::headerItem(); }
+    Q_INVOKABLE inline int   indexOfTopLevelItem(XTreeWidgetItem *item) const                  { return QTreeWidget::indexOfTopLevelItem(item); }
+    Q_INVOKABLE inline void  insertTopLevelItem(int index, XTreeWidgetItem *item)              {        QTreeWidget::insertTopLevelItem(index, item); }
+    Q_INVOKABLE        void  insertTopLevelItems(int index, const QList<XTreeWidgetItem*> &items);
+    Q_INVOKABLE        XTreeWidgetItem *invisibleRootItem() const;
+    Q_INVOKABLE inline bool  isFirstItemColumnSpanned(const XTreeWidgetItem *item) const       { return QTreeWidget::isFirstItemColumnSpanned(item); }
+    Q_INVOKABLE        XTreeWidgetItem *itemAbove(const XTreeWidgetItem *item) const;
+    Q_INVOKABLE inline QTreeWidgetItem *itemAt(const QPoint &p) const                          { return QTreeWidget::itemAt(p); }
+    Q_INVOKABLE inline QTreeWidgetItem *itemAt(int x, int y) const                             { return QTreeWidget::itemAt(x, y); }
+    Q_INVOKABLE inline QTreeWidgetItem *itemBelow(const XTreeWidgetItem *item) const           { return QTreeWidget::itemBelow(item); }
+    Q_INVOKABLE inline QWidget* itemWidget(XTreeWidgetItem *item, int column) const            { return QTreeWidget::itemWidget(item, column); }
+    Q_INVOKABLE inline void  openPersistentEditor(XTreeWidgetItem *item, int column = 0)       {        QTreeWidget::openPersistentEditor(item, column); }
+    Q_INVOKABLE inline void  removeItemWidget(XTreeWidgetItem *item, int column)               {        QTreeWidget::removeItemWidget(item, column); }
+    Q_INVOKABLE        QList<XTreeWidgetItem *> selectedItems() const;
+    Q_INVOKABLE inline void  setCurrentItem(XTreeWidgetItem *item)                             {        QTreeWidget::setCurrentItem(item); }
+    Q_INVOKABLE inline void  setCurrentItem(XTreeWidgetItem *item, int column)                 {        QTreeWidget::setCurrentItem(item, column); }
+    Q_INVOKABLE inline void  setCurrentItem(XTreeWidgetItem *item, int column, QItemSelectionModel::SelectionFlags command) { QTreeWidget::setCurrentItem(item, column, command); }
+    Q_INVOKABLE inline void  setFirstItemColumnSpanned(const XTreeWidgetItem *item, bool span) {        QTreeWidget::setFirstItemColumnSpanned(item, span); }
+    Q_INVOKABLE inline void  setHeaderItem(XTreeWidgetItem *item)                              {        QTreeWidget::setHeaderItem(item); }
+    Q_INVOKABLE inline void  setHeaderLabel(const QString &label)                              {        QTreeWidget::setHeaderLabel(label); }
+    Q_INVOKABLE inline void  setHeaderLabels(const QStringList &labels)                        {        QTreeWidget::setHeaderLabels(labels); }
+    Q_INVOKABLE inline void  setItemWidget(XTreeWidgetItem *item, int column, QWidget *widget) {        QTreeWidget::setItemWidget(item, column, widget); }
+    Q_INVOKABLE inline int   sortColumn() const                                                { return QTreeWidget::sortColumn(); }
+    Q_INVOKABLE inline QTreeWidgetItem* takeTopLevelItem(int index)                            { return QTreeWidget::takeTopLevelItem(index); }
+    Q_INVOKABLE inline int   topLevelItemCount() const                                         { return QTreeWidget::topLevelItemCount(); }
+    Q_INVOKABLE inline QRect visualItemRect(const XTreeWidgetItem *item) const                 { return QTreeWidget::visualItemRect(item); }
+    // end of scripting exposure
 
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
@@ -193,15 +239,35 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   signals:
     void  valid(bool);
     void  newId(int);
+    void  currentItemChanged(XTreeWidgetItem*, XTreeWidgetItem*);
+    void  itemActivated(XTreeWidgetItem *item, int column);
+    void  itemChanged(XTreeWidgetItem *item, int column);
+    void  itemClicked(XTreeWidgetItem *item, int column);
+    void  itemCollapsed(XTreeWidgetItem *item);
+    void  itemDoubleClicked(XTreeWidgetItem *item, int column);
+    void  itemEntered(XTreeWidgetItem *item, int column);
+    void  itemExpanded(XTreeWidgetItem *item);
+    void  itemPressed(XTreeWidgetItem *item, int column);
     void  itemSelected(int);
     void  populateMenu(QMenu *, QTreeWidgetItem *);
     void  populateMenu(QMenu *, QTreeWidgetItem *, int);
+    void  populateMenu(QMenu *, XTreeWidgetItem *);
+    void  populateMenu(QMenu *, XTreeWidgetItem *, int);
     void  resorted();
     void  populated();
 
   protected slots:
     void sHeaderClicked(int);
     void populateCalculatedColumns();
+    void sCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void sItemActivated(QTreeWidgetItem *item, int column);
+    void sItemChanged(QTreeWidgetItem *item, int column);
+    void sItemClicked(QTreeWidgetItem *item, int column);
+    void sItemCollapsed(QTreeWidgetItem *item);
+    void sItemDoubleClicked(QTreeWidgetItem *item, int column);
+    void sItemEntered(QTreeWidgetItem *item, int column);
+    void sItemExpanded(QTreeWidgetItem *item);
+    void sItemPressed(QTreeWidgetItem *item, int column);
 
   protected:
     QPoint dragStartPosition;

@@ -140,8 +140,8 @@ void unpostedCreditMemos::sView()
 
 void unpostedCreditMemos::sPrint()
 {
-  QList<QTreeWidgetItem *> selected = _cmhead->selectedItems();
-  QList<QTreeWidgetItem *> triedToClosed;
+  QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
+  QList<XTreeWidgetItem*> triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
   {
@@ -186,8 +186,8 @@ void unpostedCreditMemos::sPost()
   setDate.prepare("UPDATE cmhead SET cmhead_gldistdate=:distdate "
 		  "WHERE cmhead_id=:cmhead_id;");
 
-  QList<QTreeWidgetItem *> selected = _cmhead->selectedItems();
-  QList<QTreeWidgetItem *> triedToClosed;
+  QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
+  QList<XTreeWidgetItem*> triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
   {
@@ -295,7 +295,7 @@ void unpostedCreditMemos::sDelete()
     XSqlQuery delq;
     delq.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
 
-    QList<QTreeWidgetItem *> selected = _cmhead->selectedItems();
+    QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))

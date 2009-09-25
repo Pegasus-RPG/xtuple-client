@@ -926,7 +926,7 @@ void returnAuthorization::sEdit()
   {
     bool fill;
     fill = FALSE;
-    QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+    QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       ParameterList params;
@@ -954,7 +954,7 @@ void returnAuthorization::sEdit()
 
 void returnAuthorization::sView()
 {
-  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
@@ -978,7 +978,7 @@ void returnAuthorization::sDelete()
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
   {
-    QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+    QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       q.prepare( "DELETE FROM raitem "
@@ -1485,7 +1485,7 @@ void returnAuthorization::sCreditByChanged()
 
 void returnAuthorization::sAuthorizeLine()
 {
-  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
@@ -1509,7 +1509,7 @@ void returnAuthorization::sAuthorizeLine()
 }
 void returnAuthorization::sClearAuthorization()
 {
-  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
         QString sql ( "UPDATE raitem SET raitem_qtyauthorized=0 "
@@ -1635,7 +1635,7 @@ void returnAuthorization::sHandleEnterReceipt(bool p)
 
 void returnAuthorization::sHandleAction()
 {
-  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   if (selected.size() > 1)
   {
     _action->setText("Close");

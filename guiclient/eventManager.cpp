@@ -103,7 +103,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
       menu->setItemEnabled(menuItem, FALSE);
 
   // if multiple items are selected then keep the menu short
-  QList<QTreeWidgetItem*> list = _event->selectedItems();
+  QList<XTreeWidgetItem*> list = _event->selectedItems();
   if (list.size() > 1)
     return;
 
@@ -417,7 +417,7 @@ void eventManager::sAcknowledge()
              "SET evntlog_dispatched=CURRENT_TIMESTAMP "
              "WHERE (evntlog_id=:evntlog_id)" );
 
-  QList<QTreeWidgetItem*> list = _event->selectedItems();
+  QList<XTreeWidgetItem*> list = _event->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
     q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
@@ -437,7 +437,7 @@ void eventManager::sDelete()
   q.prepare( "DELETE FROM evntlog "
              "WHERE (evntlog_id=:evntlog_id);" );
 
-  QList<QTreeWidgetItem*> list = _event->selectedItems();
+  QList<XTreeWidgetItem*> list = _event->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
     q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());

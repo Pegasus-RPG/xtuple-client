@@ -81,20 +81,20 @@ class ScriptToolbox : public QObject
     static void setLastWindow(QWidget * lw);
 
     // expose format.h
-    Q_INVOKABLE int     decimalPlaces(QString p)	        { return decimalPlaces(p); };
-    Q_INVOKABLE QString formatNumber(double value, int decimals){ return formatNumber(value, decimals); };
-    Q_INVOKABLE QString formatMoney(double val, int curr = -1, int extra = 0)	{ return formatMoney(val, curr, extra); };
-    Q_INVOKABLE QString formatCost(double val, int curr= -1)	{ return formatCost(val, curr); };
-    Q_INVOKABLE QString formatExtPrice(double val, int curr=-1)	{ return formatExtPrice(val, curr); };
-    Q_INVOKABLE QString formatWeight(double val)	        { return formatWeight(val); };
-    Q_INVOKABLE QString formatQty(double val)	                { return formatQty(val); };
-    Q_INVOKABLE QString formatQtyPer(double val)	        { return formatQtyPer(val); };
-    Q_INVOKABLE QString formatSalesPrice(double val, int curr = -1)	{ return formatSalesPrice(val, curr); };
-    Q_INVOKABLE QString formatPurchPrice(double val, int curr = -1)	{ return formatPurchPrice(val, curr); };
-    Q_INVOKABLE QString formatUOMRatio(double val)	        { return formatUOMRatio(val); };
-    Q_INVOKABLE QString formatPercent(double val)	        { return formatPercent(val); };
-    Q_INVOKABLE QColor  namedColor(QString name)	        { return namedColor(name); };
-    Q_INVOKABLE QString formatDate(const QDate &pDate)          { return formatDate(pDate); };
+    Q_INVOKABLE int     decimalPlaces(QString p)	        { return ::decimalPlaces(p); };
+    Q_INVOKABLE QString formatNumber(double value, int decimals){ return ::formatNumber(value, decimals); };
+    Q_INVOKABLE QString formatMoney(double val, int curr = -1, int extra = 0)	{ return ::formatMoney(val, curr, extra); };
+    Q_INVOKABLE QString formatCost(double val, int curr= -1)	{ return ::formatCost(val, curr); };
+    Q_INVOKABLE QString formatExtPrice(double val, int curr=-1)	{ return ::formatExtPrice(val, curr); };
+    Q_INVOKABLE QString formatWeight(double val)	        { return ::formatWeight(val); };
+    Q_INVOKABLE QString formatQty(double val)	                { return ::formatQty(val); };
+    Q_INVOKABLE QString formatQtyPer(double val)	        { return ::formatQtyPer(val); };
+    Q_INVOKABLE QString formatSalesPrice(double val, int curr = -1)	{ return ::formatSalesPrice(val, curr); };
+    Q_INVOKABLE QString formatPurchPrice(double val, int curr = -1)	{ return ::formatPurchPrice(val, curr); };
+    Q_INVOKABLE QString formatUOMRatio(double val)	        { return ::formatUOMRatio(val); };
+    Q_INVOKABLE QString formatPercent(double val)	        { return ::formatPercent(val); };
+    Q_INVOKABLE QColor  namedColor(QString name)	        { return ::namedColor(name); };
+    Q_INVOKABLE QString formatDate(const QDate &pDate)          { return ::formatDate(pDate); };
 
   public slots:
 

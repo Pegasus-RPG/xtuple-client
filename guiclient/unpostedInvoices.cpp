@@ -103,7 +103,7 @@ void unpostedInvoices::sNew()
 
 void unpostedInvoices::sEdit()
 {
-  QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         invoice::editInvoice(((XTreeWidgetItem*)(selected[i]))->id());
@@ -112,7 +112,7 @@ void unpostedInvoices::sEdit()
 
 void unpostedInvoices::sView()
 {
-  QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         invoice::viewInvoice(((XTreeWidgetItem*)(selected[i]))->id());
@@ -127,7 +127,7 @@ void unpostedInvoices::sDelete()
   {
     q.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
 
-    QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
+    QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
@@ -157,7 +157,7 @@ void unpostedInvoices::sDelete()
 
 void unpostedInvoices::sPrint()
 {
-  QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
   printInvoice newdlg(this, "", TRUE);
 
   for (int i = 0; i < selected.size(); i++)
@@ -234,8 +234,8 @@ void unpostedInvoices::sPost()
   setDate.prepare("UPDATE invchead SET invchead_gldistdate=:distdate "
 		  "WHERE invchead_id=:invchead_id;");
 
-  QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
-  QList<QTreeWidgetItem *> triedToClosed;
+  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
   {

@@ -89,7 +89,7 @@ void duplicateAccountNumbers::sDuplicate()
 
   q.prepare(sql);
 
-  QList<QTreeWidgetItem*> selected = _account->selectedItems();
+  QList<XTreeWidgetItem*> selected = _account->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.bindValue(":company",	_company->currentText());

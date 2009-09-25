@@ -134,7 +134,7 @@ void quotes::sPrint()
              "FROM quhead "
              "WHERE (quhead_id=:quheadid); " );
   bool userCanceled = false;
-  QList<QTreeWidgetItem *> selected = _quote->selectedItems();
+  QList<XTreeWidgetItem*> selected = _quote->selectedItems();
 
   if (selected.size() > 0 &&
       orReport::beginMultiPrint(&printer, userCanceled) == false)
@@ -203,8 +203,8 @@ void quotes::sConvert()
     QList<int> converted;
     do {
       int soheadid = -1;
-      QList<QTreeWidgetItem*> selected = _quote->selectedItems();
-      QList<QTreeWidgetItem*> notConverted;
+      QList<XTreeWidgetItem*> selected = _quote->selectedItems();
+      QList<XTreeWidgetItem*> notConverted;
 
       for (int i = 0; i < selected.size(); i++)
       {
@@ -342,7 +342,7 @@ void quotes::sNew()
 
 void quotes::sEdit()
 {
-  QList<QTreeWidgetItem *> selected = _quote->selectedItems();
+  QList<XTreeWidgetItem*> selected = _quote->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
@@ -361,7 +361,7 @@ void quotes::sEdit()
 
 void quotes::sView()
 {
-  QList<QTreeWidgetItem *> selected = _quote->selectedItems();
+  QList<XTreeWidgetItem*> selected = _quote->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
@@ -390,7 +390,7 @@ void quotes::sDelete()
     q.prepare("SELECT deleteQuote(:quhead_id) AS result;");
 
     int counter = 0;
-    QList<QTreeWidgetItem *> selected = _quote->selectedItems();
+    QList<XTreeWidgetItem*> selected = _quote->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))

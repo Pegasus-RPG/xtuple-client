@@ -274,7 +274,7 @@ void transferOrders::sHandleButtons()
   XTreeWidgetItem *selected = 0;
   _numSelected = 0;
 
-  QList<QTreeWidgetItem*> selectedlist = _to->selectedItems();
+  QList<XTreeWidgetItem*> selectedlist = _to->selectedItems();
   _numSelected = selectedlist.size();
   if (_numSelected > 0)
     selected = (XTreeWidgetItem*)(selectedlist[0]);

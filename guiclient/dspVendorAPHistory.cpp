@@ -320,8 +320,8 @@ void dspVendorAPHistory::sSearchInvoiceNum()
   if(sub.isEmpty())
     return;
 
-  QTreeWidgetItem *item     = 0;
-  QTreeWidgetItem *foundSub = 0;
+  XTreeWidgetItem *item     = 0;
+  XTreeWidgetItem *foundSub = 0;
   for (int i = 0; i < _vendhist->topLevelItemCount(); i++)
   {
     item = _vendhist->topLevelItem(i);

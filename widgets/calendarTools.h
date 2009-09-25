@@ -60,7 +60,7 @@ class XTUPLEWIDGETS_EXPORT CalendarComboBox : public XComboBox
   public:
     CalendarComboBox(QWidget *, const char * = 0);
 
-    void load(ParameterList &);
+    Q_INVOKABLE void load(ParameterList &);
 
   signals:
     void newCalendarId(int);
@@ -77,13 +77,13 @@ class XTUPLEWIDGETS_EXPORT PeriodsListView : public XTreeWidget
   public:
     PeriodsListView(QWidget *, const char * = 0);
 
-    QList<QVariant>    periodList();
-    QString            periodString();
-    PeriodListViewItem *getSelected(int);
-    void               getSelected(ParameterList &);
-    bool               isPeriodSelected();
+    Q_INVOKABLE QList<QVariant>    periodList();
+    Q_INVOKABLE QString            periodString();
+    Q_INVOKABLE PeriodListViewItem *getSelected(int);
+    Q_INVOKABLE void               getSelected(ParameterList &);
+    Q_INVOKABLE bool               isPeriodSelected();
 
-  public slots:
+  public slots:	
     void populate(int);
     void load(ParameterList &);
 
@@ -93,13 +93,15 @@ class XTUPLEWIDGETS_EXPORT PeriodsListView : public XTreeWidget
 
 class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
 {
+  Q_OBJECT
+
   public:
     PeriodListViewItem( PeriodsListView *, XTreeWidgetItem *, int,
                         QDate, QDate,
                         QString, QString );
 
-    inline QDate startDate() { return _startDate; }
-    inline QDate endDate()   { return _endDate;   }
+    Q_INVOKABLE inline QDate startDate() { return _startDate; }
+    Q_INVOKABLE inline QDate endDate()   { return _endDate;   }
 
   private:
     QDate _startDate;
@@ -107,4 +109,3 @@ class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
 };
 
 #endif
-

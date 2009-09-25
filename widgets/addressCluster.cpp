@@ -540,8 +540,7 @@ void AddressList::sFillList()
  */
 void AddressList::sSearch(const QString& pTarget)
 {
-
-  QTreeWidgetItem *target = 0;
+  XTreeWidgetItem *target = 0;
   for (int i = 0; i < _listTab->topLevelItemCount(); i++)
   {
     target = _listTab->topLevelItem(i);

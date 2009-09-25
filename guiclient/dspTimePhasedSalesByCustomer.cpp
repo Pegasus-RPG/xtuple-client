@@ -133,7 +133,7 @@ void dspTimePhasedSalesByCustomer::sCalculate()
   QString sql("SELECT cust_id, cust_number, cust_name");
 
   int           columns = 1;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
@@ -211,7 +211,7 @@ ParameterList dspTimePhasedSalesByCustomer::buildParameters()
   _customerType->appendValue(params);
   _productCategory->appendValue(params);
 
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
   for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());

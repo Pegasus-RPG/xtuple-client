@@ -284,7 +284,7 @@ void arWorkBench::sPostCashrcpt()
     return;
   }
 
-  QList<QTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  QList<XTreeWidgetItem*> selected = _cashrcpt->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
@@ -344,7 +344,7 @@ void arWorkBench::sSearchDocNumChanged()
   if(sub.isEmpty())
     return;
 
-  QList<QTreeWidgetItem*> list = aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchCaseSensitive, 4);
+  QList<XTreeWidgetItem*> list = aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchCaseSensitive, 4);
   if(list.isEmpty())
     list = aropen->findItems(sub, Qt::MatchFixedString|Qt::MatchStartsWith|Qt::MatchCaseSensitive, 4);
 

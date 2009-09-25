@@ -959,7 +959,7 @@ void transferOrder::sEdit()
 void transferOrder::sHandleButtons()
 {
   XTreeWidgetItem *selected = 0;
-  QList<QTreeWidgetItem*> selectedlist = _toitem->selectedItems();
+  QList<XTreeWidgetItem*> selectedlist = _toitem->selectedItems();
   int _numSelected = selectedlist.size();
   if (_numSelected > 0)
     selected = (XTreeWidgetItem*)(selectedlist[0]);
@@ -1853,7 +1853,7 @@ void transferOrder::sReturnStock()
 {
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT returnItemShipments('TO', :toitem_id, 0, CURRENT_TIMESTAMP) AS result;");
-  QList<QTreeWidgetItem*> selected = _toitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery rollback;
@@ -1896,7 +1896,7 @@ void transferOrder::sReturnStock()
 void transferOrder::sIssueStock()
 {
   bool update  = FALSE;
-  QList<QTreeWidgetItem*> selected = _toitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* toitem = (XTreeWidgetItem*)(selected[i]);
@@ -1922,7 +1922,7 @@ void transferOrder::sIssueStock()
 
 void transferOrder::sIssueLineBalance()
 {
-  QList<QTreeWidgetItem*> selected = _toitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* toitem = (XTreeWidgetItem*)(selected[i]);

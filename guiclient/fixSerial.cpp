@@ -182,7 +182,7 @@ void fixSerial::sFix()
 
 void fixSerial::sFixAll()
 {
-  QList<QTreeWidgetItem*> all = _serial->findItems("", Qt::MatchContains);
+  QList<XTreeWidgetItem*> all = _serial->findItems("", Qt::MatchContains);
   for (int i = 0; i < all.size(); i++)
   {
     XTreeWidgetItem *currItem = static_cast<XTreeWidgetItem*>(all[i]);

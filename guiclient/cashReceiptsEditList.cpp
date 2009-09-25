@@ -169,7 +169,7 @@ void cashReceiptsEditList::sPost()
     return;
   }
 
-  QList<QTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  QList<XTreeWidgetItem*> selected = _cashrcpt->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");

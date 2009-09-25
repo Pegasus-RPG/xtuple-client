@@ -161,14 +161,14 @@ void importXML::sAdd()
 
 void importXML::sClearStatus()
 {
-  QList<QTreeWidgetItem*> selected = _file->selectedItems();
+  QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = selected.size() - 1; i >= 0; i--)
     selected[i]->setData(1, Qt::DisplayRole, tr(""));
 }
 
 void importXML::sDelete()
 {
-  QList<QTreeWidgetItem*> selected = _file->selectedItems();
+  QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = selected.size() - 1; i >= 0; i--)
     _file->takeTopLevelItem(_file->indexOfTopLevelItem(selected[i]));
 }
@@ -205,7 +205,7 @@ void importXML::sImportSelected()
 {
   bool oldAutoUpdate = _autoUpdate->isChecked();
   sHandleAutoUpdate(false);
-  QList<QTreeWidgetItem*> selected = _file->selectedItems();
+  QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     if (selected[i]->data(1, Qt::DisplayRole).toString().isEmpty())

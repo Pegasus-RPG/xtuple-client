@@ -142,7 +142,7 @@ void dspTimePhasedBookingsByItem::sFillList()
     sql += ", uom_name, warehous_code";
 
   int columns = 1;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
@@ -227,7 +227,7 @@ ParameterList dspTimePhasedBookingsByItem::buildParameters()
   else if(_salesDollars->isChecked())
     params.append("salesDollars");
 
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
   for (int i = 0; i < selected.size(); i++)
     periodList.append(((XTreeWidgetItem*)selected[i])->id());

@@ -38,7 +38,7 @@ protected slots:
     virtual void languageChange();
 
 protected:
-    void removeDupAltIds(QList<QTreeWidgetItem*>&);
+    void removeDupAltIds(QList<XTreeWidgetItem*>&);
 
 };
 

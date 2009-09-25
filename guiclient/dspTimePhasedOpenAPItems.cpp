@@ -82,7 +82,7 @@ bool dspTimePhasedOpenAPItems::setParams(ParameterList &params)
 
   if(_custom->isChecked())
   {
-    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     QList<QVariant> periodList;
     for (int i = 0; i < selected.size(); i++)
       periodList.append(((XTreeWidgetItem*)selected[i])->id());
@@ -221,7 +221,7 @@ void dspTimePhasedOpenAPItems::sFillCustom()
   QStringList linetotal;
 
   int columns = 1;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];

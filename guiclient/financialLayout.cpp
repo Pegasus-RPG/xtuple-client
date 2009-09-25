@@ -832,7 +832,7 @@ void financialLayout::sDelete()
   q.bindValue(":item_id", _layout->id());
   q.exec();
 
-  QTreeWidgetItem *item = _layout->currentItem();
+  XTreeWidgetItem *item = _layout->currentItem();
   if (0 != item)
     _layout->setCurrentItem(_layout->topLevelItem(_layout->indexOfTopLevelItem(item) - 1));
   sFillList();
@@ -1105,7 +1105,7 @@ void financialLayout::sDeleteCol()
   q.bindValue(":flcol_id", _layouts->id());
   q.exec();
 
-  QTreeWidgetItem *item = _layout->currentItem();
+  XTreeWidgetItem *item = _layout->currentItem();
   if(0 != item)
     _layout->setCurrentItem(_layout->topLevelItem(_layout->indexOfTopLevelItem(item) - 1));
   sFillList();

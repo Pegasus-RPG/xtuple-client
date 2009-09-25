@@ -8,85 +8,62 @@
  * to be bound by its terms.
  */
 
-#include <QSqlError>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
-#include <qvariant.h>
 #include <parameter.h>
 
 #include "updateReorderLevels.h"
 #include "mqlutil.h"
 #include "submitAction.h"
 
-/*
- *  Constructs a updateReorderLevels as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
 
-
     _daysGroupInt = new QButtonGroup(this);
     _daysGroupInt->addButton(_leadTime);
     _daysGroupInt->addButton(_fixedDays);
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_fixedDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
-    connect(_leadTime, SIGNAL(toggled(bool)), _leadTimePad, SLOT(setEnabled(bool)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+    connect(_post,    SIGNAL(clicked()),     this, SLOT(sPost()));
     connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-    connect(_results, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(sOpenEdit(QTreeWidgetItem*, int)));
-    connect(_results, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, 
-                                               SLOT(sCloseEdit(QTreeWidgetItem*,QTreeWidgetItem*)));
-    
-    
-    _results->addColumn(tr("Site")            ,  _whsColumn,  Qt::AlignLeft,   true, "reordlvl_warehous_code");
-    _results->addColumn(tr("Item Number")     , _itemColumn,  Qt::AlignLeft,   true, "reordlvl_item_number");
-    _results->addColumn(tr("Description")     ,          -1,  Qt::AlignLeft,   true, "reordlvl_item_descrip");
-    _results->addColumn(tr("Leadtime")        ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_leadtime");
-    _results->addColumn(tr("Curr. Level")     ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_curr_level");
-    _results->addColumn(tr("Days Stock")      ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_daysofstock");
-    _results->addColumn(tr("Total Usage")     ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_total_usage");
-    _results->addColumn(tr("New Level")       ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_calc_level");
-    
+    connect(_results, SIGNAL(currentItemChanged(XTreeWidgetItem*, XTreeWidgetItem*)), this, SLOT(sCloseEdit(XTreeWidgetItem*,XTreeWidgetItem*)));
+    connect(_results, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT(sOpenEdit(XTreeWidgetItem*, int)));
+    connect(_submit,   SIGNAL(clicked()), this, SLOT(sSubmit()));
+    connect(_update,   SIGNAL(clicked()), this, SLOT(sUpdate()));
+
+    _results->addColumn(tr("Site"),        _whsColumn, Qt::AlignLeft, true, "reordlvl_warehous_code");
+    _results->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft, true, "reordlvl_item_number");
+    _results->addColumn(tr("Description"),         -1, Qt::AlignLeft, true, "reordlvl_item_descrip");
+    _results->addColumn(tr("Leadtime"),    _qtyColumn, Qt::AlignRight,true, "reordlvl_leadtime");
+    _results->addColumn(tr("Curr. Level"), _qtyColumn, Qt::AlignRight,true, "reordlvl_curr_level");
+    _results->addColumn(tr("Days Stock"),  _qtyColumn, Qt::AlignRight,true, "reordlvl_daysofstock");
+    _results->addColumn(tr("Total Usage"), _qtyColumn, Qt::AlignRight,true, "reordlvl_total_usage");
+    _results->addColumn(tr("New Level"),   _qtyColumn, Qt::AlignRight,true, "reordlvl_calc_level");
+
     if (!_metrics->boolean("EnableBatchManager"))
       _submit->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 updateReorderLevels::~updateReorderLevels()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void updateReorderLevels::languageChange()
 {
     retranslateUi(this);
 }
-
 
 enum SetResponse updateReorderLevels::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
-  
+
   param = pParams.value("classcode", &valid);
   if (valid)
   {
@@ -112,23 +89,23 @@ enum SetResponse updateReorderLevels::set(const ParameterList &pParams)
 }
 
 bool updateReorderLevels::setParams(ParameterList &params)
-{  
+{
   if (_item->id() != -1)
     params.append("item_id", _item->id());
   else
     _parameter->appendValue(params);
   _warehouse->appendValue(params);
-  
-    if (_leadTime->isChecked())
-    {
-      params.append("addLeadtime"),
-      params.append("daysOfStock", _leadTimePad->value());
-    }
-    else if (_fixedDays->isChecked())
-      params.append("daysOfStock", _days->value());
-  
+
+  if (_leadTime->isChecked())
+  {
+    params.append("addLeadtime"),
+    params.append("daysOfStock", _leadTimePad->value());
+  }
+  else if (_fixedDays->isChecked())
+    params.append("daysOfStock", _days->value());
+
   params.append("period_id_list",_periods->periodList());
-  
+
   return true;
 }
 
@@ -136,7 +113,7 @@ void updateReorderLevels::sUpdate()
 {
   _results->clear();
   _totalDays->setText("");
-  
+
   QString method;
   if (_periods->topLevelItemCount() > 0)
   {
@@ -158,15 +135,15 @@ void updateReorderLevels::sUpdate()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-        
+
     if (_preview->isChecked())
     {
       if (q.first())
       {
         _totalDays->setText(q.value("reordlvl_total_days").toString());
-        disconnect(_results, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(sItemChanged(QTreeWidgetItem*, int)));
+        disconnect(_results, SIGNAL(itemChanged(XTreeWidgetItem*, int)), this, SLOT(sItemChanged(XTreeWidgetItem*, int)));
         _results->populate(q, true);
-        connect(_results, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(sItemChanged(QTreeWidgetItem*, int)));
+        connect(_results, SIGNAL(itemChanged(XTreeWidgetItem*, int)), this, SLOT(sItemChanged(XTreeWidgetItem*, int)));
         _tab->setCurrentIndex(1);
       }
       else
@@ -212,13 +189,13 @@ void updateReorderLevels::sPost()
 {
   MetaSQLQuery mql = mqlLoad("updateReorderLevels", "post");
   ParameterList params;
-  QList<QTreeWidgetItem*> selected = _results->selectedItems();
-  
+  QList<XTreeWidgetItem*> selected = _results->selectedItems();
+
   for (int i = 0; i < selected.size(); i++)
   {
     params.clear();
-    params.append("itemsite_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    params.append("itemsite_reorderlevel",((XTreeWidgetItem*)(selected[i]))->text(7));
+    params.append("itemsite_id",           selected[i]->id());
+    params.append("itemsite_reorderlevel", selected[i]->text(7)); //TODO: should be selected[i]->rawValue("reordlvl_calc_level"));
     q = mql.toQuery(params);
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -229,7 +206,7 @@ void updateReorderLevels::sPost()
   }
 }
 
-void updateReorderLevels::sOpenEdit(QTreeWidgetItem *item, const int col)
+void updateReorderLevels::sOpenEdit(XTreeWidgetItem *item, const int col)
 {
   if (col==7)
   {
@@ -238,12 +215,12 @@ void updateReorderLevels::sOpenEdit(QTreeWidgetItem *item, const int col)
   }
 }
 
-void updateReorderLevels::sCloseEdit(QTreeWidgetItem * /*current*/, QTreeWidgetItem *previous)
+void updateReorderLevels::sCloseEdit(XTreeWidgetItem * /*current*/, XTreeWidgetItem *previous)
 {
   _results->closePersistentEditor(previous,7);
 }
 
-void updateReorderLevels::sItemChanged(QTreeWidgetItem *item, const int col)
+void updateReorderLevels::sItemChanged(XTreeWidgetItem *item, const int col)
 {
   // Only positive numbers allowed
   if (col==7)
@@ -254,8 +231,3 @@ void updateReorderLevels::sItemChanged(QTreeWidgetItem *item, const int col)
       item->setData(col,Qt::EditRole,item->data(col,Qt::EditRole).toDouble());
   }
 }
-
-
-
-
-

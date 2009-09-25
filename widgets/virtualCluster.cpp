@@ -604,7 +604,7 @@ void VirtualList::sSelect()
 
 void VirtualList::sSearch(const QString& pTarget)
 {
-  QList<QTreeWidgetItem*> matches = _listTab->findItems(pTarget, Qt::MatchStartsWith);
+  QList<XTreeWidgetItem*> matches = _listTab->findItems(pTarget, Qt::MatchStartsWith);
 
   if (matches.size() > 0)
   {
