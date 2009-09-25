@@ -150,6 +150,9 @@ bool dspItemCostDetail::setParams(ParameterList &params)
   else if (_item->itemType() == "C")
     params.append("useBBOM");
 
+  if (_metrics->value("Application") != "PostBooks")
+    params.append("includeRevisionControl");
+
   return true;
 }
 
@@ -233,10 +236,11 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
       "                          bomitem_qtyper * (1 + bomitem_scrap)) *"
       "             itemcost_actcost) AS extendedcost "
       "  <? endif ?>"
-      "    FROM bomitem LEFT OUTER JOIN rev ON (bomitem_rev_id=rev_id),"
-      "         itemcost, costelem "
+      "    FROM bomitem, itemcost, costelem "
+      "  <? if exists(\"includeRevisionControl\") ?>"
+      "    LEFT OUTER JOIN rev ON ((bomitem_rev_id=rev_id) AND (COALESCE(rev_status, 'A')='A')) "
+      "  <? endif ?>"
       "    WHERE ((CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))"
-      "     AND (COALESCE(rev_status, 'A')='A')"
       "     AND (itemcost_item_id=bomitem_item_id)"
       "     AND (itemcost_costelem_id=costelem_id)"
       "     AND (bomitem_parent_item_id=<? value(\"item_id\") ?>)"
