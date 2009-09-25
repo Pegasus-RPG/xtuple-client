@@ -24,7 +24,7 @@ public:
     submitReport(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~submitReport();
 
-    virtual int check();
+    Q_INVOKABLE virtual int check();
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
