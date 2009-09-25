@@ -911,7 +911,15 @@ void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params
     it.next();
     if(it.flags() & QScriptValue::SkipInEnumeration)
       continue;
-    params.append(it.name(), it.value().toVariant());
+    if (it.value().isArray())
+    {
+      QList<QVariant> cpplist;
+      for (int i = 0;  i < it.value().property("length").toInt32(); i++)
+        cpplist.append(it.value().property(i).toVariant());
+      params.append(it.name(), cpplist);
+    }
+    else
+      params.append(it.name(), it.value().toVariant());
   }
 }
 
