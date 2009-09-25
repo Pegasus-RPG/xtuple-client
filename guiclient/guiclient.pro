@@ -299,7 +299,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                searchForCRMAccount.ui searchForContact.ui searchForItem.ui searchForEmp.ui            \
                selectBankAccount.ui selectBillingQty.ui selectOrderForBilling.ui                      \
                selectedPayments.ui selectPayment.ui selectPayments.ui                                 \
-               selectShippedOrders.ui shift.ui shifts.ui shipOrder.ui shippingInformation.ui          \
+               selectShippedOrders.ui shipOrder.ui shippingInformation.ui                             \
                shippingForm.ui shippingForms.ui shipTo.ui                                             \
                shippingChargeType.ui shippingChargeTypes.ui                                           \
                shippingZones.ui shippingZone.ui                                                       \
@@ -609,7 +609,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                searchForCRMAccount.h searchForContact.h searchForItem.h searchForEmp.h                \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
-               selectShippedOrders.h shift.h shifts.h shipOrder.h shippingInformation.h               \
+               selectShippedOrders.h shipOrder.h shippingInformation.h                                \
                shippingForm.h shippingForms.h shipTo.h                                                \
                shippingChargeType.h shippingChargeTypes.h                                             \
                shippingZones.h shippingZone.h                                                         \
@@ -926,7 +926,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp searchForEmp.cpp        \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \
-               selectShippedOrders.cpp shift.cpp shifts.cpp shipOrder.cpp shippingInformation.cpp     \
+               selectShippedOrders.cpp shipOrder.cpp shippingInformation.cpp                          \
                shippingForm.cpp shippingForms.cpp shipTo.cpp                                          \
                shippingChargeType.cpp shippingChargeTypes.cpp                                         \
                shippingZones.cpp shippingZone.cpp                                                     \

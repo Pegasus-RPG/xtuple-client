@@ -88,7 +88,6 @@ class menuSystem : public QObject
     void sCommentTypes();
     void sAccountNumbers();
     void sDepartments();
-    void sShifts();
     void sCustomCommands();
     void sScripts();
     void sUIForms();

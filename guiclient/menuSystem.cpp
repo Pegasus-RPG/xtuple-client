@@ -62,7 +62,6 @@
 #include "packages.h"
 #include "reports.h"
 #include "scripts.h"
-#include "shifts.h"
 #include "uiforms.h"
 
 #include "fixACL.h"
@@ -197,7 +196,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	"MaintainLocales",	NULL,	NULL,	true	},
     { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
-    { "sys.shifts",		tr("S&hifts..."),	SLOT(sShifts()),	masterInfoMenu,	"ViewShifts MaintainShifts" ,	NULL,	NULL, _metrics->boolean("Routings")	},
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, "ConfigureImportExport",	NULL, NULL, true },
 
   //  Design
@@ -552,11 +550,6 @@ void menuSystem::sAccountNumbers()
 void menuSystem::sDepartments()
 {
   omfgThis->handleNewWindow(new departments());
-}
-
-void menuSystem::sShifts()
-{
-  omfgThis->handleNewWindow(new shifts());
 }
 
 void menuSystem::sConfigureIE()
