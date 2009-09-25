@@ -36,8 +36,41 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>
-  SELECT gltrans_id,
+  <sql>&lt;? if exists("beginningBalance") ?>
+SELECT -1 AS gltrans_id,
+       &lt;? value("startDate") ?> AS gltrans_created, formatDate(&lt;? value("startDate") ?>) AS transdate,
+       '' AS gltrans_source, '' AS gltrans_doctype, '' AS gltrans_docnumber, '' AS invhist_docnumber,
+       'Beginning Balance' AS transnotes,
+       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,
+       CASE WHEN (&lt;? value("beginningBalance") ?> &lt; 0) THEN
+                     formatMoney(ABS(&lt;? value("beginningBalance") ?>))
+            ELSE ''
+       END AS f_debit,
+       CASE WHEN (&lt;? value("beginningBalance") ?> &lt; 0) THEN
+                     ABS(&lt;? value("beginningBalance") ?>)
+            ELSE 0
+       END AS debit_amt,
+
+       CASE WHEN (&lt;? value("beginningBalance") ?> > 0) THEN
+                     formatMoney(ABS(&lt;? value("beginningBalance") ?>))
+            ELSE ''
+       END AS f_credit,
+       CASE WHEN (&lt;? value("beginningBalance") ?> > 0) THEN
+                     ABS(&lt;? value("beginningBalance") ?>)
+            ELSE 0
+       END AS credit_amt,
+       &lt;? value("beginningBalance") ?> * -1 AS balance_amt,
+       &lt;? value("beginningBalance") ?> AS gltrans_amount,
+       &lt;? value("beginningBalance") ?> AS running,
+       NULL AS f_posted,
+       NULL AS f_username,
+       -1 AS gltrans_sequence
+ FROM accnt
+ WHERE (accnt_id=&lt;? value("accnt_id") ?>)
+UNION
+&lt;? endif ?>
+
+SELECT gltrans_id,
        gltrans_created, formatDate(gltrans_date) AS transdate,
        gltrans_source, gltrans_doctype, gltrans_docnumber, invhist_docnumber,
        firstLine(gltrans_notes) AS transnotes,
@@ -76,39 +109,10 @@
    AND (gltrans_source=&lt;? value("source") ?>)
 &lt;? endif ?>
        )
-  &lt;? if exists("beginningBalance") ?>
-  UNION SELECT -1,
-        &lt;? value("startDate") ?>, formatDate(&lt;? value("startDate") ?>),
-        '', '', '', '',
-        'Beginning Balance',
-        (formatGLAccount(accnt_id) || ' - ' || accnt_descrip),
-        CASE WHEN (&lt;? value("beginningBalance") ?> &lt; 0) THEN
-                      formatMoney(ABS(&lt;? value("beginningBalance") ?>))
-             ELSE ''
-        END,
-        CASE WHEN (&lt;? value("beginningBalance") ?> &lt; 0) THEN
-                      ABS(&lt;? value("beginningBalance") ?>)
-             ELSE 0
-        END,
-
-        CASE WHEN (&lt;? value("beginningBalance") ?> > 0) THEN
-                      formatMoney(ABS(&lt;? value("beginningBalance") ?>))
-             ELSE ''
-        END,
-        CASE WHEN (&lt;? value("beginningBalance") ?> > 0) THEN
-                      ABS(&lt;? value("beginningBalance") ?>)
-             ELSE 0
-        END,
-        &lt;? value("beginningBalance") ?> * -1,
-        &lt;? value("beginningBalance") ?>,
-        &lt;? value("beginningBalance") ?>,
-        NULL,
-        NULL,
-        -1
-  FROM accnt
-  WHERE (accnt_id=&lt;? value("accnt_id") ?>)
 ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? endif ?>,
-        gltrans_sequence, gltrans_amount;</sql>
+        gltrans_sequence, gltrans_amount
+
+;</sql>
  </querysource>
  <rpthead>
   <height>205</height>
