@@ -1063,6 +1063,19 @@ void transferOrder::sAction()
         return;
       }
     }
+    else if (_lineMode == cUnreleased)
+    {
+      q.prepare( "UPDATE toitem "
+                 "SET toitem_status='O' "
+                 "WHERE (toitem_id=:toitem_id);" );
+      q.bindValue(":toitem_id", _toitem->id());
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
     else
     {
       q.prepare( "SELECT closeToItem(:toitem_id) AS result;" );
