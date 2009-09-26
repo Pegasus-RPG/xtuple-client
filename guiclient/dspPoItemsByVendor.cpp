@@ -25,7 +25,7 @@
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
 
-#define POITEM_STATUS_COL 10
+#define POITEM_STATUS_COL 11
 
 dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
