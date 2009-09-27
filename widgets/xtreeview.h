@@ -37,15 +37,22 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 
       Q_INVOKABLE      QString columnNameFromLogicalIndex(const int logicalIndex) const;
       Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
+      Q_INVOKABLE virtual void setColumnRole(const QString column, int role, QVariant value);
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
+      Q_INVOKABLE virtual void setForegroundColor(int row, int col, QString color);
+      Q_INVOKABLE virtual void setRowForegroundColor(int row, QString color);
       Q_INVOKABLE         void setTable();
+      Q_INVOKABLE virtual void setTextAlignment(const QString column, int alignment);
+      Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
+      Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
       
     public slots:
       virtual int  rowCount();
       virtual int  rowCountVisible();
-      virtual QVariant value(int row, int column);
+      virtual QString filter();
+      virtual QVariant value(int row, int column, int role = Qt::DisplayRole);
       virtual QVariant selectedValue(int column);
       virtual void insert();
       virtual void populate(int p);
@@ -54,15 +61,17 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       virtual void save();
       virtual void select();
       virtual void selectRow(int index);
+      virtual void setFilter(const QString filter);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
       virtual void setModel(XSqlTableModel* model=0);
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
-      virtual void setSchemaName(QString p)                   { _schemaName = p;            };
-      virtual void setTableName(QString p)                    { _tableName = p;             };
+      virtual void setSchemaName(const QString p)             { _schemaName = p;            };
+      virtual void setTableName(const QString p)              { _tableName = p;             };
       virtual void setValue(int row, int column, QVariant value);
       virtual void sShowMenu(const QPoint &);
 
     signals:
+      void  dataChanged(int row, int col);
       void  newModel(XSqlTableModel *model);
       void  rowSelected(int);
       void  valid(bool);
@@ -70,11 +79,12 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void  populateMenu(QMenu *, QModelIndex);
       
     protected:
+      virtual void applyColumnRoles(const QString column);
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-      virtual void setRelations();
 
     private slots:
+      void emitDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight);
       void popupMenuActionTriggered(QAction*);
       void sColumnSizeChanged(int, int, int);
       void sResetAllWidths();
@@ -83,24 +93,21 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void sToggleForgetfulness();
       
     private:
-      QSqlDatabase        *_db;
       bool                 _forgetful;
-      QMultiMap<QString,QString> _idMap;
       QSqlRecord           _idx;
       int                  _keyColumns;
       XDataWidgetMapper   *_mapper;
       QMenu               *_menu;
-      XSqlTableModel       _model;
+      XSqlTableModel      *_model;
       int                  _resetWhichWidth;
       bool                 _resizingInProcess;
       QString              _schemaName;
-      QItemSelectionModel *_selectModel;
       bool                 _settingsLoaded;
       QString              _tableName;
       QString              _windowName;
 
-      struct ColumnProps
-      { QString columnName;
+      struct ColumnProps { 
+        QString columnName;
         int     logicalIndex;
         int     defaultWidth;
         int     savedWidth;
@@ -112,8 +119,17 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
         bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-
-      QMap<QString, QString>    _fkeymap;
+      
+      struct ColumnRole { 
+          inline ColumnRole(QString c, const QVariant v, int r)
+              : columnName(c), value(v),  role(r) {}
+              
+        QString columnName;
+        QVariant value;
+        int role;
+      };
+      QList<ColumnRole> _columnRoles;
+      
 };
 
 #endif

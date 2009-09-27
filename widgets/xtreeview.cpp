@@ -17,17 +17,18 @@
 #include <QModelIndex>
 #include <QPalette>
 #include <QScriptEngine>
-#include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlIndex>
-#include <QSqlRelationalTableModel>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
 #include <QStack>
 #include <QTreeWidgetItem>
 
 #include "xtsettings.h"
-#include "xsqlrelationaldelegate.h"
+#include "format.h"
+//#include "xsqlrelationaldelegate.h"
 
 #define DEBUG true
 
@@ -47,19 +48,19 @@ XTreeView::XTreeView(QWidget *parent) :
   header()->setClickable(true);
   header()->setContextMenuPolicy(Qt::CustomContextMenu);
   
-  setAlternatingRowColors(true);
-  QPalette muted = palette();
-  muted.setColor(QPalette::AlternateBase, QColor(0xEE, 0xEE, 0xEE));
-  setPalette(muted);
+  setEditTriggers(QAbstractItemView::NoEditTriggers);
+  setAlternatingRowColors(false);
 
+  _mapper = new XDataWidgetMapper;
+  _model = new XSqlTableModel;
+  _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  
   connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(sShowMenu(const QPoint &)));
   connect(header(), SIGNAL(customContextMenuRequested(const QPoint &)),
                     SLOT(sShowHeaderMenu(const QPoint &)));
   connect(header(), SIGNAL(sectionResized(int, int, int)),
           this,     SLOT(sColumnSizeChanged(int, int, int)));
-
-  _mapper = new XDataWidgetMapper(this);
-  _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
+  connect(_model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(emitDataChanged(const QModelIndex, const QModelIndex)));
 
   _windowName = window()->objectName();
 }
@@ -114,6 +115,11 @@ QString XTreeView::columnNameFromLogicalIndex(const int logicalIndex) const
       return it.value()->columnName;
   }
   return QString();
+}
+
+QString XTreeView::filter()
+{
+  return _model->filter();
 }
 
 void XTreeView::sShowMenu(const QPoint &pntThis)
@@ -187,7 +193,9 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 
 bool XTreeView::isRowHidden(int row)
 {
-  return QTreeView::isRowHidden(row,model()->parent(model()->index(row,0)));
+ QModelIndex idx = _model->index(row,0);
+ QModelIndex pidx = static_cast<QAbstractItemModel*>(_model)->parent(idx);
+ return QTreeView::isRowHidden(row,pidx);
 }
 
 bool XTreeView::throwScriptException(const QString &message)
@@ -211,13 +219,13 @@ bool XTreeView::throwScriptException(const QString &message)
 
 int XTreeView::rowCount()
 {
-  return _model.rowCount();
+  return _model->rowCount();
 }
 
 int XTreeView::rowCountVisible()
 {
   int counter = 0;
-  for (int i = 0; i < _model.rowCount(); i++)
+  for (int i = 0; i < _model->rowCount(); i++)
   {
     if (!isRowHidden(i))
       counter++;
@@ -225,9 +233,9 @@ int XTreeView::rowCountVisible()
   return counter;
 }
 
-QVariant XTreeView::value(int row, int column)
+QVariant XTreeView::value(int row, int column, int role)
 {
-  return model()->data(model()->index(row,column));
+  return _model->data(model()->index(row,column), role);
 }
 
 QVariant XTreeView::selectedValue(int column)
@@ -239,14 +247,38 @@ QVariant XTreeView::selectedValue(int column)
 void XTreeView::select()
 {
   setTable();
-  _model.select();
+  _model->select();
+  QString colname;
+  
+  //Find and Format Boolean
+  for (int col=0; col < _model->query().record().count(); ++col) {
+    colname = columnNameFromLogicalIndex(col);
+    applyColumnRoles(colname);
+  }
+
   emit valid(FALSE);
+}
+
+void XTreeView::applyColumnRoles(const QString column)
+{
+  QSqlQuery qry = _model->query();
+  int col = qry.record().indexOf(column);
+  qry.first();
+  
+  for (int idx=0; idx < _columnRoles.count(); ++idx) {
+    if (_columnRoles.at(idx).columnName==column) {
+      for (int row=0; row < qry.size(); ++row) {
+        _model->setData(_model->index(row,col), _columnRoles.at(idx).value, _columnRoles.at(idx).role);
+        qry.next();
+      }
+      qry.first();
+    }
+  }
 }
 
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-  if (!selected.indexes().isEmpty())
-  {
+  if (!selected.indexes().isEmpty()) {
     emit rowSelected(selected.indexes().first().row());
     emit valid(true);
   }
@@ -257,11 +289,11 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
 
 void XTreeView::insert()
 { 
-  int row=_model.rowCount();
-  _model.insertRows(row,1);
+  int row=_model->rowCount();
+  _model->insertRows(row,1);
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
-    _model.setData(_model.index(row,i),_idx.value(i));
+    _model->setData(_model->index(row,i),_idx.value(i));
   selectRow(row);
 }
 
@@ -272,16 +304,15 @@ void XTreeView::populate(int p)
   {
     _idx=t->primaryKey();
 
-    for (int i = 0; i < _idx.count(); ++i)
-    {
+    for (int i = 0; i < _idx.count(); ++i) {
       _idx.setValue(i, t->data(t->index(p,i)));
       setColumnHidden(i,true);
     }
     
-    QString clause = QString(_model.database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
-    _model.setFilter(clause);
-    if (!_model.query().isActive())
-      _model.select();
+    QString clause = QString(_model->database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
+    _model->setFilter(clause);
+    if (!_model->query().isActive())
+      _model->select();
   }
 }
 
@@ -289,32 +320,29 @@ void XTreeView::removeSelected()
 {
   QModelIndexList selected=selectedIndexes();
 
-  for (int i = selected.count() -1 ; i > -1; i--)
-  {
-    if (selected.value(i).column() == 1) // Only once per row
-    {
+  for (int i = selected.count() -1 ; i > -1; i--) {
+    if (selected.value(i).column() == 1) {
       setRowHidden(selected.value(i).row(),selected.value(i).parent(),true);
-      _model.removeRow(selected.value(i).row());
+      _model->removeRow(selected.value(i).row());
     }
   }
 }
 
 void XTreeView::revertAll()
 {
-  _model.revertAll();
+  _model->revertAll();
   if (_mapper)
     populate(_mapper->currentIndex());
 }
 
 void XTreeView::save()
 { 
-  if(!_model.submitAll())
-  {
-    if(!throwScriptException(_model.lastError().databaseText()))
+  if(!_model->submitAll()) {
+    if(!throwScriptException(_model->lastError().databaseText()))
           QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                             tr("Error saving %1 at %2::%3\n\n%4")
                             .arg(_tableName).arg(__FILE__).arg(__LINE__)
-                            .arg(_model.lastError().databaseText()));
+                            .arg(_model->lastError().databaseText()));
   }
   else
     emit saved();
@@ -327,6 +355,11 @@ void XTreeView::selectRow(int index)
                                         QItemSelectionModel::Rows);
 }
 
+void XTreeView::setFilter(const QString filter)
+{  
+  _model->setFilter(filter);
+}
+
 void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
 {  
   setTable();
@@ -335,36 +368,36 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
 
 void XTreeView::setTable()
 {
-  if (_model.tableName() == _tableName)
+  if (_model->tableName() == _tableName)
     return;
       
-  if (!_tableName.isEmpty())
-  {
+  if (!_tableName.isEmpty()) {
     QString tablename=_tableName;
     if (!_schemaName.isEmpty())
       tablename = _schemaName + "." + tablename;
-    _model.setTable(tablename,_keyColumns);
+    _model->setTable(tablename,_keyColumns);
     
-    setModel(&_model);
-    setItemDelegate(new XSqlRelationalDelegate(this));
-    setRelations();
+    setModel(_model);
   }
+}
+
+void XTreeView::setTextAlignment(const QString column, int alignment)
+{
+  setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
 }
 
 void XTreeView::setModel(XSqlTableModel * model)
 {
   QTreeView::setModel(model);
 
-  for (int i = 0; i < QTreeView::model()->columnCount(); ++i)
-  {
+  for (int i = 0; i < QTreeView::model()->columnCount(); ++i) {
     QString h = QTreeView::model()->headerData(i, Qt::Horizontal,
                                                Qt::DisplayRole).toString();
     QTreeView::model()->setHeaderData(i, Qt::Horizontal, h, Qt::UserRole);
 
     ColumnProps *cp = _columnByName.value(h, 0);
 
-    if (! cp)
-    {
+    if (! cp) {
       cp = new ColumnProps;
       cp->columnName   = h;
       cp->logicalIndex = i;
@@ -461,7 +494,7 @@ void XTreeView::setModel(XSqlTableModel * model)
 
 void XTreeView::setValue(int row, int column, QVariant value)
 {
-  _model.setData(_model.index(row,column), value);
+  _model->setData(_model->index(row,column), value);
 }
 
 void XTreeView::resizeEvent(QResizeEvent * e)
@@ -486,15 +519,13 @@ void XTreeView::sResetWidth()
 void XTreeView::sResetAllWidths()
 {
   bool autoSections = false;
-  for (int i = 0; i < header()->length(); i++)
-  {
+  for (int i = 0; i < header()->length(); i++) {
     ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
     int width = cp ? cp->defaultWidth : -1;
     if (width >= 0)
       header()->resizeSection(i, width);
-    else
-    {
-    if (cp)
+    else {
+      if (cp)
         cp->stretchy = true;
       autoSections = true;
     }
@@ -512,8 +543,7 @@ void XTreeView::sToggleForgetfulness()
 void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSize)
 {
   ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(logicalIndex), 0);
-  if (cp)
-  {
+  if (cp) {
     cp->savedWidth = newSize;
     if (newSize < 0)
       cp->stretchy = true;
@@ -529,8 +559,7 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
   int usedSpace = 0;
   QVector<int> stretch;
 
-  for(int i = 0; i < header()->count(); i++)
-  {
+  for(int i = 0; i < header()->count(); i++) {
     ColumnProps *tmpcp = _columnByName.value(columnNameFromLogicalIndex(i), 0);
 
     if (header()->isSectionHidden(i))
@@ -545,8 +574,7 @@ void XTreeView::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int newSiz
       stretch.append(i);
   }
 
-  if(stretch.size() > 0)
-  {
+  if(stretch.size() > 0) {
     int leftover = (viewport()->width() - usedSpace) / stretch.size();
 
     if(leftover < 50)
@@ -573,8 +601,7 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
 {
   ColumnProps *cp = _columnByName.value(colname, 0);
 
-  if (! cp)
-  {
+  if (! cp) {
     cp = new ColumnProps();
     cp->columnName = colname;
     cp->fromSettings = false;
@@ -589,19 +616,16 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
 
   if (cp->fromSettings)
     cp->stretchy   = (width == -1 || cp->savedWidth == -1);
-  else
-  {
+  else {
     cp->savedWidth = -1;
     cp->stretchy   = (width == -1);
   }
 
   cp->logicalIndex = -1;
   int colnum = -1;
-  for (colnum = 0; colnum < header()->count(); colnum++)
-  {
+  for (colnum = 0; colnum < header()->count(); colnum++) {
     if (colname == QTreeView::model()->headerData(colnum, Qt::Horizontal,
-                                                  Qt::UserRole).toString())
-    {
+                                                  Qt::UserRole).toString()) {
       cp->logicalIndex = colnum;
       QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, colname,
                                         Qt::UserRole);
@@ -609,11 +633,7 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
                                         Qt::DisplayRole);
       QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, alignment,
                                         Qt::TextAlignmentRole);
-      /* setData below always returns false => failure. why?
-      for (int i = 0; i < QTreeView::model()->rowCount(); i++)
-        bool test = QTreeView::model()->setData(QTreeView::model()->index(i, colnum),
-                                                alignment, Qt::TextAlignmentRole);
-      */
+      setTextAlignment(colname, alignment);
       break;
     }
   }
@@ -649,6 +669,17 @@ void XTreeView::popupMenuActionTriggered(QAction * pAction)
   //else if (some other command to handle)
 }
 
+void XTreeView::setColumnRole(const QString column, int role, const QVariant value)
+{
+  for (int i = 0; i < _columnRoles.count(); ++i) 
+    if (_columnRoles.at(i).columnName == column && _columnRoles.at(i).role == role) {
+      _columnRoles.removeAt(i);
+      return;
+    }
+  _columnRoles.append(ColumnRole(column, value, role));
+  applyColumnRoles(column);
+}
+
 void XTreeView::setColumnVisible(int pColumn, bool pVisible)
 {
   if(pVisible)
@@ -661,180 +692,24 @@ void XTreeView::setColumnVisible(int pColumn, bool pVisible)
     cp->visible = pVisible;
 }
 
-void XTreeView::setRelations()
+void XTreeView::setForegroundColor(int row, int col, QString color)
 {
-  if (DEBUG) qDebug("setRelations() entered with table  %s.%s",
-                    qPrintable(_schemaName), qPrintable(_tableName));
-  QSqlRelationalTableModel *model = qobject_cast<QSqlRelationalTableModel*>(&_model);
-  if (! model)
-    return;
+  _model->setData(_model->index(row,col), namedColor(color), Qt::ForegroundRole);
+}
 
-  // _fkeymap is for cases where there's strict adherence to naming conventions:
-  //    othertable[_qualifier]_basetable_id -> basetable_id
-  // special cases are handled individually below
-  // TODO: make _fkeymap static so it can be shared
-  if (_fkeymap.size() == 0)
-  {
-    _fkeymap.insert("acalitem",    "acalitem_name");
-    _fkeymap.insert("accnt",       "accnt_number");
-    _fkeymap.insert("addr",        "addr_number");
-    _fkeymap.insert("alarm",       "alarm_number");
-    _fkeymap.insert("bankaccnt",   "bankaccnt_name");
-    _fkeymap.insert("bankadjtype", "bankadjtype_name");
-    _fkeymap.insert("budghead",    "budghead_name");
-    _fkeymap.insert("calhead",     "calhead_name");
-    _fkeymap.insert("carrier",     "carrier_name");
-    _fkeymap.insert("char",        "char_name");
-    _fkeymap.insert("checkhead",   "checkhead_number");
-    _fkeymap.insert("classcode",   "classcode_code");
-    _fkeymap.insert("cmd",         "cmd_title");
-    _fkeymap.insert("cmdarg",      "cmdarg_arg");
-    _fkeymap.insert("cmhead",      "cmhead_number");
-    _fkeymap.insert("cmnttype",    "cmnttype_name");
-    _fkeymap.insert("cntct",       "cntct_number");
-    _fkeymap.insert("cntslip",     "cntslip_number");
-    _fkeymap.insert("cohead",      "cohead_number");
-    _fkeymap.insert("company",     "company_number");
-    _fkeymap.insert("costcat",     "costcat_code");
-    _fkeymap.insert("costelem",    "costelem_type");
-    _fkeymap.insert("country",     "country_abbr");
-    _fkeymap.insert("crmacct",     "crmacct_number");
-    _fkeymap.insert("curr",        "curr_symbol");
-    _fkeymap.insert("curr_symbol", "curr_abbr");
-    _fkeymap.insert("custgrp",     "custgrp_name");
-    _fkeymap.insert("custinfo",    "cust_number");
-    _fkeymap.insert("custtype",    "custtype_code");
-    _fkeymap.insert("dept",        "dept_number");
-    _fkeymap.insert("destination", "destination_name");
-    _fkeymap.insert("ediform",     "ediform_file");
-    _fkeymap.insert("ediprofile",  "ediprofile_name");
-    _fkeymap.insert("emp",         "emp_code");
-    _fkeymap.insert("empgrp",      "empgrp_name");
-    _fkeymap.insert("evnttype",    "evnttype_name");
-    _fkeymap.insert("expcat",      "expcat_code");
-    _fkeymap.insert("flhead",      "flhead_name");
-    _fkeymap.insert("form",        "form_name");
-    _fkeymap.insert("freightclass","freightclass_code");
-    _fkeymap.insert("grp",         "grp_name");
-    _fkeymap.insert("hnfc",        "hnfc_code");
-    _fkeymap.insert("image",       "image_name");
-    _fkeymap.insert("incdt",       "incdt_number");
-    _fkeymap.insert("incdtcat",    "incdtcat_name");
-    _fkeymap.insert("incdtpriority",  "incdtpriority_name");
-    _fkeymap.insert("incdtresolution","incdtresolution_name");
-    _fkeymap.insert("incdtseverity",  "incdtseverity_name");
-    _fkeymap.insert("invchead",    "invchead_invcnumber");
-    _fkeymap.insert("ipshead",     "ipshead_name");
-    _fkeymap.insert("item",        "item_number");
-    _fkeymap.insert("itemalias",   "itemalias_number");
-    _fkeymap.insert("itemgrp",     "itemgrp_name");
-    _fkeymap.insert("jrnluse",     "jrnluse_number");
-    _fkeymap.insert("labelform",   "labelform_name");
-    _fkeymap.insert("lang",        "lang_name");
-    _fkeymap.insert("lbrrate",     "lbrrate_code");
-    _fkeymap.insert("locale",      "locale_code");
-    _fkeymap.insert("location",    "location_name");
-    _fkeymap.insert("ls",          "ls_number");
-    _fkeymap.insert("lsreg",       "lsreg_number");
-    _fkeymap.insert("metric",      "metric_name");
-    _fkeymap.insert("metricenc",   "metricenc_name");
-    _fkeymap.insert("ophead",      "ophead_name");
-    _fkeymap.insert("opsource",    "opsource_name");
-    _fkeymap.insert("opstage",     "opstage_name");
-    _fkeymap.insert("optype",      "optype_name");
-    _fkeymap.insert("orderseq",    "orderseq_name");
-    _fkeymap.insert("period",      "period_name");
-    _fkeymap.insert("pkghead",     "pkghead_name");
-    _fkeymap.insert("plancode",    "plancode_code");
-    _fkeymap.insert("planord",     "planord_number");
-    _fkeymap.insert("pohead",      "pohead_number");
-    _fkeymap.insert("potype",      "potype_name");
-    _fkeymap.insert("pr",          "pr_number");
-    _fkeymap.insert("prftcntr",    "prftcntr_number");
-    _fkeymap.insert("prj",         "prj_number");
-    _fkeymap.insert("prjtask",     "prjtask_number");
-    _fkeymap.insert("prodcat",     "prodcat_code");
-    _fkeymap.insert("prospect",    "prospect_number");
-    _fkeymap.insert("pschhead",    "pschhead_number");
-    _fkeymap.insert("quhead",      "quhead_number");
-    _fkeymap.insert("rahead",      "rahead_number");
-    _fkeymap.insert("regtype",     "regtype_code");
-    _fkeymap.insert("rev",         "rev_number");
-    _fkeymap.insert("rjctcode",    "rjctcode_code");
-    _fkeymap.insert("rsncode",     "rsncode_code");
-    _fkeymap.insert("sale",        "sale_name");
-    _fkeymap.insert("salehead",    "salehead_number");
-    _fkeymap.insert("salescat",    "salescat_name");
-    _fkeymap.insert("salesrep",    "salesrep_number");
-    _fkeymap.insert("script",      "script_name");
-    _fkeymap.insert("shift",       "shift_number");
-    _fkeymap.insert("shipchrg",    "shipchrg_name");
-    _fkeymap.insert("shipform",    "shipform_name");
-    _fkeymap.insert("shiphead",    "shiphead_number");
-    _fkeymap.insert("shiptoinfo",  "shipto_name");
-    _fkeymap.insert("shipvia",     "shipvia_code");
-    _fkeymap.insert("shipzone",    "shipzone_name");
-    _fkeymap.insert("sitetype",    "sitetype_name");
-    _fkeymap.insert("stdjrnl",     "stdjrnl_name");
-    _fkeymap.insert("stdjrnlgrp",  "stdjrnlgrp_name");
-    _fkeymap.insert("stdopn",      "stdopn_number");
-    _fkeymap.insert("subaccnt",    "subaccnt_number");
-    _fkeymap.insert("subaccnttype","subaccnttype_code");
-    _fkeymap.insert("tax",         "tax_code");
-    _fkeymap.insert("taxauth",     "taxauth_code");
-    _fkeymap.insert("taxreg",      "taxreg_number");
-    _fkeymap.insert("taxtype",     "taxtype_name");
-    _fkeymap.insert("terminal",    "terminal_number");
-    _fkeymap.insert("terms",       "terms_code");
-    _fkeymap.insert("todoitem",    "todoitem_name");
-    _fkeymap.insert("tohead",      "tohead_number");
-    _fkeymap.insert("uiform",      "uiform_name");
-    _fkeymap.insert("uom",         "uom_name");
-    _fkeymap.insert("uomtype",     "uomtype_name");
-    _fkeymap.insert("url",         "url_url");
-    _fkeymap.insert("usr",         "usr_username");
-    _fkeymap.insert("vendaddrinfo","vendaddr_code");
-    _fkeymap.insert("vendinfo",    "vend_number");
-    _fkeymap.insert("vendtype",    "vendtype_code");
-    _fkeymap.insert("vohead",      "vohead_number");
-    _fkeymap.insert("whsezone",    "whsezone_name");
-    _fkeymap.insert("whsinfo",     "warehous_code");
-    _fkeymap.insert("wo",          "wo_number");
-    _fkeymap.insert("wrkcnt",      "wrkcnt_code");
-    _fkeymap.insert("xsltmap",     "xsltmap_name");
-    _fkeymap.insert("yearperiod",  "yearperiod_start");
-  }
+void XTreeView::setRowForegroundColor(int row, QString color)
+{
+  for (int col = 0; col < _model->query().record().count(); col++)
+    setForegroundColor(row, col, color);
+}
 
-  for (int i = 0; i < model->record().count(); i++)
-  {
-    QString colname = model->record().field(i).name();
-    if (DEBUG) qDebug("looking for fkey to %s", qPrintable(colname));
-
-    if (colname.endsWith("curr_id"))
-      model->setRelation(i, QSqlRelation("curr_symbol", "curr_id", "curr_abbr"));
-    else if (colname.endsWith("cust_id"))
-      model->setRelation(i, QSqlRelation("custinfo", "cust_id", "cust_number"));
-    else if (colname.endsWith("shipto_id"))
-      model->setRelation(i, QSqlRelation("shiptoinfo","shipto_id","shipto_name"));
-    else if (colname.endsWith("vend_id"))
-      model->setRelation(i, QSqlRelation("vendinfo", "vend_id", "vend_number"));
-    else if (colname.endsWith("vendaddr_id"))
-      model->setRelation(i, QSqlRelation("vendaddrinfo","vendaddr_id","vendaddr_code"));
-    else if (colname.endsWith("warehous_id"))
-      model->setRelation(i, QSqlRelation("whsinfo", "warehous_id", "warehous_code"));
-    else if (colname.endsWith("_id"))
-    {
-      colname.replace(QRegExp(".*_([^_]+)_id$"), "\\1");
-
-      if (DEBUG) qDebug("%s is an id", qPrintable(colname));
-      if (! _fkeymap.value(colname, QString()).isEmpty())
-      {
-        if (DEBUG) qDebug("setting relation(%s, %s, %s)",
-                          qPrintable(colname), qPrintable(colname + "_id"),
-                          qPrintable(_fkeymap.value(colname)));
-        model->setRelation(i, QSqlRelation(colname, colname + "_id",
-                                           _fkeymap.value(colname)));
-      }
-    }
+void XTreeView::emitDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight)
+{
+  for (int col = topLeft.column(); col <= lowerRight.column(); col++) {
+    for (int row = topLeft.row(); row <= lowerRight.row(); row++)
+      emit dataChanged(row, col);
   }
 }
+
+
+
