@@ -32,8 +32,7 @@ void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
 
 void XSqlTableModel::setKeys(int keyColumns)
 {
-  if (keyColumns && tableName().length())
-  {
+  if (keyColumns && tableName().length()) {
     QSqlRecord rec = database().record(tableName());
     QSqlIndex idx(tableName());
     for (int i = 0; i < keyColumns; i++)
@@ -143,4 +142,68 @@ QString XSqlTableModel::selectStatement() const
         query.append(QLatin1Char(' ')).append(orderBy);
 
     return query;
+}
+
+QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+      return QVariant();
+        
+    switch (role) {
+    case Qt::EditRole:
+    case Qt::DisplayRole: {
+            return QSqlRelationalTableModel::data(index, role);
+    } break;
+    case Qt::TextAlignmentRole:
+    case Qt::ForegroundRole:
+      if (roles.contains(index)) {
+         QHash<QModelIndex, ItemDataRoles>::const_iterator i = roles.find(index);
+         while (i != roles.end() && i.key() == index) {
+           if (i.value().role == role)
+             return i.value().value;
+           ++i;
+         }
+      }
+    }
+    
+    return QVariant();
+}
+
+bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!index.isValid())
+        return false;
+        
+    bool changed = false;
+    switch (role) {
+    case Qt::EditRole:
+    case Qt::DisplayRole: {
+      changed =  QSqlRelationalTableModel::setData(index, value, role);
+    } break;
+    case Qt::TextAlignmentRole:
+    case Qt::ForegroundRole:
+      if (roles.contains(index)) {
+         roles.begin();
+         QHash<QModelIndex, ItemDataRoles>::iterator i = roles.find(index);
+         while (i != roles.end() && i.key() == index)  {
+           if (i.value().role == role) {
+             if (i.value().value == value)
+               return true;
+             else {
+               i = roles.erase(i);
+               break;
+             }
+           }
+           ++i;
+         }
+      }
+      // Create a new entry
+      roles.insertMulti(index, ItemDataRoles(role, value));
+      changed =  true;
+    }
+    
+    if (changed)
+      emit dataChanged ( index, index );
+      
+    return changed;
 }

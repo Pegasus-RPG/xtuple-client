@@ -13,6 +13,7 @@
 #define XSQLTABLEMODEL_H
 
 #include <QSqlRelationalTableModel>
+#include <QHash>
 #include "widgets.h"
 
 class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
@@ -23,11 +24,23 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
       XSqlTableModel(QObject *parent = 0);
       ~XSqlTableModel();
     
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole);
     virtual void setTable(const QString &tableName, int keyColumns);
     virtual void setKeys(int keyColumns);
 
     virtual QString selectStatement() const;
+    
+    private:
+    struct ItemDataRoles
+    { 
+        inline ItemDataRoles(int r, const QVariant v)
+            : role(r), value(v) {}
 
+      int role;            
+      QVariant value;
+    };
+    QHash<QModelIndex, ItemDataRoles> roles;
 };
 
 #endif
