@@ -83,6 +83,7 @@
 #include "plugins/xspinboxplugin.h"
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
+#include "plugins/xtablewidgetplugin.h"
 
 xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
 {
@@ -159,6 +160,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XTreeViewPlugin(this));
   m_plugins.append(new XURLLabelPlugin(this));
   m_plugins.append(new XTextEditPlugin(this));
+  m_plugins.append(new XTableWidgetPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> xTuplePlugin::customWidgets() const
