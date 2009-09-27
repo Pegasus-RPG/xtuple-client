@@ -49,7 +49,7 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
                 Q_INVOKABLE bool lockRecords()           { return _lock;};
                 Q_INVOKABLE Disposition check();
                 Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
-                Q_INVOKABLE XSqlTableModel    *model()   { return static_cast<XSqlTableModel*>(_mapper->model());};
+                Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
                 
                 void showEvent ( QShowEvent * event );
        	
@@ -59,6 +59,7 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
                 bool tryLock();
                 int  currentIndex();
                 int  primaryKeyColumns()    const { return _keyColumns;       };
+                QString filter()            const { return _model->filter();  };
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };
