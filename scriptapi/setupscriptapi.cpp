@@ -46,6 +46,7 @@
 #include "qdoublevalidatorproto.h"
 #include "qeventproto.h"
 #include "qfontproto.h"
+#include "qiconproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
@@ -57,6 +58,7 @@
 #include "qtabwidgetproto.h"
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
+#include "qtoolbarproto.h"
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
 #include "qurlproto.h"
@@ -121,6 +123,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDoubleValidatorProto(engine);
   setupQEventProto(engine);
   setupQFontProto(engine);
+  setupQIconProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
@@ -133,6 +136,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQTabWidgetProto(engine);
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
+  setupQToolBarProto(engine);
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);
   setupQUrlProto(engine);

@@ -52,13 +52,6 @@ class menuProducts : public QObject
     void sMassReplaceComponent();
     void sMassExpireComponent();
 
-    void sNewBOO();
-    void sBOOs();
-    void sCopyBOO();
-
-    void sNewBreederBOM();
-    void sBreederBOMs();
-
     void sMaintainItemCosts();
     void sUpdateActualCostsByItem();
     void sUpdateActualCostsByClassCode();
@@ -81,7 +74,6 @@ class menuProducts : public QObject
     void sDspSingleLevelBOM();
     void sDspIndentedBOM();
     void sDspSummarizedBOM();
-    void sDspSequencedBOM();
     void sDspSingleLevelWhereUsed();
     void sDspIndentedWhereUsed();
     void sDspPendingBOMChanges();
@@ -108,8 +100,6 @@ class menuProducts : public QObject
     QMenu *mainMenu;
     QMenu *itemsMenu;
     QMenu *bomMenu;
-    QMenu *booMenu;
-    QMenu *breederBOMMenu;
     QMenu *costingMenu;
     QMenu *costingUpdActMenu;
     QMenu *costingPostActMenu;

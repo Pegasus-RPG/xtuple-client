@@ -41,6 +41,7 @@ HEADERS +=  setupscriptapi.h                    \
             qdoublevalidatorproto.h             \
             qeventproto.h                       \
             qfontproto.h                        \
+            qiconproto.h                        \
             qmenuproto.h                        \
             qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
@@ -52,6 +53,7 @@ HEADERS +=  setupscriptapi.h                    \
             qtabwidgetproto.h                   \
             qtextdocumentproto.h                \
             qtexteditproto.h                    \
+            qtoolbarproto.h                     \
             qtreewidgetitemproto.h              \
             qtsetup.h                           \
             qurlproto.h                         \
@@ -112,6 +114,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdoublevalidatorproto.cpp           \
             qeventproto.cpp                     \
             qfontproto.cpp                      \
+            qiconproto.cpp                      \
             qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \
@@ -123,6 +126,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qtabwidgetproto.cpp                 \
             qtextdocumentproto.cpp              \
             qtexteditproto.cpp                  \
+            qtoolbarproto.cpp                   \
             qtreewidgetitemproto.cpp            \
             qtsetup.cpp                         \
             qurlproto.cpp                       \

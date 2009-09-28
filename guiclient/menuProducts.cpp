@@ -37,9 +37,6 @@
 #include "massReplaceComponent.h"
 #include "massExpireComponent.h"
 
-#include "bbom.h"
-#include "bboms.h"
-
 #include "maintainItemCosts.h"
 #include "updateActualCostsByItem.h"
 #include "updateActualCostsByClassCode.h"
@@ -61,7 +58,6 @@
 #include "dspSingleLevelBOM.h"
 #include "dspIndentedBOM.h"
 #include "dspSummarizedBOM.h"
-#include "dspSequencedBOM.h"
 #include "dspSingleLevelWhereUsed.h"
 #include "dspIndentedWhereUsed.h"
 #include "dspPendingBOMChanges.h"
@@ -100,8 +96,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   mainMenu	= new QMenu(parent);
   itemsMenu	= new QMenu(parent);
   bomMenu	= new QMenu(parent);
-  booMenu = new QMenu(parent);
-  breederBOMMenu = new QMenu(parent);
   costingMenu = new QMenu(parent);
   costingUpdActMenu = new QMenu(parent);
   costingPostActMenu = new QMenu(parent);
@@ -120,8 +114,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   mainMenu->setObjectName("menu.prod");
   itemsMenu->setObjectName("menu.prod.items");
   bomMenu->setObjectName("menu.prod.bom");
-  booMenu->setObjectName("menu.prod.boo");
-  breederBOMMenu->setObjectName("menu.prod.breeder");
   costingMenu->setObjectName("menu.prod.costing");
   costingUpdActMenu->setObjectName("menu.prod.costingupdact");
   costingPostActMenu->setObjectName("menu.prod.costingpostact");
@@ -154,7 +146,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.dspSingleLevelBOM", tr("&Single Level..."), SLOT(sDspSingleLevelBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
   { "pd.dspIndentedBOM", tr("&Indented..."), SLOT(sDspIndentedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
   { "pd.dspSummarizedBOM", tr("Summari&zed..."), SLOT(sDspSummarizedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
-  { "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL,  _metrics->boolean("Routings") , NULL },
+  //{ "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL,  _metrics->boolean("Routings") , NULL },
   
   // Product | Reports | Where Used
   { "menu",	tr("&Where Used"), (char*)reportsWhereUsdMenu,	reportsMenu, "true", NULL, NULL, true , NULL },
@@ -192,17 +184,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.massReplaceComponentItem", tr("Mass &Replace..."), SLOT(sMassReplaceComponent()), bomMenu, "MaintainBOMs", NULL, NULL, true , NULL },
   { "pd.massExpireComponentItem", tr("Mass E&xpire..."), SLOT(sMassExpireComponent()),  bomMenu, "MaintainBOMs", NULL, NULL, true , NULL },
 
-  // Product | Bill of Operations...
-  { "menu",	tr("Bill Of &Operations"), (char*)booMenu,	mainMenu, "true", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.enterNewBOO", tr("&New..."), SLOT(sNewBOO()), booMenu, "MaintainBOOs", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, "MaintainBOOs ViewBOOs", QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , tr("List Bill of Operations") },
-  { "pd.copyBOO", tr("&Copy..."), SLOT(sCopyBOO()), booMenu, "MaintainBOOs", NULL, NULL, _metrics->boolean("Routings") , NULL },
-
-  // Product | Breeder Bill of Materials
-  { "menu",	tr("&Breeder Bill Of Materials"), (char*)breederBOMMenu,	mainMenu, "true", NULL, NULL,  _metrics->boolean("BBOM") , NULL },
-  { "pd.enterNewBreederBOM", tr("&New..."), SLOT(sNewBreederBOM()), breederBOMMenu, "MaintainBBOMs", NULL, NULL, _metrics->boolean("BBOM") , NULL },
-  { "pd.listBreederBOMs", tr("&List..."), SLOT(sBreederBOMs()), breederBOMMenu, "MaintainBBOMs ViewBBOMs", NULL, NULL, _metrics->boolean("BBOM") , NULL },
-  
   // Product | Costing
   { "menu",	tr("&Costing"), (char*)costingMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   { "pd.maintainItemCosts", tr("&Maintain Item Costs..."), SLOT(sMaintainItemCosts()), costingMenu, "ViewCosts", NULL, NULL, true , NULL },
@@ -393,41 +374,6 @@ void menuProducts::sMassExpireComponent()
   omfgThis->handleNewWindow(new massExpireComponent());
 }
 
-void menuProducts::sNewBOO()
-{
-  ParameterList params;
-  params.append("mode", "new");
-
-  boo *newdlg = new boo();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuProducts::sBOOs()
-{
-  omfgThis->handleNewWindow(new booList());
-}
-
-void menuProducts::sCopyBOO()
-{
-  copyBOO(parent, "", TRUE).exec();
-}
-
-void menuProducts::sNewBreederBOM()
-{
-  ParameterList params;
-  params.append("mode", "new");
-
-  bbom *newdlg = new bbom();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuProducts::sBreederBOMs()
-{
-  omfgThis->handleNewWindow(new bboms());
-}
-
 //  Costing
 void menuProducts::sMaintainItemCosts()
 {
@@ -554,11 +500,6 @@ void menuProducts::sDspIndentedBOM()
 void menuProducts::sDspSummarizedBOM()
 {
   omfgThis->handleNewWindow(new dspSummarizedBOM());
-}
-
-void menuProducts::sDspSequencedBOM()
-{
-  omfgThis->handleNewWindow(new dspSequencedBOM());
 }
 
 void menuProducts::sDspSingleLevelWhereUsed()
