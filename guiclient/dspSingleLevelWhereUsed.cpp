@@ -16,7 +16,6 @@
 #include <openreports.h>
 
 #include "bom.h"
-#include "boo.h"
 #include "dspInventoryHistoryByItem.h"
 #include "item.h"
 
@@ -110,10 +109,6 @@ void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu)
   if (!_privileges->check("MaintainBOMs"))
     menu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = menu->insertItem(tr("Edit Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-  if (!_privileges->check("MaintainBOOs"))
-    menu->setItemEnabled(menuItem, FALSE);
-
   menuItem = menu->insertItem(tr("Edit Item Master..."), this, SLOT(sEditItem()), 0);
   if (!_privileges->check("MaintainItemMasters"))
     menu->setItemEnabled(menuItem, FALSE);
@@ -130,17 +125,6 @@ void dspSingleLevelWhereUsed::sEditBOM()
   params.append("item_id", _bomitem->id());
 
   BOM *newdlg = new BOM();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspSingleLevelWhereUsed::sEditBOO()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _bomitem->id());
-
-  boo *newdlg = new boo();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

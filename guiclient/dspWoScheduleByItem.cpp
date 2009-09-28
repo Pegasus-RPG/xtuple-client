@@ -18,14 +18,12 @@
 #include <openreports.h>
 
 #include "bom.h"
-#include "boo.h"
 #include "changeWoQty.h"
 #include "closeWo.h"
 #include "correctOperationsPosting.h"
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
-#include "dspWoEffortByWorkOrder.h"
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoOperationsByWorkOrder.h"
 #include "explodeWo.h"
@@ -43,8 +41,6 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -498,21 +494,10 @@ void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
   
   menuItem = pMenu->insertItem(tr("View Bill of Materials..."), this, SLOT(sViewBOM()), 0);
   pMenu->setItemEnabled(menuItem, _privileges->check("ViewBOMs"));
-  if (_metrics->boolean("Routings"))
-  {
-    menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewBOOs"));
-  }
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
-
-  if (_metrics->boolean("Routings"))
-  {
-    menuItem = pMenu->insertItem(tr("Production Time Clock by Work Order..."), this, SLOT(sDspWoEffortByWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")));
-  }
 }
 
 void dspWoScheduleByItem::sFillList()
@@ -563,18 +548,6 @@ void dspWoScheduleByItem::sHandleAutoUpdate(bool pAutoUpdate)
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }
 
-void dspWoScheduleByItem::sDspWoEffortByWorkOrder()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-  params.append("run");
-
-  dspWoEffortByWorkOrder *newdlg = new dspWoEffortByWorkOrder();
-  enum SetResponse setresp = newdlg->set(params);
-  if (setresp == NoError || setresp == NoError_Run)
-    omfgThis->handleNewWindow(newdlg);
-}
-
 void dspWoScheduleByItem::sIssueWoMaterialItem()
 {
   issueWoMaterialItem newdlg(this);
@@ -617,24 +590,3 @@ void dspWoScheduleByItem::sViewBOM()
   }
 }
 
-void dspWoScheduleByItem::sViewBOO()
-{
-  q.prepare("SELECT itemsite_item_id FROM itemsite WHERE (itemsite_id=:id);");
-  q.bindValue(":id", _wo->altId());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("item_id", q.value("itemsite_item_id"));
-    params.append("mode", "view");
-
-    boo *newdlg = new boo();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}

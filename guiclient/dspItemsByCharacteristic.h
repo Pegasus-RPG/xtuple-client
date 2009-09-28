@@ -34,8 +34,6 @@ public slots:
     virtual void sView();
     virtual void sEditBOM();
     virtual void sViewBOM();
-    virtual void sEditBOO();
-    virtual void sViewBOO();
     virtual void sFillList();
     virtual void sFillList( int pItemid, bool pLocal );
 

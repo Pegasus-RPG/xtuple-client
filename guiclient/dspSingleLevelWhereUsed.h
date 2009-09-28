@@ -30,7 +30,6 @@ public slots:
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * menu );
     virtual void sEditBOM();
-    virtual void sEditBOO();
     virtual void sEditItem();
     virtual void sViewInventoryHistory();
     virtual void sFillList();

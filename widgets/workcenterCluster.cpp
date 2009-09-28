@@ -17,7 +17,7 @@ WorkCenterCluster::WorkCenterCluster(QWidget* pParent, const char* pName) :
 }
 
 WorkCenterLineEdit::WorkCenterLineEdit(QWidget *pParent, const char *pName)
-  : VirtualClusterLineEdit(pParent, "wrkcnt", "wrkcnt_id", "wrkcnt_code", "wrkcnt_descrip", 0, 0, pName)
+  : VirtualClusterLineEdit(pParent, "xtmfg.wrkcnt", "wrkcnt_id", "wrkcnt_code", "wrkcnt_descrip", 0, 0, pName)
 {
   setTitles(tr("Work Center"), tr("Work Centers"));
 }

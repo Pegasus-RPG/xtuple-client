@@ -1042,10 +1042,6 @@ void itemAvailabilityWorkbench::sPopulateMenuWhereUsed( QMenu *menu, QTreeWidget
   if (!_privileges->check("MaintainBOMs"))
     menu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = menu->insertItem(tr("Edit Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-  if (!_privileges->check("MaintainBOOs"))
-    menu->setItemEnabled(menuItem, FALSE);
-
   menuItem = menu->insertItem(tr("Edit Item Master..."), this, SLOT(sEditItem()), 0);
   if (!_privileges->check("MaintainItemMasters"))
     menu->setItemEnabled(menuItem, FALSE);
@@ -1427,17 +1423,6 @@ void itemAvailabilityWorkbench::sEditBOM()
   params.append("item_id", _whereused->id());
 
   BOM *newdlg = new BOM();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sEditBOO()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _whereused->id());
-
-  boo *newdlg = new boo();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

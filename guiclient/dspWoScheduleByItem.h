@@ -34,7 +34,6 @@ public slots:
     virtual void sCorrectProductionPosting();
     virtual void sDeleteWO();
     virtual void sDspRunningAvailability();
-    virtual void sDspWoEffortByWorkOrder();
     virtual void sEdit();
     virtual void sExplodeWO();
     virtual void sFillList();
@@ -53,7 +52,6 @@ public slots:
     virtual void sRescheduleWO();
     virtual void sView();
     virtual void sViewBOM();
-    virtual void sViewBOO();
     virtual void sViewWomatl();
     virtual void sViewWooper();
 

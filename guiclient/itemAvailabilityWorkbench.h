@@ -73,7 +73,6 @@ public slots:
     virtual void sRelocateInventory();
     virtual void sReassignLotSerial();
     virtual void sEditBOM();
-    virtual void sEditBOO();
     virtual void sEditItem();
     virtual void sViewInventoryHistory();
     virtual void sClearQueries();

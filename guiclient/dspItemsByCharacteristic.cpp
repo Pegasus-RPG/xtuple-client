@@ -19,7 +19,6 @@
 #include <openreports.h>
 #include <parameter.h>
 
-#include "boo.h"
 #include "bom.h"
 #include "item.h"
 #include "mqlutil.h"
@@ -99,6 +98,7 @@ void dspItemsByCharacteristic::sPrint()
 
 void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
+  XTreeWidgetItem * xselected = static_cast<XTreeWidgetItem*>(selected);
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Item Master..."), this, SLOT(sEdit()), 0);
@@ -107,7 +107,7 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
 
   menuItem = pMenu->insertItem(tr("View Item Master..."), this, SLOT(sView()), 0);
 
-  if (selected->text(2) == "M")
+  if (xselected && (xselected->rawValue("type").toString() == "M"))
   {
     menuItem = pMenu->insertItem(tr("Edit Bill of Material..."), this, SLOT(sEditBOM()), 0);
     if (!_privileges->check("MaintainBOMs"))
@@ -115,14 +115,6 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
 
     menuItem = pMenu->insertItem(tr("View Bill of Material..."), this, SLOT(sViewBOM()), 0);
     if ( (!_privileges->check("MaintainBOMs")) && (!_privileges->check("ViewBOMs")) )
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    menuItem = pMenu->insertItem(tr("Edit Item Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-    if (!_privileges->check("MaintainBOOs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    menuItem = pMenu->insertItem(tr("View Item Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-    if ( (!_privileges->check("MaintainBOOs")) && (!_privileges->check("ViewBOOs")) )
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
@@ -155,28 +147,6 @@ void dspItemsByCharacteristic::sViewBOM()
   params.append("item_id", _item->id());
 
   BOM *newdlg = new BOM();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspItemsByCharacteristic::sEditBOO()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _item->id());
-
-  boo *newdlg = new boo();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void dspItemsByCharacteristic::sViewBOO()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("item_id", _item->id());
-
-  boo *newdlg = new boo();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

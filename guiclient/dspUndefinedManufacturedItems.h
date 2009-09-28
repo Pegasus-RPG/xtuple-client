@@ -24,11 +24,8 @@ public:
     dspUndefinedManufacturedItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUndefinedManufacturedItems();
 
-    virtual void init();
-
 public slots:
     virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sCreateBOO();
     virtual void sCreateBOM();
     virtual void sEditItem();
     virtual void sFillList();
