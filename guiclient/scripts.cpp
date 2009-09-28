@@ -95,7 +95,7 @@ void scripts::sDelete()
 
 void scripts::sFillList()
 {
-  q.exec("SELECT script.*,"
+  q.exec("SELECT script_id, script_name, script_order, script_enabled, script_notes,"
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
          "  FROM script, pg_class, pg_namespace"
