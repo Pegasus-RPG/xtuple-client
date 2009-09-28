@@ -20,6 +20,8 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
 {
   setupUi(this);
 
+  _captive = false;
+
   // signals and slots connections
   connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
