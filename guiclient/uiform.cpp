@@ -107,7 +107,7 @@ void uiform::setMode(const int pmode)
     case cNew:
     case cEdit:
       _name->setEnabled(true);
-      _order->setEnabled(true);
+      _grade->setEnabled(true);
       _notes->setReadOnly(false);
       _import->setEnabled(true);
       _enabled->setEnabled(true);
@@ -122,7 +122,7 @@ void uiform::setMode(const int pmode)
     case cView:
     default:
       _name->setEnabled(false);
-      _order->setEnabled(false);
+      _grade->setEnabled(false);
       _notes->setReadOnly(true);
       _import->setEnabled(false);
       _enabled->setEnabled(false);
@@ -200,7 +200,7 @@ void uiform::sSave()
 
   q.bindValue(":uiform_id", _uiformid);
   q.bindValue(":uiform_name", _name->text());
-  q.bindValue(":uiform_order", _order->value());
+  q.bindValue(":uiform_order", _grade->value());
   q.bindValue(":uiform_enabled", QVariant(_enabled->isChecked()));
   q.bindValue(":uiform_source", _source);
   q.bindValue(":uiform_notes", _notes->text());
@@ -265,7 +265,7 @@ void uiform::populate()
   if (q.first())
   {
     _name->setText(q.value("uiform_name").toString());
-    _order->setValue(q.value("uiform_order").toInt());
+    _grade->setValue(q.value("uiform_order").toInt());
     _enabled->setChecked(q.value("uiform_enabled").toBool());
     _source = q.value("uiform_source").toString();
     _notes->setText(q.value("uiform_notes").toString());
@@ -319,7 +319,7 @@ void uiform::sEdit()
   xTupleDesigner *designer = new xTupleDesigner(this, "xTupleDesigner", Qt::Window);
   designer->setFormEnabled(_enabled->isChecked());
   designer->setFormId(_uiformid);
-  designer->setOrder(_order->value());
+  designer->setOrder(_grade->value());
   if (_source.isEmpty())
     designer->setSource(new QFile(":newForm.ui"));
   else
@@ -329,7 +329,7 @@ void uiform::sEdit()
   connect(designer, SIGNAL(formIdChanged(int)),      this,    SLOT(setFormId(int)));
   //connect(designer, SIGNAL(nameChanged(QString)),    _name,   SLOT(setText(QString)));
   connect(designer, SIGNAL(notesChanged(QString)),   _notes,  SLOT(setText(QString)));
-  //connect(designer, SIGNAL(orderChanged(int)),       _order,  SLOT(setValue(int)));
+  //connect(designer, SIGNAL(orderChanged(int)),       _grade,  SLOT(setValue(int)));
   connect(designer, SIGNAL(sourceChanged(QString)),  this,    SLOT(setSource(QString)));
 
   omfgThis->handleNewWindow(designer);

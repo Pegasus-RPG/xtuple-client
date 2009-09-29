@@ -448,7 +448,7 @@ QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
               "  FROM uiform"
               " WHERE((uiform_name=:uiform_name)"
               "   AND (uiform_enabled))"
-              " ORDER BY uiform_order"
+              " ORDER BY uiform_order DESC"
               " LIMIT 1;");
   qui.bindValue(":uiform_name", screenName);
   qui.exec();
@@ -797,8 +797,11 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
 
   XSqlQuery screenq;
   screenq.prepare("SELECT * "
-                  "FROM uiform "
-                  "WHERE (uiform_name=:uiform_name);");
+                  "  FROM uiform "
+                  " WHERE((uiform_name=:uiform_name)"
+                  "   AND (uiform_enabled))"
+                  " ORDER BY uiform_order DESC"
+                  " LIMIT 1;");
   screenq.bindValue(":uiform_name", name);
   screenq.exec();
   if (screenq.first())

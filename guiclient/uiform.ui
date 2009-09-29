@@ -52,15 +52,15 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_orderLit">
+        <widget class="QLabel" name="_gradeLit">
          <property name="text">
-          <string>&amp;Order</string>
+          <string>&amp;Grade:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
-          <cstring>_order</cstring>
+          <cstring>_grade</cstring>
          </property>
         </widget>
        </item>
@@ -123,7 +123,7 @@ to be bound by its terms.</comment>
        <item>
         <layout class="QHBoxLayout">
          <item>
-          <widget class="QSpinBox" name="_order">
+          <widget class="QSpinBox" name="_grade">
            <property name="maximum">
             <number>999</number>
            </property>
@@ -418,7 +418,7 @@ to be bound by its terms.</comment>
   <tabstop>_name</tabstop>
   <tabstop>_package</tabstop>
   <tabstop>_notes</tabstop>
-  <tabstop>_order</tabstop>
+  <tabstop>_grade</tabstop>
   <tabstop>_enabled</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_import</tabstop>

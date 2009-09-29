@@ -1234,7 +1234,7 @@ void GUIClient::sCustomCommand()
                 "  FROM uiform"
                 " WHERE((uiform_name=:uiform_name)"
                 "   AND (uiform_enabled))"
-                " ORDER BY uiform_order"
+                " ORDER BY uiform_order DESC"
                 " LIMIT 1;");
       q.bindValue(":uiform_name", asName);
       q.exec();
