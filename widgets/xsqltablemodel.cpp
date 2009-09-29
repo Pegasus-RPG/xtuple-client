@@ -85,8 +85,7 @@ QString XSqlTableModel::selectStatement() const
     for (int i = 0; i < rec.count(); ++i) {
         QSqlRelation rel = relation(i);
         QString name;
-        if (rel.isValid())
-        {
+        if (rel.isValid()) {
             // Count the display column name, not the original foreign key
             name = rel.displayColumn();
             fkeycount++;
@@ -156,54 +155,37 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
     } break;
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:
-      if (roles.contains(index)) {
-         QHash<QModelIndex, ItemDataRoles>::const_iterator i = roles.find(index);
-         while (i != roles.end() && i.key() == index) {
-           if (i.value().role == role)
-             return i.value().value;
-           ++i;
-         }
-      }
+      QPair<QModelIndex, int> key;
+      key.first = index;
+      key.second = role;
+      if (roles.contains(key))
+        return roles.value(key);
     }
     
-    return QVariant();
+    return QVariant(); 
 }
 
 bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!index.isValid())
-        return false;
-        
-    bool changed = false;
-    switch (role) {
-    case Qt::EditRole:
-    case Qt::DisplayRole: {
-      changed =  QSqlRelationalTableModel::setData(index, value, role);
-    } break;
-    case Qt::TextAlignmentRole:
-    case Qt::ForegroundRole:
-      if (roles.contains(index)) {
-         roles.begin();
-         QHash<QModelIndex, ItemDataRoles>::iterator i = roles.find(index);
-         while (i != roles.end() && i.key() == index)  {
-           if (i.value().role == role) {
-             if (i.value().value == value)
-               return true;
-             else {
-               i = roles.erase(i);
-               break;
-             }
-           }
-           ++i;
-         }
-      }
-      // Create a new entry
-      roles.insertMulti(index, ItemDataRoles(role, value));
-      changed =  true;
-    }
-    
-    if (changed)
-      emit dataChanged ( index, index );
+  if (!index.isValid())
+      return false;
       
-    return changed;
+  switch (role) {
+  case Qt::EditRole:
+  case Qt::DisplayRole: {
+    return QSqlRelationalTableModel::setData(index, value, role);
+  } break;
+  case Qt::TextAlignmentRole:
+  case Qt::ForegroundRole:
+    QPair<QModelIndex, int> key;
+    key.first = index;
+    key.second = role;
+    if (roles.contains(key)) {
+      if (roles.value(key) == value)
+        return true;
+    }
+    roles.insert(key, value);
+    emit dataChanged ( index, index );
+  }
+  return true;
 }

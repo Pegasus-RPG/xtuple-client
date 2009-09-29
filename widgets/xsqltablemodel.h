@@ -32,15 +32,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     virtual QString selectStatement() const;
     
     private:
-    struct ItemDataRoles
-    { 
-        inline ItemDataRoles(int r, const QVariant v)
-            : role(r), value(v) {}
-
-      int role;            
-      QVariant value;
-    };
-    QHash<QModelIndex, ItemDataRoles> roles;
+      QHash<QPair<QModelIndex, int>, QVariant> roles;
 };
 
 #endif
