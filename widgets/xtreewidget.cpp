@@ -71,18 +71,6 @@
 #define ROWROLE_COUNT            2
 
 
-enum XTRole { RawRole = (Qt::UserRole + 1),
-              ScaleRole,
-              IdRole,
-              RunningSetRole,
-              RunningInitRole,
-              TotalSetRole,
-              TotalInitRole,
-              // KeyRole,
-              // GroupRunningRole,
-              IndentRole
-            };
-
 //cint() and round() regarding Issue #8897
 #include <cmath>
 
@@ -110,6 +98,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _settingsLoaded = false;
   _menu = new QMenu(this);
   _menu->setObjectName("_menu");
+  _savedId = -1;
   _scol = -1;
   _sord = Qt::AscendingOrder;
 
@@ -204,19 +193,20 @@ void XTreeWidget::populate(const QString &pSql, int pIndex, bool pUseAltId)
   qApp->restoreOverrideCursor();
 }
 
-void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId)
+void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId, PopulateStyle popstyle)
 {
-  populate(pQuery, id(), pUseAltId);
+  populate(pQuery, id(), pUseAltId, popstyle);
 }
 
-void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
+void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, PopulateStyle popstyle)
 {
   qApp->setOverrideCursor(Qt::waitCursor);
 
   if (pIndex < 0)
     pIndex = id();
 
-  clear();
+  if (popstyle == Replace)
+    clear();
 
   if (pQuery.first())
   {
@@ -249,6 +239,9 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           rowRole[ROWROLE_HIDDEN] = 0;
 
         // keep synchronized with #define COLROLE_* above
+        // TODO: get rid of COLROLE_* above and replace this QStringList
+        // with a map or vector of known roles and their Qt:: role or XTRole
+        // enum values
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
 		   << "qtbackgroundrole"   << "qtforegroundrole"
@@ -545,6 +538,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
       {
+        if (DEBUG) qDebug("%s::populate() old-style", qPrintable(objectName()));
 	do
 	{
 	  if (pUseAltId)
@@ -1083,7 +1077,10 @@ void XTreeWidget::setAltDragString(QString pAltDragString)
 
 void XTreeWidget::clear()
 {
+  if (DEBUG)
+    qDebug("%s::clear()", qPrintable(objectName()));
   emit valid(FALSE);
+  _savedId = -1;
 
   QTreeWidget::clear();
 }
@@ -1663,13 +1660,134 @@ void XTreeWidgetItemListfromScriptValue(const QScriptValue &scriptlist, QList<XT
   }
 }
 
+// script exposure of xtreewidgetitem /////////////////////////////////////////
+
 Q_DECLARE_METATYPE(QList<XTreeWidgetItem*>)
+
+QScriptValue constructXTreeWidgetItem(QScriptContext *context,
+                                      QScriptEngine  *engine)
+{
+  XTreeWidgetItem *obj = 0;
+
+  int              variantidx =  0;     // index in arg list of first qvariant
+
+  if (qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0))
+      && context->argument(1).isNumber())
+  {
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem(item, id)");
+    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0)),
+                              context->argument(1).toInt32());
+    variantidx = 2;
+  }
+  else if (qscriptvalue_cast<XTreeWidget*>(context->argument(0))
+           && context->argument(1).isNumber())
+  {
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem(tree, id)");
+    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidget*>(context->argument(0)),
+                              context->argument(1).toInt32());
+    variantidx = 2;
+  }
+  else if (qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0))
+           && qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1))
+           && context->argument(2).isNumber())
+  {
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem(item, item, id)");
+    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0)),
+                              qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1)),
+                              context->argument(2).toInt32());
+    variantidx = 3;
+  }
+  else if (qscriptvalue_cast<XTreeWidget*>(context->argument(0))
+           && qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1))
+           && context->argument(2).isNumber())
+  {
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem(tree, item, id)");
+    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidget*>(context->argument(0)),
+                              qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1)),
+                              context->argument(2).toInt32());
+    variantidx = 3;
+  }
+
+  if (obj)
+  {
+    if (context->argument(variantidx).isNumber())
+    {
+      if (DEBUG)
+        qDebug("constructXTreeWidgetItem found altId");
+      obj->setAltId(context->argument(variantidx).toInt32());
+      variantidx++;
+    }
+
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem variantidx %d with %d total args",
+             variantidx, context->argumentCount());
+    for ( ; variantidx < context->argumentCount(); variantidx++)
+      obj->setData(variantidx, RawRole, context->argument(variantidx).toVariant());
+  }
+
+  return engine->toScriptValue(obj);
+}
 
 void setupXTreeWidgetItem(QScriptEngine *engine)
 {
- qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue, XTreeWidgetItemfromScriptValue);
- qScriptRegisterMetaType(engine, XTreeWidgetItemListtoScriptValue, XTreeWidgetItemListfromScriptValue);
+  qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue, XTreeWidgetItemfromScriptValue);
+  qScriptRegisterMetaType(engine, XTreeWidgetItemListtoScriptValue, XTreeWidgetItemListfromScriptValue);
+
+  QScriptValue constructor = engine->newFunction(constructXTreeWidgetItem);
+  engine->globalObject().setProperty("XTreeWidgetItem", constructor, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
 }
+
+// xtreewidget ////////////////////////////////////////////////////////////////
+
+void setupXTreeWidget(QScriptEngine *engine)
+{
+  QScriptValue glob = engine->newObject();
+
+  glob.setProperty("Replace", QScriptValue(engine, XTreeWidget::Replace), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("Append",  QScriptValue(engine, XTreeWidget::Append), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  glob.setProperty("itemColumn",     QScriptValue(engine, _itemColumn),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("whsColumn",      QScriptValue(engine, _whsColumn),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("userColumn",     QScriptValue(engine, _userColumn),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("dateColumn",     QScriptValue(engine, _dateColumn),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("timeDateColumn", QScriptValue(engine, _timeDateColumn),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("timeColumn",     QScriptValue(engine, _timeColumn),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("qtyColumn",      QScriptValue(engine, _qtyColumn),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("priceColumn",    QScriptValue(engine, _priceColumn),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("moneyColumn",    QScriptValue(engine, _moneyColumn),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("bigMoneyColumn", QScriptValue(engine, _bigMoneyColumn),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("costColumn",     QScriptValue(engine, _costColumn),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("prcntColumn",    QScriptValue(engine, _prcntColumn),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("transColumn",    QScriptValue(engine, _transColumn),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("uomColumn",      QScriptValue(engine, _uomColumn),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("orderColumn",    QScriptValue(engine, _orderColumn),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("statusColumn",   QScriptValue(engine, _statusColumn),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("seqColumn",      QScriptValue(engine, _seqColumn),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("ynColumn",       QScriptValue(engine, _ynColumn),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("docTypeColumn",  QScriptValue(engine, _docTypeColumn), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  glob.setProperty("RawRole",         QScriptValue(engine, RawRole),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("ScaleRole",       QScriptValue(engine, ScaleRole),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("IdRole",          QScriptValue(engine, IdRole),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("RunningSetRole",  QScriptValue(engine, RunningSetRole),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("RunningInitRole", QScriptValue(engine, RunningInitRole), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("TotalSetRole",    QScriptValue(engine, TotalSetRole),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("TotalInitRole",   QScriptValue(engine, TotalInitRole),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+//glob.setProperty("KeyRole",         QScriptValue(engine, KeyRole),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
+//glob.setProperty("GroupRunningRole",QScriptValue(engine, GroupRunningRole),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("IndentRole",      QScriptValue(engine, IndentRole),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("XTreeWidget", glob, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+}
+
+Q_DECLARE_METATYPE(XTreeWidget*)
 
 void XTreeWidget::sCopyRowToClipboard()
 {

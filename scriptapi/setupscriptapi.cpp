@@ -157,6 +157,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupXDataWidgetMapperProto(engine);
   setupXDateEdit(engine);
   setupXSqlTableModelProto(engine);
+  setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
 
 }

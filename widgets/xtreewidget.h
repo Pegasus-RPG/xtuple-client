@@ -41,7 +41,6 @@
 #define _docTypeColumn     80
 #define _currencyColumn    80
 
-
 #include "xsqlquery.h"
 
 class QAction;
@@ -50,6 +49,20 @@ class QScriptEngine;
 class XTreeWidget;
 
 void setupXTreeWidgetItem(QScriptEngine *engine);
+void setupXTreeWidget(QScriptEngine *engine);
+
+// TODO: does this really belong inside XTreeWidget?
+enum XTRole { RawRole = (Qt::UserRole + 1),
+              ScaleRole,
+              IdRole,
+              RunningSetRole,
+              RunningInitRole,
+              TotalSetRole,
+              TotalInitRole,
+              // KeyRole,
+              // GroupRunningRole,
+              IndentRole
+};
 
 class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
@@ -118,7 +131,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetI
     Q_INVOKABLE inline void setId(int pId)    { _id = pId;     }
     Q_INVOKABLE inline void setAltId(int pId) { _altId = pId;  }
 
-    Q_INVOKABLE virtual QVariant rawValue(const QString);
+    Q_INVOKABLE inline  QVariant data(int colidx,    int role) const                { return QTreeWidgetItem::data(colidx, role); }
+    Q_INVOKABLE inline  void     setData(int colidx, int role, const QVariant &val) { QTreeWidgetItem::setData(colidx, role, val); }
+    Q_INVOKABLE virtual QVariant rawValue(const QString colname);
     Q_INVOKABLE virtual int      id(const QString);
 
     virtual bool operator<(const XTreeWidgetItem &other) const;
@@ -153,12 +168,15 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_PROPERTY(QString dragString READ dragString WRITE setDragString)
   Q_PROPERTY(QString altDragString READ altDragString WRITE setAltDragString)
 
+  Q_ENUMS   (PopulateStyle)
+
   public:
+    enum PopulateStyle { Replace, Append };
     XTreeWidget(QWidget *);
     ~XTreeWidget();
     
-    Q_INVOKABLE void populate(XSqlQuery, bool = FALSE);
-    Q_INVOKABLE void populate(XSqlQuery, int, bool = FALSE);
+    Q_INVOKABLE void populate(XSqlQuery, bool = FALSE, PopulateStyle = Replace);
+    Q_INVOKABLE void populate(XSqlQuery, int, bool = FALSE, PopulateStyle = Replace);
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 
@@ -289,6 +307,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     bool        _resizingInProcess;
     bool        _forgetful;
     bool        _forgetfulOrder;
+    bool        _savedId;
     bool        _settingsLoaded;
     QString     _settingsName;
     int         _resetWhichWidth;
