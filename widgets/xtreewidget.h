@@ -253,6 +253,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void sCopyVisibleToClipboard();
     void sCopyRowToClipboard();
     void sCopyCellToClipboard();
+    void sSearch(const QString &);
 
   signals:
     void  valid(bool);

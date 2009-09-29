@@ -1891,6 +1891,24 @@ void XTreeWidget::sCopyVisibleToClipboard()
   clipboard->setMimeData(mime);
 }
 
+void XTreeWidget::sSearch(const QString & pTarget)
+{
+  clearSelection();
+  int i;
+  for (i = 0; i < topLevelItemCount(); i++)
+  {
+    // Currently this only looks at the first column
+    if (topLevelItem(i)->text(0).contains(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+
+  if (i < topLevelItemCount())
+  {
+    setCurrentItem(topLevelItem(i));
+    scrollToItem(topLevelItem(i));
+  }
+}
+
 QString XTreeWidget::toTxt() const
 {
   QString line;
