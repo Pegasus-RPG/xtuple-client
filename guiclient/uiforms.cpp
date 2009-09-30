@@ -34,7 +34,7 @@ uiforms::uiforms(QWidget* parent, const char* name, Qt::WFlags fl)
   _uiform->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "uiform_notes");
   _uiform->addColumn(tr("Grade"),    _ynColumn, Qt::AlignCenter,true, "uiform_order");
   _uiform->addColumn(tr("Enabled"),  _ynColumn, Qt::AlignCenter,true, "uiform_enabled");
-  _uiform->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
+  _uiform->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  true, "nspname");
 
   sFillList();
 }
@@ -97,7 +97,7 @@ void uiforms::sDelete()
 
 void uiforms::sFillList()
 {
-  q.exec("SELECT uiform_name, uiform_notes, uiform_order, uiform_enabled,"
+  q.exec("SELECT uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled,"
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
          "  FROM uiform, pg_class, pg_namespace"

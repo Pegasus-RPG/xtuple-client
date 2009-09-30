@@ -31,7 +31,7 @@ scripts::scripts(QWidget* parent, const char* name, Qt::WFlags fl)
   _script->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "script_notes");
   _script->addColumn(tr("Order"),    _ynColumn, Qt::AlignCenter,true, "script_order");
   _script->addColumn(tr("Enabled"),  _ynColumn, Qt::AlignCenter,true, "script_enabled");
-  _script->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
+  _script->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  true, "nspname");
 
   sFillList();
 }
