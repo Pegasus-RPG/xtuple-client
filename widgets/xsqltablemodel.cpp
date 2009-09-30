@@ -24,6 +24,15 @@ XSqlTableModel::~XSqlTableModel()
 {
 }
 
+bool XSqlTableModel::select()
+{
+  bool result;
+  result = QSqlRelationalTableModel::select();
+  if (result && rowCount());
+    emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
+  return result;
+}
+
 void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
 {
   QSqlRelationalTableModel::setTable(tableName);

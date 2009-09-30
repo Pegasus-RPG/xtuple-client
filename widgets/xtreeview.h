@@ -79,12 +79,11 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void  populateMenu(QMenu *, QModelIndex);
       
     protected:
-      virtual void applyColumnRoles(const QString column);
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
     private slots:
-      void emitDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight);
+      void handleDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight);
       void popupMenuActionTriggered(QAction*);
       void sColumnSizeChanged(int, int, int);
       void sResetAllWidths();
@@ -119,16 +118,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
         bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-      
-      struct ColumnRole { 
-          inline ColumnRole(QString c, const QVariant v, int r)
-              : columnName(c), value(v),  role(r) {}
-              
-        QString columnName;
-        QVariant value;
-        int role;
-      };
-      QList<ColumnRole> _columnRoles;
+      QHash<int, QPair<QVariant, int> > _columnRoles;
       
 };
 

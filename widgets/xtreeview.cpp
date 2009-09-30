@@ -60,8 +60,7 @@ XTreeView::XTreeView(QWidget *parent) :
                     SLOT(sShowHeaderMenu(const QPoint &)));
   connect(header(), SIGNAL(sectionResized(int, int, int)),
           this,     SLOT(sColumnSizeChanged(int, int, int)));
-  connect(_model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(emitDataChanged(const QModelIndex, const QModelIndex)));
-
+  connect(_model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(handleDataChanged(const QModelIndex, const QModelIndex)));
   _windowName = window()->objectName();
 }
 
@@ -109,8 +108,7 @@ XTreeView::~XTreeView()
 QString XTreeView::columnNameFromLogicalIndex(const int logicalIndex) const
 {
   for (QMap<QString, ColumnProps*>::const_iterator it = _columnByName.constBegin();
-       it != _columnByName.constEnd(); it++)
-  {
+       it != _columnByName.constEnd(); it++) {
     if (it.value()->logicalIndex == logicalIndex)
       return it.value()->columnName;
   }
@@ -133,8 +131,7 @@ void XTreeView::sShowMenu(const QPoint &pntThis)
     bool disableExport = FALSE;
     if(_x_preferences)
       disableExport = (_x_preferences->value("DisableExportContents")=="t");
-    if(!disableExport)
-    {
+    if(!disableExport) {
       if (_menu->count())
         _menu->insertSeparator();
 
@@ -156,8 +153,7 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 // If we have a default value and the current size is not equal to that default value
 // then we want to show the menu items for resetting those values back to default
   ColumnProps *cp = _columnByName.value(columnNameFromLogicalIndex(logicalIndex), 0);
-  if (cp && (cp->defaultWidth > 0) && (cp->defaultWidth != currentSize) )
-  {
+  if (cp && (cp->defaultWidth > 0) && (cp->defaultWidth != currentSize) ) {
     _resetWhichWidth = logicalIndex;
     _menu->insertItem(tr("Reset this Width"), this, SLOT(sResetWidth()));
   }
@@ -171,8 +167,7 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 
   _menu->insertSeparator();
 
-  for(int i = 0; i < header()->count(); i++)
-  {
+  for(int i = 0; i < header()->count(); i++) {
     QAction *act = _menu->addAction(QTreeView::model()->headerData(i, Qt::Horizontal).toString());
     act->setCheckable(true);
     act->setChecked(! header()->isSectionHidden(i));
@@ -225,8 +220,7 @@ int XTreeView::rowCount()
 int XTreeView::rowCountVisible()
 {
   int counter = 0;
-  for (int i = 0; i < _model->rowCount(); i++)
-  {
+  for (int i = 0; i < _model->rowCount(); i++) {
     if (!isRowHidden(i))
       counter++;
   }
@@ -250,30 +244,7 @@ void XTreeView::select()
   _model->select();
   QString colname;
   
-  //Find and Format Boolean
-  for (int col=0; col < _model->query().record().count(); ++col) {
-    colname = columnNameFromLogicalIndex(col);
-    applyColumnRoles(colname);
-  }
-
   emit valid(FALSE);
-}
-
-void XTreeView::applyColumnRoles(const QString column)
-{
-  QSqlQuery qry = _model->query();
-  int col = qry.record().indexOf(column);
-  qry.first();
-  
-  for (int idx=0; idx < _columnRoles.count(); ++idx) {
-    if (_columnRoles.at(idx).columnName==column) {
-      for (int row=0; row < qry.size(); ++row) {
-        _model->setData(_model->index(row,col), _columnRoles.at(idx).value, _columnRoles.at(idx).role);
-        qry.next();
-      }
-      qry.first();
-    }
-  }
 }
 
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -671,13 +642,21 @@ void XTreeView::popupMenuActionTriggered(QAction * pAction)
 
 void XTreeView::setColumnRole(const QString column, int role, const QVariant value)
 {
-  for (int i = 0; i < _columnRoles.count(); ++i) 
-    if (_columnRoles.at(i).columnName == column && _columnRoles.at(i).role == role) {
-      _columnRoles.removeAt(i);
-      return;
-    }
-  _columnRoles.append(ColumnRole(column, value, role));
-  applyColumnRoles(column);
+  QSqlQuery qry = _model->query();
+  int col = qry.record().indexOf(column);
+  
+  // Add to the hash
+  QPair<QVariant, int> values;
+  values.first = value;
+  values.second = role;
+  _columnRoles.insert(col, values);
+
+  // Apply to the model
+  qry.first();
+  for (int row=0; row < qry.size(); ++row) {
+    _model->setData(_model->index(row,col), value, role);
+    qry.next();
+  }
 }
 
 void XTreeView::setColumnVisible(int pColumn, bool pVisible)
@@ -703,10 +682,24 @@ void XTreeView::setRowForegroundColor(int row, QString color)
     setForegroundColor(row, col, color);
 }
 
-void XTreeView::emitDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight)
+void XTreeView::handleDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight)
 {
-  for (int col = topLeft.column(); col <= lowerRight.column(); col++) {
-    for (int row = topLeft.row(); row <= lowerRight.row(); row++)
+  int col;
+  int row;
+
+  // Apply column roles, they always supercede other changes
+  for (col=topLeft.column(); col <= lowerRight.column(); ++col) {
+     QHash<int, QPair<QVariant, int> >::const_iterator i = _columnRoles.find(col);
+     while (i != _columnRoles.end() && i.key() == col) {
+       for (row=topLeft.row(); row <= lowerRight.row(); ++row) 
+          _model->setData(_model->index(row,col), i.value().first, i.value().second);
+       ++i;
+     }
+  }
+
+  // Emit data changed signal
+  for (col = topLeft.column(); col <= lowerRight.column(); col++) {
+    for (row = topLeft.row(); row <= lowerRight.row(); row++)
       emit dataChanged(row, col);
   }
 }

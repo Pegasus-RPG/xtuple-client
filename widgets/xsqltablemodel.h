@@ -25,6 +25,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
       ~XSqlTableModel();
     
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual bool select();
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole);
     virtual void setTable(const QString &tableName, int keyColumns);
     virtual void setKeys(int keyColumns);
