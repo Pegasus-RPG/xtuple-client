@@ -73,7 +73,6 @@ class ScriptToolbox : public QObject
     ScriptToolbox(QScriptEngine * engine);
     virtual ~ScriptToolbox();
 
-    static QScriptValue variantToScriptValue(QScriptEngine *, QVariant);
     static void setLastWindow(QWidget * lw);
 
     // expose format.h

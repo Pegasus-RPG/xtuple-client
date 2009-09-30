@@ -716,53 +716,6 @@ int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QStr
   return btn;
 }
 
-QScriptValue ScriptToolbox::variantToScriptValue(QScriptEngine * engine, QVariant var)
-{
-  if(var.isNull())
-    return engine->nullValue();
-
-  switch(var.type())
-  {
-    case QVariant::Invalid:
-      return engine->nullValue();
-    case QVariant::Bool:
-      return QScriptValue(engine, var.toBool());
-    case QVariant::Int:
-      return QScriptValue(engine, var.toInt());
-    case QVariant::UInt:
-      return QScriptValue(engine, var.toUInt());
-    case QVariant::Double:
-      return QScriptValue(engine, var.toDouble());
-    case QVariant::Char:
-      return QScriptValue(engine, var.toChar().unicode());
-    case QVariant::String:
-      return QScriptValue(engine, var.toString());
-    case QVariant::LongLong:
-      return QScriptValue(engine, qsreal(var.toLongLong()));
-    case QVariant::ULongLong:
-      return QScriptValue(engine, qsreal(var.toULongLong()));
-    case QVariant::Date:
-    case QVariant::Time:
-    case QVariant::DateTime:
-      return engine->newDate(var.toDateTime());
-    case QVariant::RegExp:
-      return engine->newRegExp(var.toRegExp());
-/*
- * Would be ideal to have these as well but I don't know if they are really necessary
-    case QVariant::StringList:
-    case QVariant::List:
-
-    case QVariant::Map:
-*/
-    default:
-      return engine->newVariant(var);
-  }
-
-  // If we are not doing an explicity conversion just pass the variant back
-  // and see what happens
-  return engine->newVariant(var);
-}
-
 void ScriptToolbox::setLastWindow(QWidget * lw)
 {
   _lastWindow = lw;
@@ -884,7 +837,7 @@ QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterLi
   QScriptValue obj = engine->newObject();
   for(int i = 0; i < params.count(); i++)
   {
-    obj.setProperty(params.name(i), ScriptToolbox::variantToScriptValue(engine, params.value(i)));
+    obj.setProperty(params.name(i), engine->newVariant(params.value(i)));
   }
 
   return obj;
