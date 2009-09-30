@@ -1187,7 +1187,7 @@ void XComboBox::populate()
     setType(tmpType);
 }
 
-void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
+void XComboBox::populate(XSqlQuery pQuery, int pSelected)
 {
   int selected = 0;
   int counter  = 0;

@@ -62,6 +62,7 @@ HEADERS +=  setupscriptapi.h                    \
             xdatawidgetmapperproto.h            \
             xnetworkaccessmanager.h             \
             xsqltablemodelproto.h               \
+            xsqlqueryproto.h                    \
             addressclustersetup.h		\
             alarmssetup.h			\
             clineeditsetup.h			\
@@ -135,6 +136,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             xdatawidgetmapperproto.cpp          \
             xnetworkaccessmanager.cpp           \
             xsqltablemodelproto.cpp             \
+            xsqlqueryproto.cpp                  \
             addressclustersetup.cpp		\
             alarmssetup.cpp			\
             clineeditsetup.cpp			\

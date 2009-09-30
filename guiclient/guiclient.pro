@@ -67,8 +67,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                bankAdjustment.ui bankAdjustmentEditList.ui                                            \
                bankAdjustmentTypes.ui bankAdjustmentType.ui                                           \
                bboms.ui bbomItem.ui bbom.ui                                                           \
-               bom.ui bomItem.ui bomList.ui boo.ui booItem.ui booItemList.ui booList.ui buyCard.ui    \
-               booitemImage.ui budgets.ui                                                             \
+               bom.ui bomItem.ui bomList.ui                                                           \
+               booItem.ui booItemList.ui booitemImage.ui                                              \
+               buyCard.ui budgets.ui                                                                  \
                calendars.ui calendar.ui                                                               \
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
                changePoitemQty.ui changeWoQty.ui changeQtyToDistributeFromBreeder.ui                  \
@@ -82,7 +83,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                configureIE.ui configureEncryption.ui                                                  \
                confirmAchOK.ui                                                                        \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
-               copyBOM.ui copyBOO.ui copyItem.ui copySalesOrder.ui                                    \
+               copyBOM.ui copyItem.ui copySalesOrder.ui                                               \
                copyTransferOrder.ui                                                                   \
                costCategory.ui costCategories.ui countries.ui country.ui                              \
                countTagList.ui correctOperationsPosting.ui correctProductionPosting.ui                \
@@ -181,7 +182,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSummarizedSalesByItem.ui                                                            \
                dspSummarizedSalesBySalesRep.ui dspTaxHistory.ui                                       \
                dspSummarizedSalesHistoryByShippingZone.ui                                             \
-               dspTimePhasedAvailability.ui \
+               dspTimePhasedAvailability.ui                                                           \
                dspTimePhasedBookingsByCustomer.ui dspTimePhasedBookingsByItem.ui                      \
                dspTimePhasedBookingsByProductCategory.ui                                              \
                dspTimePhasedOpenARItems.ui dspTimePhasedOpenAPItems.ui                                \
@@ -263,7 +264,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printPackingList.ui printQuote.ui                                                      \
                printItemLabelsByClassCode.ui printLabelsByInvoice.ui printLabelsBySo.ui               \
                printLabelsByOrder.ui printLabelsByTo.ui printPackingListBatchByShipvia.ui printPoForm.ui \
-               printPurchaseOrder.ui                                                                 \
+               printPurchaseOrder.ui                                                                  \
                printPurchaseOrdersByAgent.ui printSASpecialCalendarForm.ui printSoForm.ui             \
                printRaForm.ui                                                                         \
                printShippingForm.ui printShippingForms.ui                                             \
@@ -371,8 +372,9 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                bankAdjustment.h bankAdjustmentEditList.h                                              \
                bankAdjustmentTypes.h bankAdjustmentType.h                                             \
                bboms.h bbomItem.h bbom.h                                                              \
-               bom.h bomItem.h bomList.h boo.h booItem.h booItemList.h booList.h buyCard.h            \
-               booitemImage.h budgets.h                                                               \
+               bom.h bomItem.h bomList.h                                                              \
+               booItem.h booItemList.h booitemImage.h                                                 \
+               buyCard.h budgets.h                                                                    \
                calendars.h calendar.h                                                                 \
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
                changePoitemQty.h changeWoQty.h changeQtyToDistributeFromBreeder.h                     \
@@ -386,7 +388,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                configureIE.h configureEncryption.h                                                    \
                confirmAchOK.h                                                                         \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
-               copyBOM.h copyBOO.h copyItem.h copySalesOrder.h                                        \
+               copyBOM.h copyItem.h copySalesOrder.h                                                  \
                copyTransferOrder.h                                                                    \
                costCategory.h costCategories.h countries.h country.h                                  \
                countTagList.h correctOperationsPosting.h correctProductionPosting.h                   \
@@ -457,7 +459,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspPoDeliveryDateVariancesByItem.h dspPoDeliveryDateVariancesByVendor.h                \
                dspPoItemsByDate.h dspPoItemsByItem.h dspPoItemsByVendor.h                             \
                dspPoItemReceivingsByDate.h dspPoItemReceivingsByItem.h                                \
-               dspPoItemReceivingsByVendor.h \
+               dspPoItemReceivingsByVendor.h                                                          \
                dspPoPriceVariancesByItem.h dspPoPriceVariancesByVendor.h dspPoReturnsByVendor.h       \
                dspPOsByDate.h dspPOsByVendor.h                                                        \
                dspPurchaseReqsByItem.h dspPurchaseReqsByPlannerCode.h                                 \
@@ -486,7 +488,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspSummarizedSalesByItem.h                                                             \
                dspSummarizedSalesBySalesRep.h dspTaxHistory.h                                         \
                dspSummarizedSalesHistoryByShippingZone.h                                              \
-               dspTimePhasedAvailability.h \
+               dspTimePhasedAvailability.h                                                            \
                dspTimePhasedBookingsByCustomer.h dspTimePhasedBookingsByItem.h                        \
                dspTimePhasedBookingsByProductCategory.h                                               \
                dspTimePhasedOpenARItems.h dspTimePhasedOpenAPItems.h                                  \
@@ -502,7 +504,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspUndefinedManufacturedItems.h                                                        \
                dspUninvoicedReceivings.h uninvoicedShipments.h unpostedPurchaseOrders.h               \
                dspUnusedPurchasedItems.h  dspVendorAPHistory.h dspValidLocationsByItem.h              \
-               dspVoucherRegister.h \
+               dspVoucherRegister.h                                                                   \
                dspWoEffortByUser.h dspWoEffortByWorkOrder.h                                           \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
@@ -605,7 +607,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                salesReps.h salesRep.h                                                                 \
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
                scriptEditor.h scripts.h                                                               \
-               scriptquery.h scripttoolbox.h                                                          \
+               scripttoolbox.h                                                                        \
                searchForCRMAccount.h searchForContact.h searchForItem.h searchForEmp.h                \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
@@ -620,8 +622,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
                syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
-              taxAdjustment.h taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h      \
-              taxDetail.h    taxBreakdown.h                                                                         \
+               taxAdjustment.h taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h     \
+               taxDetail.h    taxBreakdown.h                                                          \
                taxRegistration.h taxRegistrations.h                                                   \
                taxAssignment.h taxAssignments.h                                                       \
                taxType.h taxTypes.h taxZones.h taxZone.h taxClass.h taxClasses.h                      \
@@ -663,7 +665,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h metasqlHighlighter.h                                                   \
                idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
-               xTupleDesigner.h xTupleDesignerActions.h getscreen.h getscreen_classlist.h getscreen_headerlist.h \
+               xTupleDesigner.h xTupleDesignerActions.h getscreen.h getscreen_classlist.h getscreen_headerlist.h
 
 
 SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collectMetrics.cpp          \
@@ -687,8 +689,9 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                bankAdjustment.cpp bankAdjustmentEditList.cpp                                          \
                bankAdjustmentTypes.cpp bankAdjustmentType.cpp                                         \
                bboms.cpp bbomItem.cpp bbom.cpp                                                        \
-               bom.cpp bomItem.cpp bomList.cpp boo.cpp booItem.cpp booItemList.cpp booList.cpp buyCard.cpp \
-               booitemImage.cpp budgets.cpp                                                           \
+               bom.cpp bomItem.cpp bomList.cpp                                                        \
+               booItem.cpp booItemList.cpp booitemImage.cpp                                           \
+               buyCard.cpp budgets.cpp                                                                \
                calendars.cpp calendar.cpp                                                             \
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
                changePoitemQty.cpp changeWoQty.cpp changeQtyToDistributeFromBreeder.cpp               \
@@ -702,7 +705,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                configureIE.cpp configureEncryption.cpp                                                \
                confirmAchOK.cpp                                                                       \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
-               copyBOM.cpp copyBOO.cpp copyItem.cpp copySalesOrder.cpp                                \
+               copyBOM.cpp copyItem.cpp copySalesOrder.cpp                                            \
                copyTransferOrder.cpp                                                                  \
                costCategory.cpp costCategories.cpp countries.cpp country.cpp                          \
                countTagList.cpp correctOperationsPosting.cpp correctProductionPosting.cpp             \
@@ -803,7 +806,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspSummarizedSalesByItem.cpp                                                           \
                dspSummarizedSalesBySalesRep.cpp dspTaxHistory.cpp                                     \
                dspSummarizedSalesHistoryByShippingZone.cpp                                            \
-               dspTimePhasedAvailability.cpp \
+               dspTimePhasedAvailability.cpp                                                          \
                dspTimePhasedBookingsByCustomer.cpp dspTimePhasedBookingsByItem.cpp                    \
                dspTimePhasedBookingsByProductCategory.cpp                                             \
                dspTimePhasedOpenARItems.cpp dspTimePhasedOpenAPItems.cpp                              \
@@ -922,7 +925,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                salesReps.cpp salesRep.cpp                                                             \
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
                scriptEditor.cpp scripts.cpp                                                           \
-               scriptquery.cpp scripttoolbox.cpp                                                      \
+               scripttoolbox.cpp                                                                      \
                searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp searchForEmp.cpp        \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \

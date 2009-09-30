@@ -81,6 +81,7 @@
 #include "xdateeditsetup.h"
 #include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
+#include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 
 void setupScriptApi(QScriptEngine *engine)
@@ -157,6 +158,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupXDataWidgetMapperProto(engine);
   setupXDateEdit(engine);
   setupXSqlTableModelProto(engine);
+  setupXSqlQueryProto(engine);
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
 

@@ -31,9 +31,6 @@
 #include "bomList.h"
 #include "copyBOM.h"
 
-#include "boo.h"
-#include "booList.h"
-#include "copyBOO.h"
 #include "massReplaceComponent.h"
 #include "massExpireComponent.h"
 

@@ -39,7 +39,6 @@ enum SaveFlags
 };
 
 Q_DECLARE_METATYPE(ParameterList)
-Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes);
@@ -48,9 +47,6 @@ Q_DECLARE_METATYPE(enum SaveFlags);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
-
-QScriptValue XSqlQuerytoScriptValue(QScriptEngine *engine, const XSqlQuery &qry);
-void XSqlQueryfromScriptValue(const QScriptValue &obj, XSqlQuery &qry);
 
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);
@@ -98,13 +94,13 @@ class ScriptToolbox : public QObject
 
   public slots:
 
-    QObject * executeQuery(const QString & query);
-    QObject * executeQuery(const QString & query, const ParameterList & params);
-    QObject * executeDbQuery(const QString & group, const QString & name);
-    QObject * executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
-    QObject * executeBegin();
-    QObject * executeCommit();
-    QObject * executeRollback();
+    XSqlQuery executeQuery(const QString & query);
+    XSqlQuery executeQuery(const QString & query, const ParameterList & params);
+    XSqlQuery executeDbQuery(const QString & group, const QString & name);
+    XSqlQuery executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
+    XSqlQuery executeBegin();
+    XSqlQuery executeCommit();
+    XSqlQuery executeRollback();
 
     QObject * qtyVal();
     QObject * TransQtyVal();
@@ -157,7 +153,7 @@ class ScriptToolbox : public QObject
     QWidget * openWindow(const QString pname, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0);
 
     void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
-    void populateXTreeWidget(QWidget * tree, QObject * pSql, bool = FALSE);
+    void populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool = FALSE);
     
     void loadQWebView(QWidget * webView, const QString & url);
 

@@ -1521,7 +1521,6 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 #endif
 
   qScriptRegisterMetaType(engine, ParameterListtoScriptValue, ParameterListfromScriptValue);
-  qScriptRegisterMetaType(engine, XSqlQuerytoScriptValue, XSqlQueryfromScriptValue);
   qScriptRegisterMetaType(engine, SetResponsetoScriptValue, SetResponsefromScriptValue);
   qScriptRegisterMetaType(engine, ParameterGroupTypestoScriptValue, ParameterGroupTypesfromScriptValue);
   qScriptRegisterMetaType(engine, ParameterGroupStatestoScriptValue, ParameterGroupStatesfromScriptValue);

@@ -21,7 +21,6 @@
 #include <openreports.h>
 
 #include "bom.h"
-#include "boo.h"
 #include "characteristicAssignment.h"
 #include "comment.h"
 #include "image.h"

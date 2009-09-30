@@ -39,7 +39,6 @@
 #include "creditCard.h"
 #include "creditcardprocessor.h"
 #include "mqlutil.h"
-#include "scriptquery.h"
 #include "storedProcErrorLookup.h"
 #include "xdialog.h"
 #include "xmainwindow.h"
@@ -59,65 +58,51 @@ ScriptToolbox::~ScriptToolbox()
 {
 }
 
-QObject * ScriptToolbox::executeQuery(const QString & query)
+XSqlQuery ScriptToolbox::executeQuery(const QString & query)
 {
   ParameterList params;
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql(query);
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeQuery(const QString & query, const ParameterList & params)
+XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList & params)
 {
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql(query);
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
+XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
 {
   ParameterList params;
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql = mqlLoad(group, name);
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
+XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
 {
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql = mqlLoad(group, name);
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeBegin()
+XSqlQuery ScriptToolbox::executeBegin()
 {
   ParameterList params;
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql("BEGIN;");
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeCommit()
+XSqlQuery ScriptToolbox::executeCommit()
 {
   ParameterList params;
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql("COMMIT;");
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
-QObject * ScriptToolbox::executeRollback()
+XSqlQuery ScriptToolbox::executeRollback()
 {
   ParameterList params;
-  ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql("ROLLBACK;");
-  sq->setQuery(mql.toQuery(params));
-  return sq;
+  return mql.toQuery(params);
 }
 
 QObject * ScriptToolbox::qtyVal()
@@ -878,12 +863,11 @@ void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString
     xt->addColumn(pString, pWidth, pAlignment, pVisible, pEditColumn, pDisplayColumn);
 }
 
-void ScriptToolbox::populateXTreeWidget(QWidget * tree, QObject * pSql, bool pUseAltId)
+void ScriptToolbox::populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool pUseAltId)
 {
   XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
-  ScriptQuery *sq = qobject_cast<ScriptQuery*>(pSql);
   if(xt)
-    xt->populate(sq->query(), pUseAltId);
+    xt->populate(pSql, pUseAltId);
 }
 
 void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
@@ -923,23 +907,6 @@ void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params
     }
     else
       params.append(it.name(), it.value().toVariant());
-  }
-}
-
-QScriptValue XSqlQuerytoScriptValue(QScriptEngine *engine, const XSqlQuery &qry)
-{
-  ScriptQuery * sq = new ScriptQuery(engine);
-  sq->setQuery(qry);
-  QScriptValue obj = engine->newQObject(sq);
-  return obj;
-}
-
-void XSqlQueryfromScriptValue(const QScriptValue &obj, XSqlQuery &qry)
-{
-  ScriptQuery * sq = qobject_cast<ScriptQuery*>(obj.toQObject());
-  if(sq)
-  {
-    qry = sq->query();
   }
 }
 

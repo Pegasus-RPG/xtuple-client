@@ -20,7 +20,7 @@
 #include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class XSqlQuery;
+#include <xsqlquery.h>
 
 class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 {
@@ -127,7 +127,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     void clear();
     void append(int, const QString &);
     void append(int, const QString &, const QString &);
-    void populate(XSqlQuery &, int = -1);
+    void populate(XSqlQuery, int = -1);
     void populate(const QString &, int = -1);
     void populate();
     void setDataWidgetMap(XDataWidgetMapper* m);
