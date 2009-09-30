@@ -31,15 +31,16 @@ public slots:
     virtual void sSaveClick();
     virtual void sClose();
     virtual void sItemTypeChanged( const QString & type );
-    virtual void sBooitemList();
     virtual void populate();
-    virtual void sHandleIssueMethod( int pItem );
     virtual void sNewSubstitute();
     virtual void sEditSubstitute();
     virtual void sDeleteSubstitute();
     virtual void sFillSubstituteList();
     virtual void sItemIdChanged();
     virtual void sCharIdChanged();
+
+signals:
+   void saved(int);
 
 protected slots:
     virtual void languageChange();
@@ -50,7 +51,6 @@ private:
     int _sourceBomitemid;
     int _itemid;
     int _revisionid;
-    int _booitemseqid;
     bool _saved;
 
 };

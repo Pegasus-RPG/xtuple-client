@@ -15,7 +15,6 @@
 #include <QValidator>
 #include <QVariant>
 
-#include "booItemList.h"
 #include "itemSubstitute.h"
 #include "storedProcErrorLookup.h"
 
@@ -33,16 +32,10 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
-  connect(_booitemList, SIGNAL(clicked()), this, SLOT(sBooitemList()));
-  connect(_issueMethod, SIGNAL(activated(int)), this, SLOT(sHandleIssueMethod(int)));
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
   connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
   connect(_char, SIGNAL(activated(int)), this, SLOT(sCharIdChanged()));
-
-#ifndef Q_WS_MAC
-  _booitemList->setMaximumWidth(25);
-#endif
 
   if (_metrics->boolean("AllowInactiveBomItems"))
     _item->setType(ItemLineEdit::cGeneralComponents);
@@ -64,14 +57,6 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight, true, "bomitemsub_uomratio");
 
   _item->setFocus();
-  
-  if (!_metrics->boolean("Routings"))
-  {
-    _usedAtLit->hide();
-    _usedAt->hide();
-    _booitemList->hide();
-    _scheduleAtWooper->hide();
-  }
   
   _saved=FALSE;
 }
@@ -113,7 +98,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _booitemseqid = -1;
 
       QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
       if (issueMethod == "S")
@@ -216,8 +200,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _createWo->setEnabled(FALSE);
       _issueMethod->setEnabled(FALSE);
       _uom->setEnabled(FALSE);
-      _booitemList->setEnabled(FALSE);
-      _scheduleAtWooper->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
       _ecn->setEnabled(FALSE);
       _substituteGroup->setEnabled(FALSE);
@@ -238,10 +220,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
   q.exec();
   if (q.first() && (q.value("item_type").toString() == "K"))
   {
-    _usedAtLit->setEnabled(false);
-    _usedAt->setEnabled(false);
-    _booitemList->setEnabled(false);
-    _scheduleAtWooper->setEnabled(false);
     _createWo->setChecked(false);
     _createWo->setEnabled(false);
     _issueMethod->setCurrentIndex(0);
@@ -274,7 +252,7 @@ void bomItem::sSave()
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :effective, :expires,"
-               "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
+               "                      :createWo, -1, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
                "                      :char_id, :value, :notes, :ref ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
@@ -282,15 +260,14 @@ void bomItem::sSave()
                "                      bomitem_seqnumber, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :effective, :expires,"
-               "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
+               "                      :createWo, -1, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
                "                      :char_id, :value, :notes, :ref ) AS result "
                "FROM bomitem "
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
     q.prepare( "UPDATE bomitem "
-               "SET bomitem_booitem_seq_id=:booitem_seq_id, bomitem_schedatwooper=:scheduledWithBooItem,"
-               "    bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
+               "SET bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
                "    bomitem_effective=:effective, bomitem_expires=:expires,"
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
@@ -303,7 +280,6 @@ void bomItem::sSave()
 
   q.bindValue(":bomitem_id", _bomitemid);
   q.bindValue(":sourceBomitem_id", _sourceBomitemid);
-  q.bindValue(":booitem_seq_id", _booitemseqid);
   q.bindValue(":parent_item_id", _itemid);
   q.bindValue(":revision_id", _revisionid);
   q.bindValue(":component_item_id", _item->id());
@@ -317,7 +293,6 @@ void bomItem::sSave()
   q.bindValue(":ref", _ref->text());
 
   q.bindValue(":createWo", QVariant(_createWo->isChecked()));
-  q.bindValue(":scheduledWithBooItem", QVariant(_scheduleAtWooper->isChecked()));
 
   if (_issueMethod->currentIndex() == 0)
     q.bindValue(":issueMethod", "S");
@@ -378,6 +353,8 @@ void bomItem::sSave()
 
   omfgThis->sBOMsUpdated(_itemid, TRUE);
   
+  emit saved(_bomitemid);
+
   _saved=TRUE;
 }
 
@@ -417,48 +394,11 @@ void bomItem::sItemTypeChanged(const QString &type)
   }
 }
 
-void bomItem::sBooitemList()
-{
-  ParameterList params;
-  params.append("item_id", _itemid);
-  params.append("booitem_seq_id", _booitemseqid);
-
-  booItemList newdlg(this, "", TRUE);
-  newdlg.set(params);
-  _booitemseqid = newdlg.exec();
-
-  if (_booitemseqid != -1)
-  {
-    q.prepare( "SELECT (TEXT(booitem_seqnumber) || '-' || booitem_descrip1 || ' ' || booitem_descrip2) AS description "
-		       "FROM booitem(:item_id) "
-               "WHERE (booitem_seq_id=:booitem_seq_id);" );
-	q.bindValue(":item_id", _itemid);
-    q.bindValue(":booitem_seq_id", _booitemseqid);
-    q.exec();
-    if (q.first())
-    {
-      _usedAt->setText(q.value("description").toString());
-      _scheduleAtWooper->setEnabled(TRUE);
-    }
-    else
-    {
-      _scheduleAtWooper->setEnabled(FALSE);
-      _scheduleAtWooper->setChecked(FALSE);
-    }
-  }
-  else
-  {
-    _usedAt->clear();
-    _scheduleAtWooper->setEnabled(FALSE);
-    _scheduleAtWooper->setChecked(FALSE);
-  }
-}
-
 void bomItem::populate()
 {
   q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
-             "       bomitem_booitem_seq_id, bomitem_createwo, bomitem_issuemethod,"
-             "       bomitem_schedatwooper, bomitem_ecn, item_type,"
+             "       bomitem_createwo, bomitem_issuemethod,"
+             "       bomitem_ecn, item_type,"
              "       bomitem_qtyper,"
              "       bomitem_scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
@@ -486,7 +426,6 @@ void bomItem::populate()
       _issueMethod->setCurrentIndex(1);
     else if (q.value("bomitem_issuemethod").toString() == "M")
       _issueMethod->setCurrentIndex(2);
-    sHandleIssueMethod(_issueMethod->currentIndex());
 
     if (q.value("item_type").toString() == "M" || q.value("item_type").toString() == "F")
       _createWo->setChecked(q.value("bomitem_createwo").toBool());
@@ -498,9 +437,6 @@ void bomItem::populate()
 
     if (_mode != cCopy)
       _ecn->setText(q.value("bomitem_ecn").toString());
-
-    bool scheduledAtWooper = q.value("bomitem_schedatwooper").toBool();
-    _booitemseqid = q.value("bomitem_booitem_seq_id").toInt();
 
     _comments->setId(_bomitemid);
 
@@ -534,48 +470,11 @@ void bomItem::populate()
       _noSubstitutes->setChecked(true);
     sFillSubstituteList();
 
-    if (_booitemseqid != -1)
-    {
-      q.prepare( "SELECT (TEXT(booitem_seqnumber) || '-' || booitem_descrip1 || ' ' || booitem_descrip2) AS description "
-		         "FROM booitem(:item_id) "
-                 "WHERE (booitem_seq_id=:booitem_seq_id);" );
-	  q.bindValue(":item_id", _itemid);
-      q.bindValue(":booitem_seq_id", _booitemseqid);
-      q.exec();
-      if (q.first())
-      {
-        _usedAt->setText(q.value("description").toString());
-        _scheduleAtWooper->setEnabled(TRUE);
-        _scheduleAtWooper->setChecked(scheduledAtWooper);
-      }
-      else
-      {
-        _booitemseqid = -1;
-        _scheduleAtWooper->setEnabled(FALSE);
-      }
-    }
-    else
-      _scheduleAtWooper->setEnabled(FALSE);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-}
-
-void bomItem::sHandleIssueMethod(int pItem)
-{
-  switch (pItem)
-  {
-    case 1:
-    case 2:
-      _booitemList->setEnabled(TRUE);
-      break;
-
-    default:
-      _booitemList->setEnabled(FALSE);
-      break;
   }
 }
 
