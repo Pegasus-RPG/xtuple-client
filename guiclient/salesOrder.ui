@@ -1990,27 +1990,29 @@ to be bound by its terms.</comment>
   <tabstop>_printSO</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_origin</tabstop>
-  <tabstop>_project</tabstop>
+  <tabstop>_more</tabstop>
+  <tabstop>_expire</tabstop>
   <tabstop>_cust</tabstop>
-  <tabstop>_copyToShipto</tabstop>
+  <tabstop>_newCust</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToCntct</tabstop>
   <tabstop>_billToAddr</tabstop>
+  <tabstop>_copyToShipto</tabstop>
   <tabstop>_shipToNumber</tabstop>
   <tabstop>_shipToName</tabstop>
   <tabstop>_shipToCntct</tabstop>
   <tabstop>_shipToAddr</tabstop>
   <tabstop>_fob</tabstop>
-  <tabstop>_custPONumber</tabstop>
   <tabstop>_shipVia</tabstop>
-  <tabstop>_holdType</tabstop>
   <tabstop>_shippingCharges</tabstop>
+  <tabstop>_custPONumber</tabstop>
+  <tabstop>_holdType</tabstop>
   <tabstop>_shippingForm</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_requireInventory</tabstop>
-  <tabstop>_orderCurrency</tabstop>
   <tabstop>_showCanceled</tabstop>
+  <tabstop>_orderCurrency</tabstop>
   <tabstop>_margin</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
   <tabstop>_weight</tabstop>
@@ -2018,18 +2020,18 @@ to be bound by its terms.</comment>
   <tabstop>_freight</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
-  <tabstop>_CCAmount</tabstop>
-  <tabstop>_CCCVV</tabstop>
-  <tabstop>_clear</tabstop>
-  <tabstop>_saveAndAdd</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_more</tabstop>
-  <tabstop>_newCC</tabstop>
-  <tabstop>_salesOrderInformation</tabstop>
-  <tabstop>_editCC</tabstop>
+  <tabstop>_project</tabstop>
   <tabstop>_orderComments</tabstop>
   <tabstop>_shippingComments</tabstop>
+  <tabstop>_newCC</tabstop>
+  <tabstop>_editCC</tabstop>
+  <tabstop>_CCAmount</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_clear</tabstop>
+  <tabstop>_saveAndAdd</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_salesOrderInformation</tabstop>
+  <tabstop>_CCCVV</tabstop>
  </tabstops>
  <resources/>
  <connections>
