@@ -19,6 +19,8 @@ UI_DIR      = tmp
 HEADERS +=  setupscriptapi.h                    \
             include.h                           \
             metasqlhighlighterproto.h           \
+            orreportproto.h                     \
+            parameterlistsetup.h                \
             qactionproto.h                      \
             qdialogsetup.h                      \
             qdomattrproto.h                     \
@@ -46,6 +48,7 @@ HEADERS +=  setupscriptapi.h                    \
             qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
             qnetworkrequestproto.h              \
+            qprinterproto.h                     \
             qsqldatabaseproto.h                 \
             qsqlerrorproto.h                    \
             qsqlrecordproto.h                   \
@@ -93,6 +96,8 @@ HEADERS +=  setupscriptapi.h                    \
 SOURCES +=  setupscriptapi.cpp                  \
             include.cpp                         \
             metasqlhighlighterproto.cpp         \
+            orreportproto.cpp                   \
+            parameterlistsetup.cpp              \
             qactionproto.cpp                    \
             qdialogsetup.cpp                    \
             qdomattrproto.cpp                   \
@@ -120,6 +125,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \
             qnetworkrequestproto.cpp            \
+            qprinterproto.cpp                   \
             qsqldatabaseproto.cpp               \
             qsqlerrorproto.cpp                  \
             qsqlrecordproto.cpp                 \

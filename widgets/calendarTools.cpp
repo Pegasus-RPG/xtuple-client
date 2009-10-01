@@ -10,6 +10,8 @@
 
 #include <xsqlquery.h>
 
+#include <QtScript>
+
 #include "calendarTools.h"
 
 CalendarComboBox::CalendarComboBox(QWidget *pParent, const char *pName) :
@@ -213,6 +215,21 @@ void PeriodsListView::load(ParameterList &pParams)
   }
 
   setSelectionMode(oldSelMode);
+}
+
+QScriptValue PeriodListViewItemtoScriptValue(QScriptEngine *engine, PeriodListViewItem* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void PeriodListViewItemfromScriptValue(const QScriptValue &obj, PeriodListViewItem* &item)
+{
+  item = qobject_cast<PeriodListViewItem*>(obj.toQObject());
+}
+
+void setupPeriodListViewItem(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, PeriodListViewItemtoScriptValue, PeriodListViewItemfromScriptValue);
 }
 
 PeriodListViewItem::PeriodListViewItem( PeriodsListView *parent, XTreeWidgetItem *itm, int pId,

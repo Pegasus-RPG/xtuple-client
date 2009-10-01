@@ -1520,7 +1520,6 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   engine->installTranslatorFunctions();
 #endif
 
-  qScriptRegisterMetaType(engine, ParameterListtoScriptValue, ParameterListfromScriptValue);
   qScriptRegisterMetaType(engine, SetResponsetoScriptValue, SetResponsefromScriptValue);
   qScriptRegisterMetaType(engine, ParameterGroupTypestoScriptValue, ParameterGroupTypesfromScriptValue);
   qScriptRegisterMetaType(engine, ParameterGroupStatestoScriptValue, ParameterGroupStatesfromScriptValue);

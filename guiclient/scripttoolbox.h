@@ -38,15 +38,12 @@ enum SaveFlags
   CHANGEALL = AddressCluster::CHANGEALL
 };
 
-Q_DECLARE_METATYPE(ParameterList)
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes);
 Q_DECLARE_METATYPE(enum Qt::WindowModality);
 Q_DECLARE_METATYPE(enum SaveFlags);
 
-QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
-void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
 
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);

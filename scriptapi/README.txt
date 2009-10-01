@@ -1,15 +1,55 @@
 This directory holds the interface between various classes and the
-scripting engine available to the xTuple ERP GUI client. One of the
-ways to expose a class to application scripts is to create a prototype
-class.
+scripting engine available to the xTuple ERP GUI client.
 
-If the class is part of the xTuple ERP sources then you don't need
-a prototype class. Just add Q_INVOKABLE to the public methods that
+There are several ways to use a class while scripting:
+- Use a Qt class as is - this restricts you to using the
+  properties, slots, and signals as defined by Qt. This only works for
+  classes which inherit from QObject.
+- Extend a QObject subclass - make more of its methods Q_INVOKABLE.
+- create a prototype class.
+- as a last resort, add to the ScriptToolbox
+
+Using Qt classes as they are:
+-----------------------------
+[ not written yet ]
+
+Extending QObject subclasses:
+-----------------------------
+If the class is part of the xTuple ERP sources and inherits from QObject
+then you should do the following:
+- make the public methods in your class Q_INVOKABLE
+- add Q_INVOKABLE methods from the parent classes if they are not
+  already exposed to scripting
+- write a constructor function
+- write conversion functions XtoScriptValue and XfromScriptValue and
+  register these conversion functions with qScriptRegisterMetaType
+  If all you need to do is pass pointers back and forth, you can write these
+  like so:
+  QScriptValue XtoScriptValue(QScriptEngine *engine, X* const &obj)
+  {
+    return engine->newQObject(obj);
+  }
+  QScriptValue XfromScriptValue(const QScriptValue obj X* &item)
+  {
+    item = qobject_cast<X*>(obj.toQObject());
+  }
+  void setupX(QScriptEngine *engine)
+  {
+    qScriptRegisterMetaType(engine, XtoScriptValue, XfromScriptValue);
+
+    // register the constructor function if you have one
+  }
+- add this setup function and Q_DECLARE_METATYPE(X*) to the appropriate header
+- expose any enumerations used
+- call this setup function
+  If the class is defined in common or widgets directories, add the call to
+  scriptapi/setupscriptapi.cpp. Otherwise add it to guiclient.cpp?
+
 you need to use in the appropriate header file and recompile. The
 following method is for classes you /don't/ have control over, such
 as Qt classes themselves.
 
-Short Description:
+Short Description of creating a Prototype class:
 $ edit newproto.h
 $ awk -f h2cpp.awk newproto.h > newproto.cpp
 $ edit newproto.cpp

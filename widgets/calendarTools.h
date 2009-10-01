@@ -91,6 +91,9 @@ class XTUPLEWIDGETS_EXPORT PeriodsListView : public XTreeWidget
     int _calheadid;
 };
 
+
+void setupPeriodListViewItem(QScriptEngine *engine);
+
 class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
 {
   Q_OBJECT
@@ -107,5 +110,6 @@ class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
     QDate _startDate;
     QDate _endDate;
 };
+Q_DECLARE_METATYPE(PeriodListViewItem*)
 
 #endif

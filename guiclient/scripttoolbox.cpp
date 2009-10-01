@@ -831,38 +831,6 @@ void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
     wv->load(p);
 }
 
-// ParameterList Conversion functions
-QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params)
-{
-  QScriptValue obj = engine->newObject();
-  for(int i = 0; i < params.count(); i++)
-  {
-    obj.setProperty(params.name(i), engine->newVariant(params.value(i)));
-  }
-
-  return obj;
-}
-
-void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params)
-{
-  QScriptValueIterator it(obj);
-  while (it.hasNext())
-  {
-    it.next();
-    if(it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    if (it.value().isArray())
-    {
-      QList<QVariant> cpplist;
-      for (int i = 0;  i < it.value().property("length").toInt32(); i++)
-        cpplist.append(it.value().property(i).toVariant());
-      params.append(it.name(), cpplist);
-    }
-    else
-      params.append(it.name(), it.value().toVariant());
-  }
-}
-
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr)
 {
   return QScriptValue(engine, (int)sr);

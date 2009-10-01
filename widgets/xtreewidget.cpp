@@ -70,6 +70,8 @@
 // make sure ROWROLE_COUNT = last ROWROLE + 1
 #define ROWROLE_COUNT            2
 
+static QString yesStr = QObject::tr("Yes");
+static QString noStr  = QObject::tr("No");
 
 //cint() and round() regarding Issue #8897
 #include <cmath>
@@ -296,8 +298,6 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
           setIndentation(0);
 
         int defaultScale = decimalPlaces("");
-        QString yesStr = tr("Yes");
-        QString noStr  = tr("No");
 
 	do
 	{
@@ -564,7 +564,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
   emit populated();
 }
 
-void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
+void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn, const int scale)
 {
   if(!_settingsLoaded)
   {
@@ -641,6 +641,7 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
   hitem->setText(column, pString);
 #endif
   hitem->setTextAlignment(column, pAlignment);
+  hitem->setData(column, ScaleRole, scale);
 
   if (! pEditColumn.isEmpty())
   {
@@ -648,6 +649,7 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     roles->insert("qteditrole",    pEditColumn);
     if (! pDisplayColumn.isEmpty())
       roles->insert("qtdisplayrole", pDisplayColumn);
+
     _roles.insert(column, roles);
   }
 
@@ -1667,25 +1669,23 @@ Q_DECLARE_METATYPE(QList<XTreeWidgetItem*>)
 QScriptValue constructXTreeWidgetItem(QScriptContext *context,
                                       QScriptEngine  *engine)
 {
-  XTreeWidgetItem *obj = 0;
+  XTreeWidget     *tree = qscriptvalue_cast<XTreeWidget*>(context->argument(0));
+  XTreeWidgetItem *obj  = 0;
+  int variantidx        = 0;     // index in arg list of first qvariant
 
-  int              variantidx =  0;     // index in arg list of first qvariant
-
-  if (qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0))
-      && context->argument(1).isNumber())
+  if (tree && context->argument(1).isNumber())
+  {
+    if (DEBUG)
+      qDebug("constructXTreeWidgetItem(tree, id)");
+    obj = new XTreeWidgetItem(tree, context->argument(1).toInt32());
+    variantidx = 2;
+  }
+  else if (qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0))
+           && context->argument(1).isNumber())
   {
     if (DEBUG)
       qDebug("constructXTreeWidgetItem(item, id)");
     obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidgetItem*>(context->argument(0)),
-                              context->argument(1).toInt32());
-    variantidx = 2;
-  }
-  else if (qscriptvalue_cast<XTreeWidget*>(context->argument(0))
-           && context->argument(1).isNumber())
-  {
-    if (DEBUG)
-      qDebug("constructXTreeWidgetItem(tree, id)");
-    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidget*>(context->argument(0)),
                               context->argument(1).toInt32());
     variantidx = 2;
   }
@@ -1700,13 +1700,13 @@ QScriptValue constructXTreeWidgetItem(QScriptContext *context,
                               context->argument(2).toInt32());
     variantidx = 3;
   }
-  else if (qscriptvalue_cast<XTreeWidget*>(context->argument(0))
+  else if (tree
            && qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1))
            && context->argument(2).isNumber())
   {
     if (DEBUG)
       qDebug("constructXTreeWidgetItem(tree, item, id)");
-    obj = new XTreeWidgetItem(qscriptvalue_cast<XTreeWidget*>(context->argument(0)),
+    obj = new XTreeWidgetItem(tree,
                               qscriptvalue_cast<XTreeWidgetItem*>(context->argument(1)),
                               context->argument(2).toInt32());
     variantidx = 3;
@@ -1725,8 +1725,33 @@ QScriptValue constructXTreeWidgetItem(QScriptContext *context,
     if (DEBUG)
       qDebug("constructXTreeWidgetItem variantidx %d with %d total args",
              variantidx, context->argumentCount());
-    for ( ; variantidx < context->argumentCount(); variantidx++)
-      obj->setData(variantidx, RawRole, context->argument(variantidx).toVariant());
+    QTreeWidgetItem *header = tree ? tree->headerItem() : 0;
+    for (int i = 0 ; variantidx < context->argumentCount(); variantidx++, i++)
+    {
+      QVariant var = context->argument(variantidx).toVariant();
+      if (DEBUG)
+        qDebug("constructXTreeWidgetItem variant %d: type %d, value %s",
+               i, var.type(), qPrintable(var.toString()));
+      obj->setData(i, RawRole, var);
+      if (var.type() == QVariant::Int)
+        obj->setData(i, Qt::DisplayRole, QLocale().toString(var.toInt()));
+      else if (var.type() == QVariant::Double)
+      {
+        int scale = header ? header->data(i, ScaleRole).toInt()
+                           : decimalPlaces("unknown");
+        if (DEBUG)
+          qDebug("constructXTreeWidgetItem header %p scalerole %d(%d) result %d",
+                 header, header ? header->data(i, ScaleRole).toInt() : -1,
+                 decimalPlaces("unknown"), scale);
+
+        obj->setData(i, Qt::DisplayRole,
+                     QLocale().toString(var.toDouble(), 'f', scale));
+      }
+      else if (var.type() == QVariant::Bool)
+         obj->setData(i, Qt::DisplayRole, var.toBool() ? yesStr:noStr);
+      else
+         obj->setData(i, Qt::DisplayRole, var);
+    }
   }
 
   return engine->toScriptValue(obj);

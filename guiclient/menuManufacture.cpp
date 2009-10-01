@@ -60,8 +60,6 @@
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspPendingAvailability.h"
-#include "dspWoOperationsByWorkOrder.h"
-#include "dspWoOperationsByWorkCenter.h"
 #include "dspJobCosting.h"
 #include "dspMaterialUsageVarianceByBOMItem.h"
 #include "dspMaterialUsageVarianceByItem.h"
@@ -102,7 +100,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsBufrStsMenu = new QMenu(parent);
   reportsHistoryMenu = new QMenu(parent);
   reportsMatlReqMenu = new QMenu(parent);
-  reportsOperationsMenu = new QMenu(parent);
   reportsWoTcMenu = new QMenu(parent);
   reportsMatlUseVarMenu = new QMenu(parent);
   reportsBrdrDistVarMenu = new QMenu(parent);
@@ -122,7 +119,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsBufrStsMenu->setObjectName("menu.manu.reportsbufrsts");
   reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
   reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
-  reportsOperationsMenu->setObjectName("menu.manu.reportsoperations");
   reportsWoTcMenu->setObjectName("menu.manu.reportswotc");
   reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
   reportsBrdrDistVarMenu->setObjectName("menu.manu.reportsbrdrdistvar");
@@ -208,11 +204,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.dspInventoryAvailabilityByWorkOrder",		tr("&Inventory Availability..."),	SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
     { "wo.dspPendingWoMaterialAvailability",	tr("&Pending Material Availability..."),	SLOT(sDspPendingAvailability()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
     { "separator",				NULL,					NULL,	reportsMenu,	"true",	0, 0,	_metrics->boolean("Routings"), NULL },
-
-    //  Production | Reports | Operations
-    { "menu",				tr("&Operations"),	(char*)reportsOperationsMenu,	reportsMenu,	"true",	0, 0,	_metrics->boolean("Routings"), NULL },
-    { "wo.dspWoOperationsByWorkCenter",		tr("by &Work Center..."),	SLOT(sDspWoOperationsByWorkCenter()), reportsOperationsMenu, "MaintainWoOperations ViewWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspWoOperationsByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspWoOperationsByWo()), reportsOperationsMenu, "MaintainWoOperations ViewWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
 
     //  Production | Reports | Production Time Clock
     { "menu",				tr("Production &Time Clock"),	(char*)reportsWoTcMenu,	reportsMenu,	"true",	0, 0,	_metrics->boolean("Routings"), NULL },
@@ -494,16 +485,6 @@ void menuManufacture::sDspInventoryAvailabilityByWorkOrder()
 void menuManufacture::sDspPendingAvailability()
 {
   omfgThis->handleNewWindow(new dspPendingAvailability());
-}
-
-void menuManufacture::sDspWoOperationsByWorkCenter()
-{
-  omfgThis->handleNewWindow(new dspWoOperationsByWorkCenter());
-}
-
-void menuManufacture::sDspWoOperationsByWo()
-{
-  omfgThis->handleNewWindow(new dspWoOperationsByWorkOrder());
 }
 
 void menuManufacture::sDspWoScheduleByItem()

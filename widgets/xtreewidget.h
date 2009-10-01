@@ -243,7 +243,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     // end of scripting exposure
 
   public slots:
-    void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
+    void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString(), const int scale = 0);
     void clear();
     void hideColumn(int colnum) { QTreeWidget::hideColumn(colnum); };
     void hideColumn(const QString &);

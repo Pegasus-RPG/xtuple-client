@@ -81,8 +81,6 @@ class menuManufacture : public QObject
     void sDspWoMaterialsByComponentItem();
     void sDspWoMaterialsByWo();
     void sDspInventoryAvailabilityByWorkOrder();
-    void sDspWoOperationsByWorkCenter();
-    void sDspWoOperationsByWo();
     void sDspPendingAvailability();
     void sDspJobCosting();
     void sDspWoEffortByUser();

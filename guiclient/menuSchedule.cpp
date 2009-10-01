@@ -31,7 +31,6 @@
 #include "dspPlannedOrdersByItem.h"
 #include "dspPlannedOrdersByPlannerCode.h"
 #include "dspMRPDetail.h"
-#include "dspMPSDetail.h"
 #include "dspRoughCutByWorkCenter.h"
 #include "dspTimePhasedRoughCutByWorkCenter.h"
 #include "dspPlannedRevenueExpensesByPlannerCode.h"
@@ -110,7 +109,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspRunningAvailability", tr("&Running Availability..."), SLOT(sDspRunningAvailability()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
     { "ms.dspTimePhasedAvailabiltiy", tr("&Time-Phased Availability..."), SLOT(sDspTimePhasedAvailability()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
-    { "ms.dspMPSDetail", tr("MP&S Detail..."), SLOT(sDspMPSDetail()), reportsMenu, "ViewMPS", NULL, NULL, _metrics->value("Application") == "Manufacturing" , NULL },
     { "ms.dspMRPDetail", tr("&MRP Detail..."), SLOT(sDspMRPDetail()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspExpediteExceptionsByPlannerCode", tr("E&xpedite Exceptions..."), SLOT(sDspExpediteExceptionsByPlannerCode()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
@@ -241,11 +239,6 @@ void menuSchedule::sDspPlannedOrdersByItem()
 void menuSchedule::sDspPlannedOrdersByPlannerCode()
 {
   omfgThis->handleNewWindow(new dspPlannedOrdersByPlannerCode());
-}
-
-void menuSchedule::sDspMPSDetail()
-{
-  omfgThis->handleNewWindow(new dspMPSDetail());
 }
 
 void menuSchedule::sDspRoughCutByWorkCenter()

@@ -25,6 +25,7 @@
 #include "scripttoolbox.h"
 
 #include "../scriptapi/qeventproto.h"
+#include "../scriptapi/parameterlistsetup.h"
 
 //
 // XMainWindowPrivate

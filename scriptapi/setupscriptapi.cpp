@@ -10,6 +10,7 @@
 
 #include "addressclustersetup.h"
 #include "alarmssetup.h"
+#include "calendarTools.h"
 #include "clineeditsetup.h"
 #include "commentssetup.h"
 #include "contactclustersetup.h"
@@ -21,7 +22,9 @@
 #include "itemlineeditsetup.h"
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
+#include "orreportproto.h"
 #include "parametergroupsetup.h"
+#include "parameterlistsetup.h"
 #include "polineeditsetup.h"
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
@@ -51,6 +54,7 @@
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
+#include "qprinterproto.h"
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
@@ -99,7 +103,10 @@ void setupScriptApi(QScriptEngine *engine)
   setupItemLineEdit(engine);
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
+  setupOrReportProto(engine);
   setupParameterGroup(engine);
+  setupParameterList(engine);
+  setupPeriodListViewItem(engine);
   setupPoLineEdit(engine);
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
@@ -130,6 +137,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
+  setupQPrinterProto(engine);
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);

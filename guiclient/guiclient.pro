@@ -146,7 +146,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspMaterialUsageVarianceByBOMItem.ui dspMaterialUsageVarianceByItem.ui                 \
                dspMaterialUsageVarianceByComponentItem.ui                                             \
                dspMaterialUsageVarianceByWorkOrder.ui dspMaterialUsageVarianceByWarehouse.ui          \
-               dspMPSDetail.ui dspMRPDetail.ui openReturnAuthorizations.ui                            \
+                               dspMRPDetail.ui openReturnAuthorizations.ui                            \
                openSalesOrders.ui openVouchers.ui dspOrders.ui dspPendingAvailability.ui              \
                dspPendingBOMChanges.ui dspPlannedOrdersByItem.ui dspPlannedOrdersByPlannerCode.ui     \
                dspPlannedRevenueExpensesByPlannerCode.ui dspPoHistory.ui                              \
@@ -201,7 +201,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspVoucherRegister.ui  dspWoEffortByUser.ui dspWoEffortByWorkOrder.ui                  \
                dspWoHistoryByClassCode.ui dspWoHistoryByItem.ui dspWoHistoryByNumber.ui               \
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
-               dspWoOperationsByWorkCenter.ui dspWoOperationsByWorkOrder.ui                           \
+                                              dspWoOperationsByWorkOrder.ui                           \
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
@@ -452,7 +452,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspMaterialUsageVarianceByBOMItem.h dspMaterialUsageVarianceByItem.h                   \
                dspMaterialUsageVarianceByComponentItem.h                                              \
                dspMaterialUsageVarianceByWorkOrder.h dspMaterialUsageVarianceByWarehouse.h            \
-               dspMPSDetail.h dspMRPDetail.h openReturnAuthorizations.h                               \
+                              dspMRPDetail.h openReturnAuthorizations.h                               \
                openSalesOrders.h openVouchers.h dspOrders.h dspPendingAvailability.h                  \
                dspPendingBOMChanges.h dspPlannedOrdersByItem.h dspPlannedOrdersByPlannerCode.h        \
                dspPlannedRevenueExpensesByPlannerCode.h dspPoHistory.h                                \
@@ -508,7 +508,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspWoEffortByUser.h dspWoEffortByWorkOrder.h                                           \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
-               dspWoOperationsByWorkCenter.h dspWoOperationsByWorkOrder.h                             \
+                                             dspWoOperationsByWorkOrder.h                             \
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
@@ -770,7 +770,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspMaterialUsageVarianceByBOMItem.cpp dspMaterialUsageVarianceByItem.cpp               \
                dspMaterialUsageVarianceByComponentItem.cpp                                            \
                dspMaterialUsageVarianceByWorkOrder.cpp dspMaterialUsageVarianceByWarehouse.cpp        \
-               dspMPSDetail.cpp dspMRPDetail.cpp openReturnAuthorizations.cpp                         \
+                                dspMRPDetail.cpp openReturnAuthorizations.cpp                         \
                openSalesOrders.cpp openVouchers.cpp dspOrders.cpp dspPendingAvailability.cpp          \
                dspPendingBOMChanges.cpp dspPlannedOrdersByItem.cpp dspPlannedOrdersByPlannerCode.cpp  \
                dspPlannedRevenueExpensesByPlannerCode.cpp dspPoHistory.cpp                            \
@@ -825,7 +825,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspVoucherRegister.cpp  dspWoEffortByUser.cpp dspWoEffortByWorkOrder.cpp               \
                dspWoHistoryByClassCode.cpp dspWoHistoryByItem.cpp dspWoHistoryByNumber.cpp            \
                dspWoMaterialsByItem.cpp dspWoMaterialsByWorkOrder.cpp                                 \
-               dspWoOperationsByWorkCenter.cpp dspWoOperationsByWorkOrder.cpp                         \
+                                               dspWoOperationsByWorkOrder.cpp                         \
                dspWoScheduleByItem.cpp dspWoScheduleByParameterList.cpp dspWoScheduleByWorkOrder.cpp  \
                dspWoSoStatusMismatch.cpp dspWoSoStatus.cpp                                            \
                duplicateAccountNumbers.cpp                                                            \

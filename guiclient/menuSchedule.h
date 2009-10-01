@@ -48,7 +48,6 @@ class menuSchedule : public QObject
 
     void sDspPlannedOrdersByItem();
     void sDspPlannedOrdersByPlannerCode();
-    void sDspMPSDetail();
     void sDspRoughCutByWorkCenter();
     void sDspTimePhasedRoughCutByWorkCenter();
     void sDspPlannedRevenueExpensesByPlannerCode();
