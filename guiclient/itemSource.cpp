@@ -29,8 +29,6 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
-  connect(_vendorList, SIGNAL(clicked()), this, SLOT(sVendorList()));
-  connect(_vendor, SIGNAL(nameChanged(const QString&)), _vendorName, SLOT(setText(const QString&)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(this, SIGNAL(rejected()), this, SLOT(sRejected()));
   connect(_vendorCurrency, SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
@@ -38,10 +36,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
-
-#ifndef Q_WS_MAC
-  _vendorList->setMaximumWidth(25);
-#endif
+  _vendor->setType(__activeVendors);
 
   _captive = false;
   _new = false;
@@ -141,7 +136,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _vendor->setEnabled(FALSE);
-      _vendorList->hide();
 
       _save->setFocus();
     }
@@ -152,7 +146,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _active->setEnabled(FALSE);
       _vendor->setEnabled(FALSE);
-      _vendorList->hide();
       _vendorItemNumber->setEnabled(FALSE);
       _vendorItemDescrip->setEnabled(FALSE);
       _vendorUOM->setEnabled(FALSE);
@@ -361,7 +354,6 @@ bool itemSource::sSave()
     if (_mode != cCopy)
     {
       _vendor->setEnabled(FALSE);
-      _vendorList->hide();
     }
     _mode = cEdit;
     _item->setReadOnly(TRUE);
@@ -440,14 +432,6 @@ void itemSource::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(intMenuItem, FALSE);
 }
 
-
-void itemSource::sVendorList()
-{
-  CRMAcctList * newdlg = new CRMAcctList(this);
-  newdlg->setSubtype(CRMAcctLineEdit::Vend);
-  newdlg->setId(_vendor->id());
-  _vendor->setId(newdlg->exec());
-}
 
 void itemSource::sFillPriceList()
 {

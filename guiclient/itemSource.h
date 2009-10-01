@@ -33,7 +33,6 @@ public slots:
     virtual void sEdit();
     virtual void sDelete();
     virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sVendorList();
     virtual void sFillPriceList();
     virtual void populate();
     virtual void sRejected();
