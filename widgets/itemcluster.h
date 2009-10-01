@@ -164,7 +164,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
   public:
     ItemCluster(QWidget *, const char * = 0);
 
-    void setReadOnly(bool);
+    Q_INVOKABLE void setReadOnly(bool);
     void setEnabled(bool);
     void setDisabled(bool);
 

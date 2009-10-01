@@ -68,7 +68,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                bankAdjustmentTypes.ui bankAdjustmentType.ui                                           \
                bboms.ui bbomItem.ui bbom.ui                                                           \
                bom.ui bomItem.ui bomList.ui                                                           \
-               booItem.ui booItemList.ui booitemImage.ui                                              \
+               booItem.ui booitemImage.ui                                                             \
                buyCard.ui budgets.ui                                                                  \
                calendars.ui calendar.ui                                                               \
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
@@ -373,7 +373,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                bankAdjustmentTypes.h bankAdjustmentType.h                                             \
                bboms.h bbomItem.h bbom.h                                                              \
                bom.h bomItem.h bomList.h                                                              \
-               booItem.h booItemList.h booitemImage.h                                                 \
+               booItem.h booitemImage.h                                                               \
                buyCard.h budgets.h                                                                    \
                calendars.h calendar.h                                                                 \
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
@@ -690,7 +690,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                bankAdjustmentTypes.cpp bankAdjustmentType.cpp                                         \
                bboms.cpp bbomItem.cpp bbom.cpp                                                        \
                bom.cpp bomItem.cpp bomList.cpp                                                        \
-               booItem.cpp booItemList.cpp booitemImage.cpp                                           \
+               booItem.cpp booitemImage.cpp                                                           \
                buyCard.cpp budgets.cpp                                                                \
                calendars.cpp calendar.cpp                                                             \
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
