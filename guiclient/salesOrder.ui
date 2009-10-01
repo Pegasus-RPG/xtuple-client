@@ -20,7 +20,7 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Sales Order</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
     <layout class="QGridLayout">
      <property name="margin">
@@ -32,7 +32,7 @@ to be bound by its terms.</comment>
      <item row="0" column="0">
       <layout class="QHBoxLayout">
        <property name="spacing">
-        <number>5</number>
+        <number>12</number>
        </property>
        <item>
         <widget class="QPushButton" name="_clear">
@@ -86,12 +86,6 @@ to be bound by its terms.</comment>
          <property name="text">
           <string>&amp;Save</string>
          </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item>
@@ -112,7 +106,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>&amp;Header Information</string>
         </attribute>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
           <layout class="QGridLayout">
            <item row="0" column="0">
@@ -426,11 +420,30 @@ to be bound by its terms.</comment>
              </property>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item row="0" column="1">
-          <layout class="QVBoxLayout">
-           <item>
+           <item row="3" column="6">
+            <widget class="QLabel" name="_expireLit">
+             <property name="text">
+              <string>Expire:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="margin">
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="7">
+            <widget class="DLineEdit" name="_expire">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7">
             <layout class="QHBoxLayout">
              <item>
               <spacer>
@@ -460,109 +473,16 @@ to be bound by its terms.</comment>
              </item>
             </layout>
            </item>
-           <item>
-            <layout class="QGridLayout">
-             <property name="bottomMargin">
-              <number>5</number>
-             </property>
-             <item row="0" column="0">
-              <layout class="QVBoxLayout">
-               <property name="topMargin">
-                <number>5</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="_projectLit">
-                 <property name="text">
-                  <string>Project #:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>21</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="0" column="1">
-              <widget class="ProjectCluster" name="_project">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
-               <property name="label">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="_fromQuoteLit">
-               <property name="text">
-                <string>From Quote:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="_fromQuote">
-               <property name="text">
-                <string>No</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="_expireLit">
-               <property name="text">
-                <string>Expire:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="margin">
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="DLineEdit" name="_expire">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
           </layout>
          </item>
-         <item row="1" column="0" colspan="2">
+         <item row="1" column="0">
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
+         <item row="2" column="0">
           <layout class="QGridLayout">
            <item row="0" column="0">
             <layout class="QHBoxLayout">
@@ -659,7 +579,7 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="3" column="0">
           <layout class="QGridLayout">
            <item row="0" column="0">
             <layout class="QGridLayout">
@@ -753,14 +673,14 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="4" column="0" colspan="2">
+         <item row="4" column="0">
           <widget class="Line" name="line_3">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="2">
+         <item row="5" column="0">
           <layout class="QGridLayout">
            <item row="0" column="0">
             <widget class="QLabel" name="_fobLit">
@@ -1565,6 +1485,153 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_relationshipsTab">
+        <attribute name="title">
+         <string>Releationships</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <layout class="QGridLayout">
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item row="0" column="0">
+                <layout class="QVBoxLayout">
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="_projectLit">
+                   <property name="text">
+                    <string>Project #:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Preferred</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>21</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <widget class="ProjectCluster" name="_project">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="_fromQuoteLit">
+                 <property name="text">
+                  <string>From Quote:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="_fromQuote">
+                 <property name="text">
+                  <string>No</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="OpportunityCluster" name="_opportunity"/>
+               </item>
+               <item row="1" column="0">
+                <layout class="QVBoxLayout" name="_2">
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="_opportunityLit">
+                   <property name="text">
+                    <string>Opportunity:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Preferred</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>21</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_orderCommentsPage">
         <attribute name="title">
          <string>Order Notes</string>
@@ -1600,6 +1667,16 @@ to be bound by its terms.</comment>
             <enum>Qt::ClickFocus</enum>
            </property>
           </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_documentsTab">
+        <attribute name="title">
+         <string>Documents</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="Documents" name="_documents"/>
          </item>
         </layout>
        </widget>
@@ -1854,9 +1931,19 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
+  </customwidget>
+  <customwidget>
    <class>GLCluster</class>
    <extends>QWidget</extends>
    <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OpportunityCluster</class>
+   <extends>QWidget</extends>
+   <header>opportunitycluster.h</header>
   </customwidget>
   <customwidget>
    <class>ProjectCluster</class>
@@ -1904,7 +1991,6 @@ to be bound by its terms.</comment>
   <tabstop>_warehouse</tabstop>
   <tabstop>_origin</tabstop>
   <tabstop>_project</tabstop>
-  <tabstop>_expire</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_copyToShipto</tabstop>
   <tabstop>_billToName</tabstop>

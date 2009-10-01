@@ -273,11 +273,7 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="1" column="6" rowspan="3">
-            <widget class="ProjectCluster" name="_project">
-             <property name="label">
-              <string/>
-             </property>
-            </widget>
+            <widget class="ProjectCluster" name="_project"/>
            </item>
            <item row="1" column="7" rowspan="2">
             <spacer>
@@ -1134,6 +1130,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XURLLabel</class>

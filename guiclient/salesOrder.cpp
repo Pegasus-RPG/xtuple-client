@@ -250,6 +250,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
       _cust->setType(CLineEdit::ActiveCustomers);
       _comments->setType(Comments::SalesOrder);
+      _documents->setType(Documents::SalesOrder);
       _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
@@ -284,6 +285,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       else
         _saveAndAdd->hide();
       _comments->setType(Comments::SalesOrder);
+      _documents->setType(Documents::SalesOrder);
       _cust->setType(CLineEdit::AllCustomers);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
@@ -350,6 +352,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _edit->setText(tr("View"));
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _orderCurrency->setEnabled(FALSE);
       _save->hide();
@@ -379,6 +382,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     {
       _soheadid = q.value("head_id").toInt();
       _comments->setId(_soheadid);
+      _documents->setId(_soheadid);
       _orderDate->setDate(omfgThis->dbDate(), true);
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -437,6 +441,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     setWindowTitle(tr("Quote"));
 
     _comments->setType(Comments::Quote);
+    _documents->setType(Documents::Quote);
 
     _saveAndAdd->hide();
     _fromQuote->hide();
@@ -2295,6 +2300,7 @@ void salesOrder::populate()
       _shipComplete->setChecked(so.value("cohead_shipcomplete").toBool());
 
       _comments->setId(_soheadid);
+      _documents->setId(_soheadid);
 
 	  //Check for link to Return Authorization
 	  if (_metrics->boolean("EnableReturnAuth"))
@@ -2457,6 +2463,7 @@ void salesOrder::populate()
       _shippingComments->setText(qu.value("quhead_shipcomments").toString());
 
       _comments->setId(_soheadid);
+      _documents->setId(_soheadid);
       sFillItemList();
     }
     else if (qu.lastError().type() != QSqlError::NoError)
@@ -2983,6 +2990,7 @@ void salesOrder::clear()
   {
     _soheadid = headid.value("_soheadid").toInt();
     _comments->setId(_soheadid);
+    _documents->setId(_soheadid);
     if (ISORDER(_mode))
     {
       populateCMInfo();
@@ -3248,6 +3256,7 @@ void salesOrder::setViewMode()
   _shipToList->hide();
   _edit->setText(tr("View"));
   _comments->setType(Comments::SalesOrder);
+  _documents->setType(Documents::SalesOrder);
   _comments->setReadOnly(true);
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
@@ -4216,8 +4225,6 @@ void salesOrder::sCheckValidContacts()
 
 void salesOrder::sHandleMore()
 {
-  _project->setVisible(_more->isChecked());
-  _projectLit->setVisible(_more->isChecked());
   _warehouse->setVisible(_more->isChecked());
   _shippingWhseLit->setVisible(_more->isChecked());
   _originatedByLit->setVisible(_more->isChecked());
@@ -4234,8 +4241,6 @@ void salesOrder::sHandleMore()
 
   if (ISORDER(_mode))
   {
-    _fromQuote->setVisible(_more->isChecked());
-    _fromQuoteLit->setVisible(_more->isChecked());
     _shippingCharges->setVisible(_more->isChecked());
     _shippingChargesLit->setVisible(_more->isChecked());
     _shippingForm->setVisible(_more->isChecked());

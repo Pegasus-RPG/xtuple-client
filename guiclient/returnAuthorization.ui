@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>733</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -598,6 +598,9 @@ to be bound by its terms.</comment>
               <widget class="ProjectCluster" name="_project">
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="label">
+                <string>Project #:</string>
                </property>
               </widget>
              </item>

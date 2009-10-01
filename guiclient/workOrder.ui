@@ -17,7 +17,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>612</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -445,9 +445,6 @@ to be bound by its terms.</comment>
               </property>
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="label">
-               <string/>
               </property>
              </widget>
             </item>
