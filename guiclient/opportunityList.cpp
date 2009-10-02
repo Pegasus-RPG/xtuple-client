@@ -51,6 +51,8 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+  connect(_showInactive,	SIGNAL(toggled(bool)),	this,   SLOT(sFillList()));
+  connect(_search,		SIGNAL(lostFocus()),	this,   SLOT(sFillList()));
   connect(_targetDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_opsource,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_opstage,		SIGNAL(updated()),	this,   SLOT(sFillList()));
@@ -77,6 +79,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 
 //  statusBar()->hide();
 
+  _list->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
   _list->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
   _list->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft,   true, "crmacct_number" );
   _list->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft,   true, "ophead_owner_username" );
@@ -113,6 +116,17 @@ void opportunityList::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
   pMenu->setItemEnabled(menuItem, editPriv);
+
+  if (_list->altId() == 0)
+  {
+    menuItem = pMenu->insertItem(tr("Deactivate"), this, SLOT(sDeactivate()), 0);
+    pMenu->setItemEnabled(menuItem, editPriv);
+  }
+  else
+  {
+    menuItem = pMenu->insertItem(tr("Activate"), this, SLOT(sActivate()), 0);
+    pMenu->setItemEnabled(menuItem, editPriv);
+  }
 }
 
 enum SetResponse opportunityList::set(const ParameterList& pParams)
@@ -208,6 +222,28 @@ void opportunityList::sDelete()
 
 }
 
+void opportunityList::sDeactivate()
+{
+  q.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
+  q.bindValue(":ophead_id", _list->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else
+    sFillList();
+}
+
+void opportunityList::sActivate()
+{
+  q.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
+  q.bindValue(":ophead_id", _list->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else
+    sFillList();
+}
+
 void opportunityList::setParams(ParameterList &params)
 {
   if (_crmAccount->isValid())
@@ -217,6 +253,11 @@ void opportunityList::setParams(ParameterList &params)
   _opstage->appendValue(params);
   _usr->appendValue(params);
   _targetDates->appendValue(params);
+  
+  if(!_search->text().trimmed().isEmpty())
+    params.append("searchpattern", _search->text().trimmed());
+  if (!_showInactive->isChecked())
+    params.append("activeOnly");
 }
 
 void opportunityList::sPrint()
@@ -247,6 +288,6 @@ void opportunityList::sFillList()
     return;
   }
 
-  _list->populate(itemQ);
+  _list->populate(itemQ, true);
 }
 

@@ -35,6 +35,8 @@ class opportunityList : public XWidget, public Ui::opportunityList
     virtual void	sPopulateMenu(QMenu*);
     virtual void	sPrint();
     virtual void	sView();
+    virtual void	sDeactivate();
+    virtual void	sActivate();
     virtual void 	setParams(ParameterList &);
 
   private:

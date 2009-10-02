@@ -79,6 +79,7 @@ enum SetResponse opportunityStage::set(const ParameterList &pParams)
       _mode = cView;
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
+      _opInactive->setEnabled(FALSE);
       _save->hide();
       _close->setText(tr("&Close"));
       _close->setFocus();
@@ -134,19 +135,21 @@ void opportunityStage::sSave()
     }
 
     q.prepare( "INSERT INTO opstage "
-               "( opstage_id, opstage_name, opstage_descrip)"
+               "( opstage_id, opstage_name, opstage_descrip, opstage_opinactive)"
                "VALUES "
-               "( :opstage_id, :opstage_name, :opstage_descrip );" );
+               "( :opstage_id, :opstage_name, :opstage_descrip, :opstage_opinactive );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE opstage "
                "   SET opstage_name=:opstage_name,"
-               "       opstage_descrip=:opstage_descrip "
+               "       opstage_descrip=:opstage_descrip,"
+			   "       opstage_opinactive=:opstage_opinactive "
                " WHERE(opstage_id=:opstage_id);" );
 
   q.bindValue(":opstage_id", _opstageid);
   q.bindValue(":opstage_name", _name->text());
   q.bindValue(":opstage_descrip", _description->text().trimmed());
+  q.bindValue(":opstage_opinactive", QVariant(_opInactive->isChecked()));
   q.exec();
 
   done(_opstageid);
@@ -154,7 +157,7 @@ void opportunityStage::sSave()
 
 void opportunityStage::populate()
 {
-  q.prepare( "SELECT opstage_name, opstage_descrip "
+  q.prepare( "SELECT * "
              "  FROM opstage "
              " WHERE(opstage_id=:opstage_id);" );
   q.bindValue(":opstage_id", _opstageid);
@@ -163,6 +166,7 @@ void opportunityStage::populate()
   {
     _name->setText(q.value("opstage_name"));
     _description->setText(q.value("opstage_descrip"));
+    _opInactive->setChecked(q.value("opstage_opinactive").toBool());
   }
 } 
 
