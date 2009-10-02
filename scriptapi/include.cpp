@@ -26,6 +26,10 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
                   " WHERE ((script_name=:script_name)"
                   "   AND  (script_enabled))"
                   " ORDER BY script_order;");
+
+  context->setActivationObject(context->parentContext()->activationObject());
+  context->setThisObject(context->parentContext()->thisObject());
+
   for (; count < context->argumentCount(); count++)
   {
     QString scriptname = context->argument(count).toString();
