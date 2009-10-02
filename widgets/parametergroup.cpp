@@ -215,10 +215,27 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
     case User:
       _all->setText(QObject::tr("All Users"));
       _items->setType(XComboBox::Users);
+	  break;
 
     case ActiveUser:
       _all->setText(QObject::tr("All Users"));
       _items->setType(XComboBox::ActiveUsers);
+	  break;
+
+    case OpportunitySource:
+      _all->setText(QObject::tr("All Opportunity Sources"));
+      _items->setType(XComboBox::OpportunitySources);
+      break;
+
+    case OpportunityStage:
+      _all->setText(QObject::tr("All Opportunity Stages"));
+      _items->setType(XComboBox::OpportunityStages);
+      break;
+
+    case OpportunityType:
+      _all->setText(QObject::tr("All Opportunity Types"));
+      _items->setType(XComboBox::OpportunityTypes);
+      break;
   }
 }
 
@@ -272,6 +289,12 @@ void ParameterGroup::appendValue(ParameterList &pParams)
       pParams.append("curr_id", _items->id());
     else if (_type == WorkCenter)
       pParams.append("wrkcnt_id", _items->id());
+    else if (_type == OpportunitySource)
+      pParams.append("opsource_id", _items->id());
+    else if (_type == OpportunityStage)
+      pParams.append("opstage_id", _items->id());
+    else if (_type == OpportunityType)
+      pParams.append("optype_id", _items->id());
     else if (_type == User || _type == ActiveUser )
     {
       pParams.append("usr_id", _items->id());
@@ -298,6 +321,12 @@ void ParameterGroup::appendValue(ParameterList &pParams)
       pParams.append("currConcat_pattern", _pattern->text());
     else if (_type == WorkCenter)
       pParams.append("wrkcnt_pattern", _pattern->text());
+    else if (_type == OpportunitySource)
+      pParams.append("opsource_pattern", _pattern->text());
+    else if (_type == OpportunityStage)
+      pParams.append("opstage_pattern", _pattern->text());
+    else if (_type == OpportunityType)
+      pParams.append("optype_pattern", _pattern->text());
     else if (_type == User || _type == ActiveUser)
       pParams.append("usr_pattern", _pattern->text());
   }
@@ -344,6 +373,15 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
       case WorkCenter:
         name = ":wrkcnt_id";      break;
 
+      case OpportunitySource:
+        name = ":opsource_id";      break;
+
+      case OpportunityStage:
+        name = ":opstage_id";      break;
+
+      case OpportunityType:
+        name = ":optype_id";      break;
+
       case User:
         name = ":usr_id";         break;
 
@@ -389,6 +427,15 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
 
       case WorkCenter:
         name = ":wrkcnt_pattern";      break;
+
+      case OpportunitySource:
+        name = ":opsource_pattern";      break;
+
+      case OpportunityStage:
+        name = ":opstage_pattern";      break;
+
+      case OpportunityType:
+        name = ":optype_pattern";      break;
 
       case User:
         name = ":usr_pattern";         break;
