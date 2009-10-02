@@ -507,6 +507,14 @@ void initErrorLookupHash()
                             "there are ToDo Items assigned to it.  You must "
                             "delete or reassign these ToDo Items "
                             "before you may delete it."),                      0, "" },
+  { "deleteOpportunity", -2, TR("The selected Opportunity cannot be deleted because "
+                            "there are Quotes assigned to it.  You must "
+                            "delete or reassign these Quotes "
+                            "before you may delete it."),                      0, "" },
+  { "deleteOpportunity", -3, TR("The selected Opportunity cannot be deleted because "
+                            "there are Sales Orders assigned to it.  You must "
+                            "delete or reassign these Sales Orders "
+                            "before you may delete it."),                      0, "" },
 
   { "deletePackage", -1, TR("The selected Package cannot be deleted because "
                             "there are other packages that depend on it to "
