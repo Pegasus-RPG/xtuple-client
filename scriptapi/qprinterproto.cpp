@@ -654,7 +654,7 @@ void QPrinterProto::setResolution(int dpi)
     item->setResolution(dpi);
 }
 
-#if Q_WS_WIN
+#ifdef Q_WS_WIN
 void QPrinterProto::setWinPageSize(int pageSize)
 {
   QPrinter *item = qscriptvalue_cast<QPrinter*>(thisObject());
@@ -703,7 +703,7 @@ int QPrinterProto::widthMM() const
   return 0;
 }
 
-#if Q_WS_WIN
+#ifdef Q_WS_WIN
 int QPrinterProto::winPageSize() const
 {
   QPrinter *item = qscriptvalue_cast<QPrinter*>(thisObject());

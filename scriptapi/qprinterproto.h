@@ -109,7 +109,7 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE void            setPrinterName(const QString & name);
     Q_INVOKABLE void            setPrinterSelectionOption(const QString & option);
     Q_INVOKABLE void            setResolution(int dpi);
-#if Q_WS_WIN
+#ifdef Q_WS_WIN
     Q_INVOKABLE void            setWinPageSize(int pageSize);
     Q_INVOKABLE QList<QPrinter::PaperSource> supportedPaperSources() const;
 #endif
@@ -117,7 +117,7 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE int             toPage() const;
     Q_INVOKABLE int             width() const;
     Q_INVOKABLE int             widthMM() const;
-#if Q_WS_WIN
+#ifdef Q_WS_WIN
     Q_INVOKABLE int             winPageSize() const;
 #endif
 
