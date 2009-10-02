@@ -507,6 +507,10 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   if (valid)
     _cust->setId(param.toInt());
 
+  param = pParams.value("ophead_id", &valid);
+  if (valid)
+    _opportunity->setId(param.toInt());
+
   param = pParams.value("sohead_id", &valid);
   if (valid)
   {
@@ -773,6 +777,7 @@ qDebug("saving...");
                "    cohead_ordercomments=:ordercomments, cohead_shipcomments=:shipcomments,"
                "    cohead_shipchrg_id=:shipchrg_id, cohead_shipform_id=:shipform_id,"
                "    cohead_prj_id=:prj_id,"
+			   "    cohead_ophead_id=:ophead_id,"
                "    cohead_curr_id = :curr_id,"
                "    cohead_shipcomplete=:cohead_shipcomplete,"
                "    cohead_shipto_cntct_id=:shipto_cntct_id,"
@@ -817,7 +822,7 @@ qDebug("saving...");
                "    cohead_holdtype,"
                "    cohead_ordercomments, cohead_shipcomments,"
                "    cohead_shipchrg_id, cohead_shipform_id,"
-               "    cohead_prj_id,"
+               "    cohead_prj_id, cohead_ophead_id,"
                "    cohead_curr_id,"
                "    cohead_shipcomplete,"
                "    cohead_shipto_cntct_id,"
@@ -859,7 +864,7 @@ qDebug("saving...");
                "    :holdtype,"
                "    :ordercomments, :shipcomments,"
                "    :shipchrg_id, :shipform_id,"
-               "    :prj_id,"
+               "    :prj_id, :ophead_id,"
                "    :curr_id,"
                "    :cohead_shipcomplete,"
                "    :shipto_cntct_id,"
@@ -900,7 +905,7 @@ qDebug("saving...");
                "    quhead_freight=:freight, quhead_calcfreight=:calcfreight,"
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
-               "    quhead_prj_id=:prj_id, quhead_warehous_id=:warehous_id,"
+               "    quhead_prj_id=:prj_id, quhead_ophead_id=:ophead_id, quhead_warehous_id=:warehous_id,"
                "    quhead_curr_id = :curr_id, quhead_expire=:expire,"
                "    quhead_shipto_cntct_id=:shipto_cntct_id,"
                "    quhead_shipto_cntct_honorific=:shipto_cntct_honorific,"
@@ -942,7 +947,7 @@ qDebug("saving...");
                "    quhead_freight, quhead_calcfreight,"
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
-               "    quhead_prj_id, quhead_warehous_id,"
+               "    quhead_prj_id, quhead_ophead_id, quhead_warehous_id,"
                "    quhead_curr_id, quhead_expire,"
                "    quhead_shipto_cntct_id,"
                "    quhead_shipto_cntct_honorific,"
@@ -982,7 +987,7 @@ qDebug("saving...");
                "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
-               "    :prj_id, :warehous_id,"
+               "    :prj_id, :ophead_id, :warehous_id,"
                "    :curr_id, :expire,"
                "    :shipto_cntct_id,"
                "    :shipto_cntct_honorific,"
@@ -1085,6 +1090,8 @@ qDebug("saving...");
   q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked()));
   if (_project->isValid())
     q.bindValue(":prj_id", _project->id());
+  if (_opportunity->isValid())
+    q.bindValue(":ophead_id", _opportunity->id());
   if(_expire->isValid())
     q.bindValue(":expire", _expire->date());
 
@@ -2145,7 +2152,8 @@ void salesOrder::populate()
                 "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, cohead_number)"
                 "            ELSE formatBoolYN(cohead_wasquote)"
                 "       END AS fromQuote,"
-                "       COALESCE(cohead_prj_id,-1) AS cohead_prj_id "
+                "       COALESCE(cohead_prj_id,-1) AS cohead_prj_id, "
+                "       COALESCE(cohead_ophead_id,-1) AS cohead_ophead_id "
                 "FROM custinfo, cohead "
                 "WHERE ( (cohead_cust_id=cust_id)"
                 " AND (cohead_id=:cohead_id) );" );
@@ -2174,6 +2182,7 @@ void salesOrder::populate()
       _terms->setId(so.value("cohead_terms_id").toInt());
       _orderCurrency->setId(so.value("cohead_curr_id").toInt());
       _project->setId(so.value("cohead_prj_id").toInt());
+      _opportunity->setId(so.value("cohead_ophead_id").toInt());
 
       _shipToCntct->setId(so.value("cohead_shipto_cntct_id").toInt());
       _shipToCntct->setHonorific(so.value("cohead_shipto_cntct_honorific").toString());

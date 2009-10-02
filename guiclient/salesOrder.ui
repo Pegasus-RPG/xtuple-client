@@ -1487,7 +1487,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_relationshipsTab">
         <attribute name="title">
-         <string>Releationships</string>
+         <string>Relationships</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">

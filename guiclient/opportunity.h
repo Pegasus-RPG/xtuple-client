@@ -38,16 +38,37 @@ public slots:
     virtual void sNewTodoItem();
     virtual void sPopulateTodoMenu(QMenu*);
     virtual void sViewTodoItem();
+    virtual void sDeleteSale();
+    virtual void sEditSale();
+    virtual void sFillSalesList();
+    virtual void sHandleSalesPrivs();
+    virtual void sPopulateSalesMenu(QMenu*);
+    virtual void sPrintSale();
+    virtual void sViewSale();
+    virtual void sDeleteQuote();
+    virtual void sEditQuote();
+    virtual void sNewQuote();
+    virtual void sPrintQuote();
+    virtual void sConvertQuote();
+    virtual void sViewQuote();
+    virtual void sDeleteSalesOrder();
+    virtual void sEditSalesOrder();
+    virtual void sNewSalesOrder();
+    virtual void sPrintSalesOrder();
+    virtual void sViewSalesOrder();
     virtual void sFillCharList();
     virtual void sNewCharacteristic();
     virtual void sEditCharacteristic();
     virtual void sDeleteCharacteristic();
+	virtual void sHandleCrmacct(int);
 
 protected slots:
     virtual void languageChange();
 
 private:
     int		_opheadid;
+	int		_custid;
+	int		_prospectid;
     int		_mode;
     bool	_saved;
 };

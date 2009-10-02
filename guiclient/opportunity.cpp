@@ -15,8 +15,13 @@
 #include <QVariant>
 #include <QMenu>
 
+#include <openreports.h>
+
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
+#include "salesOrder.h"
+#include "printQuote.h"
+#include "printSoForm.h"
 #include "characteristicAssignment.h"
 
 /*
@@ -32,14 +37,26 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   // signals and slots connections
+  connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sHandleCrmacct(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));
+  connect(_viewTodoItem, SIGNAL(clicked()), this, SLOT(sViewTodoItem()));
   connect(_editTodoItem, SIGNAL(clicked()), this, SLOT(sEditTodoItem()));
   connect(_newTodoItem, SIGNAL(clicked()), this, SLOT(sNewTodoItem()));
   connect(_todoList, SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
   connect(_todoList, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateTodoMenu(QMenu*)));
   connect(_todoList, SIGNAL(valid(bool)), this, SLOT(sHandleTodoPrivs()));
-  connect(_viewTodoItem, SIGNAL(clicked()), this, SLOT(sViewTodoItem()));
+  connect(_deleteSale, SIGNAL(clicked()), this, SLOT(sDeleteSale()));
+  connect(_viewSale, SIGNAL(clicked()), this, SLOT(sViewSale()));
+  connect(_editSale, SIGNAL(clicked()), this, SLOT(sEditSale()));
+  connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
+  connect(_newQuote, SIGNAL(clicked()), this, SLOT(sNewQuote()));
+  connect(_newSalesOrder, SIGNAL(clicked()), this, SLOT(sNewSalesOrder()));
+  connect(_printSale, SIGNAL(clicked()), this, SLOT(sPrintSale()));
+  connect(_salesList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateSalesMenu(QMenu*)));
+  connect(_salesList, SIGNAL(valid(bool)), this, SLOT(sHandleSalesPrivs()));
+  connect(omfgThis,	SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillSalesList()));
+  connect(omfgThis,	SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillSalesList()));
   connect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
@@ -48,13 +65,20 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _probability->setValidator(0);
   
   _opheadid = -1;
-
+  _custid = -1;
+  _prospectid = -1;
+  
   _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
   _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
   _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
   _todoList->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "todoitem_description" );
   _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
   _todoList->addColumn(tr("Due Date"),   _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date" );
+
+  _salesList->addColumn(tr("Sale Type"),       _orderColumn, Qt::AlignLeft, true, "sale_type" );
+  _salesList->addColumn(tr("Sale #"),          _orderColumn, Qt::AlignLeft, true, "sale_number" );
+  _salesList->addColumn(tr("Sale Date"),       _dateColumn,  Qt::AlignLeft, true, "sale_date" );
+  _salesList->addColumn(tr("Ext. Price"),      _priceColumn, Qt::AlignRight, true, "sale_extprice");
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft,  true, "char_name" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value" );
@@ -139,6 +163,11 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       _deleteTodoItem->setEnabled(false);
       _editTodoItem->setEnabled(false);
       _newTodoItem->setEnabled(false);
+      _deleteSale->setEnabled(false);
+      _editSale->setEnabled(false);
+      _printSale->setEnabled(false);
+      _newQuote->setEnabled(false);
+      _newSalesOrder->setEnabled(false);
       _newCharacteristic->setEnabled(FALSE);
 
       _save->hide();
@@ -156,6 +185,7 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
   }
 
   sHandleTodoPrivs();
+  sHandleSalesPrivs();
   return NoError;
 }
 
@@ -364,6 +394,7 @@ void opportunity::populate()
     _comments->setId(_opheadid);
 
     sFillTodoList();
+    sFillSalesList();
     sFillCharList();
   }
 }
@@ -523,6 +554,445 @@ void opportunity::sHandleTodoPrivs()
   }
 }
 
+void opportunity::sPrintSale()
+{
+  if (_salesList->altId() == 0)
+    sPrintQuote();
+  else
+    sPrintSalesOrder();
+}
+
+void opportunity::sEditSale()
+{
+  if (_salesList->altId() == 0)
+    sEditQuote();
+  else
+    sEditSalesOrder();
+}
+
+void opportunity::sViewSale()
+{
+  if (_salesList->altId() == 0)
+    sViewQuote();
+  else
+    sViewSalesOrder();
+}
+
+void opportunity::sDeleteSale()
+{
+  if (_salesList->altId() == 0)
+    sDeleteQuote();
+  else
+    sDeleteSalesOrder();
+}
+
+void opportunity::sPrintQuote()
+{
+  q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS report_name "
+             "FROM quhead "
+             "WHERE (quhead_id=:quheadid); " );
+  q.bindValue(":quheadid", _salesList->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("quhead_id", _salesList->id());
+
+    orReport report(q.value("report_name").toString(), params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+  else
+    QMessageBox::warning( this, tr("Could not locate report"),
+                          tr("Could not locate the report definition the form \"%1\"")
+                          .arg(q.value("report_name").toString()) );
+}
+
+void opportunity::sConvertQuote()
+{
+  if (QMessageBox::question(this, tr("Convert Selected Quote"),
+			    tr("<p>Are you sure that you want to convert "
+			       "the selected Quote to a Sales Order?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    int quheadid = _salesList->id();
+    XSqlQuery convert;
+    convert.prepare("SELECT convertQuote(:quhead_id) AS sohead_id;");
+
+    XSqlQuery prospectq;
+    prospectq.prepare("SELECT convertProspectToCustomer(quhead_cust_id) AS result "
+                      "FROM quhead "
+                      "WHERE (quhead_id=:quhead_id);");
+
+    bool tryagain = false;
+    do
+	{
+	  int soheadid = -1;
+      convert.bindValue(":quhead_id", quheadid);
+      convert.exec();
+      if (convert.first())
+      {
+        soheadid = convert.value("sohead_id").toInt();
+        if (soheadid == -3)
+        {
+          if ((_metrics->value("DefaultSalesRep").toInt() > 0) &&
+              (_metrics->value("DefaultTerms").toInt() > 0) &&
+			  (_metrics->value("DefaultCustType").toInt() > 0) && 
+              (_metrics->value("DefaultShipFormId").toInt() > 0)  && 
+              (_privileges->check("MaintainCustomerMasters"))) 
+          {
+            if (QMessageBox::question(this, tr("Quote for Prospect"),
+											tr("<p>This Quote is for a Prospect, not "
+                                               "a Customer. Do you want to convert "
+                                               "the Prospect to a Customer using global "
+                                               "default values?"),
+                                      QMessageBox::Yes,
+                                      QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+            {
+              prospectq.bindValue(":quhead_id", quheadid);
+              prospectq.exec();
+              if (prospectq.first())
+              {
+                int result = prospectq.value("result").toInt();
+                if (result < 0)
+                {
+                  systemError(this, storedProcErrorLookup("convertProspectToCustomer", result), __FILE__, __LINE__);
+				  continue;
+                }
+                convert.exec();
+                if (convert.first())
+                {
+                  soheadid = convert.value("sohead_id").toInt();
+                  if (soheadid < 0)
+                  {
+                    QMessageBox::warning(this, tr("Cannot Convert Quote"), storedProcErrorLookup("convertQuote", soheadid)
+                                        .arg(quheadid));
+					continue;
+                  }
+				}
+			  }
+              else if (prospectq.lastError().type() != QSqlError::NoError)
+              {
+                systemError(this, prospectq.lastError().databaseText(), __FILE__, __LINE__);
+                continue;
+			  }
+			}
+            else
+            {
+              QMessageBox::information(this, tr("Quote for Prospect"),
+                                             tr("<p>The prospect must be manually "
+												"converted to customer from either the "
+                                                "CRM Account or Customer windows before "
+                                                "coverting this quote."));
+              continue;
+			}
+		  }
+          else
+          {
+            QMessageBox::information(this, tr("Quote for Prospect"),
+                                           tr("<p>The prospect must be manually "
+                                              "converted to customer from either the "
+                                              "CRM Account or Customer windows before "
+                                              "coverting this quote."));
+            continue;
+		  }
+		}
+        else if (soheadid < 0)
+        {
+          QMessageBox::warning(this, tr("Cannot Convert Quote"), storedProcErrorLookup("convertQuote", soheadid)
+							   .arg(quheadid));
+          continue;
+        }
+        ParameterList params;
+        params.append("mode", "edit");
+        params.append("sohead_id", soheadid);
+    
+        salesOrder *newdlg = new salesOrder();
+        newdlg->setWindowModality(Qt::WindowModal);
+        newdlg->set(params);
+        omfgThis->handleNewWindow(newdlg);
+	  }
+      else if (convert.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
+        continue;
+	  }
+    } while (tryagain);
+  } // if user wants to convert
+}
+
+void opportunity::sNewQuote()
+{
+  if (! save(false))
+    return;
+
+  ParameterList params;
+  params.append("mode", "newQuote");
+  if (_custid > -1)
+    params.append("cust_id", _custid);
+  else
+    params.append("cust_id", _prospectid);
+  params.append("ophead_id", _opheadid);
+
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillSalesList();
+}
+
+void opportunity::sEditQuote()
+{
+  ParameterList params;
+  params.append("mode", "editQuote");
+  params.append("quhead_id", _salesList->id());
+    
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillSalesList();
+}
+
+void opportunity::sViewQuote()
+{
+  ParameterList params;
+  params.append("mode", "viewQuote");
+  params.append("quhead_id", _salesList->id());
+    
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void opportunity::sDeleteQuote()
+{
+  if ( QMessageBox::warning( this, tr("Delete Selected Quote"),
+                             tr("Are you sure that you want to delete the selected Quote?" ),
+                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+  {
+    q.prepare("SELECT deleteQuote(:quhead_id) AS result;");
+    q.bindValue(":quhead_id", _salesList->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteQuote", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+      else
+        sFillSalesList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void opportunity::sPrintSalesOrder()
+{
+  ParameterList params;
+  params.append("sohead_id", _salesList->id());
+
+  printSoForm newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void opportunity::sNewSalesOrder()
+{
+  if (! save(false))
+    return;
+
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("cust_id", _custid);
+  params.append("ophead_id", _opheadid);
+
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillSalesList();
+}
+
+void opportunity::sEditSalesOrder()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("sohead_id", _salesList->id());
+    
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillSalesList();
+}
+
+void opportunity::sViewSalesOrder()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("sohead_id", _salesList->id());
+    
+  salesOrder *newdlg = new salesOrder();
+  newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void opportunity::sDeleteSalesOrder()
+{
+  if ( QMessageBox::warning( this, tr("Delete Selected Sales Order"),
+                             tr("Are you sure that you want to delete the selected Sales Order?" ),
+                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+  {
+    q.prepare("SELECT deleteSo(:cohead_id) AS result;");
+    q.bindValue(":cohead_id", _salesList->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteSo", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+      else
+        sFillSalesList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void opportunity::sFillSalesList()
+{
+  q.prepare("SELECT id, alt_id, sale_type, sale_number, sale_date, sale_extprice, "
+            "       'curr' AS sale_extprice_xtnumericrole, "
+			"       0 AS sale_extprice_xttotalrole "
+            "FROM ( "
+            "SELECT quhead_id AS id, 0 AS alt_id, :quote AS sale_type, "
+			"       quhead_number::TEXT AS sale_number, quhead_quotedate AS sale_date, "
+            "       SUM(ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
+            "                 (quitem_price / quitem_price_invuomratio),2)) AS sale_extprice "
+            "FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id) "
+            "WHERE (quhead_ophead_id=:ophead_id) "
+			"GROUP BY quhead_id, quhead_number, quhead_quotedate "
+			"UNION "
+			"SELECT cohead_id AS id, 1 AS alt_id, :salesorder AS sale_type, "
+			"       cohead_number AS sale_number, cohead_orderdate AS sale_date,  "
+            "       SUM(ROUND((coitem_qtyord * coitem_qty_invuomratio) *"
+            "                 (coitem_price / coitem_price_invuomratio),2)) AS sale_extprice "
+            "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id) "
+            "WHERE (cohead_ophead_id=:ophead_id) "
+			"GROUP BY cohead_id, cohead_number, cohead_orderdate "
+			"     ) AS data "
+            "ORDER BY sale_date;");
+  q.bindValue(":ophead_id", _opheadid);
+  q.bindValue(":quote", tr("Quote"));
+  q.bindValue(":salesorder", tr("Sales Order"));
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  _salesList->populate(q, true);
+}
+
+void opportunity::sPopulateSalesMenu(QMenu *pMenu)
+{
+  bool editPriv = false;
+  bool viewPriv = false;
+  bool convertPriv = false;
+
+  if(_salesList->currentItem())
+  {
+    editPriv = (cNew == _mode || cEdit == _mode) && (
+      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainQuotes")) ||
+      (1 == _salesList->currentItem()->altId() && _privileges->check("MaintainSalesOrders")) );
+
+    viewPriv = (cNew == _mode || cEdit == _mode) && (
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
+      (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
+
+    convertPriv = (cNew == _mode || cEdit == _mode) &&
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
+  }
+
+  int menuItem;
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditSale()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
+
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewSale()), 0);
+  pMenu->setItemEnabled(menuItem, (editPriv || viewPriv));
+
+  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteSale()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
+
+  menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrintSale()), 0);
+  pMenu->setItemEnabled(menuItem, (editPriv || viewPriv));
+}
+
+void opportunity::sHandleSalesPrivs()
+{
+  bool isCustomer = (_custid > -1);
+  
+  bool newQuotePriv = ((cNew == _mode || cEdit == _mode) && _privileges->check("MaintainQuotes"));
+  bool newSalesOrderPriv = ((cNew == _mode || cEdit == _mode) && isCustomer && _privileges->check("MaintainSalesOrders"));
+
+  bool editPriv = false;
+  bool viewPriv = false;
+  bool convertPriv = false;
+
+  if(_salesList->currentItem())
+  {
+    editPriv = (cNew == _mode || cEdit == _mode) && (
+      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainQuotes")) ||
+      (1 == _salesList->currentItem()->altId() && _privileges->check("MaintainSalesOrders")) );
+
+    viewPriv = (cNew == _mode || cEdit == _mode) && (
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
+      (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
+
+    convertPriv = (cNew == _mode || cEdit == _mode) &&
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
+  }
+
+  _newQuote->setEnabled(newQuotePriv);
+  _newSalesOrder->setEnabled(newSalesOrderPriv);
+  _convertQuote->setEnabled(convertPriv && _salesList->id() > 0);
+  _editSale->setEnabled(editPriv && _salesList->id() > 0);
+  _viewSale->setEnabled((editPriv || viewPriv) && _salesList->id() > 0);
+  _printSale->setEnabled((editPriv || viewPriv) && _salesList->id() > 0);
+  _deleteSale->setEnabled(editPriv && _salesList->id() > 0);
+
+  if (editPriv)
+  {
+    disconnect(_salesList,SIGNAL(itemSelected(int)),_viewSale, SLOT(animateClick()));
+    connect(_salesList,	SIGNAL(itemSelected(int)), _editSale, SLOT(animateClick()));
+  }
+  else if (viewPriv)
+  {
+    disconnect(_salesList,SIGNAL(itemSelected(int)),_editSale, SLOT(animateClick()));
+    connect(_salesList,	SIGNAL(itemSelected(int)), _viewSale, SLOT(animateClick()));
+  }
+}
+
 void opportunity::sNewCharacteristic()
 {
   if (! save(true))
@@ -573,5 +1043,25 @@ void opportunity::sFillCharList()
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
   _charass->populate(q);
+}
+
+void opportunity::sHandleCrmacct(int pCrmacctid)
+{
+  XSqlQuery crmacct;
+  crmacct.prepare( "SELECT COALESCE(crmacct_cust_id, -1) AS cust_id, "
+                   "       COALESCE(crmacct_prospect_id, -1) AS prospect_id "
+                   "FROM crmacct "
+                   "WHERE (crmacct_id=:crmacct_id);" );
+  crmacct.bindValue(":crmacct_id", pCrmacctid);
+  crmacct.exec();
+  if (crmacct.first())
+  {
+    _custid = crmacct.value("cust_id").toInt();
+	_prospectid = crmacct.value("prospect_id").toInt();
+  }
+  if (_custid == -1 && _prospectid == -1)
+    _salesTab->setEnabled(false);
+  else
+    _salesTab->setEnabled(true);
 }
 
