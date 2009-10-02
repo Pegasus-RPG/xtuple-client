@@ -34,7 +34,6 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _targetDates->setEndCaption(tr("Last Target Date:"));
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  _usr->setType(ParameterGroup::User);
   q.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");
@@ -53,6 +52,9 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
   connect(_targetDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_opsource,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_opstage,		SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_optype,		SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
@@ -210,6 +212,9 @@ void opportunityList::setParams(ParameterList &params)
 {
   if (_crmAccount->isValid())
     params.append("crmAccountId",_crmAccount->id());
+  _optype->appendValue(params);
+  _opsource->appendValue(params);
+  _opstage->appendValue(params);
   _usr->appendValue(params);
   _targetDates->appendValue(params);
 }

@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,50 +8,53 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>opportunityList</class>
- <widget class="QWidget" name="opportunityList" >
-  <property name="geometry" >
+ <widget class="QWidget" name="opportunityList">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>722</width>
+    <height>581</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Opportunity List</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_3" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="margin">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QGridLayout" name="gridLayout_2" >
-         <item row="0" column="0" >
-          <widget class="CRMAcctCluster" name="_crmAccount" />
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="CRMAcctCluster" name="_crmAccount"/>
          </item>
-         <item row="1" column="0" >
-          <widget class="ParameterGroup" name="_usr" >
-           <property name="focusPolicy" >
+         <item row="2" column="0">
+          <widget class="ParameterGroup" name="_usr">
+           <property name="focusPolicy">
             <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="fixedSize" >
+           <property name="fixedSize">
             <bool>false</bool>
+           </property>
+           <property name="type">
+            <enum>ParameterGroup::User</enum>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QGroupBox" name="_dates" >
-           <property name="title" >
+         <item row="2" column="1">
+          <widget class="QGroupBox" name="_dates">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" name="gridLayout" >
-            <item row="0" column="0" >
-             <widget class="DateCluster" name="_targetDates" >
-              <property name="focusPolicy" >
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="DateCluster" name="_targetDates">
+              <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
@@ -58,14 +62,44 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="ParameterGroup" name="_optype">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="type">
+            <enum>ParameterGroup::OpportunityType</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="ParameterGroup" name="_opsource">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="type">
+            <enum>ParameterGroup::OpportunitySource</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="ParameterGroup" name="_opstage">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="type">
+            <enum>ParameterGroup::OpportunityStage</enum>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>48</width>
            <height>0</height>
@@ -74,30 +108,30 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>Close</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_print" >
-           <property name="text" >
+          <widget class="QPushButton" name="_print">
+           <property name="text">
             <string>Print</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -109,28 +143,28 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QFrame" name="frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+     <item row="1" column="0">
+      <widget class="QFrame" name="frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
+       <layout class="QHBoxLayout">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="XTreeWidget" name="_list" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <widget class="XTreeWidget" name="_list">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>1</verstretch>
            </sizepolicy>
@@ -138,53 +172,53 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="_new" >
-            <property name="text" >
+           <widget class="QPushButton" name="_new">
+            <property name="text">
              <string>New</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="_edit" >
-            <property name="enabled" >
+           <widget class="QPushButton" name="_edit">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Edit</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="_view" >
-            <property name="enabled" >
+           <widget class="QPushButton" name="_view">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>View</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="_delete" >
-            <property name="enabled" >
+           <widget class="QPushButton" name="_delete">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Delete</string>
             </property>
            </widget>
           </item>
           <item>
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
               <height>40</height>
@@ -201,7 +235,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
   <customwidget>
    <class>CRMAcctCluster</class>
@@ -226,6 +260,9 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_optype</tabstop>
+  <tabstop>_opsource</tabstop>
+  <tabstop>_opstage</tabstop>
   <tabstop>_usr</tabstop>
   <tabstop>_targetDates</tabstop>
   <tabstop>_list</tabstop>
@@ -233,6 +270,7 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
+  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
