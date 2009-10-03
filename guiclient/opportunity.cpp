@@ -407,6 +407,8 @@ void opportunity::sNewTodoItem()
   ParameterList params;
   params.append("mode", "new");
   params.append("ophead_id", _opheadid);
+  if (_crmacct->isValid())
+    params.append("crmacct_id", _crmacct->id());
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
