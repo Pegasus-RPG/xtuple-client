@@ -26,7 +26,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 {
   setupUi(this);
   
-  _crmAccount->hide();
+//  _crmAccount->hide();
 
   _targetDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _targetDates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -51,6 +51,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+  connect(_crmAccount, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_showInactive,	SIGNAL(toggled(bool)),	this,   SLOT(sFillList()));
   connect(_search,		SIGNAL(lostFocus()),	this,   SLOT(sFillList()));
   connect(_targetDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
