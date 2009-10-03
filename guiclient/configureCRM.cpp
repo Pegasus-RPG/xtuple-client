@@ -48,6 +48,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
     
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));
+  _opportunityChangeLog->setChecked(_metrics->boolean("OpportunityChangeLog"));
   if (_metrics->boolean("EnableBatchManager"))
   {
     _incdtEmailProfile->populate("SELECT ediprofile_id, ediprofile_name "
@@ -96,6 +97,7 @@ void configureCRM::sSave()
   
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
+  _metrics->set("OpportunityChangeLog", _opportunityChangeLog->isChecked());
   
   if (_metrics->boolean("EnableBatchManager"))
   {

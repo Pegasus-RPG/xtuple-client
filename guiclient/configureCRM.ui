@@ -9,6 +9,14 @@ is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>configureCRM</class>
  <widget class="QDialog" name="configureCRM">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>678</width>
+    <height>354</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>CRM Configuration</string>
   </property>
@@ -195,7 +203,7 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <layout class="QHBoxLayout">
        <item>
         <widget class="QLabel" name="_incdtEmailProfileLit">
@@ -229,7 +237,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QGroupBox" name="_incdtDelGroup">
        <property name="enabled">
         <bool>true</bool>
@@ -274,6 +282,13 @@ to be bound by its terms.</comment>
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="_opportunityChangeLog">
+       <property name="text">
+        <string>Post Opportunity Changes to the Change Log</string>
+       </property>
       </widget>
      </item>
     </layout>
