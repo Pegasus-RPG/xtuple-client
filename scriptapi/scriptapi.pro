@@ -22,6 +22,7 @@ HEADERS +=  setupscriptapi.h                    \
             orreportproto.h                     \
             parameterlistsetup.h                \
             qactionproto.h                      \
+            qboxlayoutproto.h                   \
             qdialogsetup.h                      \
             qdomattrproto.h                     \
             qdomcdatasectionproto.h             \
@@ -43,7 +44,9 @@ HEADERS +=  setupscriptapi.h                    \
             qdoublevalidatorproto.h             \
             qeventproto.h                       \
             qfontproto.h                        \
+            qgridlayoutproto.h                  \
             qiconproto.h                        \
+            qlayoutproto.h                      \
             qmenuproto.h                        \
             qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
@@ -99,6 +102,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             orreportproto.cpp                   \
             parameterlistsetup.cpp              \
             qactionproto.cpp                    \
+            qboxlayoutproto.cpp                 \
             qdialogsetup.cpp                    \
             qdomattrproto.cpp                   \
             qdomcdatasectionproto.cpp           \
@@ -120,7 +124,9 @@ SOURCES +=  setupscriptapi.cpp                  \
             qdoublevalidatorproto.cpp           \
             qeventproto.cpp                     \
             qfontproto.cpp                      \
+            qgridlayoutproto.cpp                \
             qiconproto.cpp                      \
+            qlayoutproto.cpp                    \
             qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \

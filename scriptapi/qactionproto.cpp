@@ -17,8 +17,20 @@
 
 #define DEBUG true
 
+QScriptValue QActiontoScriptValue(QScriptEngine *engine, QAction* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void QActionfromScriptValue(const QScriptValue &obj, QAction* &item)
+{
+  item = qobject_cast<QAction*>(obj.toQObject());
+}
+
 void setupQActionProto(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, QActiontoScriptValue, QActionfromScriptValue);
+
   QScriptValue proto = engine->newQObject(new QActionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QAction*>(), proto);
   // engine->setDefaultPrototype(qMetaTypeId<QAction>(),  proto);

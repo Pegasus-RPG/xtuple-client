@@ -21,12 +21,19 @@
 }
 
 /^void setup.*QScriptEngine/ {
+  protoclass = substr($2, 6, index($2, "(") - 6);
+  baseclass  = substr(protoclass, 1, index(protoclass, "Proto") - 1);
+  print "QScriptValue " baseclass "toScriptValue(QScriptEngine *engine, " baseclass "* const &item)";
+  print "{ return engine->newQObject(item); }";
+  print "";
+  print "QScriptValue " baseclass "fromScriptValue(QScriptEngine *engine, " baseclass "* const &item)";
+  print "{ item = qobject_cast<" baseclass "*>(obj.toQObject());";
   print "";
   sub(/;/, "");
   print;
-  protoclass = substr($2, 6, index($2, "(") - 6);
-  baseclass  = substr(protoclass, 1, index(protoclass, "Proto") - 1);
   print "{";
+  print " qScriptRegisterMetaType(engine, " baseclass "toScriptValue, " baseclass "fromScriptValue);"
+  print "";
   print "  QScriptValue proto = engine->newQObject(new " protoclass "(engine));";
   print "  engine->setDefaultPrototype(qMetaTypeId<" baseclass "*>(), proto);";
   print "  engine->setDefaultPrototype(qMetaTypeId<" baseclass ">(),  proto);";

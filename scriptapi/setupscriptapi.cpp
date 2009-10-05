@@ -28,6 +28,7 @@
 #include "polineeditsetup.h"
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
+#include "qboxlayoutproto.h"
 #include "qdialogsetup.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
@@ -49,7 +50,9 @@
 #include "qdoublevalidatorproto.h"
 #include "qeventproto.h"
 #include "qfontproto.h"
+#include "qgridlayoutproto.h"
 #include "qiconproto.h"
+#include "qlayoutproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
@@ -110,6 +113,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupPoLineEdit(engine);
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
+  setupQBoxLayoutProto(engine);
   setupQDialog(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
@@ -131,7 +135,9 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDoubleValidatorProto(engine);
   setupQEventProto(engine);
   setupQFontProto(engine);
+  setupQGridLayoutProto(engine);
   setupQIconProto(engine);
+  setupQLayoutProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);

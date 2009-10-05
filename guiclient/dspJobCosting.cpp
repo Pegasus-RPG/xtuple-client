@@ -31,11 +31,11 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
                   "       wo_qtyord, wo_qtyrcv, wo_status,"
-                  "       formatDate(wo_duedate) AS duedate,"
-                  "       formatDate(wo_startdate) AS startdate,"
-                  "       formatQtyPer(wo_qtyord) AS ordered,"
-                  "       formatQtyPer(wo_qtyrcv) AS received, "
-                  "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance,"
+                  "       wo_duedate,"
+                  "       wo_startdate,"
+                  "       wo_qtyord,"
+                  "       wo_qtyrcv,"
+                  "       (noNeg(wo_qtyord - wo_qtyrcv)) AS balance,"
                   "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
                   "       itemsite_warehous_id "
                   "FROM wo, itemsite, item, warehous, uom "
@@ -46,22 +46,8 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
                   " AND (item_type = 'J')) "
                   "ORDER BY formatWONumber(wo_id) DESC");
   
-  QString _codecol;
-  if (!_metrics->boolean("Routings"))
-  {
-    _codecol = tr("Item Number");
-    _showsu->hide();
-    _showsu->setChecked(FALSE);
-    _showrt->hide();
-    _showrt->setChecked(FALSE);
-    _showmatl->hide();
-    _showmatl->setChecked(TRUE);
-  }
-  else
-    _codecol = tr("Work Center/Item");
-
-  _cost->addColumn(tr("Type"), _itemColumn, Qt::AlignLeft,  true, "type");
-  _cost->addColumn(_codecol,   _itemColumn, Qt::AlignLeft,  true, "code");
+  _cost->addColumn(tr("Type"),            _itemColumn, Qt::AlignLeft,  true, "type");
+  _cost->addColumn(tr("Work Center/Item"),_itemColumn, Qt::AlignLeft,  true, "code");
   _cost->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "descrip");
   _cost->addColumn(tr("Qty."),  _qtyColumn, Qt::AlignRight, true, "qty");
   _cost->addColumn(tr("UOM"),   _uomColumn, Qt::AlignCenter,true, "uom");
@@ -108,29 +94,12 @@ bool dspJobCosting::setParams(ParameterList &params)
     _wo->setFocus();
     return false;
   }
- if (!_showsu->isChecked() && !_showrt->isChecked() && !_showmatl->isChecked())
- {
-   QMessageBox::warning(this, tr("Select Options"),
-                        tr("<p>You must select one or more of the options to "
-                           "show Set Up, Run Time, and/or Materials."));
-   _showsu->setFocus();
-   return false;
- }
 
   params.append("wo_id", _wo->id());
   params.append("setup", tr("Setup"));
   params.append("runtime", tr("Run Time"));
   params.append("material", tr("Material"));
   params.append("timeuom", tr("Hours"));
-
-  if (_showsu->isChecked())
-    params.append("showsu");
-
-  if (_showrt->isChecked())
-    params.append("showrt");
-
-  if (_showmatl->isChecked())
-    params.append("showmatl");
 
   return true;
 }

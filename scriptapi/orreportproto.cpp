@@ -23,6 +23,18 @@
 
 #define DEBUG false
 
+/* TODO: make this work even though orReport isn't a QObject
+QScriptValue orReporttoScriptValue(QScriptEngine *engine, orReport* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void orReportfromScriptValue(const QScriptValue &obj, orReport* &item)
+{
+  item = qobject_cast<orReport*>(obj.toQObject());
+}
+*/
+
 QScriptValue scriptBeginMultiPrint(QScriptContext *context,
                                    QScriptEngine  * /*engine*/)
 {
@@ -59,6 +71,8 @@ QScriptValue scriptEndMultiPrint(QScriptContext *context,
 
 void setupOrReportProto(QScriptEngine *engine)
 {
+//qScriptRegisterMetaType(engine, orReporttoScriptValue, orReportfromScriptValue);
+
   QScriptValue proto = engine->newQObject(new orReportProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<orReport*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<orReport>(),  proto);
