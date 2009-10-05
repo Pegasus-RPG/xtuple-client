@@ -460,6 +460,7 @@ QString QPrinterProto::printerName() const
   return QString();
 }
 
+#ifndef Q_WS_WIN
 QString QPrinterProto::printerSelectionOption() const
 {
   QPrinter *item = qscriptvalue_cast<QPrinter*>(thisObject());
@@ -467,6 +468,7 @@ QString QPrinterProto::printerSelectionOption() const
     return item->printerSelectionOption();
   return QString();
 }
+#endif
 
 QPrinter::PrinterState QPrinterProto::printerState() const
 {
@@ -640,12 +642,14 @@ void QPrinterProto::setPrinterName(const QString & name)
     item->setPrinterName(name);
 }
 
+#ifndef Q_WS_WIN
 void QPrinterProto::setPrinterSelectionOption(const QString & option)
 {
   QPrinter *item = qscriptvalue_cast<QPrinter*>(thisObject());
   if (item)
     item->setPrinterSelectionOption(option);
 }
+#endif
 
 void QPrinterProto::setResolution(int dpi)
 {

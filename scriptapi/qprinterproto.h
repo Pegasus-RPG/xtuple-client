@@ -82,7 +82,9 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE QString         printProgram() const;
     Q_INVOKABLE QPrinter::PrintRange      printRange() const;
     Q_INVOKABLE QString         printerName() const;
+#ifndef Q_WS_WIN
     Q_INVOKABLE QString         printerSelectionOption() const;
+#endif
     Q_INVOKABLE QPrinter::PrinterState    printerState() const;
  // Q_INVOKABLE virtual void    releaseDC(HDC hdc) const;
     Q_INVOKABLE int             resolution() const;
@@ -107,7 +109,9 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE void            setPrintProgram(const QString & printProg);
     Q_INVOKABLE void            setPrintRange(QPrinter::PrintRange range);
     Q_INVOKABLE void            setPrinterName(const QString & name);
+#ifndef Q_WS_WIN
     Q_INVOKABLE void            setPrinterSelectionOption(const QString & option);
+#endif
     Q_INVOKABLE void            setResolution(int dpi);
 #ifdef Q_WS_WIN
     Q_INVOKABLE void            setWinPageSize(int pageSize);
