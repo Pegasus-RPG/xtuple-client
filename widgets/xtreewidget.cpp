@@ -290,6 +290,21 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
                 headerItem()->setData(wcol, Qt::UserRole, "xttotalrole");
 	    }
 	  }
+
+          // Negative NUMERIC ROLE => default for column instead of column index
+          // see below
+          if (! colRole[wcol][COLROLE_NUMERIC] &&
+              headerItem()->data(wcol, ScaleRole).isValid())
+          {
+            bool ok;
+            int tmpscale = headerItem()->data(wcol, ScaleRole).toInt(&ok);
+            if (ok)
+            {
+              if (DEBUG)
+                qDebug("setting colRole[%d][COLROLE_NUMERIC]: %d", wcol, 0-tmpscale);
+              colRole[wcol][COLROLE_NUMERIC] = 0 - tmpscale;
+            }
+          }
 	}
 
         if (rowRole[ROWROLE_INDENT])
@@ -369,9 +384,17 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
             QString numericrole = "";
             if (colRole[col][COLROLE_NUMERIC])
             {
-              numericrole = pQuery.value(colRole[col][COLROLE_NUMERIC]).toString();
-              scale = decimalPlaces(numericrole);
+              // Negative NUMERIC ROLE => default for column instead of column index
+              // see above
+              if (colRole[col][COLROLE_NUMERIC] < 0)
+                scale = 0 - colRole[col][COLROLE_NUMERIC];
+              else
+              {
+                numericrole = pQuery.value(colRole[col][COLROLE_NUMERIC]).toString();
+                scale = decimalPlaces(numericrole);
+              }
             }
+
             if (colRole[col][COLROLE_NUMERIC] ||
                 colRole[col][COLROLE_RUNNING] ||
                 colRole[col][COLROLE_TOTAL])
