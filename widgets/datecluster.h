@@ -86,16 +86,16 @@ class XTUPLEWIDGETS_EXPORT DLineEdit : public QWidget
   public:
     DLineEdit(QWidget *parent = 0, const char * = 0);
     
-    inline void                 setAllowNullDate(bool p)            { _lineedit.setAllowNullDate(p); };
-    inline void                 setNullString(const QString &p)     { _lineedit.setNullString(p); };
-    inline void                 setNullDate(const QDate &p)         { _lineedit.setNullDate(p); };
+    Q_INVOKABLE inline void     setAllowNullDate(bool p)       { _lineedit.setAllowNullDate(p); };
+    Q_INVOKABLE inline void     setNullString(const QString &p){ _lineedit.setNullString(p); };
+    Q_INVOKABLE inline void     setNullDate(const QDate &p)    { _lineedit.setNullDate(p); };
 
-    Q_INVOKABLE virtual bool                isNull()                { return _lineedit.isNull(); };
-    Q_INVOKABLE virtual bool                isValid()               { return _lineedit.isValid(); };
-    virtual XDateEdit::Defaults defaultDate()                       { return _lineedit.defaultDate(); };
-    virtual QDate               date()                              { return _lineedit.date(); };
-    virtual QString             fieldName() const                   { return _lineedit.fieldName(); };
-    Q_INVOKABLE virtual void                clear()                 { _lineedit.clear(); };
+    Q_INVOKABLE virtual bool    isNull()          { return _lineedit.isNull(); };
+    Q_INVOKABLE virtual bool    isValid()         { return _lineedit.isValid(); };
+    virtual XDateEdit::Defaults defaultDate()     { return _lineedit.defaultDate(); };
+    virtual QDate               date()            { return _lineedit.date(); };
+    virtual QString             fieldName() const { return _lineedit.fieldName(); };
+    Q_INVOKABLE virtual void    clear()           { _lineedit.clear(); };
       
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m)             { _lineedit.setDataWidgetMap(m); };
