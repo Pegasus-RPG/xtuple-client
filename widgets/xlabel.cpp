@@ -31,17 +31,17 @@ void XLabel::setDataWidgetMap(XDataWidgetMapper* m)
   m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
 }
 
-void XLabel::setPrecision(const int pPrec)
+void XLabel::setPrecision(int pPrec)
 {
   _precision = pPrec;
 }
 
-void XLabel::setPrecision(const QDoubleValidator *pVal)
+void XLabel::setPrecision(QDoubleValidator *pVal)
 {
   _precision = pVal->decimals();
 }
 
-void XLabel::setPrecision(const QIntValidator * /*pVal*/)
+void XLabel::setPrecision(QIntValidator * /*pVal*/)
 {
   _precision = 0;
 }

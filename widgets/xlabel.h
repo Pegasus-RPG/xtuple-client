@@ -24,15 +24,17 @@ class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)
+  Q_PROPERTY(int     precision    READ precision   WRITE setPrecision)
   
   public:
     XLabel(QWidget *, const char * = 0);
 
     virtual QString fieldName()   const { return _fieldName; };
-    virtual void    setPrecision(const int);
-    virtual void    setPrecision(const QDoubleValidator *);
-    virtual void    setPrecision(const QIntValidator *);
-    double          toDouble(bool * = 0);
+    virtual void    setPrecision(int);
+    int precision() const { return _precision; }
+    Q_INVOKABLE virtual void    setPrecision(QDoubleValidator *);
+    Q_INVOKABLE virtual void    setPrecision(QIntValidator *);
+    Q_INVOKABLE double          toDouble(bool * = 0);
 
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);

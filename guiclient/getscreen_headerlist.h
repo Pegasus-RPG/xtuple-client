@@ -42,8 +42,6 @@
 #include "bom.h"
 #include "bomItem.h"
 #include "bomList.h"
-#include "booItem.h"
-#include "booitemImage.h"
 #include "budgets.h"
 #include "buyCard.h"
 #include "calendar.h"
