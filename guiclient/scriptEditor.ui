@@ -252,6 +252,7 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_name</tabstop>
+  <tabstop>_package</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_enabled</tabstop>
