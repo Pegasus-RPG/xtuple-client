@@ -33,8 +33,6 @@
 #include "dspMRPDetail.h"
 #include "dspRoughCutByWorkCenter.h"
 #include "dspTimePhasedRoughCutByWorkCenter.h"
-#include "dspPlannedRevenueExpensesByPlannerCode.h"
-#include "dspTimePhasedPlannedREByPlannerCode.h"
 #include "dspRunningAvailability.h"
 #include "dspTimePhasedAvailability.h"
 #include "dspExpediteExceptionsByPlannerCode.h"
@@ -113,12 +111,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspExpediteExceptionsByPlannerCode", tr("E&xpedite Exceptions..."), SLOT(sDspExpediteExceptionsByPlannerCode()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
     { "ms.dspReorderExceptionsByPlannerCode", tr("Reorder &Exceptions..."), SLOT(sDspReorderExceptionsByPlannerCode()),reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, _metrics->boolean("Routings") , NULL },
-    { "ms.dspRoughCutByWorkCenter", tr("Rough &Cut Capacity Plan..."), SLOT(sDspRoughCutByWorkCenter()), reportsMenu, "ViewRoughCut", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-    { "ms.dspTimePhasedRoughCutByWorkCenter", tr("Time-P&hased Rough Cut Capacity Plan..."), SLOT(sDspTimePhasedRoughCutByWorkCenter()), reportsMenu, "ViewRoughCut", NULL, NULL,  _metrics->boolean("Routings") , NULL },
-    { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, _metrics->boolean("Routings") , NULL },
-    { "ms.dspPlannedRevenue/ExpensesByPlannerCode", tr("P&lanned Revenue/Expenses..."), SLOT(sDspPlannedRevenueExpensesByPlannerCode()), reportsMenu, "ViewPlannedOrders+ViewCosts+ViewListPrices", NULL, NULL, _metrics->boolean("Routings") , NULL },
-    { "ms.dspTimePhasedPlannedRevenue/ExpensesByPlannerCode", tr("Time-Ph&ased Planned Revenue/Expenses..."), SLOT(sDspTimePhasedPlannedREByPlannerCode()),  reportsMenu, "ViewPlannedOrders+ViewCosts+ViewListPrices", NULL, NULL, _metrics->boolean("Routings") , NULL },
+
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
     
     //  Master Information
@@ -239,26 +232,6 @@ void menuSchedule::sDspPlannedOrdersByItem()
 void menuSchedule::sDspPlannedOrdersByPlannerCode()
 {
   omfgThis->handleNewWindow(new dspPlannedOrdersByPlannerCode());
-}
-
-void menuSchedule::sDspRoughCutByWorkCenter()
-{
-  omfgThis->handleNewWindow(new dspRoughCutByWorkCenter());
-}
-
-void menuSchedule::sDspTimePhasedRoughCutByWorkCenter()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedRoughCutByWorkCenter());
-}
-
-void menuSchedule::sDspPlannedRevenueExpensesByPlannerCode()
-{
-  omfgThis->handleNewWindow(new dspPlannedRevenueExpensesByPlannerCode());
-}
-
-void menuSchedule::sDspTimePhasedPlannedREByPlannerCode()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedPlannedREByPlannerCode());
 }
 
 void menuSchedule::sDspTimePhasedAvailability()

@@ -149,7 +149,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                                dspMRPDetail.ui openReturnAuthorizations.ui                            \
                openSalesOrders.ui openVouchers.ui dspOrders.ui dspPendingAvailability.ui              \
                dspPendingBOMChanges.ui dspPlannedOrdersByItem.ui dspPlannedOrdersByPlannerCode.ui     \
-               dspPlannedRevenueExpensesByPlannerCode.ui dspPoHistory.ui                              \
+               dspPoHistory.ui                                                                        \
                dspPoDeliveryDateVariancesByItem.ui dspPoDeliveryDateVariancesByVendor.ui              \
                dspPoItemsByDate.ui dspPoItemsByItem.ui dspPoItemsByVendor.ui                          \
                dspPoItemReceivingsByDate.ui dspPoItemReceivingsByItem.ui                              \
@@ -186,7 +186,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspTimePhasedBookingsByCustomer.ui dspTimePhasedBookingsByItem.ui                      \
                dspTimePhasedBookingsByProductCategory.ui                                              \
                dspTimePhasedOpenARItems.ui dspTimePhasedOpenAPItems.ui                                \
-               dspTimePhasedRoughCutByWorkCenter.ui dspTimePhasedPlannedREByPlannerCode.ui            \
+               dspTimePhasedRoughCutByWorkCenter.ui                                                   \
                dspTimePhasedSalesByCustomer.ui dspTimePhasedSalesByCustomerGroup.ui                   \
                dspTimePhasedSalesByCustomerByItem.ui dspTimePhasedSalesByItem.ui                      \
                dspTimePhasedSalesByProductCategory.ui                                                 \
@@ -455,7 +455,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                               dspMRPDetail.h openReturnAuthorizations.h                               \
                openSalesOrders.h openVouchers.h dspOrders.h dspPendingAvailability.h                  \
                dspPendingBOMChanges.h dspPlannedOrdersByItem.h dspPlannedOrdersByPlannerCode.h        \
-               dspPlannedRevenueExpensesByPlannerCode.h dspPoHistory.h                                \
+               dspPoHistory.h                                                                         \
                dspPoDeliveryDateVariancesByItem.h dspPoDeliveryDateVariancesByVendor.h                \
                dspPoItemsByDate.h dspPoItemsByItem.h dspPoItemsByVendor.h                             \
                dspPoItemReceivingsByDate.h dspPoItemReceivingsByItem.h                                \
@@ -492,7 +492,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspTimePhasedBookingsByCustomer.h dspTimePhasedBookingsByItem.h                        \
                dspTimePhasedBookingsByProductCategory.h                                               \
                dspTimePhasedOpenARItems.h dspTimePhasedOpenAPItems.h                                  \
-               dspTimePhasedRoughCutByWorkCenter.h dspTimePhasedPlannedREByPlannerCode.h              \
+               dspTimePhasedRoughCutByWorkCenter.h                                                    \
                dspTimePhasedSalesByCustomer.h dspTimePhasedSalesByCustomerGroup.h                     \
                dspTimePhasedSalesByCustomerByItem.h dspTimePhasedSalesByItem.h                        \
                dspTimePhasedSalesByProductCategory.h                                                  \
@@ -773,7 +773,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                                 dspMRPDetail.cpp openReturnAuthorizations.cpp                         \
                openSalesOrders.cpp openVouchers.cpp dspOrders.cpp dspPendingAvailability.cpp          \
                dspPendingBOMChanges.cpp dspPlannedOrdersByItem.cpp dspPlannedOrdersByPlannerCode.cpp  \
-               dspPlannedRevenueExpensesByPlannerCode.cpp dspPoHistory.cpp                            \
+               dspPoHistory.cpp                                                                       \
                dspPoDeliveryDateVariancesByItem.cpp dspPoDeliveryDateVariancesByVendor.cpp            \
                dspPoItemsByDate.cpp dspPoItemsByItem.cpp dspPoItemsByVendor.cpp                       \
                dspPoItemReceivingsByDate.cpp dspPoItemReceivingsByItem.cpp                            \
@@ -810,7 +810,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspTimePhasedBookingsByCustomer.cpp dspTimePhasedBookingsByItem.cpp                    \
                dspTimePhasedBookingsByProductCategory.cpp                                             \
                dspTimePhasedOpenARItems.cpp dspTimePhasedOpenAPItems.cpp                              \
-               dspTimePhasedRoughCutByWorkCenter.cpp dspTimePhasedPlannedREByPlannerCode.cpp          \
+               dspTimePhasedRoughCutByWorkCenter.cpp                                                  \
                dspTimePhasedSalesByCustomer.cpp dspTimePhasedSalesByCustomerGroup.cpp                 \
                dspTimePhasedSalesByCustomerByItem.cpp dspTimePhasedSalesByItem.cpp                    \
                dspTimePhasedSalesByProductCategory.cpp                                                \
