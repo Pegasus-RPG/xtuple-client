@@ -161,7 +161,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspPartiallyShippedOrders.ui                                                           \
                dspPricesByItem.ui dspPricesByCustomer.ui dspPricesByCustomerType.ui                   \
                dspFreightPricesByCustomer.ui dspFreightPricesByCustomerType.ui                        \
-               dspReorderExceptionsByPlannerCode.ui dspRoughCutByWorkCenter.ui                        \
+               dspReorderExceptionsByPlannerCode.ui                                                   \
                dspReservations.ui                                                                     \
                dspRunningAvailability.ui                                                              \
                dspSalesHistoryByBilltoName.ui dspSalesHistoryByCustomer.ui                            \
@@ -185,7 +185,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspTimePhasedBookingsByCustomer.ui dspTimePhasedBookingsByItem.ui                      \
                dspTimePhasedBookingsByProductCategory.ui                                              \
                dspTimePhasedOpenARItems.ui dspTimePhasedOpenAPItems.ui                                \
-               dspTimePhasedRoughCutByWorkCenter.ui                                                   \
                dspTimePhasedSalesByCustomer.ui dspTimePhasedSalesByCustomerGroup.ui                   \
                dspTimePhasedSalesByCustomerByItem.ui dspTimePhasedSalesByItem.ui                      \
                dspTimePhasedSalesByProductCategory.ui                                                 \
@@ -466,7 +465,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspPartiallyShippedOrders.h                                                            \
                dspPricesByItem.h dspPricesByCustomer.h dspPricesByCustomerType.h                      \
                dspFreightPricesByCustomer.h dspFreightPricesByCustomerType.h                          \
-               dspReorderExceptionsByPlannerCode.h dspRoughCutByWorkCenter.h                          \
+               dspReorderExceptionsByPlannerCode.h                                                    \
                dspReservations.h                                                                      \
                dspRunningAvailability.h                                                               \
                dspSalesHistoryByBilltoName.h dspSalesHistoryByCustomer.h                              \
@@ -490,7 +489,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspTimePhasedBookingsByCustomer.h dspTimePhasedBookingsByItem.h                        \
                dspTimePhasedBookingsByProductCategory.h                                               \
                dspTimePhasedOpenARItems.h dspTimePhasedOpenAPItems.h                                  \
-               dspTimePhasedRoughCutByWorkCenter.h                                                    \
                dspTimePhasedSalesByCustomer.h dspTimePhasedSalesByCustomerGroup.h                     \
                dspTimePhasedSalesByCustomerByItem.h dspTimePhasedSalesByItem.h                        \
                dspTimePhasedSalesByProductCategory.h                                                  \
@@ -783,7 +781,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPartiallyShippedOrders.cpp                                                          \
                dspPricesByItem.cpp dspPricesByCustomer.cpp dspPricesByCustomerType.cpp                \
                dspFreightPricesByCustomer.cpp dspFreightPricesByCustomerType.cpp                      \
-               dspReorderExceptionsByPlannerCode.cpp dspRoughCutByWorkCenter.cpp                      \
+               dspReorderExceptionsByPlannerCode.cpp                                                  \
                dspReservations.cpp                                                                    \
                dspRunningAvailability.cpp                                                             \
                dspSalesHistoryByBilltoName.cpp dspSalesHistoryByCustomer.cpp                          \
@@ -807,7 +805,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspTimePhasedBookingsByCustomer.cpp dspTimePhasedBookingsByItem.cpp                    \
                dspTimePhasedBookingsByProductCategory.cpp                                             \
                dspTimePhasedOpenARItems.cpp dspTimePhasedOpenAPItems.cpp                              \
-               dspTimePhasedRoughCutByWorkCenter.cpp                                                  \
                dspTimePhasedSalesByCustomer.cpp dspTimePhasedSalesByCustomerGroup.cpp                 \
                dspTimePhasedSalesByCustomerByItem.cpp dspTimePhasedSalesByItem.cpp                    \
                dspTimePhasedSalesByProductCategory.cpp                                                \
