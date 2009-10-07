@@ -31,8 +31,6 @@
 #include "dspPlannedOrdersByItem.h"
 #include "dspPlannedOrdersByPlannerCode.h"
 #include "dspMRPDetail.h"
-#include "dspRoughCutByWorkCenter.h"
-#include "dspTimePhasedRoughCutByWorkCenter.h"
 #include "dspRunningAvailability.h"
 #include "dspTimePhasedAvailability.h"
 #include "dspExpediteExceptionsByPlannerCode.h"
