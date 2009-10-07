@@ -14,13 +14,6 @@
 #include <QValidator>
 #include "guiclient.h"
 
-/*
- *  Constructs a configureWO as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -43,7 +36,6 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _autoExplode->setChecked(_metrics->boolean("AutoExplodeWO"));
   _workOrderChangeLog->setChecked(_metrics->boolean("WorkOrderChangeLog"));
-  _postopFillQty->setChecked(_metrics->boolean("AutoFillPostOperationQty"));
 
   _woNumGeneration->insertItem(tr("Automatic"));
   _woNumGeneration->insertItem(tr("Manual"));
@@ -68,21 +60,6 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _materialVariances->setChecked(_metrics->boolean("PostMaterialVariances"));
   
-  if (_metrics->boolean("Routings"))
-    _laborVariances->setChecked(_metrics->boolean("PostLaborVariances"));
-  else
-  {
-    _laborVariances->setChecked(FALSE);
-    _laborVariances->hide();
-    _wotcPostStyle->hide();
-    _postopFillQty->hide();
-  }
-
-  if (_metrics->value("WOTCPostStyle") == "Production")
-    _production->setChecked(TRUE);
-  else
-    _operations->setChecked(TRUE);
-
   if (_metrics->value("JobItemCosDefault") == "P")
     _proportional->setChecked(TRUE);
   else
@@ -91,18 +68,11 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   this->setWindowTitle("Manufacture Configuration");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 configureWO::~configureWO()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void configureWO::languageChange()
 {
   retranslateUi(this);
@@ -116,7 +86,6 @@ void configureWO::sSave()
 
   _metrics->set("AutoExplodeWO", _autoExplode->isChecked());
   _metrics->set("WorkOrderChangeLog", _workOrderChangeLog->isChecked());
-  _metrics->set("AutoFillPostOperationQty", _postopFillQty->isChecked());
 
   if (_woNumGeneration->currentIndex() == 0)
     _metrics->set("WONumberGeneration", QString("A"));
@@ -128,12 +97,6 @@ void configureWO::sSave()
   _metrics->set("ExplodeWOEffective", ((_explodeDateEffective->isChecked()) ? QString("E") : QString("S")));
   _metrics->set("WOExplosionLevel", ((_singleLevel->isChecked()) ? QString("S") : QString("M")));
   _metrics->set("PostMaterialVariances", _materialVariances->isChecked());
-  _metrics->set("PostLaborVariances", _laborVariances->isChecked());
-
-  if (_production->isChecked())
-    _metrics->set("WOTCPostStyle", QString("Production"));
-  else if (_operations->isChecked())
-    _metrics->set("WOTCPostStyle", QString("Operations"));
 
   if (_todate->isChecked())
     _metrics->set("JobItemCosDefault", QString("D"));
