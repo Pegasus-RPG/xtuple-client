@@ -1879,15 +1879,18 @@ void XTreeWidget::sCopyRowToClipboard()
         }
         cell = cursor->currentTable()->cellAt(cursor->position());
         format = cell.format();
-        color = item->data(counter,Qt::BackgroundRole).toString();
-        if (!color.isEmpty())
-          format.setBackground(namedColor(color));
-        color = item->data(counter,Qt::ForegroundRole).toString();
-        if (!color.isEmpty())
-          format.setForeground(namedColor(color));
-        font = item->data(counter,Qt::FontRole).toString();
-        if (!font.isEmpty())
-          format.setFont(QFont(font));
+        if (item->data(counter, Qt::BackgroundRole).isValid())
+          format.setBackground(item->data(counter, Qt::BackgroundRole).value<QColor>());
+        if (item->data(counter, Qt::ForegroundRole).isValid())
+          format.setForeground(item->data(counter, Qt::ForegroundRole).value<QColor>());
+
+        if (item->data(counter,Qt::FontRole).isValid())
+        {
+          font = item->data(counter,Qt::FontRole).toString();
+          if (!font.isEmpty())
+            format.setFont(QFont(font));
+        }
+
         cell.setFormat(format);
         cursor->insertText(item->text(counter));
       }
@@ -1909,15 +1912,18 @@ void XTreeWidget::sCopyCellToClipboard()
 
   if(column > -1)
   {
-     color = item->data(column,Qt::BackgroundRole).toString();
-     if (!color.isEmpty())
-        text.setTextBackgroundColor(namedColor(color));
-     color = item->data(column,Qt::ForegroundRole).toString();
-     if (!color.isEmpty())
-        text.setTextColor(namedColor(color));
-     font = item->data(column,Qt::FontRole).toString();
-     if (!font.isEmpty())
-        text.setFont(QFont(font));
+     if (item->data(column, Qt::BackgroundRole).isValid())
+       text.setTextBackgroundColor(item->data(column, Qt::BackgroundRole).value<QColor>());
+     if (item->data(column, Qt::ForegroundRole).isValid())
+       text.setTextColor(item->data(column, Qt::ForegroundRole).value<QColor>());
+
+     if (item->data(column,Qt::FontRole).isValid())
+     {
+       font = item->data(column,Qt::FontRole).toString();
+       if (!font.isEmpty())
+         text.setFont(QFont(font));
+     }
+
      text.setText(item->text(column));
      if (_x_preferences->boolean("CopyListsPlainText"))
        mime->setText(text.toPlainText());
@@ -2056,58 +2062,57 @@ QString XTreeWidget::toHtml() const
   QTextCharFormat format;
   QString color;
   QString font;
-  int  counter;
   int  colcnt = 0;
 
   tableFormat.setHeaderRowCount(1);
 
   QTreeWidgetItem * header = headerItem();
-  cursor->insertTable(1, 1,tableFormat);
-  for (counter = 0; counter < header->columnCount(); counter++)
+  for (int i = 0; i < header->columnCount(); i++)
+    if (! QTreeWidget::isColumnHidden(i))
+      colcnt++;
+
+  cursor->insertTable(model()->rowCount() + 1, colcnt, tableFormat);
+
+  for (int counter = 0; counter < header->columnCount(); counter++)
   {
     if(!QTreeWidget::isColumnHidden(counter))
     {
-      colcnt++;
-      if (colcnt > 1)
-      {
-        cursor->currentTable()->appendColumns(1);
-        cursor->movePosition(QTextCursor::NextCell);
-      }
       cell = cursor->currentTable()->cellAt(cursor->position());
       format = cell.format();
       format.setBackground(Qt::lightGray);
       cell.setFormat(format);
       cursor->insertText(header->text(counter));
+      cursor->movePosition(QTextCursor::NextCell);
     }
   }
 
-  XTreeWidgetItem * item = topLevelItem(0);
+  XTreeWidgetItem *item = topLevelItem(0);
   if(item)
   {
     QModelIndex idx = indexFromItem(item);
-    while(idx.isValid())
+    while (idx.isValid())
     {
        item = (XTreeWidgetItem*)itemFromIndex(idx);
        if(item)
        {
-         cursor->currentTable()->appendRows(1);
-         cursor->movePosition(QTextCursor::PreviousRow);
-         cursor->movePosition(QTextCursor::NextCell);
-         for (counter = 0; counter < item->columnCount(); counter++)
+         for (int counter = 0; counter < item->columnCount(); counter++)
          {
            if(!QTreeWidget::isColumnHidden(counter))
            {
              cell = cursor->currentTable()->cellAt(cursor->position());
              format = cell.format();
-             color = item->data(counter,Qt::BackgroundRole).toString();
-             if (!color.isEmpty())
-               format.setBackground(namedColor(color));
-             color = item->data(counter,Qt::ForegroundRole).toString();
-             if (!color.isEmpty())
-               format.setForeground(namedColor(color));
-             font = item->data(counter,Qt::FontRole).toString();
-             if (!font.isEmpty())
-               format.setFont(QFont(font));
+             if (item->data(counter, Qt::BackgroundRole).isValid())
+               format.setBackground(item->data(counter, Qt::BackgroundRole).value<QColor>());
+             if (item->data(counter, Qt::ForegroundRole).isValid())
+               format.setForeground(item->data(counter, Qt::ForegroundRole).value<QColor>());
+
+             if (item->data(counter,Qt::FontRole).isValid())
+             {
+               font = item->data(counter,Qt::FontRole).toString();
+               if (!font.isEmpty())
+                 format.setFont(QFont(font));
+             }
+
              cell.setFormat(format);
              cursor->insertText(item->text(counter));
              cursor->movePosition(QTextCursor::NextCell);
