@@ -14,18 +14,10 @@
 #include <QVariant>
 #include "submitAction.h"
 
-/*
- *  Constructs a updateActualCostsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 updateActualCostsByClassCode::updateActualCostsByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
 
   // signals and slots connections
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
@@ -58,24 +50,17 @@ updateActualCostsByClassCode::updateActualCostsByClassCode(QWidget* parent, cons
   _updateActual = true;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 updateActualCostsByClassCode::~updateActualCostsByClassCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void updateActualCostsByClassCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse updateActualCostsByClassCode::set(ParameterList &pParams)
+enum SetResponse updateActualCostsByClassCode::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   QVariant param;
@@ -87,18 +72,18 @@ enum SetResponse updateActualCostsByClassCode::set(ParameterList &pParams)
   { 
     if (param.toString() == "standard")
     {
-	_updateActual = false;
-	setWindowTitle(tr("Update Standard Costs By Class Code"));
-	_rollUp->setText(tr("&Roll Up Standard Costs"));
+      _updateActual = false;
+      setWindowTitle(tr("Update Standard Costs By Class Code"));
+      _rollUp->setText(tr("&Roll Up Standard Costs"));
     }
     else if (param.toString() != "actual")
     {
-	systemError(this, tr("A System Error occurred at %1::%2.\n"
-			     "Illegal parameter value '%3' for 'costtype'")
-			    .arg(__FILE__)
-			    .arg(__LINE__)
-			    .arg(param.toString()));
-	return UndefinedError;
+      systemError(this, tr("A System Error occurred at %1::%2.\n"
+                           "Illegal parameter value '%3' for 'costtype'")
+                          .arg(__FILE__)
+                          .arg(__LINE__)
+                          .arg(param.toString()));
+      return UndefinedError;
     }
   }
 
@@ -127,11 +112,11 @@ void updateActualCostsByClassCode::sSelectAll()
 void updateActualCostsByClassCode::sUpdate()
 {
   QString sql = "SELECT doUpdateCosts(item_id, TRUE, :lowMaterial, :directLabor, "
-		  "	:lowDirectLabor, :overhead, :lowOverhead, "
-		  "	:machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
-		  "	:updateActual ) "
-		  "FROM item, classcode "
-		  "WHERE (item_classcode_id = classcode_id) ";
+                "       :lowDirectLabor, :overhead, :lowOverhead, "
+                "       :machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
+                "       :updateActual ) "
+                "  FROM item, classcode "
+                " WHERE(item_classcode_id = classcode_id) ";
 
   if (_classCode->isSelected())
     sql += "  AND (item_classcode_id=:classcode_id);";
@@ -139,31 +124,31 @@ void updateActualCostsByClassCode::sUpdate()
     sql += "  AND (classcode_code ~ :classcode_pattern);";
   else
     sql = "SELECT doUpdateCosts(:lowMaterial, :directLabor, "
-	      "	:lowDirectLabor, :overhead, :lowOverhead, "
-	      "	:machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
-	      " :updateActual);";
+          "        :lowDirectLabor, :overhead, :lowOverhead, "
+          "        :machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
+          "        :updateActual);";
 
   q.prepare(sql);
-  q.bindValue(":lowMaterial", _lowerMaterial->isChecked()	? "t" : "f" );
-  q.bindValue(":directLabor", _directLabor->isChecked()		? "t" : "f" );
-  q.bindValue(":lowDirectLabor", _lowerDirectLabor->isChecked()	? "t" : "f" );
-  q.bindValue(":overhead", _overhead->isChecked()		? "t" : "f" );
-  q.bindValue(":lowOverhead", _lowerOverhead->isChecked()	? "t" : "f" );
-  q.bindValue(":machOverhead", (_machOverhead->isChecked() ||
-		  ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
+  q.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f" );
+  q.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f" );
+  q.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f" );
+  q.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f" );
+  q.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f" );
+  q.bindValue(":machOverhead",    (_machOverhead->isChecked() ||
+      ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
   q.bindValue(":lowMachOverhead", (_lowerMachOverhead->isChecked() ||
-		  ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
-  q.bindValue(":lowUser", _lowerUser->isChecked()		? "t" : "f" );
-  q.bindValue(":rollUp", _rollUp->isChecked()			? "t" : "f" );
-  q.bindValue(":updateActual", _updateActual			? "t" : "f" );
+      ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
+  q.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f" );
+  q.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f" );
+  q.bindValue(":updateActual",    _updateActual                   ? "t" : "f" );
   _classCode->bindValue(q);
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
-			.arg(__FILE__)
-			.arg(__LINE__));
+                        .arg(__FILE__)
+                        .arg(__LINE__));
     return;
   }
 
@@ -175,9 +160,9 @@ void updateActualCostsByClassCode::sSubmit()
   ParameterList params;
 
   if (_updateActual)
-      params.append("action_name", "UpdateActualCost");
+    params.append("action_name", "UpdateActualCost");
   else
-      params.append("action_name", "UpdateStandardCost");
+    params.append("action_name", "UpdateStandardCost");
 
   if (_lowerMaterial->isChecked())
     params.append("LowerMaterial");

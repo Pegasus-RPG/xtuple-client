@@ -10,58 +10,26 @@
 
 #include "postCostsByItem.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
 #include "submitAction.h"
 
-/*
- *  Constructs a postCostsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postCostsByItem::postCostsByItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
-    
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-    
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-postCostsByItem::~postCostsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void postCostsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void postCostsByItem::init()
-{
+  // signals and slots connections
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
+  
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
+  
   if (!_metrics->boolean("Routings"))
   {
     _directLabor->hide();
@@ -82,7 +50,17 @@ void postCostsByItem::init()
   _captive = FALSE;
 }
 
-enum SetResponse postCostsByItem::set(ParameterList &pParams)
+postCostsByItem::~postCostsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void postCostsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse postCostsByItem::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   _captive = TRUE;
@@ -124,28 +102,28 @@ void postCostsByItem::sPost()
 {
   XSqlQuery sql;
   sql.prepare( "SELECT doPostCosts(:item_id, TRUE, "
-               " :material, :lowMaterial, :labor, :lowLabor, "
-	       " :overhead, :lowOverhead, :machOverhead, :lowMachOverhead, "
-	       " :user, :lowUser, :rollUp)" );
+               "         :material, :lowMaterial, :labor, :lowLabor, "
+               "         :overhead, :lowOverhead, :machOverhead, :lowMachOverhead, "
+               "         :user, :lowUser, :rollUp)" );
 
-  sql.bindValue(":item_id", _item->id());
-  sql.bindValue(":material", _material->isChecked()		? "t" : "f");
-  sql.bindValue(":lowMaterial", _lowerMaterial->isChecked()	? "t" : "f");
-  sql.bindValue(":labor", _directLabor->isChecked()		? "t" : "f");
-  sql.bindValue(":lowLabor", _lowerDirectLabor->isChecked()	? "t" : "f");
-  sql.bindValue(":overhead", _overhead->isChecked()		? "t" : "f");
-  sql.bindValue(":lowOverhead", _lowerOverhead->isChecked()	? "t" : "f");
-  sql.bindValue(":machOverhead", _machOverhead->isChecked()	? "t" : "f");
+  sql.bindValue(":item_id",         _item->id());
+  sql.bindValue(":material",        _material->isChecked()          ? "t" : "f");
+  sql.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f");
+  sql.bindValue(":labor",           _directLabor->isChecked()       ? "t" : "f");
+  sql.bindValue(":lowLabor",        _lowerDirectLabor->isChecked()  ? "t" : "f");
+  sql.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f");
+  sql.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f");
+  sql.bindValue(":machOverhead",    _machOverhead->isChecked()      ? "t" : "f");
   sql.bindValue(":lowMachOverhead", _lowerMachOverhead->isChecked() ? "t" : "f");
-  sql.bindValue(":user", _user->isChecked()		? "t" : "f");
-  sql.bindValue(":lowUser", _lowerUser->isChecked()	? "t" : "f");
-  sql.bindValue(":rollUp", _rollUp->isChecked()		? "t" : "f");
+  sql.bindValue(":user",            _user->isChecked()              ? "t" : "f");
+  sql.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f");
+  sql.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f");
   sql.exec();
   if (sql.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A SystemError occurred at %1::%2")
-			.arg(__FILE__)
-			.arg(__LINE__));
+                        .arg(__FILE__)
+                        .arg(__LINE__));
     return;
   }
 

@@ -14,18 +14,10 @@
 #include <QSqlError>
 #include "submitAction.h"
 
-/*
- *  Constructs a updateActualCostsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 updateActualCostsByItem::updateActualCostsByItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
 
   // signals and slots connections
   connect(_item, SIGNAL(valid(bool)), _update, SLOT(setEnabled(bool)));
@@ -59,21 +51,14 @@ updateActualCostsByItem::updateActualCostsByItem(QWidget* parent, const char* na
   _updateActual = TRUE;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 updateActualCostsByItem::~updateActualCostsByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void updateActualCostsByItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse updateActualCostsByItem::set(const ParameterList &pParams)
@@ -125,28 +110,28 @@ void updateActualCostsByItem::sUpdate()
 {
   XSqlQuery sql;
   sql.prepare("SELECT doUpdateCosts(:item_id, TRUE, :lowMaterial, :dirLabor, "
-		" :lowDirLabor, :overhead, :lowOverhead, :machOverhead, "
-		" :lowMachOverhead, :lowUser, :rollUp, :updateActual)");
-  sql.bindValue(":item_id",	_item->id());
-  sql.bindValue(":lowMaterial", _lowerMaterial->isChecked()	? "t" : "f");
-  sql.bindValue(":dirLabor",	_directLabor->isChecked()	? "t" : "f");
-  sql.bindValue(":lowDirLabor",	_lowerDirectLabor->isChecked()	? "t" : "f");
-  sql.bindValue(":overhead",	_overhead->isChecked()		? "t" : "f");
-  sql.bindValue(":lowOverhead",	_lowerOverhead->isChecked()	? "t" : "f");
-  sql.bindValue(":machOverhead", (_machOverhead->isChecked() ||
-		  ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
+              "         :lowDirLabor, :overhead, :lowOverhead, :machOverhead, "
+              "         :lowMachOverhead, :lowUser, :rollUp, :updateActual)");
+  sql.bindValue(":item_id",         _item->id());
+  sql.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f");
+  sql.bindValue(":dirLabor",        _directLabor->isChecked()       ? "t" : "f");
+  sql.bindValue(":lowDirLabor",     _lowerDirectLabor->isChecked()  ? "t" : "f");
+  sql.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f");
+  sql.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f");
+  sql.bindValue(":machOverhead",    (_machOverhead->isChecked() ||
+      ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
   sql.bindValue(":lowMachOverhead", (_lowerMachOverhead->isChecked() ||
-		  ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
-  sql.bindValue(":lowUser",	_lowerUser->isChecked()		? "t" : "f");
-  sql.bindValue(":rollUp",	_rollUp->isChecked()		? "t" : "f");
-  sql.bindValue(":updateActual", _updateActual			? "t" : "f" );
+      ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
+  sql.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f");
+  sql.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f");
+  sql.bindValue(":updateActual",    _updateActual                   ? "t" : "f" );
 
   sql.exec();
   if (sql.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
-			.arg(__FILE__)
-			.arg(__LINE__));
+                        .arg(__FILE__)
+                        .arg(__LINE__));
     return;
   }
 
@@ -165,9 +150,9 @@ void updateActualCostsByItem::sSubmit()
   ParameterList params;
 
   if (_updateActual)
-      params.append("action_name", "UpdateActualCost");
+    params.append("action_name", "UpdateActualCost");
   else
-      params.append("action_name", "UpdateStandardCost");
+    params.append("action_name", "UpdateStandardCost");
 
   params.append("item_id", _item->id());
 

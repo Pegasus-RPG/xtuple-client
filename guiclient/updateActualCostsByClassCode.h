@@ -25,7 +25,7 @@ public:
     ~updateActualCostsByClassCode();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSelectAll();
     virtual void sUpdate();
     virtual void sSubmit();

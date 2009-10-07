@@ -14,18 +14,10 @@
 #include <QVariant>
 #include "submitAction.h"
 
-/*
- *  Constructs a postCostsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postCostsByClassCode::postCostsByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
 
   // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
@@ -56,21 +48,14 @@ postCostsByClassCode::postCostsByClassCode(QWidget* parent, const char* name, bo
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postCostsByClassCode::~postCostsByClassCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postCostsByClassCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void postCostsByClassCode::sSelectAll()
@@ -95,41 +80,41 @@ void postCostsByClassCode::sSelectAll()
 
 void postCostsByClassCode::sPost()
 {
-    QString sql = "SELECT doPostCosts(item_id, TRUE, :material, :lowMaterial, "
-	    "	:directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
-	    "	:machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp) "
-	    "FROM item, classcode "
-	    "WHERE (item_classcode_id=classcode_id)";
+  QString sql = "SELECT doPostCosts(item_id, TRUE, :material, :lowMaterial, "
+                "       :directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
+                "       :machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp) "
+                "  FROM item, classcode "
+                " WHERE(item_classcode_id=classcode_id)";
 
-    if (_classCode->isSelected())
-        sql += " AND (item_classcode_id=:classcode_id);";
-    else if (_classCode->isPattern())
-        sql += " AND (classcode_code ~ :classcode_pattern);";
-    else
-	sql = "SELECT doPostCosts(:material, :lowMaterial, "
-	    "	:directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
-	    "	:machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp);";
+  if (_classCode->isSelected())
+    sql += " AND (item_classcode_id=:classcode_id);";
+  else if (_classCode->isPattern())
+    sql += " AND (classcode_code ~ :classcode_pattern);";
+  else
+    sql = "SELECT doPostCosts(:material, :lowMaterial, "
+          "    :directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
+          "    :machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp);";
 
-    q.prepare(sql);
-    q.bindValue(":material", _material->isChecked()		? "t" : "f");
-    q.bindValue(":lowMaterial", _lowerMaterial->isChecked()	? "t" : "f");
-    q.bindValue(":directLabor", _directLabor->isChecked()	? "t" : "f");
-    q.bindValue(":lowDirectLabor", _lowerDirectLabor->isChecked() ? "t" : "f");
-    q.bindValue(":overhead", _overhead->isChecked()		? "t" : "f");
-    q.bindValue(":lowOverhead", _lowerOverhead->isChecked()	? "t" : "f");
-    q.bindValue(":machOverhead", _machOverhead->isChecked()	? "t" : "f");
-    q.bindValue(":lowMachOverhead", _lowerMachOverhead->isChecked() ? "t" : "f");
-    q.bindValue(":user", _user->isChecked()		? "t" : "f");
-    q.bindValue(":lowUser", _lowerUser->isChecked()	? "t" : "f");
-    q.bindValue(":rollUp", _rollUp->isChecked()		? "t" : "f");
+  q.prepare(sql);
+  q.bindValue(":material",        _material->isChecked()          ? "t" : "f");
+  q.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f");
+  q.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f");
+  q.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f");
+  q.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f");
+  q.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f");
+  q.bindValue(":machOverhead",    _machOverhead->isChecked()      ? "t" : "f");
+  q.bindValue(":lowMachOverhead", _lowerMachOverhead->isChecked() ? "t" : "f");
+  q.bindValue(":user",            _user->isChecked()              ? "t" : "f");
+  q.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f");
+  q.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f");
 
-    _classCode->bindValue(q);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-    }
+  _classCode->bindValue(q);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
