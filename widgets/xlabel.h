@@ -43,6 +43,7 @@ class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
     virtual void setText(const QString &);
     virtual void setText(const char *);
     virtual void setText(const QVariant &);
+    virtual void setTextColor(const QString &);
 
   private:
     QString _fieldName;

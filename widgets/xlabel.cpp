@@ -91,3 +91,11 @@ double XLabel::toDouble(bool *pIsValid)
 {
   return QLocale().toDouble(text(), pIsValid);
 }
+
+void XLabel::setTextColor(const QString &pColorName)
+{
+  QColor c = namedColor(pColorName);
+  QPalette p = palette();
+  p.setColor(foregroundRole(), c);
+  setPalette(p);
+}
