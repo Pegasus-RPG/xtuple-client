@@ -20,16 +20,13 @@
 #include "bom.h"
 #include "changeWoQty.h"
 #include "closeWo.h"
-#include "correctOperationsPosting.h"
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
 #include "dspWoMaterialsByWorkOrder.h"
-#include "dspWoOperationsByWorkOrder.h"
 #include "explodeWo.h"
 #include "implodeWo.h"
 #include "issueWoMaterialItem.h"
-#include "postOperations.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
@@ -48,7 +45,6 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_postProduction, SIGNAL(clicked()), this, SLOT(sPostProduction()));
-  connect(_postOperations, SIGNAL(clicked()), this, SLOT(sPostOperations()));
   connect(_printTraveler, SIGNAL(clicked()), this, SLOT(sPrintTraveler()));
   connect(_wo, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
 
@@ -71,8 +67,6 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
  
-  if (!_metrics->boolean("Routings"))
-    _postOperations->hide();
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
 
@@ -215,26 +209,6 @@ void dspWoScheduleByParameterList::sCorrectProductionPosting()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sPostOperations()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-
-  postOperations newdlg(this, "", TRUE);
-  if(newdlg.set(params) != UndefinedError)
-    newdlg.exec();
-}
-
-void dspWoScheduleByParameterList::sCorrectOperationsPosting()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-
-  correctOperationsPosting newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void dspWoScheduleByParameterList::sReleaseWO()
 {
   q.prepare("SELECT releaseWo(:wo_id, FALSE);");
@@ -363,17 +337,6 @@ void dspWoScheduleByParameterList::sViewWomatl()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sViewWooper()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-  params.append("run");
-
-  dspWoOperationsByWorkOrder *newdlg = new dspWoOperationsByWorkOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void dspWoScheduleByParameterList::sInventoryAvailabilityByWorkOrder()
 {
   ParameterList params;
@@ -475,20 +438,6 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
-    if (_metrics->boolean("Routings"))
-    {
-      menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-      if (!_privileges->check("PostWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-
-      if (status != "E")
-      { 
-        menuItem = pMenu->insertItem(tr("Correct Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
-        if (!_privileges->check("PostWoOperations"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-      }
-    }
-
     pMenu->insertSeparator();
   }
 
@@ -526,13 +475,6 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
     if (!_privileges->check("ViewWoMaterials"))
       pMenu->setItemEnabled(menuItem, FALSE);
       
-    if (_metrics->boolean("Routings"))
-    {
-      menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-      if (!_privileges->check("ViewWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-    }
-
     menuItem = pMenu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
     if (!_privileges->check("ViewInventoryAvailability"))
       pMenu->setItemEnabled(menuItem, FALSE);
@@ -677,14 +619,12 @@ void dspWoScheduleByParameterList::sHandleButtons()
     if((selected->text(2) == "E") || (selected->text(2) == "R") || (selected->text(2) == "I"))
     {
       _postProduction->setEnabled(_privileges->check("PostProduction"));
-      _postOperations->setEnabled(_privileges->check("PostWoOperations"));
       _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));      
       return;
     }
   }
   
   _postProduction->setEnabled(false);
-  _postOperations->setEnabled(false);
   _printTraveler->setEnabled(false);
 }
 

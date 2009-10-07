@@ -30,7 +30,6 @@ public:
 public slots:
     virtual void sChangeWOQty();
     virtual void sCloseWO();
-    virtual void sCorrectOperationsPosting();
     virtual void sCorrectProductionPosting();
     virtual void sDeleteWO();
     virtual void sDspRunningAvailability();
@@ -42,7 +41,6 @@ public slots:
     virtual void sInventoryAvailabilityByWorkOrder();
     virtual void sIssueWoMaterialItem();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
-    virtual void sPostOperations();
     virtual void sPostProduction();
     virtual void sPrint();
     virtual void sPrintTraveler();
@@ -53,7 +51,6 @@ public slots:
     virtual void sView();
     virtual void sViewBOM();
     virtual void sViewWomatl();
-    virtual void sViewWooper();
 
 protected slots:
     virtual void languageChange();

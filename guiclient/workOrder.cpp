@@ -43,7 +43,6 @@
 #include "substituteList.h"
 #include "scrapWoMaterialFromWIP.h"
 #include "woMaterialItem.h"
-#include "dspWoOperationsByWorkOrder.h"
 #include "woOperation.h"
 
 

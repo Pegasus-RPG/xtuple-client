@@ -20,16 +20,13 @@
 #include "bom.h"
 #include "changeWoQty.h"
 #include "closeWo.h"
-#include "correctOperationsPosting.h"
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
 #include "dspWoMaterialsByWorkOrder.h"
-#include "dspWoOperationsByWorkOrder.h"
 #include "explodeWo.h"
 #include "implodeWo.h"
 #include "issueWoMaterialItem.h"
-#include "postOperations.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
@@ -178,26 +175,6 @@ void dspWoScheduleByWorkOrder::sCorrectProductionPosting()
   params.append("wo_id", _wo->id());
 
   correctProductionPosting newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void dspWoScheduleByWorkOrder::sPostOperations()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-
-  postOperations newdlg(this, "", TRUE);
-  if(newdlg.set(params) != UndefinedError)
-    newdlg.exec();
-}
-
-void dspWoScheduleByWorkOrder::sCorrectOperationsPosting()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-
-  correctOperationsPosting newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -360,17 +337,6 @@ void dspWoScheduleByWorkOrder::sViewWomatl()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sViewWooper()
-{
-  ParameterList params;
-  params.append("wo_id", _wo->id());
-  params.append("run");
-
-  dspWoOperationsByWorkOrder *newdlg = new dspWoOperationsByWorkOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void dspWoScheduleByWorkOrder::sInventoryAvailabilityByWorkOrder()
 {
   ParameterList params;
@@ -418,20 +384,6 @@ void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
-    if (_metrics->boolean("Routings"))
-    {
-      menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-      if (!_privileges->check("PostWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-
-      if (status != "E")
-      {
-        menuItem = pMenu->insertItem(tr("Correct Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
-        if (!_privileges->check("PostWoOperations"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-      }
-    }
-
     pMenu->insertSeparator();
   }
 
@@ -468,13 +420,6 @@ void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
     menuItem = pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()), 0);
     if (!_privileges->check("ViewWoMaterials"))
       pMenu->setItemEnabled(menuItem, FALSE);
-
-    if (_metrics->boolean("Routings"))
-    {
-      menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-      if (!_privileges->check("ViewWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-    }
 
     menuItem = pMenu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
     if (!_privileges->check("ViewInventoryAvailability"))
