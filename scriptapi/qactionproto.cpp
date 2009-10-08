@@ -70,9 +70,9 @@ QScriptValue constructQAction(QScriptContext *context,
     obj = new QAction(context->argument(1).toString(),
                       context->argument(2).toQObject());
   }
-  else if (DEBUG)
-    qDebug("constructQAction(): no appropriate constructor found "
-           "[ %d args ]", context->argumentCount());
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        QString("Could not find an appropriate QAction constructor to call"));
 
   if (DEBUG) qDebug("constructQAction() returning %p", obj);
   return engine->toScriptValue(obj);

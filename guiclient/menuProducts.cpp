@@ -143,7 +143,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.dspSingleLevelBOM", tr("&Single Level..."), SLOT(sDspSingleLevelBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
   { "pd.dspIndentedBOM", tr("&Indented..."), SLOT(sDspIndentedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
   { "pd.dspSummarizedBOM", tr("Summari&zed..."), SLOT(sDspSummarizedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL, true , NULL },
-  //{ "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, "ViewBOMs", NULL, NULL,  _metrics->boolean("Routings") , NULL },
   
   // Product | Reports | Where Used
   { "menu",	tr("&Where Used"), (char*)reportsWhereUsdMenu,	reportsMenu, "true", NULL, NULL, true , NULL },
