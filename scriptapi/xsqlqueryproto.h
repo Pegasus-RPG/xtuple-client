@@ -46,6 +46,10 @@ class XSqlQueryProto : public QObject, public QScriptable
 
     Q_INVOKABLE QVariantMap lastError();
 
+    Q_INVOKABLE int findFirst(int, int);
+    Q_INVOKABLE int findFirst(const QString &, int);
+    Q_INVOKABLE int findFirst(const QString &, const QString &);
+
   public slots:
     bool first();
     bool last();

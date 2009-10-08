@@ -173,3 +173,28 @@ QString XSqlQueryProto::toString() const
     return item->lastQuery();
   return QString();
 }
+
+int XSqlQueryProto::findFirst(int col, int val)
+{
+  XSqlQuery *item = qscriptvalue_cast<XSqlQuery*>(thisObject());
+  if (item)
+    return item->findFirst(col, val);
+  return -1;
+}
+
+int XSqlQueryProto::findFirst(const QString & col, int val)
+{
+  XSqlQuery *item = qscriptvalue_cast<XSqlQuery*>(thisObject());
+  if (item)
+    return item->findFirst(col, val);
+  return -1;
+}
+
+int XSqlQueryProto::findFirst(const QString & col, const QString & val)
+{
+  XSqlQuery *item = qscriptvalue_cast<XSqlQuery*>(thisObject());
+  if (item)
+    return item->findFirst(col, val);
+  return -1;
+}
+

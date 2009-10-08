@@ -695,7 +695,6 @@
 #include "warehouseZone.h"
 #include "woMaterialItem.h"
 #include "woOperation.h"
-#include "workCenter.h"
 #include "workOrder.h"
 #include "workOrderMaterials.h"
 #include "workOrderOperations.h"
