@@ -1477,22 +1477,6 @@ void workOrder::sScrapMatl()
   _woIndentedList->setId(currentId,currentAltId);
 }
 
-void workOrder::sNewWooper()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("wo_id", _woIndentedList->id());
-
-  woOperation newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  int currentId = _woIndentedList->id();
-  int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-  populate();
-  _woIndentedList->setId(currentId,currentAltId);
-}
-
 void workOrder::sEditWooper()
 {
   ParameterList params;

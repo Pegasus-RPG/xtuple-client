@@ -66,7 +66,6 @@ public slots:
     virtual void sEditMatl();
     virtual void sViewMatl();
     virtual void sDeleteMatl();
-    virtual void sNewWooper();
     virtual void sEditWooper();
     virtual void sViewWooper();
     virtual void sDeleteWooper();
