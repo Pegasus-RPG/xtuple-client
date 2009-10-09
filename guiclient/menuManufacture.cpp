@@ -20,7 +20,6 @@
 #include "workOrder.h"
 #include "explodeWo.h"
 #include "implodeWo.h"
-#include "woTimeClock.h"
 #include "closeWo.h"
 
 #include "printWoTraveler.h"
@@ -44,11 +43,6 @@
 #include "postProduction.h"
 #include "correctProductionPosting.h"
 #include "postMiscProduction.h"
-
-#include "woOperation.h"
-#include "workOrderOperations.h"
-#include "postOperations.h"
-#include "correctOperationsPosting.h"
 
 #include "dspWoScheduleByItem.h"
 #include "dspWoScheduleByParameterList.h"
@@ -93,7 +87,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   materialsMenu	 = new QMenu(parent);
   materialsIssueMenu = new QMenu(parent);
   materialsReturnMenu = new QMenu(parent);
-  operationsMenu = new QMenu(parent);
   transactionsMenu = new QMenu(parent);
   reportsMenu	 = new QMenu(parent);
   reportsScheduleMenu = new QMenu(parent);
@@ -112,7 +105,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   materialsMenu->setObjectName("menu.manu.materials");
   materialsIssueMenu->setObjectName("menu.manu.materialsissue");
   materialsReturnMenu->setObjectName("menu.manu.materialsreturn");
-  operationsMenu->setObjectName("menu.manu.operations");
   transactionsMenu->setObjectName("menu.manu.transactions");
   reportsMenu->setObjectName("menu.manu.reports");
   reportsScheduleMenu->setObjectName("menu.manu.reportsschedule");
@@ -143,10 +135,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "menu",				tr("&Materials"),				(char*)materialsMenu,			mainMenu,	"true",	0, 0,	true, NULL },
     { "wo.createWoMaterialRequirement",	tr("&New..."),	SLOT(sCreateWoMaterialRequirement()), materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
     { "wo.maintainWoMaterialRequirements",tr("&Maintain..."),	SLOT(sMaintainWoMaterials()), 		materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
-    //  Production | Operations
-    { "menu",				tr("&Operations"),			(char*)operationsMenu,	mainMenu,	"true",	0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.createWoOperation",		tr("&New..."),		SLOT(sCreateWoOperation()), operationsMenu, "MaintainWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.maintainWoOperation",		tr("&Maintain..."),	SLOT(sMaintainWoOperations()), operationsMenu, "MaintainWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
 
     { "separator",		NULL,				NULL,			  mainMenu, "true",	0, 0,	true, NULL },
     
@@ -164,10 +152,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.returnWoMaterialItem",	tr("&Item..."),	SLOT(sReturnWoMaterialItem()), materialsReturnMenu, "ReturnWoMaterials", 0, 0, true, NULL },
     
     { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, "ScrapWoMaterials", 0, 0, true, NULL },
-    { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	_metrics->boolean("Routings") , NULL },
-    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, "WoTimeClock", QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), tr("Shop Floor Workbench") },
-    { "wo.postOperations",		tr("&Post Operation..."),		SLOT(sPostOperations()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.correctOperationsPosting",	tr("Co&rrect Operation Posting..."),	SLOT(sCorrectOperationsPosting()), transactionsMenu, "PostWoOperations", 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	true, NULL },
     { "wo.postProduction",		tr("Post Productio&n..."),		SLOT(sPostProduction()), transactionsMenu, "PostProduction", 0, 0, true, NULL },
     { "wo.correctProductionPosting",	tr("C&orrect Production Posting..."),	SLOT(sCorrectProductionPosting()), transactionsMenu, "PostProduction", 0, 0, true, NULL },
@@ -327,11 +311,6 @@ void menuManufacture::sImplodeWorkOrder()
   implodeWo(parent, "", TRUE).exec();
 }
 
-void menuManufacture::sWoTimeClock()
-{
-  omfgThis->handleNewWindow(new woTimeClock());
-}
-
 void menuManufacture::sPrintTraveler()
 {
   printWoTraveler(parent, "", TRUE).exec();
@@ -425,31 +404,6 @@ void menuManufacture::sCorrectProductionPosting()
 void menuManufacture::sPostMiscProduction()
 {
   postMiscProduction(parent, "", TRUE).exec();
-}
-
-void menuManufacture::sCreateWoOperation()
-{
-  ParameterList params;
-  params.append("mode", "new");
-
-  woOperation newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void menuManufacture::sMaintainWoOperations()
-{
-  omfgThis->handleNewWindow(new workOrderOperations());
-}
-
-void menuManufacture::sPostOperations()
-{
-  postOperations(parent, "", TRUE).exec();
-}
-
-void menuManufacture::sCorrectOperationsPosting()
-{
-  correctOperationsPosting(parent, "", TRUE).exec();
 }
 
 void menuManufacture::sDspWoHistoryByItem()

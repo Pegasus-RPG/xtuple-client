@@ -697,7 +697,6 @@
 #include "woOperation.h"
 #include "workOrder.h"
 #include "workOrderMaterials.h"
-#include "workOrderOperations.h"
 #include "wotc.h"
 #include "woTimeClock.h"
 #include "xdateinputdialog.h"

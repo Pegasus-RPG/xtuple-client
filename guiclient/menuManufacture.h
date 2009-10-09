@@ -41,7 +41,6 @@ class menuManufacture : public QObject
     void sNewWorkOrder();
     void sExplodeWorkOrder();
     void sImplodeWorkOrder();
-    void sWoTimeClock();
     void sCloseWorkOrder();
 
     void sPrintTraveler();
@@ -63,11 +62,6 @@ class menuManufacture : public QObject
     void sPostProduction();
     void sPostMiscProduction();
     void sCorrectProductionPosting();
-
-    void sCreateWoOperation();
-    void sMaintainWoOperations();
-    void sPostOperations();
-    void sCorrectOperationsPosting();
 
     void sDspWoScheduleByItem();
     void sDspWoScheduleByItemGroup();
@@ -105,7 +99,6 @@ class menuManufacture : public QObject
     QMenu  *materialsMenu;
     QMenu  *materialsIssueMenu;
     QMenu  *materialsReturnMenu;
-    QMenu  *operationsMenu;
     QMenu  *transactionsMenu;
     QMenu  *reportsMenu;
     QMenu  *reportsScheduleMenu;
