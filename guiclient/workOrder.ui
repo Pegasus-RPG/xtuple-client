@@ -17,7 +17,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>604</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -83,12 +83,6 @@ to be bound by its terms.</comment>
          </property>
          <property name="text">
           <string>&amp;Save</string>
-         </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
