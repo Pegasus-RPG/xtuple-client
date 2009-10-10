@@ -24,6 +24,21 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
       XSqlTableModel(QObject *parent = 0);
       ~XSqlTableModel();
     
+    enum itemDataRole { FormatRole = (Qt::UserRole + 1),
+                  MenuRole,
+                  RawRole /* Other roles for xtreewidget?,
+                  IdRole,
+                  RunningSetRole,
+                  RunningInitRole,
+                  TotalSetRole,
+                  TotalInitRole,
+                  IndentRole */ 
+    };
+    
+    enum FormatFlags { Money, Qty, Curr, Percent, Cost, QtyPer, 
+      SalesPrice, PurchPrice, UOMRatio, ExtPrice, Weight
+    };
+    
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual bool select();
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole);
@@ -34,6 +49,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     
     private:
       QHash<QPair<QModelIndex, int>, QVariant> roles;
+      QList<QString> _locales;
 };
 
 #endif

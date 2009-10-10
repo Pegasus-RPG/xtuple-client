@@ -42,6 +42,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
       Q_INVOKABLE virtual void setForegroundColor(int row, int col, QString color);
+      Q_INVOKABLE virtual void setFormat(const QString column, int format);
       Q_INVOKABLE virtual void setRowForegroundColor(int row, QString color);
       Q_INVOKABLE         void setTable();
       Q_INVOKABLE virtual void setTextAlignment(const QString column, int alignment);

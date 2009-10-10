@@ -13,11 +13,14 @@
 #include <QSqlIndex>
 #include <QSqlRelation>
 
+#include "format.h"
 #include "xsqltablemodel.h"
 
 XSqlTableModel::XSqlTableModel(QObject *parent) : 
   QSqlRelationalTableModel(parent)
 {
+  _locales << "money" << "qty" << "curr" << "percent" << "cost" << "qtyper" 
+    << "salesprice" << "purchprice" << "uomratio" << "extprice" << "weight";
 }
 
 XSqlTableModel::~XSqlTableModel()
@@ -158,12 +161,25 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
       return QVariant();
         
     switch (role) {
-    case Qt::EditRole:
-    case Qt::DisplayRole: {
+    case Qt::EditRole: {
             return QSqlRelationalTableModel::data(index, role);
+    } break;
+    
+    case Qt::DisplayRole: {
+      if (data(index, FormatRole).isValid()) {
+        int scale = decimalPlaces(_locales.at(data(index,FormatRole).toInt()));
+        double fval = QSqlRelationalTableModel::data(index).toDouble();
+        if (data(index, FormatRole).toInt() == Percent)
+          fval = fval * 100;
+        return QLocale().toString(fval, 'f', scale);
+      }
+      else
+        return QSqlRelationalTableModel::data(index);
     } break;
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:
+    case FormatRole:
+    case MenuRole:
       QPair<QModelIndex, int> key;
       key.first = index;
       key.second = role;
@@ -178,14 +194,16 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
 {
   if (!index.isValid())
       return false;
-      
+
   switch (role) {
-  case Qt::EditRole:
+  case Qt::EditRole: 
   case Qt::DisplayRole: {
     return QSqlRelationalTableModel::setData(index, value, role);
   } break;
   case Qt::TextAlignmentRole:
   case Qt::ForegroundRole:
+  case FormatRole:
+  case MenuRole:
     QPair<QModelIndex, int> key;
     key.first = index;
     key.second = role;

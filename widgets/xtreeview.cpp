@@ -352,6 +352,11 @@ void XTreeView::setTable()
   }
 }
 
+void XTreeView::setFormat(const QString column, int format)
+{
+  setColumnRole(column, XSqlTableModel::FormatRole, QVariant(format));
+}
+
 void XTreeView::setTextAlignment(const QString column, int alignment)
 {
   setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
