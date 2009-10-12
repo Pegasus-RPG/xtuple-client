@@ -21,7 +21,6 @@
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
-#include "dspWoEffortByWorkOrder.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "distributeInventory.h"

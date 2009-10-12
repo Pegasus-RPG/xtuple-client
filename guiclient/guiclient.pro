@@ -195,7 +195,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspUndefinedManufacturedItems.ui                                                       \
                dspUninvoicedReceivings.ui uninvoicedShipments.ui unpostedPurchaseOrders.ui            \
                dspUnusedPurchasedItems.ui  dspVendorAPHistory.ui dspValidLocationsByItem.ui           \
-               dspVoucherRegister.ui  dspWoEffortByUser.ui dspWoEffortByWorkOrder.ui                  \
+               dspVoucherRegister.ui                                                                  \
                dspWoHistoryByClassCode.ui dspWoHistoryByItem.ui dspWoHistoryByNumber.ui               \
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
                                               dspWoOperationsByWorkOrder.ui                           \
@@ -498,7 +498,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspUninvoicedReceivings.h uninvoicedShipments.h unpostedPurchaseOrders.h               \
                dspUnusedPurchasedItems.h  dspVendorAPHistory.h dspValidLocationsByItem.h              \
                dspVoucherRegister.h                                                                   \
-               dspWoEffortByUser.h dspWoEffortByWorkOrder.h                                           \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
                                              dspWoOperationsByWorkOrder.h                             \
@@ -811,7 +810,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspUndefinedManufacturedItems.cpp                                                      \
                dspUninvoicedReceivings.cpp uninvoicedShipments.cpp unpostedPurchaseOrders.cpp         \
                dspUnusedPurchasedItems.cpp  dspVendorAPHistory.cpp dspValidLocationsByItem.cpp        \
-               dspVoucherRegister.cpp  dspWoEffortByUser.cpp dspWoEffortByWorkOrder.cpp               \
+               dspVoucherRegister.cpp                                                                 \
                dspWoHistoryByClassCode.cpp dspWoHistoryByItem.cpp dspWoHistoryByNumber.cpp            \
                dspWoMaterialsByItem.cpp dspWoMaterialsByWorkOrder.cpp                                 \
                                                dspWoOperationsByWorkOrder.cpp                         \
