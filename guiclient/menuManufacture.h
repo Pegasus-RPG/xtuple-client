@@ -99,13 +99,11 @@ class menuManufacture : public QObject
     QMenu  *transactionsMenu;
     QMenu  *reportsMenu;
     QMenu  *reportsScheduleMenu;
-    QMenu  *reportsBufrStsMenu;
     QMenu  *reportsHistoryMenu;
     QMenu  *reportsMatlReqMenu;
     QMenu  *reportsOperationsMenu;
     QMenu  *reportsWoTcMenu;
     QMenu  *reportsMatlUseVarMenu;
-    QMenu  *reportsBrdrDistVarMenu;
     QMenu  *reportsOpenWoMenu;
     QMenu  *utilitiesMenu;
 

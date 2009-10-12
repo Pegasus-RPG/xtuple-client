@@ -88,11 +88,9 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   transactionsMenu = new QMenu(parent);
   reportsMenu	 = new QMenu(parent);
   reportsScheduleMenu = new QMenu(parent);
-  reportsBufrStsMenu = new QMenu(parent);
   reportsHistoryMenu = new QMenu(parent);
   reportsMatlReqMenu = new QMenu(parent);
   reportsMatlUseVarMenu = new QMenu(parent);
-  reportsBrdrDistVarMenu = new QMenu(parent);
   reportsOpenWoMenu = new QMenu(parent);
   utilitiesMenu = new QMenu(parent);
 
@@ -105,113 +103,110 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   transactionsMenu->setObjectName("menu.manu.transactions");
   reportsMenu->setObjectName("menu.manu.reports");
   reportsScheduleMenu->setObjectName("menu.manu.reportsschedule");
-  reportsBufrStsMenu->setObjectName("menu.manu.reportsbufrsts");
   reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
   reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
   reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
-  reportsBrdrDistVarMenu->setObjectName("menu.manu.reportsbrdrdistvar");
   reportsOpenWoMenu->setObjectName("menu.manu.reportsopenwo");
   utilitiesMenu->setObjectName("menu.manu.utilities");
 
   actionProperties acts[] = {
     // Production | Control
-    { "menu",			tr("&Work Order"),		(char*)ordersMenu,	  mainMenu,    "true",	0, 0, true, NULL },
-    { "wo.newWorkOrder",	tr("&New..."),	SLOT(sNewWorkOrder()),	  ordersMenu, "MaintainWorkOrders", 0, 0, true, NULL },
-    { "separator",		NULL,				NULL,			  ordersMenu, "true",	0, 0,	true, NULL },
-    { "wo.explodeWorkOrder",	tr("E&xplode..."),	SLOT(sExplodeWorkOrder()), ordersMenu, "ExplodeWorkOrders", 0, 0, true, NULL },
-    { "wo.implodeWorkOrder",	tr("&Implode..."),	SLOT(sImplodeWorkOrder()), ordersMenu, "ImplodeWorkOrders", 0, 0, true, NULL },
-    { "wo.releaseWorkOrdersByPlannerCode", tr("&Release..."), SLOT(sReleaseWorkOrdersByPlannerCode()),	ordersMenu, "ReleaseWorkOrders", 0, 0, true, NULL },
-    { "wo.closeWorkOrder",	tr("&Close..."),	SLOT(sCloseWorkOrder()),  ordersMenu, "CloseWorkOrders", 0, 0, true, NULL },
-    { "separator",		NULL,				NULL,			  ordersMenu, "true",	0, 0,	true, NULL },
-    { "wo.reprioritizeWorkOrder",	   tr("Re&prioritize..."),	SLOT(sReprioritizeWorkOrder()), ordersMenu, "ReprioritizeWorkOrders", 0, 0, true, NULL },
-    { "wo.rescheduleWorkOrder",		   tr("Re&schedule..."),	SLOT(sRescheduleWorkOrder()),   ordersMenu, "RescheduleWorkOrders", 0, 0, true, NULL },
-    { "wo.changeWorkOrderQuantity",	   tr("Change &Quantity..."), SLOT(sChangeWorkOrderQty()),	ordersMenu, "ChangeWorkOrderQty", 0, 0, true, NULL },
+    { "menu",                              tr("&Work Order"), (char*)ordersMenu,                       mainMenu,   "true",                  0, 0, true, NULL },
+    { "wo.newWorkOrder",                       tr("&New..."), SLOT(sNewWorkOrder()),                   ordersMenu, "MaintainWorkOrders",    0, 0, true, NULL },
+    { "separator",                                      NULL, NULL,                                    ordersMenu, "true",                  0, 0, true, NULL },
+    { "wo.explodeWorkOrder",               tr("E&xplode..."), SLOT(sExplodeWorkOrder()),               ordersMenu, "ExplodeWorkOrders",     0, 0, true, NULL },
+    { "wo.implodeWorkOrder",               tr("&Implode..."), SLOT(sImplodeWorkOrder()),               ordersMenu, "ImplodeWorkOrders",     0, 0, true, NULL },
+    { "wo.releaseWorkOrdersByPlannerCode", tr("&Release..."), SLOT(sReleaseWorkOrdersByPlannerCode()), ordersMenu, "ReleaseWorkOrders",     0, 0, true, NULL },
+    { "wo.closeWorkOrder",                   tr("&Close..."), SLOT(sCloseWorkOrder()),                 ordersMenu, "CloseWorkOrders",       0, 0, true, NULL },
+    { "separator",                                      NULL, NULL,                                    ordersMenu, "true",                  0, 0, true, NULL },
+    { "wo.reprioritizeWorkOrder",     tr("Re&prioritize..."), SLOT(sReprioritizeWorkOrder()),          ordersMenu, "ReprioritizeWorkOrders",0, 0, true, NULL },
+    { "wo.rescheduleWorkOrder",         tr("Re&schedule..."), SLOT(sRescheduleWorkOrder()),            ordersMenu, "RescheduleWorkOrders",  0, 0, true, NULL },
+    { "wo.changeWorkOrderQuantity",tr("Change &Quantity..."), SLOT(sChangeWorkOrderQty()),             ordersMenu, "ChangeWorkOrderQty",    0, 0, true, NULL },
 
     //  Production | W/O Materials
-    { "menu",				tr("&Materials"),				(char*)materialsMenu,			mainMenu,	"true",	0, 0,	true, NULL },
-    { "wo.createWoMaterialRequirement",	tr("&New..."),	SLOT(sCreateWoMaterialRequirement()), materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
-    { "wo.maintainWoMaterialRequirements",tr("&Maintain..."),	SLOT(sMaintainWoMaterials()), 		materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
+    { "menu",                               tr("&Materials"), (char*)materialsMenu,                 mainMenu,      "true",                0, 0, true, NULL },
+    { "wo.createWoMaterialRequirement",        tr("&New..."), SLOT(sCreateWoMaterialRequirement()), materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
+    { "wo.maintainWoMaterialRequirements",tr("&Maintain..."), SLOT(sMaintainWoMaterials()),         materialsMenu, "MaintainWoMaterials", 0, 0, true, NULL },
 
-    { "separator",		NULL,				NULL,			  mainMenu, "true",	0, 0,	true, NULL },
+    { "separator",                  NULL,                   NULL,                          mainMenu,          "true",  0, 0, true, NULL },
     
     //  Production | Transactions
-    { "menu",				tr("&Transactions"),			(char*)transactionsMenu,	mainMenu,	"true",	0, 0, true, NULL },
+    { "menu",                       tr("&Transactions"),    (char*)transactionsMenu,       mainMenu,           "true", 0, 0, true, NULL },
     
     //  Production |Transactions | Issue
-    { "menu",				tr("&Issue Material"),				(char*)materialsIssueMenu,			transactionsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.issueWoMaterialBatch",	tr("&Batch..."),	SLOT(sIssueWoMaterialBatch()), materialsIssueMenu, "IssueWoMaterials", 0, 0, true, NULL },
-    { "wo.issueWoMaterialItem",		tr("&Item..."),	SLOT(sIssueWoMaterialItem()), materialsIssueMenu, "IssueWoMaterials", 0, 0, true, NULL },
+    { "menu",                       tr("&Issue Material"),  (char*)materialsIssueMenu,     transactionsMenu,   "true",             0, 0, true, NULL },
+    { "wo.issueWoMaterialBatch",    tr("&Batch..."),        SLOT(sIssueWoMaterialBatch()), materialsIssueMenu, "IssueWoMaterials", 0, 0, true, NULL },
+    { "wo.issueWoMaterialItem",     tr("&Item..."),         SLOT(sIssueWoMaterialItem()),  materialsIssueMenu, "IssueWoMaterials", 0, 0, true, NULL },
     
     //  Production | Transactions | Return
-    { "menu",				tr("Ret&urn Material"),				(char*)materialsReturnMenu,			transactionsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.returnWoMaterialBatch",	tr("&Batch..."),	SLOT(sReturnWoMaterialBatch()), materialsReturnMenu, "ReturnWoMaterials", 0, 0, true, NULL },
-    { "wo.returnWoMaterialItem",	tr("&Item..."),	SLOT(sReturnWoMaterialItem()), materialsReturnMenu, "ReturnWoMaterials", 0, 0, true, NULL },
-    
-    { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, "ScrapWoMaterials", 0, 0, true, NULL },
-    { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	true, NULL },
-    { "wo.postProduction",		tr("Post Productio&n..."),		SLOT(sPostProduction()), transactionsMenu, "PostProduction", 0, 0, true, NULL },
-    { "wo.correctProductionPosting",	tr("C&orrect Production Posting..."),	SLOT(sCorrectProductionPosting()), transactionsMenu, "PostProduction", 0, 0, true, NULL },
-    { "wo.closeWorkOrder",	tr("&Close Work Order..."),	SLOT(sCloseWorkOrder()),  transactionsMenu, "CloseWorkOrders", 0, 0, true, NULL },
-    { "separator",			   NULL,				NULL,				transactionsMenu, "true",	0, 0,	true, NULL },
-    { "wo.postMiscProduction",		tr("Post &Misc. Production..."),	SLOT(sPostMiscProduction()), transactionsMenu, "PostMiscProduction", 0, 0, true, NULL },
+    { "menu",                       tr("Ret&urn Material"),              (char*)materialsReturnMenu,       transactionsMenu,    "true",              0, 0, true, NULL },
+    { "wo.returnWoMaterialBatch",   tr("&Batch..."),                     SLOT(sReturnWoMaterialBatch()),   materialsReturnMenu, "ReturnWoMaterials", 0, 0, true, NULL },
+    { "wo.returnWoMaterialItem",    tr("&Item..."),                      SLOT(sReturnWoMaterialItem()),    materialsReturnMenu, "ReturnWoMaterials", 0, 0, true, NULL },
+    { "wo.scrapWoMaterialFromWo",   tr("&Scrap..."),                     SLOT(sScrapWoMaterialFromWo()),   transactionsMenu,    "ScrapWoMaterials",  0, 0, true, NULL },
+    { "separator",                  NULL,                                NULL,                             transactionsMenu,    "true",              0, 0, true, NULL },
+    { "wo.postProduction",          tr("Post Productio&n..."),           SLOT(sPostProduction()),          transactionsMenu,    "PostProduction",    0, 0, true, NULL },
+    { "wo.correctProductionPosting",tr("C&orrect Production Posting..."),SLOT(sCorrectProductionPosting()),transactionsMenu,    "PostProduction",    0, 0, true, NULL },
+    { "wo.closeWorkOrder",          tr("&Close Work Order..."),          SLOT(sCloseWorkOrder()),          transactionsMenu,    "CloseWorkOrders",   0, 0, true, NULL },
+    { "separator",                  NULL,                                NULL,                             transactionsMenu,    "true",              0, 0, true, NULL },
+    { "wo.postMiscProduction",      tr("Post &Misc. Production..."),     SLOT(sPostMiscProduction()),      transactionsMenu,    "PostMiscProduction",0, 0, true, NULL },
 
-    { "separator",		NULL,				NULL,			  mainMenu, "true",	0, 0,	true, NULL },
+    { "separator",              NULL,                           NULL,                     mainMenu, "true",     0, 0,   true, NULL },
     
     // Production | Forms
-    { "menu",			tr("&Forms"),		(char*)formsMenu,	  mainMenu,    "true",	0, 0, true, NULL },
-    { "wo.printTraveler",	tr("Print &Traveler..."),	SLOT(sPrintTraveler()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
-    { "wo.printPickList",	tr("Print &Pick List..."),	SLOT(sPrintPickList()),	  formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
-    { "separator",		NULL,				NULL,			  formsMenu, "true",	0, 0,	true, NULL },
-    { "wo.rptPrintWorkOrderForm",		tr("Print &Work Order Form..."),	SLOT(sPrintWorkOrderForm()), formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
+    { "menu",                    tr("&Forms"),                   (char*)formsMenu,           mainMenu,  "true",                    0, 0, true, NULL },
+    { "wo.printTraveler",        tr("Print &Traveler..."),       SLOT(sPrintTraveler()),     formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
+    { "wo.printPickList",        tr("Print &Pick List..."),      SLOT(sPrintPickList()),     formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
+    { "separator",               NULL,                           NULL,                       formsMenu, "true",                    0, 0, true, NULL },
+    { "wo.rptPrintWorkOrderForm",tr("Print &Work Order Form..."),SLOT(sPrintWorkOrderForm()),formsMenu, "PrintWorkOrderPaperWork", 0, 0, true, NULL },
     
     //  Production | Reports
-    { "menu",				tr("&Reports"),	(char*)reportsMenu,	mainMenu,	"true",	0, 0,	true, NULL },
+    { "menu",                           tr("&Reports"), (char*)reportsMenu,     mainMenu,       "true", 0, 0,   true, NULL },
     
     //  Production | Reports | Schedule
-    { "menu",				tr("Work Order &Schedule"),	(char*)reportsScheduleMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
-    { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "menu",                           tr("Work Order &Schedule"),(char*)reportsScheduleMenu,         reportsMenu,         "true",                              0, 0, true, NULL },
+    { "wo.dspWoScheduleByPlannerCode",  tr("by &Planner Code..."), SLOT(sDspWoScheduleByPlannerCode()),reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
+    { "wo.dspWoScheduleByClassCode",    tr("by &Class Code..."),   SLOT(sDspWoScheduleByClassCode()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoScheduleByItemGroup",    tr("by Item &Group..."),   SLOT(sDspWoScheduleByItemGroup()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoScheduleByItem",         tr("by &Item..."),         SLOT(sDspWoScheduleByItem()),       reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoScheduleByWorkOrder",    tr("by &Work Order..."),   SLOT(sDspWoScheduleByWorkOrder()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
 
     //  Production | Reports | Material Requirements
-    { "menu",				tr("&Material Requirements"),	(char*)reportsMatlReqMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspWoMaterialRequirementsByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoMaterialsByWo()), reportsMatlReqMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoMaterialRequirementsByComponentItem",	tr("by &Component Item..."),	SLOT(sDspWoMaterialsByComponentItem()), reportsMatlReqMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "menu",                                       tr("&Material Requirements"),(char*)reportsMatlReqMenu,              reportsMenu,        "true",                              0, 0, true, NULL },
+    { "wo.dspWoMaterialRequirementsByWorkOrder",    tr("by &Work Order..."),     SLOT(sDspWoMaterialsByWo()),            reportsMatlReqMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoMaterialRequirementsByComponentItem",tr("by &Component Item..."), SLOT(sDspWoMaterialsByComponentItem()), reportsMatlReqMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
 
-    { "wo.dspInventoryAvailabilityByWorkOrder",		tr("&Inventory Availability..."),	SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
-    { "wo.dspPendingWoMaterialAvailability",	tr("&Pending Material Availability..."),	SLOT(sDspPendingAvailability()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
+    { "wo.dspInventoryAvailabilityByWorkOrder",     tr("&Inventory Availability..."),       SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
+    { "wo.dspPendingWoMaterialAvailability",        tr("&Pending Material Availability..."),SLOT(sDspPendingAvailability()),              reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
 
-    { "separator",			NULL,	NULL,	reportsMenu,	"true",	0, 0,	true, NULL },
+    { "separator",                      NULL,   NULL,   reportsMenu,    "true", 0, 0,   true, NULL },
     
     //  Production | Reports | History
-    { "menu",				tr("&History"),	(char*)reportsHistoryMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspWoHistoryByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoHistoryByClassCode()), reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoHistoryByItem",		tr("by &Item..."),	SLOT(sDspWoHistoryByItem()), reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoHistoryByNumber",	tr("by &W/O Number..."),	SLOT(sDspWoHistoryByNumber()), reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "menu",                       tr("&History"),          (char*)reportsHistoryMenu,        reportsMenu,        "true",                              0, 0, true, NULL },
+    { "wo.dspWoHistoryByClassCode", tr("by &Class Code..."), SLOT(sDspWoHistoryByClassCode()), reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoHistoryByItem",      tr("by &Item..."),       SLOT(sDspWoHistoryByItem()),      reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoHistoryByNumber",    tr("by &W/O Number..."), SLOT(sDspWoHistoryByNumber()),    reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
 
-    { "separator",			NULL,	NULL,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspJobCosting",	tr("&Job Costing..."),	SLOT(sDspJobCosting()), reportsMenu, "ViewCosts", 0, 0, true, NULL },
+    { "separator",        NULL,                   NULL,                   reportsMenu, "true",      0, 0, true, NULL },
+    { "wo.dspJobCosting", tr("&Job Costing..."),  SLOT(sDspJobCosting()), reportsMenu, "ViewCosts", 0, 0, true, NULL },
     
     //  Production | Reports | Material Usage Variance
-    { "menu",				tr("Material &Usage Variance"),	(char*)reportsMatlUseVarMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspMaterialUsageVarianceByWarehouse",	tr("by &Site..."),	SLOT(sDspMaterialUsageVarianceByWarehouse()), reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByItem",	tr("by &Item..."),	SLOT(sDspMaterialUsageVarianceByItem()), reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByBOMItem",	tr("by &BOM Item..."),	SLOT(sDspMaterialUsageVarianceByBOMItem()), reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByComponentItem",	tr("by &Component Item..."),	SLOT(sDspMaterialUsageVarianceByComponentItem()), reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspMaterialUsageVarianceByWorkOrder()), reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
+    { "menu",                                      tr("Material &Usage Variance"),(char*)reportsMatlUseVarMenu,                    reportsMenu,           "true",                  0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByWarehouse",    tr("by &Site..."),             SLOT(sDspMaterialUsageVarianceByWarehouse()),    reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByItem",         tr("by &Item..."),             SLOT(sDspMaterialUsageVarianceByItem()),         reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByBOMItem",      tr("by &BOM Item..."),         SLOT(sDspMaterialUsageVarianceByBOMItem()),      reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByComponentItem",tr("by &Component Item..."),   SLOT(sDspMaterialUsageVarianceByComponentItem()),reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByWorkOrder",    tr("by &Work Order..."),       SLOT(sDspMaterialUsageVarianceByWorkOrder()),    reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
 
-    { "separator",					NULL,	NULL,	reportsMenu,	"true",	0, 0,	true, NULL },
+    { "separator",                                      NULL,   NULL,   reportsMenu,    "true", 0, 0,   true, NULL },
     
     //  Production | Reports | Open Work Orders
-    { "menu",				tr("Ope&n Work Orders"),	(char*)reportsOpenWoMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
-    { "wo.dspOpenWorkOrdersWithClosedParentSalesOrders",tr("with &Closed Parent Sales Orders..."),	SLOT(sDspWoSoStatusMismatch()), reportsOpenWoMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspOpenWorkOrdersWithParentSalesOrders",	tr("with &Parent Sales Orders..."),	SLOT(sDspWoSoStatus()), reportsOpenWoMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "menu",                                           tr("Ope&n Work Orders"),                  (char*)reportsOpenWoMenu,      reportsMenu,      "true",                             0, 0, true, NULL},
+    { "wo.dspOpenWorkOrdersWithClosedParentSalesOrders",tr("with &Closed Parent Sales Orders..."),SLOT(sDspWoSoStatusMismatch()),reportsOpenWoMenu,"MaintainWorkOrders ViewWorkOrders",0, 0, true, NULL},
+    { "wo.dspOpenWorkOrdersWithParentSalesOrders",      tr("with &Parent Sales Orders..."),       SLOT(sDspWoSoStatus()),        reportsOpenWoMenu,"MaintainWorkOrders ViewWorkOrders",0, 0, true, NULL},
 
-    { "separator", NULL, NULL, mainMenu, "true",	0, 0, true, NULL },
-    { "menu", tr("&Utilities"), (char*)utilitiesMenu, mainMenu, "true", NULL, NULL, true, NULL },
-    { "wo.purgeClosedWorkOrder",	   tr("Pur&ge Closed Work Orders..."),	SLOT(sPurgeClosedWorkOrders()),	utilitiesMenu, "PurgeWorkOrders", 0, 0, true, NULL },
+    { "separator",              NULL,                               NULL,                           mainMenu,      "true",            0, 0, true, NULL },
+    { "menu",                   tr("&Utilities"),                   (char*)utilitiesMenu,           mainMenu,      "true",            0, 0, true, NULL },
+    { "wo.purgeClosedWorkOrder",tr("Pur&ge Closed Work Orders..."), SLOT(sPurgeClosedWorkOrders()), utilitiesMenu, "PurgeWorkOrders", 0, 0, true, NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -244,38 +239,38 @@ void menuManufacture::addActionsToMenu(actionProperties acts[], unsigned int num
     else if ((acts[i].toolBar != NULL) && (!acts[i].toolTip.isEmpty()))
     {
       parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv,
-					  (acts[i].pixmap),
-					  acts[i].toolBar,
+                                          acts[i].actionName,
+                                          acts[i].actionTitle,
+                                          this,
+                                          acts[i].slot,
+                                          acts[i].menu,
+                                          acts[i].priv,
+                                          (acts[i].pixmap),
+                                          acts[i].toolBar,
                       acts[i].toolTip) );
     }
     else if (acts[i].toolBar != NULL)
     {
       parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv,
-					  (acts[i].pixmap),
-					  acts[i].toolBar,
+                                          acts[i].actionName,
+                                          acts[i].actionTitle,
+                                          this,
+                                          acts[i].slot,
+                                          acts[i].menu,
+                                          acts[i].priv,
+                                          (acts[i].pixmap),
+                                          acts[i].toolBar,
                       acts[i].actionTitle) );
     }
     else
     {
       parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv ) );
+                                          acts[i].actionName,
+                                          acts[i].actionTitle,
+                                          this,
+                                          acts[i].slot,
+                                          acts[i].menu,
+                                          acts[i].priv ) );
     }
   }
 }
