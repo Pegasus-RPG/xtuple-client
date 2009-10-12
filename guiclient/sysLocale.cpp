@@ -253,7 +253,11 @@ void sysLocale::sSave()
   q.bindValue(":locale_timeformat",     convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
   q.bindValue(":locale_timestampformat",convert(sampleLocale.dateFormat(QLocale::ShortFormat)) +
                                   " " + convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
-  q.bindValue(":locale_intervalformat", convert(sampleLocale.timeFormat(QLocale::ShortFormat).remove("ap", Qt::CaseInsensitive)));
+  {
+    QString intervalfmt = convert(sampleLocale.timeFormat(QLocale::ShortFormat).remove("ap", Qt::CaseInsensitive));
+    intervalfmt.insert(intervalfmt.indexOf("HH") + 2, "24");
+    q.bindValue(":locale_intervalformat", intervalfmt);
+  }
   q.bindValue(":locale_qtyformat",      QString(sampleLocale.decimalPoint()) +
                                         QString(sampleLocale.negativeSign()) +
                                         QString(sampleLocale.groupSeparator()));

@@ -308,8 +308,6 @@
 #include "dspValidLocationsByItem.h"
 #include "dspVendorAPHistory.h"
 #include "dspVoucherRegister.h"
-#include "dspWoEffortByUser.h"
-#include "dspWoEffortByWorkOrder.h"
 #include "dspWoHistoryByClassCode.h"
 #include "dspWoHistoryByItem.h"
 #include "dspWoHistoryByNumber.h"

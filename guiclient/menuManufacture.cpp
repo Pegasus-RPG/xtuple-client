@@ -62,8 +62,6 @@
 #include "dspMaterialUsageVarianceByWarehouse.h"
 #include "dspWoSoStatus.h"
 #include "dspWoSoStatusMismatch.h"
-#include "dspWoEffortByUser.h"
-#include "dspWoEffortByWorkOrder.h"
 
 #include "printWoForm.h"
 
@@ -93,7 +91,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsBufrStsMenu = new QMenu(parent);
   reportsHistoryMenu = new QMenu(parent);
   reportsMatlReqMenu = new QMenu(parent);
-  reportsWoTcMenu = new QMenu(parent);
   reportsMatlUseVarMenu = new QMenu(parent);
   reportsBrdrDistVarMenu = new QMenu(parent);
   reportsOpenWoMenu = new QMenu(parent);
@@ -111,7 +108,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsBufrStsMenu->setObjectName("menu.manu.reportsbufrsts");
   reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
   reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
-  reportsWoTcMenu->setObjectName("menu.manu.reportswotc");
   reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
   reportsBrdrDistVarMenu->setObjectName("menu.manu.reportsbrdrdistvar");
   reportsOpenWoMenu->setObjectName("menu.manu.reportsopenwo");
@@ -175,7 +171,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "menu",				tr("Work Order &Schedule"),	(char*)reportsScheduleMenu,	reportsMenu,	"true",	0, 0,	true, NULL },
     { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
     { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
     { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
     { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
@@ -187,12 +182,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
 
     { "wo.dspInventoryAvailabilityByWorkOrder",		tr("&Inventory Availability..."),	SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
     { "wo.dspPendingWoMaterialAvailability",	tr("&Pending Material Availability..."),	SLOT(sDspPendingAvailability()), reportsMenu, "ViewInventoryAvailability", 0, 0, true, NULL },
-    { "separator",				NULL,					NULL,	reportsMenu,	"true",	0, 0,	_metrics->boolean("Routings"), NULL },
-
-    //  Production | Reports | Production Time Clock
-    { "menu",				tr("Production &Time Clock"),	(char*)reportsWoTcMenu,	reportsMenu,	"true",	0, 0,	_metrics->boolean("Routings"), NULL },
-    { "wo.dspWoEffortByUser",		tr("by &User..."),	SLOT(sDspWoEffortByUser()), reportsWoTcMenu, "MaintainWoTimeClock ViewWoTimeClock", 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspWoEffortByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoEffortByWorkOrder()), reportsWoTcMenu, "MaintainWoTimeClock ViewWoTimeClock", 0, 0, _metrics->boolean("Routings"), NULL },
 
     { "separator",			NULL,	NULL,	reportsMenu,	"true",	0, 0,	true, NULL },
     
@@ -476,16 +465,6 @@ void menuManufacture::sDspWoScheduleByPlannerCode()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void menuManufacture::sDspWoScheduleByWorkCenter()
-{
-  ParameterList params;
-  params.append("wrkcnt");
-
-  dspWoScheduleByParameterList *newdlg = new dspWoScheduleByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void menuManufacture::sDspWoScheduleByWorkOrder()
 {
   omfgThis->handleNewWindow(new dspWoScheduleByWorkOrder());
@@ -514,16 +493,6 @@ void menuManufacture::sDspMaterialUsageVarianceByComponentItem()
 void menuManufacture::sDspMaterialUsageVarianceByWorkOrder()
 {
   omfgThis->handleNewWindow(new dspMaterialUsageVarianceByWorkOrder());
-}
-
-void menuManufacture::sDspWoEffortByWorkOrder()
-{
-  omfgThis->handleNewWindow(new dspWoEffortByWorkOrder());
-}
-
-void menuManufacture::sDspWoEffortByUser()
-{
-  omfgThis->handleNewWindow(new dspWoEffortByUser());
 }
 
 void menuManufacture::sDspMaterialUsageVarianceByWarehouse()

@@ -67,7 +67,6 @@ class menuManufacture : public QObject
     void sDspWoScheduleByItemGroup();
     void sDspWoScheduleByClassCode();
     void sDspWoScheduleByPlannerCode();
-    void sDspWoScheduleByWorkCenter();
     void sDspWoScheduleByWorkOrder();
     void sDspWoHistoryByItem();
     void sDspWoHistoryByNumber();
@@ -77,8 +76,6 @@ class menuManufacture : public QObject
     void sDspInventoryAvailabilityByWorkOrder();
     void sDspPendingAvailability();
     void sDspJobCosting();
-    void sDspWoEffortByUser();
-    void sDspWoEffortByWorkOrder();
     void sDspMaterialUsageVarianceByBOMItem();
     void sDspMaterialUsageVarianceByItem();
     void sDspMaterialUsageVarianceByComponentItem();
