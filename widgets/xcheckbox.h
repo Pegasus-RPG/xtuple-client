@@ -17,6 +17,10 @@
 #include "widgets.h"
 #include "xdatawidgetmapper.h"
 
+class QScriptEngine;
+
+void setupXCheckBox(QScriptEngine *engine);
+
 class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
   Q_OBJECT
@@ -29,10 +33,11 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
     XCheckBox(const QString &, QWidget * = 0);
     ~XCheckBox();
 
-    virtual bool    defaultChecked()                const { return _default; };
-    virtual bool    forgetful()                     const {return _forgetful; };
-    virtual QString fieldName()                     const { return _fieldName; };
-    virtual void    setObjectName(const QString &);
+    virtual bool    defaultChecked() const { return _default; };
+    virtual bool    forgetful()      const { return _forgetful; };
+    virtual QString fieldName()      const { return _fieldName; };
+
+    Q_INVOKABLE virtual void    setObjectName(const QString &);
     
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
@@ -54,5 +59,7 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
 
     static QPixmap *_checkedIcon;
 };
+
+Q_DECLARE_METATYPE(XCheckBox*)
 
 #endif

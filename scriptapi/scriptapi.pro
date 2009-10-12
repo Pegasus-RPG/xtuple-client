@@ -93,7 +93,6 @@ HEADERS +=  setupscriptapi.h                    \
             vendorgroupsetup.h			\
             wcomboboxsetup.h			\
             womatlclustersetup.h		\
-            xcomboboxsetup.h			\
             xdateeditsetup.h			\
 
 SOURCES +=  setupscriptapi.cpp                  \
@@ -173,7 +172,6 @@ SOURCES +=  setupscriptapi.cpp                  \
             vendorgroupsetup.cpp		\
             wcomboboxsetup.cpp			\
             womatlclustersetup.cpp		\
-            xcomboboxsetup.cpp			\
             xdateeditsetup.cpp			\
 
 QT +=  sql xml script network

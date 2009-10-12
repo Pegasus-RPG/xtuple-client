@@ -10,6 +10,8 @@
 
 #include "xcheckbox.h"
 
+#include <QtScript>
+
 XCheckBox::XCheckBox(QWidget *pParent) :
   QCheckBox(pParent)
 {
@@ -95,3 +97,49 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
 }
 
+// scripting exposure /////////////////////////////////////////////////////////
+
+QScriptValue XCheckBoxtoScriptValue(QScriptEngine *engine, XCheckBox* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void XCheckBoxfromScriptValue(const QScriptValue &obj, XCheckBox* &item)
+{
+  item = qobject_cast<XCheckBox*>(obj.toQObject());
+}
+
+QScriptValue constructXCheckBox(QScriptContext *context,
+                                QScriptEngine  *engine)
+{
+  XCheckBox *cbox = 0;
+
+  if (context->argumentCount() == 0)
+    cbox = new XCheckBox();
+
+  else if (context->argumentCount() == 1 &&
+           context->argument(0).isString())
+    cbox = new XCheckBox(context->argument(0).toString());
+  else if (context->argumentCount() == 1 &&
+           qscriptvalue_cast<QWidget*>(context->argument(0)))
+    cbox = new XCheckBox(qscriptvalue_cast<QWidget*>(context->argument(0)));
+
+  else if (context->argumentCount() == 2 &&
+           context->argument(0).isString() &&
+           qscriptvalue_cast<QWidget*>(context->argument(1)))
+    cbox = new XCheckBox(context->argument(0).toString(),
+                         qscriptvalue_cast<QWidget*>(context->argument(1)));
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        QString("Could not find an appropriate XCheckBox constructor"));
+
+  return engine->toScriptValue(cbox);
+}
+
+void setupXCheckBox(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, XCheckBoxtoScriptValue, XCheckBoxfromScriptValue);
+  QScriptValue widget = engine->newFunction(constructXCheckBox);
+  engine->globalObject().setProperty("XCheckBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}

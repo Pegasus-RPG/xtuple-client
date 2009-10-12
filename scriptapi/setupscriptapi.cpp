@@ -83,7 +83,8 @@
 #include "wcomboboxsetup.h"
 #include "wocluster.h"
 #include "womatlclustersetup.h"
-#include "xcomboboxsetup.h"
+#include "xcheckbox.h"
+#include "xcombobox.h"
 #include "xdatawidgetmapperproto.h"
 #include "xdateeditsetup.h"
 #include "xnetworkaccessmanager.h"
@@ -168,6 +169,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupWComboBox(engine);
   setupWoCluster(engine);
   setupWomatlCluster(engine);
+  setupXCheckBox(engine);
   setupXComboBox(engine);
   setupXDataWidgetMapperProto(engine);
   setupXDateEdit(engine);

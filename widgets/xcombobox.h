@@ -22,6 +22,10 @@
 
 #include <xsqlquery.h>
 
+class QScriptEngine;
+
+void setupXComboBox(QScriptEngine *engine);
+
 class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 {
   Q_OBJECT
@@ -173,6 +177,11 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _listTableName;
     XDataWidgetMapper   *_mapper;
 };
+
+// TODO: is this necessary for script exposure?
+Q_DECLARE_METATYPE(XComboBox*)
+Q_DECLARE_METATYPE(enum XComboBox::XComboBoxTypes)
+Q_DECLARE_METATYPE(enum XComboBox::Defaults)
 
 #endif
 
