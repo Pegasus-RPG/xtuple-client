@@ -36,11 +36,7 @@ public slots:
     virtual void sClose();
     virtual void sHandleButtons();
     virtual void sFillList();
-    virtual void sPostOperation();
-    virtual void sPostOperations();
     virtual void sPostProduction();
-    virtual void sCorrectOperationPosting();
-    virtual void sCorrectOperationsPosting();
     virtual void sCorrectProductionPosting();
     virtual void sRecallWO();
     virtual void sReleaseWO();
@@ -66,9 +62,6 @@ public slots:
     virtual void sEditMatl();
     virtual void sViewMatl();
     virtual void sDeleteMatl();
-    virtual void sEditWooper();
-    virtual void sViewWooper();
-    virtual void sDeleteWooper();
     virtual void sViewMatlAvailability();
     virtual void sViewMatlSubstituteAvailability();
     virtual void sSubstituteMatl();

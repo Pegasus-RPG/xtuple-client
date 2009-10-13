@@ -17,7 +17,6 @@
 #include <QMessageBox>
 #include "changeWoQty.h"
 #include "closeWo.h"
-#include "correctOperationsPosting.h"
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
@@ -29,7 +28,6 @@
 #include "implodeWo.h"
 #include "inputManager.h"
 #include "issueWoMaterialItem.h"
-#include "postOperations.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "printWoTraveler.h"
@@ -42,7 +40,6 @@
 #include "substituteList.h"
 #include "scrapWoMaterialFromWIP.h"
 #include "woMaterialItem.h"
-#include "woOperation.h"
 
 
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -877,69 +874,6 @@ void workOrder::sCorrectProductionPosting()
   populate();
   _woIndentedList->setId(currentId,currentAltId);}
 
-void workOrder::sPostOperation()
-{
-  ParameterList params;
-  params.append("wooper_id", _woIndentedList->id());
-  
-  postOperations newdlg(this, "", TRUE);
-  if(newdlg.set(params) != UndefinedError)
-  {
-    newdlg.exec();
-    int currentId = _woIndentedList->id();
-    int currentAltId = _woIndentedList->altId();
-    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-    populate();
-    _woIndentedList->setId(currentId,currentAltId);
-  }
-}
-
-void workOrder::sPostOperations()
-{
-  ParameterList params;
-  params.append("wooper_id", _woIndentedList->id());
-
-  postOperations newdlg(this, "", TRUE);
-  if(newdlg.set(params) != UndefinedError)
-  {
-    newdlg.exec();
-    int currentId = _woIndentedList->id();
-    int currentAltId = _woIndentedList->altId();
-    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-    populate();
-    _woIndentedList->setId(currentId,currentAltId);
-  }
-}
-
-void workOrder::sCorrectOperationPosting()
-{
-  ParameterList params;
-  params.append("wooper_id", _woIndentedList->id());
-
-  correctOperationsPosting newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  int currentId = _woIndentedList->id();
-  int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-  populate();
-  _woIndentedList->setId(currentId,currentAltId);}
-
-void workOrder::sCorrectOperationsPosting()
-{
-  ParameterList params;
-  params.append("wo_id", _woIndentedList->id());
-
-  correctOperationsPosting newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  int currentId = _woIndentedList->id();
-  int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-  populate();
-  _woIndentedList->setId(currentId,currentAltId);
-}
-
 void workOrder::sReleaseWO()
 {
   q.prepare("SELECT releaseWo(:wo_id, FALSE);");
@@ -1476,51 +1410,6 @@ void workOrder::sScrapMatl()
   _woIndentedList->setId(currentId,currentAltId);
 }
 
-void workOrder::sEditWooper()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("wooper_id", _woIndentedList->id());
-
-  woOperation newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  int currentId = _woIndentedList->id();
-  int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-  populate();
-  _woIndentedList->setId(currentId,currentAltId);
-}
-
-void workOrder::sViewWooper()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("wooper_id", _woIndentedList->id());
-  woOperation newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void workOrder::sDeleteWooper()
-{
-  if (QMessageBox::critical( this, tr("Delete Operation"),
-                             tr( "Are you sure that you want to delete the\n"
-                                 "selected Work Order Operation?"),
-                                 tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-  {
-    q.prepare( "DELETE FROM wooper "
-               "WHERE (wooper_id=:wooper_id);" );
-    q.bindValue(":wooper_id", _woIndentedList->id());
-    q.exec();
-
-    int currentId = _woIndentedList->id();
-    int currentAltId = _woIndentedList->altId();
-    omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
-    populate();
-    _woIndentedList->setId(currentId,currentAltId);  }
-}
-
 void workOrder::sNewMatl()
 {
   ParameterList params;
@@ -1840,24 +1729,6 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
       }
     }
         
-    if (_metrics->boolean("Routings"))
-    {
-      if (_mode != cView)
-      {
-        menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-        if (!_privileges->check("PostWoOperations"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-
-        if (status == "I")
-        {
-          menuItem = pMenu->insertItem(tr("Correct Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
-          if (!_privileges->check("PostWoOperations"))
-            pMenu->setItemEnabled(menuItem, FALSE);
-        }
-      }
-      pMenu->insertSeparator();
-    }
-    
     if (_mode != cView)
     {
       menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
@@ -1903,44 +1774,6 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
         if (!_privileges->check("ChangeWorkOrderQty"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
-    }
-  }
-  
-  //Check a wooper row is selected and the id is valid
-  if(_woIndentedList->altId() == 3 && _woIndentedList->id() > -1)
-  {
-    if (status != "C" && _mode != cView)
-    {
-      menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditWooper()), 0);
-      if (!_privileges->check("MaintainWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-    }
-    
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewWooper()), 0);
-    
-    if (_mode != cView)
-    {
-      if (status == "O" || status == "E")
-      {
-          menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteWooper()), 0);
-          if (!_privileges->check("MaintainWoOperations"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-          
-      }
-
-      pMenu->insertSeparator();
-  
-      menuItem = pMenu->insertItem(tr("Post Operation..."), this, SLOT(sPostOperation()), 0);
-      if (!_privileges->check("PostWoOperations"))
-        pMenu->setItemEnabled(menuItem, FALSE);
-
-      if (status == "I")
-      {
-        menuItem = pMenu->insertItem(tr("Correct Operation Posting..."), this, SLOT(sCorrectOperationPosting()), 0);
-        if (!_privileges->check("PostWoOperations"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-      }
-      pMenu->insertSeparator();
     }
   }
   
