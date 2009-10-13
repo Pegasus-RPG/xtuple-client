@@ -694,7 +694,6 @@
 #include "woOperation.h"
 #include "workOrder.h"
 #include "workOrderMaterials.h"
-#include "wotc.h"
 #include "xdateinputdialog.h"
 #include "xsltMap.h"
 #include "zeroUncountedCountTagsByWarehouse.h"
