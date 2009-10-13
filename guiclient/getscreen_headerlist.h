@@ -313,7 +313,6 @@
 #include "dspWoHistoryByNumber.h"
 #include "dspWoMaterialsByItem.h"
 #include "dspWoMaterialsByWorkOrder.h"
-#include "dspWoOperationsByWorkOrder.h"
 #include "dspWoScheduleByItem.h"
 #include "dspWoScheduleByParameterList.h"
 #include "dspWoScheduleByWorkOrder.h"

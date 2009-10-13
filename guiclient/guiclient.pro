@@ -198,7 +198,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspVoucherRegister.ui                                                                  \
                dspWoHistoryByClassCode.ui dspWoHistoryByItem.ui dspWoHistoryByNumber.ui               \
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
-                                              dspWoOperationsByWorkOrder.ui                           \
                dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
@@ -500,7 +499,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspVoucherRegister.h                                                                   \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
-                                             dspWoOperationsByWorkOrder.h                             \
                dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
@@ -813,7 +811,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspVoucherRegister.cpp                                                                 \
                dspWoHistoryByClassCode.cpp dspWoHistoryByItem.cpp dspWoHistoryByNumber.cpp            \
                dspWoMaterialsByItem.cpp dspWoMaterialsByWorkOrder.cpp                                 \
-                                               dspWoOperationsByWorkOrder.cpp                         \
                dspWoScheduleByItem.cpp dspWoScheduleByParameterList.cpp dspWoScheduleByWorkOrder.cpp  \
                dspWoSoStatusMismatch.cpp dspWoSoStatus.cpp                                            \
                duplicateAccountNumbers.cpp                                                            \

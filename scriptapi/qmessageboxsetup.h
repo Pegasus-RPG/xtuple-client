@@ -11,6 +11,13 @@
 #ifndef __QMESSAGEBOXSETUP_H__
 #define __QMESSAGEBOXSETUP_H__
 
+#include <QMessageBox>
+#include <QtScript>
+
 void setupQMessageBox(QScriptEngine *engine);
+
+Q_DECLARE_METATYPE(enum QMessageBox::ButtonRole)
+Q_DECLARE_METATYPE(enum QMessageBox::Icon)
+Q_DECLARE_METATYPE(enum QMessageBox::StandardButton)
 
 #endif
