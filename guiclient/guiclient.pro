@@ -339,7 +339,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                voucher.ui voucheringEditList.ui voucherItemDistrib.ui voucherItem.ui                  \
                voucherMiscDistrib.ui                                                                  \
                warehouses.ui warehouse.ui warehouseZone.ui                                            \
-               workOrder.ui workOrderMaterials.ui woTimeClock.ui wotc.ui                              \
+               workOrder.ui workOrderMaterials.ui wotc.ui                                             \
                woOperation.ui                                                                         \
                zeroUncountedCountTagsByWarehouse.ui                                                   \
                externalCCTransaction.ui                                                               \
@@ -646,7 +646,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                voucher.h voucheringEditList.h voucherItemDistrib.h voucherItem.h                      \
                voucherMiscDistrib.h                                                                   \
                warehouses.h warehouse.h warehouseZone.h                                               \
-               workOrder.h workOrderMaterials.h woTimeClock.h wotc.h                                  \
+               workOrder.h workOrderMaterials.h wotc.h                                                \
                woOperation.h                                                                          \
                zeroUncountedCountTagsByWarehouse.h                                                    \
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
@@ -959,7 +959,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                voucher.cpp voucheringEditList.cpp voucherItemDistrib.cpp voucherItem.cpp              \
                voucherMiscDistrib.cpp                                                                 \
                warehouses.cpp warehouse.cpp warehouseZone.cpp                                         \
-               workOrder.cpp workOrderMaterials.cpp woTimeClock.cpp wotc.cpp                          \
+               workOrder.cpp workOrderMaterials.cpp wotc.cpp                                          \
                woOperation.cpp                                                                        \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \

@@ -28,7 +28,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QLabel" name="_nameLit">
          <property name="text">
-          <string>&amp;Name:</string>
+          <string>Na&amp;me:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -95,7 +95,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XLabel" name="_packageLit">
            <property name="text">
-            <string>Package:</string>
+            <string>&amp;Package:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

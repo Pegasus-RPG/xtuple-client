@@ -119,8 +119,9 @@
 #include "version.h"
 #include "metrics.h"
 #include "metricsenc.h"
+#include "scripttoolbox.h"
+#include "xmainwindow.h"
 
-#include "woTimeClock.h"
 #include "sysLocale.h"
 
 #include "splashconst.h"
@@ -574,13 +575,26 @@ int main(int argc, char *argv[])
   // keep this synchronized with GUIClient and user.ui.h
   else if (omfgThis->_singleWindow == "woTimeClock")
   {
-    woTimeClock* newdlg = new woTimeClock();
-    ParameterList params;
-    params.append("captive");
-    newdlg->set(params);
-    newdlg->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(omfgThis, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
-    newdlg->show();
+    ScriptToolbox sb(0);
+    QWidget* newdlg = sb.openWindow("woTimeClock");
+    if(newdlg)
+    {
+      XMainWindow *mw = qobject_cast<XMainWindow*>(newdlg);
+      if(mw)
+      {
+        ParameterList params;
+        params.append("captive");
+        mw->set(params);
+      }
+      newdlg->setAttribute(Qt::WA_DeleteOnClose);
+      QObject::connect(omfgThis, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
+      newdlg->show();
+    }
+    else
+    {
+      qDebug("Failed to initialize woTimeClock window.");
+      return -2;
+    }
   }
 
   if(!omfgThis->singleCurrency())

@@ -65,6 +65,7 @@
 #include "qtabwidgetproto.h"
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
+#include "qtimerproto.h"
 #include "qtoolbarproto.h"
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
@@ -152,6 +153,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQTabWidgetProto(engine);
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
+  setupQTimerProto(engine);
   setupQToolBarProto(engine);
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);

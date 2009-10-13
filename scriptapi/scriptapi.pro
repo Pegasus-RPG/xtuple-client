@@ -59,6 +59,7 @@ HEADERS +=  setupscriptapi.h                    \
             qtabwidgetproto.h                   \
             qtextdocumentproto.h                \
             qtexteditproto.h                    \
+            qtimerproto.h                       \
             qtoolbarproto.h                     \
             qtreewidgetitemproto.h              \
             qtsetup.h                           \
@@ -138,6 +139,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             qtabwidgetproto.cpp                 \
             qtextdocumentproto.cpp              \
             qtexteditproto.cpp                  \
+            qtimerproto.cpp                     \
             qtoolbarproto.cpp                   \
             qtreewidgetitemproto.cpp            \
             qtsetup.cpp                         \
