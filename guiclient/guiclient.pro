@@ -248,7 +248,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                postCountSlips.ui postCountTags.ui postBillingSelections.ui                            \
                postCreditMemos.ui postInvoices.ui                                                     \
                postPurchaseOrder.ui postPurchaseOrdersByAgent.ui postPoReturnCreditMemo.ui            \
-               postOperations.ui postGLTransactionsToExternal.ui                                      \
+               postGLTransactionsToExternal.ui                                                        \
                postProduction.ui postMiscProduction.ui                                                \
                postStandardJournal.ui postStandardJournalGroup.ui                                     \
                postVouchers.ui prepareCheckRun.ui priceList.ui                                        \
@@ -551,7 +551,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                postCountSlips.h postCountTags.h postBillingSelections.h                               \
                postCreditMemos.h postInvoices.h                                                       \
                postPurchaseOrder.h postPurchaseOrdersByAgent.h postPoReturnCreditMemo.h               \
-               postOperations.h postGLTransactionsToExternal.h                                        \
+               postGLTransactionsToExternal.h                                                         \
                postProduction.h postMiscProduction.h                                                  \
                postStandardJournal.h postStandardJournalGroup.h                                       \
                postVouchers.h prepareCheckRun.h priceList.h                                           \
@@ -863,7 +863,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                postCountSlips.cpp postCountTags.cpp postBillingSelections.cpp                         \
                postCreditMemos.cpp postInvoices.cpp                                                   \
                postPurchaseOrder.cpp postPurchaseOrdersByAgent.cpp postPoReturnCreditMemo.cpp         \
-               postOperations.cpp postGLTransactionsToExternal.cpp                                    \
+               postGLTransactionsToExternal.cpp                                                       \
                postProduction.cpp postMiscProduction.cpp                                              \
                postStandardJournal.cpp postStandardJournalGroup.cpp                                   \
                postVouchers.cpp prepareCheckRun.cpp priceList.cpp                                     \
