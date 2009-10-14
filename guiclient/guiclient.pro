@@ -340,7 +340,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                voucherMiscDistrib.ui                                                                  \
                warehouses.ui warehouse.ui warehouseZone.ui                                            \
                workOrder.ui workOrderMaterials.ui                                                     \
-               woOperation.ui                                                                         \
                zeroUncountedCountTagsByWarehouse.ui                                                   \
                externalCCTransaction.ui                                                               \
                idleShutdown.ui xdateinputdialog.ui xsltMap.ui
@@ -647,7 +646,6 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                voucherMiscDistrib.h                                                                   \
                warehouses.h warehouse.h warehouseZone.h                                               \
                workOrder.h workOrderMaterials.h                                                       \
-               woOperation.h                                                                          \
                zeroUncountedCountTagsByWarehouse.h                                                    \
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
@@ -960,7 +958,6 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                voucherMiscDistrib.cpp                                                                 \
                warehouses.cpp warehouse.cpp warehouseZone.cpp                                         \
                workOrder.cpp workOrderMaterials.cpp                                                   \
-               woOperation.cpp                                                                        \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
