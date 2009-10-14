@@ -91,7 +91,7 @@ ORDER BY quitem_linenumber;</sql>
        formatExtPrice(tax) AS f_tax,
        formatExtPrice(quhead_freight) AS f_freight,
        formatExtPrice(quhead_misc) AS f_misc,
-       formatExtPrice(subtotal + tax + quhead_freight) AS f_total
+       formatExtPrice(subtotal + tax + quhead_freight + quhead_misc) AS f_total
   FROM quhead,
        (SELECT SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS subtotal
           FROM quitem
