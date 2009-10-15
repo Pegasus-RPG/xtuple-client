@@ -516,6 +516,22 @@ void initErrorLookupHash()
                             "delete or reassign these Sales Orders "
                             "before you may delete it."),                      0, "" },
 
+  { "attachQuoteToOpportunity", -1, TR("The selected Quote cannot be attached because "
+                            "the Quote cannot be found."),                     0, "" },
+  { "attachQuoteToOpportunity", -2, TR("The selected Quote cannot be attached because "
+                            "the Opportunity cannot be found."),               0, "" },
+  { "attachQuoteToOpportunity", -3, TR("The selected Quote cannot be attached because "
+                            "it is already associated with an Opportunity.  You must "
+                            "detach this Quote before you may attach it."),    0, "" },
+
+  { "attachSalesOrderToOpportunity", -1, TR("The selected Sales Order cannot be attached because "
+                            "the Sales Order cannot be found."),                     0, "" },
+  { "attachSalesOrderToOpportunity", -2, TR("The selected Sales Order cannot be attached because "
+                            "the Opportunity cannot be found."),               0, "" },
+  { "attachSalesOrderToOpportunity", -3, TR("The selected Sales Order cannot be attached because "
+                            "it is already associated with an Opportunity.  You must "
+                            "detach this Sales Order before you may attach it."),    0, "" },
+
   { "deletePackage", -1, TR("The selected Package cannot be deleted because "
                             "there are other packages that depend on it to "
                             "function properly."),                      0, "" },
