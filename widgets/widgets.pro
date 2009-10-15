@@ -158,7 +158,7 @@ SOURCES    += widgets.cpp \
               alarms.cpp alarmMaint.cpp \
               cmheadcluster.cpp \
               invoiceCluster.cpp \
-              quotecluster.cpp \
+              quotecluster.cpp quoteList.cpp \
               xspinbox.cpp \
               xsqlrelationaldelegate.cpp \
               xtablewidget.cpp \
@@ -214,7 +214,7 @@ HEADERS    += widgets.h \
               file.h \
               alarms.h alarmMaint.h \
               cmheadcluster.h \
-              quotecluster.h \
+              quotecluster.h quoteList.h \
               invoicecluster.h \
               xspinbox.h \
               xsqlrelationaldelegate.h \
