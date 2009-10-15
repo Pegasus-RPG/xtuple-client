@@ -64,6 +64,9 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_list,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_list,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
+  connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
+
+  sHandleMore();
 
   if(_privileges->check("MaintainOpportunities"))
   {
@@ -249,9 +252,12 @@ void opportunityList::setParams(ParameterList &params)
 {
   if (_crmAccount->isValid())
     params.append("crmAccountId",_crmAccount->id());
-  _optype->appendValue(params);
-  _opsource->appendValue(params);
-  _opstage->appendValue(params);
+  if (_more->isChecked())
+  {
+    _optype->appendValue(params);
+    _opsource->appendValue(params);
+    _opstage->appendValue(params);
+  }
   _usr->appendValue(params);
   _targetDates->appendValue(params);
   
@@ -291,4 +297,13 @@ void opportunityList::sFillList()
 
   _list->populate(itemQ, true);
 }
+
+void opportunityList::sHandleMore()
+{
+  _opsource->setVisible(_more->isChecked());
+  _opstage->setVisible(_more->isChecked());
+  _optype->setVisible(_more->isChecked());
+  sFillList();
+}
+
 

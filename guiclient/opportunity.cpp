@@ -19,7 +19,10 @@
 
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
+#include "socluster.h"
 #include "salesOrder.h"
+#include "salesOrderList.h"
+#include "quoteList.h"
 #include "printQuote.h"
 #include "printSoForm.h"
 #include "characteristicAssignment.h"
@@ -50,8 +53,6 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_viewSale, SIGNAL(clicked()), this, SLOT(sViewSale()));
   connect(_editSale, SIGNAL(clicked()), this, SLOT(sEditSale()));
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
-  connect(_newQuote, SIGNAL(clicked()), this, SLOT(sNewQuote()));
-  connect(_newSalesOrder, SIGNAL(clicked()), this, SLOT(sNewSalesOrder()));
   connect(_printSale, SIGNAL(clicked()), this, SLOT(sPrintSale()));
   connect(_salesList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateSalesMenu(QMenu*)));
   connect(_salesList, SIGNAL(valid(bool)), this, SLOT(sHandleSalesPrivs()));
@@ -75,10 +76,10 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
   _todoList->addColumn(tr("Due Date"),   _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date" );
 
-  _salesList->addColumn(tr("Sale Type"),       _orderColumn, Qt::AlignLeft, true, "sale_type" );
-  _salesList->addColumn(tr("Sale #"),          _orderColumn, Qt::AlignLeft, true, "sale_number" );
-  _salesList->addColumn(tr("Sale Date"),       _dateColumn,  Qt::AlignLeft, true, "sale_date" );
-  _salesList->addColumn(tr("Ext. Price"),      _priceColumn, Qt::AlignRight, true, "sale_extprice");
+  _salesList->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignLeft,  true, "sale_number" );
+  _salesList->addColumn(tr("Type"),                  -1, Qt::AlignLeft,  true, "sale_type" );
+  _salesList->addColumn(tr("Date"),         _dateColumn, Qt::AlignLeft,  true, "sale_date" );
+  _salesList->addColumn(tr("Ext. Price"),  _priceColumn, Qt::AlignRight, true, "sale_extprice");
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft,  true, "char_name" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value" );
@@ -166,8 +167,8 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       _deleteSale->setEnabled(false);
       _editSale->setEnabled(false);
       _printSale->setEnabled(false);
-      _newQuote->setEnabled(false);
-      _newSalesOrder->setEnabled(false);
+      _newSale->setEnabled(false);
+      _attachSale->setEnabled(false);
       _newCharacteristic->setEnabled(FALSE);
 
       _save->hide();
@@ -746,6 +747,41 @@ void opportunity::sNewQuote()
   sFillSalesList();
 }
 
+void opportunity::sAttachQuote()
+{
+  ParameterList params;
+  params.append("cust_id", _custid);
+  
+  quoteList newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+  {
+    q.prepare("SELECT attachQuoteToOpportunity(:quhead_id, :ophead_id) AS result;");
+    q.bindValue(":quhead_id", id);
+    q.bindValue(":ophead_id", _opheadid);
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("attachQuoteToOpportunity", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+      else
+        sFillSalesList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
 void opportunity::sEditQuote()
 {
   ParameterList params;
@@ -827,6 +863,42 @@ void opportunity::sNewSalesOrder()
   sFillSalesList();
 }
 
+void opportunity::sAttachSalesOrder()
+{
+  ParameterList params;
+  params.append("soType", (cSoOpen | cSoCustomer));
+  params.append("cust_id", _custid);
+  
+  salesOrderList newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+  {
+    q.prepare("SELECT attachSalesOrderToOpportunity(:cohead_id, :ophead_id) AS result;");
+    q.bindValue(":cohead_id", id);
+    q.bindValue(":ophead_id", _opheadid);
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("attachSalesOrderToOpportunity", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+      else
+        sFillSalesList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
 void opportunity::sEditSalesOrder()
 {
   ParameterList params;
@@ -889,19 +961,15 @@ void opportunity::sFillSalesList()
             "FROM ( "
             "SELECT quhead_id AS id, 0 AS alt_id, :quote AS sale_type, "
 			"       quhead_number::TEXT AS sale_number, quhead_quotedate AS sale_date, "
-            "       SUM(ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
-            "                 (quitem_price / quitem_price_invuomratio),2)) AS sale_extprice "
-            "FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id) "
+            "       calcQuoteAmt(quhead_id) AS sale_extprice "
+            "FROM quhead "
             "WHERE (quhead_ophead_id=:ophead_id) "
-			"GROUP BY quhead_id, quhead_number, quhead_quotedate "
 			"UNION "
 			"SELECT cohead_id AS id, 1 AS alt_id, :salesorder AS sale_type, "
 			"       cohead_number AS sale_number, cohead_orderdate AS sale_date,  "
-            "       SUM(ROUND((coitem_qtyord * coitem_qty_invuomratio) *"
-            "                 (coitem_price / coitem_price_invuomratio),2)) AS sale_extprice "
-            "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id) "
+            "       calcSalesOrderAmt(cohead_id) AS sale_extprice "
+            "FROM cohead "
             "WHERE (cohead_ophead_id=:ophead_id) "
-			"GROUP BY cohead_id, cohead_number, cohead_orderdate "
 			"     ) AS data "
             "ORDER BY sale_date;");
   q.bindValue(":ophead_id", _opheadid);
@@ -961,6 +1029,22 @@ void opportunity::sHandleSalesPrivs()
   bool viewPriv = false;
   bool convertPriv = false;
 
+  int newMenuItem;
+  QMenu * newMenu = new QMenu;
+  newMenuItem = newMenu->insertItem(tr("Quote"), this, SLOT(sNewQuote()));
+  newMenu->setItemEnabled(newMenuItem, newQuotePriv);
+  newMenuItem = newMenu->insertItem(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+  newMenu->setItemEnabled(newMenuItem, newSalesOrderPriv);
+  _newSale->setMenu(newMenu);
+
+  int attachMenuItem;
+  QMenu * attachMenu = new QMenu;
+  attachMenuItem = attachMenu->insertItem(tr("Quote"), this, SLOT(sAttachQuote()));
+  attachMenu->setItemEnabled(attachMenuItem, newQuotePriv);
+  attachMenuItem = attachMenu->insertItem(tr("Sales Order"), this, SLOT(sAttachSalesOrder()));
+  attachMenu->setItemEnabled(attachMenuItem, newSalesOrderPriv);
+  _attachSale->setMenu(attachMenu);
+
   if(_salesList->currentItem())
   {
     editPriv = (cNew == _mode || cEdit == _mode) && (
@@ -975,8 +1059,6 @@ void opportunity::sHandleSalesPrivs()
       (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
   }
 
-  _newQuote->setEnabled(newQuotePriv);
-  _newSalesOrder->setEnabled(newSalesOrderPriv);
   _convertQuote->setEnabled(convertPriv && _salesList->id() > 0);
   _editSale->setEnabled(editPriv && _salesList->id() > 0);
   _viewSale->setEnabled((editPriv || viewPriv) && _salesList->id() > 0);

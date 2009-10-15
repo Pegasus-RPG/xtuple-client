@@ -48,12 +48,14 @@ public slots:
     virtual void sDeleteQuote();
     virtual void sEditQuote();
     virtual void sNewQuote();
+    virtual void sAttachQuote();
     virtual void sPrintQuote();
     virtual void sConvertQuote();
     virtual void sViewQuote();
     virtual void sDeleteSalesOrder();
     virtual void sEditSalesOrder();
     virtual void sNewSalesOrder();
+    virtual void sAttachSalesOrder();
     virtual void sPrintSalesOrder();
     virtual void sViewSalesOrder();
     virtual void sFillCharList();

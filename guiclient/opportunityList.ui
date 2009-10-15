@@ -30,14 +30,14 @@ to be bound by its terms.</comment>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="CRMAcctCluster" name="_crmAccount">
            <property name="label">
             <string>CRM Account:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="ParameterGroup" name="_usr">
            <property name="focusPolicy">
             <enum>Qt::StrongFocus</enum>
@@ -50,7 +50,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QGroupBox" name="_dates">
            <property name="title">
             <string/>
@@ -66,7 +66,7 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="ParameterGroup" name="_optype">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -76,7 +76,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="ParameterGroup" name="_opsource">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -86,7 +86,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="ParameterGroup" name="_opstage">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -96,7 +96,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QLabel" name="_searchLit">
@@ -113,7 +113,7 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="XCheckBox" name="_showInactive">
            <property name="text">
             <string>Show Inactive</string>
@@ -151,6 +151,13 @@ to be bound by its terms.</comment>
           <widget class="QPushButton" name="_print">
            <property name="text">
             <string>Print</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XCheckBox" name="_more">
+           <property name="text">
+            <string>More</string>
            </property>
           </widget>
          </item>

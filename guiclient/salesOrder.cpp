@@ -2342,7 +2342,8 @@ void salesOrder::populate()
                 "       quhead_commission AS commission,"
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       cust_ffshipto, cust_blanketpos,"
-                "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id "
+                "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, "
+                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id "
                 "FROM quhead, custinfo "
                 "WHERE ( (quhead_cust_id=cust_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2352,7 +2353,8 @@ void salesOrder::populate()
                 "       quhead_commission AS commission,"
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
-                "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id "
+                "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id, "
+                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id "
                 "FROM quhead, prospect "
                 "WHERE ( (quhead_cust_id=prospect_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2382,6 +2384,7 @@ void salesOrder::populate()
       _terms->setId(qu.value("quhead_terms_id").toInt());
       _orderCurrency->setId(qu.value("quhead_curr_id").toInt());
       _project->setId(qu.value("quhead_prj_id").toInt());
+      _opportunity->setId(qu.value("quhead_ophead_id").toInt());
 
       _billToName->setText(qu.value("quhead_billtoname").toString());
       _billToAddr->setLine1(qu.value("quhead_billtoaddress1").toString());

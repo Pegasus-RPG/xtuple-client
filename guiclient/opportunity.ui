@@ -416,9 +416,16 @@ to be bound by its terms.</comment>
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_newQuote">
+          <widget class="QPushButton" name="_newSale">
            <property name="text">
-            <string>New Quote</string>
+            <string>New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_attachSale">
+           <property name="text">
+            <string>Attach</string>
            </property>
           </widget>
          </item>
@@ -428,14 +435,7 @@ to be bound by its terms.</comment>
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Convert Quote</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_newSalesOrder">
-           <property name="text">
-            <string>New Sales Order</string>
+            <string>Convert</string>
            </property>
           </widget>
          </item>
