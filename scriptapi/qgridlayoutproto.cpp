@@ -13,7 +13,7 @@
 #include <QString>
 #include <QWidget>
 
-#define DEBUG true
+#define DEBUG false
 
 QScriptValue QGridLayouttoScriptValue(QScriptEngine *engine, QGridLayout* const &item)
 {
@@ -66,6 +66,9 @@ bool QGridLayoutProto::activate()
 void QGridLayoutProto::addItem(QLayoutItem *item, int row, int column, int rowspan, int columnSpan, Qt::Alignment alignment)
 {
   QGridLayout *griditem = qscriptvalue_cast<QGridLayout*>(thisObject());
+  if (DEBUG)
+    qDebug("QGridLayoutProto(%p, %d, %d, %d, %d, %d) called",
+           item, row, column, rowspan, columnSpan, (int)alignment);
   if (griditem)
     griditem->addItem(item, row, column, rowspan, columnSpan, alignment);
 }

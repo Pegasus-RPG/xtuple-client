@@ -14,7 +14,7 @@
 #include <QWidget>
 #include <QtScript>
 
-#define DEBUG true
+#define DEBUG false
 
 QScriptValue QBoxLayouttoScriptValue(QScriptEngine *engine, QBoxLayout* const &item)
 {

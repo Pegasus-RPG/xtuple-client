@@ -45,6 +45,7 @@ WoLineEdit::WoLineEdit(QWidget *pParent, const char *name) :
 {
   _woType = 0;
   _warehouseid = -1;
+  _currentWarehouseid = -1;
   _parsed = TRUE;
   _useQuery = FALSE;
 
@@ -86,6 +87,7 @@ void WoLineEdit::setId(int pId)
     else
     {
       wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
+                  "       warehous_id,"
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
                   "       abs(wo_qtyord) AS wo_qtyord,"
@@ -109,7 +111,7 @@ void WoLineEdit::setId(int pId)
                   "       ELSE "
                   "         'D' "
                   "       END AS method "
-                  "FROM wo, itemsite, item, warehous, uom "
+                  "FROM wo, itemsite, item, whsinfo, uom "
                   "WHERE ((wo_itemsite_id=itemsite_id)"
                   " AND (itemsite_item_id=item_id)"
                   " AND (item_inv_uom_id=uom_id)"
@@ -136,6 +138,8 @@ void WoLineEdit::setId(int pId)
       _qtyOrdered  = wo.value("wo_qtyord").toDouble();
       _qtyReceived = wo.value("wo_qtyrcv").toDouble();
       _method = wo.value("method").toString();
+      _currentWarehouseid = (wo.value("warehous_id").isNull())
+                                      ? -1 : wo.value("warehous_id").toInt();
 
       emit newId(_id);
       emit newItemid(wo.value("item_id").toInt());
@@ -158,6 +162,7 @@ void WoLineEdit::setId(int pId)
   {
     _id    = -1;
     _valid = FALSE;
+    _currentWarehouseid = -1;
 
     setText("");
 
@@ -895,4 +900,3 @@ void WomatlCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(_itemNumber, _fieldName, "code", "currentDefault");
 }
-

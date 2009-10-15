@@ -10,8 +10,8 @@
 
 #include <QPushButton>
 #include <QLabel>
-#include <QValidator>
 #include <QHBoxLayout>
+#include <QtScript>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -184,3 +184,88 @@ void UsernameCluster::setUsername(const QString & pUsername)
   _username->setUsername(pUsername);
 }
 
+// script exposure ////////////////////////////////////////////////////////////
+
+QScriptValue UsernameLineEdittoScriptValue(QScriptEngine *engine, UsernameLineEdit* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void UsernameLineEditfromScriptValue(const QScriptValue &obj, UsernameLineEdit* &item)
+{
+  item = qobject_cast<UsernameLineEdit*>(obj.toQObject());
+}
+
+QScriptValue constructUsernameLineEdit(QScriptContext *context,
+                                       QScriptEngine  *engine)
+{
+  UsernameLineEdit *obj = 0;
+
+  if (context->argumentCount() == 1 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new UsernameLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)));
+
+  else if (context->argumentCount() >= 2 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new UsernameLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                               qPrintable(context->argument(1).toString()));
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not find an appropriate UsernameLineEdit constructor");
+
+  return engine->toScriptValue(obj);
+}
+
+void setupUsernameLineEdit(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, UsernameLineEdittoScriptValue, UsernameLineEditfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructUsernameLineEdit);
+
+  widget.setProperty("UsersAll",     QScriptValue(engine, UsernameLineEdit::UsersAll),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("UsersActive",  QScriptValue(engine, UsernameLineEdit::UsersActive),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("UsersInactive",QScriptValue(engine, UsernameLineEdit::UsersInactive),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("UsernameLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
+QScriptValue UsernameClustertoScriptValue(QScriptEngine *engine, UsernameCluster* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void UsernameClusterfromScriptValue(const QScriptValue &obj, UsernameCluster* &item)
+{
+  item = qobject_cast<UsernameCluster*>(obj.toQObject());
+}
+
+QScriptValue constructUsernameCluster(QScriptContext *context,
+                                       QScriptEngine  *engine)
+{
+  UsernameCluster *obj = 0;
+
+  if (context->argumentCount() == 1 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new UsernameCluster(qscriptvalue_cast<QWidget*>(context->argument(0)));
+
+  else if (context->argumentCount() >= 2 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new UsernameCluster(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                               qPrintable(context->argument(1).toString()));
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not find an appropriate UsernameCluster constructor");
+
+  return engine->toScriptValue(obj);
+}
+
+void setupUsernameCluster(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, UsernameClustertoScriptValue, UsernameClusterfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructUsernameCluster);
+
+  engine->globalObject().setProperty("UsernameCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}

@@ -15,7 +15,7 @@
 #include <QIcon>
 #include <QString>
 
-#define DEBUG true
+#define DEBUG false
 
 QScriptValue QActiontoScriptValue(QScriptEngine *engine, QAction* const &item)
 {

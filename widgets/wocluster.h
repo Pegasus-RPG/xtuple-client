@@ -57,17 +57,20 @@ friend class WoCluster;
       Closed    = 0x10
     };
 
-    inline void setQuery(const QString  &pSql) { _sql = pSql; _useQuery = TRUE; }
-    inline int  type() const                   { return _woType;              }
-    inline void setType(int pWoType)           { _woType = pWoType;           }
-    inline void setWarehouse(int pWarehouseid) { _warehouseid = pWarehouseid; }
-    inline QString method() const                 { return _method;              }
+    Q_INVOKABLE inline int     currentWarehouse() const       { return _currentWarehouseid;  }
+    Q_INVOKABLE inline QString method() const                 { return _method;              }
+    Q_INVOKABLE inline void    setQuery(const QString  &pSql) { _sql = pSql; _useQuery = TRUE; }
+    Q_INVOKABLE inline void    setType(int pWoType)           { _woType = pWoType;           }
+    Q_INVOKABLE inline void    setWarehouse(int pWarehouseid) { _warehouseid = pWarehouseid; }
+    Q_INVOKABLE inline int     type() const                   { return _woType;              }
+    Q_INVOKABLE inline int     warehouse() const              { return _warehouseid;         }
 
   public slots:
     void setId(int);
     void sParse();
 
   private:
+    int     _currentWarehouseid;
     bool    _useQuery;
     QString _sql;
     int     _woType;
@@ -116,10 +119,11 @@ class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
     inline void setType(int pWoType)           { _woNumber->_woType = pWoType;           }
     inline int  type() const                   { return _woNumber->_woType;              }
     inline void setWarehouse(int pWarehouseid) { _woNumber->_warehouseid = pWarehouseid; }
+    Q_INVOKABLE inline int currentWarehouse() const { return _woNumber->currentWarehouse(); }
     Q_INVOKABLE inline int id() const          { return _woNumber->_id;                  }
     Q_INVOKABLE inline bool isValid() const    { return _woNumber->_valid;               }
     Q_INVOKABLE inline char status() const     { return _woNumber->_status.toAscii();    }
-    Q_INVOKABLE inline QString method() const     { return _woNumber->method();             }
+    Q_INVOKABLE inline QString method() const     { return _woNumber->method();          }
     Q_INVOKABLE inline double qtyOrdered() const { return _woNumber->_qtyOrdered;        }
     Q_INVOKABLE inline double qtyReceived() const { return _woNumber->_qtyReceived;      }
     Q_INVOKABLE inline double qtyBalance() const
@@ -129,6 +133,7 @@ class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
       else
         return (_woNumber->_qtyOrdered - _woNumber->_qtyReceived);
     }
+    Q_INVOKABLE inline int    warehouse() const   { return _woNumber->warehouse();       }
 
   public slots:
     void setDataWidgetMap(XDataWidgetMapper* m);

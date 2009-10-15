@@ -47,11 +47,14 @@ HEADERS +=  setupscriptapi.h                    \
             qgridlayoutproto.h                  \
             qiconproto.h                        \
             qlayoutproto.h                      \
+            qlayoutitemproto.h                  \
             qmenuproto.h                        \
             qmessageboxsetup.h                  \
             qnetworkreplyproto.h                \
             qnetworkrequestproto.h              \
             qprinterproto.h                     \
+            qsizepolicyproto.h                  \
+            qspaceritemproto.h                  \
             qsqldatabaseproto.h                 \
             qsqlerrorproto.h                    \
             qsqlrecordproto.h                   \
@@ -90,7 +93,6 @@ HEADERS +=  setupscriptapi.h                    \
             shipmentclusterlineeditsetup.h	\
             solineeditsetup.h			\
             tolineeditsetup.h			\
-            usernamelineeditsetup.h		\
             vendorgroupsetup.h			\
             wcomboboxsetup.h			\
             womatlclustersetup.h		\
@@ -126,12 +128,15 @@ SOURCES +=  setupscriptapi.cpp                  \
             qfontproto.cpp                      \
             qgridlayoutproto.cpp                \
             qiconproto.cpp                      \
+            qlayoutitemproto.cpp                \
             qlayoutproto.cpp                    \
             qmenuproto.cpp                      \
             qmessageboxsetup.cpp                \
             qnetworkreplyproto.cpp              \
             qnetworkrequestproto.cpp            \
             qprinterproto.cpp                   \
+            qsizepolicyproto.cpp                \
+            qspaceritemproto.cpp                \
             qsqldatabaseproto.cpp               \
             qsqlerrorproto.cpp                  \
             qsqlrecordproto.cpp                 \
@@ -170,7 +175,6 @@ SOURCES +=  setupscriptapi.cpp                  \
             shipmentclusterlineeditsetup.cpp	\
             solineeditsetup.cpp			\
             tolineeditsetup.cpp			\
-            usernamelineeditsetup.cpp		\
             vendorgroupsetup.cpp		\
             wcomboboxsetup.cpp			\
             womatlclustersetup.cpp		\

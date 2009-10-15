@@ -12,7 +12,7 @@
 
 #include <QString>
 
-#define DEBUG true
+#define DEBUG false
 
 void setupQTextEditProto(QScriptEngine *engine)
 {

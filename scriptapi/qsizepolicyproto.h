@@ -8,9 +8,17 @@
  * to be bound by its terms.
  */
 
-#ifndef __USERNAMELINEEDITSETUP_H__
-#define __USERNAMELINEEDITSETUP_H__
+#ifndef __QSIZEPOLICYPROTO_H__
+#define __QSIZEPOLICYPROTO_H__
 
-void setupUsernameLineEdit(QScriptEngine *engine);
+#include <QSizePolicy>
+#include <QObject>
+#include <QtScript>
+
+Q_DECLARE_METATYPE(enum QSizePolicy::ControlType)
+Q_DECLARE_METATYPE(enum QSizePolicy::Policy)
+Q_DECLARE_METATYPE(enum QSizePolicy::PolicyFlag)
+
+void setupQSizePolicy(QScriptEngine *engine);
 
 #endif

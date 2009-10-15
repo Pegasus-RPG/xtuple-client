@@ -52,12 +52,15 @@
 #include "qfontproto.h"
 #include "qgridlayoutproto.h"
 #include "qiconproto.h"
+#include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qprinterproto.h"
+#include "qsizepolicyproto.h"
+#include "qspaceritemproto.h"
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
@@ -79,7 +82,7 @@
 #include "shipmentclusterlineeditsetup.h"
 #include "solineeditsetup.h"
 #include "tolineeditsetup.h"
-#include "usernamelineeditsetup.h"
+#include "usernamecluster.h"
 #include "vendorgroupsetup.h"
 #include "wcomboboxsetup.h"
 #include "wocluster.h"
@@ -139,6 +142,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFontProto(engine);
   setupQGridLayoutProto(engine);
   setupQIconProto(engine);
+  setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
@@ -146,6 +150,8 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQPrinterProto(engine);
+  setupQSizePolicy(engine);
+  setupQSpacerItem(engine);
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
@@ -166,6 +172,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupShipmentClusterLineEdit(engine);
   setupSoLineEdit(engine);
   setupToLineEdit(engine);
+  setupUsernameCluster(engine);
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
   setupWComboBox(engine);

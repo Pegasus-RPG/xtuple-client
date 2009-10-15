@@ -17,8 +17,12 @@
 
 class QLabel;
 class QPushButton;
+class QScriptEngine;
 
 class UsernameCluster;
+
+void setupUsernameLineEdit(QScriptEngine *engine);
+void setupUsernameCluster(QScriptEngine *engine);
 
 class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
 {
@@ -35,11 +39,11 @@ class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
       UsersInactive
     };
 
-    inline enum Type type() const { return _type; }
-    inline void setType(enum Type pType) { _type = pType; }
+    Q_INVOKABLE inline enum Type type() const { return _type; }
+    Q_INVOKABLE inline void setType(enum Type pType) { _type = pType; }
 
-    int id();
-    const QString & username();
+    Q_INVOKABLE int id();
+    Q_INVOKABLE const QString & username();
 
   public slots:
     void setId(int);
@@ -94,5 +98,7 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
     QLabel           * _label;
 };
 
-#endif
+Q_DECLARE_METATYPE(UsernameLineEdit*)
+Q_DECLARE_METATYPE(UsernameCluster*)
 
+#endif
