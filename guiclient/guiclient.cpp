@@ -75,7 +75,7 @@
 #include "crmacctcluster.h"
 #include "crmaccount.h"
 #include "customer.h"
-
+#include "distributeInventory.h"
 #include "splashconst.h"
 #include "scripttoolbox.h"
 
@@ -1511,6 +1511,57 @@ QWidget * GUIClient::myActiveWindow()
   return _activeWindow;
 }
 
+// TODO: when std edition is extracted, replace this with a script include()
+QScriptValue distributeInventorySeriesAdjust(QScriptContext *context,
+                                             QScriptEngine  *engine)
+{
+  int result = -1;
+
+  if (context->argumentCount() == 1 &&
+      context->argument(0).isNumber())
+    result = distributeInventory::SeriesAdjust(context->argument(0).toInt32(),
+                                               0);
+
+  else if (context->argumentCount() == 2 &&
+           context->argument(0).isNumber() &&
+           qscriptvalue_cast<QWidget*>(context->argument(1)))
+    result = distributeInventory::SeriesAdjust(context->argument(0).toInt32(),
+           qscriptvalue_cast<QWidget*>(context->argument(1)));
+
+  else if (context->argumentCount() == 3 &&
+           context->argument(0).isNumber() &&
+           qscriptvalue_cast<QWidget*>(context->argument(1)))
+    result = distributeInventory::SeriesAdjust(context->argument(0).toInt32(),
+                             qscriptvalue_cast<QWidget*>(context->argument(1)),
+                             context->argument(2).toString());
+
+  else if (context->argumentCount() == 4 &&
+           context->argument(0).isNumber() &&
+           qscriptvalue_cast<QWidget*>(context->argument(1)) &&
+           context->argument(3).isDate())
+    result = distributeInventory::SeriesAdjust(context->argument(0).toInt32(),
+                             qscriptvalue_cast<QWidget*>(context->argument(1)),
+                             context->argument(2).toString(),
+                             context->argument(3).toDateTime().date());
+
+  else if (context->argumentCount() == 5 &&
+           context->argument(0).isNumber() &&
+           qscriptvalue_cast<QWidget*>(context->argument(1)) &&
+           context->argument(3).isDate() &&
+           context->argument(4).isDate())
+    result = distributeInventory::SeriesAdjust(context->argument(0).toInt32(),
+                             qscriptvalue_cast<QWidget*>(context->argument(1)),
+                             context->argument(2).toString(),
+                             context->argument(3).toDateTime().date(),
+                             context->argument(4).toDateTime().date());
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not find an appropriate SeriesAdjust method");
+
+  return engine->toScriptValue(result);
+}
+
 void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 {
   if(!engine)
@@ -1563,6 +1614,11 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   engine->globalObject().setProperty("startOfTime", engine->newDate(QDateTime(_startOfTime)));
   engine->globalObject().setProperty("endOfTime", engine->newDate(QDateTime(_endOfTime)));
 
+  // TODO: when std edition is extracted, replace this with a script include()
+  QScriptValue distribInvObj = engine->newObject();
+  distribInvObj.setProperty("SeriesAdjust", distribInvObj,
+                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  engine->globalObject().setProperty("DistributeInventory", distribInvObj);
 
   mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
                             QScriptValue::ReadOnly | QScriptValue::Undeletable);
