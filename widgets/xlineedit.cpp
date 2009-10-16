@@ -18,6 +18,8 @@
 
 #include "format.h"
 
+#define DEBUG false
+
 XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   QLineEdit(parent)
 {
@@ -59,14 +61,28 @@ void XLineEdit::sParse()
     QRegExp zeroRegex(QString("^[0") + QLocale().groupSeparator() + "]*" +
                       QLocale().decimalPoint() + "0*$");
     if (! text().isEmpty() && toDouble() == 0 && ! text().contains(zeroRegex))
+    {
+      _valid = false;
       setText("");
+    }
+    else _valid = true;
   }
+  if (DEBUG)
+    qDebug("%s::sParse() _valid = %d",
+           objectName().isEmpty() ? "XLineEdit" : qPrintable(objectName()),
+           _valid);
 }
 
 double XLineEdit::toDouble(bool *pIsValid)
 {
   QString strippedText = text().remove(QLocale().groupSeparator());
-  return QLocale().toDouble(strippedText, pIsValid);
+  double result = QLocale().toDouble(strippedText, pIsValid);
+  _valid = pIsValid;
+  if (DEBUG)
+    qDebug("%s::toDouble() returning %f (%d) for %s (%s)",
+           objectName().isEmpty() ? "XLineEdit" : qPrintable(objectName()),
+           result, _valid, qPrintable(text()), qPrintable(strippedText));
+  return result;
 }
 
 void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)

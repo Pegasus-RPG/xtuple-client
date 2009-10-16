@@ -70,7 +70,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                buyCard.ui budgets.ui                                                                  \
                calendars.ui calendar.ui                                                               \
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
-               changePoitemQty.ui changeWoQty.ui changeQtyToDistributeFromBreeder.ui                  \
+               changePoitemQty.ui changeWoQty.ui                                                      \
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
                characteristicPrice.ui check.ui checkFormat.ui checkFormats.ui                         \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
@@ -101,7 +101,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                customers.ui customerTypes.ui customerType.ui customerTypeList.ui                      \
                databaseInformation.ui deletePlannedOrder.ui deletePlannedOrdersByPlannerCode.ui       \
                department.ui departments.ui                                                           \
-               distributeBreederProduction.ui                         distributeInventory.ui          \
+               distributeInventory.ui          \
                distributeToLocation.ui                                                                \
                dspAllocations.ui dspAPApplications.ui                                                 \
                dspAPOpenItemsByVendor.ui                                                              \
@@ -369,7 +369,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                buyCard.h budgets.h                                                                    \
                calendars.h calendar.h                                                                 \
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
-               changePoitemQty.h changeWoQty.h changeQtyToDistributeFromBreeder.h                     \
+               changePoitemQty.h changeWoQty.h                                                        \
                characteristic.h characteristics.h characteristicAssignment.h                          \
                characteristicPrice.h check.h checkFormat.h checkFormats.h                             \
                classCodes.h classCode.h closePurchaseOrder.h closeWo.h                                \
@@ -400,7 +400,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                customers.h customerTypes.h customerType.h customerTypeList.h                          \
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
                department.h departments.h                                                             \
-               distributeBreederProduction.h                        distributeInventory.h             \
+               distributeInventory.h             \
                distributeToLocation.h                                                                 \
                dspAllocations.h dspAPApplications.h                                                   \
                dspAPOpenItemsByVendor.h                                                               \
@@ -679,7 +679,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                buyCard.cpp budgets.cpp                                                                \
                calendars.cpp calendar.cpp                                                             \
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
-               changePoitemQty.cpp changeWoQty.cpp changeQtyToDistributeFromBreeder.cpp               \
+               changePoitemQty.cpp changeWoQty.cpp                                                    \
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \
                characteristicPrice.cpp check.cpp checkFormat.cpp checkFormats.cpp                     \
                classCodes.cpp classCode.cpp closePurchaseOrder.cpp closeWo.cpp                        \
@@ -711,7 +711,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                customers.cpp customerTypes.cpp customerType.cpp customerTypeList.cpp                  \
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
                department.cpp departments.cpp                                                         \
-               distributeBreederProduction.cpp                          distributeInventory.cpp       \
+               distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
                dspAllocations.cpp dspAPApplications.cpp                                               \
                dspAPOpenItemsByVendor.cpp                                                             \
