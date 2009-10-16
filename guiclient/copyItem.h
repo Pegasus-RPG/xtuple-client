@@ -25,9 +25,14 @@ public:
     copyItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~copyItem();
 
+    Q_INVOKABLE inline  bool    captive() const { return _captive; }
+    Q_INVOKABLE virtual void    createItemSites(int pItemid);
+    Q_INVOKABLE virtual bool    okToSave();
+
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sHandleItemType( const QString & pItemType );
+    virtual enum SetResponse set(const ParameterList & pParams);
+    virtual void clear();
+    virtual void sHandleItemType(const QString & pItemType);
     virtual void sCopy();
 
 protected slots:

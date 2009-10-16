@@ -10,21 +10,16 @@
 
 #include "items.h"
 
+#include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 #include <metasql.h>
-#include <QMessageBox>
-#include <QWorkspace>
-#include <QSqlError>
-#include <QMenu>
+
 #include "copyItem.h"
 #include "item.h"
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a items as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 items::items(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -103,9 +98,10 @@ void items::sPopulateMenu(QMenu *pMenu)
   if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  QAction *tmpaction = pMenu->addAction(tr("Delete..."));
+  connect(tmpaction, SIGNAL(triggered()), this, SLOT(sDelete()));
+  tmpaction->setEnabled(_privileges->check("MaintainItemMasters"));
+  tmpaction->setObjectName("items.popup.delete");
 }
 
 void items::sNew()
