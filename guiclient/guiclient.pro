@@ -84,7 +84,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                copyBOM.ui copyItem.ui copySalesOrder.ui                                               \
                copyTransferOrder.ui                                                                   \
                costCategory.ui costCategories.ui countries.ui country.ui                              \
-               countTagList.ui correctOperationsPosting.ui correctProductionPosting.ui                \
+               countTagList.ui correctProductionPosting.ui                                            \
                createCycleCountTags.ui                                                                \
                createCountTagsByParameterList.ui createCountTagsByItem.ui                             \
                createItemSitesByClassCode.ui                                                          \
@@ -383,7 +383,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                copyBOM.h copyItem.h copySalesOrder.h                                                  \
                copyTransferOrder.h                                                                    \
                costCategory.h costCategories.h countries.h country.h                                  \
-               countTagList.h correctOperationsPosting.h correctProductionPosting.h                   \
+               countTagList.h correctProductionPosting.h                                              \
                createCycleCountTags.h                                                                 \
                createCountTagsByParameterList.h createCountTagsByItem.h                               \
                createItemSitesByClassCode.h                                                           \
@@ -693,7 +693,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                copyBOM.cpp copyItem.cpp copySalesOrder.cpp                                            \
                copyTransferOrder.cpp                                                                  \
                costCategory.cpp costCategories.cpp countries.cpp country.cpp                          \
-               countTagList.cpp correctOperationsPosting.cpp correctProductionPosting.cpp             \
+               countTagList.cpp correctProductionPosting.cpp                                          \
                createCycleCountTags.cpp                                                               \
                createCountTagsByParameterList.cpp createCountTagsByItem.cpp                           \
                createItemSitesByClassCode.cpp                                                         \
