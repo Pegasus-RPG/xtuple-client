@@ -31,6 +31,10 @@ public slots:
     virtual void sSave();
     virtual void populate();
 
+signals:
+    void populated(int costcatid);
+    void saved(int costcatid);
+
 protected slots:
     virtual void languageChange();
 

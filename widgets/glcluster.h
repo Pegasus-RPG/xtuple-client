@@ -49,7 +49,7 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public QWidget
     inline bool showExternal()              { return _showExternal; }
     inline void setShowExternal(bool p)     { _showExternal = p; }
 
-    void setReadOnly(bool);
+    Q_INVOKABLE void setReadOnly(bool);
 
   public slots:
     bool isValid();

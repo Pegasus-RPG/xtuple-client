@@ -26,8 +26,6 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _transformClearingLit->setVisible(_metrics->boolean("Transforms")); 
   _transformClearing->setVisible(_metrics->boolean("Transforms"));
-  _laborAndOverheadClearingLit->setVisible(_metrics->boolean("Routings")); 
-  _laborAndOverhead->setVisible(_metrics->boolean("Routings"));
   _toLiabilityClearingLit->setVisible(_metrics->boolean("MultiWhs"));
   _toLiabilityClearing->setVisible(_metrics->boolean("MultiWhs"));
 
@@ -89,7 +87,6 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
       _mfgScrap->setReadOnly(TRUE);
       _transformClearing->setReadOnly(TRUE);
       _purchasePrice->setReadOnly(TRUE);
-      _laborAndOverhead->setReadOnly(TRUE);
       _liability->setReadOnly(TRUE);
       _freight->setReadOnly(TRUE);
       _shippingAsset->setReadOnly(TRUE);
@@ -174,10 +171,6 @@ void costCategory::sSave()
       tr("<p>You must select a Manufacturing Scrap Account before saving."),
       _mfgScrap
     },
-    { (_metrics->boolean("Routings") && _laborAndOverhead->id() < 0),
-      tr("<p>You must select a Labor and Overhead Costs Account before saving."),
-      _laborAndOverhead
-    },
     { _liability->id() < 0,
       tr("<p>You must select a P/O Liability Clearing Account before saving."),
       _liability
@@ -243,7 +236,7 @@ void costCategory::sSave()
                "  costcat_liability_accnt_id, costcat_freight_accnt_id,"
                "  costcat_adjustment_accnt_id, costcat_scrap_accnt_id, costcat_mfgscrap_accnt_id,"
                "  costcat_transform_accnt_id, costcat_wip_accnt_id,"
-               "  costcat_purchprice_accnt_id, costcat_laboroverhead_accnt_id,"
+               "  costcat_purchprice_accnt_id,"
                "  costcat_shipasset_accnt_id, costcat_toliability_accnt_id ) "
                "VALUES "
                "( :costcat_id, :costcat_code, :costcat_descrip,"
@@ -251,7 +244,7 @@ void costCategory::sSave()
                "  :costcat_liability_accnt_id, :costcat_freight_accnt_id,"
                "  :costcat_adjustment_accnt_id, :costcat_scrap_accnt_id, :costcat_mfgscrap_accnt_id,"
                "  :costcat_transform_accnt_id, :costcat_wip_accnt_id,"
-               "  :costcat_purchprice_accnt_id, :costcat_laboroverhead_accnt_id,"
+               "  :costcat_purchprice_accnt_id,"
                "  :costcat_shipasset_accnt_id, :costcat_toliability_accnt_id );" );
   }
   else if (_mode == cEdit)
@@ -267,7 +260,6 @@ void costCategory::sSave()
                "    costcat_transform_accnt_id=:costcat_transform_accnt_id,"
                "    costcat_wip_accnt_id=:costcat_wip_accnt_id,"
                "    costcat_purchprice_accnt_id=:costcat_purchprice_accnt_id,"
-               "    costcat_laboroverhead_accnt_id=:costcat_laboroverhead_accnt_id,"
                "    costcat_shipasset_accnt_id=:costcat_shipasset_accnt_id,"
                "    costcat_toliability_accnt_id=:costcat_toliability_accnt_id "
                "WHERE (costcat_id=:costcat_id);" );
@@ -285,7 +277,6 @@ void costCategory::sSave()
   q.bindValue(":costcat_transform_accnt_id", _transformClearing->id());
   q.bindValue(":costcat_wip_accnt_id", _wip->id());
   q.bindValue(":costcat_purchprice_accnt_id", _purchasePrice->id());
-  q.bindValue(":costcat_laboroverhead_accnt_id", _laborAndOverhead->id());
   q.bindValue(":costcat_shipasset_accnt_id", _shippingAsset->id());
   if (_toLiabilityClearing->isValid())
     q.bindValue(":costcat_toliability_accnt_id", _toLiabilityClearing->id());
@@ -296,6 +287,7 @@ void costCategory::sSave()
     return;
   }
 
+  emit saved(_costcatid);
   done(_costcatid);
 }
 
@@ -324,9 +316,10 @@ void costCategory::populate()
     _wip->setId(q.value("costcat_wip_accnt_id").toInt());
     _transformClearing->setId(q.value("costcat_transform_accnt_id").toInt());
     _purchasePrice->setId(q.value("costcat_purchprice_accnt_id").toInt());
-    _laborAndOverhead->setId(q.value("costcat_laboroverhead_accnt_id").toInt());
     _shippingAsset->setId(q.value("costcat_shipasset_accnt_id").toInt());
     _toLiabilityClearing->setId(q.value("costcat_toliability_accnt_id").toInt());
+
+    emit populated(_costcatid);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
