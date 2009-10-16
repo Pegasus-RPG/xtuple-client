@@ -12,15 +12,60 @@
 
 #include <QApplication>
 
+#define DEBUG true
+
+QScriptValue scriptFind(QScriptContext *context, QScriptEngine  * engine)
+{
+  if (context->argumentCount() >= 1 &&
+      qscriptvalue_cast<WId>(context->argument(0)))
+    return engine->toScriptValue(QWidget::find(qscriptvalue_cast<WId>(context->argument(0))));
+  return 0;
+}
+
+QScriptValue scriptKeyboardGrabber(QScriptContext * /*context*/,
+                                    QScriptEngine  *engine)
+{
+  return engine->toScriptValue(QWidget::keyboardGrabber());
+}
+
+QScriptValue scriptMouseGrabber(QScriptContext * /*context*/,
+                                 QScriptEngine  *engine)
+{
+  return engine->toScriptValue(QWidget::mouseGrabber());
+}
+
+QScriptValue scriptSetTabOrder(QScriptContext *context,
+                               QScriptEngine  * /*engine*/)
+{
+  if (context->argumentCount() >= 2 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)) &&
+      qscriptvalue_cast<QWidget*>(context->argument(1)))
+  {
+    if (DEBUG) qDebug("scriptSetTabOrder(%p, %p)",
+                      qscriptvalue_cast<QWidget*>(context->argument(0)),
+                      qscriptvalue_cast<QWidget*>(context->argument(1)));
+    QWidget::setTabOrder(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                         qscriptvalue_cast<QWidget*>(context->argument(1)));
+  }
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not set tab order as requested");
+  return QScriptValue();
+}
+
 void setupQWidgetProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QWidgetProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWidget*>(), proto);
-  //engine->setDefaultPrototype(qMetaTypeId<QWidget>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWidget,
                                                  proto);
   engine->globalObject().setProperty("QWidget", constructor);
+
+  constructor.setProperty("find",           engine->newFunction(scriptFind));
+  constructor.setProperty("keyboardGrabber",engine->newFunction(scriptKeyboardGrabber));
+  constructor.setProperty("mouseGrabber",   engine->newFunction(scriptMouseGrabber));
+  constructor.setProperty("setTabOrder",    engine->newFunction(scriptSetTabOrder));
 }
 
 QScriptValue constructQWidget(QScriptContext *context,

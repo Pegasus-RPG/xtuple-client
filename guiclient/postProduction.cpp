@@ -15,62 +15,52 @@
 #include <QVariant>
 
 #include "closeWo.h"
-#include "distributeBreederProduction.h"
 #include "distributeInventory.h"
 #include "inputManager.h"
 #include "scrapWoMaterialFromWIP.h"
+#include "storedProcErrorLookup.h"
+
+#define DEBUG true
 
 postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
+  if (DEBUG)
+    qDebug("postProduction()'s _qty is at %p, _post is at %p", _qty, _post);
 
-    connect(_backflushOperations, SIGNAL(toggled(bool)), this, SLOT(sBackflushOperationsToggled(bool)));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
+  connect(_post,  SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
+  connect(_wo,   SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
 
-    _captive = false;
+  _captive = false;
 
-    _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
-    omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
+  omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
-    _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
+  _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
 
-    _qty->setValidator(omfgThis->qtyVal());
-    _qtyOrdered->setPrecision(decimalPlaces("qty"));
-    _qtyReceived->setPrecision(decimalPlaces("qty"));
-    _qtyBalance->setPrecision(decimalPlaces("qty"));
-    _fromWOTC = false;
-    
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _immediateTransfer->hide();
-      _transferWarehouse->hide();
-    }
-    
-    if (!_metrics->boolean("Routings"))
-    {
-      _backflushOperations->setChecked(FALSE);
-      _backflushOperations->hide();
-      _setupUser->hide();
-      _runUser->hide();
-    }
-  
-  if (_preferences->boolean("XCheckBox/forgetful"))
+  _qty->setValidator(omfgThis->qtyVal());
+  _qtyOrdered->setPrecision(decimalPlaces("qty"));
+  _qtyReceived->setPrecision(decimalPlaces("qty"));
+  _qtyBalance->setPrecision(decimalPlaces("qty"));
+
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
   {
-    _backflush->setChecked(true);
-    _backflushOperations->setChecked(true);
+    _immediateTransfer->hide();
+    _transferWarehouse->hide();
   }
 
+  if (_preferences->boolean("XCheckBox/forgetful"))
+    _backflush->setChecked(true);
+
   _nonPickItems->setEnabled(_backflush->isChecked() &&
-			    _privileges->check("ChangeNonPickItems"));
+                            _privileges->check("ChangeNonPickItems"));
   // TODO: unhide as part of implementation of 5847
   _nonPickItems->hide();
 
-  sBackflushOperationsToggled(_backflushOperations->isChecked());
   _transferWarehouse->setEnabled(_immediateTransfer->isChecked());
 }
 
@@ -100,29 +90,19 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
     _qty->setFocus();
   }
 
-  param = pParams.value("usr_id", &valid);
-  if (valid)
-  {
-    _setupUser->setId(param.toInt());
-    _runUser->setId(param.toInt());
-  }
-
   param = pParams.value("backflush", &valid);
   if (valid)
     _backflush->setChecked(param.toBool());
-
-  param = pParams.value("fromWOTC", &valid);
-  if (valid)
-  {
-    _scrap->setHidden(param.toBool());
-    _fromWOTC = true;
-  }
 
   return NoError;
 }
 
 void postProduction::sHandleWoid(int pWoid)
-{  
+{
+  if (DEBUG)
+    qDebug("postProduction::sHandleWoid(%d) entered with method %s",
+           pWoid, qPrintable(_wo->method()));
+
   if (_wo->method() == "D")
   {
     _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
@@ -134,7 +114,7 @@ void postProduction::sHandleWoid(int pWoid)
   {
     _qtyOrderedLit->setText(tr("Qty. Ordered:"));
     _qtyReceivedLit->setText(tr("Qty. Received:"));
-    
+
     q.prepare( "SELECT womatl_issuemethod "
               "FROM womatl "
               "WHERE (womatl_wo_id=:womatl_wo_id);" );
@@ -159,25 +139,6 @@ void postProduction::sHandleWoid(int pWoid)
       }
     }
   }
-
-  if (_metrics->boolean("Routings"))
-  {
-    if (_wo->method() == "D")
-    {
-      _backflushOperations->setEnabled(false);
-      _backflushOperations->setChecked(false);
-    }
-    else
-    {
-      q.prepare( "SELECT wooper_id "
-               "FROM wooper "
-               "WHERE (wooper_wo_id=:wo_id);" );
-      q.bindValue(":wo_id", pWoid);
-      q.exec();
-      _backflushOperations->setEnabled(q.first());
-      _backflushOperations->setChecked(q.first());
-    }
-  }
 }
 
 void postProduction::sReadWorkOrder(int pWoid)
@@ -187,218 +148,220 @@ void postProduction::sReadWorkOrder(int pWoid)
 
 void postProduction::sScrap()
 {
-    ParameterList params;
-    params.append("wo_id", _wo->id());
+  ParameterList params;
+  params.append("wo_id", _wo->id());
 
-    scrapWoMaterialFromWIP newdlg(this, "", TRUE);
-    newdlg.set(params);
-    newdlg.exec();
+  scrapWoMaterialFromWIP newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+bool postProduction::okToPost()
+{
+  XSqlQuery type;
+  type.prepare( "SELECT item_type "
+                "FROM item,itemsite,wo "
+                "WHERE ((wo_id=:wo_id) "
+                "AND (wo_itemsite_id=itemsite_id) "
+                "AND (itemsite_item_id=item_id)); ");
+  type.bindValue(":wo_id", _wo->id());
+  type.exec();
+  if (type.first() && type.value("item_type").toString() == "J")
+  {
+    QMessageBox::critical( this, tr("Invalid Work Order"),
+                          tr("<p>Work Orders of Item Type Job are posted "
+                             "when shipping the Sales Order they are "
+                             "associated with.") );
+    return false;
+  }
+  else if (type.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, type.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  if (_immediateTransfer->isChecked() &&
+      _wo->currentWarehouse() == _transferWarehouse->id())
+  {
+    QMessageBox::critical(this, tr("Same Transfer and Production Sites"),
+                          tr("<p>You have selected an Interwarehouse Transfer "
+                            "but the Transfer and Production Sites are the "
+                            "same. Either choose a different Transfer Site or "
+                            "uncheck the Immediate Transfer box."));
+    _transferWarehouse->setFocus();
+    return false;
+  }
+
+  return true;
+}
+
+QString postProduction::updateWoAfterPost()
+{
+  QString result = QString::null;
+  if (_productionNotes->toPlainText().trimmed().length())
+  {
+    XSqlQuery woq;
+    woq.prepare( "UPDATE wo "
+       "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
+       "WHERE (wo_id=:wo_id);" );
+    woq.bindValue(":productionNotes", _productionNotes->toPlainText().trimmed());
+    woq.bindValue(":wo_id", _wo->id());
+    woq.exec();
+    if (woq.lastError().type() != QSqlError::NoError)
+      result = woq.lastError().databaseText();
+  }
+
+  if (DEBUG)
+    qDebug("postProduction::updateWoAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+QString postProduction::handleSeriesAdjustAfterPost(int itemlocSeries)
+{
+  QString result = QString::null;
+  if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+    result = tr("Transaction Canceled");
+
+  if (DEBUG)
+    qDebug("postProduction::handleSeriesAdjustAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+QString postProduction::handleTransferAfterPost()
+{
+  QString result = QString::null;
+  if (_immediateTransfer->isChecked())
+  {
+    if (_wo->currentWarehouse() == _transferWarehouse->id())
+      result = tr("<p>Cannot post an immediate transfer for the newly posted "
+                  "production as the transfer Site is the same as the "
+                  "production Site. You must manually transfer the "
+                  "production to the intended Site.");
+    else
+    {
+      XSqlQuery xferq;
+      xferq.prepare("SELECT interWarehouseTransfer(itemsite_item_id, "
+                    "    itemsite_warehous_id, :to_warehous_id, :qty,"
+                    "    'W', formatWoNumber(wo_id),"
+                    "   'Immediate Transfer from Production Posting') AS result"
+                    "  FROM wo, itemsite "
+                    " WHERE ( (wo_itemsite_id=itemsite_id)"
+                    "     AND (wo_id=:wo_id) );" );
+      xferq.bindValue(":wo_id", _wo->id());
+      xferq.bindValue(":to_warehous_id", _transferWarehouse->id());
+      xferq.bindValue(":qty", _qty->toDouble());
+      xferq.exec();
+      if (xferq.first() &&
+          distributeInventory::SeriesAdjust(xferq.value("result").toInt(),
+                                            this) == XDialog::Rejected)
+          result = tr("Transaction Canceled");
+      else if (xferq.lastError().type() != QSqlError::NoError)
+        result = xferq.lastError().databaseText();
+    }
+  }
+
+  if (DEBUG)
+    qDebug("postProduction::handleTransferAfterPost() returning %s",
+           qPrintable(result));
+  return result;
 }
 
 void postProduction::sPost()
 {
-  XSqlQuery type;
-  type.prepare( "SELECT item_type "
-	            "FROM item,itemsite,wo "
-			    "WHERE ((wo_id=:wo_id) "
-			    "AND (wo_itemsite_id=itemsite_id) "
-			    "AND (itemsite_item_id=item_id)); ");
-  type.bindValue(":wo_id", _wo->id());
-  type.exec();
-  if (type.first())
+  if (! okToPost())
+    return;
+
+  // xtmfg calls postProduction::okToPost() but not ::sPost() && has a situation
+  // where qty 0 is OK, so don't move the _qty == 0 check to okToPost()
+  if (_qty->toDouble() == 0.0)
   {
-    if (type.value("item_type").toString() == "J")
-    {
-        QMessageBox::critical( this, tr("Invalid Work Order"),
-                             tr("Work Orders of Item Type Job are posted when shipping \n"
-                    "the Sales Order they are associated with.") );
-      clear();
-      return;
-    }
-    else
-    {
-      if (_qty->toDouble() == 0.0 && _fromWOTC)
-      {
-        if (QMessageBox::question(this, tr("Zero Quantity To Post"),
-              tr("Is the Quantity of Production really 0?\n"
-                 "If so, you will be clocked out but nothing "
-                 "else will be posted."),
-              QMessageBox::Yes,
-              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-        {
-          _qty->setFocus();
-          return;
-        }
-        accept();	// nothing to post, but accept() to let woTimeClock clock out the user
-      }
-      else if (_qty->toDouble() == 0.0)
-      {
-        QMessageBox::critical( this, tr("Enter Quantity to Post"),
-                     tr("You must enter a quantity of production to Post.") );
-        _qty->setFocus();
-        return;
-      }
-      else
-      {
-        XSqlQuery rollback;
-        rollback.prepare("ROLLBACK;");
-
-        q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-        q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations, 0, :suUser, :rnUser) AS result;");
-        q.bindValue(":wo_id", _wo->id());
-        if (_wo->method() == "A")
-          q.bindValue(":qty", _qty->toDouble());
-        else
-          q.bindValue(":qty", _qty->toDouble() * -1);
-        q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
-        q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
-        q.bindValue(":suUser", _setupUser->username());
-        q.bindValue(":rnUser", _runUser->username());
-        q.exec();
-        if (q.first())
-        {
-          int itemlocSeries = q.value("result").toInt();
-
-          if (itemlocSeries < 0)
-          {
-            rollback.exec();
-            systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2, Error #%3.")
-                   .arg(__LINE__)
-                   .arg(_wo->id())
-                   .arg(itemlocSeries) );
-            return;
-          }
-          else
-          {
-            if (_productionNotes->toPlainText().trimmed().length())
-            {
-              q.prepare( "UPDATE wo "
-                 "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
-                 "WHERE (wo_id=:wo_id);" );
-              q.bindValue(":productionNotes", _productionNotes->toPlainText().trimmed());
-              q.bindValue(":wo_id", _wo->id());
-              q.exec();
-            }
-
-            if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
-            {
-              rollback.exec();
-              QMessageBox::information( this, tr("Post Production"), tr("Transaction Canceled") );
-              return;
-            }
-
-            if (_immediateTransfer->isChecked())
-            {
-              q.prepare( "SELECT itemsite_warehous_id "
-                 "FROM itemsite, wo "
-                 "WHERE ( (wo_itemsite_id=itemsite_id)"
-                 " AND (wo_id=:wo_id) );" );
-              q.bindValue(":wo_id", _wo->id());
-              q.exec();
-              if (q.first())
-              {
-                if (q.value("itemsite_warehous_id").toInt() == _transferWarehouse->id())
-                {
-                  rollback.exec();
-                  QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
-                      tr( "Cannot post an immediate transfer for the newly posted production as the\n"
-                      "transfer Site is the same as the production Site.  You must manually\n"
-                      "transfer the production to the intended Site." ) );
-                  return;
-                }
-                else
-                {
-                  q.prepare( "SELECT interWarehouseTransfer( itemsite_item_id, itemsite_warehous_id, :to_warehous_id, :qty,"
-                             "'W', formatWoNumber(wo_id), 'Immediate Transfer from Production Posting' ) AS result "
-                             "FROM wo, itemsite "
-                             "WHERE ( (wo_itemsite_id=itemsite_id)"
-                             " AND (wo_id=:wo_id) );" );
-                  q.bindValue(":wo_id", _wo->id());
-                  q.bindValue(":to_warehous_id", _transferWarehouse->id());
-                  q.bindValue(":qty", _qty->toDouble());
-                  q.exec();
-                  if (q.first())
-                  {
-                    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-                    {
-                      rollback.exec();
-                      QMessageBox::information( this, tr("Post Production"), tr("Transaction Canceled") );
-                      return;
-                    }
-                    
-                    q.exec("COMMIT;");
-                  }
-                }
-              }
-              else
-              {
-                rollback.exec();
-                systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-                   .arg(__LINE__)
-                   .arg(_wo->id()) );
-                return;
-              }
-            }
-            else
-              q.exec("COMMIT;");
-              
-            omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-
-            if (type.value("item_type").toString() == "B")
-            {
-              ParameterList params;
-              params.append("mode", "new");
-              params.append("wo_id", _wo->id());
-
-              distributeBreederProduction newdlg(this, "", TRUE);
-              newdlg.set(params);
-              newdlg.exec();
-            }
-
-            if (_closeWo->isChecked())
-            {
-              ParameterList params;
-              params.append("wo_id", _wo->id());
-
-              closeWo newdlg(this, "", TRUE);
-              newdlg.set(params);
-              newdlg.exec();
-            }
-          }
-        }
-        else if (q.lastError().type() != QSqlError::NoError)
-        {
-          rollback.exec();
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-
-        if (_captive)
-          accept();
-        else
-          clear();
-      }
-    }
-  }
-  else
-  {
-    systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-       .arg(__LINE__)
-       .arg(_wo->id()) );
+    QMessageBox::critical(this, tr("Enter Quantity to Post"),
+                          tr("You must enter a quantity of production to Post.") );
+    _qty->setFocus();
     return;
   }
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distributions
+  q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0) AS result;");
+  q.bindValue(":wo_id", _wo->id());
+  if (_wo->method() == "A")
+    q.bindValue(":qty", _qty->toDouble());
+  else
+    q.bindValue(":qty", _qty->toDouble() * -1);
+  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  q.exec();
+  if (q.first())
+  {
+    int itemlocSeries = q.value("result").toInt();
+
+    if (itemlocSeries < 0)
+    {
+      rollback.exec();
+      systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
+                  __FILE__, __LINE__);
+      return;
+    }
+
+    QString errmsg = updateWoAfterPost();
+    if (! errmsg.isEmpty())
+    {
+      rollback.exec();
+      systemError(this, errmsg, __FILE__, __LINE__);
+      return;
+    }
+
+    errmsg = handleSeriesAdjustAfterPost(itemlocSeries);
+    if (! errmsg.isEmpty())
+    {
+      rollback.exec();
+      QMessageBox::information(this, tr("Post Production"), errmsg);
+      return;
+    }
+
+    errmsg = handleTransferAfterPost();
+    if (! errmsg.isEmpty())
+    {
+      rollback.exec();
+      systemError(this, errmsg, __FILE__, __LINE__);
+      return;
+    }
+
+    q.exec("COMMIT;");
+
+    omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+
+    if (_closeWo->isChecked())
+    {
+      ParameterList params;
+      params.append("wo_id", _wo->id());
+
+      closeWo newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    rollback.exec();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (_captive)
+    accept();
+  else
+    clear();
 }
 
 void postProduction::sCatchWoid(int pWoid)
 {
   _wo->setId(pWoid);
   _qty->setFocus();
-}
-
-void postProduction::sBackflushOperationsToggled( bool yes )
-{
-  _setupUser->setReadOnly(!yes);
-  _runUser->setReadOnly(!yes);
 }
 
 void postProduction::clear()

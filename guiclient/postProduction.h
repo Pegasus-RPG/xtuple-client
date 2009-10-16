@@ -24,9 +24,15 @@ public:
     postProduction(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postProduction();
 
+    Q_INVOKABLE bool    captive() { return _captive; }
+    Q_INVOKABLE QString handleSeriesAdjustAfterPost(int itemlocSeries);
+    Q_INVOKABLE QString handleTransferAfterPost();
+    Q_INVOKABLE bool    okToPost();
+    Q_INVOKABLE QString updateWoAfterPost();
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-	virtual void clear();
+    virtual void clear();
     virtual void sHandleWoid( int pWoid );
     virtual void sReadWorkOrder( int pWoid );
     virtual void sPost();
@@ -36,12 +42,8 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void sBackflushOperationsToggled( bool yes );
-
-
 private:
     bool _captive;
-    bool _fromWOTC;
 
 };
 
