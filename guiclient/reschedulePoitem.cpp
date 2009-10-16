@@ -125,6 +125,14 @@ void reschedulePoitem::sPopulate(int pPoitemid)
 
 void reschedulePoitem::sReschedule()
 {
+  if (!_new->isValid())
+  {
+    QMessageBox::critical( this, tr("Invalid Reschedule Date"),
+                           tr("<p>You must enter a reschedule due date before you may save this Purchase Order Item.") );
+    _new->setFocus();
+    return;
+  }
+
   q.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate);");
   q.bindValue(":poitem_id", _poitem->id());
   q.bindValue(":dueDate", _new->date());
