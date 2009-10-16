@@ -258,13 +258,14 @@ void woMaterialItem::sSave()
     q.prepare( "UPDATE womatl "
                "SET womatl_qtyper=:qtyPer, womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
                "    womatl_uom_id=:uom_id,"
-               "    womatl_qtyreq=(:qtyPer * (1 + :scrap) * wo_qtyord), womatl_notes=:notes, womatl_ref=:ref "
+               "    womatl_qtyreq=:qtyReq, womatl_notes=:notes, womatl_ref=:ref "
                "FROM wo "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_id=:womatl_id) );" );
     q.bindValue(":womatl_id", _womatlid);
     q.bindValue(":issueMethod", issueMethod);
     q.bindValue(":qtyPer", _qtyPer->toDouble());
+    q.bindValue(":qtyReq", _qtyRequired->toDouble());
     q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
     q.bindValue(":notes", _notes->text());
@@ -290,7 +291,16 @@ void woMaterialItem::sSave()
 
 void woMaterialItem::sUpdateQtyRequired()
 {
-  _qtyRequired->setText(_wo->qtyOrdered() * (_qtyPer->toDouble() * (1 + (_scrap->toDouble() / 100))));
+  XSqlQuery qtyreq;
+  qtyreq.prepare("SELECT calcQtyReq(:item_id, :uom_id, :qtyord, :qtyper, :scrap) AS qtyreq;");
+  qtyreq.bindValue(":item_id", _item->id());
+  qtyreq.bindValue(":uom_id", _uom->id());
+  qtyreq.bindValue(":qtyord", _wo->qtyOrdered());
+  qtyreq.bindValue(":qtyper", _qtyPer->toDouble());
+  qtyreq.bindValue(":scrap", (_scrap->toDouble() / 100.0));
+  qtyreq.exec();
+  if(qtyreq.first())
+    _qtyRequired->setDouble(qtyreq.value("qtyreq").toDouble());
 }
 
 void woMaterialItem::populate()
@@ -309,9 +319,9 @@ void woMaterialItem::populate()
   {
     _wo->setId(q.value("womatl_wo_id").toInt());
     _item->setId(q.value("itemsite_item_id").toInt());
-    _qtyPer->setText(q.value("qtyper").toDouble());
+    _qtyPer->setDouble(q.value("qtyper").toDouble());
     _uom->setId(q.value("womatl_uom_id").toInt());
-    _scrap->setText(q.value("scrap").toDouble());
+    _scrap->setDouble(q.value("scrap").toDouble());
     _notes->setText(q.value("womatl_notes").toString());
     _ref->setText(q.value("womatl_ref").toString());
 
