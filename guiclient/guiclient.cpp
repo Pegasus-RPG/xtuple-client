@@ -1615,7 +1615,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   engine->globalObject().setProperty("endOfTime", engine->newDate(QDateTime(_endOfTime)));
 
   // TODO: when std edition is extracted, replace this with a script include()
-  QScriptValue distribInvObj = engine->newObject();
+  QScriptValue distribInvObj = engine->newFunction(distributeInventorySeriesAdjust);
   distribInvObj.setProperty("SeriesAdjust", distribInvObj,
                             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   engine->globalObject().setProperty("DistributeInventory", distribInvObj);
