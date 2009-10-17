@@ -115,7 +115,16 @@ void miscCheck::sSave()
     return;
   }
 
-  if (_cmCluster->isValid() && _amt > _aropenamt)
+  if ( (_applytocm->isChecked()) && (_cmCluster->id() == -1) )
+  {
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
+                          tr("<p>You must select a Credit Memo for this "
+			     "expensed check.") );
+    _expcat->setFocus();
+    return;
+  }
+ 
+  if (_applytocm->isChecked() && _cmCluster->isValid() && (_amt > _aropenamt))
   {
     QMessageBox::warning( this, tr("Invalid Amount"),
                             tr("<p>You must enter an amount less than or equal to the  "
