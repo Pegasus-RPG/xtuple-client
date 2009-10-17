@@ -28,8 +28,6 @@ closeWo::closeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
-  _cmnttype->setType(XComboBox::AllCommentTypes);
-  _commentGroup->setEnabled(_postComment->isChecked());
   
   _postMaterialVariance->setChecked(_metrics->boolean("PostMaterialVariances"));
 }
@@ -178,20 +176,6 @@ void closeWo::sCloseWo()
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
-    }
-
-    if (_postComment->isChecked())
-    {
-      q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
-      q.bindValue(":cmnttype_id", _cmnttype->id());
-      q.bindValue(":wo_id", _wo->id());
-      q.bindValue(":comment", _comment->toPlainText());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
     }
 
     omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
