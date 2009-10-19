@@ -10,11 +10,13 @@
 
 #include "itemCost.h"
 
-#include <QVariant>
-#include <QValidator>
 #include <QMessageBox>
 #include <QSqlError>
-#include <currcluster.h>
+#include <QVariant>
+
+#include "currcluster.h"
+#include "mqlutil.h"
+#include "storedProcErrorLookup.h"
 
 static bool _foundCostElems;
 
@@ -23,10 +25,7 @@ itemCost::itemCost(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _captive = false;
   _itemcostid = -1;
@@ -173,9 +172,19 @@ void itemCost::sSave()
     q.prepare("SELECT postCost(:itemcost_id) AS result;");
     q.bindValue(":itemcost_id", _itemcostid);
     q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("postCost", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
   }
 
-  if (q.lastError().type() != QSqlError::NoError)	// if EITHER q.exec() failed
+  if (q.lastError().type() != QSqlError::NoError)  // if EITHER q.exec() failed
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -188,37 +197,20 @@ void itemCost::sPopulateCostelem()
 {
   if (_mode == cNew)
   {
-    QString sql( "SELECT costelem_id, costelem_type "
-		 "FROM costelem "
-		 "WHERE ( ( (NOT costelem_sys) " );
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("itemtype", _item->itemType());
 
-    if ( ( (_item->itemType() == "M") ||
-	 (_item->itemType() == "F") ||
-	 (_item->itemType() == "B") ||
-	 (_item->itemType() == "C") ||
-	 (_item->itemType() == "T") ) && (_metrics->boolean("Routings") ) )
-      sql += " OR (costelem_type IN ('Direct Labor', 'Overhead', 'Machine Overhead'))";
-    else if ( (_item->itemType() == "O") ||
-	      (_item->itemType() == "P") )
-      sql += " OR (costelem_type IN ('Material'))";
-
-    sql += " ) AND (costelem_id NOT IN ( SELECT itemcost_costelem_id"
-	   "                           FROM itemcost"
-	   "                           WHERE ( (NOT itemcost_lowlevel)"
-	   "                            AND (itemcost_item_id=:item_id) ) ) ) ) "
-	   "ORDER BY costelem_type;";
-
-    q.prepare(sql);
-    q.bindValue(":item_id", _item->id());
-    q.exec();
+    q = mqlLoad("costelem", "unusedbyitem").toQuery(params);
     _costelem->populate(q);
     if (q.size() <= 0)
     {
       QMessageBox::warning(this, tr("No Costing Elements Remaining"),
-		   tr("Item %1 already has all available costing elements "
-		      "assigned.\nNo new Item Costs can be created for it until "
-		      "more costing elements are defined.")
-		      .arg(_item->itemNumber()));
+                           tr("<p>Item %1 already has all available costing "
+                              "elements assigned. No new Item Costs can be "
+                              "created for it until more costing elements are "
+                              "defined.")
+                           .arg(_item->itemNumber()));
       _foundCostElems = false;
     }
   }
