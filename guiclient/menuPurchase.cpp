@@ -105,7 +105,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   vendorMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
-  reportsPrMenu = new QMenu(parent);
   reportsPoMenu = new QMenu(parent);
   reportsPoItemsMenu = new QMenu(parent);
   reportsItemSrcMenu = new QMenu(parent);
@@ -123,7 +122,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   vendorMenu->setObjectName("menu.purch.vendor");
   formsMenu->setObjectName("menu.purch.forms");
   reportsMenu->setObjectName("menu.purch.reports");
-  reportsPrMenu->setObjectName("menu.purch.reportspr");
   reportsPoMenu->setObjectName("menu.purch.reportspo");
   reportsPoItemsMenu->setObjectName("menu.purch.reportpoitems");
   reportsItemSrcMenu->setObjectName("menu.purch.reportsitemsrc");

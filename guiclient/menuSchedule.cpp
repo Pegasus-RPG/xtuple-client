@@ -55,10 +55,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   mainMenu = new QMenu(parent);
   plannedOrdersMenu = new QMenu(parent);
   plannedOrdersMrpMenu = new QMenu(parent);
-  bufferMenu = new QMenu(parent);
-  bufferRunMenu = new QMenu(parent);
-  bufferInvMenu = new QMenu(parent);
-  bufferWoMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
   reportsPlannedMenu = new QMenu(parent);
   masterInfoMenu = new QMenu(parent);
@@ -66,10 +62,6 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   mainMenu->setObjectName("menu.sched");
   plannedOrdersMenu->setObjectName("menu.sched.plannedorders");
   plannedOrdersMrpMenu->setObjectName("menu.sched.plannedordersmrp");
-  bufferMenu->setObjectName("menu.sched.buffer");
-  bufferRunMenu->setObjectName("menu.sched.bufferrun");
-  bufferInvMenu->setObjectName("menu.sched.bufferinv");
-  bufferWoMenu->setObjectName("menu.sched.bufferwo");
   reportsMenu->setObjectName("menu.sched.reports");
   reportsPlannedMenu->setObjectName("menu.sched.reportsplanned");
   masterInfoMenu->setObjectName("menu.sched.masterinfo");

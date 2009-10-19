@@ -111,7 +111,6 @@ class menuPurchase : public QObject
     QMenu *vendorMenu;
     QMenu *formsMenu;
     QMenu *reportsMenu;
-    QMenu *reportsPrMenu;
     QMenu *reportsPoMenu;
     QMenu *reportsPoItemsMenu;
     QMenu *reportsItemSrcMenu;

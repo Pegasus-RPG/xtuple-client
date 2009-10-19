@@ -65,10 +65,6 @@ class menuSchedule : public QObject
     QMenu *plannedOrdersMrpMenu;
     QMenu *capacityPlanMenu;
     QMenu *capacityPlanTpPrdMenu;
-    QMenu *bufferMenu;
-    QMenu *bufferRunMenu;
-    QMenu *bufferInvMenu;
-    QMenu *bufferWoMenu;
     QMenu *reportsMenu;
     QMenu *reportsPlannedMenu;
     QMenu *masterInfoMenu;

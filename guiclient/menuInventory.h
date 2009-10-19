@@ -194,7 +194,6 @@ class menuInventory : public QObject
     QMenu *reportsItemsitesMenu;
     QMenu *reportsQohMenu;
     QMenu *reportsInvAvailMenu;
-    QMenu *reportsInvBufrStsMenu;
     QMenu *reportsInvHistMenu;
     QMenu *reportsDtlInvHistMenu;
     QMenu *reportsItemUsgMenu;
