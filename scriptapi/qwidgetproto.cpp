@@ -169,6 +169,7 @@ QRect QWidgetProto::contentsRect() const
   return QRect();
 }
 
+#ifndef Q_WS_WIN
 WId QWidgetProto::effectiveWinId() const
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
@@ -176,6 +177,7 @@ WId QWidgetProto::effectiveWinId() const
     return item->effectiveWinId();
   return WId();
 }
+#endif
 
 void QWidgetProto::ensurePolished() const
 {
@@ -784,6 +786,7 @@ QRegion QWidgetProto::visibleRegion() const
   return QRegion();
 }
 
+#ifndef Q_WS_WIN
 WId QWidgetProto::winId() const
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
@@ -791,6 +794,7 @@ WId QWidgetProto::winId() const
     return item->winId();
   return WId();
 }
+#endif
 
 QWidget *QWidgetProto::window() const
 {

@@ -65,7 +65,9 @@ class QWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE void clearFocus();
     Q_INVOKABLE void clearMask();
     Q_INVOKABLE QRect contentsRect()                    const;
+#ifndef Q_WS_WIN
     Q_INVOKABLE WId effectiveWinId()                    const;
+#endif
     Q_INVOKABLE void ensurePolished()                   const;
     Q_INVOKABLE QWidget *focusProxy()                   const;
     Q_INVOKABLE QWidget *focusWidget()                  const;
@@ -147,7 +149,9 @@ class QWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE void update(const QRegion &rgn);
     Q_INVOKABLE void updateGeometry();
     Q_INVOKABLE QRegion visibleRegion()         const;
+#ifndef Q_WS_WIN
     Q_INVOKABLE WId winId()                     const;
+#endif
     Q_INVOKABLE QWidget *window()               const;
     Q_INVOKABLE QString windowRole()            const;
     Q_INVOKABLE int windowState()               const;
