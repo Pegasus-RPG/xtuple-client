@@ -16,9 +16,11 @@
 
 QScriptValue scriptFind(QScriptContext *context, QScriptEngine  * engine)
 {
+#ifndef Q_WS_WIN
   if (context->argumentCount() >= 1 &&
       qscriptvalue_cast<WId>(context->argument(0)))
     return engine->toScriptValue(QWidget::find(qscriptvalue_cast<WId>(context->argument(0))));
+#endif
   return 0;
 }
 
