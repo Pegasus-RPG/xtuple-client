@@ -25,8 +25,12 @@ public:
     correctProductionPosting(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~correctProductionPosting();
 
+    Q_INVOKABLE virtual bool captive() const { return _captive; }
+    Q_INVOKABLE virtual bool okToPost();
+
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void clear();
 
 protected slots:
     virtual void languageChange();

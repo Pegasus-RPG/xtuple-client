@@ -10,12 +10,14 @@
 
 #include "correctProductionPosting.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-#include "inputManager.h"
-#include "distributeInventory.h"
 #include "closeWo.h"
+#include "distributeInventory.h"
+#include "inputManager.h"
+#include "storedProcErrorLookup.h"
 
 correctProductionPosting::correctProductionPosting(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -23,7 +25,7 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   setupUi(this);
 
   connect(_correct, SIGNAL(clicked()), this, SLOT(sCorrect()));
-  connect(_wo, SIGNAL(newId(int)), this, SLOT(populate()));
+  connect(_wo,     SIGNAL(newId(int)), this, SLOT(populate()));
 
   _captive = FALSE;
   _qtyReceivedCache = 0.0;
@@ -37,22 +39,13 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   _qtyBalance->setPrecision(omfgThis->transQtyVal());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
-  {
     _backFlush->setChecked(true);
-    _backflushOperations->setChecked(true);
-  }
   _nonPickItems->setEnabled(_backFlush->isChecked() &&
 			    _privileges->check("ChangeNonPickItems"));
 
   // TODO: unhide as part of implementation of 5847
   _nonPickItems->hide();
 
-  if (!_metrics->boolean("Routings"))
-  {
-    _backflushOperations->setChecked(FALSE);
-    _backflushOperations->hide();
-  }
-  
   adjustSize();
 }
 
@@ -86,99 +79,99 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
   return NoError;
 }
 
-void correctProductionPosting::sCorrect()
+bool correctProductionPosting::okToPost()
 {
   if (_qty->toDouble() > _qtyReceivedCache)
   {
     QMessageBox::warning( this, tr("Cannot Post Correction"),
                           tr( "The Quantity to correct must be less than or equal to the Quantity already Posted." ) );
     _qty->setFocus();
-    return;
+    return false;
   }
 
-
-  q.prepare( "SELECT item_type "
+  XSqlQuery itemtypeq;
+  itemtypeq.prepare( "SELECT item_type "
              "FROM wo, itemsite, item "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
              " AND (wo_id=:wo_id) );" );
-  q.bindValue(":wo_id", _wo->id());
-  q.exec();
-  if (q.first())
+  itemtypeq.bindValue(":wo_id", _wo->id());
+  itemtypeq.exec();
+  if (itemtypeq.first() && (itemtypeq.value("item_type").toString() == "J"))
   {
-    if (q.value("item_type").toString() == "B")
-    {
-      QMessageBox::critical( this, tr("Cannot Post Correction"),
-                             tr( "You may not post a correction to a W/O that manufactures a Breeder Item.\n"
-                                 "You must, instead, adjust the Breeder's, Co-Product's and By-Product's QOH." ) );
-      return;
-    }
-    if (q.value("item_type").toString() == "J")
-    {
-      QMessageBox::critical( this, tr("Cannot Post Correction"),
-                             tr( "You may not post a correction to a W/O for a Job Item.\n"
-                                 "You must, instead, adjust shipped quantities." ) );
-      return;
-    }
+    QMessageBox::warning(this, tr("Cannot Post Correction"),
+                         tr("You may not post a correction to a W/O for a "
+                            "Job Item. You must, instead, adjust shipped "
+                            "quantities."));
+    return false;
   }
+  else if (itemtypeq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, itemtypeq.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  return true;
+}
+
+void correctProductionPosting::clear()
+{
+  _wo->setId(-1);
+  _qty->clear();
+  _close->setText(tr("&Close"));
+  _wo->setFocus();
+}
+
+void correctProductionPosting::sCorrect()
+{
+  if (! okToPost())
+    return;
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations) AS result;");
+  q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distribution
+  q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0)"
+            "        AS result;");
   q.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
     q.bindValue(":qty", _qty->toDouble());
   else
     q.bindValue(":qty", _qty->toDouble() * -1);
   q.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
-  q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
   q.exec();
   if (q.first())
   {
     int result = q.value("result").toInt();
-
-    if (result > 0)
-    {
-      if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
-        return;
-      }
-
-      q.exec("COMMIT;");
-      omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-    }
-    else
+    if (result < 0)
     {
       rollback.exec();
-      systemError( this, tr("A System Error occurred at correctProductionPosting::%1, Work Order ID #2, Error #%3.")
-                         .arg(__LINE__)
-                         .arg(_wo->id())
-                         .arg(result) );
+      systemError(this, storedProcErrorLookup("correctProduction", result),
+                  __FILE__, __LINE__);
       return;
     }
+
+    if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
+      return;
+    }
+
+    q.exec("COMMIT;");
+    omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
   }
-  else
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError( this, tr("A System Error occurred at correctProductionPosting::%1, Work Order ID #%2.")
-                       .arg(__LINE__)
-                       .arg(_wo->id()) );
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_captive)
     accept();
   else
-  {
-    _wo->setId(-1);
-    _qty->clear();
-    _close->setText(tr("&Close"));
-    _wo->setFocus();
-  }
+    clear();
 }
 
 void correctProductionPosting::populate()
@@ -189,15 +182,12 @@ void correctProductionPosting::populate()
     {
       _backFlush->setEnabled(false);
       _backFlush->setChecked(false);
-      _backflushOperations->setEnabled(false);
-      _backflushOperations->setChecked(false);
       _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
       _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
     }
     else
     {
       _backFlush->setEnabled(true);
-      _backflushOperations->setEnabled(true);
       _qtyOrderedLit->setText(tr("Qty. Ordered:"));
       _qtyReceivedLit->setText(tr("Qty. Received:"));
     }
@@ -216,5 +206,4 @@ void correctProductionPosting::populate()
 
     _qtyReceivedCache = 0;
   }
-
 }
