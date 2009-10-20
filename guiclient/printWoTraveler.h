@@ -24,17 +24,24 @@ public:
     printWoTraveler(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printWoTraveler();
 
+    Q_INVOKABLE virtual bool errorPrinting() const    { return _errorPrinting; }
+    Q_INVOKABLE virtual void setErrorPrinting(bool p) { _errorPrinting = p; }
+
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList &pParams);
     virtual void sHandleOptions( int pWoid );
     virtual void sPrint();
     virtual void sHandlePrintButton();
+
+signals:
+    void finishedPrinting(QPrinter *printer);
 
 protected slots:
     virtual void languageChange();
 
 private:
     bool _captive;
+    bool _errorPrinting;
 
 };
 

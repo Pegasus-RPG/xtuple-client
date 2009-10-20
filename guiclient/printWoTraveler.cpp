@@ -15,61 +15,44 @@
 #include <QVariant>
 
 #include <openreports.h>
-#include "inputManager.h"
 
-/*
- *  Constructs a printWoTraveler as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "inputManager.h"
+#include "storedProcErrorLookup.h"
+
+#define DEBUG true
+
 printWoTraveler::printWoTraveler(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(valid(bool)), this, SLOT(sHandlePrintButton()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sHandleOptions(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_pickList, SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
-    connect(_routing, SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
-    connect(_packingList, SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
-    connect(_woLabel, SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
+  connect(_packingList,SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
+  connect(_pickList,   SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
+  connect(_print,          SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_wo,            SIGNAL(newId(int)), this, SLOT(sHandleOptions(int)));
+  connect(_wo,           SIGNAL(valid(bool)), this, SLOT(sHandlePrintButton()));
+  connect(_woLabel,    SIGNAL(toggled(bool)), this, SLOT(sHandlePrintButton()));
 
-    _captive = FALSE;
+  _captive = FALSE;
 
-    omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
+  omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-    _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
-    if (!_privileges->check("ReleaseWorkOrders"))
-      _releaseWo->setEnabled(FALSE);
-      
-    if (!_metrics->boolean("Routings"))
-    {
-      _routing->setChecked(FALSE);
-      _routing->hide();
-    }
+  if (!_privileges->check("ReleaseWorkOrders"))
+    _releaseWo->setEnabled(FALSE);
+    
+  _errorPrinting = false;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 printWoTraveler::~printWoTraveler()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void printWoTraveler::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse printWoTraveler::set(const ParameterList &pParams)
@@ -126,33 +109,6 @@ void printWoTraveler::sHandleOptions(int pWoid)
       _pickList->setChecked(false);
     }
   
-    if (_metrics->boolean("Routings"))
-    {
-      check.prepare( "SELECT wooper_id "
-                     "FROM wooper "
-                     "WHERE (wooper_wo_id=:wo_id) "
-                     "LIMIT 1;" );
-      check.bindValue(":wo_id", pWoid);
-      check.exec();
-      if (check.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-      if (check.first())
-      {
-        _routing->setEnabled(true);
-        _routing->setForgetful(false);
-        _routing->setObjectName("_routing");
-      }
-      else
-      {
-        _routing->setEnabled(false);
-        _routing->setForgetful(true);
-        _routing->setChecked(false);
-      }
-    }
-
     check.prepare( "SELECT wo_id "
                    "FROM wo "
                    "WHERE ( (wo_ordtype='S')"
@@ -182,9 +138,14 @@ void printWoTraveler::sHandleOptions(int pWoid)
 
 void printWoTraveler::sPrint()
 {
+  if (DEBUG) qDebug("printWoTraveler::sPrint() entered");
+
   QPrinter  printer(QPrinter::HighResolution);
   bool      setupPrinter = TRUE;
-  bool userCanceled = false;
+  bool      userCanceled = false;
+
+  _errorPrinting = false;
+
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
     if(!userCanceled)
@@ -192,41 +153,26 @@ void printWoTraveler::sPrint()
     return;
   }
 
+  if (DEBUG) qDebug("printWoTraveler::sPrint() multiprint started");
+
   if (_pickList->isChecked())
   {
     ParameterList params;
     params.append("wo_id", _wo->id());
 
     orReport report("PickList", params);
-
     if (report.isValid() && report.print(&printer, setupPrinter))
       setupPrinter = FALSE;
     else
     {
       report.reportError(this);
-      orReport::endMultiPrint(&printer);
-      return;
+      _errorPrinting = true;
     }
   }
 
-  if (_routing->isChecked())
-  {
-    ParameterList params;
-    params.append("wo_id", _wo->id());
+  if (DEBUG) qDebug("printWoTraveler::sPrint() PickList handled");
 
-    orReport report("Routing", params);
-
-    if (report.isValid() && report.print(&printer, setupPrinter))
-      setupPrinter = FALSE;
-    else
-    {
-      report.reportError(this);
-      orReport::endMultiPrint(&printer);
-      return;
-    }
-  }
-
-  if (_woLabel->isChecked())
+  if (_woLabel->isChecked() && ! _errorPrinting)
   {
     XSqlQuery query;
     query.prepare( "SELECT wo_id, CAST(wo_qtyord AS INTEGER) AS wo_qtyord_int "
@@ -246,18 +192,19 @@ void printWoTraveler::sPrint()
       else
       {
 	report.reportError(this);
-	orReport::endMultiPrint(&printer);
-	return;
+        _errorPrinting = true;
       }
     }
     else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      _errorPrinting = true;
     }
   }
 
-  if (_packingList->isChecked())
+  if (DEBUG) qDebug("printWoTraveler::sPrint() WOLabel handled");
+
+  if (_packingList->isChecked() && ! _errorPrinting)
   {
     XSqlQuery query;
     query.prepare( "SELECT cohead_id, findCustomerForm(cohead_cust_id, 'L') AS reportname "
@@ -283,25 +230,47 @@ void printWoTraveler::sPrint()
       else
       {
 	report.reportError(this);
-	orReport::endMultiPrint(&printer);
-	return;
+        _errorPrinting = true;
       }
     }
     else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      _errorPrinting = true;
     }
   }
+
+  if (DEBUG) qDebug("printWoTraveler::sPrint() PackingList handled");
+
+  if (! _errorPrinting)
+  {
+    emit finishedPrinting(&printer);
+  }
+
+  if (DEBUG) qDebug("printWoTraveler::sPrint() finishedPrinting handled");
+
   orReport::endMultiPrint(&printer);
+
+  if (_errorPrinting)
+    return;
 
   if (_releaseWo->isChecked())
   {
     XSqlQuery release;
-    release.prepare("SELECT releaseWo(:wo_id, FALSE);");
+    release.prepare("SELECT releaseWo(:wo_id, FALSE) AS result;");
     release.bindValue(":wo_id", _wo->id());
     release.exec();
-    if (release.lastError().type() != QSqlError::NoError)
+    if (release.first())
+    {
+      int result = release.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("releaseWo", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (release.lastError().type() != QSqlError::NoError)
     {
       systemError(this, release.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -314,6 +283,7 @@ void printWoTraveler::sPrint()
     close();
   else
   {
+    _errorPrinting = false;
     _wo->setId(-1);
     _wo->setFocus();
   }
@@ -321,6 +291,7 @@ void printWoTraveler::sPrint()
 
 void printWoTraveler::sHandlePrintButton()
 {
-  _print->setEnabled( (_wo->isValid()) &&
-                      ( (_pickList->isChecked()) || (_routing->isChecked()) || (_packingList->isChecked())  || (_woLabel->isChecked())) );
+  _print->setEnabled( _wo->isValid() &&
+                     (_pickList->isChecked() || _packingList->isChecked()
+                      || _woLabel->isChecked()) );
 }
