@@ -418,9 +418,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _inputManager = new InputManager();
   qApp->installEventFilter(_inputManager);
 
-#ifndef Q_WS_MACX
-  setIcon(QPixmap(":/images/icon32x32.png"));
-#endif
   setWindowTitle();
 
 //  Populate the menu bar

@@ -20,11 +20,6 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Log In</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff/>
-   </iconset>
-  </property>
   <layout class="QVBoxLayout">
    <item>
     <layout class="QHBoxLayout">

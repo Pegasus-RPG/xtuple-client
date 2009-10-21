@@ -167,6 +167,10 @@ int main(int argc, char *argv[])
   QCoreApplication::addLibraryPath(QString("."));
 #endif
 
+#ifndef Q_WS_MACX
+  QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
+#endif
+
 #ifdef Q_WS_WIN
   if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
     QApplication::setStyle(QStyleFactory::create("windowsxpstyle"));

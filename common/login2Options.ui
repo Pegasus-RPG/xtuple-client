@@ -20,11 +20,6 @@ to be bound by its terms.</comment>
   <property name="windowTitle" >
    <string>Login Options</string>
   </property>
-  <property name="windowIcon" >
-   <iconset>
-    <normaloff/>
-   </iconset>
-  </property>
   <layout class="QHBoxLayout" >
    <property name="spacing" >
     <number>5</number>
