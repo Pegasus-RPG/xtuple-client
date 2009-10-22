@@ -27,13 +27,32 @@ void QActionfromScriptValue(const QScriptValue &obj, QAction* &item)
   item = qobject_cast<QAction*>(obj.toQObject());
 }
 
+QScriptValue QActionListtoScriptValue(QScriptEngine *engine, QList<QAction*> const &cpplist)
+{
+  QScriptValue scriptlist = engine->newArray(cpplist.size());
+  for (int i = 0; i < cpplist.size(); i++)
+    scriptlist.setProperty(i, engine->newQObject(cpplist.at(i)));
+  return scriptlist;
+}
+
+void QActionListfromScriptValue(const QScriptValue &obj, QList<QAction*> &cpplist)
+{
+  cpplist.clear();
+  int listlen = obj.property("length").toInt32();
+  for (int i = 0; i < listlen; i++)
+  {
+    QAction *tmp = qobject_cast<QAction*>(obj.property(i).toQObject());
+    cpplist.append(tmp);
+  }
+}
+
 void setupQActionProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QActiontoScriptValue, QActionfromScriptValue);
+  qScriptRegisterMetaType(engine, QActiontoScriptValue,     QActionfromScriptValue);
+  qScriptRegisterMetaType(engine, QActionListtoScriptValue, QActionListfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QActionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QAction*>(), proto);
-  // engine->setDefaultPrototype(qMetaTypeId<QAction>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQAction,
                                                  proto);

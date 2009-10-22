@@ -253,7 +253,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                postStandardJournal.ui postStandardJournalGroup.ui                                     \
                postVouchers.ui prepareCheckRun.ui priceList.ui                                        \
                pricingScheduleAssignment.ui pricingScheduleAssignments.ui                             \
-               printAnnodizingPurchaseRequests.ui printArOpenItem.ui                                  \
+                                                  printArOpenItem.ui                                  \
                printCheck.ui printChecks.ui printChecksReview.ui                                      \
                printCreditMemo.ui printCreditMemos.ui reprintCreditMemos.ui                           \
                printInvoice.ui printInvoices.ui printInvoicesByShipvia.ui reprintInvoices.ui          \
@@ -556,7 +556,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                postStandardJournal.h postStandardJournalGroup.h                                       \
                postVouchers.h prepareCheckRun.h priceList.h                                           \
                pricingScheduleAssignment.h pricingScheduleAssignments.h                               \
-               printAnnodizingPurchaseRequests.h printArOpenItem.h                                    \
+                                                 printArOpenItem.h                                    \
                printCheck.h printChecks.h printChecksReview.h                                         \
                printCreditMemo.h printCreditMemos.h reprintCreditMemos.h                              \
                printInvoice.h printInvoices.h printInvoicesByShipvia.h reprintInvoices.h              \
@@ -868,7 +868,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                postStandardJournal.cpp postStandardJournalGroup.cpp                                   \
                postVouchers.cpp prepareCheckRun.cpp priceList.cpp                                     \
                pricingScheduleAssignment.cpp pricingScheduleAssignments.cpp                           \
-               printAnnodizingPurchaseRequests.cpp printArOpenItem.cpp                                \
+                                                   printArOpenItem.cpp                                \
                printCheck.cpp printChecks.cpp printChecksReview.cpp                                   \
                printCreditMemo.cpp printCreditMemos.cpp reprintCreditMemos.cpp                        \
                printInvoice.cpp printInvoices.cpp printInvoicesByShipvia.cpp reprintInvoices.cpp      \

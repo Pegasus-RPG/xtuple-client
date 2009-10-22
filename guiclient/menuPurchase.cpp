@@ -66,7 +66,6 @@
 
 #include "printPoForm.h"
 #include "printVendorForm.h"
-#include "printAnnodizingPurchaseRequests.h"
 
 #include "vendor.h"
 #include "searchForCRMAccount.h"
@@ -219,7 +218,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.dspDeliveryDateVariancesByItem", tr("by &Item..."), SLOT(sDspPoDeliveryDateVariancesByItem()), reportsDelvVarMenu, "ViewVendorPerformance", NULL, NULL, true , NULL },
     
     { "po.dspRejectedMaterialByVendor", tr("Rejected &Material..."), SLOT(sDspRejectedMaterialByVendor()), reportsMenu, "ViewVendorPerformance", NULL, NULL, true , NULL },
-    { "po.printAnnodizingPurchaseRequests", tr("Print &Annodizing Purchase Requests..."), SLOT(sPrintAnnodizingPurchaseRequests()),  reportsMenu, "ViewPurchaseRequests", NULL, NULL, _metrics->boolean("EnablePrintAnnodizingPurchaseRequests") , NULL },
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "po.voucheringEditList", tr("U&nposted Vouchers..."), SLOT(sVoucheringEditList()), reportsMenu, "MaintainVouchers ViewVouchers", NULL, NULL, true , NULL },
 
@@ -547,11 +545,6 @@ void menuPurchase::sPrintPOForm()
 void menuPurchase::sPrintVendorForm()
 {
   printVendorForm(parent, "", TRUE).exec();
-}
-
-void menuPurchase::sPrintAnnodizingPurchaseRequests()
-{
-  printAnnodizingPurchaseRequests(parent, "", TRUE).exec();
 }
 
 //  Master Information

@@ -15,8 +15,9 @@
 #include <QObject>
 #include <QtScript>
 
+#include "qactionproto.h"
+
 Q_DECLARE_METATYPE(QMenu*)
-//Q_DECLARE_METATYPE(QMenu)
 
 void setupQMenuProto(QScriptEngine *engine);
 QScriptValue constructQMenu(QScriptContext *context, QScriptEngine *engine);
@@ -31,6 +32,7 @@ class QMenuProto : public QObject, public QScriptable
     Q_INVOKABLE QAction *actionAt(const QPoint &pt)	const;
     Q_INVOKABLE QRect    actionGeometry(QAction *act)	const;
     Q_INVOKABLE QAction *activeAction()	                const;
+    Q_INVOKABLE QList<QAction*> actions()               const;
     Q_INVOKABLE QAction *addAction(const QString &text);
     Q_INVOKABLE QAction *addAction(const QIcon &icon, const QString &text);
     Q_INVOKABLE QAction *addAction(const QString &text, const QObject *receiver, const char *member, const QKeySequence &shortcut = 0);

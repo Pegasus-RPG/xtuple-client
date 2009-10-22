@@ -22,7 +22,7 @@ class QGraphicsWidget;
 class QString;
 
 Q_DECLARE_METATYPE(QAction*)
-//Q_DECLARE_METATYPE(QAction)
+Q_DECLARE_METATYPE(QList<QAction*>)
 
 void setupQActionProto(QScriptEngine *engine);
 QScriptValue constructQAction(QScriptContext *context, QScriptEngine *engine);

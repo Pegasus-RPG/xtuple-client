@@ -82,7 +82,6 @@ class menuPurchase : public QObject
 
     void sPrintPOForm();
     void sPrintVendorForm();
-    void sPrintAnnodizingPurchaseRequests();
 
     void sNewVendor();
     void sSearchForVendor();

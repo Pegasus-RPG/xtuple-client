@@ -66,6 +66,14 @@ QAction *QMenuProto::activeAction() const
   return 0;
 }
 
+QList<QAction*> QMenuProto::actions() const
+{
+  QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
+  if (item)
+    return item->actions();
+  return QList<QAction*>();
+}
+
 QAction *QMenuProto::addAction(const QString &text)
 {
   if (DEBUG) qDebug("addAction(QString = %s)", qPrintable(text));
