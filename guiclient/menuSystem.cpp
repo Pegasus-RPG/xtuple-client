@@ -117,16 +117,12 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   windowMenu->setCheckable(TRUE);
 
   cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascade()), windowMenu, true);
-  parent->actions.append( cascade );
 
   tile = new Action( parent, "window.tile", tr("&Tile"), parent->workspace(), SLOT(tile()), windowMenu, true);
-  parent->actions.append( tile );
 
   closeActive = new Action( parent, "window.closeActiveWindow", tr("Close &Active Window"), this, SLOT(sCloseActive()), windowMenu, true);
-  parent->actions.append( closeActive );
 
   closeAll = new Action( parent, "window.closeAllWindows", tr("Close A&ll Windows"), this, SLOT(sCloseAll()), windowMenu, true);
-  parent->actions.append( closeAll );
 
   _rememberPos = new Action( parent, "window.rememberPositionToggle", tr("Remember Position"), this, SLOT(sRememberPositionToggle()), windowMenu, true);
   _rememberPos->setCheckable(true);
@@ -286,25 +282,25 @@ void menuSystem::addActionsToMenu(actionProperties acts[], unsigned int numElems
     }
     else if (acts[i].toolBar != NULL)
     {
-      parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv,
-					  (acts[i].pixmap),
-					  acts[i].toolBar) );
+      new Action( parent,
+                  acts[i].actionName,
+                  acts[i].actionTitle,
+                  this,
+                  acts[i].slot,
+                  acts[i].menu,
+                  acts[i].priv,
+                  (acts[i].pixmap),
+                  acts[i].toolBar) ;
     }
     else
     {
-      parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv ) );
+      new Action( parent,
+                  acts[i].actionName,
+                  acts[i].actionTitle,
+                  this,
+                  acts[i].slot,
+                  acts[i].menu,
+                  acts[i].priv ) ;
     }
   }
 }

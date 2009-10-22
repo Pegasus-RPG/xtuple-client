@@ -192,11 +192,9 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
-  _toolTip = pToolTip;
-
   setIconSet(QIcon(pIcon));
   addTo(pToolBar);
-  setToolTip(_toolTip);
+  setToolTip(pToolTip);
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
@@ -228,20 +226,16 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  _toolTip = pToolTip;
-
   setIconSet(QIcon(pIcon));
   addTo(pToolBar);
-  setToolTip(_toolTip);
+  setToolTip(pToolTip);
 }
 
-void Action::init( QWidget *, const char *pName, const QString &pDisplayName,
+void Action::init( QWidget *, const char *pName, const QString &/*pDisplayName*/,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, const QString & pEnabled )
 {
   setObjectName(pName);
-  _name = pName;
-  _displayName = pDisplayName;
 
   QString hotkey;
   hotkey = _preferences->parent(pName);
@@ -707,8 +701,10 @@ void GUIClient::showEvent(QShowEvent *event)
       sq.exec();
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;
+      bool found_one = false;
       while(sq.next())
       {
+        found_one = true;
         QString script = sq.value("script_source").toString();
         if(!engine)
         {
@@ -726,6 +722,33 @@ void GUIClient::showEvent(QShowEvent *event)
         {
           int line = engine->uncaughtExceptionLineNumber();
           qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+        }
+      }
+      if(found_one)
+      {
+        QList<QMenu*> menulist = findChildren<QMenu*>();
+        for(int m = 0; m < menulist.size(); ++m)
+        {
+          QList<QAction*> actionlist = menulist.at(m)->actions();
+          for(int i = 0; i < actionlist.size(); ++i)
+          {
+            QAction* act = actionlist.at(i);
+            if(!act->objectName().isEmpty())
+            {
+              QString hotkey;
+              hotkey = _preferences->parent(act->objectName());
+              if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
+              {
+                _hotkeyList << hotkey;
+                act->setShortcutContext(Qt::ApplicationShortcut);
+                if (hotkey.left(1) == "C")
+                  act->setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
+
+                else if (hotkey.left(1) == "F")
+                  act->setShortcut(hotkey);
+              }
+            }
+          }
         }
       }
     // END script code
@@ -1150,7 +1173,7 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
       this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());
-    actions.append(action);
+    //actions.append(action);
   }
 }
 

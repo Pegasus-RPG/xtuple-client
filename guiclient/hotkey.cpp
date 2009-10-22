@@ -13,15 +13,8 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a hotkey as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 hotkey::hotkey(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -76,33 +69,34 @@ hotkey::hotkey(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _action->addColumn( tr("Display Name"), -1,  Qt::AlignLeft );
 
   QStringList addedactions;
-  QString dspname;
   XTreeWidgetItem *last = 0;
-  for (ActionSet::iterator action = omfgThis->actions.begin(); action != omfgThis->actions.end(); action++)
+  QList<QMenu*> menulist = omfgThis->findChildren<QMenu*>();
+  for(int m = 0; m < menulist.size(); ++m)
   {
-    if(!addedactions.contains((*action)->name()))
+    QList<QAction*> actionlist = menulist.at(m)->actions();
+    for(int i = 0; i < actionlist.size(); ++i)
     {
-      addedactions.append((*action)->name());
-      last = new XTreeWidgetItem(_action, last, -1,
-				 QVariant((*action)->name()),
-				 QString((*action)->displayName()).remove("&")); 
+      QAction* act = actionlist.at(i);
+      if(!act->objectName().isEmpty())
+      {
+        if(!addedactions.contains(act->objectName()))
+        {
+          addedactions.append(act->objectName());
+          last = new XTreeWidgetItem(_action, last, -1,
+				     QVariant(act->objectName()),
+				     act->text().remove("&")); 
+        }
+      }
     }
   }
   _action->sortItems(0,Qt::AscendingOrder);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 hotkey::~hotkey()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void hotkey::languageChange()
 {
   retranslateUi(this);

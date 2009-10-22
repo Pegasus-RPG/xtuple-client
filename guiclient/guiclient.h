@@ -116,12 +116,8 @@ enum SetResponse
 };
 
 
-class ActionSet;
-
 class Action : public QAction
 {
-  friend class ActionSet;
-
   public:
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
@@ -153,23 +149,10 @@ class Action : public QAction
             const QPixmap &, QWidget *,
             const QString &); 
 
-    inline const QString name()        { return _name;        };
-    inline const QString displayName() { return _displayName; };
-    inline const QString toolTip() { return _toolTip; };
-
-  protected:
-    QString _name;
-    QString _displayName;
-    QString _toolTip;
-
   private:
     void init( QWidget *, const char *, const QString &,
                QObject *, const char *,
                QWidget *, const QString & );
-};
-
-class ActionSet : public QList<Action *>
-{
 };
 
 class GUIClient : public QMainWindow
@@ -227,7 +210,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE QMenuBar *menuBar();
 
     XSqlQuery        _q;
-    ActionSet        actions;
     XSqlQuery        __item;
     int              __itemListSerial;
     XSqlQuery        __cust;

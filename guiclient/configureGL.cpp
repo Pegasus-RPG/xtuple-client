@@ -284,18 +284,9 @@ void configureGL::sSave()
   _metrics->set("AutoCloseARIncident", _closeARIncdt->isChecked());
   
   // GL
-  Action *profitcenter = 0;
-  Action *subaccounts  = 0;
-  Action *companyseg   = 0;
-  for (ActionSet::iterator action = omfgThis->actions.begin(); action != omfgThis->actions.end(); action++)
-  {
-    if((*action)->name() == "gl.companies")
-      companyseg = *action;
-    if((*action)->name() == "gl.profitCenterNumber")
-      profitcenter = *action;
-    if((*action)->name() == "gl.subaccountNumbers")
-      subaccounts = *action;
-  }
+  QAction *profitcenter = omfgThis->findChild<QAction*>("gl.profitCenterNumber");
+  QAction *subaccounts  = omfgThis->findChild<QAction*>("gl.subaccountNumbers");
+  QAction *companyseg   = omfgThis->findChild<QAction*>("gl.companies");
 
   _metrics->set("GLMainSize", _mainSize->value());
 

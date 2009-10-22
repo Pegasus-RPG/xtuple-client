@@ -499,39 +499,39 @@ void menuAccounting::addActionsToMenu(actionProperties acts[], unsigned int numE
     }
     else if ((acts[i].toolBar != NULL) && (acts[i].toolBar != NULL))
     {
-      parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv,
-					  (acts[i].pixmap),
-					  acts[i].toolBar,
-                      acts[i].toolTip) );
+      new Action( parent,
+                  acts[i].actionName,
+                  acts[i].actionTitle,
+                  this,
+                  acts[i].slot,
+                  acts[i].menu,
+                  acts[i].priv,
+                  (acts[i].pixmap),
+                  acts[i].toolBar,
+                  acts[i].toolTip) ;
     }
     else if (acts[i].toolBar != NULL)
     {
-      parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv,
-					  (acts[i].pixmap),
-					  acts[i].toolBar,
-                      acts[i].actionTitle) );
+      new Action( parent,
+                  acts[i].actionName,
+                  acts[i].actionTitle,
+                  this,
+                  acts[i].slot,
+                  acts[i].menu,
+                  acts[i].priv,
+                  (acts[i].pixmap),
+                  acts[i].toolBar,
+                  acts[i].actionTitle);
     }
     else
     {
-      parent->actions.append( new Action( parent,
-					  acts[i].actionName,
-					  acts[i].actionTitle,
-					  this,
-					  acts[i].slot,
-					  acts[i].menu,
-					  acts[i].priv ) );
+      new Action( parent,
+                  acts[i].actionName,
+                  acts[i].actionTitle,
+                  this,
+                  acts[i].slot,
+                  acts[i].menu,
+                  acts[i].priv ) ;
     }
   }
 }
