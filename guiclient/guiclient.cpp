@@ -590,9 +590,12 @@ void GUIClient::initMenuBar()
 
   if(!firstRun)
   {
-    for(int i = 0; i < actions.size(); ++i)
+    QList<QMenu*> menulist = findChildren<QMenu*>();
+    for(int m = 0; m < menulist.size(); ++m)
     {
-      __menuEvaluate(actions.at(i));
+      QList<QAction*> actionlist = menulist.at(m)->actions();
+      for(int i = 0; i < actionlist.size(); ++i)
+        __menuEvaluate(actionlist.at(i));
     }
   }
   else
