@@ -78,8 +78,8 @@ class XTUPLEWIDGETS_EXPORT VendorInfo : public QWidget
     VendorInfo(QWidget *parent, const char *name = 0);
 
     Q_INVOKABLE inline int id()          const { return _vendorNumber->_id;         };
-    inline bool isValid()    const { return _vendorNumber->_valid;      };
-    inline bool isReadOnly() const { return _vendorNumber->isEnabled(); };
+    Q_INVOKABLE inline bool isValid()    const { return _vendorNumber->_valid;      };
+    Q_INVOKABLE inline bool isReadOnly() const { return _vendorNumber->isEnabled(); };
 
     QString defaultNumber()  const { return _default;                   };
     QString fieldName()      const { return _fieldName;                 };
@@ -125,14 +125,14 @@ class XTUPLEWIDGETS_EXPORT VendorCluster : public QWidget
   public:
     VendorCluster(QWidget *, const char * = 0);
 
-    inline int      id()                  { return _vendorNumber->_id;         };
-    inline bool     isValid()             { return _vendorNumber->_valid;      };
+    Q_INVOKABLE inline int      id()                  { return _vendorNumber->_id;         };
+    Q_INVOKABLE inline bool     isValid()             { return _vendorNumber->_valid;      };
     inline QString  defaultNumber() const { return _default;                   };
     inline QString  fieldName()     const { return _fieldName;                 };
     inline QString  number()        const { return _vendorNumber->text();      };
 
-    void setReadOnly(bool);
-    void setType(int);
+    Q_INVOKABLE void setReadOnly(bool);
+    Q_INVOKABLE void setType(int);
     
   public slots:
     void setDataWidgetMap(XDataWidgetMapper* m);
