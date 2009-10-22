@@ -29,6 +29,7 @@
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
 #include "qboxlayoutproto.h"
+#include "qbytearrayproto.h"
 #include "qdialogsetup.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
@@ -119,6 +120,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
   setupQBoxLayoutProto(engine);
+  setupQByteArrayProto(engine);
   setupQDialog(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);

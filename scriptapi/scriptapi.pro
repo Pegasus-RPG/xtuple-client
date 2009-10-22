@@ -23,6 +23,7 @@ HEADERS +=  setupscriptapi.h                    \
             parameterlistsetup.h                \
             qactionproto.h                      \
             qboxlayoutproto.h                   \
+            qbytearrayproto.h                   \
             qdialogsetup.h                      \
             qdomattrproto.h                     \
             qdomcdatasectionproto.h             \
@@ -105,6 +106,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             parameterlistsetup.cpp              \
             qactionproto.cpp                    \
             qboxlayoutproto.cpp                 \
+            qbytearrayproto.cpp                 \
             qdialogsetup.cpp                    \
             qdomattrproto.cpp                   \
             qdomcdatasectionproto.cpp           \
