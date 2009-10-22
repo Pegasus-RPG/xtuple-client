@@ -1,14 +1,24 @@
-/* a completely scripted implementation of voiding previously-created credit card
-   transactions through authorize.net. the window contains a list of transactions
-   available to void, a button to void the currently-selected transaction, and a
-   close button.
+/*
+ * This file is part of the xTuple ERP: PostBooks Edition, a free and
+ * open source Enterprise Resource Planning software suite,
+ * Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including xTuple-specific Exhibits)
+ * is available at www.xtuple.com/CPAL.  By using this software, you agree
+ * to be bound by its terms.
  */
 
-var _ccp          = toolbox.getCreditCardProcessor();
-var _currid       = -1;
+/* a completely scripted implementation of voiding previously-created
+   credit card transactions through authorize.net. the window
+   contains a list of transactions available to void, a button to
+   void the currently-selected transaction, and a close button.
+ */
+
+var _ccp    = toolbox.getCreditCardProcessor();
 if (_ccp == null)
-  toolbox.messageBox("critical", mywindow, "No Credit Card Processor",
-	          "Could not get a credit card processor");
+  QMessageBox.critical(mywindow, qsTr("No Credit Card Processor"),
+                       qsTr("Could not get a credit card processor"));
+var _currid = -1;
 var _transactions = mywindow.findChild("_transactions");
 var _void         = mywindow.findChild("_void");
 
@@ -95,8 +105,8 @@ function sVoid()
     // local error checks
     if (_transactions.currentItem().text("status") == "Voided")
     {
-      toolbox.messageBox("warning", mywindow, "Cannot Void",
-                         "This transaction cannot be voided a second time.");
+      QMessageBox.warning(mywindow, qsTr("Cannot Void"),
+                          qsTr("This transaction cannot be voided a second time."));
       return;
     }
 
@@ -131,21 +141,20 @@ function sVoid()
     {
       if (! anq.value("ccard_active"))
       {
-        toolbox.messageBox("critical", mywindow, "Cannot Void",
-                           _ccp.errorMsg(-10).replace("%1", anq.value("ccard_number_x")));
+        QMessageBox.critical(mywindow, qsTr("Cannot Void"),
+                             _ccp.errorMsg(-10).replace("%1", anq.value("ccard_number_x")));
         return -10;
       }
     }
     else if (anq.lastError().type != 0)
     {
-      toolbox.messageBox("critical", mywindow, "Cannot Void",
-                         "A database error occurred: " + anq.lastError().driverText
-                       + "\n" + anq.lastError().text);
+      QMessageBox.critical(mywindow, qsTr("Cannot Void"),
+                           qsTr("A database error occurred: %1").arg(anq.lastError().text));
       return -1;
     }
     else
     {
-      toolbox.messageBox("critical", mywindow, "Cannot Void", _ccp.errorMsg(-17));
+      QMessageBox.critical(mywindow, qsTr("Cannot Void"), _ccp.errorMsg(-17));
       return -17;
     }
 
@@ -222,12 +231,12 @@ function sHandleResponse(netresponse)
     print("sHandleResponse entered");
     if (netresponse.error())
     {
-      toolbox.messageBox("critical", mywindow, "Error during data transfer",
-                        "<p>There was a network error trying to post the transaction: "
-                      + netresponse.error()
-                      + ". Look up this error code at "
+      QMessageBox.critical(mywindow, qsTr("Error during data transfer"),
+                   qsTr("<p>There was a network error trying to post the "
+                      + "transaction: %1."
+                      + "Look up this error code at "
                       + " <a>http://doc.trolltech.com/4.4/qnetworkreply.html"
-                      + "#NetworkError-enum</a>");
+                      + "#NetworkError-enum</a>").arg(netresponse.error()));
       return;
     }
 
@@ -235,13 +244,13 @@ function sHandleResponse(netresponse)
     var response = netresponse.readAll().toString();
     if (response.match(/^<HTML>/i))
     {
-      toolbox.messageBox("critical", mywindow, "Error returned from A.N",
+      QMessageBox.critical(mywindow, qsTr("Error returned from A.N"),
                          response);
       return;
     }
 
-    // field[N] here corresponds to fieldValue(..., N+1, ...) in the C++
-    // because Authorize.Net uses 1-based arrays, JavaScript uses 0-based arrays, and
+    // field[N] here corresponds to fieldValue(..., N+1, ...) in the C++.
+    // Authorize.Net uses 1-based arrays, JavaScript uses 0-based arrays, and
     // C++ uses 0-based arrays but the C++ function fieldValue translates
     var field = response.split(metrics.value("CCANDelim").length > 0 ?
                                         metrics.value("CCANDelim") : ",");
@@ -249,14 +258,15 @@ function sHandleResponse(netresponse)
   
     if (field[0] == 2)
     {
-      toolbox.messageBox("critical", mywindow, "Declined",
-                         "The void transaction was declined");
+      QMessageBox.critical(mywindow, qsTr("Declined"),
+                           qsTr("The void transaction was declined"));
       return;
     }
     else if (field[0] == 3)
     {
-      toolbox.messageBox("critical", mywindow, "Error",
-                         "The void transaction received an error: " + field[3]);
+      QMessageBox.critical(mywindow, qsTr("Error"),
+                         qsTr("The void transaction received an error: %1")
+                         .arg(field[3]));
       return;
     }
     else if (field[0] == 1)
@@ -265,9 +275,9 @@ function sHandleResponse(netresponse)
       params.approved = "HELDFORREVIEW";
     else
     {
-      toolbox.messageBox("critical", mywindow, "Error",
-                         "The void transaction received an unknown approval value: "
-                       + field[0]);
+      QMessageBox.critical(mywindow, qsTr("Error"),
+                           qsTr("The void transaction received an unknown "
+                              + "approval value: %1").arg(field[0]));
       return;
     }
 
@@ -329,15 +339,15 @@ function sHandleResponse(netresponse)
            params);
     if (ccq.lastError().type > 0)
     {
-      toolbox.messageBox("critical", mywindow, "Query Failed",
-                         "There was an error querying the database: " +
-                         ccq.lastError().databaseText);
+      QMessageBox.critical(mywindow, qsTr("Query Failed"),
+                         qsTr("There was an error querying the database: %1")
+                         .arg(ccq.lastError().text));
       return;
     }
 
-    toolbox.messageBox("information", mywindow, "Transaction Complete",
-                       "The ccpay table has been updated after "
-                     + "completing the Void transaction.");
+    QMessageBox.information(mywindow, qsTr("Transaction Complete"),
+                       qsTr("<p>The ccpay table has been updated after "
+                          + "completing the Void transaction."));
     sPopulateTransactions();
   }
   catch (e)

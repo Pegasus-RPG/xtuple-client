@@ -1,4 +1,20 @@
-#include soap2js
+/*
+ * This file is part of the xTuple ERP: PostBooks Edition, a free and
+ * open source Enterprise Resource Planning software suite,
+ * Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including xTuple-specific Exhibits)
+ * is available at www.xtuple.com/CPAL.  By using this software, you agree
+ * to be bound by its terms.
+ */
+
+debugger;
+
+/* soap2js provides a facility to convert arbitrary SOAP messages and other
+   XML files to a javascript object. elements in the XML become properties
+   of the javascript object, including the full nested structure.
+ */
+include("soap2js");
 
 var _addr       = mywindow.findChild("_addr");
 var _conditions = mywindow.findChild("_conditions");
@@ -7,9 +23,6 @@ var _err        = mywindow.findChild("_err");
 var _netmgr     = new QNetworkAccessManager(mywindow);
 var _output     = mywindow.findChild("_output");
 var _temp       = mywindow.findChild("_temp");
-
-_addr.newId.connect(sSendQuery);
-_netmgr.finished.connect(sGetResponse);
 
 function sSendQuery()
 {
@@ -39,22 +52,25 @@ function sGetResponse(netreply)
   {
     if (netreply.error())
     {
-      toolbox.messageBox("warning", mywindow, "Network Error",
-                         "<p>The request for weather information "
-                       + "returned error "
-                       + netreply.error()
-                       + ".<p>" + netreply.errorString());
+      QMessageBox.warning(mywindow, qsTr("Network Error"),
+                          qsTr("<p>The request for weather information "
+                             + "returned error %1<br>%2")
+                             .arg(netreply.error())
+                             .arg(netreply.errorString()));
       return;
     }
+
     var xmlstring = netreply.readAll();
     _output.setPlainText(xmlstring);
+
     var weather = xml2js(xmlstring);
     var condition = weather.rss.channel.item.yweather_condition;
     if (condition == null)
     {
-      _conditions.text = "N/A";
-      _temp.text       = "N/A";
-      _datetime.text   = "N/A";
+      var na = qsTr("N/A");
+      _conditions.text = na;
+      _temp.text       = na;
+      _datetime.text   = na;
       _err.text        = weather.rss.channel.item.title.xmltext + " " +
                          weather.rss.channel.item.description.xmltext;
     }
@@ -72,3 +88,6 @@ function sGetResponse(netreply)
         + e);
   }
 }
+
+_addr["newId(int)"].connect(sSendQuery);
+_netmgr.finished.connect(sGetResponse);
