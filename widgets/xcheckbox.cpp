@@ -65,7 +65,6 @@ void XCheckBox::setForgetful(bool p)
 
 void XCheckBox::showEvent(QShowEvent * event)
 {
-qDebug() << __PRETTY_FUNCTION__;
   QString pname;
   if(window())
     pname = window()->objectName() + "/";
@@ -81,8 +80,6 @@ qDebug() << __PRETTY_FUNCTION__;
 
 XCheckBox::~XCheckBox()
 {
-qDebug() << __PRETTY_FUNCTION__;
-qDebug() << "  settingsName: " << _settingsName;
   if (!_settingsName.isEmpty() && _x_preferences)
   {
     if (_forgetful)
