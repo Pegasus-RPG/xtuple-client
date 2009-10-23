@@ -165,6 +165,13 @@ bool customCommand::save()
     return false;
   }
 
+  if(_privname->text().trimmed().contains(QRegExp("\\s")))
+  {
+    QMessageBox::warning( this, tr("Cannot Save"),
+      tr("Priv Name may not contain spaces.") );
+    return false;
+  }
+
   if((cNew == _mode) && !_saved)
     q.prepare("INSERT INTO cmd"
               "      (cmd_id, cmd_module, cmd_title, cmd_privname,"
@@ -184,7 +191,7 @@ bool customCommand::save()
   q.bindValue(":cmd_id", _cmdid);
   q.bindValue(":cmd_module", _module->currentText());
   q.bindValue(":cmd_title", _title->text());
-  q.bindValue(":cmd_privname", _privname->text());
+  q.bindValue(":cmd_privname", _privname->text().trimmed());
   if(!_name->text().isEmpty())
     q.bindValue(":cmd_name", _name->text());
   q.bindValue(":cmd_descrip", _description->toPlainText());
