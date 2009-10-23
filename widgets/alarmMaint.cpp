@@ -75,7 +75,7 @@ void alarmMaint::set( const ParameterList & pParams )
   if (valid)
   {
     _source = (enum Alarms::AlarmSources)param.toInt();
-    if ( (Alarms::_alarmMap[_source].ident == "TODO") || (Alarms::_alarmMap[_source].ident == "J") )
+    if ( (QString(Alarms::_alarmMap[_source].ident) == QString("TODO")) || (QString(Alarms::_alarmMap[_source].ident) == QString("J")) )
       _alarmDate->setEnabled(false);
   }
     

@@ -37,8 +37,6 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
     virtual bool    forgetful()      const { return _forgetful; };
     virtual QString fieldName()      const { return _fieldName; };
 
-    Q_INVOKABLE virtual void    setObjectName(const QString &);
-    
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDefaultChecked(bool p)                { _default = p; };
@@ -47,6 +45,8 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
     virtual void setData();
 
   protected:
+    virtual void showEvent(QShowEvent *);
+
     XDataWidgetMapper *_mapper;
     
   private:

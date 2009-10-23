@@ -63,10 +63,9 @@ void XCheckBox::setForgetful(bool p)
     setIcon(QPixmap());    
 }
 
-void XCheckBox::setObjectName(const QString & pName)
+void XCheckBox::showEvent(QShowEvent * event)
 {
-  QCheckBox::setObjectName(pName);
-
+qDebug() << __PRETTY_FUNCTION__;
   QString pname;
   if(window())
     pname = window()->objectName() + "/";
@@ -77,10 +76,13 @@ void XCheckBox::setObjectName(const QString & pName)
     if (!_forgetful)
       setCheckState((Qt::CheckState)(_x_preferences->value(_settingsName + "/checked").toInt()));
   }
+  QCheckBox::showEvent(event);
 }
 
 XCheckBox::~XCheckBox()
 {
+qDebug() << __PRETTY_FUNCTION__;
+qDebug() << "  settingsName: " << _settingsName;
   if (!_settingsName.isEmpty() && _x_preferences)
   {
     if (_forgetful)
