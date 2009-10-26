@@ -19,6 +19,11 @@
 #include <QtDesigner/QDesignerComponents>
 #include <QtDesigner/QDesignerIntegrationInterface>
 #include <QtDesigner>
+#include <QtDesigner/QDesignerFormWindowInterface>
+#include <QtDesigner/QDesignerFormEditorInterface>
+#include <QtDesigner/QDesignerFormWindowManagerInterface>
+#include <QtDesigner/QDesignerPropertyEditorInterface>
+#include <QtDesigner/QDesignerWidgetDataBaseInterface>
 
 // TODO: can we live without this?
 // copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/qdesigner_integration_p.h
@@ -155,6 +160,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
       plugin->initialize(_formeditor);
   }
   QDesignerComponents::initializePlugins(_formeditor);
+  QDesignerComponents::initializeResources();
 
   _actions = new xTupleDesignerActions(this);
 
@@ -215,6 +221,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   // action editor;
 
   _integration = new qdesigner_internal::QDesignerIntegration(_formeditor, this);
+  _formeditor->setIntegration(_integration);
 
   // toolbar creation
 
