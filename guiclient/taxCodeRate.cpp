@@ -171,10 +171,12 @@ void taxCodeRate::sSave()
   }
   q.bindValue(":taxrate_id", _taxrateid);
   q.bindValue(":taxrate_tax_id", _taxId);
+
   if(_percent->isValid())
-    q.bindValue(":taxrate_percent", 0.0);
-  else
     q.bindValue(":taxrate_percent", (_percent->toDouble() / 100));
+  else
+    q.bindValue(":taxrate_percent", 0.0);
+
   q.bindValue(":taxrate_curr_id", _flat->id());
   if(_flat->isEmpty())
     q.bindValue(":taxrate_amount", 0.0);
