@@ -10,60 +10,25 @@
 
 #include "currencies.h"
 
-#include <QVariant>
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+
 #include <parameter.h>
-#include <QWorkspace>
+
 #include "currency.h"
 
-/*
- *  Constructs a currencies as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 currencies::currencies(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_curr, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_curr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-currencies::~currencies()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void currencies::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-#include <QSqlError>
-
-void currencies::init()
-{
-//  statusBar()->hide();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_curr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   if (_privileges->check("MaintainCurrencies"))
   {
@@ -85,6 +50,16 @@ void currencies::init()
   sFillList();
 }
 
+currencies::~currencies()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void currencies::languageChange()
+{
+  retranslateUi(this);
+}
+
 void currencies::sNew()
 {
   bool single = omfgThis->singleCurrency();
@@ -100,22 +75,25 @@ void currencies::sNew()
   if(single && !omfgThis->singleCurrency())
   {
     // Check for the gain/loss and discrep accounts
-    q.prepare("SELECT COALESCE((SELECT TRUE"
-              "                   FROM accnt, metric"
-              "                  WHERE ((accnt_id=metric_value)"
-              "                    AND  (metric_name='CurrencyGainLossAccount'))), FALSE)"
-              "   AND COALESCE((SELECT TRUE"
-              "                   FROM accnt, metric"
-              "                  WHERE ((accnt_id=metric_value)"
-              "                    AND  (metric_name='GLSeriesDiscrepancyAccount'))), FALSE) AS result; ");
+    q.prepare("SELECT COUNT(*) = 2 AS result"
+              "  FROM accnt "
+              " WHERE accnt_id IN (fetchMetricValue('CurrencyGainLossAccount'),"
+              "                    fetchMetricValue('GLSeriesDiscrepancyAccount'));");
     q.exec();
     if(q.first() && q.value("result").toBool() != true)
+    {
       QMessageBox::warning( this, tr("Additional Configuration Required"),
-        tr("Your system is configured to use multiple Currencies, but the\n"
-           "Currency Gain/Loss Account and/or the G/L Series Discrepancy Account\n"
-           "does not appear to be configured correctly. You should define these\n"
-           "Accounts in 'System | Configure Modules | Configure G/L...' before\n"
+        tr("<p>Your system is configured to use multiple Currencies, but the "
+           "Currency Gain/Loss Account and/or the G/L Series Discrepancy Account "
+           "does not appear to be configured correctly. You should define these "
+           "Accounts in 'System | Configure Modules | Configure G/L...' before "
            "posting any transactions in the system.") );
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
@@ -144,30 +122,37 @@ void currencies::sView()
 
 void currencies::sDelete()
 {
-    q.prepare("SELECT curr_base FROM curr_symbol "
-    		"WHERE curr_id = :curr_id");
-    q.bindValue(":curr_id", _curr->id());
-    q.exec();
-    if (q.first() && q.value("curr_base").toBool())
-    {
-	QMessageBox::critical(this,
-			      tr("Cannot delete base currency"),
-			      tr("You cannot delete the base currency."));
-	return;
-    }
-    
-    q.prepare("DELETE FROM curr_symbol WHERE curr_id = :curr_id");
-    q.bindValue(":curr_id", _curr->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    
-    sFillList();
+  q.prepare("SELECT curr_base FROM curr_symbol "
+              "WHERE curr_id = :curr_id");
+  q.bindValue(":curr_id", _curr->id());
+  q.exec();
+  if (q.first() && q.value("curr_base").toBool())
+  {
+      QMessageBox::critical(this,
+                            tr("Cannot delete base currency"),
+                            tr("You cannot delete the base currency."));
+      return;
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  q.prepare("DELETE FROM curr_symbol WHERE curr_id = :curr_id");
+  q.bindValue(":curr_id", _curr->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  sFillList();
 }
 
 void currencies::sFillList()
 {
-  _curr->clear();
   q.prepare( "SELECT *, "
              "	CASE WHEN curr_base = TRUE THEN 'Y' "
              "	ELSE '' END AS flag "
@@ -184,16 +169,16 @@ void currencies::sFillList()
 
 void currencies::sPopulateMenu(QMenu* pMenu)
 {
-    int menuItem;
-    
-    pMenu->insertItem("View...", this, SLOT(sView()), 0);
-    
-    menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-    if (!_privileges->check("MaintainCurrencies"))
-	pMenu->setItemEnabled(menuItem, FALSE);
-    
-    menuItem = pMenu->insertItem("Delete...", this, SLOT(sDelete()), 0);
-    if (!_privileges->check("MaintainCurrencies"))
-	pMenu->setItemEnabled(menuItem, FALSE);
+  QAction *menuItem;
+  
+  menuItem = pMenu->addAction(tr("View..."));
+  connect(menuItem, SIGNAL(triggered()), this, SLOT(sView()));
+  
+  menuItem = pMenu->addAction(tr("Edit..."));
+  connect(menuItem, SIGNAL(triggered()), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainCurrencies"));
+  
+  menuItem = pMenu->addAction(tr("Delete..."));
+  connect(menuItem, SIGNAL(triggered()), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainCurrencies"));
 }
-
