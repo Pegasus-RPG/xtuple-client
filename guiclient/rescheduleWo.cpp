@@ -98,5 +98,10 @@ void rescheduleWo::sReschedule()
       _wo->setFocus();
     }
   }
+  else
+  {
+    QMessageBox::warning( this, tr("Valid Dates Required"),
+      tr("You must specify a valid Start/Due date.") );
+  }
 }
 
