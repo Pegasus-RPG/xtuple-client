@@ -25,11 +25,11 @@ public:
     ~group();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
+    virtual void        reject();
+    virtual SetResponse set(const ParameterList &pParams);
     virtual void sCheck();
     virtual void populate();
     virtual void sSave();
-    virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sModuleSelected(const QString &);
     virtual void sAdd();
     virtual void sAddAll();
@@ -40,8 +40,9 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _grpid;
+    int  _grpid;
+    int  _mode;
+    bool _trapClose;
 
 };
 

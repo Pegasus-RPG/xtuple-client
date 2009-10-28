@@ -10,10 +10,19 @@
 
 #include "group.h"
 
-#include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+
+#include "storedProcErrorLookup.h"
+
+#define DEBUG true
+
+/* TODO: fix transaction handling in this window.
+         currently only cNew is wrapped in a transaction, so the Cancel
+         button really closes the window in edit mode instead of actually
+         canceling the changes.
+ */
 
 group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -42,6 +51,7 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   while (q.next())
     _module->insertItem(q.value("priv_module").toString());
 
+  _trapClose = false;
 }
 
 group::~group()
@@ -82,6 +92,7 @@ enum SetResponse group::set(const ParameterList &pParams)
       }
 
       _mode = cNew;
+      _trapClose = true;
       q.exec("BEGIN;");
       q.prepare( "INSERT INTO grp "
                  "( grp_id, grp_name, grp_descrip)"
@@ -92,9 +103,10 @@ enum SetResponse group::set(const ParameterList &pParams)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         q.exec("ROLLBACK;");
+        _trapClose = false;
         return UndefinedError;
       }
-      
+
       _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
       _name->setFocus();
@@ -124,14 +136,38 @@ enum SetResponse group::set(const ParameterList &pParams)
   return NoError;
 }
 
-void group::closeEvent(QCloseEvent * /*pEvent*/)
+/* override reject() instead of closeEvent() because the QDialog docs
+   say the Esc key calls reject and the close event cannot be ignored
+ */
+void group::reject()
 {
-  if(cNew == _mode)
-  {
-    q.exec("ROLLBACK;");
-  }
+  if (DEBUG)
+    qDebug("group::reject() called with _trapClose = %d", _trapClose);
 
-  reject();
+  if(_trapClose)
+  {
+    XSqlQuery endtxn;
+    switch(QMessageBox::question(this, tr("Save?"),
+                                 tr("<p>Do you wish to save your changes?"),
+                                 QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                 QMessageBox::Yes))
+    {
+      case QMessageBox::Yes:
+        endtxn.exec("COMMIT;");
+        break;
+
+      case QMessageBox::No:
+        endtxn.exec("ROLLBACK;");
+        break;
+
+      case QMessageBox::Cancel:
+      default:
+        break;
+
+    }
+  }
+  
+  XDialog::reject();
 }
 
 void group::sCheck()
@@ -174,8 +210,14 @@ void group::sSave()
   q.bindValue(":grp_name", _name->text());
   q.bindValue(":grp_descrip", _description->text().trimmed());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   q.exec("COMMIT;");
+  _trapClose = false;
   _mode = cEdit;
 
   done(_grpid);
@@ -226,6 +268,21 @@ void group::sAdd()
   q.bindValue(":grp_id", _grpid);
   q.bindValue(":priv_id", _available->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("grantPrivGroup", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -236,6 +293,21 @@ void group::sAddAll()
   q.bindValue(":grp_id", _grpid);
   q.bindValue(":module", _module->currentText());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("grantAllModulePrivGroup", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -246,6 +318,21 @@ void group::sRevoke()
   q.bindValue(":grp_id", _grpid);
   q.bindValue(":priv_id", _granted->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("revokePrivGroup", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -256,6 +343,21 @@ void group::sRevokeAll()
   q.bindValue(":grp_id", _grpid);
   q.bindValue(":module", _module->currentText());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("revokeAllModulePrivGroup", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -296,7 +398,10 @@ void group::populate()
       _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
     }
-
   }
-} 
-
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}

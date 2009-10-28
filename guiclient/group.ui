@@ -521,7 +521,7 @@ to be bound by its terms.</comment>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>group</receiver>
-   <slot>close()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>424</x>
