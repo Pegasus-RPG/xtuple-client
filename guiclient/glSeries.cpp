@@ -20,12 +20,13 @@
 
 #define cPostStandardJournal 0x10
 
+#define DEBUG false
+
 glSeries::glSeries(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  connect(_close,	SIGNAL(clicked()),	this, SLOT(sClose()));
   connect(_delete,	SIGNAL(clicked()),	this, SLOT(sDelete()));
   connect(_edit,	SIGNAL(clicked()),	this, SLOT(sEdit()));
   connect(_new,		SIGNAL(clicked()),	this, SLOT(sNew()));
@@ -368,6 +369,8 @@ void glSeries::sPost()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+
+    omfgThis->sGlSeriesUpdated();
   }
 
   if(cPostStandardJournal == _mode)
@@ -389,26 +392,29 @@ void glSeries::sPost()
   set(params);
 }
 
-void glSeries::sClose()
+void glSeries::reject()
 {
+  if (DEBUG)
+    qDebug("glSeries::reject() entered with _mode %d, topLevelItemCount %d",
+           _mode, _glseries->topLevelItemCount());
   if (cNew == _mode &&
-      (_glseries->topLevelItemCount() <= 0 ||
+      _glseries->topLevelItemCount() > 0 &&
       QMessageBox::question(this, tr("Delete G/L Series?"),
 			    tr("<p>Are you sure you want to delete this G/L "
 			       "Series Entry?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes))
+			    QMessageBox::Yes | QMessageBox::No,
+			    QMessageBox::No) == QMessageBox::Yes)
   {
     q.prepare("SELECT deleteGLSeries(:glsequence);");
     q.bindValue(":glsequence", _glsequence);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-    omfgThis->sGlSeriesUpdated();
   }
 
-  reject();
+  omfgThis->sGlSeriesUpdated();
+
+  XDialog::reject();
 }
 
 void glSeries::sFillList()

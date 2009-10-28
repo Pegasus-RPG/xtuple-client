@@ -26,12 +26,12 @@ public:
     ~glSeries();
 
 public slots:
+    virtual void reject();
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
     virtual void sPost();
-    virtual void sClose();
     virtual void sFillList();
     virtual void sSave();
 

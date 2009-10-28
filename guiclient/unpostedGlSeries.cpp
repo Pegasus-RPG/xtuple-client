@@ -13,8 +13,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
-#include <QVariant>
 
 #include <parameter.h>
 #include <openreports.h>
@@ -52,12 +50,12 @@ unpostedGlSeries::unpostedGlSeries(QWidget* parent, const char* name, Qt::WFlags
 
 unpostedGlSeries::~unpostedGlSeries()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void unpostedGlSeries::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void unpostedGlSeries::sPrint()
