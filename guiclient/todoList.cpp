@@ -38,15 +38,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
 
-  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  _usr->setType(ParameterGroup::ActiveUser);
-  q.prepare("SELECT usr_id "
-	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
+  _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  q.prepare("SELECT current_user;");
   q.exec();
   if (q.first())
   {
-    _usr->setId(q.value("usr_id").toInt());
+    _usr->setUsername(q.value("current_user").toString());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -69,8 +66,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
 	    this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
-  connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
-  connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
+  connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  connect(_all,		SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
+  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
+  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(handlePrivs()));
+  connect(_pattern,	SIGNAL(lostFocus()),	this,	SLOT(sFillList()));
+  connect(_pattern,	SIGNAL(lostFocus),	this,	SLOT(handlePrivs()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -241,7 +242,7 @@ void todoList::handlePrivs()
 				            _privileges->check("MaintainProjects"));
   }
 
-  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+  _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
 		   _privileges->check("ViewOtherTodoLists"));
   _new->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
                    _privileges->check("ViewOtherTodoLists"));
@@ -272,8 +273,8 @@ void todoList::sNew()
   if (_crmAccount->isValid())
     params.append("crmacct_id", _crmAccount->id());
   params.append("mode", "new");
-  if (_usr->isSelected())
-    _usr->appendValue(params);
+  if (_selected->isChecked())
+    params.append("username", _usr->username());
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -393,7 +394,11 @@ void todoList::setParams(ParameterList &params)
     params.append("assignedTo");
   else
     params.append("ownedBy");
-  _usr->appendValue(params);
+  
+  if (_selected->isChecked())
+    params.append("username", _usr->username());
+  else if (_usePattern->isChecked())
+    params.append("usr_pattern", _pattern->text());
 
   if (_duedateGroup->isChecked())
   {

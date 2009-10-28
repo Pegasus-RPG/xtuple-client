@@ -38,11 +38,11 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListTab->layout()->addWidget(_todoList);
   _todoList->findChild<QWidget*>("_contextGroup")->hide();
-  _todoList->findChild<QWidget*>("_usr")->hide();
+  _todoList->findChild<QWidget*>("_usrGroup")->hide();
   _todoList->findChild<QWidget*>("_close")->hide();
   _todoList->findChild<QWidget*>("_startdateGroup")->hide();
   _todoList->findChild<QWidget*>("_duedateGroup")->hide();
-  _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _todoList->findChild<QRadioButton*>("_all")->setChecked(true);
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
   

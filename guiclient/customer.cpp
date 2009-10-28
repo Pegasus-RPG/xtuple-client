@@ -38,13 +38,13 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoListPage->layout()->addWidget(_todoList);
   _todoList->findChild<QWidget*>("_close")->hide();
   _todoList->findChild<QWidget*>("_contextGroup")->hide();
-  _todoList->findChild<QWidget*>("_usr")->hide();
+  _todoList->findChild<QWidget*>("_usrGroup")->hide();
   _todoList->findChild<QWidget*>("_startdateGroup")->hide();
   _todoList->findChild<QWidget*>("_duedateGroup")->hide();
   _todoList->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
   _todoList->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
   _todoList->findChild<XCheckBox*>("_autoUpdate")->hide();
-  _todoList->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _todoList->findChild<QRadioButton*>("_all")->setChecked(true);
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
   
