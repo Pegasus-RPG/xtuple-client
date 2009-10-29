@@ -160,7 +160,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
       plugin->initialize(_formeditor);
   }
   QDesignerComponents::initializePlugins(_formeditor);
-  QDesignerComponents::initializeResources();
+  //QDesignerComponents::initializeResources(); // done elsewhere
 
   _actions = new xTupleDesignerActions(this);
 
