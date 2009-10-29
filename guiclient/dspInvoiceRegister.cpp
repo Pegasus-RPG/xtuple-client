@@ -261,9 +261,7 @@ void dspInvoiceRegister::sFillList()
      "       'curr' AS debit_xtnumericrole,"
      "       'curr' AS credit_xtnumericrole,"
      "       0 AS xtindentrole,"
-     "       gltrans_date AS transdate,"  // qtdisplay role isn't working right?
-     "       1 AS debit_xttotalrole,"
-     "       1 AS credit_xttotalrole "
+     "       gltrans_date AS transdate "  // qtdisplay role isn't working right?
      "FROM gltrans "
      "WHERE ((gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
      " AND (gltrans_source = 'A/R')"
@@ -308,9 +306,7 @@ void dspInvoiceRegister::sFillList()
      "       'curr' AS debit_xtnumericrole,"
      "       'curr' AS credit_xtnumericrole,"
      "       1 AS xtindentrole,"
-     "       NULL AS transdate,"          // qtdisplay role isn't working right?
-     "       0 AS debit_xttotalrole,"
-     "       0 AS credit_xttotalrole "
+     "       NULL AS transdate "          // qtdisplay role isn't working right?
      "FROM gltrans, accnt "
      "WHERE ((gltrans_accnt_id=accnt_id)"
      " AND (gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
@@ -326,7 +322,9 @@ void dspInvoiceRegister::sFillList()
   _gltrans->populate(q, true);
   _gltrans->expandAll();
 
-  // calculate subtotals for debit and credit columns and add rows for them
+  // calculate subtotals and grand total for debit and credit columns and add rows for them
+  double debittotal = 0.0;
+  double credittotal = 0.0;
   for (int i = 0; i < _gltrans->topLevelItemCount(); i++)
   {
     double debitsum = 0.0;
@@ -335,19 +333,24 @@ void dspInvoiceRegister::sFillList()
     for (int j = 0; j < _gltrans->topLevelItem(i)->childCount(); j++)
     {
       item = _gltrans->topLevelItem(i)->child(j);
-      qDebug("in loop @ %d %p", j, item);
+//      qDebug("in loop @ %d %p", j, item);
       if (item)
       {
         debitsum += item->rawValue("debit").toDouble();
         creditsum += item->rawValue("credit").toDouble();
+        debittotal += item->rawValue("debit").toDouble();
+        credittotal += item->rawValue("credit").toDouble();
       }
     }
     if (item)
     {
-      qDebug("adding subtotal %p", item);
+//      qDebug("adding subtotal %p", item);
       item = new XTreeWidgetItem(_gltrans->topLevelItem(i), -1, -1, tr("Subtotal"));
       item->setData(_gltrans->column("debit"),  Qt::EditRole, formatMoney(debitsum));
       item->setData(_gltrans->column("credit"), Qt::EditRole, formatMoney(creditsum));
     }
   }
+  XTreeWidgetItem *item = new XTreeWidgetItem(_gltrans, -1, -1, tr("Total"));
+  item->setData(_gltrans->column("debit"),  Qt::EditRole, formatMoney(debittotal));
+  item->setData(_gltrans->column("credit"), Qt::EditRole, formatMoney(credittotal));
 }
