@@ -1683,6 +1683,10 @@ void salesOrder::sParseShipToNumber()
           else
             _shipToNumber->clear();
       }
+	  else
+	  {
+          populateShipto(shiptoid.value("shipto_id").toInt());
+	  }
     }
   }
   else if (_shiptoid != -1)
