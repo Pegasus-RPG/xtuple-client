@@ -40,6 +40,7 @@ public slots:
     virtual void sViewSo();
     virtual void sViewTo();
     virtual void sViewWo();
+    virtual void sViewPo();
 
 protected slots:
     virtual void languageChange();

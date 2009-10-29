@@ -25,6 +25,7 @@
 #include "salesOrder.h"
 #include "transferOrder.h"
 #include "workOrder.h"
+#include "purchaseOrder.h"
 
 #define ORDERTYPE_COL		0
 #define ORDERNUM_COL		1
@@ -178,6 +179,12 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
   }
 
+  else if (pSelected->text(ORDERTYPE_COL) == "P/O")
+  {
+    menuItem = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+  }
+
 }
 
 void dspRunningAvailability::sFirmOrder()
@@ -287,6 +294,17 @@ void dspRunningAvailability::sViewWo()
   params.append("wo_id", _availability->id());
 
   workOrder *newdlg = new workOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspRunningAvailability::sViewPo()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("pohead_id", _availability->id());
+
+  purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
