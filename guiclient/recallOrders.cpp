@@ -52,7 +52,20 @@ void recallOrders::sRecall()
 {
   if (!checkSitePrivs(_ship->id()))
     return;
-    
+
+  if (_ship->altId() != -1)
+  {    
+    int answer = QMessageBox::question(this, tr("Purge Invoice?"),
+                            tr("<p>There is an unposted Invoice associated "
+                               "this Shipment.  This Invoice will be purged "
+                               "as part of the recall process. <p> "
+                               "OK to continue? "),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No);
+    if (answer == QMessageBox::No)
+      return;
+  }
+
   q.prepare("SELECT recallShipment(:shiphead_id) AS result;");
   q.bindValue(":shiphead_id", _ship->id());
   q.exec();
@@ -83,7 +96,7 @@ void recallOrders::sFillList()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  QString sql = "SELECT DISTINCT shiphead_id, shiphead_shipdate, "
+  QString sql = "SELECT DISTINCT shiphead_id, COALESCE(invchead_id, -1) AS invchead_id, shiphead_shipdate, "
                 "       cohead_number AS number, shiphead_number, cohead_billtoname, "
                 "       shipitem_invoiced "
                 "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id)"
@@ -103,7 +116,7 @@ void recallOrders::sFillList()
                 " ) "
                 "<? if exists(\"MultiWhs\") ?>"
                 "UNION "
-                "SELECT DISTINCT shiphead_id, shiphead_shipdate, "
+                "SELECT DISTINCT shiphead_id, -1 AS invchead_id, shiphead_shipdate, "
                 "       tohead_number AS number, shiphead_number, '' AS cohead_billtoname, "
                 "       false AS shipitem_invoiced "
                 "FROM shiphead, tohead, toitem "
@@ -116,7 +129,7 @@ void recallOrders::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _ship->clear();
-  _ship->populate(q);
+  _ship->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
