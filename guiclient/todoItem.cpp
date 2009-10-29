@@ -32,6 +32,7 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _due->setAllowNullDate(true);
   _assigned->setAllowNullDate(true);
   _completed->setAllowNullDate(true);
+  _priority->setType(XComboBox::IncidentPriority);
 
   _assignedTo->setUsername(omfgThis->username());
   _owner->setUsername(omfgThis->username());
