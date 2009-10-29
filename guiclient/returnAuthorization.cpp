@@ -33,8 +33,6 @@
 #include "dspShipmentsBySalesOrder.h"
 #include "dspSalesOrderStatus.h"
 
-#define TO_RECEIVE_COL 12
-
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -514,21 +512,10 @@ bool returnAuthorization::sSave(bool partial)
 
 void returnAuthorization::sPostReceipts()
 {
-   for (int i = 0; i < _raitem->topLevelItemCount(); i++)
-   {
-     for (int j = 0; j < _raitem->topLevelItem(i)->childCount(); j++)
-     {
-       if ( (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0) ||
-            (_raitem->topLevelItem(i)->child(j)->text(TO_RECEIVE_COL).toFloat() > 0) )
-       {
-         enterPoReceipt::post("RA", _raheadid);
-         sFillList();
-         _mode = cEdit;
-         _cancel->setText("&Close");
-         break;
-       }
-     }
-   }
+   enterPoReceipt::post("RA", _raheadid);
+   sFillList();
+   _mode = cEdit;
+   _cancel->setText("&Close");
 }
 
 void returnAuthorization::sSaveClick()
