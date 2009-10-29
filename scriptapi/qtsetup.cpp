@@ -647,7 +647,11 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("XButton1", QScriptValue(engine, Qt::XButton1), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("XButton2", QScriptValue(engine, Qt::XButton2), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
+/* Designer problem -- this line causes problems with the embedded designer
+                       and testing has shown that it is not required as the conversion
+                       appear to work correctly without it.
   qScriptRegisterMetaType(engine, OrientationtoScriptValue,	OrientationfromScriptValue);
+*/
   widget.setProperty("Horizontal", QScriptValue(engine, Qt::Horizontal), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Vertical", QScriptValue(engine, Qt::Vertical), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
