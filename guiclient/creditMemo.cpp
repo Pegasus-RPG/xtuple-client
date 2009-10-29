@@ -531,9 +531,11 @@ void creditMemo::sPopulateCustomerInfo()
                      "       cust_commprcnt,"
                      "       cust_taxzone_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
-                     "       cust_ffshipto, cust_ffbillto "
-                     "FROM custinfo LEFT OUTER JOIN"
-		     "     cntct ON (cust_cntct_id=cntct_id) "
+                     "       cust_ffshipto, cust_ffbillto, "
+                     "       COALESCE(shipto_id, -1) AS shiptoid "
+                     "FROM custinfo LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
+					 "              LEFT OUTER JOIN shipto ON ((shipto_cust_id=cust_id) "
+					 "                                     AND (shipto_default)) "
                      "WHERE (cust_id=:cust_id);" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
@@ -560,11 +562,14 @@ void creditMemo::sPopulateCustomerInfo()
 
         _billtoName->setEnabled(ffBillTo);
         _billToAddr->setEnabled(ffBillTo);
+	  
+        if ((cNew == _mode) && (query.value("shiptoid").toInt() != -1))
+          populateShipto(query.value("shiptoid").toInt());
       }
       else if (query.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
     else
@@ -572,12 +577,12 @@ void creditMemo::sPopulateCustomerInfo()
       _salesRep->setCurrentIndex(-1);
       _taxzone->setId(-1);
       _custtaxzoneid	= -1;
-    }
 
-    _shipToName->setEnabled(_ffShipto);
-    _shipToNumber->clear();
-    _shipToName->clear();
-    _shipToAddr->clear();
+      _shipToName->setEnabled(_ffShipto);
+      _shipToNumber->clear();
+      _shipToName->clear();
+      _shipToAddr->clear();
+    }
   }
 }
 
