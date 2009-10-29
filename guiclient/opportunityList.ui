@@ -13,15 +13,15 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
-    <height>599</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Opportunity List</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
      <property name="margin">
       <number>12</number>
@@ -30,26 +30,6 @@ to be bound by its terms.</comment>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="0">
-          <widget class="CRMAcctCluster" name="_crmAccount">
-           <property name="label">
-            <string>CRM Account:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="ParameterGroup" name="_usr">
-           <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
-           </property>
-           <property name="fixedSize">
-            <bool>false</bool>
-           </property>
-           <property name="type">
-            <enum>ParameterGroup::User</enum>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="1">
           <widget class="QGroupBox" name="_dates">
            <property name="title">
@@ -120,6 +100,100 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
+         <item row="2" column="0">
+          <widget class="QGroupBox" name="_crmAccountGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="CRMAcctCluster" name="_crmAccount">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="label">
+               <string>CRM Account:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QGroupBox" name="_usrGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <property name="verticalSpacing">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QRadioButton" name="_all">
+                <property name="text">
+                 <string>All Users</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>128</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="_selected">
+                <property name="text">
+                 <string>Selected</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="UsernameCluster" name="_usr">
+                <property name="label">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QRadioButton" name="_usePattern">
+                <property name="text">
+                 <string>Pattern</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XLineEdit" name="_pattern">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -129,8 +203,8 @@ to be bound by its terms.</comment>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>48</width>
-           <height>0</height>
+           <width>5</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -155,9 +229,15 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="XCheckBox" name="_more">
+          <widget class="QPushButton" name="_more">
            <property name="text">
             <string>More</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -288,9 +368,20 @@ to be bound by its terms.</comment>
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
+   <class>UsernameCluster</class>
+   <extends>QWidget</extends>
+   <header>usernamecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -302,18 +393,23 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_search</tabstop>
   <tabstop>_showInactive</tabstop>
+  <tabstop>_crmAccount</tabstop>
   <tabstop>_optype</tabstop>
   <tabstop>_opsource</tabstop>
   <tabstop>_opstage</tabstop>
-  <tabstop>_usr</tabstop>
+  <tabstop>_all</tabstop>
+  <tabstop>_selected</tabstop>
+  <tabstop>_usePattern</tabstop>
+  <tabstop>_pattern</tabstop>
   <tabstop>_targetDates</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_more</tabstop>
   <tabstop>_list</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_print</tabstop>
  </tabstops>
  <resources/>
  <connections/>

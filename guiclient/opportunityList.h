@@ -42,7 +42,6 @@ class opportunityList : public XWidget, public Ui::opportunityList
 
   private:
     int		_mode;
-    int		_myUsrId;
 };
 
 #endif // OPPORTUNITYLIST_H

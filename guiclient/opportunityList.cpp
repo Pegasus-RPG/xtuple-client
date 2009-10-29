@@ -25,24 +25,16 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-  
-//  _crmAccount->hide();
 
   _targetDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _targetDates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
   _targetDates->setStartCaption(tr("First Target Date:"));
   _targetDates->setEndCaption(tr("Last Target Date:"));
 
-  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  q.prepare("SELECT usr_id "
-	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
-  q.exec();
+  _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  q.exec("SELECT current_user;");
   if (q.first())
-  {
-    _myUsrId = q.value("usr_id").toInt();
-    _usr->setId(_myUsrId);
-  }
+    _usr->setUsername(q.value("current_user").toString());
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -56,17 +48,20 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_search,		SIGNAL(lostFocus()),	this,   SLOT(sFillList()));
   connect(_targetDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_opsource,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_opstage,		SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_optype,		SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_opstage,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_optype,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList())); 
+  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
+  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_list,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_list,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-  connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
-
-  sHandleMore();
+  connect(_more,        SIGNAL(clicked()), this, SLOT(sHandleMore()));
+  connect(_usePattern,  SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
 
   if(_privileges->check("MaintainOpportunities"))
   {
@@ -95,6 +90,10 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _list->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false, "f_currency" );
   _list->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_target_date" );
   _list->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
+  
+  _more->setChecked(_preferences->boolean("opListShowAll"));
+  sHandleMore();
+  _search->setFocus();
 }
 
 void opportunityList::languageChange()
@@ -149,7 +148,7 @@ enum SetResponse opportunityList::set(const ParameterList& pParams)
   param = pParams.value("run", &valid);
   if (valid)
   {
-    connect(_usr, SIGNAL(updated()),	this,	SLOT(sFillList()));
+    connect(_usr, SIGNAL(newId(int)),	this,	SLOT(sFillList()));
     sFillList();
   }
 
@@ -158,6 +157,7 @@ enum SetResponse opportunityList::set(const ParameterList& pParams)
 
 void opportunityList::sClose()
 {
+  _preferences->set("opListShowAll", _more->isChecked());
   close();
 }
 
@@ -165,7 +165,7 @@ void opportunityList::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
-  if (_usr->isSelected())
+  if (_selected->isChecked())
     params.append("usr_id", _usr->id());
   if (_crmAccount->isValid())
     params.append("crmacct_id",_crmAccount->id());
@@ -258,7 +258,12 @@ void opportunityList::setParams(ParameterList &params)
     _opsource->appendValue(params);
     _opstage->appendValue(params);
   }
-  _usr->appendValue(params);
+  
+  if (_selected->isChecked())
+    params.append("username", _usr->username());
+  else if (_usePattern->isChecked())
+    params.append("usr_pattern", _pattern->text());
+    
   _targetDates->appendValue(params);
   
   if(!_search->text().trimmed().isEmpty())
@@ -300,6 +305,7 @@ void opportunityList::sFillList()
 
 void opportunityList::sHandleMore()
 {
+  _crmAccountGroup->setVisible(_more->isChecked());
   _opsource->setVisible(_more->isChecked());
   _opstage->setVisible(_more->isChecked());
   _optype->setVisible(_more->isChecked());

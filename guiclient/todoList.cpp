@@ -39,12 +39,9 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
 
   _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  q.prepare("SELECT current_user;");
-  q.exec();
+  q.exec("SELECT current_user;");
   if (q.first())
-  {
     _usr->setUsername(q.value("current_user").toString());
-  }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -68,10 +65,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
   connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
   connect(_all,		SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
+  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
   connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
   connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(handlePrivs()));
-  connect(_pattern,	SIGNAL(lostFocus()),	this,	SLOT(sFillList()));
-  connect(_pattern,	SIGNAL(lostFocus),	this,	SLOT(handlePrivs()));
+  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
+  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(handlePrivs()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));

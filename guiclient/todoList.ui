@@ -30,6 +30,9 @@ to be bound by its terms.</comment>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <layout class="QGridLayout" name="gridLayout_7">
+         <property name="spacing">
+          <number>12</number>
+         </property>
          <item row="0" column="0" colspan="2">
           <widget class="CRMAcctCluster" name="_crmAccount"/>
          </item>
@@ -476,6 +479,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>278</x>
      <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_usePattern</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_pattern</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>203</y>
     </hint>
    </hints>
   </connection>

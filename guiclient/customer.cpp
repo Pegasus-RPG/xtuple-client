@@ -61,9 +61,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _opportunitiesPage->layout()->addWidget(_oplist);
   _oplist->findChild<QWidget*>("_close")->hide();
-  _oplist->findChild<QWidget*>("_usr")->hide();
+  _oplist->findChild<QWidget*>("_usrGroup")->hide();
   _oplist->findChild<QWidget*>("_dates")->hide();
-  _oplist->findChild<ParameterGroup*>("_usr")->setState(ParameterGroup::All);
+  _oplist->findChild<QWidget*>("_more")->hide();
+  _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
+  _oplist->findChild<QRadioButton*>("_all")->setChecked(true);
   _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
   
   _quotes = new quotes(this, "quotes", Qt::Widget);

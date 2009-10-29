@@ -260,14 +260,14 @@ bool opportunity::save(bool partial)
               "       ophead_optype_id, ophead_probability_prcnt,"
               "       ophead_amount, ophead_curr_id, ophead_target_date,"
               "       ophead_actual_date,"
-              "       ophead_notes) "
+              "       ophead_notes, ophead_active) "
               "VALUES(:ophead_name, :ophead_crmacct_id,"
               "       :ophead_owner_username,"
               "       :ophead_opstage_id, :ophead_opsource_id,"
               "       :ophead_optype_id, :ophead_probability_prcnt,"
               "       :ophead_amount, :ophead_curr_id, :ophead_target_date,"
               "       :ophead_actual_date,"
-              "       :ophead_notes);" );
+              "       :ophead_notes, :ophead_active);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE ophead"
               "   SET ophead_name=:ophead_name,"
@@ -281,11 +281,13 @@ bool opportunity::save(bool partial)
               "       ophead_curr_id=:ophead_curr_id,"
               "       ophead_target_date=:ophead_target_date,"
               "       ophead_actual_date=:ophead_actual_date,"
-              "       ophead_notes=:ophead_notes"
+              "       ophead_notes=:ophead_notes,"
+              "       ophead_active=:ophead_active"
               " WHERE (ophead_id=:ophead_id); ");
 
   q.bindValue(":ophead_id", _opheadid);
   q.bindValue(":ophead_name", _name->text());
+  q.bindValue(":ophead_active",	QVariant(_active->isChecked()));
   if (_crmacct->id() > 0)
     q.bindValue(":ophead_crmacct_id", _crmacct->id());
   if(_owner->isValid())
@@ -350,7 +352,7 @@ void opportunity::populate()
             "       ophead_probability_prcnt, ophead_amount,"
             "       COALESCE(ophead_curr_id, basecurrid()) AS curr_id,"
             "       ophead_target_date, ophead_actual_date,"
-            "       ophead_notes"
+            "       ophead_notes, ophead_active"
             "  FROM ophead"
             " WHERE(ophead_id=:ophead_id); ");
   q.bindValue(":ophead_id", _opheadid);
@@ -358,6 +360,7 @@ void opportunity::populate()
   if(q.first())
   {
     _name->setText(q.value("ophead_name").toString());
+    _active->setChecked(q.value("ophead_active").toBool());
     _crmacct->setId(q.value("ophead_crmacct_id").toInt());
     _owner->setUsername(q.value("ophead_owner_username").toString());
 
