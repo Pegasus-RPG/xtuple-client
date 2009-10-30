@@ -138,6 +138,7 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
 
   connect(formwm, SIGNAL(activeFormWindowChanged(QDesignerFormWindowInterface*)),
           this,   SLOT(sActiveFormWindowChanged(QDesignerFormWindowInterface*)));
+  sActiveFormWindowChanged(formwm->activeFormWindow());
 }
 
 void xTupleDesignerActions::sActiveFormWindowChanged(QDesignerFormWindowInterface *pwindow)
@@ -287,11 +288,13 @@ bool xTupleDesignerActions::sSaveToDB()
                "    uiform_source=:uiform_source "
                "WHERE (uiform_id=:uiform_id);" );
 
+  QString source = _designer->source();
+
   q.bindValue(":uiform_id",      _designer->formId());
   q.bindValue(":uiform_name",    _designer->name());
   q.bindValue(":uiform_order",   _designer->order());
   q.bindValue(":uiform_enabled", _designer->formEnabled());
-  q.bindValue(":uiform_source",  _designer->source());
+  q.bindValue(":uiform_source",  source);
   q.bindValue(":uiform_notes",   _designer->notes());
 
   q.exec();
@@ -301,7 +304,7 @@ bool xTupleDesignerActions::sSaveToDB()
     return false;
   }
 
-  _designer->setSource(_designer->source());
+  _designer->setSource(source);
   _designer->formwindow()->setDirty(false);
   return true;
 }
@@ -335,11 +338,12 @@ bool xTupleDesignerActions::sSaveFile()
     return false;
   }
 
+  QString source = _designer->source();
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
-  ts << _designer->source();
+  ts << source;
   file.close();
-  _designer->setSource(_designer->source());
+  _designer->setSource(source);
   _designer->formwindow()->setDirty(false);
 
   settings.setValue("LastDirectory", fi.path());
