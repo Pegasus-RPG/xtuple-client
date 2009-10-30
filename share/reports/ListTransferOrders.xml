@@ -51,14 +51,16 @@
        ) ON (shipitem_orderitem_id=toitem_id)
  WHERE ((toitem_tohead_id=tohead_id)
    AND  (toitem_status&lt;>'X')
+&lt;? if exists("tohead_status") ?>
+   AND (tohead_status=&lt;? value("tohead_status") ?>)
+&lt;? elseif exists("excludeClosed") ?>
+   AND (tohead_status &lt;> 'C')
+&lt;? endif ?>
 &lt;? if exists("src_warehous_id") ?>
    AND  (tohead_src_warehous_id=&lt;? value("src_warehous_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("dest_warehous_id") ?>
    AND  (tohead_dest_warehous_id=&lt;? value("dest_warehous_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("tohead_status") ?>
-   AND (tohead_status=&lt;? value("tohead_status") ?>)
 &lt;? endif ?>
 )
 GROUP BY tohead_number, tohead_srcname, tohead_trnsname, tohead_destname,
