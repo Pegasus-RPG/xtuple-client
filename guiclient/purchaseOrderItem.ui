@@ -1399,7 +1399,10 @@ to be bound by its terms.</comment>
   <tabstop>_warehouse</tabstop>
   <tabstop>_nonInventoryItem</tabstop>
   <tabstop>_expcat</tabstop>
+  <tabstop>_ordered</tabstop>
+  <tabstop>_received</tabstop>
   <tabstop>_taxtype</tabstop>
+  <tabstop>_taxRecoverable</tabstop>
   <tabstop>_unitPrice</tabstop>
   <tabstop>_extendedPrice</tabstop>
   <tabstop>_freight</tabstop>
@@ -1413,9 +1416,6 @@ to be bound by its terms.</comment>
   <tabstop>_minOrderQty</tabstop>
   <tabstop>_orderQtyMult</tabstop>
   <tabstop>_invVendorUOMRatio</tabstop>
-  <tabstop>_earliestDate</tabstop>
-  <tabstop>_manufName</tabstop>
-  <tabstop>_manufItemNumber</tabstop>
   <tabstop>_manufItemDescrip</tabstop>
   <tabstop>_notesButton</tabstop>
   <tabstop>_commentsButton</tabstop>
@@ -1424,6 +1424,9 @@ to be bound by its terms.</comment>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_earliestDate</tabstop>
+  <tabstop>_manufItemNumber</tabstop>
+  <tabstop>_manufName</tabstop>
  </tabstops>
  <resources/>
  <connections>
