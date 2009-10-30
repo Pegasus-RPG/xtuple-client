@@ -331,6 +331,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _menuBar = 0;
   _activeWindow = 0;
   _shown = false;
+  _shuttingDown = false;
 
   _databaseURL = pDatabaseURL;
   _username = pUsername;
@@ -514,8 +515,13 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
 GUIClient::~GUIClient()
 {
+  QApplication::closeAllWindows();
+
   errorLogListener::destroy();
   //omfgThis = 0;
+
+  // Close the database connection
+  QSqlDatabase::database().close();
 }
 
 bool GUIClient::singleCurrency()
@@ -672,14 +678,13 @@ void GUIClient::saveToolbarPositions()
 
 void GUIClient::closeEvent(QCloseEvent *event)
 {
+  _shuttingDown = true;
+
   saveToolbarPositions();
 
   // save main window size for next login
   xtsettingsSetValue("GUIClient/geometry/pos", pos());
   xtsettingsSetValue("GUIClient/geometry/size", size());
-
-  // Close the database connection
-  QSqlDatabase::database().close();
 
   event->accept();
 }

@@ -24,11 +24,14 @@ public:
     voucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~voucher();
 
+    Q_INVOKABLE void enableWindowModifiedSetting();
+
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSave();
+    virtual bool sSave();
     virtual void sHandleVoucherNumber();
     virtual void sPopulate();
+    virtual void sDataChanged();
     virtual void sDistributions();
     virtual void sDistributeLine();
     virtual void sClear();
@@ -48,7 +51,7 @@ public slots:
     virtual void sPopulateDistDate();
     virtual void sPopulateDueDate();
     virtual void sView();
-	virtual void saveDetail();
+    virtual void saveDetail();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

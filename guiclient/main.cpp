@@ -570,10 +570,10 @@ int main(int argc, char *argv[])
   }
 // END code for updating locale settings
 
+  QObject::connect(&app, SIGNAL(aboutToQuit()), &app, SLOT(closeAllWindows()));
   if (omfgThis->_singleWindow.isEmpty())
   {
     omfgThis->setAttribute(Qt::WA_DeleteOnClose);
-    QObject::connect(omfgThis, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
     omfgThis->show();
   }
   // keep this synchronized with GUIClient and user.ui.h

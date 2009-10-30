@@ -29,7 +29,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_distributions, SIGNAL(clicked()), this, SLOT(sDistributions()));
   connect(_distributeline, SIGNAL(clicked()), this, SLOT(sDistributeLine()));
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
@@ -81,6 +81,8 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" ); 
+
+  setWindowModified(false);
 }
 
 voucher::~voucher()
@@ -135,6 +137,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
+      enableWindowModifiedSetting();
     }
     else if (param.toString() == "edit")
     {
@@ -188,12 +191,13 @@ enum SetResponse voucher::set(const ParameterList &pParams)
   {
     _voheadid = param.toInt();
     populate();
+    enableWindowModifiedSetting();
   }
 
   return NoError;
 }
 
-void voucher::sSave()
+bool voucher::sSave()
 {
   if (! _poNumber->isValid())
   {
@@ -201,7 +205,7 @@ void voucher::sSave()
                            tr("<p>You must enter an PO Number before you may "
                               "save this Voucher.") );
     _poNumber->setFocus();
-    return;
+    return false;
   }
 
   if (!_invoiceDate->isValid())
@@ -210,7 +214,7 @@ void voucher::sSave()
                            tr("<p>You must enter an Invoice Date before you "
                               "may save this Voucher.") );
     _invoiceDate->setFocus();
-    return;
+    return false;
   }
 
   if (!_dueDate->isValid())
@@ -219,7 +223,7 @@ void voucher::sSave()
                            tr("<p>You must enter a Due Date before you may "
                               "save this Voucher.") );
     _dueDate->setFocus();
-    return;
+    return false;
   }
 
   if (!_distributionDate->isValid())
@@ -228,7 +232,7 @@ void voucher::sSave()
                            tr("<p>You must enter a Distribution Date before "
                               "you may save this Voucher.") );
     _distributionDate->setFocus();
-    return;
+    return false;
   }
 
   if (_invoiceNum->text().trimmed().length() == 0)
@@ -237,7 +241,7 @@ void voucher::sSave()
                            tr("<p>You must enter a Vendor Invoice Number "
                               "before you may save this Voucher.") );
     _invoiceNum->setFocus();
-    return;
+    return false;
   }
   else
   {
@@ -257,11 +261,11 @@ void voucher::sSave()
                              tr("<p>A Voucher for this Vendor has already been "
                                 "entered with the same Vendor Invoice Number. "
                                 "Are you sure you want to use this number again?" ),
-                              QMessageBox::Yes,
-                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+                              QMessageBox::No | QMessageBox::Yes,
+                              QMessageBox::No) == QMessageBox::No)
       {
         _invoiceNum->setFocus();
-        return;
+        return false;
       }
     }
   }
@@ -298,15 +302,21 @@ void voucher::sSave()
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
   q.bindValue(":vohead_notes", _notes->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
 
   omfgThis->sVouchersUpdated();
+  setWindowModified(false);
 
   _voheadid = -1;
 
   if (cNew != _mode)
   {
     close();
-    return;
+    return true;
   }
 
   _poNumber->setId(-1);
@@ -326,6 +336,7 @@ void voucher::sSave()
   ParameterList params;
   params.append("mode", "new");
   set(params);
+  return true;
 }
 
 void voucher::sHandleVoucherNumber()
@@ -798,6 +809,30 @@ void voucher::clear()
 
 void voucher::closeEvent(QCloseEvent *pEvent)
 {
+  if (isWindowModified())
+  {
+    QMessageBox::StandardButtons buttons = omfgThis->shuttingDown() ?
+                      QMessageBox::Yes | QMessageBox::No :
+                      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+
+    switch (QMessageBox::question(this, tr("Save Voucher?"),
+                                  tr("Do you want to save this voucher?"),
+                                  buttons, QMessageBox::Yes))
+    {
+      case QMessageBox::Yes:
+        if (! sSave() && ! omfgThis->shuttingDown())
+          pEvent->ignore();
+        else if (_mode == cNew)
+          break; // so we can clean up
+        return;
+      case QMessageBox::Cancel:
+        pEvent->ignore();
+        return;
+      default:
+        break;
+    }
+  }
+
   if (_mode == cNew)
   {
     q.prepare("SELECT deleteVoucher(:vohead_id) AS result;");
@@ -807,8 +842,8 @@ void voucher::closeEvent(QCloseEvent *pEvent)
     {
       // TODO: change deleteVoucher to return INT instead of current BOOLEAN
       if (! q.value("result").toBool())
-	systemError(this, tr("Error deleting temporary Voucher."),
-		    __FILE__, __LINE__);
+        systemError(this, tr("Error deleting temporary Voucher."),
+                    __FILE__, __LINE__);
     }
     else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -917,4 +952,25 @@ void voucher::saveDetail()
       return;
     }
   }
+}
+
+void voucher::enableWindowModifiedSetting()
+{
+  connect(_amountToDistribute,     SIGNAL(valueChanged()), this, SLOT(sDataChanged()));
+  connect(_distributionDate,SIGNAL(newDate(const QDate&)), this, SLOT(sDataChanged()));
+  connect(_dueDate,         SIGNAL(newDate(const QDate&)), this, SLOT(sDataChanged()));
+  connect(_flagFor1099,             SIGNAL(toggled(bool)), this, SLOT(sDataChanged()));
+  connect(_invoiceDate,     SIGNAL(newDate(const QDate&)), this, SLOT(sDataChanged()));
+  connect(_invoiceNum,SIGNAL(textChanged(const QString&)), this, SLOT(sDataChanged()));
+  connect(_notes,                   SIGNAL(textChanged()), this, SLOT(sDataChanged()));
+  connect(_poNumber,                   SIGNAL(newId(int)), this, SLOT(sDataChanged()));
+  connect(_reference, SIGNAL(textChanged(const QString&)), this, SLOT(sDataChanged()));
+  connect(_taxzone,                    SIGNAL(newID(int)), this, SLOT(sDataChanged()));
+  connect(_terms,                      SIGNAL(newID(int)), this, SLOT(sDataChanged()));
+  connect(_vendor,                          SIGNAL(newId(int)), this, SLOT(sDataChanged()));
+}
+
+void voucher::sDataChanged()
+{
+  setWindowModified(true);
 }

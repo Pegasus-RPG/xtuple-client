@@ -225,8 +225,9 @@ class GUIClient : public QMainWindow
 
     QString _singleWindow;
 
-    Q_INVOKABLE void launchBrowser(QWidget*, const QString &);
-    Q_INVOKABLE QWidget * myActiveWindow();
+    Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);
+    Q_INVOKABLE     QWidget *myActiveWindow();
+    Q_INVOKABLE inline bool  shuttingDown() { return _shuttingDown; }
 
     void loadScriptGlobals(QScriptEngine * engine);
 
@@ -381,6 +382,7 @@ class GUIClient : public QMainWindow
     QFont *_fixedFont;
 
     bool _shown;
+    bool _shuttingDown;
 };
 extern GUIClient *omfgThis;
 
