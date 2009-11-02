@@ -620,7 +620,8 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("MaskInColor", QScriptValue(engine, Qt::MaskInColor), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("MaskOutColor", QScriptValue(engine, Qt::MaskOutColor), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  qScriptRegisterMetaType(engine, MatchFlagtoScriptValue,	MatchFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, MatchFlagtoScriptValue, MatchFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, MatchFlagstoScriptValue,MatchFlagsfromScriptValue);
   widget.setProperty("MatchExactly", QScriptValue(engine, Qt::MatchExactly), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("MatchFixedString", QScriptValue(engine, Qt::MatchFixedString), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("MatchContains", QScriptValue(engine, Qt::MatchContains), QScriptValue::ReadOnly | QScriptValue::Undeletable);
@@ -990,6 +991,7 @@ Q_DECLARE_METATYPE(enum Qt::KeyboardModifier);
 Q_DECLARE_METATYPE(enum Qt::LayoutDirection);
 Q_DECLARE_METATYPE(enum Qt::MaskMode);
 Q_DECLARE_METATYPE(enum Qt::MatchFlag);
+Q_DECLARE_METATYPE(Qt::MatchFlags);
 Q_DECLARE_METATYPE(enum Qt::Modifier);
 Q_DECLARE_METATYPE(enum Qt::MouseButton);
 Q_DECLARE_METATYPE(enum Qt::Orientation);
@@ -1190,6 +1192,11 @@ QScriptValue MaskModetoScriptValue(QScriptEngine *engine, const enum Qt::MaskMod
 }
 
 QScriptValue MatchFlagtoScriptValue(QScriptEngine *engine, const enum Qt::MatchFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue MatchFlagstoScriptValue(QScriptEngine *engine, const Qt::MatchFlags &p)
 {
   return QScriptValue(engine, (int)p);
 }
@@ -1501,6 +1508,11 @@ void MaskModefromScriptValue(const QScriptValue &obj, enum Qt::MaskMode &p)
 void MatchFlagfromScriptValue(const QScriptValue &obj, enum Qt::MatchFlag &p)
 {
   p = (enum Qt::MatchFlag)obj.toInt32();
+}
+
+void MatchFlagsfromScriptValue(const QScriptValue &obj, Qt::MatchFlags &p)
+{
+  p = (Qt::MatchFlags)obj.toInt32();
 }
 
 void ModifierfromScriptValue(const QScriptValue &obj, enum Qt::Modifier &p)

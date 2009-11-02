@@ -51,6 +51,7 @@ QScriptValue KeyboardModifiertoScriptValue(QScriptEngine *engine, const enum Qt:
 QScriptValue LayoutDirectiontoScriptValue(QScriptEngine *engine, const enum Qt::LayoutDirection &p);
 QScriptValue MaskModetoScriptValue(QScriptEngine *engine, const enum Qt::MaskMode &p);
 QScriptValue MatchFlagtoScriptValue(QScriptEngine *engine, const enum Qt::MatchFlag &p);
+QScriptValue MatchFlagstoScriptValue(QScriptEngine *engine, const Qt::MatchFlags &p);
 QScriptValue ModifiertoScriptValue(QScriptEngine *engine, const enum Qt::Modifier &p);
 QScriptValue MouseButtontoScriptValue(QScriptEngine *engine, const enum Qt::MouseButton &p);
 QScriptValue OrientationtoScriptValue(QScriptEngine *engine, const enum Qt::Orientation &p);
@@ -113,6 +114,7 @@ void KeyboardModifierfromScriptValue(const QScriptValue &obj, enum Qt::KeyboardM
 void LayoutDirectionfromScriptValue(const QScriptValue &obj, enum Qt::LayoutDirection &p);
 void MaskModefromScriptValue(const QScriptValue &obj, enum Qt::MaskMode &p);
 void MatchFlagfromScriptValue(const QScriptValue &obj, enum Qt::MatchFlag &p);
+void MatchFlagsfromScriptValue(const QScriptValue &obj, Qt::MatchFlags &p);
 void ModifierfromScriptValue(const QScriptValue &obj, enum Qt::Modifier &p);
 void MouseButtonfromScriptValue(const QScriptValue &obj, enum Qt::MouseButton &p);
 void OrientationfromScriptValue(const QScriptValue &obj, enum Qt::Orientation &p);
