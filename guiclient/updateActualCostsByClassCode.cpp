@@ -146,9 +146,7 @@ void updateActualCostsByClassCode::sUpdate()
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__));
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
