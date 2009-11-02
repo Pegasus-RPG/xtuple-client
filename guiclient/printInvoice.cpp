@@ -33,6 +33,7 @@ printInvoice::printInvoice(QWidget* parent, const char* name, bool modal, Qt::WF
   _captive = FALSE;
   _setup   = FALSE;
   _alert   = TRUE;
+  _printer = new QPrinter(QPrinter::HighResolution);
 
   _cust->setReadOnly(TRUE);
 
@@ -62,7 +63,13 @@ printInvoice::printInvoice(QWidget* parent, const char* name, bool modal, Qt::WF
 printInvoice::~printInvoice()
 {
   if (_captive)	// see sPrint()
-    orReport::endMultiPrint(&_printer);
+    orReport::endMultiPrint(_printer);
+
+  if (_printer)
+  {
+    delete _printer;
+    _printer = 0;
+  }
 }
 
 void printInvoice::languageChange()
@@ -143,7 +150,7 @@ void printInvoice::sPrint()
     if (dosetup)
     {
       bool userCanceled = false;
-      if (orReport::beginMultiPrint(&_printer, userCanceled) == false)
+      if (orReport::beginMultiPrint(_printer, userCanceled) == false)
       {
 	if(!userCanceled)
           systemError(this, tr("Could not initialize printing system for multiple reports."));
@@ -171,14 +178,14 @@ void printInvoice::sPrint()
           
       else
       {
-        if (report.print(&_printer, dosetup))
+        if (report.print(_printer, dosetup))
           dosetup = FALSE;
         else
         {
           systemError( this, tr("A Printing Error occurred at printInvoice::%1.")
                              .arg(__LINE__) );
 	  if (!_captive)
-	    orReport::endMultiPrint(&_printer);
+	    orReport::endMultiPrint(_printer);
           return;
         }
 
@@ -244,7 +251,7 @@ void printInvoice::sPrint()
     if (_captive)
       accept();
     else
-      orReport::endMultiPrint(&_printer);
+      orReport::endMultiPrint(_printer);
   }
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

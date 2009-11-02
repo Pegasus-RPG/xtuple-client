@@ -42,11 +42,11 @@ protected slots:
     virtual void languageChange();
 
 private:
-    bool _captive;
-    bool _setup;
-    bool _alert;
-    QPrinter _printer;
-    int _invcheadid;
+    bool      _alert;
+    bool      _captive;
+    int       _invcheadid;
+    QPrinter *_printer;
+    bool      _setup;
 
 };
 
