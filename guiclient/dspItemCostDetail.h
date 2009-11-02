@@ -25,17 +25,14 @@ public:
     dspItemCostDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostDetail();
 
-    virtual bool setParams(ParameterList &);
+    Q_INVOKABLE virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams);
+    virtual void sFillList();
+    virtual void sFillList(int pItemid, bool pLocale);
     virtual void sPopulate();
     virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * menuThis );
-    virtual void sViewBomitem();
-    virtual void sViewMaterialCosting();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocale );
 
 protected slots:
     virtual void languageChange();

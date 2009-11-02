@@ -17,6 +17,7 @@
 #include <openreports.h>
 
 #include "bomItem.h"
+#include "mqlutil.h"
 
 dspItemCostDetail::dspItemCostDetail(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -113,7 +114,7 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
 
 void dspItemCostDetail::sPopulate()
 {
-  q.prepare( "SELECT costelem_id, costelem_type "
+  q.prepare( "SELECT costelem_id, costelem_type, costelem_type "
              "FROM costelem, itemcost "
              "WHERE ( (itemcost_costelem_id=costelem_id)"
              " AND (itemcost_lowlevel)"
@@ -169,34 +170,6 @@ void dspItemCostDetail::sPrint()
     report.reportError(this);
 }
 
-void dspItemCostDetail::sPopulateMenu(QMenu *menuThis)
-{
-  menuThis->insertItem(tr("View BOM Item..."),                  this, SLOT(sViewBomitem()),        0 );
-  menuThis->insertItem(tr("View Material Costing Detail..."),   this, SLOT(sViewMaterialCosting()), 0 );
-}
-
-void dspItemCostDetail::sViewBomitem()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("bomitem_id", _bom->id());
-
-  bomItem newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void dspItemCostDetail::sViewMaterialCosting()
-{
-  ParameterList params;
-  params.append("item_id", _bom->altId());
-  params.append("costtype", "Material");
-
-  dspItemCostDetail *newdlg = new dspItemCostDetail();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void dspItemCostDetail::sFillList()
 {
   sFillList(-1, TRUE);
@@ -211,86 +184,7 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql(
-      "SELECT id, item.item_id, seqnumber, item_number,"
-      "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-      "       qtyper,       'qtyper' AS qtyper_xtnumericrole,"
-      "       scrap,        'scrap' AS scrap_xtnumericrole,"
-      "       cost,         'cost' AS cost_xtnumericrole,"
-      "       extendedcost, 'cost' AS extendedcost_xtnumericrole,"
-      "       0 AS extendedcost_xttotalrole "
-      "FROM uom, item, ("
-      "<? if exists(\"useBOM\") ?>"
-      "     SELECT bomitem_id AS id, bomitem_seqnumber AS seqnumber,"
-      "            itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
-      "            bomitem_scrap AS scrap,"
-      "            bomitem_item_id AS item_id,"
-      "  <? if exists(\"standardCost\") ?>"
-      "            itemcost_stdcost AS cost,"
-      "            (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
-      "                          bomitem_qtyper * (1 + bomitem_scrap)) *"
-      "             itemcost_stdcost) AS extendedcost "
-      "  <? elseif exists(\"actualCost\") ?>"
-      "            itemcost_actcost AS cost,"
-      "            (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
-      "                          bomitem_qtyper * (1 + bomitem_scrap)) *"
-      "             itemcost_actcost) AS extendedcost "
-      "  <? endif ?>"
-      "    FROM bomitem, itemcost, costelem "
-      "  <? if exists(\"includeRevisionControl\") ?>"
-      "    LEFT OUTER JOIN rev ON ((bomitem_rev_id=rev_id) AND (COALESCE(rev_status, 'A')='A')) "
-      "  <? endif ?>"
-      "    WHERE ((CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))"
-      "     AND (itemcost_item_id=bomitem_item_id)"
-      "     AND (itemcost_costelem_id=costelem_id)"
-      "     AND (bomitem_parent_item_id=<? value(\"item_id\") ?>)"
-      "     AND (costelem_id=<? value(\"costelem_id\") ?>) ) "
-      "<? elseif exists(\"useBBOM\") ?>"
-      "     SELECT bbomitem_id AS id, bbomitem_seqnumber AS seqnumber,"
-      "            bbomitem_qtyper AS qtyper,"
-      "            bbomitem_costabsorb AS scrap,"
-      "            bbomparent_parent_item_id AS item_id,"
-      "  <? if exists(\"standardCost\") ?>"
-      "            itemcost_stdcost AS cost,"
-      "            (itemcost_stdcost / bbomitem_qtyper *"
-      "             bbomitem_costabsorb) AS extendedcost "
-      "  <? elseif exists(\"actualCost\") ?>"
-      "            itemcost_actcost AS cost,"
-      "            (itemcost_actcost / bbomitem_qtyper *"
-      "             bbomitem_costabsorb) AS extendedcost "
-      "  <? endif ?>"
-      "    FROM bbomitem, itemcost "
-      "    WHERE ((CURRENT_DATE BETWEEN bbomitem_effective AND (bbomitem_expires-1))"
-      "     AND (itemcost_item_id=bbomitem_parent_item_id)"
-      "     AND (itemcost_costelem_id=<? value(\"costelem_id\") ?>)"
-      "     AND (bbomitem_item_id=<? value(\"item_id\") ?>) )"
-      "    UNION"
-      "    SELECT source.bbomitem_id, source.bbomitem_seqnumber AS seqnumber,"
-      "           source.bbomitem_qtyper, target.bbomitem_costabsorb,"
-      "           item_id,"
-      "  <? if exists(\"standardCost\") ?>"
-      "           itemcost_stdcost AS cost,"
-      "           (itemcost_stdcost * source.bbomitem_qtyper /"
-      "            target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost "
-      "  <? elseif exists(\"actualCost\") ?>"
-      "           itemcost_actcost AS cost,"
-      "           (itemcost_actcost * source.bbomitem_qtyper /"
-      "            target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost "
-      "  <? endif ?>"
-      "    FROM item, itemcost, bbomitem AS target, bbomitem AS source "
-      "    WHERE ( (source.bbomitem_parent_item_id=target.bbomitem_parent_item_id)"
-      "     AND (CURRENT_DATE BETWEEN source.bbomitem_effective AND (source.bbomitem_expires-1))"
-      "     AND (CURRENT_DATE BETWEEN target.bbomitem_effective AND (target.bbomitem_expires-1))"
-      "     AND (source.bbomitem_item_id=itemcost_item_id)"
-      "     AND (source.bbomitem_item_id=item_id)"
-      "     AND (item_type='Y')"
-      "     AND (target.bbomitem_item_id=<? value(\"item_id\") ?>)"
-      "     AND (itemcost_costelem_id=<? value(\"costelem_id\") ?>) )"
-      "<? endif ?>"
-      ") AS data "
-      "WHERE ((data.item_id=item.item_id)"
-      "   AND (item_inv_uom_id=uom_id)) "
-      "ORDER BY seqnumber;");
+  MetaSQLQuery mql = mqlLoad("itemcostdetail", "detail");
 
   q = mql.toQuery(params);
   _bom->populate(q, true);
