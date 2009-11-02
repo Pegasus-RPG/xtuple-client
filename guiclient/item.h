@@ -31,6 +31,7 @@ public:
     static void editItem( int pId );
     static void viewItem( int pId );
     virtual bool checkSitePrivs( int itemsiteid );
+    Q_INVOKABLE virtual int id() { return _itemid; }
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
