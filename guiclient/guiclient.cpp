@@ -81,6 +81,8 @@
 
 #include "setupscriptapi.h"
 
+#define CHECK_REGISTERED false
+
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
 #include <windows.h>
@@ -833,6 +835,7 @@ void GUIClient::sTick()
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
 
+#if CHECK_REGISTERED
       if (_metrics->value("Application") == "PostBooks")
       {
         if(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes")
@@ -852,6 +855,7 @@ void GUIClient::sTick()
           }
         }
       }
+#endif
     }
 
     __intervalCount++;
