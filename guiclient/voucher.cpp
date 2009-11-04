@@ -184,7 +184,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
   param = pParams.value("pohead_id", &valid);
   if (valid)
-    _poNumber->setId(param.toInt());
+    _poNumber->setId(param.toInt(), "PO");
 
   param = pParams.value("vohead_id", &valid);
   if (valid)
@@ -777,7 +777,7 @@ void voucher::populate()
   if (vohead.first())
   {
     _voucherNumber->setText(vohead.value("vohead_number").toString());
-    _poNumber->setId(vohead.value("vohead_pohead_id").toInt());
+    _poNumber->setId(vohead.value("vohead_pohead_id").toInt(), "PO");
     _taxzone->setId(vohead.value("vohead_taxzone_id").toInt());
     _terms->setId(vohead.value("vohead_terms_id").toInt());
     _amountToDistribute->set(vohead.value("vohead_amount").toDouble(),
