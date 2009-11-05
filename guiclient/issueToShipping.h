@@ -37,6 +37,7 @@ public slots:
     virtual void sCatchToheadid( int pToheadid );
     virtual void sCatchToitemid( int porderitemid );
     virtual void sCatchWoid( int pWoid );
+    virtual void sHandleButtons();
     virtual void sIssueAllBalance();
     virtual void sIssueLineBalance();
     virtual void sIssueStock();

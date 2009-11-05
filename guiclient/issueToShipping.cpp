@@ -35,6 +35,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   connect(_order,       SIGNAL(valid(bool)), this, SLOT(sFillList()));
   connect(_returnStock, SIGNAL(clicked()), this, SLOT(sReturnStock()));
   connect(_bcFind, SIGNAL(clicked()), this, SLOT(sBcFind()));
+  connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
@@ -112,6 +113,14 @@ enum SetResponse issueToShipping::set(const ParameterList &pParams)
   return NoError;
 }
 
+void issueToShipping::sHandleButtons()
+{
+  if (_soitem->currentItem()->rawValue("atshipping").toDouble() > 0)
+    _returnStock->setEnabled(true);
+  else
+    _returnStock->setEnabled(false);
+}
+ 
 void issueToShipping::sCatchSoheadid(int pSoheadid)
 {
   _order->setId(pSoheadid, "SO");
