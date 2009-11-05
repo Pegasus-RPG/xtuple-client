@@ -445,7 +445,7 @@ void itemAvailabilityWorkbench::sFillListInvhist()
 
 void itemAvailabilityWorkbench::sFillListCosted()
 {
-  if (! _item->isValid())
+  if (! _item->isValid() || _item->itemType() == "R")
     return;
 
   MetaSQLQuery mql( "SELECT bomdata_bomwork_id AS id,"
