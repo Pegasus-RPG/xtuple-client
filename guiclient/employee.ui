@@ -963,53 +963,5 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>_charass</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_deleteCharass</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>336</x>
-     <y>747</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>435</x>
-     <y>747</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_charass</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_editCharass</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>336</x>
-     <y>747</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>435</x>
-     <y>747</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_charass</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_editCharass</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>336</x>
-     <y>747</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>435</x>
-     <y>747</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

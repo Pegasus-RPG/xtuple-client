@@ -193,6 +193,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
   {
     connect(_charass,SIGNAL(valid(bool)), _deleteCharass, SLOT(setEnabled(bool)));
     connect(_charass,SIGNAL(valid(bool)), _editCharass, SLOT(setEnabled(bool)));
+    connect(_charass,SIGNAL(itemSelected(int)), _editCharass, SLOT(animateClick()));
     connect(_groups, SIGNAL(valid(bool)), _detachGroup, SLOT(setEnabled(bool)));
     _attachGroup->setEnabled(true);
     if (empGroup::userHasPriv(cEdit))
