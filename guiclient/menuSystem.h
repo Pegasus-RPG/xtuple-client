@@ -84,6 +84,7 @@ class menuSystem : public QObject
     void sCurrencies();
     void sExchangeRates();
     void sCountries();
+    void sStates();
     void sLocales();
     void sCommentTypes();
     void sAccountNumbers();

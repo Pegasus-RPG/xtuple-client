@@ -19,6 +19,8 @@
 
 #include "addresscluster.h"
 
+#define DEBUG false
+
 void AddressCluster::init()
 {
     _titleSingular = tr("Address");
@@ -55,12 +57,12 @@ void AddressCluster::init()
 #else
     _city->setMinimumWidth(85);
 #endif
-    _number->hide();
+    if (! DEBUG)
+      _number->hide();
     _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cityLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _stateLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _state->setEditable(true);
-    _country->setEditable(true);
     _country->setMaximumWidth(250);
     _postalcodeLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _countryLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -104,9 +106,11 @@ void AddressCluster::init()
     connect(_addr2,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_addr3,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_city,      SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
-    connect(_state,     SIGNAL(editTextChanged(const QString&)), this, SIGNAL(changed()));
+    connect(_state, SIGNAL(editTextChanged(const QString&)), this, SIGNAL(changed()));
+    connect(_state,                      SIGNAL(newID(int)), this, SIGNAL(changed()));
     connect(_postalcode,SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
-    connect(_country,   SIGNAL(editTextChanged(const QString&)), this, SIGNAL(changed()));
+    connect(_country,                    SIGNAL(newID(int)), this, SIGNAL(changed()));
+    connect(_country,                    SIGNAL(newID(int)), this, SLOT(populateStateComboBox()));
 
     setFocusProxy(_addr1);
     setFocusPolicy(Qt::StrongFocus);
@@ -128,12 +132,43 @@ void AddressCluster::populateStateComboBox()
   if(_x_metrics == 0)
     return;
 
+  QString tmpstate = _state->currentText();
+  if (DEBUG)
+    qDebug("%s::populateStateComboBox() entered country %d/%s tmp %s",
+           (objectName().isEmpty() ? "AddressCluster":qPrintable(objectName())),
+           _country->id(), qPrintable(_country->currentText()),
+           qPrintable(tmpstate));
   _state->clear();
-  XSqlQuery state;
-  state.prepare("SELECT DISTINCT -1, addr_state, addr_state AS state "
-                "FROM addr ORDER BY state;");
-  state.exec();
-  _state->populate(state);
+
+  if (_country->id() >= 0)
+  {
+    MetaSQLQuery state("SELECT DISTINCT state_id,"
+                       "       CASE WHEN state_abbr IS NULL THEN state_name"
+                       "            WHEN TRIM(state_abbr) = '' THEN state_name"
+                       "            ELSE state_abbr END,"
+                       "       CASE WHEN state_abbr IS NULL THEN state_name"
+                       "            WHEN TRIM(state_abbr) = '' THEN state_name"
+                       "            ELSE state_abbr END"
+                       "  FROM state"
+                       " WHERE (state_country_id=<? value(\"country_id\") ?>) "
+                       "ORDER BY 2;");
+    ParameterList params;
+    params.append("country_id", _country->id());
+
+    XSqlQuery stateq = state.toQuery(params);
+    _state->populate(stateq);
+  }
+
+  _state->setEditable(_state->findText(tmpstate, Qt::MatchExactly) < 0 ||
+                      _state->count() <= 1);
+  if (_state->isEditable())
+    _state->setEditText(tmpstate);
+  else
+    _state->setText(tmpstate);
+  if (DEBUG)
+    qDebug("%s::populateStateComboBox() returning id %d, text %s, tmpstate %s",
+           (objectName().isEmpty() ? "AddressCluster":qPrintable(objectName())),
+         _state->id(), qPrintable(_state->currentText()), qPrintable(tmpstate));
 }
 
 void AddressCluster::populateCountryComboBox()
@@ -149,6 +184,8 @@ void AddressCluster::populateCountryComboBox()
                   "FROM country ORDER BY country_name;");
   country.exec();
   _country->populate(country);
+  if (! _x_metrics->value("DefaultAddressCountry").isEmpty())
+    _country->setText(_x_metrics->value("DefaultAddressCountry"));
 }
 
 void AddressCluster::setNumber(QString pNumber)
@@ -165,6 +202,7 @@ void AddressCluster::setNumber(QString pNumber)
                                           .arg(__LINE__),
                                   address.lastError().databaseText()); 
 }
+
 void AddressCluster::setId(const int pId)
 {
   if (pId == _id)
@@ -183,56 +221,69 @@ void AddressCluster::silentSetId(const int pId)
     }
     else
     {
-        clear();
-        XSqlQuery idQ;
-        idQ.prepare(_query + " WHERE addr_id = :id;");
-        idQ.bindValue(":id", pId);
-        idQ.exec();
-        if (idQ.first())
+      clear();
+      XSqlQuery idQ;
+      idQ.prepare(_query + " WHERE addr_id = :id;");
+      idQ.bindValue(":id", pId);
+      idQ.exec();
+      if (idQ.first())
+      {
+        _id = pId;
+        _valid = true;
+        _number->setText(idQ.value("addr_number").toString());
+        _addr1->setText(idQ.value("addr_line1").toString());
+        _addr2->setText(idQ.value("addr_line2").toString());
+        _addr3->setText(idQ.value("addr_line3").toString());
+        _city->setText(idQ.value("addr_city").toString());
+        _postalcode->setText(idQ.value("addr_postalcode").toString());
+
+        /* set country before state.
+           otherwise populateStateComboBox will clear the old state */
+        _country->setText(idQ.value("addr_country").toString());
+
+        if (_state->findText(idQ.value("addr_state").toString(),
+                             Qt::MatchExactly) >= 0)
+          _state->setText(idQ.value("addr_state").toString());
+        else // invalid state?
         {
-            _id = pId;
-            _valid = true;
-	    _number->setText(idQ.value("addr_number").toString());
-            _addr1->setText(idQ.value("addr_line1").toString());
-            _addr2->setText(idQ.value("addr_line2").toString());
-            _addr3->setText(idQ.value("addr_line3").toString());
-            _city->setText(idQ.value("addr_city").toString());
-            _postalcode->setText(idQ.value("addr_postalcode").toString());
-            _state->setEditText(idQ.value("addr_state").toString());
-            _country->setEditText(idQ.value("addr_country").toString());
-            _active->setChecked(idQ.value("addr_active").toBool());
-            _notes = idQ.value("addr_notes").toString();
-
-            if (_mapper->model())
-            {
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1)), _addr1->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2)), _addr2->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3)), _addr3->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city)), _city->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state)), _state->currentText());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode)), _postalcode->text());
-               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country)), _country->currentText());    
-            }
-
-            c_number     = _number->text();
-            c_addr1      = _addr1->text();
-            c_addr2      = _addr2->text();
-	    c_addr3      = _addr3->text();
-	    c_city       = _city->text();
-	    c_state      = _state->currentText();
-	    c_postalcode = _postalcode->text();
-	    c_country    = _country->currentText();
-	    c_active     = _active->isChecked();
-	    c_notes      = _notes;;
+          _country->setId(-1);
+          _state->setEditable(true);
+          _state->setEditText(idQ.value("addr_state").toString());
         }
-        else if (idQ.lastError().type() != QSqlError::NoError)
-            QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                          .arg(__FILE__)
-                                          .arg(__LINE__),
-                                  idQ.lastError().databaseText());
-    }
+
+        _active->setChecked(idQ.value("addr_active").toBool());
+        _notes = idQ.value("addr_notes").toString();
+
+        if (_mapper->model())
+        {
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1)), _addr1->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2)), _addr2->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3)), _addr3->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city)), _city->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state)), _state->currentText());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode)), _postalcode->text());
+           _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country)), _country->currentText());    
+        }
+
+        c_number     = _number->text();
+        c_addr1      = _addr1->text();
+        c_addr2      = _addr2->text();
+        c_addr3      = _addr3->text();
+        c_city       = _city->text();
+        c_state      = _state->currentText();
+        c_postalcode = _postalcode->text();
+        c_country    = _country->currentText();
+        c_active     = _active->isChecked();
+        c_notes      = _notes;
+      }
+      else if (idQ.lastError().type() != QSqlError::NoError)
+          QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                        .arg(__FILE__)
+                                        .arg(__LINE__),
+                                idQ.lastError().databaseText());
+  }
 
     // _parsed = TRUE;
 }
@@ -242,7 +293,6 @@ void AddressCluster::clear()
   _id = -1;
   _valid = false;
 
-  populateStateComboBox();
   populateCountryComboBox();
 
   // reset cache
@@ -260,9 +310,7 @@ void AddressCluster::clear()
   _addr2->clear();
   _addr3->clear();
   _city->clear();
-  _state->clearEditText();
   _postalcode->clear();
-  _country->clearEditText();
   _active->setChecked(c_active);
   _selected = false;
 }
@@ -297,7 +345,8 @@ int AddressCluster::save(enum SaveFlags flag)
       _addr1->text() == "" && _addr2->text() == "" &&
       _addr3->text() == "" && _city->text() == "" &&
       _state->currentText() == "" && _postalcode->text() == "" &&
-      _country->currentText() == "")
+      (_country->currentText() == "" || (_x_metrics && _country->currentText()==_x_metrics->value("DefaultAddressCountry")))
+     )
   {
     silentSetId(-1);
     return 0;

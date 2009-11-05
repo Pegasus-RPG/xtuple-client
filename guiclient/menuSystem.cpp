@@ -62,6 +62,7 @@
 #include "packages.h"
 #include "reports.h"
 #include "scripts.h"
+#include "states.h"
 #include "uiforms.h"
 
 #include "fixACL.h"
@@ -175,20 +176,25 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configureGL",	tr("&Accounting..."),	SLOT(sConfigureGL()),	configModulesMenu,	"ConfigureGL",	NULL,	NULL,	true	},
 
   //  Master Information
-    { "menu",				tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	"true",						NULL,	NULL,	true	},
-    { "sys.databaseInformation",	tr("&Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	"ConfigDatabaseInfo",	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",					NULL,	NULL,	true	},
+    { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	"true",			NULL,	NULL,	true	},
+    { "sys.databaseInformation",tr("&Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	"ConfigDatabaseInfo",	NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	"MaintainImages",	NULL,	NULL,	true	},
     { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	"MaintainForms",	NULL,	NULL,	true	},
     { "sys.labelForms",		tr("&Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	"MaintainForms",	NULL,	NULL,	true	},
     { "sys.calendars",		tr("C&alendars..."),	SLOT(sCalendars()),	masterInfoMenu,	"MaintainCalendars",	NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.currencies",		tr("Curre&ncies..."),	SLOT(sCurrencies()),	masterInfoMenu,	"CreateNewCurrency",	NULL,	NULL,	true	},
     { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),masterInfoMenu,	"MaintainCurrencyRates ViewCurrencyRates",
-																	NULL,	NULL,	true	},
+															NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.encryption",         tr("Encr&yption..."),   SLOT(sConfigureEncryption()), masterInfoMenu, "ConfigureCC ConfigureEncryption",
-                                                                                                                                        NULL,	NULL,	true	},
-    { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	"ConfigureCC",	NULL,	NULL,	true	},
+                                                                                                                        NULL,	NULL,	true	},
+    { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	"ConfigureCC",	        NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	"MaintainCountries",	NULL,	NULL,	true	},
+    { "sys.states",	tr("&States and Provinces..."),	SLOT(sStates()),	masterInfoMenu,	"MaintainStates",	NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	"MaintainLocales",	NULL,	NULL,	true	},
     { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
@@ -526,6 +532,11 @@ void menuSystem::sExchangeRates()
 void menuSystem::sCountries()
 {
   omfgThis->handleNewWindow(new countries());
+}
+
+void menuSystem::sStates()
+{
+  omfgThis->handleNewWindow(new states());
 }
 
 void menuSystem::sLocales()

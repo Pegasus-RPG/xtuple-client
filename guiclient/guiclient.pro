@@ -303,7 +303,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                shipVias.ui shipVia.ui siteType.ui siteTypes.ui splitReceipt.ui                        \
                standardJournal.ui standardJournals.ui                                                 \
                standardJournalGroup.ui standardJournalGroupItem.ui standardJournalGroups.ui           \
-               standardJournalItem.ui subaccount.ui subaccounts.ui subAccntTypes.ui subAccntType.ui   \
+               standardJournalItem.ui                                                                 \
+               state.ui states.ui                                                                     \
+               subaccount.ui subaccounts.ui subAccntTypes.ui subAccntType.ui                          \
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
                syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
@@ -607,7 +609,9 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                shipVias.h shipVia.h siteType.h siteTypes.h splitReceipt.h                             \
                standardJournal.h standardJournals.h                                                   \
                standardJournalGroup.h standardJournalGroupItem.h standardJournalGroups.h              \
-               standardJournalItem.h subaccount.h subaccounts.h subAccntTypes.h subAccntType.h        \
+               standardJournalItem.h                                                                  \
+               state.h states.h                                                                       \
+               subaccount.h subaccounts.h subAccntTypes.h subAccntType.h                              \
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
                syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
@@ -919,7 +923,9 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                shipVias.cpp shipVia.cpp siteType.cpp siteTypes.cpp splitReceipt.cpp                   \
                standardJournal.cpp standardJournals.cpp                                               \
                standardJournalGroup.cpp standardJournalGroupItem.cpp standardJournalGroups.cpp        \
-               standardJournalItem.cpp subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp \
+               standardJournalItem.cpp                                                                \
+               state.cpp states.cpp                                                                   \
+               subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp                      \
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
                syncCompanies.cpp                                                                      \
                systemMessage.cpp                                                                      \
