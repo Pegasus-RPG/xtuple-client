@@ -3272,8 +3272,9 @@ void salesOrder::setViewMode()
   _shipToList->hide();
   _edit->setText(tr("View"));
   _comments->setType(Comments::SalesOrder);
-  _documents->setType(Documents::SalesOrder);
   _comments->setReadOnly(true);
+  _documents->setType(Documents::SalesOrder);
+  _documents->setReadOnly(true);
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(FALSE);
