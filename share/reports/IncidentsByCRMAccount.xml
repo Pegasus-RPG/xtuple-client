@@ -38,10 +38,11 @@ FROM crmacct
                      &lt;? if not exists("showClosed") ?>
                        AND (incdt_status != 'L')
                      &lt;? endif ?>)
-      LEFT OUTER JOIN todoitem ON (todoitem_incdt_id=incdt_id)
+      LEFT OUTER JOIN todoitem ON (todoitem_incdt_id=incdt_id AND
+                                  (todoitem_status IS NULL OR todoitem_status != 'C'))
       LEFT OUTER JOIN incdtseverity ON (incdt_incdtseverity_id = incdtseverity_id)
       LEFT OUTER JOIN incdtpriority ON (incdt_incdtpriority_id = incdtpriority_id)
-WHERE ((todoitem_status IS NULL OR todoitem_status != 'C')
+WHERE (TRUE
 &lt;? if exists("crmacct_id") ?>
   AND (crmacct_id=&lt;? value("crmacct_id") ?>)
 &lt;? endif ?>
