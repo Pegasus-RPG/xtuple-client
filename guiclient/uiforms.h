@@ -29,6 +29,7 @@ public slots:
     virtual void sDelete();
     virtual void sFillList();
     virtual void sTest();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();

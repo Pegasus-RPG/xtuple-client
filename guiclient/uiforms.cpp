@@ -29,6 +29,8 @@ uiforms::uiforms(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_test, SIGNAL(clicked()), this, SLOT(sTest()));
+  
+  connect(_uiform, SIGNAL(newId(int)), this, SLOT(sHandleButtons()));
 
   _uiform->addColumn(tr("Name"),   _itemColumn, Qt::AlignLeft,  true, "uiform_name");
   _uiform->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "uiform_notes");
@@ -97,13 +99,19 @@ void uiforms::sDelete()
 
 void uiforms::sFillList()
 {
-  q.exec("SELECT uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled,"
-         "       CASE WHEN nspname='public' THEN ''"
-         "            ELSE nspname END AS nspname"
-         "  FROM uiform, pg_class, pg_namespace"
+  q.exec(" SELECT uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled,"
+         "        CASE WHEN nspname='public' THEN ''"
+         "             ELSE nspname END AS nspname,"
+         "        CASE WHEN (pkghead_id IS NULL) THEN 0"
+         "             ELSE 1 END AS xtindentrole"
+         " FROM uiform, pg_class, pg_namespace"
+         "   LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
          " WHERE ((uiform.tableoid=pg_class.oid)"
          "   AND  (relnamespace=pg_namespace.oid))"
-         " ORDER BY uiform_name, uiform_order, uiform_id;" );
+         " UNION "
+         " SELECT -1, pkghead_name, pkghead_descrip, NULL, NULL, pkghead_name, 0"
+         "   FROM pkghead"
+         " ORDER BY nspname, xtindentrole, uiform_name, uiform_order, uiform_id;" );
   _uiform->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -147,4 +155,14 @@ void uiforms::sTest()
   wnd->setCentralWidget(ui);
 
   omfgThis->handleNewWindow(wnd);
+}
+
+void uiforms::sHandleButtons()
+{
+    if (_uiform->id() < 0)
+    {
+        _delete->setEnabled(false);
+        _edit->setEnabled(false);
+        _test->setEnabled(false);
+    }
 }

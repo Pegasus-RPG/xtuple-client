@@ -26,6 +26,8 @@ scripts::scripts(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  
+  connect(_script, SIGNAL(newId(int)), this, SLOT(sHandleButtons()));
 
   _script->addColumn(tr("Name"),   _itemColumn, Qt::AlignLeft,  true, "script_name");
   _script->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "script_notes");
@@ -95,17 +97,34 @@ void scripts::sDelete()
 
 void scripts::sFillList()
 {
+  
   q.exec("SELECT script_id, script_name, script_order, script_enabled, script_notes,"
          "       CASE WHEN nspname='public' THEN ''"
-         "            ELSE nspname END AS nspname"
+         "            ELSE nspname END AS nspname,"
+         "       CASE WHEN (pkghead_id IS NULL) THEN 0"
+	 "	      ELSE 1 END AS xtindentrole"
          "  FROM script, pg_class, pg_namespace"
+         "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name)"
          "  WHERE ((script.tableoid=pg_class.oid)"
          "    AND  (relnamespace=pg_namespace.oid))"
-         " ORDER BY script_name, script_order, script_id;" );
+         " UNION "
+         " SELECT -1, pkghead_name, NULL, NULL, pkghead_descrip, pkghead_name, 0 "
+         " FROM pkghead"
+         " ORDER BY nspname, xtindentrole, script_name, script_order, script_id;" );
+  
   _script->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void scripts::sHandleButtons()
+{
+    if (_script->id() < 0)
+    {
+        _delete->setEnabled(false);
+        _edit->setEnabled(false);       
+    }
 }
