@@ -11,6 +11,7 @@
 #include "createItemSitesByClassCode.h"
 
 #include <QMessageBox>
+#include <QSqlError>
 #include <QValidator>
 #include <QVariant>
 
@@ -24,7 +25,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _locationGroupInt->addButton(_miscLocation);
 
   connect(_create, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(populateLocations()));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
   connect(_planningType, SIGNAL(activated(int)), this, SLOT(sHandlePlanningType()));
@@ -219,7 +219,15 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_sold, :itemsite_soldranking,"
                "       :itemsite_stocked,"
                "       :itemsite_controlmethod, :itemsite_perishable, TRUE,"
-               "       :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
+               "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'J', 'K') "
+               "                 THEN FALSE "
+               "            ELSE :itemsite_loccntrl END,"
+               "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'J', 'K') "
+               "                 THEN -1 "
+               "            ELSE :itemsite_location_id END,"
+               "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'J', 'K') "
+               "                 THEN '' "
+               "            ELSE :itemsite_location END,"
                "       :itemsite_location_comments, '',"
                "       :itemsite_abcclass, FALSE, startOfTime(),"
                "       :itemsite_ordergroup, :itemsite_ordergroup_first, :itemsite_mps_timefence, "
@@ -334,18 +342,6 @@ void createItemSitesByClassCode::sHandleWOSupply(bool pSupplied)
     _createWo->setChecked(FALSE);
   }
 } 
-
-void createItemSitesByClassCode::sHandleMLC(bool pMLC)
-{
-  if (pMLC)
-  {
-    _location->setChecked(TRUE);
-    _miscLocation->setEnabled(FALSE);
-    _miscLocationName->setEnabled(FALSE);
-  }
-  else
-    _miscLocation->setEnabled(TRUE);
-}
 
 void createItemSitesByClassCode::sHandleControlMethod()
 {
