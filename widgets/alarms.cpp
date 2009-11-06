@@ -210,7 +210,7 @@ void Alarms::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("alarm_id", _alarms->altId());
+  params.append("alarm_id", _alarms->id());
 
   alarmMaint newdlg(this, "", TRUE);
   newdlg.set(params);
