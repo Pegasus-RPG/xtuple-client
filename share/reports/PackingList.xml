@@ -63,8 +63,11 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
        TEXT(tohead_number) AS cohead_custponumber,
        formatDate(tohead_orderdate) AS orderdate,
        tohead_shipcomments AS shipcomments,
-       '' AS billtoname,
-       '' AS billing_address,
+       tohead_srcname AS billtoname,
+       formataddr(tohead_srcaddress1, tohead_srcaddress2,
+                   tohead_srcaddress3,
+                  (tohead_srccity || ' ' || tohead_srcstate ||
+                   ' ' || tohead_srcpostalcode), tohead_srccountry) AS billing_address,
        tohead_destname AS shiptoname,
        formataddr(tohead_destaddress1, tohead_destaddress2,
                    tohead_destaddress3,
@@ -181,7 +184,7 @@ GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_id, coitem_memo, item_numb
 UNION
 SELECT 2 AS groupby,
        toitem_linenumber AS linenumber,
-       '' AS memo,
+       toitem_notes AS memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
        formattoitembarcode(toitem_id) AS orderitem_barcode,
