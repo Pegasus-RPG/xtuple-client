@@ -73,6 +73,8 @@
 static QString yesStr = QObject::tr("Yes");
 static QString noStr  = QObject::tr("No");
 
+static QTreeWidgetItem* searchChildren(XTreeWidgetItem *item, int pId);
+
 //cint() and round() regarding Issue #8897
 #include <cmath>
 
@@ -1057,17 +1059,47 @@ void XTreeWidget::setId(int pId)
   if (pId < 0)
     return;
 
-  for (QModelIndex i = indexFromItem(topLevelItem(0)); i.isValid(); i = indexBelow(i))
+  XTreeWidgetItem *item = (XTreeWidgetItem*)topLevelItem(0);
+  QTreeWidgetItem *found = 0;
+  while(item)
   {
-    XTreeWidgetItem *item = (XTreeWidgetItem*)itemFromIndex(i);
     if(item && item->id() == pId)
-    {
-      selectionModel()->setCurrentIndex(i,
-                                        QItemSelectionModel::ClearAndSelect |
-                                        QItemSelectionModel::Rows);
-      return;
-    }
+      found = item;
+    else if(item && item->childCount() > 0)
+      found = searchChildren(item, pId);
+    if(found)
+      break;
+    item = (XTreeWidgetItem*)itemBelow(item);
   }
+  if(found)
+  {
+    scrollToItem(found);
+    QModelIndex i = indexFromItem(found);
+    selectionModel()->setCurrentIndex(i,
+                                      QItemSelectionModel::ClearAndSelect |
+                                      QItemSelectionModel::Rows);
+  }
+}
+
+// This is a static local function to help searching children recursively
+QTreeWidgetItem* searchChildren(XTreeWidgetItem *parent, int pId)
+{
+  if(!parent)
+    return 0;
+
+  XTreeWidgetItem *item = 0;
+  QTreeWidgetItem *found = 0;
+  for(int i = 0; i < parent->childCount(); ++i)
+  {
+    item = (XTreeWidgetItem*)parent->child(i);
+    if(item && item->id() == pId)
+      found = item;
+    else if(item && item->childCount() > 0)
+      found = searchChildren(item, pId);
+    if(found)
+      return found;
+  }
+  return 0;
 }
 
 void XTreeWidget::setId(int pId, int pAltId)
