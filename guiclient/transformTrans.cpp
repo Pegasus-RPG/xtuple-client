@@ -397,7 +397,7 @@ void  transformTrans::sPopulateQOH()
 {
   if (_source->id() > -1)
   {
-    _fromBeforeQty->setDouble(_source->currentItem()->data(2, Qt::UserRole).toMap().value("raw").toDouble());
+    _fromBeforeQty->setDouble(_source->currentItem()->rawValue("qty").toDouble());
     sRecalculateAfter();
   }
   else
