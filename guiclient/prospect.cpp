@@ -241,7 +241,7 @@ void prospect::sSave()
 	       "SELECT cust_name AS name "
 	       "FROM cust "
 	       "WHERE (UPPER(cust_number)=UPPER(:prospect_number));" );
-    q.bindValue(":prospect_name", _number->text().trimmed());
+    q.bindValue(":prospect_number", _number->text().trimmed());
     q.bindValue(":prospect_id", _prospectid);
     q.exec();
     if (q.first())
