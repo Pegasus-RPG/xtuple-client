@@ -39,7 +39,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserOrderNumber()));
   connect(_poCurrency,	SIGNAL(newID(int)),	this, SLOT(sCurrencyChanged()));
-  connect(_poitem, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(sHandleDeleteButton()));
+  connect(_poitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleDeleteButton()));
   connect(_purchaseOrderInformation, SIGNAL(currentChanged(int)), this, SLOT(sTabChanged(int)));
   connect(_qecurrency,	SIGNAL(newID(int)),	this, SLOT(sCurrencyChanged()));
   connect(_qedelete,	SIGNAL(clicked()),	this, SLOT(sQEDelete()));
@@ -736,6 +736,13 @@ void purchaseOrder::sEdit()
 
 void purchaseOrder::sDelete()
 {
+  if (QMessageBox::question(this, tr("Delete Purchase Order Item?"),
+			                      tr("<p>Are you sure you want to delete this "
+				                     "Purchase Order Line Item?"),
+	  QMessageBox::Yes,
+	  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
   q.prepare( "DELETE FROM poitem "
              "WHERE (poitem_id=:poitem_id);" );
   q.bindValue(":poitem_id", _poitem->id());
