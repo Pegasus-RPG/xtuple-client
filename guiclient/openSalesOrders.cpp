@@ -48,10 +48,11 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   _so->addColumn(tr("S/O #"),           _orderColumn, Qt::AlignLeft,  true, "cohead_number");
   _so->addColumn(tr("Cust. #"),         _orderColumn, Qt::AlignLeft,  true, "cust_number");
   _so->addColumn(tr("Customer"),         -1,          Qt::AlignLeft,  true, "cohead_billtoname");
-  _so->addColumn(tr("Ship-To"),           100        , Qt::AlignLeft,  false,"cohead_shiptoname");
+  _so->addColumn(tr("Ship-To"),          _itemColumn, Qt::AlignLeft,  false,"cohead_shiptoname");
   _so->addColumn(tr("Cust. P/O Number"), -1         , Qt::AlignLeft,  true, "cohead_custponumber");
   _so->addColumn(tr("Ordered"),          _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
   _so->addColumn(tr("Scheduled"),        _dateColumn, Qt::AlignCenter,true, "scheddate");
+  _so->addColumn(tr("Status"),         _statusColumn, Qt::AlignLeft, false, "status");
   
   if (_privileges->check("MaintainSalesOrders"))
   {
@@ -406,7 +407,8 @@ void openSalesOrders::sFillList()
 
   QString sql( "SELECT DISTINCT cohead.*,"
                "       COALESCE(cust_number, :error) AS cust_number,"
-               "       getSoSchedDate(cohead_id) AS scheddate "
+               "       getSoSchedDate(cohead_id) AS scheddate, "
+               "       getSoStatus(cohead_id) AS status "
                "  FROM cohead "
                "    JOIN custinfo ON (cohead_cust_id=cust_id) "
                "<? if exists(\"selectedSites\") ?> "
