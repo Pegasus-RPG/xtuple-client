@@ -109,7 +109,10 @@ void scripts::sFillList()
          "    AND  (relnamespace=pg_namespace.oid))"
          " UNION "
          " SELECT -1, pkghead_name, NULL, NULL, pkghead_descrip, pkghead_name, 0 "
-         " FROM pkghead"
+         " FROM script, pg_class, pg_namespace"
+         "   RIGHT OUTER JOIN pkghead ON (nspname=pkghead_name)"
+         " WHERE ((script.tableoid=pg_class.oid)"
+         "   AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY nspname, xtindentrole, script_name, script_order, script_id;" );
   
   _script->populate(q);

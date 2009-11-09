@@ -110,7 +110,10 @@ void uiforms::sFillList()
          "   AND  (relnamespace=pg_namespace.oid))"
          " UNION "
          " SELECT -1, pkghead_name, pkghead_descrip, NULL, NULL, pkghead_name, 0"
-         "   FROM pkghead"
+         " FROM uiform, pg_class, pg_namespace"
+         "   RIGHT OUTER JOIN pkghead ON (nspname=pkghead_name) "
+         " WHERE ((uiform.tableoid=pg_class.oid)"
+         "   AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY nspname, xtindentrole, uiform_name, uiform_order, uiform_id;" );
   _uiform->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
