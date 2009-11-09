@@ -255,7 +255,7 @@ void createLotSerial::sAssign()
     q.prepare("SELECT ls_id, ls_number "
               "FROM ls,itemsite "
               "WHERE ( (UPPER(ls_number)=UPPER(:lotserial)) "
-              "AND (ls_item_id=itemsite_id) "
+              "AND (ls_item_id=itemsite_item_id) "
               "AND (itemsite_id=:itemsiteid) );");
     q.bindValue(":itemsiteid", _itemsiteid);
     q.bindValue(":lotserial", _lotSerial->currentText());
