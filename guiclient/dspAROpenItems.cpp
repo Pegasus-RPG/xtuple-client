@@ -212,6 +212,12 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
   if (((XTreeWidgetItem *)pItem)->altId() == 0)
   // Invoice
   {
+    if(((XTreeWidgetItem *)pItem)->rawValue("posted") != 0)
+    {
+      menuItem = pMenu->insertItem(tr("Edit Posted Invoice..."), this, SLOT(sEditInvoiceDetails()), 0);
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainMiscInvoices"));
+    }
+
     menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoiceDetails()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewMiscInvoices"));
   
@@ -624,6 +630,27 @@ void dspAROpenItems::sViewInvoice()
   ParameterList params;
   params.append("invoiceNumber", _aropen->currentItem()->text("docnumber"));
   dspInvoiceInformation* newdlg = new dspInvoiceInformation();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspAROpenItems::sEditInvoiceDetails()
+{
+  XTreeWidgetItem *pItem = _aropen->currentItem();
+  if(pItem->rawValue("posted") != 0 &&
+      QMessageBox::question(this, tr("Edit Posted Invoice?"),
+                            tr("<p>This Invoice has already been posted. "
+                               "Are you sure you want to edit it?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
+    return;
+  }
+
+  ParameterList params;
+  params.append("invchead_id", _aropen->currentItem()->id("docnumber"));
+  params.append("mode", "edit");
+  invoice* newdlg = new invoice();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
