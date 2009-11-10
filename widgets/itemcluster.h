@@ -78,7 +78,7 @@ friend class ItemCluster;
       cActive         = 0x80000000,
       
       // Groups of Item Types
-      cGeneralManufactured = cManufactured | cPhantom | cBreeder | cKit,
+      cGeneralManufactured = cManufactured | cBreeder,
       cGeneralPurchased    = cPurchased | cOutsideProcess,
       cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
       cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
