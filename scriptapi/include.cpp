@@ -42,10 +42,10 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
                                              1);
       if (engine->hasUncaughtException())
       {
-        qWarning() << "uncaught exception in " << scriptname
-                   << " (id " << scriptq.value("script_id").toInt()
-                   << ") at line "
-                   << engine->uncaughtExceptionLineNumber() << ": "
+        qWarning() << "uncaught exception in" << scriptname
+                   << "(id" << scriptq.value("script_id").toInt()
+                   << ") at line"
+                   << engine->uncaughtExceptionLineNumber() << ":"
                    << result.toString();
         break;
       }
