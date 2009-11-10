@@ -30,7 +30,9 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Seq #"),        80,           Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");

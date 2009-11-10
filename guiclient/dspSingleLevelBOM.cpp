@@ -27,7 +27,9 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _bomitem->addColumn(tr("#"),                   30,      Qt::AlignCenter,true, "bomitem_seqnumber" );
   _bomitem->addColumn(tr("Item Number"),    _itemColumn,  Qt::AlignLeft,  true, "item_number"   );

@@ -34,8 +34,12 @@ copyBOM::copyBOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _captive = FALSE;
 
-  _source->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
-  _target->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+  _source->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                   ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                   ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+  _target->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                   ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                   ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 }
 
 /*

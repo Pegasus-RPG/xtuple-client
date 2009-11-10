@@ -32,7 +32,9 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");

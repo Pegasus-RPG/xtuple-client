@@ -28,7 +28,9 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _cutoff->setNullString(tr("Latest"));
   _cutoff->setNullDate(omfgThis->endOfTime().addDays(-1));

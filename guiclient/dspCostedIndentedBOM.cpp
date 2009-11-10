@@ -42,7 +42,9 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   connect(_print,                  SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_revision,              SIGNAL(newId(int)), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
+                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Seq #"),       _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
