@@ -1691,6 +1691,7 @@ void customer::setId(int p)
 {
   _custid=p;
   populate();
+  emit newId(_custid);
 }
 
 void customer::sClear()
@@ -1795,7 +1796,10 @@ void customer::sPrepare()
 
   q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
   if (q.first())
+  {
     _custid = q.value("cust_id").toInt();
+    emit newId(_custid);
+  }
   else
   {
     systemError(this, tr("A System Error occurred at %1::%2.")

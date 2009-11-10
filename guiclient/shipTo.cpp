@@ -305,6 +305,9 @@ void shipTo::sSave()
 
   q.exec("COMMIT;");
 
+  if (_mode == cNew)
+    emit newId(_shiptoid);
+
   done(_shiptoid);
 }
 
@@ -364,6 +367,7 @@ void shipTo::populate()
     _salesRep->setId(q.value("shipto_salesrep_id").toInt());
     _commission->setDouble(commission * 100);
 
+    emit newId(_shiptoid);
     emit populated();
   }
   else if (q.lastError().type() != QSqlError::NoError)

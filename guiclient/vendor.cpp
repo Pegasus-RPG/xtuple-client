@@ -124,7 +124,6 @@ SetResponse vendor::set(const ParameterList &pParams)
   if (valid)
   {
     _vendid = param.toInt();
-    emit newId(_vendid);
     populate();
   }
 
@@ -586,6 +585,7 @@ void vendor::sSave()
   }
   else if (!q.lastError().type() == QSqlError::NoError)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -609,6 +609,8 @@ void vendor::sSave()
   q.exec("COMMIT;");
   _NumberGen = -1;
   omfgThis->sVendorsUpdated();
+  if (_mode == cNew)
+    emit newId(_vendid);
 
   if(!_ignoreClose)
     close();
@@ -661,7 +663,6 @@ void vendor::sCheck()
           _vendid = q.value("vend_id").toInt();
           _mode = cEdit;
           populate();
-          emit newId(_vendid);
           _name->setFocus();
         }
       }
@@ -778,6 +779,8 @@ void vendor::populate()
     _comments->setId(_vendid);
 
     _crmacctid = q.value("crmacct_id").toInt();
+
+    emit newId(_vendid);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
