@@ -819,7 +819,10 @@ void dspAROpenItems::sPrintStatement()
 
     orReport report(q.value("_reportname").toString(), params);
     if (report.isValid())
+    {
       report.print();
+      emit finishedPrintingStatement(_customerSelector->custId());
+    }
     else
       report.reportError(this);
   }
