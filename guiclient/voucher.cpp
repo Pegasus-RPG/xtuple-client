@@ -61,7 +61,6 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _poNumber->setMinimumHeight(32);
   
   /* a VendorCluster keeps the vend_id handy and handles address info easily */
-  _vendorLit->setVisible(false);
   _vendor->setVisible(false);
 
   _poitem->addColumn(tr("#"),               _whsColumn,   Qt::AlignCenter, true,  "poitem_linenumber" );
