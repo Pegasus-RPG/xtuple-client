@@ -1369,6 +1369,7 @@ void item::sFillSubstituteList()
 void item::sNewTransformation()
 {
   ParameterList params;
+  params.append("itemType", ItemLineEdit::cAllItemTypes_Mask ^ ItemLineEdit::cPhantom);
   itemList newdlg(this, "", TRUE);
   newdlg.set(params);
 
