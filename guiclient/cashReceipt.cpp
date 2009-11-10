@@ -48,8 +48,6 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _mindate;
-
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
