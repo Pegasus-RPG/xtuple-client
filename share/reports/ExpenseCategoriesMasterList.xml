@@ -14,62 +14,10 @@
   <sql>SELECT 
   expcat_code,
   expcat_descrip,
-          (SELECT
-                 accnt.accnt_company || '-' || 
-                 accnt.accnt_profit|| '-' || 
-                 accnt.accnt_number|| '-' || 
-                 accnt.accnt_sub || '   ' || 
-                 accnt_descrip
-           FROM 
-                 public.expcat, 
-                 public.accnt
-           WHERE 
-                 expcat.expcat_exp_accnt_id = accnt.accnt_id AND
-                 A.expcat_id = expcat_id
-           ) AS exp_accnt,
-
-  (SELECT
-                 accnt.accnt_company || '-' || 
-                 accnt.accnt_profit|| '-' || 
-                 accnt.accnt_number|| '-' || 
-                 accnt.accnt_sub || '   ' || 
-                 accnt_descrip
-           FROM 
-                 public.expcat, 
-                 public.accnt
-           WHERE 
-                 expcat.expcat_purchprice_accnt_id = accnt.accnt_id AND
-                 A.expcat_id = expcat_id
-           ) AS ppv_accnt,
-
-  (SELECT
-                 accnt.accnt_company || '-' || 
-                 accnt.accnt_profit|| '-' || 
-                 accnt.accnt_number|| '-' || 
-                 accnt.accnt_sub || '   ' || 
-                 accnt_descrip
-           FROM 
-                 public.expcat, 
-                 public.accnt
-           WHERE 
-                 expcat.expcat_liability_accnt_id = accnt.accnt_id AND
-                 A.expcat_id = expcat_id
-           ) AS poliab_accnt,
-
-  (SELECT
-                 accnt.accnt_company || '-' || 
-                 accnt.accnt_profit|| '-' || 
-                 accnt.accnt_number|| '-' || 
-                 accnt.accnt_sub || '   ' || 
-                 accnt_descrip
-           FROM 
-                 public.expcat, 
-                 public.accnt
-           WHERE 
-                 expcat.expcat_freight_accnt_id = accnt.accnt_id AND
-                 A.expcat_id = expcat_id
-           ) AS polinefrgt_accnt
-
+  formatGLAccountLong(expcat_exp_accnt_id) AS exp_accnt,
+  formatGLAccountLong(expcat_purchprice_accnt_id) AS ppv_accnt,
+  formatGLAccountLong(expcat_liability_accnt_id) AS poliab_accnt,
+  formatGLAccountLong(expcat_freight_accnt_id) AS polinefrgt_accnt
 FROM 
   expcat AS A
 ORDER BY expcat_code;
