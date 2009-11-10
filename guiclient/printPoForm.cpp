@@ -10,10 +10,12 @@
 
 #include "printPoForm.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "guiclient.h"
 
 printPoForm::printPoForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -21,13 +23,9 @@ printPoForm::printPoForm(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_po, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  _report->populate( "SELECT form_id, form_name "
+  _report->populate( "SELECT form_id, form_name, form_name "
                      "FROM form "
                      "WHERE (form_key='PO') "
                      "ORDER BY form_name;" );
@@ -57,7 +55,10 @@ void printPoForm::sPrint()
 
     orReport report(q.value("report_name").toString(), params);
     if (report.isValid())
+    {
       report.print();
+      emit finishedPrinting(_po->id());
+    }
     else
     {
       report.reportError(this);
@@ -72,4 +73,3 @@ void printPoForm::sPrint()
                           tr("Could not locate the report definition the form \"%1\"")
                           .arg(_report->currentText()) );
 }
-

@@ -16,58 +16,41 @@
 
 #include <openreports.h>
 #include <parameter.h>
+
 #include "guiclient.h"
 
-/*
- *  Constructs a printPurchaseOrdersByAgent as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printPurchaseOrdersByAgent::printPurchaseOrdersByAgent(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
+  _agent->setType(XComboBox::Agent);
+  _agent->setText(omfgThis->username());
 
-    _agent->setType(XComboBox::Agent);
-    _agent->setText(omfgThis->username());
+  _vendorCopy->setChecked(_metrics->boolean("POVendor"));
 
-    _vendorCopy->setChecked(_metrics->boolean("POVendor"));
-
-    if (_metrics->value("POInternal").toInt() > 0)
-    {
-      _internalCopy->setChecked(TRUE);
-      _numOfCopies->setValue(_metrics->value("POInternal").toInt());
-    }
-    else
-    {
-      _internalCopy->setChecked(FALSE);
-      _numOfCopies->setEnabled(FALSE);
-    }
+  if (_metrics->value("POInternal").toInt() > 0)
+  {
+    _internalCopy->setChecked(TRUE);
+    _numOfCopies->setValue(_metrics->value("POInternal").toInt());
+  }
+  else
+  {
+    _internalCopy->setChecked(FALSE);
+    _numOfCopies->setEnabled(FALSE);
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 printPurchaseOrdersByAgent::~printPurchaseOrdersByAgent()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void printPurchaseOrdersByAgent::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void printPurchaseOrdersByAgent::sPrint()
@@ -144,6 +127,8 @@ void printPurchaseOrdersByAgent::sPrint()
 	orReport::endMultiPrint(printer);
 	return;
       }
+
+      emit finishedPrinting(pohead.value("pohead_id").toInt());
     }
     while (pohead.next());
     orReport::endMultiPrint(printer);

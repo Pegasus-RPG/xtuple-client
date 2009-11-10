@@ -18,14 +18,17 @@ class printPoForm : public XDialog, public Ui::printPoForm
 {
     Q_OBJECT
 
-public:
+  public:
     printPoForm(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printPoForm();
 
-public slots:
+  public slots:
     virtual void sPrint();
 
-protected slots:
+  signals:
+    virtual void finishedPrinting(int);
+
+  protected slots:
     virtual void languageChange();
 
 };
