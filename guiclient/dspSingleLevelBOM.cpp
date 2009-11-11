@@ -34,8 +34,10 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   _bomitem->addColumn(tr("#"),                   30,      Qt::AlignCenter,true, "bomitem_seqnumber" );
   _bomitem->addColumn(tr("Item Number"),    _itemColumn,  Qt::AlignLeft,  true, "item_number"   );
   _bomitem->addColumn(tr("Description"),         -1,      Qt::AlignLeft,  true, "itemdescription"   );
-  _bomitem->addColumn(tr("UOM"),            _uomColumn,   Qt::AlignCenter,true, "uom_name" );
-  _bomitem->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight, true, "qtyper"  );
+  _bomitem->addColumn(tr("Issue UOM"),       _uomColumn,   Qt::AlignCenter,true, "invuomname" );
+  _bomitem->addColumn(tr("Issue Qty. Per"),  _qtyColumn,   Qt::AlignRight, true, "qtyper"  );
+  _bomitem->addColumn(tr("Inv. UOM"),        _uomColumn,   Qt::AlignCenter,true, "issueuomname" );
+  _bomitem->addColumn(tr("Inv. Qty. Per"),   _qtyColumn,   Qt::AlignRight, true, "bomitem_qtyper"  );
   _bomitem->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight, true, "bomitem_scrap"  );
   _bomitem->addColumn(tr("Effective"),      _dateColumn,  Qt::AlignCenter,true, "bomitem_effective" );
   _bomitem->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter,true, "bomitem_expires" );
@@ -126,9 +128,11 @@ void dspSingleLevelBOM::sFillList(int, bool)
     return;
 
   MetaSQLQuery mql(
-               "SELECT bomitem_item_id AS itemid, bomitem.*, item_number, uom_name,"
+               "SELECT bomitem_item_id AS itemid, bomitem.*, item_number, "
+			   "       invuom.uom_name AS invuomname, issueuom.uom_name AS issueuomname,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       'qtyper' AS bomitem_qtyper_xtnumericrole,"
                "       'qtyper' AS qtyper_xtnumericrole,"
                "       'percent' AS bomitem_scrap_xtnumericrole,"
                "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomitem_effective_qtdisplayrole,"
@@ -137,9 +141,10 @@ void dspSingleLevelBOM::sFillList(int, bool)
                "            WHEN (bomitem_effective >= CURRENT_DATE) THEN 'future'"
                "            WHEN (item_type='M') THEN 'altemphasis'"
                "       END AS qtforegroundrole "
-               "FROM bomitem(<? value(\"item_id\" ?>,<? value(\"revision_id\" ?>), item, uom "
+               "FROM bomitem(<? value(\"item_id\" ?>,<? value(\"revision_id\" ?>), item, uom AS issueuom, uom AS invuom "
                "WHERE ( (bomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
+               " AND (item_inv_uom_id=invuom.uom_id)"
+               " AND (bomitem_uom_id=issueuom.uom_id)"
                "<? if exists(\"expiredDays\") ?>"
                " AND (bomitem_expires > (CURRENT_DATE - <? value(\"expiredDays\") ?>))"
                "<? else ?>"
