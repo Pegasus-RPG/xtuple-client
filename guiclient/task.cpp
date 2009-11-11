@@ -40,6 +40,9 @@ task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjid = -1;
   _prjtaskid = -1;
   
+  _owner->setType(UsernameLineEdit::UsersActive);
+  _assignedTo->setType(UsernameLineEdit::UsersActive);
+
   adjustSize();
 }
 

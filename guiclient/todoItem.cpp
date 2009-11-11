@@ -36,6 +36,8 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _assignedTo->setUsername(omfgThis->username());
   _owner->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
+  _assignedTo->setType(UsernameLineEdit::UsersActive);
 }
 
 void todoItem::languageChange()

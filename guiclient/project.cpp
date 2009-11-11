@@ -39,6 +39,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
+  _assignedTo->setType(UsernameLineEdit::UsersActive);
   
   _saved=false;
 

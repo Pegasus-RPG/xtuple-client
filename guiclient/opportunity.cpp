@@ -86,6 +86,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter,true, "charass_default" );
 
   _owner->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
 
   _saved = false;
 }

@@ -66,6 +66,8 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _todoList->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date");
 
   _owner->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
+  _assignedTo->setType(UsernameLineEdit::UsersActive);
 
   if (_metrics->boolean("LotSerialControl"))
   {
