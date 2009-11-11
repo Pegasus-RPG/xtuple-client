@@ -83,8 +83,8 @@ void printArOpenItem::sPrint()
 
   if (report.isValid())
   {
-    report.print();
-    emit finishedPrinting(_aropen->id());
+    if (report.print())
+      emit finishedPrinting(_aropen->id());
     accept();
   }
   else

@@ -69,8 +69,8 @@ void printQuote::sPrint()
   orReport report(_report->code(), params);
   if (report.isValid())
   {
-    report.print();
-    emit finishedPrinting(_quheadid);
+    if (report.print())
+      emit finishedPrinting(_quheadid);
     if (_captive)
       accept();
   }

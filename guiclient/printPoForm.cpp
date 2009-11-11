@@ -56,8 +56,8 @@ void printPoForm::sPrint()
     orReport report(q.value("report_name").toString(), params);
     if (report.isValid())
     {
-      report.print();
-      emit finishedPrinting(_po->id());
+      if (report.print())
+        emit finishedPrinting(_po->id());
     }
     else
     {
