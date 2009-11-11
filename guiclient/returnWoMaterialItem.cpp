@@ -28,6 +28,7 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty()));
 
   _captive = FALSE;
+  _transDate->setDate(omfgThis->dbDate(), true);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
@@ -79,7 +80,14 @@ enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
 
 void returnWoMaterialItem::sReturn()
 {
-  if (!_wo->isValid())
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return;
+  }
+  else if (!_wo->isValid())
   {
     QMessageBox::critical( this, tr("Select Work Order"),
                            tr("You must select the Work Order from which you with to return Materal") );
@@ -92,9 +100,10 @@ void returnWoMaterialItem::sReturn()
 
   XSqlQuery returnItem;
   returnItem.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  returnItem.prepare("SELECT returnWoMaterial(:womatl_id, :qty) AS result;");
+  returnItem.prepare("SELECT returnWoMaterial(:womatl_id, :qty, :date) AS result;");
   returnItem.bindValue(":womatl_id", _womatl->id());
   returnItem.bindValue(":qty", _qty->toDouble());
+  q.bindValue(":date",  _transDate->date());
   returnItem.exec();
   if (returnItem.first())
   {

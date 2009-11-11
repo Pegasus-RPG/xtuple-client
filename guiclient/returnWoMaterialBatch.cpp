@@ -27,6 +27,7 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _captive = FALSE;
+  q.bindValue(":date",  _transDate->date());
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
@@ -63,6 +64,14 @@ enum SetResponse returnWoMaterialBatch::set(const ParameterList &pParams)
 
 void returnWoMaterialBatch::sReturn()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return;
+  }
+  
   q.prepare( "SELECT wo_qtyrcv, wo_status "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
@@ -108,9 +117,10 @@ void returnWoMaterialBatch::sReturn()
             continue;
 
           q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-          q.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0) AS result;");
+          q.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0, :date) AS result;");
           q.bindValue(":womatl_id", items.value("womatl_id").toInt());
           q.bindValue(":qty", items.value("qty").toDouble());
+          q.bindValue(":date",  _transDate->date());
           q.exec();
           if (q.first())
           {

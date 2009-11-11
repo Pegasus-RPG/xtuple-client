@@ -33,6 +33,7 @@ scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name
   connect(_womatl, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
   _captive = FALSE;
+  _transDate->setDate(omfgThis->dbDate(), true);
   _fromWOTC = FALSE;
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -98,12 +99,24 @@ enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
   param = pParams.value("wooper_id", &valid);
   if (valid)
     _womatl->setWooperid(param.toInt());
+    
+  param = pParams.value("transDate", &valid);
+  if (valid)
+    _transDate->setDate(param.toDate());
 
   return NoError;
 }
 
 void scrapWoMaterialFromWIP::sScrap()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return;
+  }
+  
   if (_scrapComponent->isChecked() && _qty->toDouble() <= 0)
   {
     QMessageBox::critical( this, tr("Cannot Scrap from WIP"),
@@ -136,12 +149,14 @@ void scrapWoMaterialFromWIP::sScrap()
     q.prepare("SELECT scrapWoMaterial(:womatl_id, :qty) AS result;");
     q.bindValue(":womatl_id", _womatl->id());
     q.bindValue(":qty", _qty->toDouble());
+    q.bindValue(":date",  _transDate->date());
   }
   else if (_scrapTopLevel->isChecked())
   {
     q.prepare("SELECT scrapTopLevel(:wo_id, :qty, :issueRepl) AS result;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":qty",   _topLevelQty->toDouble());
+    q.bindValue(":date",  _transDate->date());
   }
 
   q.exec();

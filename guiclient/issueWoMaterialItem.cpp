@@ -35,6 +35,7 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
 
     _captive = FALSE;
+    _transDate->setDate(omfgThis->dbDate(), true);
 
     omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
     omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
@@ -136,6 +137,14 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 
 void issueWoMaterialItem::sIssue()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return;
+  }
+  
   q.prepare("SELECT itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
@@ -169,9 +178,10 @@ void issueWoMaterialItem::sIssue()
   rollback.prepare("ROLLBACK;");
 
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT issueWoMaterial(:womatl_id, :qty, TRUE) AS result;");
+  q.prepare("SELECT issueWoMaterial(:womatl_id, :qty, TRUE, :date) AS result;");
   q.bindValue(":womatl_id", _womatl->id());
   q.bindValue(":qty", _qtyToIssue->toDouble());
+  q.bindValue(":date",  _transDate->date());
   q.exec();
   if (q.first())
   {

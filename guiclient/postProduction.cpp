@@ -34,7 +34,7 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
   connect(_wo,   SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
 
   _captive = false;
-
+  _transDate->setDate(omfgThis->dbDate(), true);
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
@@ -150,6 +150,7 @@ void postProduction::sScrap()
 {
   ParameterList params;
   params.append("wo_id", _wo->id());
+  params.append("transDate", _transDate->date());
 
   scrapWoMaterialFromWIP newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -158,6 +159,14 @@ void postProduction::sScrap()
 
 bool postProduction::okToPost()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return false;
+  }
+  
   XSqlQuery type;
   type.prepare( "SELECT item_type "
                 "FROM item,itemsite,wo "
@@ -287,13 +296,14 @@ void postProduction::sPost()
   rollback.prepare("ROLLBACK;");
 
   q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distributions
-  q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0) AS result;");
+  q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0, :date) AS result;");
   q.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
     q.bindValue(":qty", _qty->toDouble());
   else
     q.bindValue(":qty", _qty->toDouble() * -1);
   q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  q.bindValue(":date",  _transDate->date());
   q.exec();
   if (q.first())
   {

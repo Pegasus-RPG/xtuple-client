@@ -28,6 +28,7 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   connect(_wo,     SIGNAL(newId(int)), this, SLOT(populate()));
 
   _captive = FALSE;
+  _transDate->setDate(omfgThis->dbDate(), true);
   _qtyReceivedCache = 0.0;
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -81,7 +82,14 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 
 bool correctProductionPosting::okToPost()
 {
-  if (_qty->toDouble() > _qtyReceivedCache)
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return false;
+  }
+  else if (_qty->toDouble() > _qtyReceivedCache)
   {
     QMessageBox::warning( this, tr("Cannot Post Correction"),
                           tr( "The Quantity to correct must be less than or equal to the Quantity already Posted." ) );
@@ -131,7 +139,7 @@ void correctProductionPosting::sCorrect()
   rollback.prepare("ROLLBACK;");
 
   q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distribution
-  q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0)"
+  q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0, :date)"
             "        AS result;");
   q.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
@@ -139,6 +147,7 @@ void correctProductionPosting::sCorrect()
   else
     q.bindValue(":qty", _qty->toDouble() * -1);
   q.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
+  q.bindValue(":date",  _transDate->date());
   q.exec();
   if (q.first())
   {

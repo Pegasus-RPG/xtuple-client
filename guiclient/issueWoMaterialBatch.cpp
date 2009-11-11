@@ -28,7 +28,7 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _hasPush = FALSE;
-
+  _transDate->setDate(omfgThis->dbDate(), true);
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -73,6 +73,14 @@ enum SetResponse issueWoMaterialBatch::set(const ParameterList &pParams)
 
 void issueWoMaterialBatch::sIssue()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return;
+  }
+  
   XSqlQuery issue;
   issue.prepare("SELECT itemsite_id, "
                 "       item_number, "
@@ -126,9 +134,10 @@ void issueWoMaterialBatch::sIssue()
   while(items.next())
   {
     issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, 0, TRUE) AS result;");
+    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, 0, TRUE, :date) AS result;");
     issue.bindValue(":womatl_id", items.value("womatl_id").toInt());
     issue.bindValue(":qty", items.value("qty").toDouble());
+    issue.bindValue(":date",  _transDate->date());
     issue.exec();
   
     if (issue.first())
