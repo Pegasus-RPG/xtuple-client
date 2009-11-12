@@ -30,6 +30,7 @@ XSqlTableModel::~XSqlTableModel()
 bool XSqlTableModel::select()
 {
   bool result;
+  roles.clear();
   result = QSqlRelationalTableModel::select();
   if (result && rowCount());
     emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
@@ -179,6 +180,7 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:
     case FormatRole:
+    case EditorRole:
     case MenuRole:
       QPair<QModelIndex, int> key;
       key.first = index;
@@ -203,6 +205,7 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
   case Qt::TextAlignmentRole:
   case Qt::ForegroundRole:
   case FormatRole:
+  case EditorRole:
   case MenuRole:
     QPair<QModelIndex, int> key;
     key.first = index;

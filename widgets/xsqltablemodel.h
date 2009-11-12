@@ -25,8 +25,9 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
       ~XSqlTableModel();
     
     enum itemDataRole { FormatRole = (Qt::UserRole + 1),
-                  MenuRole,
-                  RawRole /* Other roles for xtreewidget?,
+                  EditorRole,  
+                  MenuRole, /* Other roles for xtreewidget?
+                  RawRole,
                   IdRole,
                   RunningSetRole,
                   RunningInitRole,
@@ -41,7 +42,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual bool select();
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole);
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     virtual void setTable(const QString &tableName, int keyColumns);
     virtual void setKeys(int keyColumns);
 
