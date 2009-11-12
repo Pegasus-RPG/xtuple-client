@@ -80,7 +80,7 @@ friend class ItemCluster;
       // Groups of Item Types
       cGeneralManufactured = cManufactured | cBreeder,
       cGeneralPurchased    = cPurchased | cOutsideProcess,
-      cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
+      cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess | cReference,
       cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
       cKitComponents       = cSold | (cAllItemTypes_Mask ^ cKit)
     };
