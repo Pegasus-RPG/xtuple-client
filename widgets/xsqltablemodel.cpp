@@ -30,7 +30,6 @@ XSqlTableModel::~XSqlTableModel()
 bool XSqlTableModel::select()
 {
   bool result;
-  roles.clear();
   result = QSqlRelationalTableModel::select();
   if (result && rowCount());
     emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
