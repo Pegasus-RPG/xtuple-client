@@ -248,6 +248,24 @@ void bomItem::sSave()
     return;
   }
 
+  // Check the component item type and if it is a Reference then issue a warning
+  q.prepare("SELECT item_type "
+            "FROM item "
+            "WHERE (item_id=:item_id); ");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first() && (q.value("item_type").toString() == "R"))
+  {
+    int answer = QMessageBox::question(this, tr("Reference Item"),
+                            tr("<p>Adding a Reference Item to a Bill of Material "
+                               "may cause W/O variances. <p> "
+                               "OK to continue? "),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No);
+    if (answer == QMessageBox::No)
+      return;
+  }
+  
   if (_mode == cNew && !_saved)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
