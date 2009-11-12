@@ -313,7 +313,6 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
       _custName->setText(cobmisc.value("cohead_billtoname").toString());
       _shipToName->setText(cobmisc.value("cohead_shiptoname").toString());
       _shipvia->setText(cobmisc.value("cobmisc_shipvia").toString());
-      _salesTax->setLocalValue(cobmisc.value("f_tax").toDouble());
      
       _miscCharge->setLocalValue(cobmisc.value("cobmisc_misc").toDouble());
       _miscChargeAccount->setId(cobmisc.value("cobmisc_misc_accnt_id").toInt());

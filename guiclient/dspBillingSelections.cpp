@@ -57,7 +57,7 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   _cobill->addColumn(tr("Freight"),       _priceColumn,  Qt::AlignLeft,   false, "cobmisc_freight" );
   _cobill->addColumn(tr("Tax"),           _priceColumn,  Qt::AlignLeft,   false, "cobmisc_tax" );
   _cobill->addColumn(tr("Total"),         _priceColumn,  Qt::AlignLeft,   false, "total" );
-  _cobill->addColumn(tr("Payment rec'd"), _priceColumn,  Qt::AlignLeft,   false, "payment" );
+  _cobill->addColumn(tr("Payment rec'd"), _priceColumn,  Qt::AlignLeft,   false, "cobmisc_payment" );
 
   if (_privileges->check("PostARDocuments"))
     connect(_cobill, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
