@@ -778,7 +778,6 @@ void transferOrder::sPopulateMenu(QMenu *pMenu)
       else if (_lineMode == cUnreleased)
       {
         pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
-        pMenu->insertItem(tr("Release Line..."), this, SLOT(sAction()), 0);
         pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
       }
     }
@@ -1009,8 +1008,8 @@ void transferOrder::sHandleButtons()
       {
         _lineMode = cUnreleased;
 
-        _action->setText(tr("Release"));
-        _action->setEnabled(TRUE);
+        _action->setText(tr("Close"));
+        _action->setEnabled(FALSE);
         _delete->setEnabled(TRUE);
       }
       else
@@ -1055,19 +1054,6 @@ void transferOrder::sAction()
                  "SET toitem_status=:toitem_status "
                  "WHERE (toitem_id=:toitem_id);" );
       q.bindValue(":toitem_status", _statusTypes[_status->currentIndex()]);
-      q.bindValue(":toitem_id", _toitem->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (_lineMode == cUnreleased)
-    {
-      q.prepare( "UPDATE toitem "
-                 "SET toitem_status='O' "
-                 "WHERE (toitem_id=:toitem_id);" );
       q.bindValue(":toitem_id", _toitem->id());
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
