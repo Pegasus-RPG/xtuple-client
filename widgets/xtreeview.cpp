@@ -28,7 +28,6 @@
 
 #include "xtsettings.h"
 #include "format.h"
-//#include "xsqlrelationaldelegate.h"
 
 #define DEBUG true
 
@@ -51,8 +50,8 @@ XTreeView::XTreeView(QWidget *parent) :
   setEditTriggers(QAbstractItemView::NoEditTriggers);
   setAlternatingRowColors(false);
 
-  _mapper = new XDataWidgetMapper;
-  _model = new XSqlTableModel;
+  _mapper = new XDataWidgetMapper(this);
+  _model = new XSqlTableModel(this);
   _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
   
   connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(sShowMenu(const QPoint &)));
@@ -142,7 +141,6 @@ void XTreeView::sShowMenu(const QPoint &pntThis)
       _menu->popup(mapToGlobal(pntThis));
   }
 }
-
 
 void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 {
@@ -242,7 +240,7 @@ void XTreeView::select()
 {
   setTable();
   _model->select();
-  QString colname;
+  applyColumnRoles();
   
   emit valid(FALSE);
 }
@@ -282,8 +280,10 @@ void XTreeView::populate(int p)
     
     QString clause = QString(_model->database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
     _model->setFilter(clause);
-    if (!_model->query().isActive())
+    if (!_model->query().isActive()) {
       _model->select();
+      applyColumnRoles();
+    }
   }
 }
 
@@ -355,6 +355,11 @@ void XTreeView::setTable()
 void XTreeView::setFormat(const QString column, int format)
 {
   setColumnRole(column, XSqlTableModel::FormatRole, QVariant(format));
+}
+
+void XTreeView::setTextAlignment(int column, int alignment)
+{
+  setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
 }
 
 void XTreeView::setTextAlignment(const QString column, int alignment)
@@ -609,7 +614,7 @@ void XTreeView::setColumn(const QString &label, int width, int alignment, bool v
                                         Qt::DisplayRole);
       QTreeView::model()->setHeaderData(colnum, Qt::Horizontal, alignment,
                                         Qt::TextAlignmentRole);
-      setTextAlignment(colname, alignment);
+      setTextAlignment(colnum, alignment);
       break;
     }
   }
@@ -645,22 +650,48 @@ void XTreeView::popupMenuActionTriggered(QAction * pAction)
   //else if (some other command to handle)
 }
 
-void XTreeView::setColumnRole(const QString column, int role, const QVariant value)
+void XTreeView::applyColumnRole(int column, int role, QVariant value)
 {
   QSqlQuery qry = _model->query();
-  int col = qry.record().indexOf(column);
   
+  // Apply to the model
+  qry.first();
+  for (int row=0; row < qry.size(); ++row) {
+    _model->setData(_model->index(row,column), value, role);
+    qry.next();
+  }
+}
+
+void XTreeView::applyColumnRoles()
+{
+  QPair<QVariant, int> values;
+  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
+  while (i.hasNext()) {
+    values = i.value();
+    applyColumnRole(i.key(), values.second, values.first );
+    i.next();
+  }
+}
+
+void XTreeView::setColumnRole(int column, int role, const QVariant value)
+{  
   // Add to the hash
   QPair<QVariant, int> values;
   values.first = value;
   values.second = role;
-  _columnRoles.insert(col, values);
+  _columnRoles.insert(column, values);
+  
+  // Apply
+  applyColumnRole(column, role, value);
+}
 
-  // Apply to the model
-  qry.first();
-  for (int row=0; row < qry.size(); ++row) {
-    _model->setData(_model->index(row,col), value, role);
-    qry.next();
+void XTreeView::setColumnRole(const QString column, int role, const QVariant value)
+{
+  for (int colnum = 0; colnum < header()->count(); colnum++) {
+    if (column == QTreeView::model()->headerData(colnum, Qt::Horizontal,
+                                                  Qt::UserRole).toString()) {
+      setColumnRole(colnum, role, value);
+    }
   }
 }
 

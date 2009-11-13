@@ -37,6 +37,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 
       Q_INVOKABLE      QString columnNameFromLogicalIndex(const int logicalIndex) const;
       Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
+      Q_INVOKABLE virtual void setColumnRole(int column, int role, QVariant value);
       Q_INVOKABLE virtual void setColumnRole(const QString column, int role, QVariant value);
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
@@ -45,6 +46,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       Q_INVOKABLE virtual void setFormat(const QString column, int format);
       Q_INVOKABLE virtual void setRowForegroundColor(int row, QString color);
       Q_INVOKABLE         void setTable();
+      Q_INVOKABLE virtual void setTextAlignment(int column, int alignment);
       Q_INVOKABLE virtual void setTextAlignment(const QString column, int alignment);
       Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
       Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
@@ -80,6 +82,8 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void  populateMenu(QMenu *, QModelIndex);
       
     protected:
+      virtual void applyColumnRole(int column, int role, QVariant value);
+      virtual void applyColumnRoles();
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
