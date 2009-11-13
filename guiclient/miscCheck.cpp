@@ -187,7 +187,7 @@ void miscCheck::sSave()
   if (_expense->isChecked())
     check.bindValue(":expcat_id", _expcat->id());
 
-  if (_cmCluster->isValid())
+  if ( (_applytocm->isChecked()) && (_cmCluster->isValid()) )
 	check.bindValue(":cmhead_id",_cmCluster->id());
 
   check.exec();
