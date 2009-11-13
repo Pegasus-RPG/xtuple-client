@@ -127,9 +127,6 @@ to be bound by its terms.</comment>
             <property name="margin">
              <number>12</number>
             </property>
-            <property name="spacing">
-             <number>6</number>
-            </property>
             <item row="0" column="0">
              <widget class="XCheckBox" name="_receipts">
               <property name="text">
@@ -160,10 +157,20 @@ to be bound by its terms.</comment>
             <string>Include</string>
            </property>
            <layout class="QGridLayout">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="XCheckBox" name="_expired">
               <property name="text">
                <string>Expired</string>
+              </property>
+              <property name="forgetful">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="XCheckBox" name="_unauthorized">
+              <property name="text">
+               <string>Unauthorized</string>
               </property>
               <property name="forgetful">
                <bool>true</bool>
@@ -376,8 +383,7 @@ to be bound by its terms.</comment>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
               <widget class="XTreeWidget" name="_radue">
-               <zorder></zorder>
-               <zorder>horizontalLayoutWidget</zorder>
+               <zorder>qt_scrollarea_viewport</zorder>
               </widget>
              </item>
              <item>
@@ -546,20 +552,26 @@ to be bound by its terms.</comment>
   <tabstop>_receipts</tabstop>
   <tabstop>_shipments</tabstop>
   <tabstop>_payment</tabstop>
+  <tabstop>_unauthorized</tabstop>
   <tabstop>_expired</tabstop>
   <tabstop>_closed</tabstop>
   <tabstop>_ra</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
-  <tabstop>_creditmemo</tabstop>
-  <tabstop>_check</tabstop>
-  <tabstop>_creditcard</tabstop>
-  <tabstop>_printdue</tabstop>
-  <tabstop>_editdue</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_query</tabstop>
   <tabstop>_viewdue</tabstop>
   <tabstop>_process</tabstop>
-  <tabstop>_close</tabstop>
+  <tabstop>_printdue</tabstop>
+  <tabstop>_editdue</tabstop>
+  <tabstop>_creditmemo</tabstop>
+  <tabstop>_check</tabstop>
+  <tabstop>_radue</tabstop>
+  <tabstop>_postmemos</tabstop>
+  <tabstop>_printmemo</tabstop>
+  <tabstop>_creditcard</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -582,7 +594,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_ra</sender>
    <signal>valid(bool)</signal>
-   <receiver>_view</receiver>
+   <receiver>_edit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -598,7 +610,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_ra</sender>
    <signal>valid(bool)</signal>
-   <receiver>_edit</receiver>
+   <receiver>_view</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -607,7 +619,7 @@ to be bound by its terms.</comment>
     </hint>
     <hint type="destinationlabel">
      <x>540</x>
-     <y>239</y>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -640,22 +652,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>545</x>
      <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_ra</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_edit</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>256</x>
-     <y>330</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>536</x>
-     <y>279</y>
     </hint>
    </hints>
   </connection>

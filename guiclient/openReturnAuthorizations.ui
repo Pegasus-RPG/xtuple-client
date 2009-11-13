@@ -24,7 +24,7 @@ to be bound by its terms.</comment>
    </size>
   </property>
   <property name="windowTitle">
-   <string>List Return Authorizations</string>
+   <string>List Open Return Authorizations</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <item row="0" column="0">
@@ -56,34 +56,24 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <property name="spacing">
-               <number>12</number>
+             <widget class="XCheckBox" name="_unauthorized">
+              <property name="text">
+               <string>Unauthorized</string>
               </property>
-              <item>
-               <widget class="XCheckBox" name="_expired">
-                <property name="text">
-                 <string>Expired</string>
-                </property>
-                <property name="forgetful">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
+              <property name="forgetful">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="XCheckBox" name="_expired">
+              <property name="text">
+               <string>Expired</string>
+              </property>
+              <property name="forgetful">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -294,13 +284,15 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_warehouse</tabstop>
+  <tabstop>_unauthorized</tabstop>
+  <tabstop>_expired</tabstop>
   <tabstop>_ra</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_print</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -109,6 +109,9 @@ void returnAuthorizationWorkbench::sPrint()
   if(_expired->isChecked())
     params.append("showExpired");
 
+  if(_unauthorized->isChecked())
+    params.append("showUnauthorized");
+
   if (_closed->isChecked())
   {
     params.append("showClosed");
@@ -402,7 +405,8 @@ void returnAuthorizationWorkbench::sFillListReview()
     return;
   }
   else if ((_receipts->isChecked()) || (_shipments->isChecked()) || 
-	        (_payment->isChecked()) || (_closed->isChecked()))
+	        (_payment->isChecked()) || (_closed->isChecked()) ||
+			(_unauthorized->isChecked()))
   {
 	bool bw;
 	bw = false;
@@ -499,6 +503,8 @@ void returnAuthorizationWorkbench::sFillListReview()
 
 	if (!_expired->isChecked())
 	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
+	if (!_unauthorized->isChecked())
+	  sql +=  " AND (raitem_qtyauthorized > 0)";
 	if (_closed->isChecked())
 	  sql +=  " AND (raitem_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
 	else
