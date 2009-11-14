@@ -40,6 +40,7 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
 
   public slots:
     virtual void sParse();
+    virtual void setData();
     virtual void setData(const QString &text);
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDefaultText(QString p)  { _default = p; };

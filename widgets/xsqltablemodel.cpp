@@ -161,20 +161,9 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
       return QVariant();
         
     switch (role) {
-    case Qt::EditRole: {
-            return QSqlRelationalTableModel::data(index, role);
-    } break;
-    
-    case Qt::DisplayRole: {
-      if (data(index, FormatRole).isValid()) {
-        int scale = decimalPlaces(_locales.at(data(index,FormatRole).toInt()));
-        double fval = QSqlRelationalTableModel::data(index).toDouble();
-        if (data(index, FormatRole).toInt() == Percent)
-          fval = fval * 100;
-        return QLocale().toString(fval, 'f', scale);
-      }
-      else
-        return QSqlRelationalTableModel::data(index);
+    case Qt::DisplayRole:
+    case Qt::EditRole: { 
+      return QSqlRelationalTableModel::data(index);
     } break;
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:
@@ -195,15 +184,19 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
 {
   if (!index.isValid())
       return false;
-
   switch (role) {
-  case Qt::EditRole: 
-  case Qt::DisplayRole: {
-    return QSqlRelationalTableModel::setData(index, value, role);
+  case Qt::DisplayRole:
+  case Qt::EditRole: {
+    if (data(index, FormatRole).isValid())
+      QSqlRelationalTableModel::setData(index, formatValue(value, data(index, FormatRole)), role);
+    else 
+      QSqlRelationalTableModel::setData(index, value, role);
   } break;
+  case FormatRole: {
+    QSqlRelationalTableModel::setData(index, formatValue(data(index), value));
+  }
   case Qt::TextAlignmentRole:
   case Qt::ForegroundRole:
-  case FormatRole:
   case EditorRole:
   case MenuRole:
     QPair<QModelIndex, int> key;
@@ -217,4 +210,13 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
     emit dataChanged ( index, index );
   }
   return true;
+}
+
+QVariant XSqlTableModel::formatValue(const QVariant &value, const QVariant &format)
+{
+  int scale = decimalPlaces(_locales.at(format.toInt()));
+  double fval = value.toDouble();
+  if (format.toInt() == Percent)
+    fval = fval * 100;
+  return QVariant(QLocale().toString(fval, 'f', scale));
 }

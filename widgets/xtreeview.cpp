@@ -263,6 +263,7 @@ void XTreeView::insert()
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
     _model->setData(_model->index(row,i),_idx.value(i));
+  applyColumnRoles(row);
   selectRow(row);
 }
 
@@ -664,19 +665,40 @@ void XTreeView::applyColumnRole(int column, int role, QVariant value)
 
 void XTreeView::applyColumnRoles()
 {
-  QPair<QVariant, int> values;
   QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
   while (i.hasNext()) {
-    values = i.value();
-    applyColumnRole(i.key(), values.second, values.first );
+    applyColumnRole(i.key(), i.value().second, i.value().first );
+    i.next();
+  }
+}
+
+void XTreeView::applyColumnRoles(int row)
+{
+  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
+  while (i.hasNext()) {
+    _model->setData(_model->index(row,i.key()), i.value().first, i.value().second);
     i.next();
   }
 }
 
 void XTreeView::setColumnRole(int column, int role, const QVariant value)
 {  
-  // Add to the hash
   QPair<QVariant, int> values;
+  bool found = false;
+  
+  // Remove any previous value for this column/role pair
+  QMultiHash<int, QPair<QVariant, int> >::iterator i = _columnRoles.find(column);
+  while (i != _columnRoles.end() && i.key() ==column && !found) {
+     if (i.value().second == role) {
+       values.first = i.value().first;
+       values.second = i.value().second;
+       _columnRoles.remove(column, values);
+       found = true;
+     }
+     ++i;
+  }
+  
+  // Insert new
   values.first = value;
   values.second = role;
   _columnRoles.insert(column, values);
@@ -728,6 +750,13 @@ void XTreeView::handleDataChanged(const QModelIndex topLeft, const QModelIndex l
      QHash<int, QPair<QVariant, int> >::const_iterator i = _columnRoles.find(col);
      while (i != _columnRoles.end() && i.key() == col) {
        for (row=topLeft.row(); row <= lowerRight.row(); ++row) 
+       if (i.value().second > 32) {
+       qDebug("setting changed");
+       qDebug("row %d", row);
+       qDebug("col %d", col);
+       qDebug("val " + i.value().first.toString());
+       qDebug("role %d", i.value().second);
+       qDebug("end changed"); }
           _model->setData(_model->index(row,col), i.value().first, i.value().second);
        ++i;
      }

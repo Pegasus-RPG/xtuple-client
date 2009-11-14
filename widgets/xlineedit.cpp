@@ -89,7 +89,7 @@ void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
   _mapper=m;
   m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
-  connect(this, SIGNAL(textChanged(QString)), this, SLOT(setData(QString)));
+  connect(this, SIGNAL(editingFinished()), this, SLOT(setData()));
 }
 
 void XLineEdit::setText(const QVariant &pVariant)
@@ -173,6 +173,11 @@ void XLineEdit::focusInEvent(QFocusEvent *pEvent)
     setSelection(0, text().length());
 
   QLineEdit::focusInEvent(pEvent);
+}
+
+void XLineEdit::setData()
+{
+  setData(text());
 }
 
 void XLineEdit::setData(const QString &text)

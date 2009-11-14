@@ -84,6 +84,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
     protected:
       virtual void applyColumnRole(int column, int role, QVariant value);
       virtual void applyColumnRoles();
+      virtual void applyColumnRoles(int row);
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
@@ -123,7 +124,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
         bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-      QHash<int, QPair<QVariant, int> > _columnRoles;
+      QMultiHash<int, QPair<QVariant, int> > _columnRoles;
       
 };
 
