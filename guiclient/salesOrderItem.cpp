@@ -326,8 +326,9 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     else if (param.toString() == "newQuote")
     {
       _mode = cNewQuote;
-      _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
-      _item->clearExtraClauseList();
+//  TODO - quotes different from sales orders?
+//      _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
+//      _item->clearExtraClauseList();
 
       setWindowTitle(tr("Quote Item"));
 
