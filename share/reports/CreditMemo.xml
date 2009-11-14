@@ -77,20 +77,28 @@ ORDER BY cmitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
-  <sql>SELECT formatExtPrice(COALESCE(cmhead_freight,0.0) + COALESCE(cmhead_tax,0.0) + COALESCE(cmhead_misc,0.0) +
-         ( SELECT COALESCE(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) * cmitem_unitprice / cmitem_price_invuomratio), 0.0)
-             FROM cmitem, itemsite, item
-            WHERE ((cmitem_cmhead_id=%1)
-              AND (cmitem_itemsite_id=itemsite_id)
-              AND (itemsite_item_id=item_id)
-             )
-           )
-         ) AS totaldue,
+  <sql>SELECT formatExtPrice( COALESCE(cmhead_freight,0.0) +
+                       ( SELECT COALESCE(SUM(tax * -1.0), 0)
+                         FROM ( SELECT ROUND(SUM(taxdetail_tax), 2) AS tax
+                                FROM tax JOIN calculateTaxDetailSummary('CM', cmhead_id, 'T')
+                                           ON (taxdetail_tax_id=tax_id)
+                                GROUP BY tax_id ) AS data ) +
+                       COALESCE(cmhead_misc,0.0) +
+                       ( SELECT COALESCE(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) *
+                                              cmitem_unitprice / cmitem_price_invuomratio), 0.0)
+                         FROM cmitem
+                         WHERE (cmitem_cmhead_id=%1) ) 
+                     ) AS totaldue,
        formatExtPrice(COALESCE(cmhead_freight,0.0)) AS freight,
-       formatExtPrice(COALESCE(cmhead_tax,0.0)) AS tax,
+       ( SELECT formatExtPrice(COALESCE(SUM(tax * -1.0), 0))
+         FROM ( SELECT ROUND(SUM(taxdetail_tax), 2) AS tax
+                FROM tax JOIN calculateTaxDetailSummary('CM', cmhead_id, 'T')
+                           ON (taxdetail_tax_id=tax_id)
+                GROUP BY tax_id ) AS data ) AS tax,
        formatExtPrice(COALESCE(cmhead_misc,0.0)) AS misc
   FROM cmhead
- WHERE (cmhead_id=%1);</sql>
+ WHERE (cmhead_id=%1);
+</sql>
  </querysource>
  <querysource>
   <name>logo</name>
