@@ -79,6 +79,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _freightCache = 0;
 
   _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter, true,  "invcitem_linenumber" );
+  _invcitem->addColumn(tr("Order #"),     _itemColumn,     Qt::AlignLeft,   true,  "soitemnumber"   );
   _invcitem->addColumn(tr("Item"),        _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
   _invcitem->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "itemdescription"   );
   _invcitem->addColumn(tr("Qty. UOM"),    _uomColumn,      Qt::AlignLeft,   true,  "qtyuom"   );
@@ -770,6 +771,7 @@ void invoice::populate()
 void invoice::sFillItemList()
 {
   q.prepare( "SELECT invcitem_id, invcitem_linenumber,"
+             "       formatSoItemNumber(invcitem_coitem_id) AS soitemnumber, "
              "       CASE WHEN (item_id IS NULL) THEN invcitem_number"
              "            ELSE item_number"
              "       END AS itemnumber,"
