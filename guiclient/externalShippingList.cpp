@@ -20,7 +20,29 @@ bool externalShippingList::userHasPriv()
 void externalShippingList::showEvent(QShowEvent *event)
 {
   if (event)
-    _screen->select();
+    _ship->setTable();
+    _ship->setColumn(tr("So Number"),                 100, Qt::AlignLeft, true, "so_number");
+    _ship->setColumn(tr("Shipment Number"),           100, Qt::AlignLeft, true, "shipment_number");
+    _ship->setColumn(tr("Package Tracking Number"),   100, Qt::AlignLeft, true, "package_tracking_number");
+    _ship->setColumn(tr("Void"),                       40, Qt::AlignLeft, true, "void");
+    _ship->setColumn(tr("Billing Option"),            100, Qt::AlignLeft, false, "billing_option");
+    _ship->setColumn(tr("Weight"),                     60, Qt::AlignRight,true,  "weight");
+    _ship->setColumn(tr("Base Freight"),               60, Qt::AlignRight,false, "base_freight");
+    _ship->setColumn(tr("Base Freight Currency"),      80, Qt::AlignLeft, false, "base_freight_currency");
+    _ship->setColumn(tr("Total Freight"),              60, Qt::AlignRight,true,  "total_freight");
+    _ship->setColumn(tr("Total Freight Currency"),     80, Qt::AlignLeft, true,  "total_freight_currency");
+    _ship->setColumn(tr("Package Type"),              100, Qt::AlignLeft, false, "billing_option");
+    _ship->setColumn(tr("Tracking Number"),           100, Qt::AlignLeft, false, "tracking_number");
+    _ship->setColumn(tr("Last Updated"),              100, Qt::AlignLeft, false, "last_updated");
+    
+    _ship->setFormat("weight", XSqlTableModel::Qty);
+    _ship->setFormat("base_freight", XSqlTableModel::Curr);
+    _ship->setFormat("total_freight", XSqlTableModel::Curr);
+    
+    _ship->select();
+    
+    qDebug("%d", XSqlTableModel::Qty);
+    qDebug("%d", XSqlTableModel::Curr);
   XWidget::showEvent(event);
 }
 
@@ -77,8 +99,8 @@ void externalShippingList::sView()
 
 void externalShippingList::sDelete()
 {
-  _screen->removeCurrent();
-  _screen->save();
+  _ship->removeSelected();
+  _ship->save();
 }
 
 void externalShippingList::sOpen(int mode)
@@ -88,10 +110,10 @@ void externalShippingList::sOpen(int mode)
     
   ParameterList params;
   params.append("mode", mode);
-  params.append("currentIndex",_screen->currentIndex());
+  params.append("currentIndex",_ship->currentIndex());
   
   externalShipping newdlg(this, "", TRUE);
-  newdlg.setModel(_screen->model());
+  newdlg.setModel(_ship->model());
   newdlg.set(params);
   newdlg.exec();
 }

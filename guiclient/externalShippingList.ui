@@ -20,136 +20,124 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>External Shipping List</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="Screen" name="_screen">
-     <property name="schemaName">
-      <string>api</string>
+    <layout class="QHBoxLayout">
+     <property name="margin">
+      <number>12</number>
      </property>
-     <property name="tableName">
-      <string>extshipmaint</string>
-     </property>
-     <property name="primaryKeyColumns">
-      <number>5</number>
-     </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0">
-       <layout class="QHBoxLayout">
-        <item>
-         <layout class="QVBoxLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_customersLit">
-            <property name="text">
-             <string>External Shipping Data:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XTreeView" name="_ship">
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="alternatingRowColors">
-             <bool>false</bool>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout">
-          <property name="spacing">
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_close">
-            <property name="text">
-             <string>&amp;Close</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="_new">
-              <property name="text">
-               <string>&amp;New</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_edit">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>&amp;Edit</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_view">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>&amp;View</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_delete">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>&amp;Delete</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+     <item>
+      <layout class="QVBoxLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_customersLit">
+         <property name="text">
+          <string>External Shipping Data:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeView" name="_ship">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="schemaName">
+          <string>api</string>
+         </property>
+         <property name="tableName">
+          <string>extshipmaint</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>&amp;Close</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_new">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_view">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;View</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_delete">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Screen</class>
-   <extends>QWidget</extends>
-   <header>screen.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>XTreeView</class>
    <extends>QTreeView</extends>
@@ -171,38 +159,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>760</x>
      <y>4</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_ship</sender>
-   <signal>rowSelected(int)</signal>
-   <receiver>_screen</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>235</x>
-     <y>73</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>16</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_screen</sender>
-   <signal>newModel(XSqlTableModel*)</signal>
-   <receiver>_ship</receiver>
-   <slot>setModel(XSqlTableModel*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>271</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>273</x>
-     <y>67</y>
     </hint>
    </hints>
   </connection>
