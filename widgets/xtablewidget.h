@@ -29,6 +29,7 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
       XTableWidget(QWidget *parent = 0);
       ~XTableWidget();
 
+      Q_INVOKABLE bool    isRowHidden(int row)      { return QTableView::isRowHidden(row); };
                   int     primaryKeyColumns() const { return _keyColumns; };
                   QString schemaName()        const { return _schemaName; };
                   QString tableName()         const { return _tableName;  };
@@ -39,16 +40,21 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
       Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
+      Q_INVOKABLE virtual void setColumnRole(const QString column, int role, QVariant value);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
+      Q_INVOKABLE virtual void setForegroundColor(int row, int col, QString color);
+      Q_INVOKABLE virtual void setFormat(const QString column, int format);
+      Q_INVOKABLE virtual void setRowForegroundColor(int row, QString color);
       Q_INVOKABLE         void setTable();
- //     Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
- //     Q_INVOKABLE XSqlTableModel    model()   { return static_cast<XSqlTableModel>(_mapper->model());};
-      
+      Q_INVOKABLE virtual void setTextAlignment(int column, int alignment);
+      Q_INVOKABLE virtual void setTextAlignment(const QString column, int alignment);
+      Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
+      Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
+            
     public slots:
-
       virtual int  rowCount();
       virtual int  rowCountVisible();
- //     virtual QString filter()            const { return _model.filter()   };
+      virtual QString filter();
       virtual QVariant value(int row, int column);
       virtual QVariant selectedValue(int column); 
       virtual void insert();
@@ -57,8 +63,9 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
       virtual void revertAll(); 
       virtual void save();
       virtual void select();
+      virtual void selectRow(int index);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
- //     virtual void setFilter(QString filter)                  { _model.setFilter(filter);  };
+      virtual void setFilter(const QString filter);
       virtual void setModel(XSqlTableModel* model=0);
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
       virtual void setSchemaName(QString p)                   { _schemaName = p;            };
@@ -67,6 +74,7 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
       virtual void sShowMenu(const QPoint &);
 
     signals:
+      void  dataChanged(int row, int col);
       void  newModel(XSqlTableModel *model);
       void  rowSelected(int);
       void  valid(bool);
@@ -76,9 +84,10 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
     protected:
       virtual void resizeEvent(QResizeEvent*);
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-      virtual void setRelations();
+ //     virtual void setRelations();
 
     private slots:
+      void handleDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight);
       void popupMenuActionTriggered(QAction*);
       void sColumnSizeChanged(int, int, int);
       void sResetAllWidths();
@@ -87,18 +96,18 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
       void sToggleForgetfulness();
 
     private:
-      QSqlDatabase        *_db;
+  //    QSqlDatabase        *_db;
       bool                 _forgetful;
-      QMultiMap<QString,QString> _idMap;
+   //   QMultiMap<QString,QString> _idMap;
       QSqlRecord           _idx;
       int                  _keyColumns;
       XDataWidgetMapper   *_mapper;
       QMenu               *_menu;
-      XSqlTableModel       _model;
+      XSqlTableModel      *_model;
       int                  _resetWhichWidth;
       bool                 _resizingInProcess;
       QString              _schemaName;
-      QItemSelectionModel *_selectModel;
+  //    QItemSelectionModel *_selectModel;
       bool                 _settingsLoaded;
       QString              _tableName;
       QString              _windowName;
@@ -116,8 +125,6 @@ class XTUPLEWIDGETS_EXPORT XTableWidget : public QTableView
         bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-
-      QMap<QString, QString>    _fkeymap;
 };
 
 #endif

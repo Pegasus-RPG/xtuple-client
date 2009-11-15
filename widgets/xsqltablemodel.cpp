@@ -31,9 +31,71 @@ bool XSqlTableModel::select()
 {
   bool result;
   result = QSqlRelationalTableModel::select();
+  applyColumnRoles();
   if (result && rowCount());
     emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
   return result;
+}
+
+void XSqlTableModel::applyColumnRole(int column, int role, QVariant value)
+{
+  QSqlQuery qry = query();
+  
+  // Apply to the model
+  qry.first();
+  for (int row=0; row < qry.size(); ++row) {
+    setData(index(row,column), value, role);
+    qry.next();
+  }
+}
+
+void XSqlTableModel::applyColumnRoles()
+{
+qDebug("Apply Roles");
+  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
+  while (i.hasNext()) {
+  qDebug("col %d", i.key());
+  qDebug("role %d",  i.value().second);
+  qDebug("value " +  i.value().first.toString());
+    applyColumnRole(i.key(), i.value().second, i.value().first );
+    i.next();
+  }
+  qDebug("end roles");
+}
+
+void XSqlTableModel::applyColumnRoles(int row)
+{
+  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
+  while (i.hasNext()) {
+    setData(index(row,i.key()), i.value().first, i.value().second);
+    i.next();
+  }
+}
+
+void XSqlTableModel::setColumnRole(int column, int role, const QVariant value)
+{  
+  QPair<QVariant, int> values;
+  bool found = false;
+  
+  // Remove any previous value for this column/role pair
+  QMultiHash<int, QPair<QVariant, int> >::iterator i = _columnRoles.find(column);
+  while (i != _columnRoles.end() && i.key() ==column && !found) {
+     if (i.value().second == role) {
+       values.first = i.value().first;
+       values.second = i.value().second;
+       _columnRoles.remove(column, values);
+       found = true;
+     }
+     ++i;
+  }
+  
+  // Insert new
+  values.first = value;
+  values.second = role;
+  _columnRoles.insert(column, values);
+  
+  // Apply
+  applyColumnRole(column, role, value);
 }
 
 void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
@@ -163,7 +225,11 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
     case Qt::EditRole: { 
-      return QSqlRelationalTableModel::data(index);
+      QVariant formatRole = data(index, FormatRole);
+      if (formatRole.isValid())
+         return formatValue(QSqlRelationalTableModel::data(index), formatRole);
+      else 
+        return QSqlRelationalTableModel::data(index);
     } break;
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:
@@ -212,7 +278,7 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
   return true;
 }
 
-QVariant XSqlTableModel::formatValue(const QVariant &value, const QVariant &format)
+QVariant XSqlTableModel::formatValue(const QVariant &value, const QVariant &format) const
 {
   int scale = decimalPlaces(_locales.at(format.toInt()));
   double fval = value.toDouble();

@@ -210,6 +210,12 @@ bool XTreeView::throwScriptException(const QString &message)
    return false;
 }
 
+int XTreeView::currentIndex()
+{
+  QModelIndexList idx = selectedIndexes();
+  return idx.at(0).row();
+}
+
 int XTreeView::rowCount()
 {
   return _model->rowCount();
@@ -240,7 +246,7 @@ void XTreeView::select()
 {
   setTable();
   _model->select();
-  applyColumnRoles();
+  qDebug("selected");
   
   emit valid(FALSE);
 }
@@ -263,7 +269,7 @@ void XTreeView::insert()
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
     _model->setData(_model->index(row,i),_idx.value(i));
-  applyColumnRoles(row);
+  _model->applyColumnRoles(row);
   selectRow(row);
 }
 
@@ -283,7 +289,6 @@ void XTreeView::populate(int p)
     _model->setFilter(clause);
     if (!_model->query().isActive()) {
       _model->select();
-      applyColumnRoles();
     }
   }
 }
@@ -320,7 +325,7 @@ void XTreeView::save()
     emit saved();
 }
 
-void XTreeView::selectRow(int index)
+void XTreeView::setCurrentIndex(int index)
 {
   selectionModel()->select(QItemSelection(model()->index(index,0),QTreeView::model()->index(index,0)),
                                         QItemSelectionModel::ClearAndSelect |
@@ -360,7 +365,7 @@ void XTreeView::setFormat(const QString column, int format)
 
 void XTreeView::setTextAlignment(int column, int alignment)
 {
-  setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
+  _model->setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
 }
 
 void XTreeView::setTextAlignment(const QString column, int alignment)
@@ -651,68 +656,12 @@ void XTreeView::popupMenuActionTriggered(QAction * pAction)
   //else if (some other command to handle)
 }
 
-void XTreeView::applyColumnRole(int column, int role, QVariant value)
-{
-  QSqlQuery qry = _model->query();
-  
-  // Apply to the model
-  qry.first();
-  for (int row=0; row < qry.size(); ++row) {
-    _model->setData(_model->index(row,column), value, role);
-    qry.next();
-  }
-}
-
-void XTreeView::applyColumnRoles()
-{
-  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
-  while (i.hasNext()) {
-    applyColumnRole(i.key(), i.value().second, i.value().first );
-    i.next();
-  }
-}
-
-void XTreeView::applyColumnRoles(int row)
-{
-  QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
-  while (i.hasNext()) {
-    _model->setData(_model->index(row,i.key()), i.value().first, i.value().second);
-    i.next();
-  }
-}
-
-void XTreeView::setColumnRole(int column, int role, const QVariant value)
-{  
-  QPair<QVariant, int> values;
-  bool found = false;
-  
-  // Remove any previous value for this column/role pair
-  QMultiHash<int, QPair<QVariant, int> >::iterator i = _columnRoles.find(column);
-  while (i != _columnRoles.end() && i.key() ==column && !found) {
-     if (i.value().second == role) {
-       values.first = i.value().first;
-       values.second = i.value().second;
-       _columnRoles.remove(column, values);
-       found = true;
-     }
-     ++i;
-  }
-  
-  // Insert new
-  values.first = value;
-  values.second = role;
-  _columnRoles.insert(column, values);
-  
-  // Apply
-  applyColumnRole(column, role, value);
-}
-
 void XTreeView::setColumnRole(const QString column, int role, const QVariant value)
 {
   for (int colnum = 0; colnum < header()->count(); colnum++) {
     if (column == QTreeView::model()->headerData(colnum, Qt::Horizontal,
                                                   Qt::UserRole).toString()) {
-      setColumnRole(colnum, role, value);
+      _model->setColumnRole(colnum, role, value);
     }
   }
 }
@@ -744,23 +693,6 @@ void XTreeView::handleDataChanged(const QModelIndex topLeft, const QModelIndex l
 {
   int col;
   int row;
-
-  // Apply column roles, they always supercede other changes
-  for (col=topLeft.column(); col <= lowerRight.column(); ++col) {
-     QHash<int, QPair<QVariant, int> >::const_iterator i = _columnRoles.find(col);
-     while (i != _columnRoles.end() && i.key() == col) {
-       for (row=topLeft.row(); row <= lowerRight.row(); ++row) 
-       if (i.value().second > 32) {
-       qDebug("setting changed");
-       qDebug("row %d", row);
-       qDebug("col %d", col);
-       qDebug("val " + i.value().first.toString());
-       qDebug("role %d", i.value().second);
-       qDebug("end changed"); }
-          _model->setData(_model->index(row,col), i.value().first, i.value().second);
-       ++i;
-     }
-  }
 
   // Emit data changed signal
   for (col = topLeft.column(); col <= lowerRight.column(); col++) {

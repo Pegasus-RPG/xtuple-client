@@ -24,7 +24,7 @@ void XTextEdit::setDataWidgetMap(XDataWidgetMapper* m)
   else
     m->addMapping(this, _fieldName, "plainText", "defaultText");
   _mapper = m;
-  connect(this, SIGNAL(lostFocus()), this, SLOT(updateMapperData()));
+  connect(this, SIGNAL(textChanged()), this, SLOT(updateMapperData()));
 }
 
 void XTextEdit::updateMapperData()

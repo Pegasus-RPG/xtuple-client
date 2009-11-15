@@ -26,6 +26,7 @@
 #include <QStack>
 #include <QTreeWidgetItem>
 
+#include "format.h"
 #include "xtsettings.h"
 #include "xsqlrelationaldelegate.h"
 
@@ -53,15 +54,16 @@ XTableWidget::XTableWidget(QWidget *parent) :
   muted.setColor(QPalette::AlternateBase, QColor(0xEE, 0xEE, 0xEE));
   setPalette(muted);
 
+  _mapper = new XDataWidgetMapper(this);
+  _model = new XSqlTableModel(this);
+  _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  
   connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(sShowMenu(const QPoint &)));
   connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
                     SLOT(sShowHeaderMenu(const QPoint &)));
   connect(horizontalHeader(), SIGNAL(sectionResized(int, int, int)),
-          this,     SLOT(sColumnSizeChanged(int, int, int))); 
-
-  _mapper = new XDataWidgetMapper(this);
-  _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
-
+          this,     SLOT(sColumnSizeChanged(int, int, int)));
+  connect(_model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(handleDataChanged(const QModelIndex, const QModelIndex)));
   _windowName = window()->objectName();
 }
 
@@ -115,6 +117,23 @@ QString XTableWidget::columnNameFromLogicalIndex(const int logicalIndex) const
       return it.value()->columnName;
   }
   return QString();
+}
+
+QString XTableWidget::filter()
+{
+  return _model->filter();
+}
+
+void XTableWidget::handleDataChanged(const QModelIndex topLeft, const QModelIndex lowerRight)
+{
+  int col;
+  int row;
+
+  // Emit data changed signal
+  for (col = topLeft.column(); col <= lowerRight.column(); col++) {
+    for (row = topLeft.row(); row <= lowerRight.row(); row++)
+      emit dataChanged(row, col);
+  }
 }
 
 void XTableWidget::sShowMenu(const QPoint &pntThis)
@@ -207,13 +226,13 @@ bool XTableWidget::throwScriptException(const QString &message)
 
 int XTableWidget::rowCount()
 {
-  return _model.rowCount();
+  return _model->rowCount();
 }
 
 int XTableWidget::rowCountVisible()
 {
   int counter = 0;
-  for (int i = 0; i < _model.rowCount(); i++)
+  for (int i = 0; i < _model->rowCount(); i++)
   {
     if (!isRowHidden(i))
       counter++;
@@ -235,8 +254,10 @@ QVariant XTableWidget::selectedValue(int column)
 void XTableWidget::select()
 {
   setTable();
-  _model.select();
+  _model->select();
+  
   emit valid(FALSE);
+
 }
 
 void XTableWidget::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -253,11 +274,11 @@ void XTableWidget::selectionChanged(const QItemSelection & selected, const QItem
 
 void XTableWidget::insert()
 { 
-  int row=_model.rowCount();
-  _model.insertRows(row,1);
+  int row=_model->rowCount();
+  _model->insertRows(row,1);
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
-    _model.setData(_model.index(row,i),_idx.value(i));
+    _model->setData(_model->index(row,i),_idx.value(i));
   selectRow(row);
 }
 
@@ -268,16 +289,16 @@ void XTableWidget::populate(int p)
   {
     _idx=t->primaryKey();
 
-    for (int i = 0; i < _idx.count(); ++i)
-    {
+    for (int i = 0; i < _idx.count(); ++i) {
       _idx.setValue(i, t->data(t->index(p,i)));
       setColumnHidden(i,true);
     }
     
-    QString clause = QString(_model.database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
-    _model.setFilter(clause);
-    if (!_model.query().isActive())
-      _model.select();
+    QString clause = QString(_model->database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
+    _model->setFilter(clause);
+    if (!_model->query().isActive()) {
+      _model->select();
+    }
   }
 }
 
@@ -285,35 +306,40 @@ void XTableWidget::removeSelected()
 {
   QModelIndexList selected=selectedIndexes();
 
-  for (int i = selected.count() -1 ; i > -1; i--)
-  {
-    if (selected.value(i).column() == 1) // Only once per row
-    {
-      hideRow(i);
-      _model.removeRow(selected.value(i).row());
+  for (int i = selected.count() -1 ; i > -1; i--) {
+    if (selected.value(i).column() == 1) { // Only once per row
+      _model->removeRow(selected.value(i).row());
+      hideRow(selected.value(i).row());
     }
   }
 }
 
 void XTableWidget::revertAll()
 {
-  _model.revertAll();
+  _model->revertAll();
   if (_mapper)
     populate(_mapper->currentIndex());
 }
 
 void XTableWidget::save()
 { 
-  if(!_model.submitAll())
+  if(!_model->submitAll())
   {
-    if(!throwScriptException(_model.lastError().databaseText()))
+    if(!throwScriptException(_model->lastError().databaseText()))
           QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                             tr("Error saving %1 at %2::%3\n\n%4")
                             .arg(_tableName).arg(__FILE__).arg(__LINE__)
-                            .arg(_model.lastError().databaseText()));
+                            .arg(_model->lastError().databaseText()));
   }
   else
     emit saved();
+}
+
+void XTableWidget::selectRow(int index)
+{
+  selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,0)),
+                                        QItemSelectionModel::ClearAndSelect |
+                                        QItemSelectionModel::Rows);
 }
 
 void XTableWidget::setDataWidgetMap(XDataWidgetMapper* mapper)
@@ -322,22 +348,19 @@ void XTableWidget::setDataWidgetMap(XDataWidgetMapper* mapper)
   _mapper=mapper; 
 }
 
-void XTableWidget::setTable()
+void XTableWidget::setFilter(const QString filter)
+{  
+  _model->setFilter(filter);
+}
+
+void XTableWidget::setForegroundColor(int row, int col, QString color)
 {
-  if (_model.tableName() == _tableName)
-    return;
-      
-  if (!_tableName.isEmpty())
-  {
-    QString tablename=_tableName;
-    if (!_schemaName.isEmpty())
-      tablename = _schemaName + "." + tablename;
-    _model.setTable(tablename,_keyColumns);
-    
-    setModel(&_model);
-    setItemDelegate(new XSqlRelationalDelegate(this));
-    setRelations();
-  }
+  _model->setData(_model->index(row,col), namedColor(color), Qt::ForegroundRole);
+}
+
+void XTableWidget::setFormat(const QString column, int format)
+{
+  setColumnRole(column, XSqlTableModel::FormatRole, QVariant(format));
 }
 
 void XTableWidget::setModel(XSqlTableModel * model)
@@ -447,9 +470,43 @@ void XTableWidget::setModel(XSqlTableModel * model)
   emit newModel(model);
 }
 
+void XTableWidget::setRowForegroundColor(int row, QString color)
+{
+  for (int col = 0; col < _model->query().record().count(); col++)
+    setForegroundColor(row, col, color);
+}
+
+void XTableWidget::setTable()
+{
+  if (_model->tableName() == _tableName)
+    return;
+      
+  if (!_tableName.isEmpty())
+  {
+    QString tablename=_tableName;
+    if (!_schemaName.isEmpty())
+      tablename = _schemaName + "." + tablename;
+    _model->setTable(tablename,_keyColumns);
+    
+    setModel(_model);
+    setItemDelegate(new XSqlRelationalDelegate(this));
+  //  setRelations();
+  }
+}
+
+void XTableWidget::setTextAlignment(int column, int alignment)
+{
+  _model->setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
+}
+
+void XTableWidget::setTextAlignment(const QString column, int alignment)
+{
+  setColumnRole(column, Qt::TextAlignmentRole, QVariant(alignment));
+}
+
 void XTableWidget::setValue(int row, int column, QVariant value)
 {
-  _model.setData(_model.index(row,column), value);
+  _model->setData(_model->index(row,column), value);
 }
 
 void XTableWidget::resizeEvent(QResizeEvent * e)
@@ -629,6 +686,17 @@ void XTableWidget::setColumnLocked(int pColumn, bool pLocked)
     cp->locked = pLocked;
 }
 
+
+void XTableWidget::setColumnRole(const QString column, int role, const QVariant value)
+{
+  for (int colnum = 0; colnum < horizontalHeader()->count(); colnum++) {
+    if (column == QTableView::model()->headerData(colnum, Qt::Horizontal,
+                                                  Qt::UserRole).toString()) {
+      _model->setColumnRole(colnum, role, value);
+    }
+  }
+}
+
 void XTableWidget::popupMenuActionTriggered(QAction * pAction)
 {
   QMap<QString, QVariant> m = pAction->data().toMap();
@@ -650,11 +718,12 @@ void XTableWidget::setColumnVisible(int pColumn, bool pVisible)
     cp->visible = pVisible;
 }
 
+/*
 void XTableWidget::setRelations()
 {
   if (DEBUG) qDebug("setRelations() entered with table  %s.%s",
                     qPrintable(_schemaName), qPrintable(_tableName));
-  QSqlRelationalTableModel *model = qobject_cast<QSqlRelationalTableModel*>(&_model);
+  QSqlRelationalTableModel *model = qobject_cast<QSqlRelationalTableModel*>(_model);
   if (! model)
     return;
 
@@ -827,3 +896,4 @@ void XTableWidget::setRelations()
     }
   }
 }
+*/

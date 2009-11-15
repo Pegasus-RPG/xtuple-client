@@ -44,6 +44,7 @@
 #include "vendorcluster.h"
 #include "wocluster.h"
 #include "workcentercluster.h"
+#include "xsqltablemodel.h"
 
 #define DEBUG true
 
@@ -111,6 +112,192 @@ QWidget *XSqlRelationalDelegate::createEditor(QWidget *parent,
                                             const QStyleOptionViewItem &option,
                                             const QModelIndex &index) const
 {
+  if (DEBUG) qDebug("XSqlRelationalDelegate::createEditor(%p, option, index)",
+                    parent);
+  const XSqlTableModel *model = qobject_cast<const XSqlTableModel *>(index.model());
+
+  QWidget *editor = 0;
+  QString editorRole = model->data(index, XSqlTableModel::EditorRole).toString();
+  if (editorRole == "GLCluster")
+  {
+    GLCluster *widget = new GLCluster(parent);
+    editor = widget;
+  }
+  else if (editorRole == "AddressCluster")
+  {
+    AddressCluster *widget = new AddressCluster(parent);
+    widget->setMode(AddressCluster::Select);
+    editor = widget;
+  }
+  else if (editorRole == "ContactCluster")
+  {
+    ContactCluster *widget = new ContactCluster(parent);
+    widget->setMinimalLayout(true);
+    widget->setMode(ContactCluster::Select);
+    editor = widget;
+  }
+  else if (editorRole == "SoCluster")
+  {
+    OrderLineEdit *widget = new OrderLineEdit(parent);
+    widget->setAllowedTypes(OrderLineEdit::Sales);
+    editor = widget;
+  }
+  else if (editorRole == "CRMAcctCluster")
+  {
+    CRMAcctLineEdit *widget = new CRMAcctLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "CustCluster")
+  {
+    CLineEdit *widget = new CLineEdit(parent);
+    widget->setType(CLineEdit::AllCustomers);
+    editor = widget;
+  }
+  else if (editorRole == "DeptCluster")
+  {
+    DeptClusterLineEdit *widget = new DeptClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "EmpCluster")
+  {
+    EmpClusterLineEdit *widget = new EmpClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "EmpGroupCluster")
+  {
+    EmpGroupClusterLineEdit *widget = new EmpGroupClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "ExpenseCluster")
+  {
+    ExpenseLineEdit *widget = new ExpenseLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "ImageCluster")
+  {
+    ImageClusterLineEdit *widget = new ImageClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "IncidentCluster")
+  {
+    IncidentClusterLineEdit *widget = new IncidentClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "InvoiceCluster")
+  {
+    InvoiceClusterLineEdit *widget = new InvoiceClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "ItemCluster")
+  {
+    ItemLineEdit *widget = new ItemLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "LotserialCluster")
+  {
+    LotserialLineEdit *widget = new LotserialLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "OpportunityCluster")
+  {
+    OpportunityClusterLineEdit *widget = new OpportunityClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "PlanOrdCluster")
+  {
+    PlanOrdCluster *widget = new PlanOrdCluster(parent);
+    editor = widget;
+  }
+  else if (editorRole == "PoCluster")
+  {
+    OrderLineEdit *widget = new OrderLineEdit(parent);
+    widget->setAllowedTypes(OrderLineEdit::Purchase);
+    editor = widget;
+  }
+  else if (editorRole == "ProjectCluster")
+  {
+    ProjectLineEdit *widget = new ProjectLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "ProspectCluster")
+  {
+    CLineEdit *widget = new CLineEdit(parent);
+    widget->setType(CLineEdit::AllProspects);
+    editor = widget;
+  }
+  else if (editorRole == "RaCluster")
+  {
+    OrderLineEdit *widget = new OrderLineEdit(parent);
+    widget->setAllowedTypes(OrderLineEdit::Return);
+    editor = widget;
+  }
+  else if (editorRole == "RevisionCluster")
+  {
+    RevisionLineEdit *widget = new RevisionLineEdit(parent);
+    widget->setMode(RevisionLineEdit::Use);
+    editor = widget;
+  }
+  else if (editorRole == "ShiftCluster")
+  {
+    ShiftClusterLineEdit *widget = new ShiftClusterLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "ShipmentCluster")
+  {
+    ShipmentClusterLineEdit *widget = new ShipmentClusterLineEdit(parent);
+    editor = widget;
+  } 
+  /* cannot use the ShiptoCluster because it requires a customer id!
+     use the default combobox
+  else if (editorRole = "shipto_name"))
+  {
+    ShiptoCluster *widget = new ShiptoCluster(parent);
+    editor = widget;
+  }
+  */
+  else if (editorRole == "ToCluster")
+  {
+    OrderLineEdit *widget = new OrderLineEdit(parent);
+    widget->setAllowedTypes(OrderLineEdit::Transfer);
+    editor = widget;
+  }
+  else if (editorRole == "UsernameCluster")
+  {
+    UsernameLineEdit *widget = new UsernameLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "VendorCluster")
+  {
+    VendorLineEdit *widget = new VendorLineEdit(parent);
+    editor = widget;
+  }
+  else if (editorRole == "WoCluster")
+  {
+    WoCluster *widget = new WoCluster(parent);
+    editor = widget;
+  }
+  else if (editorRole == "WorkCenterCluster")
+  {
+    WorkCenterLineEdit *widget = new WorkCenterLineEdit(parent);
+    editor = widget;
+  }
+  else
+  {
+    QSqlTableModel *childModel = model ? model->relationModel(index.column()) : 0;
+    if (!childModel)
+        return QItemDelegate::createEditor(parent, option, index);
+
+    QComboBox *widget = new QComboBox(parent);
+    widget->setModel(childModel);
+    widget->setModelColumn(childModel->fieldIndex(model->relation(index.column()).displayColumn()));
+    editor = widget;
+  }
+  
+  editor->installEventFilter(const_cast<XSqlRelationalDelegate *>(this));
+  editor->setAutoFillBackground(true);
+  return editor;
+  
+/*
   if (DEBUG) qDebug("XSqlRelationalDelegate::createEditor(%p, option, index)",
                     parent);
   const QSqlRelationalTableModel *sqlModel = qobject_cast<const QSqlRelationalTableModel *>(index.model());
@@ -250,7 +437,7 @@ QWidget *XSqlRelationalDelegate::createEditor(QWidget *parent,
   {
     ShipmentClusterLineEdit *widget = new ShipmentClusterLineEdit(parent);
     editor = widget;
-  }
+  } */
   /* cannot use the ShiptoCluster because it requires a customer id!
      use the default combobox
   else if (colname.endsWith("shipto_name"))
@@ -258,7 +445,7 @@ QWidget *XSqlRelationalDelegate::createEditor(QWidget *parent,
     ShiptoCluster *widget = new ShiptoCluster(parent);
     editor = widget;
   }
-  */
+  */ /*
   else if (colname.endsWith("tohead_number"))
   {
     OrderLineEdit *widget = new OrderLineEdit(parent);
@@ -291,10 +478,7 @@ QWidget *XSqlRelationalDelegate::createEditor(QWidget *parent,
     widget->setModelColumn(childModel->fieldIndex(sqlModel->relation(index.column()).displayColumn()));
     editor = widget;
   }
-
-  editor->installEventFilter(const_cast<XSqlRelationalDelegate *>(this));
-  editor->setAutoFillBackground(true);
-  return editor;
+*/
 }
 
 void XSqlRelationalDelegate::setEditorData(QWidget *editor,

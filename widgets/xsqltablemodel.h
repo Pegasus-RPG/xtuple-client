@@ -39,9 +39,13 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     enum FormatFlags { Money, Qty, Curr, Percent, Cost, QtyPer, 
       SalesPrice, PurchPrice, UOMRatio, ExtPrice, Weight
     };
-    
+
+    virtual void applyColumnRole(int column, int role, QVariant value);
+    virtual void applyColumnRoles();
+    virtual void applyColumnRoles(int row);
+    virtual void setColumnRole(int column, int role, QVariant value);
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QVariant formatValue(const QVariant &dataValue, const QVariant &formatValue);
+    virtual QVariant formatValue(const QVariant &dataValue, const QVariant &formatValue) const;
     virtual bool select();
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     virtual void setTable(const QString &tableName, int keyColumns);
@@ -51,6 +55,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     
     private:
       QHash<QPair<QModelIndex, int>, QVariant> roles;
+      QMultiHash<int, QPair<QVariant, int> > _columnRoles;
       QList<QString> _locales;
 };
 
