@@ -97,6 +97,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
+/*
 #include <QWindowsStyle>
 #include <QCleanlooksStyle>
 
@@ -108,6 +109,7 @@
 #ifdef Q_WS_MACX
 #include <QMacStyle>
 #endif
+*/
 
 #include <dbtools.h>
 #include <parameter.h>
@@ -149,6 +151,7 @@ int main(int argc, char *argv[])
   bool    _requireSSL     = false;
   bool    havePasswd      = false;
 
+/*
 #ifdef XQ_WS_WIN
   WSADATA wsaData;
   if (WSAStartup(MAKEWORD(1, 1), &wsaData))
@@ -157,6 +160,7 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 #endif
+*/
 
   QApplication app(argc, argv);
 
@@ -171,6 +175,7 @@ int main(int argc, char *argv[])
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
 
+/*
 #ifdef Q_WS_WIN
   if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
     QApplication::setStyle(QStyleFactory::create("windowsxpstyle"));
@@ -201,6 +206,7 @@ int main(int argc, char *argv[])
   QApplication::setStyle(new QMacStyle);
 #endif
 #endif
+*/
 
   // Try and load a default translation file and install it
   QTranslator defaultTranslator(&app);
@@ -632,9 +638,11 @@ int main(int argc, char *argv[])
   if (0 != _metricsenc)
     delete _metricsenc;
 
+/*
 #ifdef XQ_WS_WIN
   WSACleanup();
 #endif
+*/
 
   return 0;
 }
