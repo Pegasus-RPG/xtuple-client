@@ -138,6 +138,7 @@ void XLineEdit::mousePressEvent(QMouseEvent *event)
 
 void XLineEdit::keyPressEvent(QKeyEvent *event)
 {
+  _parsed = FALSE;
   if (event->modifiers() == Qt::ControlModifier)
   {
     if (event->key() == Qt::Key_L)
@@ -158,8 +159,6 @@ void XLineEdit::keyPressEvent(QKeyEvent *event)
       emit (requestAlias());
     }
   }
-  else
-    _parsed = FALSE;
 
   if (_parsed)
     event->accept();
