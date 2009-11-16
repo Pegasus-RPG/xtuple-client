@@ -159,6 +159,7 @@ SOURCES    += widgets.cpp \
               cmheadcluster.cpp \
               invoiceCluster.cpp \
               quotecluster.cpp quoteList.cpp \
+              xdoublevalidator.cpp \
               xspinbox.cpp \
               xsqlrelationaldelegate.cpp \
               xtablewidget.cpp \
@@ -216,6 +217,7 @@ HEADERS    += widgets.h \
               cmheadcluster.h \
               quotecluster.h quoteList.h \
               invoicecluster.h \
+              xdoublevalidator.h \
               xspinbox.h \
               xsqlrelationaldelegate.h \
               xtablewidget.h \

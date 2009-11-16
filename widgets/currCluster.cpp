@@ -19,6 +19,7 @@
 #include "xsqlquery.h"
 #include "xcombobox.h"
 #include "format.h"
+#include "xdoublevalidator.h"
 
 #include <math.h>
 
@@ -174,7 +175,7 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
 
     _currency->setType(XComboBox::Currencies);
 
-    _validator = new QDoubleValidator(0, +999999999, _localScale, this);
+    _validator = new XDoubleValidator(0, +999999999, _localScale, this);
     _valueLocalWidget->setValidator(_validator);
     
     _valueBaseWidget->setAlignment(Qt::AlignRight|Qt::AlignTop);
