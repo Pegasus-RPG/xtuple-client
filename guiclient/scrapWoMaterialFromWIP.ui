@@ -469,7 +469,6 @@ to be bound by its terms.</comment>
   <tabstop>_qty</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_scrap</tabstop>
-  <tabstop>_scrap</tabstop>
  </tabstops>
  <resources/>
  <connections>
