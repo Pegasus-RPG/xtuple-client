@@ -1723,7 +1723,8 @@ void salesOrder::populateShipto(int pShiptoid)
       _commission->setDouble(shipto.value("commission").toDouble() * 100);
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
-      _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
+      if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
+        _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
 
       _ignoreSignals = FALSE;
     }
