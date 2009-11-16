@@ -115,6 +115,7 @@ private:
     bool _notice;
     bool _autoSaved;
     bool _captive;
+    bool _charfilled;
     QStandardItemModel * _custchar;
 
 };

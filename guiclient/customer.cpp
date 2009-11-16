@@ -187,6 +187,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _NumberGen = -1;
   _autoSaved = false;
   _captive = false;
+  _charfilled = false;
 
   _sellingWarehouse->setId(-1);
 
@@ -1067,7 +1068,6 @@ void customer::sDeleteCharacteristic()
 
 void customer::sFillCharacteristicList()
 {
-  
   q.prepare( "SELECT custtype_char "
              "FROM custtype "
              "WHERE (custtype_id=:custtype_id);");
@@ -1077,6 +1077,8 @@ void customer::sFillCharacteristicList()
   q.first();
   if (q.value("custtype_char").toBool())
   {
+      if (_charfilled)
+        return;
       _widgetStack->setCurrentIndex(1);
       _custchar->removeRows(0, _custchar->rowCount());
       q.prepare( "SELECT DISTINCT char_id, char_name,"
@@ -1107,6 +1109,7 @@ void customer::sFillCharacteristicList()
       _custchar->setData(idx, _custtype->id(), Qt::UserRole);
       row++;
     }
+    _charfilled=true;
   }
   else
   {
@@ -1121,6 +1124,7 @@ void customer::sFillCharacteristicList()
     q.bindValue(":cust_id", _custid);
     q.exec();
     _charass->populate(q);
+    _charfilled=false;
   }
 }
 
@@ -1698,7 +1702,7 @@ void customer::sClear()
 {
     _custid = -1;
     _crmacctid = -1;
-
+    
     disconnect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
     _number->clear();
     connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
@@ -1774,6 +1778,7 @@ void customer::sClear()
     _print->setEnabled(false);
     
     sFillList();
+    _charfilled = false;
     setValid(false);
       
     if (_number->editMode() || _mode == cNew)
