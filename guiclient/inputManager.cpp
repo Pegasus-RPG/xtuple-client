@@ -12,6 +12,7 @@
 #include <QList>
 #include <QKeyEvent>
 #include <QEvent>
+#include <QDebug>
 
 #include <xsqlquery.h>
 
@@ -557,6 +558,15 @@ void InputManager::dispatchSalesOrderLineItem()
     QString number    = _private->_buffer.left(_private->_length1);
     QString subNumber = _private->_buffer.right(_private->_length2);
 
+    QString lineNumber = subNumber;
+    QString subSubNumber = "0";
+    int subsep = subNumber.indexOf(".");
+    if(subsep >= 0)
+    {
+      lineNumber = subNumber.left(subsep);
+      subSubNumber = subNumber.right(subNumber.length() - (subsep + 1));
+    }
+
     if ( (receiver.type() == cBCSalesOrderLineItem) ||
          (receiver.type() == cBCSalesOrder) )
     {
@@ -565,9 +575,11 @@ void InputManager::dispatchSalesOrderLineItem()
                         "FROM cohead, coitem "
                         "WHERE ( (coitem_cohead_id=cohead_id)"
                         " AND (cohead_number=:sohead_number)"
-                        " AND (coitem_linenumber=:soitem_linenumber) );" );
+                        " AND (coitem_linenumber=:soitem_linenumber)"
+                        " AND (coitem_subnumber=:soitem_subnumber) );" );
       soitemid.bindValue(":sohead_number", number);
-      soitemid.bindValue(":soitem_linenumber", subNumber);
+      soitemid.bindValue(":soitem_linenumber", lineNumber);
+      soitemid.bindValue(":soitem_subnumber", subSubNumber);
       soitemid.exec();
       if (soitemid.first())
       {
@@ -606,9 +618,11 @@ void InputManager::dispatchSalesOrderLineItem()
                           "WHERE ( (coitem_cohead_id=cohead_id)"
                           " AND (coitem_itemsite_id=itemsite_id)"
                           " AND (cohead_number=:sohead_number)"
-                          " AND (coitem_linenumber=:soitem_linenumber) );" );
+                          " AND (coitem_linenumber=:soitem_linenumber)"
+                          " AND (coitem_subnumber=:soitem_subnumber) );" );
       itemsiteid.bindValue(":sohead_number", number);
-      itemsiteid.bindValue(":soitem_linenumber", subNumber);
+      itemsiteid.bindValue(":soitem_linenumber", lineNumber);
+      itemsiteid.bindValue(":soitem_subnumber", subSubNumber);
       itemsiteid.exec();
       if (itemsiteid.first())
       {
