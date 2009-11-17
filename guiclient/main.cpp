@@ -97,19 +97,6 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
-/*
-#include <QWindowsStyle>
-#include <QCleanlooksStyle>
-
-#ifdef Q_WS_WIN
-#include <windows.h>
-#include <QStyleFactory>
-#endif
-
-#ifdef Q_WS_MACX
-#include <QMacStyle>
-#endif
-*/
 
 #include <dbtools.h>
 #include <parameter.h>
@@ -151,17 +138,6 @@ int main(int argc, char *argv[])
   bool    _requireSSL     = false;
   bool    havePasswd      = false;
 
-/*
-#ifdef XQ_WS_WIN
-  WSADATA wsaData;
-  if (WSAStartup(MAKEWORD(1, 1), &wsaData))
-  {
-    qDebug("Error starting up Windows Socket system... Database services are not avalable.");
-    exit(-1);
-  }
-#endif
-*/
-
   QApplication app(argc, argv);
 
 #if QT_VERSION >= 0x040400
@@ -174,39 +150,6 @@ int main(int argc, char *argv[])
 #ifndef Q_WS_MACX
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
-
-/*
-#ifdef Q_WS_WIN
-  if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
-    QApplication::setStyle(QStyleFactory::create("windowsxpstyle"));
-#if QT_VERSION >= 0x040300 
-  else if (QSysInfo::WindowsVersion == QSysInfo::WV_VISTA)
-    QApplication::setStyle(QStyleFactory::create("windowsvistastyle"));
-#endif
-  else
-    QApplication::setStyle(new QWindowsStyle);
-#elif defined Q_WS_MACX
-#if QT_VERSION >= 0x040400
-  // Again for some reason on earlier version this causes a crash
-  // despite this being the correct place for it.
-  QApplication::setStyle(new QMacStyle);
-#endif
-#elif defined Q_WS_X11
-  QApplication::setStyle(new QCleanlooksStyle);
-#endif
-
-#if QT_VERSION < 0x040400
-  // This is here because of some crash problem using it before the
-  // QApplication object is instantiated even though it shouldn't be
-  // needed. This only appears to affect versions lower than 4.4.
-  QCoreApplication::addLibraryPath(QString("."));
-#if defined Q_WS_MACX
-  // Just as above this has to be done after the QApplication is
-  // instantiated to prevent a crash on earlier Qt Versions.
-  QApplication::setStyle(new QMacStyle);
-#endif
-#endif
-*/
 
   // Try and load a default translation file and install it
   QTranslator defaultTranslator(&app);
@@ -637,12 +580,6 @@ int main(int argc, char *argv[])
   delete _privileges;
   if (0 != _metricsenc)
     delete _metricsenc;
-
-/*
-#ifdef XQ_WS_WIN
-  WSACleanup();
-#endif
-*/
 
   return 0;
 }
