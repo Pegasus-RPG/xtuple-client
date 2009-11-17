@@ -345,7 +345,7 @@ to be bound by its terms.</comment>
                <string>Show windows inside workspace</string>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -353,6 +353,9 @@ to be bound by its terms.</comment>
              <widget class="QRadioButton" name="_interfaceTopLevel">
               <property name="text">
                <string>Show windows as free-floating</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
