@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include "guiclient.h"
+#include "xdoublevalidator.h"
 
 updatePricesByProductCategory::updatePricesByProductCategory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -29,7 +30,7 @@ updatePricesByProductCategory::updatePricesByProductCategory(QWidget* parent, co
     
     _productCategory->setType(ParameterGroup::ProductCategory);
     
-    _updateBy->setValidator(new QDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
+    _updateBy->setValidator(new XDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
 }
 
 updatePricesByProductCategory::~updatePricesByProductCategory()

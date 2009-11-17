@@ -70,6 +70,7 @@
 #include "timeoutHandler.h"
 #include "idleShutdown.h"
 #include "inputManager.h"
+#include "xdoublevalidator.h"
 
 #include "custcluster.h"
 #include "crmacctcluster.h"
@@ -365,19 +366,19 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
             or replace every field that uses _moneyVal, _negMoneyVal, _priceVal, and _costVal
                with CurrCluster or CurrDisplay
   */
-  _qtyVal         = new QDoubleValidator(0,              99999999.0, decimalPlaces("qty"),     this);
-  _transQtyVal    = new QDoubleValidator(-99999999.0,    99999999.0, decimalPlaces("qty"),     this);
-  _qtyPerVal      = new QDoubleValidator(0,              99999999.0, decimalPlaces("qtyper"),  this);
-  _scrapVal       = new QDoubleValidator(0,                  9999.0, decimalPlaces("percent"), this);
-  _percentVal     = new QDoubleValidator(0,                  9999.0, decimalPlaces("percent"), this);
-  _negPercentVal  = new QDoubleValidator(-9999.0,            9999.0, decimalPlaces("percent"), this);
-  _moneyVal       = new QDoubleValidator(0,            9999999999.0, decimalPlaces("curr"),    this);
-  _negMoneyVal    = new QDoubleValidator(-9999999999.0,9999999999.0, decimalPlaces("curr"),    this);
-  _priceVal       = new QDoubleValidator(0,               9999999.0, decimalPlaces("purchprice"), this);
-  _costVal        = new QDoubleValidator(0,               9999999.0, decimalPlaces("cost"), this);
-  _ratioVal       = new QDoubleValidator(0,            9999999999.0, decimalPlaces("uomratio"), this);
-  _weightVal      = new QDoubleValidator(0,              99999999.0, decimalPlaces("weight"), this);
-  _runTimeVal     = new QDoubleValidator(0,              99999999.0, 2, this);
+  _qtyVal         = new XDoubleValidator(0,              99999999.0, decimalPlaces("qty"),     this);
+  _transQtyVal    = new XDoubleValidator(-99999999.0,    99999999.0, decimalPlaces("qty"),     this);
+  _qtyPerVal      = new XDoubleValidator(0,              99999999.0, decimalPlaces("qtyper"),  this);
+  _scrapVal       = new XDoubleValidator(0,                  9999.0, decimalPlaces("percent"), this);
+  _percentVal     = new XDoubleValidator(0,                  9999.0, decimalPlaces("percent"), this);
+  _negPercentVal  = new XDoubleValidator(-9999.0,            9999.0, decimalPlaces("percent"), this);
+  _moneyVal       = new XDoubleValidator(0,            9999999999.0, decimalPlaces("curr"),    this);
+  _negMoneyVal    = new XDoubleValidator(-9999999999.0,9999999999.0, decimalPlaces("curr"),    this);
+  _priceVal       = new XDoubleValidator(0,               9999999.0, decimalPlaces("purchprice"), this);
+  _costVal        = new XDoubleValidator(0,               9999999.0, decimalPlaces("cost"), this);
+  _ratioVal       = new XDoubleValidator(0,            9999999999.0, decimalPlaces("uomratio"), this);
+  _weightVal      = new XDoubleValidator(0,              99999999.0, decimalPlaces("weight"), this);
+  _runTimeVal     = new XDoubleValidator(0,              99999999.0, 2, this);
   _orderVal       = new QIntValidator(0, 999999, this);
   _dayVal         = new QIntValidator(0, 9999, this);
 

@@ -21,6 +21,7 @@
 #include "priceList.h"
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
+#include "xdoublevalidator.h"
 
 #define cNewQuote  (0x20 | cNew)
 #define cEditQuote (0x20 | cEdit)
@@ -116,7 +117,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
   _item->addExtraClause( QString("(itemsite_active)") ); // ItemLineEdit::cActive doesn't compare against the itemsite record
   _item->addExtraClause( QString("(itemsite_sold)") );   // ItemLineEdit::cSold doesn't compare against the itemsite record
-  _discountFromCust->setValidator(new QDoubleValidator(-9999, 100, 2, this));
+  _discountFromCust->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
  
@@ -2833,7 +2834,7 @@ void salesOrderItem::sQtyUOMChanged()
   {
     _qtyinvuomratio = 1.0;
     if (_invIsFractional)
-      _qtyOrdered->setValidator(new QDoubleValidator(this));
+      _qtyOrdered->setValidator(new XDoubleValidator(this));
     else
       _qtyOrdered->setValidator(new QIntValidator(this));
   }
@@ -2851,7 +2852,7 @@ void salesOrderItem::sQtyUOMChanged()
     {
       _qtyinvuomratio = invuom.value("ratio").toDouble();
       if (invuom.value("frac").toBool())
-        _qtyOrdered->setValidator(new QDoubleValidator(this));
+        _qtyOrdered->setValidator(new XDoubleValidator(this));
       else
         _qtyOrdered->setValidator(new QIntValidator(this));
     }

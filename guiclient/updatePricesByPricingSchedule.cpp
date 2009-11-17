@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include "guiclient.h"
+#include "xdoublevalidator.h"
 
 updatePricesByPricingSchedule::updatePricesByPricingSchedule(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -31,7 +32,7 @@ updatePricesByPricingSchedule::updatePricesByPricingSchedule(QWidget* parent, co
                         "FROM ipshead "
                         "ORDER BY ipshead_name;" );
     
-    _updateBy->setValidator(new QDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
+    _updateBy->setValidator(new XDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
 }
 
 updatePricesByPricingSchedule::~updatePricesByPricingSchedule()

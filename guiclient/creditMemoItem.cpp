@@ -17,6 +17,7 @@
 
 #include "priceList.h"
 #include "taxDetail.h"
+#include "xdoublevalidator.h"
 
 creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -59,7 +60,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _qtyReturned->setValidator(omfgThis->qtyVal());
   _qtyShipped->setPrecision(omfgThis->qtyVal());
   _discountFromList->setPrecision(omfgThis->percentVal());
-  _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
+  _discountFromSale->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
   
