@@ -996,9 +996,7 @@ void dspFinancialReport::sTogglePeriod()
 bool dspFinancialReport::forwardUpdate()
 {
   QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
-               "FROM accnt "
-               "  LEFT OUTER JOIN trialbal ON (trialbal_accnt_id=accnt_id) "
-               "WHERE (COALESCE(trialbal_dirty,true));" );
+               "FROM accnt;" );
   ParameterList params;
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);

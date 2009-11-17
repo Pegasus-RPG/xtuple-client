@@ -138,6 +138,7 @@ void dspTrialBalances::sPrint()
 
 void dspTrialBalances::sFillList()
 {
+  _trialbal->clear();
   if (!_metrics->boolean("ManualForwardUpdate"))
   {
     if (!forwardUpdate())
@@ -200,12 +201,10 @@ bool dspTrialBalances::forwardUpdate()
 {
   QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
                "FROM accnt "
-               "  LEFT OUTER JOIN trialbal ON (trialbal_accnt_id=accnt_id) "
-               "WHERE ( (COALESCE(trialbal_dirty,true))"
-	             "<? if exists(\"accnt_id\") ?>"
-	             " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
-	             "<? endif ?>"
-	             ");" );
+               "<? if exists(\"accnt_id\") ?>"
+               " WHERE (accnt_id=<? value(\"accnt_id\") ?>)"
+               "<? endif ?>"
+               ";" );
 
   ParameterList params;
   setParams(params);
