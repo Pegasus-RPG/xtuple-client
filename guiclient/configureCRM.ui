@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
-    <height>404</height>
+    <width>789</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,7 +82,7 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="0" column="4" rowspan="10">
+   <item row="0" column="4" rowspan="9">
     <layout class="QVBoxLayout">
      <item>
       <widget class="QPushButton" name="_cancel">
@@ -275,7 +275,33 @@ to be bound by its terms.</comment>
      </layout>
     </widget>
    </item>
-   <item row="9" column="2">
+   <item row="7" column="0">
+    <widget class="XLabel" name="_countryLit">
+     <property name="text">
+      <string>Default Country for Addresses:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>_country</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" colspan="2">
+    <widget class="XComboBox" name="_country">
+     <property name="allowNull">
+      <bool>true</bool>
+     </property>
+     <property name="nullStr">
+      <string>[ no default ]</string>
+     </property>
+     <property name="type">
+      <enum>XComboBox::Countries</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -291,67 +317,9 @@ to be bound by its terms.</comment>
      </property>
     </spacer>
    </item>
-   <item row="8" column="0" colspan="4">
-    <layout class="QHBoxLayout" name="_countryLayout">
-     <item>
-      <widget class="XLabel" name="_countryLit">
-       <property name="text">
-        <string>Default Country for Addresses:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>_country</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XComboBox" name="_country">
-       <property name="allowNull">
-        <bool>true</bool>
-       </property>
-       <property name="nullStr">
-        <string>[ no default ]</string>
-       </property>
-       <property name="type">
-        <enum>XComboBox::Countries</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="XCheckBox" name="_strictCountries">
-       <property name="text">
-        <string>Enforce Valid Country Names</string>
-       </property>
-       <property name="forgetful">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
@@ -382,6 +350,7 @@ to be bound by its terms.</comment>
   <tabstop>_incdtStatus</tabstop>
   <tabstop>_incdtUpdated</tabstop>
   <tabstop>_incdtComments</tabstop>
+  <tabstop>_country</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
