@@ -39,12 +39,11 @@ todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::Windo
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(ParameterGroup::User);
-  q.prepare("SELECT usr_id "
-            "FROM usr "
-            "WHERE (usr_username=CURRENT_USER);");
+  q.prepare("SELECT getUsrId(NULL) AS usr_id;");
   q.exec();
   if (q.first())
   {
+    _myUsrId = q.value("usr_id").toInt();
     _usr->setId(_myUsrId);
   }
   else if (q.lastError().type() != QSqlError::NoError)
