@@ -92,7 +92,7 @@ enum SetResponse expenseCategory::set(const ParameterList &pParams)
 void expenseCategory::sCheck()
 {
   _category->setText(_category->text().trimmed().toUpper());
-  if ((_mode == cNew) && (_category->text().length() != 0))
+  if ( ((_mode == cNew) || (_mode == cCopy)) && (_category->text().length() != 0) )
   {
     q.prepare( "SELECT expcat_id "
                "FROM expcat "
