@@ -466,6 +466,9 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <widget class="QPushButton" name="_create">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>C&amp;reate</string>
            </property>
@@ -524,6 +527,9 @@ to be bound by its terms.</comment>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>_abcClass</cstring>
               </property>
              </widget>
             </item>
@@ -740,6 +746,9 @@ to be bound by its terms.</comment>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
+              <property name="buddy">
+               <cstring>_locationComments</cstring>
+              </property>
              </widget>
             </item>
             <item row="2" column="1">
@@ -770,9 +779,6 @@ to be bound by its terms.</comment>
         <layout class="QGridLayout" name="gridLayout_14">
          <item row="0" column="0">
           <widget class="QGroupBox" name="_useParameters">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="title">
             <string>Enforce Order Parameters</string>
            </property>
@@ -782,198 +788,171 @@ to be bound by its terms.</comment>
            <property name="checked">
             <bool>false</bool>
            </property>
-           <layout class="QGridLayout" name="gridLayout_15">
+           <layout class="QFormLayout" name="formLayout">
             <item row="0" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_5">
-                <item>
-                 <layout class="QGridLayout" name="gridLayout_12">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="_reorderLevelLit">
-                    <property name="text">
-                     <string>&amp;Reorder Level:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="buddy">
-                     <cstring>_reorderLevel</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="XLineEdit" name="_reorderLevel">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>32767</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="_orderUpToQtyLit">
-                    <property name="text">
-                     <string>Order &amp;Up To:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="buddy">
-                     <cstring>_orderUpToQty</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="XLineEdit" name="_orderUpToQty">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>32767</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="_minimumOrderLit">
-                    <property name="text">
-                     <string>Minimum Order:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="buddy">
-                     <cstring>_minimumOrder</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="XLineEdit" name="_minimumOrder">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>32767</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="_maximumOrderLit">
-                    <property name="text">
-                     <string>Maximum Order:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="buddy">
-                     <cstring>_minimumOrder</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="XLineEdit" name="_maximumOrder">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>32767</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="_orderMultipleLit">
-                    <property name="text">
-                     <string>Order &amp;Multiple:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="buddy">
-                     <cstring>_orderMultiple</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <widget class="XLineEdit" name="_orderMultiple">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>80</width>
-                      <height>32767</height>
-                     </size>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight</set>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="_useParametersOnManual">
-                  <property name="text">
-                   <string>Enfore on Manual Orders</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
+             <widget class="QLabel" name="_reorderLevelLit">
+              <property name="text">
+               <string>&amp;Reorder Level:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_reorderLevel</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="XLineEdit" name="_reorderLevel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="_orderUpToQtyLit">
+              <property name="text">
+               <string>Order &amp;Up To:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_orderUpToQty</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="XLineEdit" name="_orderUpToQty">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="_minimumOrderLit">
+              <property name="text">
+               <string>Minimum Order:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_minimumOrder</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="XLineEdit" name="_minimumOrder">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="_maximumOrderLit">
+              <property name="text">
+               <string>Maximum Order:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_maximumOrder</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="XLineEdit" name="_maximumOrder">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="_orderMultipleLit">
+              <property name="text">
+               <string>Order &amp;Multiple:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_orderMultiple</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="XLineEdit" name="_orderMultiple">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="2">
+             <widget class="QCheckBox" name="_useParametersOnManual">
+              <property name="text">
+               <string>Enforce on Manual Orders</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>13</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -995,6 +974,9 @@ to be bound by its terms.</comment>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy">
+                   <cstring>_planningType</cstring>
                   </property>
                  </widget>
                 </item>
@@ -1032,6 +1014,9 @@ to be bound by its terms.</comment>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
+                  <property name="buddy">
+                   <cstring>_safetyStock</cstring>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
@@ -1054,6 +1039,9 @@ to be bound by its terms.</comment>
                  <widget class="QLabel" name="_orderGroupLit">
                   <property name="text">
                    <string>Group MRP Orders Every:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>_orderGroup</cstring>
                   </property>
                  </widget>
                 </item>
@@ -1130,6 +1118,9 @@ to be bound by its terms.</comment>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy">
+                   <cstring>_mpsTimeFence</cstring>
                   </property>
                  </widget>
                 </item>
@@ -1436,6 +1427,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>131</x>
      <y>542</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_warehouse</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_create</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>736</x>
+     <y>83</y>
     </hint>
    </hints>
   </connection>
