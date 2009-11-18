@@ -32,6 +32,11 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupply(bool)));
 
   _planningType->append(0, "None", "N");
+
+  _mpsTimeFenceLit->hide();
+  _mpsTimeFence->hide();
+  _mpsTimeFenceDaysLit->hide();
+
   if(_metrics->value("Application") == "PostBooks")
   {
     _planningType->setCurrentIndex(0);
@@ -43,16 +48,15 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
     _orderGroup->hide();
     _orderGroupDaysLit->hide();
     _orderGroupFirst->hide();
-    _mpsTimeFenceLit->hide();
-    _mpsTimeFence->hide();
-    _mpsTimeFenceDaysLit->hide();
+
+    _create->setEnabled(true);
   }
   else
-  {
     _planningType->append(1, "MRP", "M");
-    if (!_metrics->boolean("MultiWhs"))
-      _createPlannedTransfers->hide();
-  }
+
+  if (!_metrics->boolean("MultiWhs"))
+    _createPlannedTransfers->hide();
+
   sHandlePlanningType();
   
   _reorderLevel->setValidator(omfgThis->qtyVal());
@@ -196,7 +200,9 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_reorderlevel, itemsite_ordertoqty,"
                "  itemsite_minordqty, itemsite_maxordqty, itemsite_multordqty,"
                "  itemsite_safetystock, itemsite_cyclecountfreq,"
-               "  itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id, itemsite_costcat_id,"
+               "  itemsite_leadtime, itemsite_eventfence,"
+               "  itemsite_plancode_id, itemsite_costcat_id,"
+               "  itemsite_supply_itemsite_id,"
                "  itemsite_posupply, itemsite_wosupply,"
                "  itemsite_createpr, itemsite_createwo,"
                "  itemsite_sold, itemsite_soldranking,"
@@ -224,7 +230,14 @@ void createItemSitesByClassCode::sSave()
                "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'K') THEN 0"
                "            ELSE :itemsite_multordqty   END,"
                "       :itemsite_safetystock, :itemsite_cyclecountfreq,"
-               "       :itemsite_leadtime, :itemsite_eventfence, :itemsite_plancode_id, :itemsite_costcat_id,"
+               "       :itemsite_leadtime, :itemsite_eventfence,"
+               "       :itemsite_plancode_id, :itemsite_costcat_id,"
+               "       CASE WHEN COALESCE(:supplywhsid,-1) < 0  THEN NULL "
+               "            ELSE (SELECT itemsite_id"
+               "                    FROM itemsite"
+               "                   WHERE ((itemsite_item_id=item_id)"
+               "                      AND (itemsite_warehous_id=:supplywhsid)))"
+               "       END,"
                "       :itemsite_posupply, :itemsite_wosupply,"
                "       :itemsite_createpr, :itemsite_createwo,"
                "       :itemsite_sold, :itemsite_soldranking,"
@@ -269,6 +282,10 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_eventfence", _eventFence->value());
   q.bindValue(":itemsite_plancode_id", _plannerCode->id());
   q.bindValue(":itemsite_costcat_id", _costcat->id());
+
+  if (_createPlannedTransfers->isChecked())
+    q.bindValue(":supplywhsid", _suppliedFromSite->id());
+
   q.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
   q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
   q.bindValue(":itemsite_posupply",        QVariant(_poSupply->isChecked()));

@@ -39,6 +39,11 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
   _planningType->append(0, "None", "N");
+
+  _mpsTimeFenceLit->hide();
+  _mpsTimeFence->hide();
+  _mpsTimeFenceDaysLit->hide();
+
   if(_metrics->value("Application") == "PostBooks")
   {
     _planningType->setCurrentIndex(0);
@@ -50,22 +55,13 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _orderGroup->hide();
     _orderGroupDaysLit->hide();
     _orderGroupFirst->hide();
-    _mpsTimeFenceLit->hide();
-    _mpsTimeFence->hide();
-    _mpsTimeFenceDaysLit->hide();
-  }
-  else if(_metrics->value("Application") == "Standard")
-  {
-    _mpsTimeFenceLit->hide();
-    _mpsTimeFence->hide();
-    _mpsTimeFenceDaysLit->hide();
   }
   else
-  {
     _planningType->append(1, "MRP", "M");
-    if (!_metrics->boolean("MultiWhs"))
-      _createPlannedTransfers->hide();
-  }
+
+  if (!_metrics->boolean("MultiWhs"))
+    _createPlannedTransfers->hide();
+
   sHandlePlanningType();
   
   _itemType = 0;
