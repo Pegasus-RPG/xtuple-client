@@ -313,6 +313,7 @@ void viewCheckRun::sPrintCheckRun()
 
   printChecks newdlg(this, "", TRUE);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
   newdlg.exec();
 }
 
