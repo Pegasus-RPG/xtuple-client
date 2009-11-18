@@ -492,7 +492,9 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   _info = new QPushButton(tr("?"), this, "_info");
   _info->setFocusPolicy(Qt::NoFocus);
   _info->setToolTip(tr("Open"));
+  _info->setEnabled(false);
   layoutButtons->addWidget(_info);
+  connect(this, SIGNAL(valid(bool)), _info, SLOT(setEnabled(bool)));
   
   _delete = new QPushButton(tr("x"), this, "_delete");
   _delete->setFocusPolicy(Qt::NoFocus);
