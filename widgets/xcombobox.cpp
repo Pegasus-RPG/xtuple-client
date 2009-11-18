@@ -1389,6 +1389,7 @@ void XComboBoxfromScriptValue(const QScriptValue &obj, XComboBox* &item)
   item = qobject_cast<XComboBox*>(obj.toQObject());
 }
 
+/*
 QScriptValue XComboBoxTypestoScriptValue(QScriptEngine *engine, XComboBox::XComboBoxTypes const &item)
 {
   return QScriptValue(engine, (int)item);
@@ -1398,6 +1399,7 @@ void XComboBoxTypesfromScriptValue(const QScriptValue &obj, XComboBox::XComboBox
 {
   item = (XComboBox::XComboBoxTypes)(obj.toInt32());
 }
+*/
 
 QScriptValue XComboBoxDefaultstoScriptValue(QScriptEngine *engine, XComboBox::Defaults const &item)
 {
@@ -1452,7 +1454,7 @@ QScriptValue constructXComboBox(QScriptContext *context,
 void setupXComboBox(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, XComboBoxtoScriptValue, XComboBoxfromScriptValue);
-  qScriptRegisterMetaType(engine, XComboBoxTypestoScriptValue, XComboBoxTypesfromScriptValue);
+  //qScriptRegisterMetaType(engine, XComboBoxTypestoScriptValue, XComboBoxTypesfromScriptValue);
   qScriptRegisterMetaType(engine, XComboBoxDefaultstoScriptValue, XComboBoxDefaultsfromScriptValue);
 
   QScriptValue widget = engine->newFunction(constructXComboBox);
