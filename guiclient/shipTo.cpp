@@ -235,6 +235,23 @@ void shipTo::sSave()
 
   if (_mode == cNew)
   {
+    if (_shipToNumber->text().length() == 0)
+    {
+      q.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
+                 "  FROM shipto "
+                 " WHERE ((shipto_cust_id=:cust_id)"
+                 "   AND  (shipto_num~'^[0-9]*$') )" );
+      q.bindValue(":cust_id", _custid);
+      q.exec();
+      if (q.first())
+        _shipToNumber->setText(q.value("n_shipto_num"));
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+
     q.exec("SELECT NEXTVAL('shipto_shipto_id_seq') AS shipto_id;");
     if (q.first())
       _shiptoid = q.value("shipto_id").toInt();
@@ -379,23 +396,7 @@ void shipTo::populate()
 
 void shipTo::sPopulateNumber()
 {
-  if (_shipToNumber->text().length() == 0)
-  {
-    q.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
-               "  FROM shipto "
-               " WHERE ((shipto_cust_id=:cust_id)"
-               "   AND  (shipto_num~'^[0-9]*$') )" );
-    q.bindValue(":cust_id", _custid);
-    q.exec();
-    if (q.first())
-      _shipToNumber->setText(q.value("n_shipto_num"));
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
+  if (_shipToNumber->text().length() > 0)
   {
     q.prepare( "SELECT shipto_id "
                "FROM shipto "
