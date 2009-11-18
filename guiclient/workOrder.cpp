@@ -362,7 +362,6 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _daysLit->hide();
 
         sCreate();
-        _save->setFocus();
       }
       else
       {
@@ -1923,7 +1922,6 @@ void workOrder::populate()
     _bottomSpacer->hide();
 
     _save->setEnabled(true);
-    _close->setFocus();
   }
   else
   {
