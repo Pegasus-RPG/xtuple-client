@@ -47,6 +47,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   connect(_arapply, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
   connect(_arapply, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_applications, SIGNAL(toggled(bool)), _arapply, SLOT(clear()));
+  connect(_applications, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons(bool)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartDate(QDate().currentDate().addDays(-90));
@@ -119,7 +120,6 @@ void dspCashReceipts::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
 }
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
@@ -201,7 +201,7 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
         menuItem = pMenu->insertItem(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()), 0);
         pMenu->setItemEnabled(menuItem, _privileges->check("PostCashReceipts"));
       }
-      else
+      else if (!_arapply->altId())
       {
         menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
         pMenu->setItemEnabled(menuItem, _privileges->check("ReversePostedCashReceipt"));
@@ -353,7 +353,9 @@ void dspCashReceipts::sHandleButtons(bool valid)
   int menuItem = -1;
   QMenu * editMenu = new QMenu;
   QMenu * viewMenu = new QMenu;   
- 
+
+  _reverse->setVisible(!_applications->isChecked());
+
   if (valid && _arapply->id() > -1)
   {
     // Handle Edit Button
@@ -369,16 +371,18 @@ void dspCashReceipts::sHandleButtons(bool valid)
       editMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
         
       _post->show();
-      _reverse->show();
+      _reverse->setVisible(!_applications->isChecked());
       _reverse->setEnabled(false);
       _post->setEnabled(_privileges->check("PostCashReceipts"));
     }
     else
     {
       _post->show();
-      _reverse->show();
+      _reverse->setVisible(!_applications->isChecked());
       _post->setEnabled(false);
-      _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt") && _cashreceipts->isChecked());
+      _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt")
+                           && _cashreceipts->isChecked()
+                           && !_arapply->altId());
     } 
         
     if (_arapply->currentItem()->id("target") > -1)
