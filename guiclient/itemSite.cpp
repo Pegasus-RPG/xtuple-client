@@ -54,6 +54,12 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _mpsTimeFence->hide();
     _mpsTimeFenceDaysLit->hide();
   }
+  else if(_metrics->value("Application") == "Standard")
+  {
+    _mpsTimeFenceLit->hide();
+    _mpsTimeFence->hide();
+    _mpsTimeFenceDaysLit->hide();
+  }
   else
   {
     _planningType->append(1, "MRP", "M");
