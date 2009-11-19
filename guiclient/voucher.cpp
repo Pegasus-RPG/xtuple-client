@@ -308,7 +308,6 @@ bool voucher::sSave()
   }
 
   omfgThis->sVouchersUpdated();
-  setWindowModified(false);
 
   _voheadid = -1;
 
@@ -335,6 +334,7 @@ bool voucher::sSave()
   ParameterList params;
   params.append("mode", "new");
   set(params);
+  setWindowModified(false);
   return true;
 }
 
