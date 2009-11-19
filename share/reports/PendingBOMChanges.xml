@@ -15,7 +15,7 @@
        uom_name,
        item_descrip1,
        item_descrip2,
-       CASE WHEN (&lt;? value("cutOffDate") ?> >= date('12/31/2099')) THEN text('Latest')
+       CASE WHEN (&lt;? value("cutOffDate") ?> >= date('2099-12-31')) THEN text('Latest')
             ELSE formatDate(&lt;? value("cutOffDate") ?>)
        END AS cutoffdate
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
