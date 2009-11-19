@@ -1011,7 +1011,7 @@ void salesOrderItem::sSave()
           {
             q.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
             q.bindValue(":wo_id", _orderId);
-            q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+            q.bindValue(":qty", _orderQty->toDouble());
             q.exec();
             if (q.first())
             {
