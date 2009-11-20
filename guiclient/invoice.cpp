@@ -1167,7 +1167,7 @@ void invoice::sHandleShipchrg(int pShipchrgid)
 
 void invoice::sTaxZoneChanged()
 {
-  if (_invcheadid != -1 && _taxzoneidCache != _taxzone->id())
+  if (_loading == false && _invcheadid != -1 && _taxzoneidCache != _taxzone->id())
   {
     if (!save())
 	  return;
@@ -1178,7 +1178,7 @@ void invoice::sTaxZoneChanged()
 
 void invoice::sFreightChanged()
 {
-  if (_invcheadid != -1 && _freightCache != _freight->localValue())
+  if (_loading == false && _invcheadid != -1 && _freightCache != _freight->localValue())
   {
     if (!save())
 	  return;
