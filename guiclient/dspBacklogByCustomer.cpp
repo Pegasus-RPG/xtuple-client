@@ -76,7 +76,10 @@ void dspBacklogByCustomer::sHandlePrices(bool pShowPrices)
   else
     _soitem->hideColumn("baseextpricebalance");
 
-  sFillList();
+  if (_cust->isValid())
+  {
+    sFillList();
+  }
 }
 
 bool dspBacklogByCustomer::setParams(ParameterList &params)
