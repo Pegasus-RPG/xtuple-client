@@ -220,6 +220,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _comments->setEnabled(editing);
   _save->setEnabled(editing);
   _newCharass->setEnabled(editing);
+  _userButton->setEnabled(editing);
 
   _origmode = _mode;
   if (DEBUG)
