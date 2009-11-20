@@ -159,6 +159,9 @@ void dspBacklogByItem::sPrintPackingList()
 
 void dspBacklogByItem::sPopulateMenu(QMenu *pMenu)
 {
+  if (_soitem->id() <= 0)
+    return;
+	
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
