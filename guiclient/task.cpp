@@ -142,6 +142,7 @@ enum SetResponse task::set(const ParameterList &pParams)
       _started->setEnabled(false);
       _completed->setEnabled(false);
       _alarms->setEnabled(false);
+	  _comments->setReadOnly(true);
       _save->hide();
     }
   }
