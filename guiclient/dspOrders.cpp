@@ -229,6 +229,9 @@ void dspOrders::sFillList()
       params.append("endDate",   _endDate->date());
     }
 
+  if (_metrics->value("Application") == "Standard")
+    params.append("Standard");
+
     XSqlQuery xtmfg;
     xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
     if (xtmfg.first())
