@@ -1175,7 +1175,7 @@ to be bound by its terms.</comment>
                        <item>
                         <widget class="WComboBox" name="_suppliedFromSite">
                          <property name="type">
-                          <enum>WComboBox::Supply</enum>
+                          <enum>WComboBox::NonTransit</enum>
                          </property>
                         </widget>
                        </item>
