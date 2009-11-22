@@ -51,16 +51,11 @@ void XSqlTableModel::applyColumnRole(int column, int role, QVariant value)
 
 void XSqlTableModel::applyColumnRoles()
 {
-qDebug("Apply Roles");
   QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
   while (i.hasNext()) {
-  qDebug("col %d", i.key());
-  qDebug("role %d",  i.value().second);
-  qDebug("value " +  i.value().first.toString());
     applyColumnRole(i.key(), i.value().second, i.value().first );
     i.next();
   }
-  qDebug("end roles");
 }
 
 void XSqlTableModel::applyColumnRoles(int row)
@@ -223,13 +218,18 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
       return QVariant();
         
     switch (role) {
-    case Qt::DisplayRole:
-    case Qt::EditRole: { 
+    case Qt::DisplayRole: {
+      QVariant value = QSqlRelationalTableModel::data(index, Qt::DisplayRole);
       QVariant formatRole = data(index, FormatRole);
       if (formatRole.isValid())
-         return formatValue(QSqlRelationalTableModel::data(index), formatRole);
-      else 
-        return QSqlRelationalTableModel::data(index);
+        return formatValue(value, formatRole);
+      else if (value.type() == QVariant::Bool)
+        return value.toBool() ? tr("Yes") : tr("No");
+      else
+        return value;
+    } break;
+    case Qt::EditRole: { 
+      return QSqlRelationalTableModel::data(index);
     } break;
     case Qt::TextAlignmentRole:
     case Qt::ForegroundRole:

@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QHBoxLayout>
 #include <QDropEvent>
+#include <QStandardItemEditorCreator>
 #include <QMouseEvent>
 #include <QVBoxLayout>
 #include <QDragEnterEvent>
@@ -24,8 +25,62 @@
 #include "itemList.h"
 #include "itemSearch.h"
 #include "itemAliasList.h"
+#include "xsqltablemodel.h"
 
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
+
+ItemLineEditDelegate::ItemLineEditDelegate(QObject *parent)
+  : QItemDelegate(parent)
+{
+  _template = qobject_cast<ItemLineEdit *>(parent);
+}
+
+ItemLineEditDelegate::~ItemLineEditDelegate()
+{
+}
+
+QWidget *ItemLineEditDelegate::createEditor(QWidget *parent,
+                                            const QStyleOptionViewItem &option,
+                                            const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return 0;
+
+    ItemLineEdit *widget = new ItemLineEdit(parent);
+    // Make editor share certain properties with template
+    widget->setType(_template->type());
+    QStringList clauses = _template->getExtraClauseList();
+    for (int i = 0; i < clauses.size(); i++)
+        widget->addExtraClause(clauses.at(i));
+
+    return widget;
+}
+
+void ItemLineEditDelegate::setEditorData(QWidget *editor,
+                                           const QModelIndex &index) const
+{
+  const XSqlTableModel *model = qobject_cast<const XSqlTableModel *>(index.model());
+  if (model) {
+    ItemLineEdit *widget = qobject_cast<ItemLineEdit *>(editor);
+    if (widget)
+      widget->setItemNumber(model->data(index).toString());
+  }
+}
+
+void ItemLineEditDelegate::setModelData(QWidget *editor,
+                                          QAbstractItemModel *model,
+                                          const QModelIndex &index) const
+{
+  if (!index.isValid())
+    return;
+
+//  XSqlTableModel *sqlModel = qobject_cast<XSqlTableModel *>(model);
+  if (model) {
+    ItemLineEdit *widget = qobject_cast<ItemLineEdit *>(editor);
+    if (widget)
+      model->setData(index, widget->itemNumber(), Qt::EditRole);
+  }
+}
 
 ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pParent, name)
 {
@@ -42,6 +97,7 @@ ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pPare
   _parsed = TRUE;
   _valid = FALSE;
   _configured = FALSE;
+  _delegate = new ItemLineEditDelegate(this);
 
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));

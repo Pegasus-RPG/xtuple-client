@@ -8,36 +8,36 @@
  * to be bound by its terms.
  */
 
-#ifndef __XTABLEWIDGETPLUGIN_H__
-#define __XTABLEWIDGETPLUGIN_H__
+#ifndef __XTABLEVIEWPLUGIN_H__
+#define __XTABLEVIEWPLUGIN_H__
 
-#include "xtablewidget.h"
+#include "xtableview.h"
 
 #include <QDesignerCustomWidgetInterface>
 #include <QtPlugin>
 
-class XTableWidgetPlugin : public QObject, public QDesignerCustomWidgetInterface
+class XTableViewPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
   public:
-    XTableWidgetPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
+    XTableViewPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
     bool isContainer() const { return false; }
     bool isInitialized() const { return initialized; }
     QIcon icon() const { return QIcon(); }
     QString domXml() const
     {
-      return "<widget class=\"XTableWidget\" name=\"xtablewidget\">\n"
+      return "<widget class=\"XTableView\" name=\"xtableview\">\n"
              "</widget>\n";
     }
     QString group() const { return "xTuple Custom Widgets"; }
-    QString includeFile() const { return "xtablewidget.h"; }
-    QString name() const { return "XTableWidget"; }
+    QString includeFile() const { return "xtableview.h"; }
+    QString name() const { return "XTableView"; }
     QString toolTip() const { return ""; }
     QString whatsThis() const { return ""; }
-    QWidget *createWidget(QWidget *parent) { return new XTableWidget(parent); }
+    QWidget *createWidget(QWidget *parent) { return new XTableView(parent); }
     void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
   private:

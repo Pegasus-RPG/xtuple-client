@@ -14,14 +14,17 @@
 #include "xlineedit.h"
 
 #include "qstringlist.h"
-
 #include <parameter.h>
+
+#include <QItemDelegate>
+#include <QStyleOptionViewItem>
 
 class QPushButton;
 class QLabel;
 class QDragEnterEvent;
 class QDropEvent;
 class QMouseEvent;
+class ItemLineEditDelegate;
 
 class XTUPLEWIDGETS_EXPORT ItemLineEdit : public XLineEdit
 {
@@ -30,6 +33,7 @@ class XTUPLEWIDGETS_EXPORT ItemLineEdit : public XLineEdit
   Q_PROPERTY(unsigned int type           READ type          WRITE setType       DESIGNABLE false)
 
 friend class ItemCluster;
+friend class ItemLineEditDelegate;
 
   public:
     ItemLineEdit(QWidget *, const char * = 0);
@@ -97,6 +101,7 @@ friend class ItemCluster;
     inline QStringList getExtraClauseList() const { return _extraClauses; }
     inline void clearExtraClauseList() { _extraClauses.clear(); }
 
+    Q_INVOKABLE ItemLineEditDelegate* itemDelegate() { return _delegate;}
     QString itemNumber();
     QString uom();
     QString upc();
@@ -139,6 +144,7 @@ friend class ItemCluster;
   private:
     void constructor();
 
+    ItemLineEditDelegate *_delegate;
     QString _sql;
     QString _validationSql;
     QString _itemNumber;
@@ -153,6 +159,22 @@ friend class ItemCluster;
     bool    _useValidationQuery;
 };
 
+class ItemLineEditDelegate : public QItemDelegate
+{
+  Q_OBJECT
+
+  public:
+    ItemLineEditDelegate(QObject *parent = 0);
+    ~ItemLineEditDelegate();
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void     setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void     setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+
+  private:
+    ItemLineEdit *_template;
+};
+
 class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
@@ -160,7 +182,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
   Q_PROPERTY(QString number         READ itemNumber     WRITE setItemNumber      DESIGNABLE false)
   Q_PROPERTY(unsigned int type      READ type           WRITE setType            DESIGNABLE false)
-  
+
   public:
     ItemCluster(QWidget *, const char * = 0);
 
@@ -180,17 +202,19 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
     Q_INVOKABLE int isValid() const                        { return _itemNumber->isValid();              }
     Q_INVOKABLE QString  uom() const                       { return _itemNumber->uom();                  }
     Q_INVOKABLE QString  upc() const                       { return _itemNumber->upc();                  }
-    inline QString  defaultNumber()  const                 { return _default; };
+    inline QString  defaultNumber()  const                 { return _default; }
     inline QString  fieldName()      const                 { return _fieldName;                          }
 
     Q_INVOKABLE inline void addExtraClause(const QString & pClause) { _itemNumber->addExtraClause(pClause);     }
     Q_INVOKABLE inline QStringList getExtraClauseList() const       { return _itemNumber->getExtraClauseList(); }
     Q_INVOKABLE inline void clearExtraClauseList()                  { _itemNumber->clearExtraClauseList();      }
+    ItemLineEdit *itemLineEdit() { return _itemNumber; }
 
   public slots:
+    QItemDelegate *itemDelegate() { return _itemNumber->itemDelegate(); }
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setDefaultNumber(QString p)                       { _default = p;                               };
-    void setFieldName(QString p)                           { _fieldName = p;                             };
+    void setDefaultNumber(QString p)                       { _default = p;     }
+    void setFieldName(QString p)                           { _fieldName = p;   }
     void setId(int);
     void setItemNumber(QString);
     void setItemsiteid(int);

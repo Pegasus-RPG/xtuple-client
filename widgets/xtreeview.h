@@ -11,6 +11,7 @@
 #ifndef XTREEVIEW_H
 #define XTREEVIEW_H
 
+#include <QItemDelegate>
 #include <QTreeView>
 #include <QMenu>
 
@@ -30,47 +31,50 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       ~XTreeView();
 
       Q_INVOKABLE bool    isRowHidden(int row);
-                  int     primaryKeyColumns() const { return _keyColumns; };
-                  QString schemaName()        const { return _schemaName; };
-                  QString tableName()         const { return _tableName;  };
+                  int     primaryKeyColumns() const { return _keyColumns; }
+                  QString schemaName()        const { return _schemaName; }
+                  QString tableName()         const { return _tableName;  }
+
                   bool    throwScriptException(const QString &message);
 
+      Q_INVOKABLE int columnIndex(const QString column);
       Q_INVOKABLE      QString columnNameFromLogicalIndex(const int logicalIndex) const;
       Q_INVOKABLE         void setColumn(const QString &label, int width, int alignment, bool visible, const QString &colname);
       Q_INVOKABLE virtual void setColumnLocked(const QString &pColname, bool pLocked);
       Q_INVOKABLE virtual void setColumnLocked(const int      pColumn, bool pLocked);
       Q_INVOKABLE virtual void setColumnRole(const QString column, int role, QVariant value);
       Q_INVOKABLE virtual void setColumnVisible(int, bool);
-      Q_INVOKABLE virtual void setForegroundColor(int row, int col, QString color);
-      Q_INVOKABLE virtual void setFormat(const QString column, int format);
-      Q_INVOKABLE virtual void setRowForegroundColor(int row, QString color);
       Q_INVOKABLE         void setTable();
-      Q_INVOKABLE virtual void setTextAlignment(int column, int alignment);
-      Q_INVOKABLE virtual void setTextAlignment(const QString column, int alignment);
-      Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
-      Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
-      
+      Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;}
+      Q_INVOKABLE XSqlTableModel    *model()   { return _model;}
+            
     public slots:
       virtual int  currentIndex();
       virtual int  rowCount();
       virtual int  rowCountVisible();
       virtual QString filter();
-      virtual QVariant value(int row, int column, int role = Qt::DisplayRole);
-      virtual QVariant selectedValue(int column);
+      virtual QVariant value(int row, int column);
+      virtual QVariant selectedValue(int column); 
       virtual void insert();
       virtual void populate(int p);
       virtual void removeSelected();
-      virtual void revertAll();
+      virtual void revertAll(); 
       virtual void save();
       virtual void select();
-      virtual void setCurrentIndex(int index);
-      virtual void selectRow(int index)                       {setCurrentIndex(index); };
-      virtual void setFilter(const QString filter);
+      virtual void selectRow(int index);
+      virtual void setColumnEditor(int column, const QString editor);
+      virtual void setColumnEditor(const QString column, const QString editor);
+      virtual void setColumnFormat(const QString column, int format);
+      virtual void setColumnTextAlignment(int column, int alignment);
+      virtual void setColumnTextAlignment(const QString column, int alignment);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
+      virtual void setFilter(const QString filter);
+      virtual void setForegroundColor(int row, int col, QString color);
       virtual void setModel(XSqlTableModel* model=0);
-      virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
-      virtual void setSchemaName(const QString p)             { _schemaName = p;            };
-      virtual void setTableName(const QString p)              { _tableName = p;             };
+      virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            }
+      virtual void setRowForegroundColor(int row, QString color);
+      virtual void setSchemaName(QString p)                   { _schemaName = p;            }
+      virtual void setTableName(QString p)                    { _tableName = p;             }
       virtual void setValue(int row, int column, QVariant value);
       virtual void sShowMenu(const QPoint &);
 
@@ -94,7 +98,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void sResetWidth();
       void sShowHeaderMenu(const QPoint &);
       void sToggleForgetfulness();
-      
+
     private:
       bool                 _forgetful;
       QSqlRecord           _idx;
@@ -122,7 +126,6 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
         bool    fromSettings;
       };
       QMap<QString, ColumnProps*> _columnByName;
-      
 };
 
 #endif

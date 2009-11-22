@@ -105,7 +105,7 @@ HEADERS += \
 	   plugins/screenplugin.h\
            plugins/xtreeviewplugin.h \
            plugins/xspinboxplugin.h \
-           plugins/xtablewidgetplugin.h \
+           plugins/xtableviewplugin.h \
 
 SOURCES    += widgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -161,8 +161,8 @@ SOURCES    += widgets.cpp \
               quotecluster.cpp quoteList.cpp \
               xdoublevalidator.cpp \
               xspinbox.cpp \
-              xsqlrelationaldelegate.cpp \
-              xtablewidget.cpp \
+              xitemdelegate.cpp \
+              xtableview.cpp \
 
 HEADERS    += widgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -219,8 +219,8 @@ HEADERS    += widgets.h \
               invoicecluster.h \
               xdoublevalidator.h \
               xspinbox.h \
-              xsqlrelationaldelegate.h \
-              xtablewidget.h \
+              xitemdelegate.h \
+              xtableview.h \
 
 FORMS += accountSearch.ui \
          customerselector.ui \
