@@ -19,7 +19,7 @@ bool externalShippingList::userHasPriv()
 
 void externalShippingList::showEvent(QShowEvent *event)
 {
-  if (event)
+  if (event) {
     _ship->setTable();
     _ship->setColumn(tr("So Number"),                 100, Qt::AlignLeft, true, "so_number");
     _ship->setColumn(tr("Shipment Number"),           100, Qt::AlignLeft, true, "shipment_number");
@@ -34,15 +34,12 @@ void externalShippingList::showEvent(QShowEvent *event)
     _ship->setColumn(tr("Package Type"),              100, Qt::AlignLeft, false, "billing_option");
     _ship->setColumn(tr("Tracking Number"),           100, Qt::AlignLeft, false, "tracking_number");
     _ship->setColumn(tr("Last Updated"),              100, Qt::AlignLeft, false, "last_updated");
-    
-    _ship->setFormat("weight", XSqlTableModel::Qty);
-    _ship->setFormat("base_freight", XSqlTableModel::Curr);
-    _ship->setFormat("total_freight", XSqlTableModel::Curr);
-    
+    _ship->setColumnFormat("weight", XSqlTableModel::Qty);
+    _ship->setColumnFormat("base_freight", XSqlTableModel::Curr);
+    _ship->setColumnFormat("total_freight", XSqlTableModel::Curr);
     _ship->select();
-    
-    qDebug("%d", XSqlTableModel::Qty);
-    qDebug("%d", XSqlTableModel::Curr);
+  }
+
   XWidget::showEvent(event);
 }
 
