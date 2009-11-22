@@ -11,25 +11,16 @@
 #include "xtreeview.h"
 #include "xsqltablemodel.h"
 
-#include <QAbstractItemDelegate>
-#include <QBuffer>
 #include <QHeaderView>
 #include <QMessageBox>
-#include <QModelIndex>
-#include <QPalette>
 #include <QScriptEngine>
-#include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlIndex>
-#include <QSqlRelationalTableModel>
-#include <QStack>
-#include <QTreeWidgetItem>
 
 #include "format.h"
 #include "xtsettings.h"
-#include "xsqlrelationaldelegate.h"
 
 #define DEBUG true
 
@@ -552,8 +543,6 @@ void XTreeView::setTable()
     _model->setTable(tablename,_keyColumns);
     
     setModel(_model);
- //   setItemDelegate(new XSqlRelationalDelegate(this));
-  //  setRelations();
   }
 }
 
