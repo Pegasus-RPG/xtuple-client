@@ -55,7 +55,7 @@ ORDER BY custtype_code, warehous_code;</sql>
            FROM custtype
           WHERE custtype_id=&lt;? value("custtype_id") ?>)
        &lt;? elseif exists("custtype_pattern") ?>
-         text(&lt;? value("custtype_pattern") ?>
+         text(&lt;? value("custtype_pattern") ?>)
        &lt;? else  ?>
          text('All Customer Types')
        &lt;? endif ?>
@@ -718,7 +718,8 @@ ORDER BY custtype_code, warehous_code;</sql>
     <query>detail</query>
     <column>totalsales</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format>money</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>
