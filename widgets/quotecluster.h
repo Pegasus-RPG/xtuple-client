@@ -27,7 +27,10 @@ class QuoteSearch : public VirtualSearch
   Q_OBJECT
 
   public:
-    QuoteSearch(QWidget *pParent, Qt::WindowFlags flags);
+    QuoteSearch(QWidget *pParent, Qt::WindowFlags flags = 0);
+
+  public slots:
+    virtual void sFillList();
 };
 
 class QuoteLineEdit : public VirtualClusterLineEdit
@@ -40,6 +43,9 @@ class QuoteLineEdit : public VirtualClusterLineEdit
       Q_INVOKABLE virtual bool forCustomer();
       Q_INVOKABLE virtual bool forProspect();
       Q_INVOKABLE virtual int  recipId();
+
+    public slots:
+      virtual void sSearch();
 
     protected slots:
         virtual void clear();
