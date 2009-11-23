@@ -138,7 +138,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="QRadioButton" name="_assembly" >
             <property name="text" >
-             <string>Assemly</string>
+             <string>Assembly</string>
             </property>
             <property name="checked" >
              <bool>true</bool>
