@@ -17,7 +17,8 @@
 
 #include "storedProcErrorLookup.h"
 
-#define cUndefined    0x00
+#define cUndefined   0x00
+// #define cView        0x03       // already defined in widgets.h
 #define cReschedule  0x10
 
 batchItem::batchItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -61,6 +62,24 @@ int batchItem::Reschedule(int pBatchid, QWidget *pParent, QSqlDatabase pDb)
   newdlg.populate();
 
   newdlg._email->setEnabled(FALSE);
+
+  return newdlg.exec();
+}
+
+int batchItem::view(int pBatchid, QWidget *pParent, QSqlDatabase pDb)
+{
+  batchItem newdlg(pParent);
+
+  newdlg._mode    = cView;
+  newdlg._batchid = pBatchid;
+  newdlg._db      = pDb;
+  newdlg.populate();
+
+  newdlg._save->hide();
+  newdlg._close->setText(tr("&Close"));
+  newdlg._scheduledDate->setEnabled(false);
+  newdlg._scheduledTime->setEnabled(false);
+  newdlg._email->setEnabled(false);
 
   return newdlg.exec();
 }

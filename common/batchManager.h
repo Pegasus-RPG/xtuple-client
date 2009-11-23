@@ -29,6 +29,7 @@ public:
 public slots:
     virtual void sReschedule();
     virtual void sCancel();
+    virtual void sView();
     virtual void setViewOtherEvents( bool viewOtherEvents );
 
 protected slots:

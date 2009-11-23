@@ -37,6 +37,7 @@ batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_reschedule,   SIGNAL(clicked()),          this, SLOT(sReschedule()));
   connect(_showCompleted,SIGNAL(toggled(bool)),      this, SLOT(sFillList()));
   connect(_usr,          SIGNAL(newID(int)),         this, SLOT(sFillList()));
+  connect(_view,         SIGNAL(clicked()),          this, SLOT(sView()));
   connect(buttonGroup,   SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
   _db = QSqlDatabase();
@@ -123,6 +124,11 @@ void batchManager::sReschedule()
     sFillList();
 }
 
+void batchManager::sView()
+{
+  if (batchItem::view(_batch->id(), this, _db) != QDialog::Rejected)
+    sFillList();
+}
 
 void batchManager::sCancel()
 {

@@ -26,6 +26,7 @@ public:
 
     static int Reschedule( int pBatchid, QWidget * pParent );
     static int Reschedule( int pBatchid, QWidget * pParent, QSqlDatabase pDb );
+    static int view(int pBatchid, QWidget *pParent, QSqlDatabase pDb = QSqlDatabase());
 
 public slots:
     virtual void sSave();
