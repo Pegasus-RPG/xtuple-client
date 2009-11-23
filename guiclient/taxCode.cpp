@@ -40,11 +40,11 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire())); 
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   
-  _taxitems->addColumn(tr("Effective"), _dateColumn, Qt::AlignLeft, true, "effective" );
-  _taxitems->addColumn(tr("Expires"), _dateColumn, Qt::AlignLeft, true, "expires" );
-  _taxitems->addColumn(tr("Percent"), 70, Qt::AlignLeft, true, "taxrate_percent" );
-  _taxitems->addColumn(tr("Amount"), 70, Qt::AlignLeft, true, "taxrate_amount" );
-  _taxitems->addColumn(tr("Currency"), -1, Qt::AlignLeft, true, "curr_name" );
+  _taxitems->addColumn(tr("Effective"), _dateColumn,    Qt::AlignLeft,  true, "effective" );
+  _taxitems->addColumn(tr("Expires"),   _dateColumn,    Qt::AlignLeft,  true, "expires" );
+  _taxitems->addColumn(tr("Percent"),   _prcntColumn,   Qt::AlignRight, true, "taxrate_percent" );
+  _taxitems->addColumn(tr("Amount"),    _moneyColumn,   Qt::AlignRight, true, "taxrate_amount" );
+  _taxitems->addColumn(tr("Currency"),  -1,             Qt::AlignLeft,  true, "curr_name" );
   sFillList(); 
 }
 
@@ -161,23 +161,23 @@ void taxCode::sFillList()
   _taxitems->clear();
 
 
-  MetaSQLQuery mql( " SELECT taxrate_id, "
-                 "       CASE WHEN (taxrate_effective = startOfTime()) THEN NULL "
-                 "            ELSE taxrate_effective END AS effective, "
-                 "       CASE WHEN (taxrate_expires = endOfTime()) THEN NULL "
-                 "            ELSE taxrate_expires END AS expires, "
-                 "       <? literal (\"always\") ?> AS effective_xtnullrole, "
-                 "       <? literal (\"never\") ?>  AS expires_xtnullrole, "
-		 "       taxrate_percent, taxrate_amount, curr_name, "
-		 " CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
-                 "	    WHEN (taxrate_effective >= CURRENT_DATE) THEN 'emphasis'"
-                 "      END AS qtforegroundrole, "
-                 "  'percent' AS taxrate_percent_xtnumericrole "
-		 " FROM taxrate LEFT OUTER JOIN curr_symbol "
-		 "       ON (taxrate_curr_id = curr_id) "
-		 " WHERE taxrate_tax_id = <? value(\"tax_id\") ?> "
-		 " ORDER BY taxrate_id, taxrate_effective, taxrate_expires, "
-		 " taxrate_percent, taxrate_amount; " );
+  MetaSQLQuery mql( " SELECT taxrate.*, curr_name, "
+                    "        CASE WHEN (taxrate_effective = startOfTime()) THEN NULL "
+                    "             ELSE taxrate_effective END AS effective, "
+                    "        CASE WHEN (taxrate_expires = endOfTime()) THEN NULL "
+                    "             ELSE taxrate_expires END AS expires, "
+                    "        <? literal (\"always\") ?> AS effective_xtnullrole, "
+                    "        <? literal (\"never\") ?>  AS expires_xtnullrole, "
+                    "       CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
+                    "	         WHEN (taxrate_effective >= CURRENT_DATE) THEN 'emphasis'"
+                    "       END AS qtforegroundrole, "
+                    "      'percent' AS taxrate_percent_xtnumericrole,"
+                    "      'currency' AS taxrate_amount_xtnumericrole "
+                    " FROM taxrate"
+                    "      LEFT OUTER JOIN curr_symbol ON (taxrate_curr_id = curr_id) "
+                    " WHERE taxrate_tax_id = <? value(\"tax_id\") ?> "
+                    " ORDER BY taxrate_id, taxrate_effective, taxrate_expires, "
+                    "          taxrate_percent, taxrate_amount; " );
 
   ParameterList params;
   setParams(params);
