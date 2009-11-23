@@ -76,7 +76,10 @@ void printSoForm::sPrint()
 
     orReport report(q.value("report_name").toString(), params);
     if (report.isValid())
-      report.print();
+    {
+      if (report.print())
+        emit finishedPrinting(_so->id());
+    }
     else
     {
       report.reportError(this);
