@@ -49,6 +49,8 @@
     <file>images/splashStdEdition.png</file>
     <file>images/splashEmpty.png</file>
     <file>images/dspRegister.png</file>
+    <file>images/xchange.png</file>
+    <file>images/community.png</file>
   </qresource>
 </RCC>
 

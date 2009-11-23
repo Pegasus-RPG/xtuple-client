@@ -91,6 +91,13 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   setObjectName("sysModule");
   parent = Pparent;
 
+  toolBar = new QToolBar(tr("Community Tools"));
+  toolBar->setObjectName("Community Tools");
+  toolBar->setIconSize(QSize(32, 32));
+  QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(parent);
+  if(!toolbars.isEmpty())
+    parent->addToolBar(toolBar);
+
   errorLogListener::initialize();
 
   cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
@@ -233,14 +240,14 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   // Community
   communityMenu = new QMenu();
   actionProperties community[] = {
-    { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", NULL, NULL, true },
+    { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", QPixmap(":images/community.png"), toolBar, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
     { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") == "PostBooks" },
     { "community.editAccount", tr("My Online User &Account"),      SLOT(sCommunityEditAccount()), communityMenu, "true", NULL, NULL, true },
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
-    { "community.xchange",     tr("&xChange online store"),        SLOT(sCommunityXchange()),      communityMenu, "true", NULL, NULL, true },
+    { "community.xchange",     tr("&xChange online store"),        SLOT(sCommunityXchange()),     communityMenu, "true", QPixmap(":images/xchange.png"), toolBar, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
     { "community.forums",      tr("Discussion &Forums"),           SLOT(sCommunityForums()),      communityMenu, "true", NULL, NULL, true },
     { "community.issues",      tr("&Bugs and Feature Requests"),   SLOT(sCommunityIssues()),      communityMenu, "true", NULL, NULL, true },
