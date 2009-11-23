@@ -116,6 +116,7 @@ class menuSystem : public QObject
     void sRegister();
     void sCommunitySupport();
     void sCommunityTranslation();
+    void sCommunityXchange();
 
   private:
     GUIClient *parent;

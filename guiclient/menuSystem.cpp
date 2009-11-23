@@ -240,6 +240,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
+    { "community.xchange",     tr("&xChange online store"),        SLOT(sCommunityXchange()),      communityMenu, "true", NULL, NULL, true },
+    { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
     { "community.forums",      tr("Discussion &Forums"),           SLOT(sCommunityForums()),      communityMenu, "true", NULL, NULL, true },
     { "community.issues",      tr("&Bugs and Feature Requests"),   SLOT(sCommunityIssues()),      communityMenu, "true", NULL, NULL, true },
     { "community.downloads",   tr("&Downloads"),                   SLOT(sCommunityDownloads()),   communityMenu, "true", NULL, NULL, true },
@@ -782,5 +784,10 @@ void menuSystem::sCommunitySupport()
 void menuSystem::sCommunityTranslation()
 {
   omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/translate");
+}
+
+void menuSystem::sCommunityXchange()
+{
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.com/xchange");
 }
 
