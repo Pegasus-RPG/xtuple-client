@@ -261,15 +261,11 @@ void login2::sLogin()
     setCursor(QCursor(Qt::ArrowCursor));
 
     QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
-                          tr("<p>A connection to the specified xTuple ERP "
-                             "Server cannot be made.  This may be due to an "
-                             "incorrect Username and/or Password or the "
-                             "server in question cannot support any more "
-                             "connections.<p>Please verify your Username and "
-                             "Password and try again or wait until the "
-                             "specified xTuple ERP Server is less busy.<br>"
-                             "System Error<pre>%1" )
-                            .arg(db.lastError().driverText() ));
+                          tr("<p>Sorry, can't connect to the specified xTuple ERP server. "
+                             "<p>This may be due to a problem with your user name, password, or server connection information. "
+                             "<p>Below is more detail on the connection problem: "
+                             "<p>%1" )
+                            .arg(db.lastError().databaseText().replace('\n', "<br>") ));
     if (!_captive)
     {
       _username->setText("");
