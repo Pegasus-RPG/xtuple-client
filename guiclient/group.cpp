@@ -16,7 +16,7 @@
 
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 /* TODO: fix transaction handling in this window.
          currently only cNew is wrapped in a transaction, so the Cancel

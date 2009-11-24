@@ -113,6 +113,7 @@ void XDialog::closeEvent(QCloseEvent * event)
   if(event->isAccepted())
   {
     saveSize();
+    QDialog::closeEvent(event);
   }
 }
 
