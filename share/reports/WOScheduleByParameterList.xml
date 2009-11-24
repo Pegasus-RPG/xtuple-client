@@ -9,88 +9,19 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>Detail</name>
-  <sql>SELECT formatWONumber(wo_id) AS wonumber,
-       wo_status, warehous_code, item_number, item_descrip1, item_descrip2, uom_name,
-       formatQty(wo_qtyord) AS ordered,
-       formatQty(wo_qtyrcv) AS received,
-       formatDate(wo_startdate) AS startdate,
-       formatDate(wo_duedate) AS duedate
-FROM wo, itemsite, warehous, item, uom
-WHERE ( (wo_itemsite_id=itemsite_id)
- AND (itemsite_item_id=item_id)
- AND (item_inv_uom_id=uom_id)
- AND (itemsite_warehous_id=warehous_id)
-
-&lt;? if exists(&quot;showOnlyRI&quot;) ?>
- AND (wo_status IN ('R', 'I'))
-&lt;? else ?>
- AND (wo_status &lt;> 'C')
-&lt;? endif ?>
-
-&lt;? if exists(&quot;showOnlyTopLevel&quot;) ?>
- AND (wo_ordtype&lt;>'W')
-&lt;? endif ?>
-
-&lt;? if exists(&quot;warehous_id&quot;) ?>
- AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-&lt;? endif ?>
-
-&lt;? if exists(&quot;item_id&quot;) ?>
- AND (itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-&lt;? elseif exists(&quot;wo_id&quot;) ?>
- AND (wo_number IN (SELECT wo_number
-                    FROM wo
-                    WHERE (wo_id=&lt;? value(&quot;wo_id&quot;) ?>)))
-&lt;? endif ?>
-
-&lt;? if exists(&quot;plancode_id&quot;) ?>
- AND (itemsite_plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>)
-&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
- AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
-&lt;? endif ?>
-
-&lt;? if exists(&quot;classcode_id&quot;) ?>
- AND (item_classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
-&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
- AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ &lt;? value(&quot;classcode_pattern&quot;) ?>)))
-&lt;? endif ?>
-
-&lt;? if exists(&quot;itemgrp_id&quot;) ?>
- AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>)))
-&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
- AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ &lt;? value(&quot;itemgrp_pattern&quot;) ?>) )))
-&lt;? endif ?>
-
-&lt;? if exists(&quot;wrkcnt_id&quot;) ?>
- AND (wo_id IN (SELECT wooper_wo_id FROM wooper WHERE (wooper_wrkcnt_id=&lt;? value(&quot;wrkcnt_id&quot;) ?>)))
-&lt;? elseif exists(&quot;wrkcnt_pattern&quot;) ?>
- AND (wo_id IN (SELECT wooper_wo_id FROM wooper, wrkcnt WHERE ( (wooper_wrkcnt_id=wrkcnt_id) AND (wrkcnt_code ~ &lt;? value(&quot;wrkcnt_pattern&quot;) ?>) )))
-&lt;? endif ?>
-
- AND (wo_duedate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>) )
-ORDER BY
-
-&lt;? if exists(&quot;sortByStartDate&quot;) ?>
-  wo_startdate,
-&lt;? elseif exists(&quot;sortByDueDate&quot;) ?>
-  wo_duedate,
-&lt;? elseif exists(&quot;sortByItemNumber&quot;) ?>
-  item_number,
-&lt;? endif ?>
-
-  wo_number, wo_subnumber;
-    </sql>
+  <mqlgroup>workOrderSchedule</mqlgroup>
+  <mqlname>parameterlist</mqlname>
  </querysource>
  <querysource>
   <name>Head</name>
-  <sql>SELECT formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS f_startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS f_enddate,
-&lt;? if exists(&quot;warehous_id&quot;) ?>
+  <sql>SELECT formatDate(&lt;? value("startDate") ?>, 'Earliest') AS f_startdate,
+       formatDate(&lt;? value("endDate") ?>, 'Latest') AS f_enddate,
+&lt;? if exists("warehous_id") ?>
        warehous_code
 FROM warehous
-WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>);
+WHERE (warehous_id=&lt;? value("warehous_id") ?>);
 &lt;? else ?>
        TEXT('All Sites') AS warehous_code;
 &lt;? endif ?>
@@ -99,41 +30,41 @@ WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>);
  <querysource>
   <name>TypeCodeParam</name>
   <sql>SELECT
-&lt;? if exists(&quot;classcode_id&quot;) ?>
+&lt;? if exists("classcode_id") ?>
   TEXT('Class Code:')
-&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
+&lt;? elseif exists("classcode_pattern") ?>
   TEXT('Class Code Pattern:')
-&lt;? elseif exists(&quot;plancode_id&quot;) ?>
+&lt;? elseif exists("plancode_id") ?>
   TEXT('Planner Code:')
-&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
+&lt;? elseif exists("plancode_pattern") ?>
   TEXT('Planner Code Pattern:')
-&lt;? elseif exists(&quot;itemgrp_id') ?>
+&lt;? elseif exists("itemgrp_id') ?>
   TEXT('Item Group:')
-&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
+&lt;? elseif exists("itemgrp_pattern") ?>
   TEXT('Item Group Pattern:')
-&lt;? elseif exists(&quot;wrkcnt_id&quot;) ?>
+&lt;? elseif exists("wrkcnt_id") ?>
   TEXT('Work Center:')
-&lt;? elseif exists(&quot;wrkcnt_pattern&quot;) ?>
+&lt;? elseif exists("wrkcnt_pattern") ?>
   TEXT('Work Center Pattern:')
 &lt;? else ?>
   TEXT('')
 &lt;? endif ?> AS type,
-&lt;? if exists(&quot;classcode_id&quot;) ?>
-  (SELECT (classcode_code||'-'||classcode_descrip) FROM classcode WHERE (classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>))
-&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
-  TEXT(&lt;? value(&quot;classcode_pattern&quot;) ?>)
-&lt;? elseif exists(&quot;plancode_id&quot;) ?>
-  (SELECT (plancode_code||'-'||plancode_name) FROM plancode WHERE (plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>))
-&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
-  TEXT(&lt;? value(&quot;plancode_pattern&quot;) ?>)
-&lt;? elseif exists(&quot;itemgrp_id') ?>
-  (SELECT (itemgrp_name||'-'||itemgrp_descrip) FROM itemgrp WHERE (itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>))
-&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
-  TEXT(&lt;? value(&quot;itemgrp_pattern&quot;) ?>)
-&lt;? elseif exists(&quot;wrkcnt_id&quot;) ?>
-  (SELECT (wrkcnt_code||'-'||wrkcnt_descrip) FROM wrkcnt WHERE (wrkcnt_id=&lt;? value(&quot;wrkcnt_id&quot;) ?>))
-&lt;? elseif exists(&quot;wrkcnt_pattern&quot;) ?>
-  TEXT(&lt;? value(&quot;wrkcnt_pattern&quot;) ?>)
+&lt;? if exists("classcode_id") ?>
+  (SELECT (classcode_code||'-'||classcode_descrip) FROM classcode WHERE (classcode_id=&lt;? value("classcode_id") ?>))
+&lt;? elseif exists("classcode_pattern") ?>
+  TEXT(&lt;? value("classcode_pattern") ?>)
+&lt;? elseif exists("plancode_id") ?>
+  (SELECT (plancode_code||'-'||plancode_name) FROM plancode WHERE (plancode_id=&lt;? value("plancode_id") ?>))
+&lt;? elseif exists("plancode_pattern") ?>
+  TEXT(&lt;? value("plancode_pattern") ?>)
+&lt;? elseif exists("itemgrp_id') ?>
+  (SELECT (itemgrp_name||'-'||itemgrp_descrip) FROM itemgrp WHERE (itemgrp_id=&lt;? value("itemgrp_id") ?>))
+&lt;? elseif exists("itemgrp_pattern") ?>
+  TEXT(&lt;? value("itemgrp_pattern") ?>)
+&lt;? elseif exists("wrkcnt_id") ?>
+  (SELECT (wrkcnt_code||'-'||wrkcnt_descrip) FROM wrkcnt WHERE (wrkcnt_id=&lt;? value("wrkcnt_id") ?>))
+&lt;? elseif exists("wrkcnt_pattern") ?>
+  TEXT(&lt;? value("wrkcnt_pattern") ?>)
 &lt;? else ?>
   TEXT('')
 &lt;? endif ?> AS code;</sql>
@@ -141,10 +72,10 @@ WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>);
  <querysource>
   <name>ItemParameter</name>
   <sql>SELECT
-&lt;? if exits(&quot;item_id&quot;) ?>
+&lt;? if exits("item_id") ?>
   item_number
 FROM item
-WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+WHERE (item_id=&lt;? value("item_id") ?>);
 &lt;? else ?>
   TEXT('All') AS item_number;
 &lt;? endif ?></sql>
