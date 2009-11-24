@@ -15,6 +15,7 @@
 #include <QSqlError>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 
 #include "bom.h"
@@ -448,36 +449,7 @@ void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 void dspWoScheduleByItem::sFillList()
 {
   _wo->clear();
-
-  QString sql( "SELECT wo_id, itemsite_id,"
-               "       wo.*, warehous_code,"
-               "       formatWONumber(wo_id) AS wonumber,"
-               "       'qty' AS wo_qtyord_xtnumericrole,"
-               "       'qty' AS wo_qtyrcv_xtnumericrole,"
-               "       CASE WHEN ((wo_startdate<=CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) THEN 'error' END AS wo_startdate_qtforegroundrole,"
-               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole "
-	       "FROM wo, itemsite, warehous "
-	       "WHERE ((wo_itemsite_id=itemsite_id)"
-	       " AND (itemsite_warehous_id=warehous_id)"
-	       " AND (itemsite_item_id=<? value(\"item_id\") ?>)"
-	       " AND (wo_startdate BETWEEN <? value(\"startDate\") ?>"
-	       "                       AND <? value(\"endDate\") ?>)"
-	       "<? if exists(\"showOnlyRI\") ?>"
-	       " AND (wo_status IN ('R','I'))"
-	       "<? else ?>"
-	       " AND (wo_status<>'C')"
-	       "<? endif ?>"
-	       "<? if exists(\"showOnlyTopLevel\") ?>"
-	       " AND (wo_ordtype<>'W')"
-	       "<? endif ?>"
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       ") "
-	       "ORDER BY "
-	       " wo_startdate, wo_number, wo_subnumber" );
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("workOrderSchedule", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

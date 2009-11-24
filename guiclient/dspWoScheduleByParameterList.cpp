@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 
 #include "bom.h"
@@ -534,61 +535,7 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
 
 void dspWoScheduleByParameterList::sFillList()
 {
-  QString sql( "SELECT wo_id,"
-               "       CASE WHEN (wo_ordid IS NULL) THEN -1"
-               "            ELSE wo_ordid"
-               "       END AS orderid,"
-               "       wo.*, warehous_code, uom_name,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       formatWONumber(wo_id) AS wonumber,"
-               "       'qty' AS wo_qtyord_xtnumericrole,"
-               "       'qty' AS wo_qtyrcv_xtnumericrole,"
-               "       CASE WHEN ((wo_startdate<=CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) THEN 'error' END AS wo_startdate_qtforegroundrole,"
-               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole,"
-               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'Overdue'"
-               "            ELSE 'On Time'"
-               "       END AS condition,"
-               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS condition_qtforegroundrole "
-               "FROM wo, itemsite, warehous, item, uom "
-               "WHERE ( (wo_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-	       " AND (wo_startdate BETWEEN <? value(\"startDate\") ?>"
-	       "                       AND <? value(\"endDate\") ?>)"
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"showOnlyRI\") ?>"
-	       " AND (wo_status IN ('R','I'))"
-	       "<? else ?>"
-	       " AND (wo_status<>'C')"
-	       "<? endif ?>"
-	       "<? if exists(\"showOnlyTopLevel\") ?>"
-	       " AND (wo_ordtype<>'W')"
-	       "<? endif ?>"
-	       "<? if exists(\"classcode_id\") ?>"
-	       " AND (item_classcode_id=<? value(\"classcode_id\") ?>)"
-	       "<? elseif exists(\"itemgrp_id\") ?>"
-	       " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=<? value(\"itemgrp_id\") ?>)))"
-	       "<? elseif exists(\"plancode_id\") ?>"
-	       " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
-	       "<? elseif exists(\"wrkcnt_id\") ?>"
-	       " AND (wo_id IN (SELECT wooper_wo_id FROM wooper WHERE (wooper_wrkcnt_id=<? value(\"wrkcnt_id\") ?>)))"
-	       "<? elseif exists(\"classcode_pattern\") ?>"
-	       " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ <? value(\"classcode_pattern\") ?>)))"
-	       "<? elseif exists(\"itemgrp_pattern\") ?>"
-	       " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ <? value(\"itemgrp_pattern\") ?>) ) ))"
-	       "<? elseif exists(\"plancode_pattern\") ?>"
-	       " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
-	       "<? elseif exists(\"wrkcnt_pattern\") ?>"
-	       " AND (wo_id IN (SELECT wooper_wo_id FROM wooper, wrkcnt WHERE ((wooper_wrkcnt_id=wrkcnt_id) AND (wrkcnt_code ~ <? value(\"wrkcnt_pattern\") ?>))))"
-	       "<? endif ?>"
-	       ") "
-	       "ORDER BY "
-	       " wo_startdate, wo_number, wo_subnumber" );
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("workOrderSchedule", "parameterlist");
   ParameterList params;
   if (! setParams(params))
     return;
