@@ -146,14 +146,14 @@ void scrapWoMaterialFromWIP::sScrap()
 
   if (_scrapComponent->isChecked())
   {
-    q.prepare("SELECT scrapWoMaterial(:womatl_id, :qty) AS result;");
+    q.prepare("SELECT scrapWoMaterial(:womatl_id, :qty, :date) AS result;");
     q.bindValue(":womatl_id", _womatl->id());
     q.bindValue(":qty", _qty->toDouble());
     q.bindValue(":date",  _transDate->date());
   }
   else if (_scrapTopLevel->isChecked())
   {
-    q.prepare("SELECT scrapTopLevel(:wo_id, :qty, :issueRepl) AS result;");
+    q.prepare("SELECT scrapTopLevel(:wo_id, :qty, :issueRepl, :date) AS result;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":qty",   _topLevelQty->toDouble());
     q.bindValue(":date",  _transDate->date());

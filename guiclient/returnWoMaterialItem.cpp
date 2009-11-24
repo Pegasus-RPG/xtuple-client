@@ -103,7 +103,7 @@ void returnWoMaterialItem::sReturn()
   returnItem.prepare("SELECT returnWoMaterial(:womatl_id, :qty, :date) AS result;");
   returnItem.bindValue(":womatl_id", _womatl->id());
   returnItem.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":date",  _transDate->date());
+  returnItem.bindValue(":date",  _transDate->date());
   returnItem.exec();
   if (returnItem.first())
   {
