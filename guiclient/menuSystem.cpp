@@ -96,7 +96,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   toolBar->setIconSize(QSize(32, 32));
   QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(parent);
   if(!toolbars.isEmpty())
-    parent->addToolBar(toolBar);
+    parent->insertToolBar(toolbars.at(0), toolBar);
 
   errorLogListener::initialize();
 
