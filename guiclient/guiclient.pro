@@ -160,7 +160,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspPartiallyShippedOrders.ui                                                           \
                dspPricesByItem.ui dspPricesByCustomer.ui dspPricesByCustomerType.ui                   \
                dspFreightPricesByCustomer.ui dspFreightPricesByCustomerType.ui                        \
-               dspReorderExceptionsByPlannerCode.ui                                                   \
+               dspRecurringInvoices.ui dspReorderExceptionsByPlannerCode.ui                           \
                dspReservations.ui                                                                     \
                dspRunningAvailability.ui                                                              \
                dspSalesHistoryByBilltoName.ui dspSalesHistoryByCustomer.ui                            \
@@ -462,7 +462,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspPartiallyShippedOrders.h                                                            \
                dspPricesByItem.h dspPricesByCustomer.h dspPricesByCustomerType.h                      \
                dspFreightPricesByCustomer.h dspFreightPricesByCustomerType.h                          \
-               dspReorderExceptionsByPlannerCode.h                                                    \
+               dspRecurringInvoices.h dspReorderExceptionsByPlannerCode.h                             \
                dspReservations.h                                                                      \
                dspRunningAvailability.h                                                               \
                dspSalesHistoryByBilltoName.h dspSalesHistoryByCustomer.h                              \
@@ -775,7 +775,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspPartiallyShippedOrders.cpp                                                          \
                dspPricesByItem.cpp dspPricesByCustomer.cpp dspPricesByCustomerType.cpp                \
                dspFreightPricesByCustomer.cpp dspFreightPricesByCustomerType.cpp                      \
-               dspReorderExceptionsByPlannerCode.cpp                                                  \
+               dspRecurringInvoices.cpp dspReorderExceptionsByPlannerCode.cpp                         \
                dspReservations.cpp                                                                    \
                dspRunningAvailability.cpp                                                             \
                dspSalesHistoryByBilltoName.cpp dspSalesHistoryByCustomer.cpp                          \

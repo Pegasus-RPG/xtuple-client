@@ -38,6 +38,7 @@
 #include "dspBillingSelections.h"
 #include "postBillingSelections.h"
 #include "unpostedInvoices.h"
+#include "dspRecurringInvoices.h"
 #include "reprintInvoices.h"
 #include "printInvoices.h"
 #include "printInvoicesByShipvia.h"
@@ -255,6 +256,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspBillingSelections",	     tr("Billing &Selections..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", QPixmap(":/images/billingSelections"), toolBar, true, tr("Billing Selections") },
     { "so.postBillingSelections",	     tr("&Post Billing Selections..."),	SLOT(sPostBillingSelections()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
+    { "so.dspRecurringInvoices",	     tr("&List Recurring Invoices..."),	SLOT(sRecurringInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
     { "so.listUnpostedInvoices",	     tr("&List Unposted Invoices..."),	SLOT(sUnpostedInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
     { "so.postInvoices",		     tr("Post &Invoices..."),		SLOT(sPostInvoices()), billingInvoicesMenu, "PostMiscInvoices",	NULL, NULL, true, NULL },
 
@@ -642,6 +644,11 @@ void menuSales::sDspBillingSelections()
 void menuSales::sPostBillingSelections()
 {
   postBillingSelections(parent, "", TRUE).exec();
+}
+
+void menuSales::sRecurringInvoices()
+{
+  omfgThis->handleNewWindow(new dspRecurringInvoices());
 }
 
 void menuSales::sUnpostedInvoices()
