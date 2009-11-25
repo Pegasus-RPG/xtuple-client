@@ -32,6 +32,7 @@ exists(../openrpt) {
 }
 
 INCLUDEPATH += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL
+DEPENDPATH  += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL
 
 
 CONFIG += release thread
@@ -39,5 +40,5 @@ CONFIG += release thread
 
 QT += qt3support
 macx {
-  CONFIG += x86
+  CONFIG += x86 ppc
 }
