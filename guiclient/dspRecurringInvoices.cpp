@@ -21,7 +21,6 @@
 #include "getGLDistDate.h"
 #include "invoice.h"
 #include "mqlutil.h"
-#include "printInvoice.h"
 #include "storedProcErrorLookup.h"
 
 dspRecurringInvoices::dspRecurringInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -38,11 +37,10 @@ dspRecurringInvoices::dspRecurringInvoices(QWidget* parent, const char* name, Qt
   _invchead->addColumn(tr("Customer"),     -1,              Qt::AlignLeft,   true,  "cust_name" );
   _invchead->addColumn(tr("Ship-to"),      100,             Qt::AlignLeft,   false, "invchead_shipto_name" );
   _invchead->addColumn(tr("Invc. Date"),   _dateColumn,     Qt::AlignCenter, true,  "invchead_invcdate" );
-  _invchead->addColumn(tr("Recurring"),    _ynColumn,       Qt::AlignCenter, true,  "invchead_recurring" );
   _invchead->addColumn(tr("Interval"),     100,             Qt::AlignRight,  true,  "invchead_recurring_interval" );
-  _invchead->addColumn(tr("Type"),         _orderColumn,    Qt::AlignCenter, true,  "invchead_recurring_type" );
+  _invchead->addColumn(tr("Type"),         _orderColumn,    Qt::AlignCenter, true,  "recurring_type" );
   _invchead->addColumn(tr("Until"),        _dateColumn,     Qt::AlignCenter, true,  "invchead_recurring_until" );
-  _invchead->addColumn(tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
+  _invchead->addColumn(tr("Amount"),       _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (_privileges->check("MaintainMiscInvoices"))
@@ -105,10 +103,6 @@ void dspRecurringInvoices::sPopulateMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
   if ((!_privileges->check("MaintainMiscInvoices")) && (!_privileges->check("ViewMiscInvoices")))
     pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
-  if (!_privileges->check("PrintInvoices"))
-    pMenu->setItemEnabled(menuItem, FALSE);
 }
 
 void dspRecurringInvoices::sFillList()
@@ -118,6 +112,11 @@ void dspRecurringInvoices::sFillList()
   MetaSQLQuery mql = mqlLoad("invoices", "detail");
   ParameterList params;
   params.append("recurringOnly");
+  params.append("day", tr("Day"));
+  params.append("week", tr("Week"));
+  params.append("month", tr("Month"));
+  params.append("year", tr("Year"));
+  params.append("none", tr("None"));
   q = mql.toQuery(params);
   _invchead->populate(q);
   if (q.lastError().type() != QSqlError::NoError)

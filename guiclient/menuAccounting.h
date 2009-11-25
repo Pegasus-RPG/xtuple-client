@@ -77,6 +77,7 @@ class menuAccounting : public QObject
     
     // AR
     void sCreateInvoice();
+    void sRecurringInvoices();
     void sUnpostedInvoices();
     void sPrintInvoices();
     void sReprintInvoices();
