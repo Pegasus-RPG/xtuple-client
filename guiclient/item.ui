@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
-    <height>692</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -494,17 +494,27 @@ to be bound by its terms.</comment>
                <widget class="XComboBox" name="_freightClass"/>
               </item>
               <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+               <widget class="QLabel" name="_upcCodeLit">
+                <property name="text">
+                 <string>UPC Code:</string>
                 </property>
-                <property name="sizeHint" stdset="0">
+               </widget>
+              </item>
+              <item>
+               <widget class="XLineEdit" name="_upcCode">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
                  <size>
-                  <width>0</width>
-                  <height>20</height>
+                  <width>120</width>
+                  <height>32767</height>
                  </size>
                 </property>
-               </spacer>
+               </widget>
               </item>
               <item>
                <spacer>
@@ -554,32 +564,35 @@ to be bound by its terms.</comment>
          <property name="checked">
           <bool>true</bool>
          </property>
-         <layout class="QGridLayout">
+         <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="_prodcatLit">
-            <property name="text">
-             <string>Product C&amp;ategory:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>_prodcat</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="XComboBox" name="_prodcat">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
            <layout class="QHBoxLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="_prodcatLit">
+              <property name="text">
+               <string>Product C&amp;ategory:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>_prodcat</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="XComboBox" name="_prodcat">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QLabel" name="_warrantyCodeLit">
               <property name="text">
@@ -604,33 +617,29 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
+            <item>
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>29</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
-          <item row="0" column="3">
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>16</width>
-              <height>29</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="4">
-           <widget class="QCheckBox" name="_exclusive">
-            <property name="text">
-             <string>Exclusive</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="5">
+          <item row="1" column="0">
            <layout class="QHBoxLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <item>
              <widget class="QLabel" name="_listPriceLit">
               <property name="text">
@@ -663,7 +672,7 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QLabel" name="_priceUOMLit">
               <property name="text">
-               <string> Per </string>
+               <string>Unit Price UOM:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -681,6 +690,13 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="_exclusive">
+              <property name="text">
+               <string>Exclusive</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -692,29 +708,6 @@ to be bound by its terms.</comment>
                </size>
               </property>
              </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="_upcCodeLit">
-              <property name="text">
-               <string>UPC Code:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_upcCode">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>32767</height>
-               </size>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -1592,12 +1585,9 @@ to be bound by its terms.</comment>
   <tabstop>_configured</tabstop>
   <tabstop>_freightClass</tabstop>
   <tabstop>_sold</tabstop>
-  <tabstop>_prodcat</tabstop>
-  <tabstop>_exclusive</tabstop>
   <tabstop>_warranty</tabstop>
   <tabstop>_listprice</tabstop>
   <tabstop>_priceUOM</tabstop>
-  <tabstop>_upcCode</tabstop>
   <tabstop>_prodWeight</tabstop>
   <tabstop>_packWeight</tabstop>
   <tabstop>_tab</tabstop>
