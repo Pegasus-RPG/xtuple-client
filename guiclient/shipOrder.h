@@ -34,6 +34,7 @@ public slots:
     virtual void sHandleSo();
     virtual void sHandleTo();
     virtual void sHandleButtons();
+	virtual void calcFreight();
 
 protected slots:
     virtual void languageChange();

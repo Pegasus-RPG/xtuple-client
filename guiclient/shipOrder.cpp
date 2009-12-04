@@ -817,6 +817,7 @@ void shipOrder::sFillList()
     _shipment->clear();
     _shipment->setEnabled(false);
   }
+  calcFreight();
 }
 
 void shipOrder::sSelectToggled( bool yes )
@@ -901,3 +902,42 @@ void shipOrder::sFillTracknum()
     }
   }
 }
+
+void shipOrder::calcFreight()
+{
+  XSqlQuery Ordid ;
+  Ordid.prepare("SELECT shiphead_order_id  AS order_id FROM shiphead WHERE shiphead_id = :shiphead_id ;");
+  Ordid.bindValue(":shiphead_id",_shipment->id());
+  Ordid.exec();
+  if(Ordid.first())
+  {
+    XSqlQuery data ;
+    data.prepare("SELECT * FROM shiphead WHERE shiphead_order_id = :order_id  AND shiphead_shipped = 'true';");
+    data.bindValue(":order_id",Ordid.value("order_id").toInt());
+    data.exec();
+    if (data.first())
+    {
+      XSqlQuery data1 ;
+	  if (_order->isSO())
+      {
+	    data1.prepare("SELECT (noNeg( (SELECT cohead_freight AS tot_freight from cohead WHERE cohead_id = :order_id)-(SELECT SUM(shiphead_freight) AS freight_given " 
+		              " from shiphead where shiphead_order_id =:order_id AND shiphead_shipped='true')) )AS freight; ") ;
+	    data1.bindValue(":order_id",Ordid.value("order_id").toInt());
+        data1.exec();
+	  }
+      else
+      {
+	    data1.prepare("SELECT (noNeg( (select SUM(toitem_freight) + tohead_freight AS freight from tohead,toitem WHERE (toitem_tohead_id=tohead_id) "
+	                  " AND tohead_id = :order_id GROUP BY tohead.tohead_id ,tohead.tohead_freight  )-(SELECT SUM(shiphead_freight) AS freight_given " 
+					  " from shiphead where shiphead_order_id = :order_id AND shiphead_shipped='true')) )AS freight; " );
+	    data1.bindValue(":order_id",Ordid.value("order_id").toInt());
+        data1.exec();
+	  }
+	  if(data1.first())
+      _freight->setLocalValue(data1.value("freight").toDouble());
+    }
+  }
+}
+
+
+
