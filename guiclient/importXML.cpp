@@ -21,6 +21,8 @@
 #include "configureIE.h"
 #include "storedProcErrorLookup.h"
 
+#define DEBUG false
+
 bool importXML::userHasPriv()
 {
   return _privileges->check("ImportXML");
@@ -254,6 +256,9 @@ bool importXML::importOne(const QString &pFileName)
     return false;
 
   QString tmpfileName; // only set if we translate the file with XSLT
+  if (DEBUG)
+      qDebug("importXML::importOne(%s) doctype = %s",
+             qPrintable(pFileName), qPrintable(doc.doctype().name()));
   if (doc.doctype().name() != "xtupleimport")
   {
     QString xsltfile;
@@ -276,7 +281,8 @@ bool importXML::importOne(const QString &pFileName)
     else
     {
       systemError(this,
-		  tr("<p>Could not find a map for doctype %1 and system id %2. "
+		  tr("<p>Could not find a map for doctype '%1' and "
+                     "system id '%2'. "
 		     "Write an XSLT stylesheet to convert this to valid xtuple"
 		     "import XML and add it to the Map of XSLT Import Filters.")
 		      .arg(doc.doctype().name()).arg(doc.doctype().systemId()));
@@ -353,7 +359,7 @@ bool importXML::importOne(const QString &pFileName)
 
   /* xtupleimport format is very straightforward:
       top level element is xtupleimport
-	second level elements are all api view names
+        second level elements are all table/view names (default to api schema)
 	  third level elements are all column names
      and there are no text nodes until third level
 
@@ -388,14 +394,22 @@ bool importXML::importOne(const QString &pFileName)
     if (! viewElem.attribute("key").isEmpty())
       keyList = viewElem.attribute("key").split(QRegExp(",\\s*"));
 
+    QString viewName = viewElem.tagName();
+    if (viewName.indexOf(".") > 0)
+      ; // viewName contains . so accept that it's schema-qualified
+    else if (! viewElem.attribute("schema").isEmpty())
+      viewName = viewElem.attribute("schema") + "." + viewName;
+    else // backwards compatibility - must be in the api schema
+      viewName = "api." + viewName;
+
     // TODO: fix QtXML classes so they read default attribute values from the DTD
     // then remove this code
     if (mode.isEmpty())
       mode = "insert";
     else if (mode == "update" && keyList.isEmpty())
     {
-      if (! viewElem.namedItem(viewElem.tagName() + "_number").isNull())
-	keyList.append(viewElem.tagName() + "_number");
+      if (! viewElem.namedItem(viewName + "_number").isNull())
+        keyList.append(viewName + "_number");
       else if (! viewElem.namedItem("order_number").isNull())
 	keyList.append("order_number");
       else if (! ignoreErr)
@@ -409,8 +423,10 @@ bool importXML::importOne(const QString &pFileName)
     }
     // end of code to remove
 
+    QString savepointName = viewName;
+    savepointName.remove(".");
     if (ignoreErr)
-      q.exec("SAVEPOINT " + viewElem.tagName() + ";");
+      q.exec("SAVEPOINT " + savepointName + ";");
 
     for (QDomElement columnElem = viewElem.firstChildElement();
 	 ! columnElem.isNull();
@@ -442,19 +458,19 @@ bool importXML::importOne(const QString &pFileName)
       for (int i = 0; i < columnNameList.size(); i++)
 	columnNameList[i].append("=" + columnValueList[i]);
 
-      sql = "UPDATE api." + viewElem.tagName() + " SET " +
+      sql = "UPDATE " + viewName + " SET " +
 	    columnNameList.join(", ") +
 	    " WHERE (" + whereList.join(" AND ") + ");";
     }
     else if (mode == "insert")
-      sql = "INSERT INTO api." + viewElem.tagName() + " (" +
+      sql = "INSERT INTO " + viewName + " (" +
 	    columnNameList.join(", ") +
 	    " ) SELECT " +
 	    columnValueList.join(", ") + ";" ;
     else
     {
       if (ignoreErr)
-	q.exec("ROLLBACK TO SAVEPOINT " + viewElem.tagName() + ";");
+        q.exec("ROLLBACK TO SAVEPOINT " + savepointName + ";");
       else
       {
 	rollback.exec();
@@ -470,7 +486,7 @@ bool importXML::importOne(const QString &pFileName)
       if (ignoreErr)
       {
 	QString warning = q.lastError().databaseText();
-	q.exec("ROLLBACK TO SAVEPOINT " + viewElem.tagName() + ";");
+        q.exec("ROLLBACK TO SAVEPOINT " + savepointName + ";");
 	QMessageBox::warning(this, tr("Ignoring Error"),
 			     tr("Ignoring database error while importing %1:\n\n%2")
 			      .arg(viewElem.tagName())
@@ -484,7 +500,7 @@ bool importXML::importOne(const QString &pFileName)
       }
     }
     else if (ignoreErr)
-      q.exec("RELEASE SAVEPOINT " + viewElem.tagName() + ";");
+      q.exec("RELEASE SAVEPOINT " + savepointName + ";");
   }
 
   q.exec("COMMIT;");
