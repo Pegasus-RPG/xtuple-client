@@ -97,6 +97,13 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 
+/*! \defgroup scriptapi The xTuple ERP Scripting API
+
+  The xTuple ERP Scripting API defines the interface between extension %scripts
+  and the xTuple ERP C++ core.
+
+ */
+
 void setupScriptApi(QScriptEngine *engine)
 {
   setupAddressCluster(engine);
