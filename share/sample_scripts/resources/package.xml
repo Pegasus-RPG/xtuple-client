@@ -28,7 +28,6 @@
   </prerequisite-->
 
   <loadreport file="client/reports/DisplayItemLocations.xml"	       >sample_scripts package</loadreport>
-  <loadreport file="client/reports/InventoryAvailabilityByItemChar.xml">sample_scripts package</loadreport>
 
   <loadappscript file="client/scripts/addButton.js"		name="addButton">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/addressCoordinates.js"	name="addressCoordinates">sample_scripts package</loadappscript>
@@ -43,7 +42,6 @@
   <loadappscript file="client/scripts/DisplayItemLocations.script"	name="DisplayItemLocations">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/dspBacklogByParameterList_Collapse.js"	name="dspBacklogByParameterList">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/dspBacklogByParameterList_Expand.js"	name="dspBacklogByParameterList">sample_scripts package</loadappscript>
-  <loadappscript file="client/scripts/dspInventoryAvailabilityByItemChar.js"	name="dspInventoryAvailabilityByItemChar">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/FileDemo.script"		name="FileDemo">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/hideSalesrepComm.js"	name="hideSalesrepComm">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/initMenu.js"		name="initMenu">sample_scripts package</loadappscript>
@@ -61,7 +59,6 @@
   <loadappui file="client/uiforms/addressWindow.ui"		>sample_scripts package</loadappui>
   <loadappui file="client/uiforms/ccvoid.ui"		        >sample_scripts package</loadappui>
   <loadappui file="client/uiforms/DisplayItemLocations.ui"	>sample_scripts package</loadappui>
-  <loadappui file="client/uiforms/dspInventoryAvailabilityByItemChar.ui">sample_scripts package</loadappui>
   <loadappui file="client/uiforms/FileDemo.ui"		>sample_scripts package</loadappui>
   <loadappui file="client/uiforms/itemSiteViewItem.ui"	>sample_scripts package</loadappui>
   <loadappui file="client/uiforms/scriptCC.ui"		>sample_scripts package</loadappui>
