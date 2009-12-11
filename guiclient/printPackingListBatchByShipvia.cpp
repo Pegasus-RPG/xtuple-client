@@ -12,6 +12,7 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -26,15 +27,10 @@ printPackingListBatchByShipvia::printPackingListBatchByShipvia(QWidget* parent, 
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  ParameterList params;
-  if (_metrics->boolean("MultiWhs"))
-    params.append("MultiWhs");
-  MetaSQLQuery mql = mqlLoad("packingListBatchByShipVia", "shipVia");
-  q = mql.toQuery(params);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _shipvia->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  sPopulateShipVia();
 }
 
 printPackingListBatchByShipvia::~printPackingListBatchByShipvia()
@@ -52,6 +48,14 @@ void printPackingListBatchByShipvia::sPrint()
   QPrinter printer(QPrinter::HighResolution);
   bool     setupPrinter = TRUE;
 
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start and End Date"),
+                          tr("You must enter a valid Start and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   XSqlQuery prtd;
   QString prts("UPDATE pack SET pack_printed=TRUE"
                " WHERE ((pack_head_id=<? value(\"head_id\") ?>) "
@@ -66,6 +70,7 @@ void printPackingListBatchByShipvia::sPrint()
 
   XSqlQuery packq;
   ParameterList params;
+  _dates->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   params.append("shipvia", _shipvia->currentText());
@@ -104,8 +109,9 @@ void printPackingListBatchByShipvia::sPrint()
 
     if (packq.value("orderhead_status").toString() != "C")
     {
-      orReport report(packq.value( packq.value("pack_shiphead_id").isNull() ?
+      orReport report(packq.value( (_pick->isChecked()) ?
                                    "pickform" : "packform").toString(), params);
+
       if (report.isValid())
       {
         if (report.print(&printer, setupPrinter))
@@ -135,4 +141,18 @@ void printPackingListBatchByShipvia::sPrint()
 
   }
   orReport::endMultiPrint(&printer);
+  sPopulateShipVia();
+}
+
+void printPackingListBatchByShipvia::sPopulateShipVia()
+{
+  ParameterList params;
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+  MetaSQLQuery mql = mqlLoad("packingListBatchByShipVia", "shipVia");
+  q = mql.toQuery(params);
+
+  _shipvia->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 }

@@ -25,6 +25,7 @@ public:
 
 public slots:
     virtual void sPrint();
+    virtual void sPopulateShipVia();
 
 protected slots:
     virtual void languageChange();
