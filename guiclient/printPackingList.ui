@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2009 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>printPackingList</class>
- <widget class="QDialog" name="printPackingList" >
-  <property name="geometry" >
+ <widget class="QDialog" name="printPackingList">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,34 +17,51 @@ to be bound by its terms.</comment>
     <height>388</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Print Packing List</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_6" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_6">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout" >
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
+          <widget class="QRadioButton" name="_printPack">
+           <property name="text">
+            <string>Print Packlist</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="_printPick">
+           <property name="text">
+            <string>Print Picklist</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -52,8 +70,8 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_reprint" >
-           <property name="text" >
+          <widget class="QCheckBox" name="_reprint">
+           <property name="text">
             <string>Reprint</string>
            </property>
           </widget>
@@ -61,11 +79,11 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>0</width>
            <height>20</height>
@@ -74,34 +92,34 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>5</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
+            <widget class="QPushButton" name="_close">
+             <property name="text">
               <string>&amp;Cancel</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_print" >
-             <property name="enabled" >
+            <widget class="QPushButton" name="_print">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>&amp;Print</string>
              </property>
-             <property name="autoDefault" >
+             <property name="autoDefault">
               <bool>true</bool>
              </property>
-             <property name="default" >
+             <property name="default">
               <bool>true</bool>
              </property>
             </widget>
@@ -110,13 +128,13 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -128,30 +146,30 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <layout class="QGridLayout" name="gridLayout_5" >
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="_orderGroup" >
-         <property name="title" >
+     <item row="1" column="0">
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="_orderGroup">
+         <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout" >
-          <item row="0" column="0" >
-           <widget class="OrderCluster" name="_order" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="OrderCluster" name="_order">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <spacer name="horizontalSpacer" >
-            <property name="orientation" >
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>0</width>
               <height>20</height>
@@ -162,21 +180,21 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QGroupBox" name="_shipmentGroup" >
-         <property name="title" >
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="_shipmentGroup">
+         <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2" >
-          <item row="0" column="0" >
-           <widget class="ShipmentCluster" name="_shipment" >
-            <property name="focusPolicy" >
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="ShipmentCluster" name="_shipment">
+            <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
             </property>
-            <property name="label" >
+            <property name="label">
              <string>Shipment#:</string>
             </property>
-            <property name="listVisible" >
+            <property name="listVisible">
              <bool>true</bool>
             </property>
            </widget>
@@ -184,83 +202,83 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QGroupBox" name="_infoGroup" >
-         <property name="title" >
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="_infoGroup">
+         <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4" >
-          <item row="0" column="0" >
-           <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" >
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_custNameLit" >
-                <property name="text" >
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="_custNameLit">
+                <property name="text">
                  <string>Customer Name:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" >
-               <widget class="QLabel" name="_custName" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+              <item row="0" column="1">
+               <widget class="QLabel" name="_custName">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="_custPhoneLit" >
-                <property name="text" >
+              <item row="1" column="0">
+               <widget class="QLabel" name="_custPhoneLit">
+                <property name="text">
                  <string> Customer Phone:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1" >
-               <widget class="QLabel" name="_custPhone" />
+              <item row="1" column="1">
+               <widget class="QLabel" name="_custPhone"/>
               </item>
-              <item row="2" column="0" >
-               <widget class="QLabel" name="_poNumberLit" >
-                <property name="text" >
+              <item row="2" column="0">
+               <widget class="QLabel" name="_poNumberLit">
+                <property name="text">
                  <string>Purchase Order #:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1" >
-               <widget class="QLabel" name="_poNumber" />
+              <item row="2" column="1">
+               <widget class="QLabel" name="_poNumber"/>
               </item>
-              <item row="3" column="0" >
-               <widget class="QLabel" name="_orderDateLit" >
-                <property name="text" >
+              <item row="3" column="0">
+               <widget class="QLabel" name="_orderDateLit">
+                <property name="text">
                  <string>Order Date:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1" >
-               <layout class="QHBoxLayout" name="horizontalLayout" >
+              <item row="3" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
-                 <widget class="DLineEdit" name="_orderDate" />
+                 <widget class="DLineEdit" name="_orderDate"/>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_3" >
-                  <property name="orientation" >
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="sizeHint" stdset="0" >
+                  <property name="sizeHint" stdset="0">
                    <size>
                     <width>40</width>
                     <height>20</height>
@@ -273,11 +291,11 @@ to be bound by its terms.</comment>
              </layout>
             </item>
             <item>
-             <spacer name="verticalSpacer_2" >
-              <property name="orientation" >
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -296,7 +314,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -329,11 +347,11 @@ to be bound by its terms.</comment>
    <receiver>printPackingList</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

@@ -166,7 +166,7 @@ void printPackingList::sPrint()
     q.bindValue(":head_id", _order->id());
   }
 
-  q.bindValue(":form", (_shipment->id() > 0) ? "P" : "L");
+  q.bindValue(":form", (_printPack->isChecked()) ? "P" : "L");
 
   q.exec();
   if (q.first())
