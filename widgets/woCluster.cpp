@@ -573,6 +573,7 @@ void WomatlCluster::constructor()
   if(_x_metrics)
   {
     _qtyIssued->setPrecision(decimalPlaces("qty"));
+    _qtyFxd->setPrecision(decimalPlaces("qty"));
     _qtyPer->setPrecision(decimalPlaces("qtyper"));
     _qtyRequired->setPrecision(decimalPlaces("qty"));
     _scrap->setPrecision(decimalPlaces("percent"));
@@ -598,7 +599,8 @@ void WomatlCluster::setWooperid(int pWooperid)
   bool qual = FALSE;
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
                "       wo_id, uom_name, item_descrip1, item_descrip2,"
-               "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
+               "       womatl_qtyfxd AS _qtyfxd, womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
+               "       formatQty(womatl_qtyfxd) AS qtyfxd,"
                "       formatQtyPer(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQtyPer(womatl_qtyreq) AS qtyreq,"
@@ -675,7 +677,7 @@ void WomatlCluster::setWoid(int pWoid)
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
                "       wo_id, wo_qtyord, uom_name, item_descrip1, item_descrip2,"
                "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
-               "       womatl_qtyper AS qtyper,"
+               "       womatl_qtyfxd AS qtyfxd, womatl_qtyper AS qtyper,"
                "       womatl_scrap * 100 AS scrap,"
                "       ABS(womatl_qtyreq) AS qtyreq,"
                "       ABS(womatl_qtyiss)  AS qtyiss,"
@@ -765,6 +767,7 @@ void WomatlCluster::setId(int pWomatlid)
                  "       wo_id, uom_name, item_descrip1, item_descrip2,"
                  "       ABS(list.womatl_qtyreq) AS _qtyreq, "
                  "       ABS(list.womatl_qtyiss) AS _qtyiss,"
+                 "       (list.womatl_qtyfxd) AS qtyfxd,"
                  "       (list.womatl_qtyper) AS qtyper,"
                  "       (list.womatl_scrap * 100) AS scrap,"
                  "       (abs(list.womatl_qtyreq)) AS qtyreq, "
@@ -861,6 +864,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     _uom->setText("");
     _descrip1->setText("");
     _descrip2->setText("");
+    _qtyFxd->setText("");
     _qtyPer->setText("");
     _scrap->setText("");
     _qtyRequired->setText("");
@@ -880,6 +884,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     _uom->setText(_womatl.value("uom_name").toString());
     _descrip1->setText(_womatl.value("item_descrip1").toString());
     _descrip2->setText(_womatl.value("item_descrip2").toString());
+    _qtyFxd->setDouble(_womatl.value("qtyfxd").toDouble());
     _qtyPer->setDouble(_womatl.value("qtyper").toDouble());
     _scrap->setDouble(_womatl.value("scrap").toDouble());
     _qtyRequired->setDouble(_womatl.value("qtyreq").toDouble());
