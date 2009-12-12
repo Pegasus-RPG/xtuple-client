@@ -32,13 +32,14 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+				 ItemLineEdit::cTooling);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
-  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
-  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
+  _bomitem->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
+  _bomitem->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
+  _bomitem->addColumn(tr("Ext. Qty. Req."),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyreq");
   _bomitem->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
@@ -137,7 +138,7 @@ void dspSummarizedBOM::sFillList()
     return;
 
   MetaSQLQuery mql(" SELECT item_id AS itemid, *,"
-                   "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
+                   "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
                    "       CASE WHEN bomdata_expired THEN 'expired'"
                    "            WHEN bomdata_future  THEN 'future'"
                    "        END AS qtforegroundrole "

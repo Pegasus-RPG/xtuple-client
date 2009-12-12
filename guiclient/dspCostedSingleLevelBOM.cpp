@@ -40,13 +40,16 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+				 ItemLineEdit::cTooling);
 
   _bomitem->addColumn(tr("#"),          _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   _bomitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Qty."),        _qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Batch Sz."),   _qtyColumn, Qt::AlignRight, true, "bomdata_batchsize");
+  _bomitem->addColumn(tr("Fxd. Qty."),   _qtyColumn, Qt::AlignRight, true, "bomdata_qtyfxd");
+  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
   _bomitem->addColumn(tr("Scrap %"),   _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
   _bomitem->addColumn(tr("Effective"),  _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),    _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
@@ -183,6 +186,8 @@ void dspCostedSingleLevelBOM::sFillList()
                    "       bomdata_actunitcost AS unitcost,"
                    "       bomdata_actextendedcost AS extendedcost,"
                    "<? endif ?>"
+                   "       'qty' AS bomdata_batchsize_xtnumericrole,"
+                   "       'qty' AS bomdata_qtyfxd_xtnumericrole,"
                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
                    "       'percent' AS bomdata_scrap_xtnumericrole,"
                    "       'cost' AS unitcost_xtnumericrole,"
@@ -215,10 +220,10 @@ void dspCostedSingleLevelBOM::sFillList()
   if (q.first())
   {
     XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1, tr("Actual Cost"), "");
-    last->setText(9, q.value("actual").toString());
+    last->setText(11, q.value("actual").toString());
 
     last = new XTreeWidgetItem(_bomitem, last, -1, -1, tr("Standard Cost"), "" );
-    last->setText(9, q.value("standard").toString());
+    last->setText(11, q.value("standard").toString());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

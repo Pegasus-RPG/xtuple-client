@@ -23,6 +23,7 @@ class dspMaterialUsageVarianceByComponentItem : public XWidget, public Ui::dspMa
 public:
     dspMaterialUsageVarianceByComponentItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspMaterialUsageVarianceByComponentItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

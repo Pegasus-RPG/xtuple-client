@@ -13,9 +13,12 @@
 #include <QVariant>
 //#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
 #include "guiclient.h"
+#include <metasql.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspMaterialUsageVarianceByWarehouse as a child of 'parent', with the
@@ -41,7 +44,7 @@ dspMaterialUsageVarianceByWarehouse::dspMaterialUsageVarianceByWarehouse(QWidget
   _womatlvar->addColumn(tr("Post Date"),       _dateColumn,  Qt::AlignCenter, true,  "posted" );
   _womatlvar->addColumn(tr("Parent Item"),     _itemColumn,  Qt::AlignLeft,   true,  "parentitemnumber"   );
   _womatlvar->addColumn(tr("Component Item"),  _itemColumn,  Qt::AlignLeft,   true,  "componentitemnumber"   );
-  _womatlvar->addColumn(tr("Description"),     -1,           Qt::AlignLeft,   true,  "descrip");
+  _womatlvar->addColumn(tr("Description"),     -1,           Qt::AlignLeft,   true,  "componentdescrip");
   _womatlvar->addColumn(tr("Ordered"),         _qtyColumn,   Qt::AlignRight,  true,  "ordered"  );
   _womatlvar->addColumn(tr("Produced"),        _qtyColumn,   Qt::AlignRight,  true,  "received"  );
   _womatlvar->addColumn(tr("Proj. Req."),      _qtyColumn,   Qt::AlignRight,  true,  "projreq"  );
@@ -74,9 +77,10 @@ void dspMaterialUsageVarianceByWarehouse::languageChange()
 void dspMaterialUsageVarianceByWarehouse::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-
+  if (! setParams(params))
+    return;
+  params.append("includeFormatted");
+	
   orReport report("MaterialUsageVarianceByWarehouse", params);
   if (report.isValid())
     report.print();
@@ -90,54 +94,28 @@ void dspMaterialUsageVarianceByWarehouse::sPopulateMenu(QMenu *)
 
 void dspMaterialUsageVarianceByWarehouse::sFillList()
 {
-  if (_dates->allValid())
-  {
-    QString sql( "SELECT womatlvar_id, posted, parentitemnumber, componentitemnumber,"
-                 "       descrip,"
-                 "       ordered, received,"
-                 "       projreq, projqtyper,"
-                 "       actiss, actqtyper,"
-                 "       (actqtyper - projqtyper) AS qtypervar,"
-                 "       CASE WHEN (actqtyper=projqtyper) THEN 0"
-                 "            WHEN (projqtyper=0) THEN actqtyper"
-                 "            ELSE ((1 - (actqtyper / projqtyper)) * -1)"
-                 "       END AS qtypervarpercent,"
-                 "       womatlvar_notes, womatlvar_ref,"
-                 "       'qty' AS ordered_xtnumericrole,"
-                 "       'qty' AS received_xtnumericrole,"
-                 "       'qty' AS projreq_xtnumericrole,"
-                 "       'qtyper' AS projqtyper_xtnumericrole,"
-                 "       'qty' AS actiss_xtnumericrole,"
-                 "       'qtyper' AS actqtyper_xtnumericrole,"
-                 "       'qtyper' AS qtypervar_xtnumericrole,"
-                 "       'percent' AS qtypervarpercent_xtnumericrole "
-                 "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted,"
-                 "              componentitem.item_descrip1 || ' ' || componentitem.item_descrip2 as descrip,"
-                 "              womatlvar_notes, womatlvar_ref,"
-                 "              parentitem.item_number AS parentitemnumber, componentitem.item_number AS componentitemnumber,"
-                 "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"
-                 "              (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,"
-                 "              womatlvar_qtyper AS projqtyper,"
-                 "              (womatlvar_qtyiss) AS actiss, (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper "
-                 "       FROM womatlvar, itemsite AS componentsite, itemsite AS parentsite,"
-                 "            item AS componentitem, item AS parentitem "
-                 "       WHERE ((womatlvar_parent_itemsite_id=parentsite.itemsite_id)"
-                 "        AND (womatlvar_component_itemsite_id=componentsite.itemsite_id)"
-                 "        AND (parentsite.itemsite_item_id=parentitem.item_id)"
-                 "        AND (componentsite.itemsite_item_id=componentitem.item_id)"
-                 "        AND (womatlvar_posted BETWEEN :startDate AND :endDate)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (componentsite.itemsite_warehous_id=:warehous_id)";
-
-    sql += ") ) AS data "
-           "ORDER BY posted";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.exec();
-    _womatlvar->populate(q);
-  }
+  ParameterList params;
+  if (! setParams(params))
+    return;
+	
+  MetaSQLQuery mql = mqlLoad("workOrderVariance", "material");
+  q = mql.toQuery(params);
+  _womatlvar->populate(q);
 }
+
+bool dspMaterialUsageVarianceByWarehouse::setParams(ParameterList &params)
+{
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"),
+      tr("You must specify a valid date range.") );
+    return false;
+  }
+
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+
+  return true;
+}
+
 

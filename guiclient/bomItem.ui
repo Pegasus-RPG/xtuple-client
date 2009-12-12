@@ -176,7 +176,7 @@ to be bound by its terms.</comment>
      </item>
      <item row="2" column="0">
       <layout class="QGridLayout">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="_qtyPerLit">
          <property name="text">
           <string>&amp;Qty. Per:</string>
@@ -189,7 +189,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <layout class="QHBoxLayout">
          <item>
           <widget class="XLineEdit" name="_qtyPer">
@@ -242,7 +242,7 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="_scrapLit">
          <property name="text">
           <string>Sc&amp;rap %:</string>
@@ -255,7 +255,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="1">
         <layout class="QHBoxLayout">
          <item>
           <widget class="XLineEdit" name="_scrap">
@@ -285,7 +285,7 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="_issueMethodLit">
          <property name="text">
           <string>Issue Method:</string>
@@ -298,7 +298,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout">
          <property name="spacing">
           <number>0</number>
@@ -340,7 +340,7 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="_ecnNumLit">
          <property name="text">
           <string>ECN #:</string>
@@ -353,7 +353,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <layout class="QHBoxLayout">
          <item>
           <widget class="XLineEdit" name="_ecn"/>
@@ -369,6 +369,49 @@ to be bound by its terms.</comment>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="_fixedQtyLit">
+         <property name="text">
+          <string>Fixed Qty.:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_qtyFxd</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="XLineEdit" name="_qtyFxd">
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
              <height>20</height>
             </size>
            </property>
@@ -653,11 +696,13 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTextEdit</class>
@@ -668,12 +713,18 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_dates</tabstop>
+  <tabstop>_qtyFxd</tabstop>
   <tabstop>_qtyPer</tabstop>
   <tabstop>_uom</tabstop>
   <tabstop>_scrap</tabstop>
   <tabstop>_createWo</tabstop>
   <tabstop>_issueMethod</tabstop>
   <tabstop>_ecn</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_ref</tabstop>
   <tabstop>_noSubstitutes</tabstop>
   <tabstop>_itemDefinedSubstitutes</tabstop>
   <tabstop>_bomDefinedSubstitutes</tabstop>
@@ -681,10 +732,9 @@ to be bound by its terms.</comment>
   <tabstop>_newSubstitution</tabstop>
   <tabstop>_editSubstitution</tabstop>
   <tabstop>_deleteSubstitution</tabstop>
-  <tabstop>_tab</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
+  <tabstop>_char</tabstop>
+  <tabstop>_value</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -695,8 +745,8 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>45</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
      <x>520</x>
@@ -711,12 +761,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>36</x>
-     <y>449</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>37</x>
-     <y>473</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
    </hints>
   </connection>
@@ -727,12 +777,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>37</x>
-     <y>473</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>505</x>
-     <y>501</y>
+     <x>451</x>
+     <y>655</y>
     </hint>
    </hints>
   </connection>
@@ -743,12 +793,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>37</x>
-     <y>473</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>505</x>
-     <y>528</y>
+     <x>451</x>
+     <y>655</y>
     </hint>
    </hints>
   </connection>
@@ -759,12 +809,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>36</x>
-     <y>449</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>505</x>
-     <y>474</y>
+     <x>451</x>
+     <y>655</y>
     </hint>
    </hints>
   </connection>
@@ -775,12 +825,12 @@ to be bound by its terms.</comment>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>37</x>
-     <y>473</y>
+     <x>352</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>505</x>
-     <y>501</y>
+     <x>451</x>
+     <y>655</y>
     </hint>
    </hints>
   </connection>

@@ -52,6 +52,7 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft,   true,  "description");
   _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter, true,  "issuemethod");
   _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft,   true,  "uom_name");
+  _womatl->addColumn(tr("Fxd. Qty."),      _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyfxd");
   _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyper");
   _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight,  true,  "womatl_scrap");
   _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyreq");
@@ -292,7 +293,9 @@ void workOrderMaterials::sSubstitute()
   int womatlid = _womatl->id();
 
   XSqlQuery sub;
-  sub.prepare( "SELECT itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper) AS qtyper, womatl_wo_id,"
+  sub.prepare( "SELECT itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper) AS qtyper,"
+               "       itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyfxd) AS qtyfxd,"
+			   "       womatl_wo_id,"
                "       womatl_scrap, womatl_issuemethod,"
                "       womatl_duedate, womatl_bomitem_id, "
                "       womatl_notes, womatl_ref "
@@ -317,8 +320,9 @@ void workOrderMaterials::sSubstitute()
       params.append("wo_id", sub.value("womatl_wo_id"));
       params.append("bomitem_id", sub.value("womatl_bomitem_id"));
       params.append("item_id", result);
+      params.append("qtyFxd", (sub.value("qtyfxd").toDouble() * substitute._uomratio));
       params.append("qtyPer", (sub.value("qtyper").toDouble() * substitute._uomratio));
-      params.append("scrap", sub.value("womatl_scrap"));
+      params.append("scrap", (sub.value("womatl_scrap").toDouble() * 100.0));
       params.append("notes", sub.value("womatl_notes"));
       params.append("reference", sub.value("womatl_ref"));
 
@@ -366,6 +370,7 @@ void workOrderMaterials::sFillList()
                "            WHEN (womatl_issuemethod = 'M') THEN :mixed"
                "            ELSE :error"
                "       END AS issuemethod,"
+               "       'qty' AS womatl_qtyfxd_xtnumericrole,"
                "       'qtyper' AS womatl_qtyper_xtnumericrole,"
                "       'percent' AS womatl_scrap_xtnumericrole,"
                "       'qty' AS womatl_qtyreq_xtnumericrole,"
@@ -451,8 +456,8 @@ void workOrderMaterials::sFillList()
     if (_privileges->check("ViewCosts"))
     {
       q.prepare( "SELECT p.item_maxcost AS f_maxcost,"
-                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * stdCost(c.item_id))) AS f_stdcost,"
-                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * actCost(c.item_id))) AS f_actcost "
+                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, (womatl_qtyfxd + womatl_qtyper) * (1 + womatl_scrap)) * stdCost(c.item_id))) AS f_stdcost,"
+                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, (womatl_qtyfxd + womatl_qtyper) * (1 + womatl_scrap)) * actCost(c.item_id))) AS f_actcost "
                  "FROM wo, womatl, itemsite AS ci, itemsite AS pi, item AS c, item AS p "
                  "WHERE ( (womatl_wo_id=wo_id)"
                  " AND (womatl_itemsite_id=ci.itemsite_id)"

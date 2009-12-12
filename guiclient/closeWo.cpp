@@ -63,6 +63,30 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
 
 bool closeWo::okToSave()
 {
+  XSqlQuery tool;
+  tool.prepare( "SELECT (count(womatl_id) > 0) AS disttool"
+                " FROM womatl "
+                "  JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
+                "  JOIN item ON (itemsite_item_id = item_id) "
+                " WHERE ((womatl_wo_id=:wo_id)"
+                " AND (item_type = 'T' ) "
+                " AND (womatl_qtyiss > 0 ) "
+                " AND ((itemsite_controlmethod IN ('L','S') "
+                "      OR (itemsite_loccntrl)))); ");
+  tool.bindValue(":wo_id", _wo->id());
+  tool.exec();
+  if (tool.first())
+  {
+    if (tool.value("disttool").toBool())
+    {
+      QMessageBox::critical(this, tr("Controlled Tool"),
+                            tr("<p>A controlled tooling item still resides on this work order. "
+                               "You must return the tooling item before closing it.") );
+      _wo->setFocus();
+      return false;
+    }
+  }
+
   XSqlQuery type;
   type.prepare( "SELECT item_type "
                 "FROM item,itemsite,wo "

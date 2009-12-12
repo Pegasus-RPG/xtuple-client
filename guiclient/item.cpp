@@ -1220,6 +1220,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     freight  = TRUE;
+	purchased = TRUE;
   }
 
   if (itemType == "O")

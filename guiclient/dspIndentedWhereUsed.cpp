@@ -39,7 +39,8 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
   _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "descrip");
   _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
-  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
+  _bomitem->addColumn(tr("Fxd. Qty."),    _qtyColumn, Qt::AlignRight, true, "bomwork_qtyfxd");
+  _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
   _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomwork_scrap");
   _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
   _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
@@ -164,10 +165,11 @@ void dspIndentedWhereUsed::sFillList()
                      "       bomworkitemsequence(bomwork_id) AS seqord, "
                      "       bomwork_seqnumber, item_number, uom_name,"
                      "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-                     "       bomwork_qtyper,"
+                     "       bomwork_qtyfxd ,bomwork_qtyper,"
                      "       bomwork_scrap,"
                      "       bomwork_effective,"
                      "       bomwork_expires,"
+                     "       'qty' AS bomwork_qtyfxd_xtnumericrole,"
                      "       'qtyper' AS bomwork_qtyper_xtnumericrole,"
                      "       'scrap' AS bomwork_scrap_xtnumericrole,"
                      "       CASE WHEN COALESCE(bomwork_effective,startOfTime())=startOfTime() THEN 'Always' END AS bomwork_effective_qtdisplayrole,"
@@ -194,7 +196,7 @@ void dspIndentedWhereUsed::sFillList()
     }
     _bomitem->expandAll();
 
-    q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
+    q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
     q.bindValue(":bomwork_set_id", worksetid);
     q.exec();
   }

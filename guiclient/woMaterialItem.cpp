@@ -31,6 +31,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
 
 
   // signals and slots connections
+  connect(_qtyFxd, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
@@ -44,6 +45,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
+  _qtyFxd->setValidator(omfgThis->qtyVal());
   _qtyPer->setValidator(omfgThis->qtyPerVal());
   _scrap->setValidator(omfgThis->scrapVal());
   _qtyRequired->setPrecision(omfgThis->qtyVal());
@@ -105,6 +107,10 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   param = pParams.value("wooper_id", &valid);
   if (valid)
     _wooperid=param.toInt();
+
+  param = pParams.value("qtyFxd", &valid);
+  if (valid)
+    _qtyFxd->setText(param.toDouble());
 
   param = pParams.value("qtyPer", &valid);
   if (valid)
@@ -169,6 +175,7 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
       _wo->setEnabled(FALSE);
       _item->setEnabled(FALSE);
+      _qtyFxd->setEnabled(FALSE);
       _qtyPer->setEnabled(FALSE);
       _uom->setEnabled(FALSE);
       _scrap->setEnabled(FALSE);
@@ -229,10 +236,11 @@ void woMaterialItem::sSave()
 
     int itemsiteid = q.value("itemsiteid").toInt();
 
-    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap, :bomitem_id, :notes, :ref) AS womatlid;");
+    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyFxd, :qtyPer, :scrap, :bomitem_id, :notes, :ref) AS womatlid;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":issueMethod", issueMethod);
+    q.bindValue(":qtyFxd", _qtyFxd->toDouble());
     q.bindValue(":qtyPer", _qtyPer->toDouble());
     q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
@@ -256,7 +264,8 @@ void woMaterialItem::sSave()
   else if (_mode == cEdit)
   {
     q.prepare( "UPDATE womatl "
-               "SET womatl_qtyper=:qtyPer, womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
+               "SET womatl_qtyfxd=:qtyFxd, womatl_qtyper=:qtyPer, "
+			   "    womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
                "    womatl_uom_id=:uom_id,"
                "    womatl_qtyreq=:qtyReq, womatl_notes=:notes, womatl_ref=:ref "
                "FROM wo "
@@ -264,6 +273,7 @@ void woMaterialItem::sSave()
                " AND (womatl_id=:womatl_id) );" );
     q.bindValue(":womatl_id", _womatlid);
     q.bindValue(":issueMethod", issueMethod);
+    q.bindValue(":qtyFxd", _qtyFxd->toDouble());
     q.bindValue(":qtyPer", _qtyPer->toDouble());
     q.bindValue(":qtyReq", _qtyRequired->toDouble());
     q.bindValue(":uom_id", _uom->id());
@@ -280,6 +290,7 @@ void woMaterialItem::sSave()
   else
   {
     _item->setId(-1);
+    _qtyFxd->clear();
     _qtyPer->clear();
     _qtyRequired->clear();
     _scrap->clear();
@@ -292,10 +303,12 @@ void woMaterialItem::sSave()
 void woMaterialItem::sUpdateQtyRequired()
 {
   XSqlQuery qtyreq;
-  qtyreq.prepare("SELECT calcQtyReq(:item_id, :uom_id, :qtyord, :qtyper, :scrap) AS qtyreq;");
+  qtyreq.prepare("SELECT roundQty(itemuomfractionalbyuom(:itemid, :uomid),"
+                  "              (:qtyfxd + :qtyper * :qtyord) * (1 + :scrap)) AS qtyreq;");
   qtyreq.bindValue(":item_id", _item->id());
   qtyreq.bindValue(":uom_id", _uom->id());
   qtyreq.bindValue(":qtyord", _wo->qtyOrdered());
+  qtyreq.bindValue(":qtyfxd", _qtyFxd->toDouble());
   qtyreq.bindValue(":qtyper", _qtyPer->toDouble());
   qtyreq.bindValue(":scrap", (_scrap->toDouble() / 100.0));
   qtyreq.exec();
@@ -306,6 +319,7 @@ void woMaterialItem::sUpdateQtyRequired()
 void woMaterialItem::populate()
 {
   q.prepare( "SELECT womatl_wo_id, itemsite_item_id,"
+             "       womatl_qtyfxd AS qtyfxd,"
              "       womatl_qtyper AS qtyper,"
              "       womatl_uom_id,"
              "       womatl_scrap * 100 AS scrap,"
@@ -319,6 +333,7 @@ void woMaterialItem::populate()
   {
     _wo->setId(q.value("womatl_wo_id").toInt());
     _item->setId(q.value("itemsite_item_id").toInt());
+    _qtyFxd->setDouble(q.value("qtyfxd").toDouble());
     _qtyPer->setDouble(q.value("qtyper").toDouble());
     _uom->setId(q.value("womatl_uom_id").toInt());
     _scrap->setDouble(q.value("scrap").toDouble());
@@ -359,12 +374,33 @@ void woMaterialItem::sItemIdChanged()
   uom.bindValue(":item_id", _item->id());
   uom.exec();
   _uom->populate(uom);
-  uom.prepare("SELECT item_inv_uom_id"
+  uom.prepare("SELECT item_inv_uom_id, item_type "
               "  FROM item"
               " WHERE(item_id=:item_id);");
   uom.bindValue(":item_id", _item->id());
   uom.exec();
   if(uom.first())
+  {
     _uom->setId(uom.value("item_inv_uom_id").toInt());
+    if (uom.value("item_type").toString() != "T" && uom.value("item_type").toString() != "R")
+	{
+	  if (_qtyPer->text().length() == 0)
+	  {
+	    _qtyFxd->setDouble(0.0);
+		_qtyPer->setDouble(1.0);
+	  }
+	}
+	else
+	{
+	  if (_qtyPer->text().length() == 0)
+	  {
+	    _qtyFxd->setDouble(1.0);
+		_qtyPer->setDouble(0.0);
+	  }
+	}
+	
+	if (_scrap->text().length() == 0)
+	  _scrap->setDouble(0.0);
+  }
 }
 

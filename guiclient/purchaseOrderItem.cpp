@@ -185,7 +185,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       }
       else
       {
-        _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
+        _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
+		               ItemLineEdit::cTooling | ItemLineEdit::cActive);
         _item->setDefaultType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
       }
     }

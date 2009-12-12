@@ -30,7 +30,8 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+				 ItemLineEdit::cTooling);
 
   _cutoff->setNullString(tr("Latest"));
   _cutoff->setNullDate(omfgThis->endOfTime().addDays(-1));
@@ -43,6 +44,7 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
   _bomitem->addColumn(tr("Description"), -1,           Qt::AlignCenter, true,  "description" );
   _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _bomitem->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight,  true,  "qtyfxd"  );
   _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
   _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
   
@@ -125,14 +127,17 @@ void dspPendingBOMChanges::sFillList(int, bool)
   {
     q.prepare( "SELECT bomitem_id, actiondate, action,"
                "       bomitem_seqnumber, item_number, description,"
-               "       uom_name, qtyper,"
+               "       uom_name, qtyfxd, qtyper,"
                "       bomitem_scrap, actiondate,"
+               "       'qty' AS qtyfxd_xtnumericrole,"
                "       'qtyper' AS qtyper_xtnumericrole,"
                "       'percent' AS bomitem_scrap_xtnumericrole "
                "FROM ( "
                "SELECT bomitem_id, :effective AS action,"
                "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       uom_name,"
+			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS qtyfxd,"
+			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
                "       bomitem_scrap, bomitem_effective AS actiondate "
                "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
@@ -141,7 +146,9 @@ void dspPendingBOMChanges::sFillList(int, bool)
                "UNION "
                "SELECT bomitem_id, :expires AS action, "
                "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       uom_name,"
+			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS qtyfxd,"
+			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
                "       bomitem_scrap, bomitem_expires AS actiondate "
                "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"

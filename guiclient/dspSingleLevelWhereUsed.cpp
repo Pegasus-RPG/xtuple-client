@@ -43,6 +43,7 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* na
   _bomitem->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "descrip");
   _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,  true, "uom_name");
+  _bomitem->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight, true, "qtyfxd");
   _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight, true, "qtyper");
   _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight, true, "bomitem_scrap");
   _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter,true, "bomitem_effective");
@@ -160,9 +161,12 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
                  "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
                  "       uom_name,"
                  "       itemuomtouom(bomitem_item_id, bomitem_uom_id,"
+                 "                    NULL, bomitem_qtyfxd) AS qtyfxd,"
+                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id,"
                  "                    NULL, bomitem_qtyper) AS qtyper,"
                  "       bomitem_scrap,"
                  "       bomitem_effective, bomitem_expires,"
+                 "       'qty' AS qtyfxd_xtnumericrole,"
                  "       'qtyper' AS qtyper_xtnumericrole,"
                  "       'scrap' AS bomitem_scrap_xtnumericrole,"
                  "       CASE WHEN (COALESCE(bomitem_effective, startoftime()) = startoftime()) THEN 'Always' END AS bomitem_effective_qtdisplayrole,"

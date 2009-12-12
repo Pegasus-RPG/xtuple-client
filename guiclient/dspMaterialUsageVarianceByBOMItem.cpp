@@ -16,6 +16,8 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspMaterialUsageVarianceByBOMItem as a child of 'parent', with the
@@ -73,19 +75,11 @@ void dspMaterialUsageVarianceByBOMItem::languageChange()
 
 void dspMaterialUsageVarianceByBOMItem::sPrint()
 {
-  if(!_dates->allValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date Range"),
-      tr("You must specify a valid date range.") );
-    return;
-  }
-
   ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("component_item_id", _componentItem->id());
-
+  if (! setParams(params))
+    return;
+  params.append("includeFormatted");
+	
   orReport report("MaterialUsageVarianceByBOMItem", params);
   if (report.isValid())
     report.print();
@@ -117,50 +111,44 @@ void dspMaterialUsageVarianceByBOMItem::sPopulateComponentItems(int pItemid)
 
 void dspMaterialUsageVarianceByBOMItem::sFillList()
 {
-  if ((_componentItem->id() != -1) && (_dates->allValid()))
-  {
-    QString sql( "SELECT womatlvar_id, posted,"
-                 "       ordered, received,"
-                 "       projreq, projqtyper,"
-                 "       actiss, actqtyper,"
-                 "       (actqtyper - projqtyper) AS qtypervar,"
-                 "       CASE WHEN (actqtyper=projqtyper) THEN 0"
-                 "            WHEN (projqtyper=0) THEN actqtyper"
-                 "            ELSE ((1 - (actqtyper / projqtyper)) * -1)"
-                 "       END AS qtypervarpercent,"
-                 "       womatlvar_notes, womatlvar_ref,"
-                 "       'qty' AS ordered_xtnumericrole,"
-                 "       'qty' AS received_xtnumericrole,"
-                 "       'qty' AS projreq_xtnumericrole,"
-                 "       'qtyper' AS projqtyper_xtnumericrole,"
-                 "       'qty' AS actiss_xtnumericrole,"
-                 "       'qtyper' AS actqtyper_xtnumericrole,"
-                 "       'qtyper' AS qtypervar_xtnumericrole,"
-                 "       'percent' AS qtypervarpercent_xtnumericrole "
-                 "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted,"
-                 "              womatlvar_notes, womatlvar_ref,"
-                 "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"
-                 "              (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,"
-                 "              womatlvar_qtyper AS projqtyper,"
-                 "              (womatlvar_qtyiss) AS actiss, (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper "
-                 "       FROM womatlvar, itemsite AS component, itemsite AS parent "
-                 "       WHERE ((womatlvar_parent_itemsite_id=parent.itemsite_id)"
-                 "        AND (womatlvar_component_itemsite_id=component.itemsite_id)"
-                 "        AND (womatlvar_bomitem_id=:bomitem_id)"
-                 "        AND (womatlvar_posted BETWEEN :startDate AND :endDate)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (component.itemsite_warehous_id=:warehous_id)";
-
-    sql += ") ) AS data "
-           "ORDER BY posted";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":bomitem_id", _componentItem->id());
-    q.exec();
-    _womatlvar->populate(q);
-  }
+  ParameterList params;
+  if (! setParams(params))
+    return;
+	
+  MetaSQLQuery mql = mqlLoad("workOrderVariance", "material");
+  q = mql.toQuery(params);
+  _womatlvar->populate(q);
 }
+
+bool dspMaterialUsageVarianceByBOMItem::setParams(ParameterList &params)
+{
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"),
+      tr("You must specify a valid date range.") );
+    return false;
+  }
+
+  if(!_item->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Item"),
+      tr("You must specify an Item.") );
+    return false;
+  }
+
+  if(!_componentItem->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid BOM Item"),
+      tr("You must specify a BOM Item.") );
+    return false;
+  }
+
+  params.append("item_id", _item->id());
+  params.append("bomitem_id", _componentItem->id());
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+
+  return true;
+}
+
 

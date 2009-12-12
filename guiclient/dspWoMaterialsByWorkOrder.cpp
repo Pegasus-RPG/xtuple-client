@@ -44,6 +44,7 @@ dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char
   _womatl->addColumn(tr("Oper. #"),         _dateColumn,  Qt::AlignCenter, true,  "wooperseq" );
   _womatl->addColumn(tr("Iss. Meth.") ,     _orderColumn, Qt::AlignCenter, true,  "issuemethod" );
   _womatl->addColumn(tr("Iss. UOM") ,       _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
+  _womatl->addColumn(tr("Fxd. Qty."),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyfxd"  );
   _womatl->addColumn(tr("Qty. Per"),        _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyper"  );
   _womatl->addColumn(tr("Scrap %"),         _prcntColumn, Qt::AlignRight,  true,  "womatl_scrap"  );
   _womatl->addColumn(tr("Required"),        _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyreq"  );
@@ -137,12 +138,16 @@ void dspWoMaterialsByWorkOrder::sFillList()
                "       uom_name,"
                "       noNeg(womatl_qtyreq - womatl_qtyiss) AS balance,"
                "       CASE WHEN (womatl_duedate <= CURRENT_DATE) THEN 'error' END AS womatl_duedate_qtforegroundrole,"
+               "       'qty' AS womatl_qtyfxd_xtnumericrole,"
                "       'qtyper' AS womatl_qtyper_xtnumericrole,"
                "       'percent' AS womatl_scrap_xtnumericrole,"
                "       'qty' AS womatl_qtyreq_xtnumericrole,"
                "       'qty' AS womatl_qtyiss_xtnumericrole,"
                "       'qty' AS womatl_qtywipscrap_xtnumericrole,"
                "       'qty' AS balance_xtnumericrole,"
+               "       0 AS womatl_qtyreq_xttotalrole,"
+               "       0 AS womatl_qtyiss_xttotalrole,"
+               "       0 AS womatl_qtywipscrap_xttotalrole,"
                "       0 AS balance_xttotalrole "
                "FROM wo, womatl, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"

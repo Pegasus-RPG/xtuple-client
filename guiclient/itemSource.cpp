@@ -34,7 +34,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_vendorCurrency, SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
 
-  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
   _vendor->setType(__activeVendors);
 

@@ -44,14 +44,15 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+				 ItemLineEdit::cTooling);
 
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Seq #"),       _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Qty. Req."),    _qtyColumn, Qt::AlignRight, true, "bomdata_qtyreq");
   _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
   _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
@@ -186,7 +187,7 @@ void dspCostedIndentedBOM::sFillList()
                     "       bomdata_actunitcost AS unitcost,"
                     "       bomdata_actextendedcost AS extendedcost, "
                     "<? endif ?>"
-                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
+                    "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
                     "       'percent' AS bomdata_scrap_xtnumericrole,"
                     "       'cost' AS unitcost_xtnumericrole,"
                     "       'cost' AS extendedcost_xtnumericrole,"

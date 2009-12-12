@@ -23,6 +23,7 @@ class dspMaterialUsageVarianceByWorkOrder : public XWidget, public Ui::dspMateri
 public:
     dspMaterialUsageVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspMaterialUsageVarianceByWorkOrder();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

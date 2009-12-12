@@ -13,8 +13,12 @@
 #include <QVariant>
 //#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "inputManager.h"
 
 /*
@@ -41,8 +45,8 @@ dspMaterialUsageVarianceByWorkOrder::dspMaterialUsageVarianceByWorkOrder(QWidget
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _womatlvar->addColumn(tr("Post Date"),          _dateColumn,  Qt::AlignCenter, true,  "posted" );
-  _womatlvar->addColumn(tr("Component Item"),     -1,           Qt::AlignLeft,   true,  "item_number"   );
-  _womatlvar->addColumn(tr("Description"),        -1,           Qt::AlignLeft,   true,  "descrip");
+  _womatlvar->addColumn(tr("Component Item"),     -1,           Qt::AlignLeft,   true,  "componentitemnumber"   );
+  _womatlvar->addColumn(tr("Description"),        -1,           Qt::AlignLeft,   true,  "componentdescrip");
   _womatlvar->addColumn(tr("Ordered"),            _qtyColumn,   Qt::AlignRight,  true,  "ordered"  );
   _womatlvar->addColumn(tr("Produced"),           _qtyColumn,   Qt::AlignRight,  true,  "received"  );
   _womatlvar->addColumn(tr("Proj. Req."),         _qtyColumn,   Qt::AlignRight,  true,  "projreq"  );
@@ -75,8 +79,10 @@ void dspMaterialUsageVarianceByWorkOrder::languageChange()
 void dspMaterialUsageVarianceByWorkOrder::sPrint()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
-
+  if (! setParams(params))
+    return;
+  params.append("includeFormatted");
+	
   orReport report("MaterialUsageVarianceByWorkOrder", params);
   if (report.isValid())
     report.print();
@@ -90,45 +96,27 @@ void dspMaterialUsageVarianceByWorkOrder::sPopulateMenu(QMenu *)
 
 void dspMaterialUsageVarianceByWorkOrder::sFillList()
 {
-  if (_wo->isValid())
-  {
-    q.prepare( "SELECT womatlvar_id, posted, item_number,"
-               "       descrip, ordered, received,"
-               "       projreq, projqtyper,"
-               "       actiss, actqtyper,"
-               "       (actqtyper - projqtyper) AS qtypervar,"
-               "       CASE WHEN (actqtyper=projqtyper) THEN 0"
-               "            WHEN (projqtyper=0) THEN actqtyper"
-               "            ELSE ((1 - (actqtyper / projqtyper)) * -1)"
-               "       END AS qtypervarpercent,"
-               "       womatlvar_notes, womatlvar_ref,"
-               "       'qty' AS ordered_xtnumericrole,"
-               "       'qty' AS received_xtnumericrole,"
-               "       'qty' AS projreq_xtnumericrole,"
-               "       'qtyper' AS projqtyper_xtnumericrole,"
-               "       'qty' AS actiss_xtnumericrole,"
-               "       'qtyper' AS actqtyper_xtnumericrole,"
-               "       'qtyper' AS qtypervar_xtnumericrole,"
-               "       'percent' AS qtypervarpercent_xtnumericrole "
-               "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted, item_number,"
-               "              item_descrip1 || ' ' || item_descrip2 as descrip,"
-               "              womatlvar_notes, womatlvar_ref,"
-               "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"
-               "              (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,"
-               "              womatlvar_qtyper AS projqtyper,"
-               "              (womatlvar_qtyiss) AS actiss, (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper "
-               "       FROM womatlvar, itemsite, item, wo "
-               "       WHERE ( (womatlvar_component_itemsite_id=itemsite_id)"
-               "        AND (itemsite_item_id=item_id)"
-               "        AND (wo_number=womatlvar_number)"
-               "        AND (wo_subnumber=womatlvar_subnumber)"
-               "        AND (wo_id=:wo_id) ) ) AS data "
-               "ORDER BY item_number;" );
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    _womatlvar->populate(q);
-  }
-  else
-    _womatlvar->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+	
+  MetaSQLQuery mql = mqlLoad("workOrderVariance", "material");
+  q = mql.toQuery(params);
+  _womatlvar->populate(q);
 }
+
+bool dspMaterialUsageVarianceByWorkOrder::setParams(ParameterList &params)
+{
+  if(!_wo->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid W/O"),
+      tr("You must specify a Work Order.") );
+    return false;
+  }
+
+  params.append("wo_id", _wo->id());
+
+  return true;
+}
+
 

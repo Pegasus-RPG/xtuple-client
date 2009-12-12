@@ -355,12 +355,14 @@ void plannedOrder::sHandleItemsite(int pWarehousid)
   if ( q.value("itemsite_posupply").toBool() &&
       (q.value("item_type").toString() == "P" ||
        q.value("item_type").toString() == "O" ||
+       q.value("item_type").toString() == "T" ||
        q.value("item_type").toString() == "M") )
     _poButton->setEnabled(TRUE);
   else
     _poButton->setEnabled(FALSE);
   if ( q.value("itemsite_wosupply").toBool() &&
       (q.value("item_type").toString() == "P" ||
+       q.value("item_type").toString() == "T" ||
        q.value("item_type").toString() == "M") )
     _woButton->setEnabled(TRUE);
   else

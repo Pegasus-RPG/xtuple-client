@@ -29,15 +29,18 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+				 ItemLineEdit::cTooling);
 
   _bomitem->addColumn(tr("#"),                   30,      Qt::AlignCenter,true, "bomitem_seqnumber" );
   _bomitem->addColumn(tr("Item Number"),    _itemColumn,  Qt::AlignLeft,  true, "item_number"   );
   _bomitem->addColumn(tr("Description"),         -1,      Qt::AlignLeft,  true, "itemdescription"   );
-  _bomitem->addColumn(tr("Issue UOM"),       _uomColumn,   Qt::AlignCenter,true, "invuomname" );
-  _bomitem->addColumn(tr("Issue Qty. Per"),  _qtyColumn,   Qt::AlignRight, true, "qtyper"  );
-  _bomitem->addColumn(tr("Inv. UOM"),        _uomColumn,   Qt::AlignCenter,true, "issueuomname" );
-  _bomitem->addColumn(tr("Inv. Qty. Per"),   _qtyColumn,   Qt::AlignRight, true, "bomitem_qtyper"  );
+  _bomitem->addColumn(tr("Issue UOM"),       _uomColumn,   Qt::AlignCenter,true, "issueuomname" );
+  _bomitem->addColumn(tr("Issue Fxd. Qty."),  _qtyColumn,  Qt::AlignRight, true, "bomitem_qtyfxd"  );
+  _bomitem->addColumn(tr("Issue Qty. Per"),  _qtyColumn,   Qt::AlignRight, true, "bomitem_qtyper"  );
+  _bomitem->addColumn(tr("Inv. UOM"),        _uomColumn,   Qt::AlignCenter,true, "invuomname" );
+  _bomitem->addColumn(tr("Inv. Fxd. Qty."),   _qtyColumn,  Qt::AlignRight, true, "invqtyfxd"  );
+  _bomitem->addColumn(tr("Inv. Qty. Per"),   _qtyColumn,   Qt::AlignRight, true, "invqtyper"  );
   _bomitem->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight, true, "bomitem_scrap"  );
   _bomitem->addColumn(tr("Effective"),      _dateColumn,  Qt::AlignCenter,true, "bomitem_effective" );
   _bomitem->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter,true, "bomitem_expires" );
@@ -131,9 +134,12 @@ void dspSingleLevelBOM::sFillList(int, bool)
                "SELECT bomitem_item_id AS itemid, bomitem.*, item_number, "
 			   "       invuom.uom_name AS invuomname, issueuom.uom_name AS issueuomname,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-               "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS invqtyfxd,"
+               "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS invqtyper,"
+               "       'qty' AS bomitem_qtyfxd_xtnumericrole,"
+               "       'qty' AS invqtyfxd_xtnumericrole,"
                "       'qtyper' AS bomitem_qtyper_xtnumericrole,"
-               "       'qtyper' AS qtyper_xtnumericrole,"
+               "       'qtyper' AS invqtyper_xtnumericrole,"
                "       'percent' AS bomitem_scrap_xtnumericrole,"
                "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomitem_effective_qtdisplayrole,"
                "       CASE WHEN COALESCE(bomitem_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomitem_expires_qtdisplayrole,"

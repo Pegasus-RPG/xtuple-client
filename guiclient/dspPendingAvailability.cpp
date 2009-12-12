@@ -35,7 +35,7 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char* name
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
 
   _effective->setNullString(tr("Now"));
@@ -125,7 +125,8 @@ void dspPendingAvailability::sFillList()
                "       END AS totalavail_qtforegroundrole "
                "FROM ( SELECT itemsite_id, bomitem_seqnumber, item_number,"
                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
-               "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :buildQty) AS pendalloc,"
+               "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
+			   "                            (bomitem_qtyfxd + bomitem_qtyper * :buildQty) * (1 + bomitem_scrap)))) AS pendalloc,"
                "              qtyAllocated(itemsite_id, DATE(:buildDate)) AS totalalloc,"
                "              noNeg(itemsite_qtyonhand) AS qoh,"
                "              qtyOrdered(itemsite_id, DATE(:buildDate)) AS ordered,"

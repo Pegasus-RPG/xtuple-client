@@ -47,6 +47,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Expires"));
 
+  _qtyFxd->setValidator(omfgThis->qtyVal());
   _qtyPer->setValidator(omfgThis->qtyPerVal());
   _scrap->setValidator(omfgThis->scrapVal());
 
@@ -194,6 +195,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _mode = cView;
 
       _item->setReadOnly(TRUE);
+      _qtyFxd->setEnabled(FALSE);
       _qtyPer->setEnabled(FALSE);
       _scrap->setEnabled(FALSE);
       _dates->setEnabled(FALSE);
@@ -232,11 +234,24 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 
 void bomItem::sSave()
 {
-  if (_qtyPer->toDouble() == 0.0)
+  // Cache the item type
+  QString _itemtype = "";
+  q.prepare("SELECT item_type "
+            "FROM item "
+            "WHERE (item_id=:item_id); ");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+    _itemtype = q.value("item_type").toString();
+	
+  if (_qtyPer->toDouble() == 0.0 && _qtyFxd->toDouble() == 0.0)
   {
     QMessageBox::critical( this, tr("Enter Quantity Per"),
                            tr("You must enter a Quantity Per value before saving this BOM Item.") );
-    _qtyPer->setFocus();
+	if (_itemtype == "T" || _itemtype == "R")
+	  _qtyFxd->setFocus();
+	else
+      _qtyPer->setFocus();
     return;
   }
 
@@ -249,12 +264,7 @@ void bomItem::sSave()
   }
 
   // Check the component item type and if it is a Reference then issue a warning
-  q.prepare("SELECT item_type "
-            "FROM item "
-            "WHERE (item_id=:item_id); ");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first() && (q.value("item_type").toString() == "R"))
+  if (_itemtype == "R")
   {
     int answer = QMessageBox::question(this, tr("Reference Item"),
                             tr("<p>Adding a Reference Item to a Bill of Material "
@@ -268,7 +278,7 @@ void bomItem::sSave()
   
   if (_mode == cNew && !_saved)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
-               "                      :bomitem_uom_id, :qtyPer, :scrap,"
+               "                      :bomitem_uom_id, :qtyFxd, :qtyPer, :scrap,"
                "                      :effective, :expires,"
                "                      :createWo, -1, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
@@ -276,7 +286,7 @@ void bomItem::sSave()
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
-               "                      :bomitem_uom_id, :qtyPer, :scrap,"
+               "                      :bomitem_uom_id, :qtyFxd, :qtyPer, :scrap,"
                "                      :effective, :expires,"
                "                      :createWo, -1, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
@@ -285,7 +295,7 @@ void bomItem::sSave()
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
     q.prepare( "UPDATE bomitem "
-               "SET bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
+               "SET bomitem_qtyfxd=:qtyFxd, bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
                "    bomitem_effective=:effective, bomitem_expires=:expires,"
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
@@ -302,6 +312,7 @@ void bomItem::sSave()
   q.bindValue(":revision_id", _revisionid);
   q.bindValue(":component_item_id", _item->id());
   q.bindValue(":bomitem_uom_id", _uom->id());
+  q.bindValue(":qtyFxd", _qtyFxd->toDouble());
   q.bindValue(":qtyPer", _qtyPer->toDouble());
   q.bindValue(":scrap", (_scrap->toDouble() / 100));
   q.bindValue(":effective", _dates->startDate());
@@ -417,7 +428,7 @@ void bomItem::populate()
   q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
              "       bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_ecn, item_type,"
-             "       bomitem_qtyper,"
+             "       bomitem_qtyfxd, bomitem_qtyper,"
              "       bomitem_scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       bomitem_uom_id, "
@@ -450,6 +461,7 @@ void bomItem::populate()
 
     _dates->setStartDate(q.value("bomitem_effective").toDate());
     _dates->setEndDate(q.value("bomitem_expires").toDate());
+    _qtyFxd->setDouble(q.value("bomitem_qtyfxd").toDouble());
     _qtyPer->setDouble(q.value("bomitem_qtyper").toDouble());
     _scrap->setDouble(q.value("bomitem_scrap").toDouble() * 100);
 
@@ -592,13 +604,35 @@ void bomItem::sItemIdChanged()
   uom.bindValue(":item_id", _item->id());
   uom.exec();
   _uom->populate(uom);
-  uom.prepare("SELECT item_inv_uom_id"
+  uom.prepare("SELECT item_inv_uom_id, item_type "
               "  FROM item"
               " WHERE(item_id=:item_id);");
   uom.bindValue(":item_id", _item->id());
   uom.exec();
   if(uom.first())
+  {
     _uom->setId(uom.value("item_inv_uom_id").toInt());
+
+    if (uom.value("item_type").toString() != "T" && uom.value("item_type").toString() != "R")
+	{
+	  if (_qtyPer->text().length() == 0)
+	  {
+	    _qtyFxd->setDouble(0.0);
+		_qtyPer->setDouble(1.0);
+	  }
+	}
+	else
+	{
+	  if (_qtyPer->text().length() == 0)
+	  {
+	    _qtyFxd->setDouble(1.0);
+		_qtyPer->setDouble(0.0);
+	  }
+	}
+	
+	if (_scrap->text().length() == 0)
+	  _scrap->setDouble(0.0);
+  }
 }
 
 void bomItem::sCharIdChanged()
