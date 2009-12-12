@@ -22,52 +22,10 @@
        &lt;? endif ?>
        AS warehouse;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT formatDate(posted) AS f_posted,
-       parent_number, parent_descrip1, parent_descrip2, parent_invuom,
-       child_number, child_descrip1, child_descrip2, child_invuom,
-       formatQty(ordered) AS f_ordered,
-       formatQty(received) AS f_produced,
-       formatQty(projreq) AS f_projreq,
-       formatQtyPer(projqtyper) AS f_projqtyper,
-       formatQty(actiss) AS f_actiss, 
-       formatQtyPer(actqtyper) AS f_actqtyper,
-       formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
-       CASE WHEN (actqtyper=projqtyper) THEN formatPrcnt(0)
-            WHEN (projqtyper=0) THEN formatPrcnt(actqtyper)
-            ELSE formatPrcnt((1 - (actqtyper / projqtyper)) * -1)
-       END AS f_percent
-  FROM ( SELECT womatlvar_posted AS posted,
-                parentitem.item_number AS parent_number,
-                puom.uom_name AS parent_invuom,
-                parentitem.item_descrip1 AS parent_descrip1,
-                parentitem.item_descrip2 AS parent_descrip2,
-                componentitem.item_number AS child_number,
-                cuom.uom_name AS child_invuom,
-                componentitem.item_descrip1 AS child_descrip1,
-                componentitem.item_descrip2 AS child_descrip2,
-                womatlvar_qtyord AS ordered,
-                womatlvar_qtyrcv AS received,
-                (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,
-                womatlvar_qtyper AS projqtyper,
-                (womatlvar_qtyiss) AS actiss,
-                (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
-           FROM womatlvar, itemsite AS componentsite, itemsite AS parentsite,
-                item AS componentitem, item AS parentitem, uom AS puom, uom AS cuom
-          WHERE ((womatlvar_parent_itemsite_id=parentsite.itemsite_id)
-            AND (womatlvar_component_itemsite_id=componentsite.itemsite_id)
-            AND (parentsite.itemsite_item_id=parentitem.item_id)
-            AND (parentitem.item_inv_uom_id=puom.uom_id)
-            AND (componentsite.itemsite_item_id=componentitem.item_id)
-            AND (componentitem.item_inv_uom_id=cuom.uom_id)
-            AND (womatlvar_posted BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("warehous_id") ?>
-            AND (componentsite.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-                )
-       ) AS data
-ORDER BY posted;</sql>
+  <mqlgroup>workOrderVariance</mqlgroup>
+  <mqlname>material</mqlname>
  </querysource>
  <rpthead>
   <height>234</height>
@@ -672,7 +630,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>parent_descrip1</column>
+     <column>parentdescrip</column>
     </data>
    </field>
    <field>
@@ -729,7 +687,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>child_descrip1</column>
+     <column>componentdescrip</column>
     </data>
    </field>
    <field>
@@ -767,7 +725,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_percent</column>
+     <column>f_qtypervarpercent</column>
     </data>
    </field>
    <field>
@@ -786,7 +744,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>child_number</column>
+     <column>componentitemnumber</column>
     </data>
    </field>
    <field>
@@ -824,7 +782,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>parent_number</column>
+     <column>parentitemnumber</column>
     </data>
    </field>
    <field>
@@ -843,7 +801,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_produced</column>
+     <column>f_received</column>
     </data>
    </field>
    <field>
@@ -889,44 +847,6 @@ ORDER BY posted;</sql>
     <data>
      <query>detail</query>
      <column>f_projqtyper</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>265</x>
-     <y>30</y>
-     <width>175</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>child_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>85</x>
-     <y>30</y>
-     <width>175</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>parent_descrip2</column>
     </data>
    </field>
   </detail>

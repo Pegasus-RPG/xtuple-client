@@ -21,7 +21,7 @@
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
-   AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) );</sql>
+   AND (wo_id=&lt;? value("wo_id") ?>) );</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -33,6 +33,7 @@
             ELSE 'Error'
        END AS issuemethod,
        uom_name,
+       formatQty(womatl_qtyfxd) AS qtyfxd,
        formatQtyper(womatl_qtyper) AS qtyper,
        formatScrap(womatl_scrap) AS scrappercent,
        formatQty(womatl_qtyreq) AS required,
@@ -44,7 +45,7 @@ WHERE ((womatl_wo_id=wo_id)
  AND (womatl_uom_id=uom_id)
  AND (womatl_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
- AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) )
+ AND (wo_id=&lt;? value("wo_id") ?>) )
 ORDER BY item_number;</sql>
  </querysource>
  <rpthead>
@@ -394,6 +395,22 @@ ORDER BY item_number;</sql>
    <yend>229</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>213</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd Qty</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -551,6 +568,22 @@ ORDER BY item_number;</sql>
    <left/>
    <vcenter/>
    <string>Component Item #</string>
+  </label>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>14</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd Qty</string>
   </label>
  </pghead>
  <section>
@@ -723,7 +756,7 @@ ORDER BY item_number;</sql>
     <rect>
      <x>10</x>
      <y>15</y>
-     <width>300</width>
+     <width>255</width>
      <height>15</height>
     </rect>
     <font>
@@ -755,6 +788,25 @@ ORDER BY item_number;</sql>
     <data>
      <query>detail</query>
      <column>qtyper</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>270</x>
+     <y>17</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyfxd</column>
     </data>
    </field>
   </detail>

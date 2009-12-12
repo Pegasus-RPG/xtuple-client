@@ -12,16 +12,16 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number, item_descrip1, item_descrip2,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse
   FROM item
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+ WHERE (item_id=&lt;? value("item_id") ?>);
 </sql>
  </querysource>
  <querysource>
@@ -34,6 +34,7 @@
                          ELSE 'Error'
                 END AS issuemethod,
                 uom_name,
+                formatQty(womatl_qtyfxd) AS qtyfxd,
                 formatQty(womatl_qtyper) AS qtyper,
                 formatScrap(womatl_scrap) AS scrappercent,
                 formatQty(womatl_qtyreq) AS required,
@@ -47,9 +48,9 @@ WHERE ((womatl_wo_id=wo_id)
        AND (wo_itemsite_id=parentsite.itemsite_id)
        AND (womatl_itemsite_id=componentsite.itemsite_id)
        AND (parentsite.itemsite_item_id=item_id)
-       AND (componentsite.itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-       AND (componentsite.itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+       AND (componentsite.itemsite_item_id=&lt;? value("item_id") ?>)
+&lt;? if exists("warehous_id") ?>
+       AND (componentsite.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
  )
 ORDER BY wo_startdate;</sql>
@@ -347,6 +348,22 @@ ORDER BY wo_startdate;</sql>
    <vcenter/>
    <string>Balance</string>
   </label>
+  <label>
+   <rect>
+    <x>285</x>
+    <y>213</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd Qty</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -521,6 +538,22 @@ ORDER BY wo_startdate;</sql>
    <vcenter/>
    <string>Issue Method</string>
   </label>
+  <label>
+   <rect>
+    <x>285</x>
+    <y>14</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd Qty</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -551,7 +584,7 @@ ORDER BY wo_startdate;</sql>
    <field>
     <rect>
      <x>95</x>
-     <y>15</y>
+     <y>32</y>
      <width>300</width>
      <height>15</height>
     </rect>
@@ -690,8 +723,8 @@ ORDER BY wo_startdate;</sql>
    </field>
    <field>
     <rect>
-     <x>95</x>
-     <y>30</y>
+     <x>400</x>
+     <y>32</y>
      <width>300</width>
      <height>15</height>
     </rect>
@@ -743,6 +776,25 @@ ORDER BY wo_startdate;</sql>
     <data>
      <query>detail</query>
      <column>qtyper</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>280</x>
+     <y>17</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyfxd</column>
     </data>
    </field>
   </detail>
@@ -840,7 +892,8 @@ ORDER BY wo_startdate;</sql>
     <query>detail</query>
     <column>balance</column>
    </data>
-   <tracktotal builtin="true" >qty</tracktotal>
+   <format>qty</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>

@@ -26,7 +26,7 @@
        bomdata_uom_name AS item_invuom,
        bomdata_item_descrip1 AS item_descrip1,
        bomdata_item_descrip2 AS item_descrip2,
-       formatQtyPer(bomdata_qtyper) AS qtyper
+       formatQtyPer(bomdata_qtyreq) AS qtyreq
   FROM summarizedBOM(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>,&lt;? value("expiredDays") ?>,&lt;? value("futureDays") ?>)
 
 </sql>
@@ -320,7 +320,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Ext. Qty. Req.</string>
   </label>
   <field>
    <rect>
@@ -417,7 +417,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Ext. Qty. Req.</string>
   </label>
  </pghead>
  <section>
@@ -526,7 +526,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>qtyreq</column>
     </data>
    </field>
   </detail>

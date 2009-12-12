@@ -39,11 +39,12 @@
   bomdata_item_descrip1 AS item_descrip1,
   bomdata_item_descrip2 AS item_descrip2,
   bomdata_issuemethod AS issuemethod,
+  formatQty(bomdata_qtyfxd) AS qtyfxd,
   formatQtyPer(bomdata_qtyper) AS qtyper,
   formatScrap(bomdata_scrap) AS scrap,
   CASE
     WHEN item_inv_uom_id IS NOT NULL THEN
-      formatqtyper(bomitem_qtyper * (1 + bomitem_scrap) * itemuomtouomratio(bomitem_item_id,bomitem_uom_id,item_inv_uom_id)) 
+      formatqtyper((bomitem_qtyfxd + bomitem_qtyper) * (1 + bomitem_scrap) * itemuomtouomratio(bomitem_item_id,bomitem_uom_id,item_inv_uom_id)) 
     ELSE
       ''
   END AS qtyreq,
@@ -527,6 +528,22 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>UOM</string>
   </label>
+  <label>
+   <rect>
+    <x>320</x>
+    <y>163</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -811,7 +828,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>qtyfxd</column>
     </data>
    </field>
    <field>
@@ -836,7 +853,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <field>
     <rect>
      <x>315</x>
-     <y>15</y>
+     <y>31</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -1030,6 +1047,25 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
      <column>qtyreq</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>315</x>
+     <y>16</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyper</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
@@ -1211,7 +1247,8 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <query>detail</query>
     <column>extcost</column>
    </data>
-   <tracktotal>%9.4f</tracktotal>
+   <format>%9.4f</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>

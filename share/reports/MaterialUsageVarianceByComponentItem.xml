@@ -26,47 +26,13 @@
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
- WHERE (item_id=&lt;? value("item_id") ?>);
+ WHERE (item_id=&lt;? value("component_item_id") ?>);
 </sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT formatDate(posted) AS f_posted,
-       item_number, item_descrip1, item_descrip2, uom_name,
-       formatQty(ordered) AS f_ordered,
-       formatQty(received) AS f_produced,
-       formatQty(projreq) AS f_projreq,
-       formatQtyPer(projqtyper) AS f_projqtyper,
-       formatQty(actiss) AS f_actiss, 
-       formatQtyPer(actqtyper) AS f_actqtyper,
-       formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
-       CASE WHEN (actqtyper=projqtyper) THEN formatPrcnt(0)
-            WHEN (projqtyper=0) THEN formatPrcnt(actqtyper)
-            ELSE formatPrcnt((1 - (actqtyper / projqtyper)) * -1)
-       END AS f_percent
-  FROM ( SELECT womatlvar_posted AS posted,
-                item_number, uom_name,
-                item_descrip1, item_descrip2,
-                womatlvar_qtyord AS ordered,
-                womatlvar_qtyrcv AS received,
-                (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,
-                womatlvar_qtyper AS projqtyper,
-                (womatlvar_qtyiss) AS actiss,
-                (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
-           FROM womatlvar, itemsite AS component,
-                itemsite AS parent, item, uom
-          WHERE ((womatlvar_parent_itemsite_id=parent.itemsite_id)
-            AND (womatlvar_component_itemsite_id=component.itemsite_id)
-            AND (parent.itemsite_item_id=item_id)
-            AND (item_inv_uom_id=uom_id)
-            AND (component.itemsite_item_id=&lt;? value("item_id") ?>)
-            AND (womatlvar_posted BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("warehous_id") ?>
-            AND (component.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-                )
-       ) AS data
-ORDER BY posted;</sql>
+  <mqlgroup>workOrderVariance</mqlgroup>
+  <mqlname>material</mqlname>
  </querysource>
  <rpthead>
   <height>234</height>
@@ -184,22 +150,6 @@ ORDER BY posted;</sql>
    <right/>
    <vcenter/>
    <string>Item Number:</string>
-  </label>
-  <label>
-   <rect>
-    <x>245</x>
-    <y>200</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
   </label>
   <label>
    <rect>
@@ -537,22 +487,6 @@ ORDER BY posted;</sql>
    <vcenter/>
    <string>Produced</string>
   </label>
-  <label>
-   <rect>
-    <x>245</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
   <line>
    <xstart>5</xstart>
    <ystart>30</ystart>
@@ -735,7 +669,7 @@ ORDER BY posted;</sql>
     <rect>
      <x>85</x>
      <y>15</y>
-     <width>300</width>
+     <width>400</width>
      <height>15</height>
     </rect>
     <font>
@@ -747,26 +681,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>85</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
+     <column>parentdescrip</column>
     </data>
    </field>
    <field>
@@ -887,26 +802,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_percent</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>245</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>uom_name</column>
+     <column>f_qtypervarpercent</column>
     </data>
    </field>
    <field>
@@ -925,7 +821,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_produced</column>
+     <column>f_received</column>
     </data>
    </field>
    <field>
@@ -944,7 +840,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>parentitemnumber</column>
     </data>
    </field>
    <field>

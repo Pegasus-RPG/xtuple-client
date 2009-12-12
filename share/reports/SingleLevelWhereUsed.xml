@@ -29,6 +29,7 @@
   <name>detail</name>
   <sql>SELECT bomitem_seqnumber, item_number,
        item_descrip1, item_descrip2, uom_name,
+       formatQty(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd)) AS f_qtyfxd,
        formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,
        formatScrap(bomitem_scrap) AS f_scrap,
        formatDate(bomitem_effective, 'Always') AS f_effective,
@@ -39,7 +40,7 @@
             WHEN (bomitem_issuemethod='M') THEN 'Mixxed'
             ELSE 'Special'
        END AS f_issuemethod,
-       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper + (1 * bomitem_scrap))) as f_qtyreq
+       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper) * (1 + bomitem_scrap))) as f_qtyreq
   FROM bomitem, item, uom
  WHERE ((bomitem_parent_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
@@ -396,6 +397,22 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <string>UOM:</string>
   </label>
+  <label>
+   <rect>
+    <x>300</x>
+    <y>213</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -585,6 +602,22 @@ ORDER BY item_number;</sql>
    <hcenter/>
    <vcenter/>
    <string>Seq. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>300</x>
+    <y>14</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
   </label>
  </pghead>
  <section>
@@ -827,6 +860,25 @@ ORDER BY item_number;</sql>
     <data>
      <query>detail</query>
      <column>f_effective</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>315</x>
+     <y>17</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_qtyfxd</column>
     </data>
    </field>
   </detail>

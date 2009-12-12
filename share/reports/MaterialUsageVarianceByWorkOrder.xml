@@ -22,38 +22,10 @@
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_id=&lt;? value("wo_id") ?>))</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT formatDate(posted) AS f_posted,
-       item_number, item_descrip1, item_descrip2, uom_name,
-       formatQty(ordered) AS f_ordered,
-       formatQty(received) AS f_produced,
-       formatQty(projreq) AS f_projreq,
-       formatQtyPer(projqtyper) AS f_projqtyper,
-       formatQty(actiss) AS f_actiss, 
-       formatQtyPer(actqtyper) AS f_actqtyper,
-       formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
-       CASE WHEN (actqtyper=projqtyper) THEN formatPrcnt(0)
-            WHEN (projqtyper=0) THEN formatPrcnt(actqtyper)
-            ELSE formatPrcnt((1 - (actqtyper / projqtyper)) * -1)
-       END AS f_percent
-  FROM ( SELECT womatlvar_posted AS posted,
-                item_number, uom_name,
-                item_descrip1, item_descrip2,
-                womatlvar_qtyord AS ordered,
-                womatlvar_qtyrcv AS received,
-                (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,
-                womatlvar_qtyper AS projqtyper,
-                (womatlvar_qtyiss) AS actiss,
-                (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
-           FROM womatlvar, itemsite, item, wo, uom
-          WHERE ((womatlvar_component_itemsite_id=itemsite_id)
-            AND (itemsite_item_id=item_id)
-            AND (item_inv_uom_id=uom_id)
-            AND (wo_number=womatlvar_number)
-            AND (wo_subnumber=womatlvar_subnumber)
-            AND (wo_id=&lt;? value("wo_id") ?>) ) ) AS data
-ORDER BY item_number;</sql>
+  <mqlgroup>workOrderVariance</mqlgroup>
+  <mqlname>material</mqlname>
  </querysource>
  <rpthead>
   <height>234</height>
@@ -188,22 +160,6 @@ ORDER BY item_number;</sql>
     <column>warehous_code</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>245</x>
-    <y>200</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
   <label>
    <rect>
     <x>400</x>
@@ -517,22 +473,6 @@ ORDER BY item_number;</sql>
   </line>
   <label>
    <rect>
-    <x>245</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
     <x>494</x>
     <y>0</y>
     <width>85</width>
@@ -722,7 +662,7 @@ ORDER BY item_number;</sql>
     <rect>
      <x>85</x>
      <y>15</y>
-     <width>300</width>
+     <width>375</width>
      <height>15</height>
     </rect>
     <font>
@@ -734,7 +674,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>componentdescrip</column>
     </data>
    </field>
    <field>
@@ -753,7 +693,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>componentitemnumber</column>
     </data>
    </field>
    <field>
@@ -772,7 +712,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_produced</column>
+     <column>f_received</column>
     </data>
    </field>
    <field>
@@ -791,26 +731,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_percent</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>245</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>uom_name</column>
+     <column>f_qtypervarpercent</column>
     </data>
    </field>
    <field>
@@ -849,25 +770,6 @@ ORDER BY item_number;</sql>
     <data>
      <query>detail</query>
      <column>f_ordered</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>85</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
     </data>
    </field>
    <field>

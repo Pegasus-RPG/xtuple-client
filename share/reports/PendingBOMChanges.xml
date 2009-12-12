@@ -28,9 +28,10 @@
        'Effective' AS action,
        bomitem_seqnumber, item_number, uom_name,
        item_descrip1, item_descrip2, uom_name,
+       formatQty(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd)) AS qtyfxd,
        formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper + (1 * bomitem_scrap))) AS qtyreq,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper) * (1 + bomitem_scrap))) AS qtyreq,
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        formatBoolYN(bomitem_createwo) AS createchild,
@@ -490,6 +491,22 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>Issue Method</string>
   </label>
+  <label>
+   <rect>
+    <x>485</x>
+    <y>213</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -679,6 +696,22 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <left/>
    <vcenter/>
    <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>485</x>
+    <y>14</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
   </label>
  </pghead>
  <section>
@@ -921,6 +954,25 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <data>
      <query>detail</query>
      <column>bomitem_seqnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>485</x>
+     <y>14</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyfxd</column>
     </data>
    </field>
   </detail>

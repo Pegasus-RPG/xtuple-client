@@ -29,7 +29,7 @@
        bomdata_item_descrip2 AS item_descrip2,
        bomdata_issuemethod AS issuemethod,
        bomdata_createchild AS createchild,
-       formatQtyPer(bomdata_qtyper) AS qtyper,
+       formatQtyPer(bomdata_qtyreq) AS qtyreq,
        formatScrap(bomdata_scrap) AS scrap,
        CASE WHEN COALESCE(bomdata_effective, startOfTime()) &lt;= startOfTime()
             THEN &lt;? value("always") ?>
@@ -235,7 +235,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Ext. Qty. Req.</string>
   </label>
   <label>
    <rect>
@@ -805,7 +805,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>qtyreq</column>
     </data>
    </field>
    <field>

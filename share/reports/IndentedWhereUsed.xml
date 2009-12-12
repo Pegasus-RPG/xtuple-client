@@ -26,6 +26,7 @@
        bomworkitemsequence(bomwork_id) AS seqord,
        item_number, uom_name AS item_invuom,
        item_descrip1, item_descrip2,
+       formatQty(bomwork_qtyfxd) AS qtyfxd,
        formatQtyPer(bomwork_qtyper) AS qtyper,
        formatScrap(bomwork_scrap) AS scrap,
        formatDate(bomwork_effective, 'Always') AS effective,
@@ -113,7 +114,7 @@ ORDER BY seqord;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Qty. Per</string>
   </label>
   <label>
    <rect>
@@ -304,6 +305,22 @@ ORDER BY seqord;</sql>
    <vcenter/>
    <string>Effective</string>
   </label>
+  <label>
+   <rect>
+    <x>350</x>
+    <y>203</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -396,7 +413,7 @@ ORDER BY seqord;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Qty. Per</string>
   </label>
   <label>
    <rect>
@@ -445,6 +462,22 @@ ORDER BY seqord;</sql>
    <left/>
    <vcenter/>
    <string>Component Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>350</x>
+    <y>-1</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Fxd. Qty.</string>
   </label>
  </pghead>
  <section>
@@ -632,6 +665,25 @@ ORDER BY seqord;</sql>
     <yend>45</yend>
     <weight>0</weight>
    </line>
+   <field>
+    <rect>
+     <x>345</x>
+     <y>1</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyfxd</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>

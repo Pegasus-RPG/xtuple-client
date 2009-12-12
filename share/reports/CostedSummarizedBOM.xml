@@ -30,7 +30,7 @@
        bomdata_uom_name AS item_invuom,
        bomdata_item_descrip1 AS item_descrip1,
        bomdata_item_descrip2 AS item_descrip2,
-       formatQtyPer(bomdata_qtyper) AS qtyper,
+       formatQtyPer(bomdata_qtyreq) AS qtyreq,
 &lt;? if exists("useActualCosts") ?>
        formatCost(bomdata_actunitcost) AS f_cost,
        formatCost(bomdata_actextendedcost) AS f_extcost
@@ -83,7 +83,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Ext. Qty. Req.</string>
   </label>
   <field>
    <rect>
@@ -438,7 +438,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ext. Qty. Per</string>
+   <string>Ext. Qty. Req.</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -570,7 +570,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>qtyreq</column>
     </data>
    </field>
    <field>
