@@ -1200,7 +1200,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 #else
   QString pemfile;
 #endif
-  if (! pemfile.isEmpty())
+  if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay")) // This is currently only used for YourPay
   {
     curl_args.append( "-E" );
     curl_args.append(pemfile);
