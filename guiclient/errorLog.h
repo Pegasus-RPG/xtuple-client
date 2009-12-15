@@ -29,11 +29,15 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
+    virtual void toggleDebug(bool);
+    virtual void toggleWarning(bool);
+    virtual void toggleCritical(bool);
+    virtual void toggleFatal(bool);
 };
 
 class errorLogListener : public QObject, public XSqlQueryErrorListener {
   Q_OBJECT
+  friend void xTupleMessageOutput(QtMsgType, const char*);
 
   public:
     errorLogListener(QObject * parent = 0);

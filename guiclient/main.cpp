@@ -122,6 +122,8 @@ QString __password;
 
 #define DEBUG false
 
+extern void xTupleMessageOutput(QtMsgType type, const char *msg);
+
 int main(int argc, char *argv[])
 {
   Q_INIT_RESOURCE(guiclient);
@@ -138,6 +140,7 @@ int main(int argc, char *argv[])
   bool    _requireSSL     = false;
   bool    havePasswd      = false;
 
+  qInstallMsgHandler(xTupleMessageOutput);
   QApplication app(argc, argv);
 
 #if QT_VERSION >= 0x040400

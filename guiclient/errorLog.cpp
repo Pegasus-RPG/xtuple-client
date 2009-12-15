@@ -18,6 +18,8 @@
 #include <QDateTime>
 #include <QSqlError>
 
+#include "xtsettings.h"
+
 static QStringList _errorList;
 static errorLogListener * listener = 0;
 
@@ -41,10 +43,19 @@ errorLog::errorLog(QWidget* parent, const char * name, Qt::WFlags flags)
   for(int i = 0; i < _errorList.size(); i++)
     _errorLog->append(_errorList.at(i));
 
+  _debug->setChecked(xtsettingsValue("catchQDebug").toBool());
+  _warning->setChecked(xtsettingsValue("catchQWarning").toBool());
+  _critical->setChecked(xtsettingsValue("catchQCritical").toBool());
+  _fatal->setChecked(xtsettingsValue("catchQFatal").toBool());
+
   connect(_clear,   SIGNAL(clicked()),           _errorLog, SLOT(clear()));
   connect(_clear,   SIGNAL(clicked()),            listener, SLOT(clear()));
   connect(_clear,   SIGNAL(clicked()),            omfgThis, SLOT(sClearErrorMessages()));
   connect(listener, SIGNAL(updated(const QString &)), this, SLOT(updateErrors(const QString &)));
+  connect(_debug,   SIGNAL(toggled(bool)),        this,     SLOT(toggleDebug(bool)));
+  connect(_warning, SIGNAL(toggled(bool)),        this,     SLOT(toggleWarning(bool)));
+  connect(_critical,SIGNAL(toggled(bool)),        this,     SLOT(toggleCritical(bool)));
+  connect(_fatal,   SIGNAL(toggled(bool)),        this,     SLOT(toggleFatal(bool)));
 }
 
 errorLog::~errorLog()
@@ -62,6 +73,25 @@ void errorLog::updateErrors(const QString & msg)
   _errorLog->append(msg);
 }
 
+void errorLog::toggleDebug(bool y)
+{
+  xtsettingsSetValue("catchQDebug", y);
+}
+
+void errorLog::toggleWarning(bool y)
+{
+  xtsettingsSetValue("catchQWarning", y);
+}
+
+void errorLog::toggleCritical(bool y)
+{
+  xtsettingsSetValue("catchQCritical", y);
+}
+
+void errorLog::toggleFatal(bool y)
+{
+  xtsettingsSetValue("catchQFatal", y);
+}
 
 errorLogListener::errorLogListener(QObject * parent)
   : QObject(parent)
@@ -96,3 +126,45 @@ void errorLogListener::clear()
   _errorList.clear();
   (void)blockSignals(blocked);
 }
+
+void xTupleMessageOutput(QtMsgType type, const char *pMsg)
+{
+  QString msg;
+  msg = QDateTime::currentDateTime().toString();
+  bool notify = false;
+  switch (type) {
+    case QtDebugMsg:
+      if(!xtsettingsValue("catchQDebug").toBool())
+        return;
+      msg += " Debug: ";
+      break;
+    case QtWarningMsg:
+      if(!xtsettingsValue("catchQWarning").toBool())
+        return;
+      msg += " Warning: ";
+      break;
+    case QtCriticalMsg:
+      if(!xtsettingsValue("catchQCritical").toBool())
+        return;
+      msg += " Critical: ";
+      notify = true;
+      break;
+    case QtFatalMsg:
+      if(!xtsettingsValue("catchQFatal").toBool())
+        return;
+      msg += " Fatal: ";
+      notify = true;
+      //abort();
+      break;
+  }
+  msg += pMsg;
+  _errorList.append(msg);
+  if(_errorList.size() > 20)
+    _errorList.removeFirst();
+
+  if(listener)
+    listener->updated(msg);
+  if(omfgThis && notify)
+    omfgThis->sNewErrorMessage();
+}
+
