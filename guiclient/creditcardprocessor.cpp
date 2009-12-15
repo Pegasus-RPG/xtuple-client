@@ -12,6 +12,11 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QSqlError>
+#include <QHttp>
+#include <QSslSocket>
+#include <QSslCertificate>
+#include <QSslConfiguration>
+#include <QBuffer>
 
 #include <currcluster.h>
 #include <metasql.h>
@@ -164,6 +169,7 @@ CreditCardProcessor::CreditCardProcessor()
   _defaultTestPort    = 0;
   _defaultTestServer  = "test.creditcardprocessor.com";
   _errorMsg       = "";
+  _http = 0;
 
   for (unsigned int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++)
     _msgHash.insert(messages[i].code, messages[i].text);
@@ -1175,103 +1181,156 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   if (isTest())
     _metrics->set("CCOrder", prequest);
 
-  // TODO: why have a hard-coded path to curl?
-  QProcess proc(this);
-  QString curl_path;
-#ifdef Q_WS_WIN
-  curl_path = qApp->applicationDirPath() + "\\curl";
-#elif defined Q_WS_MACX
-  curl_path = "/usr/bin/curl";
-#elif defined Q_WS_X11
-  curl_path = "/usr/bin/curl";
-#endif
-
-  QStringList curl_args;
-  curl_args.append( "-k" );
-  curl_args.append( "-d" );
-  curl_args.append( prequest );
-
-#ifdef Q_WS_WIN
-  QString pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-  QString pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-  QString pemfile = _metrics->value("CCYPLinPathPEM");
-#else
   QString pemfile;
+#ifdef Q_WS_WIN
+  pemfile = _metrics->value("CCYPWinPathPEM");
+#elif defined Q_WS_MACX
+  pemfile = _metrics->value("CCYPMacPathPEM");
+#elif defined Q_WS_X11
+  pemfile = _metrics->value("CCYPLinPathPEM");
 #endif
-  if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay")) // This is currently only used for YourPay
+
+  if(!_metrics->boolean("CCUseCurl"))
   {
-    curl_args.append( "-E" );
-    curl_args.append(pemfile);
-  }
+    // TODO: The specific reference to YourPay should go away, especially when something other than YourPay starts to use this
+    if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay")) // This is currently only used for YourPay
+    {
+      QFile pemio(pemfile);
+      QSslCertificate localcert(&pemio);
+      if(!localcert.isNull())
+      {
+        QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
+        sslconf.setLocalCertificate(localcert);
+        QSslConfiguration::setDefaultConfiguration(sslconf);
+      }
+      else
+      {
+        QMessageBox::critical(0, tr("Failed to load PEM file"),
+          tr("Failed to load the PEM file. This may cause communication problems."));
+      }
+    }
 
-  curl_args.append(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
+    QHttp::ConnectionMode cmode = QHttp::ConnectionModeHttps;
+    QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
+    if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
+      cmode = QHttp::ConnectionModeHttp;
+    _http = new QHttp(ccurl.host(), cmode, ccurl.port(0));
 
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    curl_args.append( "-x" );
-    curl_args.append(_metrics->value("CCProxyServer") +
-		     QString(_metrics->value("CCProxyPort").toInt() == 0 ? "" :
-					(":" + _metrics->value("CCProxyPort"))));
-    curl_args.append( "-U" );
-    curl_args.append(_metricsenc->value("CCProxyLogin") + ":" +
-		     _metricsenc->value("CCPassword"));
-  }
+    if(_metrics->boolean("CCUseProxyServer"))
+    {
+      _http->setProxy(_metrics->value("CCProxyServer"), _metrics->value("CCProxyPort").toInt(),
+                    _metricsenc->value("CCProxyLogin"), _metricsenc->value("CCPassword"));
+    }
 
-  QString curlCmd = curl_path + ((DEBUG) ? (" " + curl_args.join(" ")) : "");
-  if (DEBUG)
-    qDebug("%s", curlCmd.toAscii().data());
-
-  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  /* TODO: consider changing to the original implementation:
-	      start the proc in a separate thread
-	      capture the output as it's generated
-	      while (proc->isRunning())
-		qApp->processEvents();
-   */
-  proc.start(curl_path, curl_args);
-  if ( !proc.waitForStarted() )
-  {
+    QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+    int rid = _http->post(ccurl.encodedPath(), prequest.toAscii());
+    while(_http->hasPendingRequests() || _http->currentId() != 0)
+    {
+      QApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    }
     QApplication::restoreOverrideCursor();
-    _errorMsg = errorMsg(-18)
-		  .arg(curlCmd)
-		  .arg("")
-		  .arg(QString(proc.readAllStandardError()));
-    return -18;
+    if(_http->error() != QHttp::NoError)
+    {
+      _errorMsg = errorMsg(-18)
+                        .arg(ccurl.toString())
+                        .arg(_http->error())
+                        .arg(_http->errorString());
+      return -18;
+    }
+    presponse = _http->readAll();
   }
-
-  if (! proc.waitForFinished())
+  else
   {
+    // TODO: why have a hard-coded path to curl?
+    QProcess proc(this);
+    QString curl_path;
+  #ifdef Q_WS_WIN
+    curl_path = qApp->applicationDirPath() + "\\curl";
+  #elif defined Q_WS_MACX
+    curl_path = "/usr/bin/curl";
+  #elif defined Q_WS_X11
+    curl_path = "/usr/bin/curl";
+  #endif
+
+    QStringList curl_args;
+    curl_args.append( "-k" );
+    curl_args.append( "-d" );
+    curl_args.append( prequest );
+
+    if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay")) // This is currently only used for YourPay
+    {
+      curl_args.append( "-E" );
+      curl_args.append(pemfile);
+    }
+
+    curl_args.append(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
+
+    if(_metrics->boolean("CCUseProxyServer"))
+    {
+      curl_args.append( "-x" );
+      curl_args.append(_metrics->value("CCProxyServer") +
+		       QString(_metrics->value("CCProxyPort").toInt() == 0 ? "" :
+					  (":" + _metrics->value("CCProxyPort"))));
+      curl_args.append( "-U" );
+      curl_args.append(_metricsenc->value("CCProxyLogin") + ":" +
+		       _metricsenc->value("CCPassword"));
+    }
+
+    QString curlCmd = curl_path + ((DEBUG) ? (" " + curl_args.join(" ")) : "");
+    if (DEBUG)
+      qDebug("%s", curlCmd.toAscii().data());
+
+    QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+    /* TODO: consider changing to the original implementation:
+	        start the proc in a separate thread
+	        capture the output as it's generated
+	        while (proc->isRunning())
+		  qApp->processEvents();
+     */
+    proc.start(curl_path, curl_args);
+    if ( !proc.waitForStarted() )
+    {
+      QApplication::restoreOverrideCursor();
+      _errorMsg = errorMsg(-18)
+		    .arg(curlCmd)
+		    .arg("")
+		    .arg(QString(proc.readAllStandardError()));
+      return -18;
+    }
+
+    if (! proc.waitForFinished())
+    {
+      QApplication::restoreOverrideCursor();
+      _errorMsg = errorMsg(-18)
+		    .arg(curlCmd)
+		    .arg("")
+		    .arg(QString(proc.readAllStandardError()));
+      return -18;
+    }
+
     QApplication::restoreOverrideCursor();
-    _errorMsg = errorMsg(-18)
-		  .arg(curlCmd)
-		  .arg("")
-		  .arg(QString(proc.readAllStandardError()));
-    return -18;
+
+    if (proc.exitStatus() != QProcess::NormalExit)
+    {
+      _errorMsg = errorMsg(-18)
+		    .arg(curlCmd)
+		    .arg("")
+		    .arg(QString(proc.readAllStandardError()));
+      return -18;
+    }
+
+    if (proc.exitCode() != 0)
+    {
+      _errorMsg = errorMsg(-18)
+		    .arg(curlCmd)
+		    .arg(proc.exitCode())
+		    .arg(QString(proc.readAllStandardError()));
+      return -18;
+    }
+
+    presponse = proc.readAllStandardOutput();
   }
 
-  QApplication::restoreOverrideCursor();
-
-  if (proc.exitStatus() != QProcess::NormalExit)
-  {
-    _errorMsg = errorMsg(-18)
-		  .arg(curlCmd)
-		  .arg("")
-		  .arg(QString(proc.readAllStandardError()));
-    return -18;
-  }
-
-  if (proc.exitCode() != 0)
-  {
-    _errorMsg = errorMsg(-18)
-		  .arg(curlCmd)
-		  .arg(proc.exitCode())
-		  .arg(QString(proc.readAllStandardError()));
-    return -18;
-  }
-
-  presponse = proc.readAllStandardOutput();
   if (isTest())
     _metrics->set("CCTestMe", presponse);
 
@@ -2222,3 +2281,4 @@ ParameterList CreditCardProcessor::voidPrevious(const ParameterList &pinput)
 
   return *poutput;
 }
+

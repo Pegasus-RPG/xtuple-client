@@ -14,6 +14,7 @@
 #include <QHash>
 #include <QObject>
 #include <QString>
+#include <QHttp>
 
 #include <parameter.h>
 
@@ -86,6 +87,7 @@ class CreditCardProcessor : public QObject
     QString		_ppassword;
     QString		_pport;
     QString		_pserver;
+    QHttp             * _http;
 
 };
 
