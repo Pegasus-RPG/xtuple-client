@@ -31,9 +31,6 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_enter,	SIGNAL(clicked()),	this,	SLOT(sEnter()));
   connect(_po,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
   connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
-  connect(_showClosed,SIGNAL(toggled(bool)),	this,	SLOT(sShowClosed()));
-
-  sShowClosed();
   
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter , true, "poitem_linenumber");
   _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   , true, "warehous_code");
@@ -48,6 +45,8 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("To Return"),    _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_toreturn");
 
   _returnAddr->setEnabled(_printReport->isChecked());
+  _po->setAllowedStatuses(OrderLineEdit::Open | OrderLineEdit::Closed);
+  _po->setAllowedTypes(OrderLineEdit::Purchase);
 }
 
 enterPoReturn::~enterPoReturn()
@@ -327,10 +326,3 @@ void enterPoReturn::closeEvent(QCloseEvent *pEvent)
   XWidget::closeEvent(pEvent);
 }
 
-void enterPoReturn::sShowClosed()
-{
-  if (_showClosed->isChecked())
-    _po->setType(cPOClosed & cPOOpen);
-  else
-    _po->setType(cPOOpen);
-}

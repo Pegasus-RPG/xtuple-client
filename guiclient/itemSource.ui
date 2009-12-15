@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>652</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,6 +46,13 @@ to be bound by its terms.</comment>
            </property>
            <property name="checked">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>Default</string>
            </property>
           </widget>
          </item>
@@ -708,6 +715,7 @@ to be bound by its terms.</comment>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>VendorCluster</class>
@@ -723,11 +731,13 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -446,7 +446,7 @@ void purchaseOrder::createHeader()
   // need to set at least the _order date before the INSERT
   _comments->setId(_poheadid);
   _orderDate->setDate(omfgThis->dbDate(), true);
-  _status->setText("U");
+  // TO DO: Rework  _status->setText("U");
   _vendor->setType(__activeVendors);
 
   q.prepare( "INSERT INTO pohead "
@@ -507,6 +507,7 @@ void purchaseOrder::populate()
     _notes->setText(po.value("pohead_comments").toString());
 	
     _vendaddrid = po.value("vendaddrid").toInt();
+    /* TO DO: Rework
     if (_vendaddrid == -1)
     {
       _vendaddrCode->setText(tr("Main"));
@@ -531,7 +532,7 @@ void purchaseOrder::populate()
       _vendaddrZipCode->setText(po.value("vendaddr_zipcode"));
       _vendaddrCountry->setText(po.value("vendaddr_country"));
     }
-
+ */
     _comments->setId(_poheadid);
     _vendor->setId(po.value("pohead_vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
@@ -602,7 +603,7 @@ void purchaseOrder::sSave()
   if (_taxZone->id() != -1) 
     q.bindValue(":pohead_taxzone_id", _taxZone->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
-  q.bindValue(":pohead_shipvia", _shipVia->text());
+  q.bindValue(":pohead_shipvia", _shipVia->currentText());
   q.bindValue(":pohead_fob", _fob->text());
   q.bindValue(":pohead_agent_username", _agent->currentText());
   if (_terms->isValid())
@@ -661,7 +662,7 @@ void purchaseOrder::sSave()
     _poCurrency->setEnabled(true);
     _qecurrency->setEnabled(true);
     _qeitem->removeRows(0, _qeitem->rowCount());
-
+/* TO DO: Rework
     _vendaddrCode->clear();
     _vendaddrName->clear();
     _vendaddrAddr1->clear();
@@ -671,7 +672,7 @@ void purchaseOrder::sSave()
     _vendaddrState->clear();
     _vendaddrZipCode->clear();
     _vendaddrCountry->clear();
-
+*/
     _close->setText(tr("&Close"));
 
     createHeader();
@@ -780,6 +781,7 @@ void purchaseOrder::sVendaddrList()
       {
         _vendaddrid = vendaddrid;
         _vendaddrCode->setText(q.value("vendaddr_code"));
+        /* TO DO: Rework
         _vendaddrName->setText(q.value("vendaddr_name"));
         _vendaddrAddr1->setText(q.value("vendaddr_address1"));
         _vendaddrAddr2->setText(q.value("vendaddr_address2"));
@@ -788,6 +790,7 @@ void purchaseOrder::sVendaddrList()
         _vendaddrState->setText(q.value("vendaddr_state"));
         _vendaddrZipCode->setText(q.value("vendaddr_zipcode"));
         _vendaddrCountry->setText(q.value("vendaddr_country"));
+        */
       }
     }
     else
@@ -803,6 +806,7 @@ void purchaseOrder::sVendaddrList()
       {
         _vendaddrid = -1;
         _vendaddrCode->setText(tr("Main"));
+        /* TO DO: Rework
         _vendaddrName->setText(q.value("vend_name"));
         _vendaddrAddr1->setText(q.value("vend_address1"));
         _vendaddrAddr2->setText(q.value("vend_address2"));
@@ -811,6 +815,7 @@ void purchaseOrder::sVendaddrList()
         _vendaddrState->setText(q.value("vend_state"));
         _vendaddrZipCode->setText(q.value("vend_zip"));
         _vendaddrCountry->setText(q.value("vend_country"));
+        */
       }
     }
   }
@@ -877,7 +882,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
       if (_terms->id() == -1)
         _terms->setId(vq.value("vend_terms_id").toInt());
 
-      if (_shipVia->text().length() == 0)
+      if (_shipVia->currentText().length() == 0)
         _shipVia->setText(vq.value("vend_shipvia"));
 
       if (vq.value("vend_fobsource").toString() == "V")
@@ -894,6 +899,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
       if (vq.value("vendaddrid").toInt())
       {
         _vendaddrid = -1;
+        /* TO DO: Rework
         _vendaddrCode->setText(tr("Main"));
         _vendaddrName->setText(vq.value("vend_name"));
         _vendaddrAddr1->setText(vq.value("vend_address1"));
@@ -903,6 +909,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
         _vendaddrState->setText(vq.value("vend_state"));
         _vendaddrZipCode->setText(vq.value("vend_zip"));
         _vendaddrCountry->setText(vq.value("vend_country"));
+        */
       }
     }
   }

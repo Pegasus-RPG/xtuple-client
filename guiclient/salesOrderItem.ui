@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>649</width>
-    <height>679</height>
+    <height>695</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,7 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Sales Order Item</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QGridLayout">
      <property name="margin">
@@ -1092,7 +1092,7 @@ to be bound by its terms.</comment>
                      <layout class="QVBoxLayout">
                       <item>
                        <layout class="QGridLayout">
-                        <item row="0" column="0">
+                        <item row="2" column="0">
                          <widget class="QLabel" name="_orderQtyLit">
                           <property name="text">
                            <string>Qty.:</string>
@@ -1105,10 +1105,43 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="_orderLit">
+                          <property name="text">
+                           <string>Order #:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
                         <item row="0" column="1">
-                         <layout class="QHBoxLayout">
+                         <layout class="QHBoxLayout" name="_2">
                           <item>
-                           <widget class="XLabel" name="_orderQty">
+                           <widget class="XLabel" name="_order">
+                            <property name="maximumSize">
+                             <size>
+                              <width>80</width>
+                              <height>32767</height>
+                             </size>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="_orderLineLit">
+                            <property name="text">
+                             <string>Line #:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="XLabel" name="_orderLine">
                             <property name="maximumSize">
                              <size>
                               <width>80</width>
@@ -1128,27 +1161,25 @@ to be bound by its terms.</comment>
                             <property name="sizeHint" stdset="0">
                              <size>
                               <width>0</width>
-                              <height>20</height>
+                              <height>0</height>
                              </size>
                             </property>
                            </spacer>
                           </item>
                          </layout>
                         </item>
-                        <item row="1" column="0">
-                         <widget class="QLabel" name="_orderDueDateLit">
-                          <property name="text">
-                           <string>Due Date:</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>_orderDueDate</cstring>
-                          </property>
-                         </widget>
+                        <item row="2" column="1">
+                         <layout class="QHBoxLayout">
+                          <item>
+                           <widget class="XLabel" name="_orderQty">
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </item>
-                        <item row="1" column="1">
+                        <item row="3" column="1">
                          <layout class="QHBoxLayout">
                           <item>
                            <widget class="DLineEdit" name="_orderDueDate">
@@ -1172,7 +1203,20 @@ to be bound by its terms.</comment>
                           </item>
                          </layout>
                         </item>
-                        <item row="2" column="0">
+                        <item row="3" column="0">
+                         <widget class="QLabel" name="_orderDueDateLit">
+                          <property name="text">
+                           <string>Due Date:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy">
+                           <cstring>_orderDueDate</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
                          <widget class="QLabel" name="_orderStatusLit">
                           <property name="text">
                            <string>Status:</string>
@@ -1182,7 +1226,7 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="2" column="1">
+                        <item row="1" column="1">
                          <widget class="QLabel" name="_orderStatus">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1195,7 +1239,7 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="3" column="0">
+                        <item row="4" column="0">
                          <widget class="QLabel" name="_supplyWarehouseLit">
                           <property name="enabled">
                            <bool>false</bool>
@@ -1211,7 +1255,7 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="3" column="1">
+                        <item row="4" column="1">
                          <layout class="QHBoxLayout">
                           <item>
                            <widget class="WComboBox" name="_supplyWarehouse">
@@ -1220,6 +1264,13 @@ to be bound by its terms.</comment>
                             </property>
                             <property name="type">
                              <enum>WComboBox::Supply</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBox">
+                            <property name="text">
+                             <string>Drop Ship</string>
                             </property>
                            </widget>
                           </item>
@@ -1238,7 +1289,7 @@ to be bound by its terms.</comment>
                           </item>
                          </layout>
                         </item>
-                        <item row="4" column="0">
+                        <item row="5" column="0">
                          <widget class="QLabel" name="_overridePoPriceLit">
                           <property name="text">
                            <string>Override Price:</string>
@@ -1248,7 +1299,7 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="4" column="1">
+                        <item row="5" column="1">
                          <widget class="CurrCluster" name="_overridePoPrice">
                           <property name="format">
                            <enum>CurrDisplay::Cost</enum>
@@ -1838,7 +1889,6 @@ to be bound by its terms.</comment>
   <tabstop>_orderQty</tabstop>
   <tabstop>_orderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
-  <tabstop>_overridePoPrice</tabstop>
   <tabstop>_taxtype</tabstop>
   <tabstop>_tax</tabstop>
   <tabstop>_comments</tabstop>

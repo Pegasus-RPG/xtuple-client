@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>List Unposted Purchase Orders</string>
+   <string>List Open Purchase Orders</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -82,7 +82,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="0" column="1" rowspan="2">
+     <item row="0" column="1" rowspan="3">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPushButton" name="_close">
@@ -106,17 +106,10 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="XCheckBox" name="_allOpenOrders">
-       <property name="text">
-        <string>Show All Unvouchered Purchase Orders</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="XTreeWidget" name="_pohead"/>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <layout class="QVBoxLayout">
        <property name="spacing">
         <number>5</number>
@@ -184,12 +177,12 @@ to be bound by its terms.</comment>
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_post">
+          <widget class="QPushButton" name="_release">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Post</string>
+            <string>Release</string>
            </property>
           </widget>
          </item>
@@ -212,6 +205,42 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
       </layout>
+     </item>
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Show</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="XCheckBox" name="_allOpenOrders">
+          <property name="text">
+           <string>Unreleased</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="xCheckBox">
+          <property name="text">
+           <string>Open</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -243,7 +272,7 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_post</tabstop>
+  <tabstop>_release</tabstop>
   <tabstop>_new</tabstop>
  </tabstops>
  <resources/>

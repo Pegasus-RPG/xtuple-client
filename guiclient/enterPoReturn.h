@@ -31,7 +31,6 @@ public slots:
     virtual void sEnter();
     virtual void sFillList();
     virtual void sPost();
-    virtual void sShowClosed();
 
 protected slots:
     virtual void languageChange();

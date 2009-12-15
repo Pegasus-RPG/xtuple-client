@@ -20,9 +20,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Purchase Order</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
-    <layout class="QGridLayout">
+    <layout class="QGridLayout" name="gridLayout_4">
      <property name="margin">
       <number>12</number>
      </property>
@@ -82,13 +82,47 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Header Information</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0" rowspan="2" colspan="2">
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
-              <layout class="QGridLayout" name="gridLayout_1">
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="_orderNumberLit">
+                 <property name="text">
+                  <string>Order #:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="XLineEdit" name="_orderNumber">
+                   <property name="inputMask">
+                    <string>999999999999; </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
                <item row="0" column="2">
                 <widget class="QLabel" name="_termsLit">
                  <property name="text">
@@ -103,6 +137,12 @@ to be bound by its terms.</comment>
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
                   <widget class="XComboBox" name="_terms">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -133,9 +173,9 @@ to be bound by its terms.</comment>
                 </layout>
                </item>
                <item row="0" column="4">
-                <widget class="QLabel" name="_receivingWhseLit">
+                <widget class="QLabel" name="_agentLit">
                  <property name="text">
-                  <string>Receiving Site:</string>
+                  <string>Purchasing Agent:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -143,24 +183,48 @@ to be bound by its terms.</comment>
                 </widget>
                </item>
                <item row="0" column="5">
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
                  <item>
-                  <widget class="WComboBox" name="_warehouse"/>
+                  <widget class="XComboBox" name="_agent">
+                   <property name="type">
+                    <enum>XComboBox::Agent</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
-                  <spacer>
+                  <spacer name="horizontalSpacer">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>0</width>
+                     <width>13</width>
                      <height>20</height>
                     </size>
                    </property>
                   </spacer>
                  </item>
                 </layout>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="_orderDateLit">
+                 <property name="text">
+                  <string>Order Date:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="DLineEdit" name="_orderDate">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="2">
                 <widget class="QLabel" name="_taxZoneLite">
@@ -202,142 +266,33 @@ to be bound by its terms.</comment>
                  </item>
                 </layout>
                </item>
-               <item row="1" column="4">
-                <widget class="QLabel" name="_agentLit">
-                 <property name="text">
-                  <string>Purchasing Agent:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="5">
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <item>
-                  <widget class="XComboBox" name="_agent">
-                   <property name="type">
-                    <enum>XComboBox::Agent</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>0</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item row="2" column="5">
                 <widget class="QCheckBox" name="_printPO">
                  <property name="text">
                   <string>Print on Save</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item row="2" column="0" colspan="2">
+                <layout class="QVBoxLayout" name="verticalLayout_3">
                  <item>
-                  <widget class="XLineEdit" name="_orderNumber">
-                   <property name="inputMask">
-                    <string>999999999999; </string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>0</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="_orderNumberLit">
-                 <property name="text">
-                  <string>Order #:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="DLineEdit" name="_orderDate">
-                 <property name="minimumSize">
-                  <size>
-                   <width>100</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="_orderDateLit">
-                 <property name="text">
-                  <string>Order Date:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="_statusLit">
-                 <property name="text">
-                  <string>Status:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="_status">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout">
-               <property name="spacing">
-                <number>12</number>
-               </property>
-               <item>
-                <layout class="QGridLayout">
-                 <property name="verticalSpacing">
-                  <number>2</number>
-                 </property>
-                 <item row="0" column="0" colspan="3">
                   <layout class="QHBoxLayout">
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Fixed</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>10</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                    <item>
                     <widget class="VendorInfo" name="_vendor"/>
                    </item>
@@ -351,214 +306,316 @@ to be bound by its terms.</comment>
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
-                       <width>61</width>
-                       <height>32</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
                     </spacer>
                    </item>
                   </layout>
                  </item>
-                 <item row="1" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendName">
-                   <property name="enabled">
-                    <bool>false</bool>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendAddr1">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendAddr2">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendAddr3">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="XLineEdit" name="_vendCity">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="XLineEdit" name="_vendState">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="maximumSize">
+                   <property name="sizeHint" stdset="0">
                     <size>
-                     <width>40</width>
-                     <height>32767</height>
+                     <width>20</width>
+                     <height>0</height>
                     </size>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="2">
-                  <widget class="XLineEdit" name="_vendZipCode">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendCountry">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
+                  </spacer>
                  </item>
                 </layout>
                </item>
-               <item>
-                <layout class="QGridLayout">
-                 <property name="verticalSpacing">
-                  <number>2</number>
+               <item row="2" column="2">
+                <layout class="QVBoxLayout" name="verticalLayout_6">
+                 <property name="topMargin">
+                  <number>5</number>
                  </property>
-                 <item row="0" column="0" colspan="3">
-                  <layout class="QHBoxLayout">
+                 <item>
+                  <widget class="QLabel" name="_statusLit">
+                   <property name="text">
+                    <string>Status:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="3">
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="topMargin">
+                    <number>2</number>
+                   </property>
                    <item>
-                    <widget class="QLabel" name="_locationLit">
-                     <property name="text">
-                      <string>Alt. Address:</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
+                    <widget class="XComboBox" name="_status">
+                     <item>
+                      <property name="text">
+                       <string>Unreleased</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Open</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Closed</string>
+                      </property>
+                     </item>
                     </widget>
                    </item>
                    <item>
-                    <widget class="XLineEdit" name="_vendaddrCode">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="_vendaddrList">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="focusPolicy">
-                      <enum>Qt::NoFocus</enum>
-                     </property>
-                     <property name="text">
-                      <string>...</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer>
+                    <spacer name="horizontalSpacer_2">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
                        <width>40</width>
-                       <height>32</height>
+                       <height>20</height>
                       </size>
                      </property>
                     </spacer>
                    </item>
                   </layout>
                  </item>
-                 <item row="1" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendaddrName">
-                   <property name="enabled">
-                    <bool>false</bool>
+                 <item>
+                  <spacer name="verticalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendaddrAddr1">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendaddrAddr2">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendaddrAddr3">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="XLineEdit" name="_vendaddrCity">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="XLineEdit" name="_vendaddrState">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="maximumSize">
+                   <property name="sizeHint" stdset="0">
                     <size>
-                     <width>40</width>
-                     <height>32767</height>
+                     <width>20</width>
+                     <height>0</height>
                     </size>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="2">
-                  <widget class="XLineEdit" name="_vendaddrZipCode">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0" colspan="3">
-                  <widget class="XLineEdit" name="_vendaddrCountry">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
+                  </spacer>
                  </item>
                 </layout>
+               </item>
+               <item row="2" column="4">
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="_soLit">
+                   <property name="text">
+                    <string>Sales Order #:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="5">
+                <widget class="OrderCluster" name="_so">
+                 <property name="label">
+                  <string/>
+                 </property>
+                 <property name="listVisible">
+                  <bool>true</bool>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="Line" name="line_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
+              <layout class="QGridLayout" name="gridLayout_6">
+               <item row="1" column="1">
+                <widget class="QGroupBox" name="groupBox">
+                 <property name="title">
+                  <string>Ship To:</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="1" column="0">
+                   <widget class="ContactCluster" name="_shiptoCntct">
+                    <property name="minimalLayout">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="AddressCluster" name="_shiptoAddr"/>
+                  </item>
+                  <item row="0" column="0">
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <item>
+                     <widget class="QLabel" name="_receivingWhseLit">
+                      <property name="text">
+                       <string>Receiving Site:</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="WComboBox" name="_warehouse"/>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="_dropShip">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="text">
+                       <string>Drop Ship</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>26</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QGroupBox" name="_vendaddrGroup">
+                 <property name="title">
+                  <string>Vendor Address</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_2">
+                  <item row="1" column="0">
+                   <widget class="ContactCluster" name="_vendCntct">
+                    <property name="minimalLayout">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="AddressCluster" name="_vendAddr"/>
+                  </item>
+                  <item row="0" column="0">
+                   <layout class="QHBoxLayout">
+                    <item>
+                     <widget class="QLabel" name="_locationLit">
+                      <property name="text">
+                       <string>Address:</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="XLineEdit" name="_vendaddrCode">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="_vendaddrList">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>60</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::NoFocus</enum>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer>
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>0</width>
+                        <height>26</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <layout class="QHBoxLayout">
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>25</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item>
                 <widget class="QLabel" name="_fobLit">
                  <property name="text">
@@ -583,7 +640,20 @@ to be bound by its terms.</comment>
                 </widget>
                </item>
                <item>
-                <widget class="XLineEdit" name="_shipVia"/>
+                <widget class="XComboBox" name="_shipVia">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="type">
+                  <enum>XComboBox::ShipVias</enum>
+                 </property>
+                </widget>
                </item>
                <item>
                 <spacer>
@@ -595,8 +665,8 @@ to be bound by its terms.</comment>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>71</width>
-                   <height>47</height>
+                   <width>0</width>
+                   <height>0</height>
                   </size>
                  </property>
                 </spacer>
@@ -615,8 +685,8 @@ to be bound by its terms.</comment>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>0</height>
+               <width>625</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -643,9 +713,6 @@ to be bound by its terms.</comment>
          <item row="0" column="1" rowspan="2">
           <layout class="QVBoxLayout">
            <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
             <number>0</number>
            </property>
            <item>
@@ -698,12 +765,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="1" column="0">
           <layout class="QHBoxLayout">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
            <item>
             <widget class="QFrame" name="frame_2">
              <property name="sizePolicy">
@@ -743,20 +804,8 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <layout class="QVBoxLayout">
-                <property name="spacing">
-                 <number>6</number>
-                </property>
-                <property name="margin">
-                 <number>0</number>
-                </property>
                 <item>
                  <layout class="QHBoxLayout">
-                  <property name="spacing">
-                   <number>6</number>
-                  </property>
-                  <property name="margin">
-                   <number>0</number>
-                  </property>
                   <item>
                    <widget class="QLabel" name="_poCurrencyLit">
                     <property name="text">
@@ -799,12 +848,6 @@ to be bound by its terms.</comment>
            </item>
            <item>
             <layout class="QGridLayout">
-             <property name="margin">
-              <number>0</number>
-             </property>
-             <property name="spacing">
-              <number>6</number>
-             </property>
              <item row="1" column="1">
               <widget class="CurrCluster" name="_tax">
                <property name="allowNegative">
@@ -920,12 +963,6 @@ to be bound by its terms.</comment>
          <string>Notes</string>
         </attribute>
         <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="QTextEdit" name="_notes"/>
          </item>
@@ -936,12 +973,6 @@ to be bound by its terms.</comment>
          <string>Comments</string>
         </attribute>
         <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="Comments" name="_comments">
            <property name="type">
@@ -956,19 +987,10 @@ to be bound by its terms.</comment>
          <string>Quick Entry</string>
         </attribute>
         <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <layout class="QHBoxLayout">
            <property name="spacing">
             <number>5</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
            <item>
             <widget class="PoitemTableView" name="_qeitemView" native="true">
@@ -980,9 +1002,6 @@ to be bound by its terms.</comment>
            <item>
             <layout class="QVBoxLayout">
              <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="margin">
               <number>0</number>
              </property>
              <item>
@@ -1024,12 +1043,6 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <layout class="QGridLayout">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>6</number>
-           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="_qecurrencyLit">
              <property name="text">
@@ -1069,14 +1082,25 @@ to be bound by its terms.</comment>
     </layout>
    </item>
   </layout>
+  <zorder></zorder>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>AddressCluster</class>
+   <extends>QWidget</extends>
+   <header>addresscluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
   </customwidget>
   <customwidget>
    <class>CurrCluster</class>
@@ -1093,6 +1117,11 @@ to be bound by its terms.</comment>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OrderCluster</class>
+   <extends>QWidget</extends>
+   <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
    <class>VendorInfo</class>
@@ -1135,31 +1164,21 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
-  <tabstop>_terms</tabstop>
-  <tabstop>_warehouse</tabstop>
   <tabstop>_orderDate</tabstop>
+  <tabstop>_terms</tabstop>
   <tabstop>_taxZone</tabstop>
+  <tabstop>_status</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_printPO</tabstop>
-  <tabstop>_vendName</tabstop>
-  <tabstop>_vendAddr1</tabstop>
-  <tabstop>_vendAddr2</tabstop>
-  <tabstop>_vendAddr3</tabstop>
-  <tabstop>_vendCity</tabstop>
-  <tabstop>_vendState</tabstop>
-  <tabstop>_vendZipCode</tabstop>
-  <tabstop>_vendCountry</tabstop>
   <tabstop>_vendaddrCode</tabstop>
-  <tabstop>_vendaddrName</tabstop>
-  <tabstop>_vendaddrAddr1</tabstop>
-  <tabstop>_vendaddrAddr2</tabstop>
-  <tabstop>_vendaddrAddr3</tabstop>
-  <tabstop>_vendaddrCity</tabstop>
-  <tabstop>_vendaddrState</tabstop>
-  <tabstop>_vendaddrZipCode</tabstop>
-  <tabstop>_vendaddrCountry</tabstop>
+  <tabstop>_vendCntct</tabstop>
+  <tabstop>_vendAddr</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_shiptoCntct</tabstop>
+  <tabstop>_shiptoAddr</tabstop>
   <tabstop>_fob</tabstop>
   <tabstop>_shipVia</tabstop>
+  <tabstop>_purchaseOrderInformation</tabstop>
   <tabstop>_poitem</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
@@ -1174,7 +1193,6 @@ to be bound by its terms.</comment>
   <tabstop>_qecurrency</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_purchaseOrderInformation</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1195,118 +1213,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_vendor</sender>
-   <signal>nameChanged(QString)</signal>
-   <receiver>_vendName</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>cityChanged(QString)</signal>
-   <receiver>_vendCity</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>stateChanged(QString)</signal>
-   <receiver>_vendState</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>zipCodeChanged(QString)</signal>
-   <receiver>_vendZipCode</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>address2Changed(QString)</signal>
-   <receiver>_vendAddr2</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>address1Changed(QString)</signal>
-   <receiver>_vendAddr1</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>address3Changed(QString)</signal>
-   <receiver>_vendAddr3</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_orderDate</sender>
    <signal>newDate(QDate)</signal>
    <receiver>_freight</receiver>
@@ -1455,22 +1361,6 @@ to be bound by its terms.</comment>
    <signal>newID(int)</signal>
    <receiver>_total</receiver>
    <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>countryChanged(QString)</signal>
-   <receiver>_vendCountry</receiver>
-   <slot>setText(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>
@@ -1489,8 +1379,8 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>171</y>
+     <x>309</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>196</x>
@@ -1505,8 +1395,8 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>171</y>
+     <x>309</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>559</x>
@@ -1521,12 +1411,28 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>171</y>
+     <x>309</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>559</x>
      <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_so</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_dropShip</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>678</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>611</x>
+     <y>263</y>
     </hint>
    </hints>
   </connection>

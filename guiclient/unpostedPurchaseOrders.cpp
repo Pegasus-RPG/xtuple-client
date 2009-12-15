@@ -36,7 +36,7 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
   connect(_pohead,	SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
                                                 this,	SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
   connect(_pohead,	SIGNAL(valid(bool)),	this,	SLOT(sHandleButtons()));
-  connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
+ // connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
@@ -278,7 +278,7 @@ void unpostedPurchaseOrders::sHandleButtons()
   _delete->setEnabled(unposted && _privileges->check("MaintainPurchaseOrders"));
   _edit->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
 		    (open && _privileges->check("MaintainPostedPurchaseOrders")));
-  _post->setEnabled(unposted && _privileges->check("PostPurchaseOrders"));
+//  _post->setEnabled(unposted && _privileges->check("PostPurchaseOrders"));
   _print->setEnabled(_privileges->check("PrintPurchaseOrders"));
 
   if ((unposted && _privileges->check("MaintainPurchaseOrders")) ||
