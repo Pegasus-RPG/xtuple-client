@@ -1,9 +1,13 @@
-/* This is a sample script to show how to open a core application window from a
-   scripted window.
+/*
+  This is a sample script showing how to open core application windows
+  from scripts, setting up and populating XTreeWidgets, and
+  connecting signals from Qt widgets to scripted slots,
 
-   This sample has a window that lists the itemsites for a selected site.
-   A pushbutton allows the user to view the item record for the selected
-   itemsite.
+  This sample creates a window that listing the itemsites for a selected site.
+  One QPushButton lets the user view the Item record for the selected
+  row while another lets the user view the Item Site record.
+  The Item window is defined as an XWidget.
+  The Item Site window is an XDialog, and so has to be handled differently.
  */
 
 var _itemsite = mywindow.findChild("_itemsite");

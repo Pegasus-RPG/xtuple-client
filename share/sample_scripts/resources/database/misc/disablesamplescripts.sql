@@ -1,1 +1,1 @@
-SELECT disablePackage("sample_scripts");
+SELECT disablePackage('sample_scripts');

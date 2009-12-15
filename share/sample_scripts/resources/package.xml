@@ -45,6 +45,7 @@
   <loadappscript file="client/scripts/FileDemo.script"		name="FileDemo">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/hideSalesrepComm.js"	name="hideSalesrepComm">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/initMenu.js"		name="initMenu">sample_scripts package</loadappscript>
+  <loadappscript file="client/scripts/initMenu_executeQueryExample.js" name="initMenu">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/itemSiteViewItem.js"	name="itemSiteViewItem">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/postOperations_disallowOverPost.js" name="postOperations">sample_scripts package</loadappscript>
   <loadappscript file="client/scripts/scriptCC.script"		name="scriptCC">sample_scripts package</loadappscript>
