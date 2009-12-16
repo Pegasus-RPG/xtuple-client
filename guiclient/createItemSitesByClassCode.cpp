@@ -30,7 +30,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   connect(_planningType, SIGNAL(activated(int)), this, SLOT(sHandlePlanningType()));
   connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupply(bool)));
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupply(bool)));
-
   _planningType->append(0, "None", "N");
 
   _mpsTimeFenceLit->hide();
@@ -103,9 +102,10 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
     _warehouse->setAllowNull(TRUE);
     _warehouse->setNull();
   }
-
+/* TO DO: Rework
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
+  */
 }
 
 createItemSitesByClassCode::~createItemSitesByClassCode()
@@ -155,7 +155,7 @@ void createItemSitesByClassCode::sSave()
     _controlMethod->setFocus();
     return;
   }
-
+/* TO DO: Rework
   if(!_costNone->isChecked() && !_costAvg->isChecked()
    && !_costStd->isChecked())
   {
@@ -164,7 +164,7 @@ void createItemSitesByClassCode::sSave()
                              "Item Site before you may save it.") );
     return;
   }
-
+*/
   if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
@@ -290,7 +290,7 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
   q.bindValue(":itemsite_posupply",        QVariant(_poSupply->isChecked()));
   q.bindValue(":itemsite_wosupply",        QVariant(_woSupply->isChecked()));
-  q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
+//  q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
   q.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
   q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
   q.bindValue(":itemsite_stocked",       QVariant(_stocked->isChecked()));
@@ -332,14 +332,14 @@ void createItemSitesByClassCode::sSave()
     q.bindValue(":itemsite_controlmethod", "L");
   else if (_controlMethod->currentIndex() == 3)
     q.bindValue(":itemsite_controlmethod", "S");
-
+/*
   if(_costNone->isChecked())
     q.bindValue(":itemsite_costmethod", "N");
   else if(_costAvg->isChecked())
     q.bindValue(":itemsite_costmethod", "A");
   else if(_costStd->isChecked())
     q.bindValue(":itemsite_costmethod", "S");
-
+*/
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
   q.exec();
@@ -351,6 +351,7 @@ void createItemSitesByClassCode::sSave()
 
 void createItemSitesByClassCode::sHandlePOSupply(bool pSupplied)
 {
+    /*
   if (pSupplied)
     _createPr->setEnabled(TRUE);
   else
@@ -358,6 +359,7 @@ void createItemSitesByClassCode::sHandlePOSupply(bool pSupplied)
     _createPr->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
   }
+  */
 } 
 
 void createItemSitesByClassCode::sHandleWOSupply(bool pSupplied)
@@ -373,6 +375,7 @@ void createItemSitesByClassCode::sHandleWOSupply(bool pSupplied)
 
 void createItemSitesByClassCode::sHandleControlMethod()
 {
+    /*
   if (_controlMethod->currentIndex() == 0)
   {
     _costNone->setChecked(true);
@@ -390,7 +393,7 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
   }
-
+*/
   if ( (_controlMethod->currentIndex() == 2) ||
        (_controlMethod->currentIndex() == 3) )
     _perishable->setEnabled(TRUE);

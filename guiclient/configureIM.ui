@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>814</width>
-    <height>560</height>
+    <width>662</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@ to be bound by its terms.</comment>
          <string>Inventory</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
+         <item row="0" column="0" colspan="2">
           <layout class="QHBoxLayout">
            <item>
             <widget class="QGroupBox" name="_defaultGroup">
@@ -131,7 +131,7 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
+         <item row="1" column="0" colspan="2">
           <widget class="QGroupBox" name="_multiWhs">
            <property name="title">
             <string>Enable Multiple Sites</string>
@@ -282,7 +282,7 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="2" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <property name="spacing">
             <number>12</number>
@@ -316,145 +316,174 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
-          <layout class="QGridLayout">
-           <item row="0" column="0" rowspan="2">
-            <widget class="QGroupBox" name="_cost">
-             <property name="title">
-              <string>Costing Methods Allowed</string>
-             </property>
-             <layout class="QVBoxLayout">
-              <item>
-               <widget class="QCheckBox" name="_costAvg">
-                <property name="text">
-                 <string>Average</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="_costStd">
-                <property name="text">
-                 <string>Standard</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="_costJob">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Job</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QGroupBox" name="_countTagGroup">
-             <property name="title">
-              <string>When Count Tag Qty. exceeds Slip Qty.</string>
-             </property>
-             <layout class="QVBoxLayout">
-              <property name="spacing">
-               <number>0</number>
+         <item row="3" column="0" rowspan="2">
+          <widget class="QGroupBox" name="_cost">
+           <property name="title">
+            <string>Costing Methods Allowed</string>
+           </property>
+           <layout class="QVBoxLayout">
+            <item>
+             <widget class="QCheckBox" name="_costAvg">
+              <property name="text">
+               <string>Average</string>
               </property>
-              <property name="margin">
-               <number>5</number>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costAvgByLot">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-              <item>
-               <widget class="QRadioButton" name="_postToDefault">
-                <property name="text">
-                 <string>Post Difference to Default Location, if any</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_doNotPost">
-                <property name="text">
-                 <string>Do Not Post Count Tag</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="1" rowspan="2">
-            <widget class="QGroupBox" name="_countSlipGroup">
-             <property name="title">
-              <string>Count Slip # Auditing</string>
-             </property>
-             <layout class="QVBoxLayout">
-              <property name="spacing">
-               <number>0</number>
+              <property name="text">
+               <string>Average by Lot</string>
               </property>
-              <property name="margin">
-               <number>5</number>
+              <property name="checked">
+               <bool>false</bool>
               </property>
-              <item>
-               <widget class="QRadioButton" name="_noSlipChecks">
-                <property name="text">
-                 <string>No Slip # Checks, allow Duplications</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_checkOnUnpostedWarehouse">
-                <property name="text">
-                 <string>Disallow Unposted Slip # Duplications within a Site</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_checkOnUnposted">
-                <property name="text">
-                 <string>Disallow All Unposted Slip # Duplications</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_checkOnAllWarehouse">
-                <property name="text">
-                 <string>Disallow All Slip # Duplications within a Site</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_checkOnAll">
-                <property name="text">
-                 <string>Disallow All Slip # Duplications</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costFIFO">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>FIFO (First In, First Out)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costFIFOByLot">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>FIFO by Lot</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costJob">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Job</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costSerial">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Serialized</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costStd">
+              <property name="text">
+               <string>Standard</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="1">
+          <widget class="QGroupBox" name="_countTagGroup">
+           <property name="title">
+            <string>When Count Tag Qty. exceeds Slip Qty.</string>
+           </property>
+           <layout class="QVBoxLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="_postToDefault">
+              <property name="text">
+               <string>Post Difference to Default Location, if any</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_doNotPost">
+              <property name="text">
+               <string>Do Not Post Count Tag</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QGroupBox" name="_countSlipGroup">
+           <property name="title">
+            <string>Count Slip # Auditing</string>
+           </property>
+           <layout class="QVBoxLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="_noSlipChecks">
+              <property name="text">
+               <string>No Slip # Checks, allow Duplications</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_checkOnUnpostedWarehouse">
+              <property name="text">
+               <string>Disallow Unposted Slip # Duplications within a Site</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_checkOnUnposted">
+              <property name="text">
+               <string>Disallow All Unposted Slip # Duplications</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_checkOnAllWarehouse">
+              <property name="text">
+               <string>Disallow All Slip # Duplications within a Site</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_checkOnAll">
+              <property name="text">
+               <string>Disallow All Slip # Duplications</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
           <spacer>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -464,8 +493,8 @@ to be bound by its terms.</comment>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>536</width>
-             <height>16</height>
+             <width>20</width>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -833,7 +862,6 @@ to be bound by its terms.</comment>
   <tabstop>_lotSerial</tabstop>
   <tabstop>_costAvg</tabstop>
   <tabstop>_costStd</tabstop>
-  <tabstop>_costJob</tabstop>
   <tabstop>_postToDefault</tabstop>
   <tabstop>_doNotPost</tabstop>
   <tabstop>_noSlipChecks</tabstop>
@@ -881,6 +909,54 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>363</x>
      <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_costFIFOByLot</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>365</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_costAvgByLot</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_costSerial</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>

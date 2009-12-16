@@ -249,7 +249,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_active->setEnabled(FALSE);
 	_poSupply->setEnabled(FALSE);
 	_woSupply->setEnabled(FALSE);
-	_createPr->setEnabled(FALSE);
+//	_createPr->setEnabled(FALSE);
 	_createWo->setEnabled(FALSE);
 	_sold->setEnabled(FALSE);
 	_soldRanking->setEnabled(FALSE);
@@ -677,7 +677,7 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_supply_itemsite_id", _supplyItemsiteId);
   newItemSite.bindValue(":itemsite_poSupply", QVariant(_poSupply->isChecked()));
   newItemSite.bindValue(":itemsite_woSupply", QVariant(_woSupply->isChecked()));
-  newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
+  //newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
   newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked()));
   newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked()));
   newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked()));
@@ -824,6 +824,7 @@ void itemSite::sHandlePlanningType()
 
 void itemSite::sHandlePOSupplied(bool pSupplied)
 {
+    /*
   if ( (pSupplied) &&
        ( (_itemType == 'P') || (_itemType == 'O') ) )
     _createPr->setEnabled(TRUE);
@@ -832,6 +833,7 @@ void itemSite::sHandlePOSupplied(bool pSupplied)
     _createPr->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
   }
+  */
 } 
 
 void itemSite::sHandleWOSupplied(bool pSupplied)
@@ -1013,7 +1015,7 @@ void itemSite::sCacheItemType(char pItemType)
 	
     _poSupply->setEnabled(TRUE);
     _woSupply->setEnabled(TRUE);
-    
+  /*
     if ( (_itemType == 'O') || (_itemType == 'P') )
       _createPr->setEnabled(_poSupply->isChecked());
     else
@@ -1021,7 +1023,7 @@ void itemSite::sCacheItemType(char pItemType)
       _createPr->setChecked(FALSE);
       _createPr->setEnabled(FALSE);
     }
-    
+ */
     if ( (_itemType == 'M') )
       _createWo->setEnabled(_woSupply->isChecked());
     else
