@@ -87,9 +87,9 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_shippingCharges, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_shipVia, SIGNAL(textChanged(const QString&)), this, SLOT(sFillItemList()));
   connect(_shipToAddr, SIGNAL(changed()),        this, SLOT(sConvertShipTo()));
-  connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
+  connect(_shipToList, SIGNAL(clicked()), this, SLOT(newShipToList()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)),        this, SLOT(sConvertShipTo()));
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
+  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(newParseShipToNumber()));
   connect(_showCanceled, SIGNAL(toggled(bool)), this, SLOT(sFillItemList()));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
@@ -222,6 +222,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 #endif
 
   sHandleMore();
+
+  shipToNumber_orig = _shipToNumber->text();
 }
 
 salesOrder::~salesOrder()
@@ -4268,5 +4270,203 @@ void salesOrder::sHandleMore()
   {
     _expireLit->setVisible(_more->isChecked());
     _expire->setVisible(_more->isChecked());
+  }
+}
+
+void salesOrder::newParseShipToNumber()
+{
+  XSqlQuery checkdata;
+  checkdata.prepare("SELECT * FROM cohead "
+                    "WHERE ((cohead_number = :orderNumberText));");
+  checkdata.bindValue(":orderNumberText", _orderNumber->text());
+  checkdata.exec();
+  if (checkdata.first())
+  {
+ 	_coheadId = (checkdata.value("cohead_id").toInt());
+	sParseShipToNumber();
+	shipToNumber_new = _shipToNumber->text();
+	
+	if(shipToNumber_new == "")
+	  return;
+	if(shipToNumber_orig != shipToNumber_new)
+	{
+	  XSqlQuery checkshipto_old;	
+	  checkshipto_old.prepare("SELECT COALESCE(shipto_id, -1) AS shipto_id FROM shipto "
+	                          "WHERE (LOWER(shipto_num) = LOWER(:shipto_num));");
+      checkshipto_old.bindValue(":shipto_num", shipToNumber_orig);
+	  checkshipto_old.exec();
+	  if(checkshipto_old.first())
+	    _shipToIdOrig = (checkshipto_old.value("shipto_id").toInt());
+
+	  XSqlQuery checkshipto_new;
+	  checkshipto_new.prepare("SELECT COALESCE(shipto_id, -1) AS shipto_id FROM shipto "
+	    		    	      "WHERE (LOWER(shipto_num) = LOWER(:shipToNumber_new));");
+	  checkshipto_new.bindValue(":shipToNumber_new", shipToNumber_new);
+	  checkshipto_new.exec();
+	  if (checkshipto_new.first())
+	    _shipToIdNew = (checkshipto_new.value("shipto_id").toInt());
+	  else
+	  {
+		populateShipto(-1);
+		return;
+	  }
+
+	  recalculateprice();
+	  
+	  shipToNumber_orig = shipToNumber_new;
+    }
+  }
+  else
+  {
+    sParseShipToNumber();
+  }  
+}
+
+void salesOrder::newShipToList()
+{
+  XSqlQuery checkdata;
+  checkdata.prepare("SELECT * FROM cohead WHERE (cohead_number = :orderNumberText);");
+  checkdata.bindValue(":orderNumberText", _orderNumber->text());
+  checkdata.exec();
+  if(checkdata.first())
+  {
+	_coheadId = (checkdata.value("cohead_id").toInt());
+	shipToNumber_orig = _shipToNumber->text();
+    sShipToList();
+	shipToNumber_new = _shipToNumber->text();
+	if(shipToNumber_orig != shipToNumber_new)
+	{
+	  XSqlQuery checkshipto_old;
+	  checkshipto_old.prepare("SELECT COALESCE(shipto_id, -1) AS shipto_id FROM shipto " 
+							  "WHERE (LOWER(shipto_num) = LOWER(:shipToNumber));");
+	  checkshipto_old.bindValue(":shipToNumber", shipToNumber_orig);
+	  checkshipto_old.exec();
+      if (checkshipto_old.first())
+	    _shipToIdOrig = ( checkshipto_old.value("shipto_id").toInt());
+
+	  XSqlQuery checkshipto_new;
+	  checkshipto_new.prepare("SELECT COALESCE(shipto_id, -1) AS shipto_id FROM shipto " 
+							  "WHERE (LOWER(shipto_num) = LOWER(:shipToNumber_new));");
+	  checkshipto_new.bindValue(":shipToNumber_new", shipToNumber_new);
+	  checkshipto_new.exec();
+      if (checkshipto_new.first())
+		_shipToIdNew = (checkshipto_new.value("shipto_id").toInt());
+
+      recalculateprice();
+
+	  shipToNumber_orig = shipToNumber_new;
+	}
+  }
+  else
+  {
+    sShipToList();
+  }
+}
+
+void salesOrder::recalculateprice()
+{
+  if (QMessageBox::question(this, tr("Update all prices?"),
+                                 tr("Do you want to recalculate all prices for an order including:\n\t- Line items\n\t - Taxes\n\t - Freight ?"),
+                                 QMessageBox::Yes | QMessageBox::Escape,
+                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+	XSqlQuery maxlineitem;
+    maxlineitem.prepare("SELECT MAX(coitem_linenumber) AS line_max FROM coitem WHERE (coitem_cohead_id = :coheadId );");
+	maxlineitem.bindValue(":coheadId", _coheadId);
+	maxlineitem.exec();
+
+    if (maxlineitem.first())
+	{
+	  maxlineNum = (maxlineitem.value("line_max").toInt());
+	  while (maxlineNum > 0)
+	  {
+		XSqlQuery getcoitemid;
+		getcoitemid.prepare("SELECT coitem_id FROM coitem "
+		        			"WHERE (coitem_cohead_id = :coheadId) "
+							"AND (coitem_linenumber = :maxlineNum);");
+	    getcoitemid.bindValue(":coheadId", _coheadId);
+	    getcoitemid.bindValue(":maxlineNum", maxlineNum);
+	    getcoitemid.exec();
+
+		if (getcoitemid.first())
+	    {
+	      _coitemId = (getcoitemid.value("coitem_id").toInt());
+
+		  XSqlQuery fetchitemprice;
+          fetchitemprice.prepare("SELECT itemPrice(item_id, cohead_cust_id, :shiptoid, "
+								 "(coitem_qtyord * coitem_qty_invuomratio), cohead_curr_id, "
+			                     "ipshead_effective) AS price "
+			                     "FROM cohead JOIN coitem ON (cohead_id = coitem_cohead_id) "
+			                     "JOIN itemsite ON (coitem_itemsite_id = itemsite_id) "
+			                     "JOIN item ON (itemsite_item_id = item_id) "
+			                     "LEFT OUTER JOIN ipsitem ON (item_id = ipsitem_item_id) "
+			                     "LEFT OUTER JOIN ipshead ON (ipsitem_ipshead_id = ipshead_id) "
+			                     "WHERE (coitem_id = :coitemId);");
+		  fetchitemprice.bindValue(":shiptoid", _shipToIdNew);
+		  fetchitemprice.bindValue(":coitemId", _coitemId);
+		  fetchitemprice.exec();
+		  if (fetchitemprice.first())
+	      {
+			newitemPrice = (fetchitemprice.value("price").toDouble());
+
+			XSqlQuery setitemprice;
+			setitemprice.prepare("UPDATE coitem SET coitem_price = :newitemprice "
+			                     "WHERE (coitem_id = :coitemId);");
+		    setitemprice.bindValue(":newitemprice", newitemPrice);
+			setitemprice.bindValue(":coitemId", _coitemId);
+		    setitemprice.exec();
+		  }
+		}
+		maxlineNum = maxlineNum - 1;
+      }// End of while (maxlineNum > 0)
+	}
+
+	XSqlQuery fetchfreight;
+    fetchfreight.prepare("SELECT SUM(COALESCE(freightdata_total, 0.00)) AS freight "
+	                     "FROM freightDetail('SO', :coheadId, :custId, :shipToIdNew, "
+	                     ":orderDate, :shipVia, :orderCurrency);");
+	fetchfreight.bindValue(":coheadId", _coheadId);
+	fetchfreight.bindValue(":custId", _cust->id());
+	fetchfreight.bindValue(":shipToIdNew", _shipToIdNew);
+	fetchfreight.bindValue(":orderDate", _orderDate->date());
+	fetchfreight.bindValue(":shipVia", _shipVia->currentText());
+	fetchfreight.bindValue(":orderCurrency", _orderCurrency->id());
+	fetchfreight.exec();
+    if (fetchfreight.first())
+	{
+	  newfreight = (fetchfreight.value("freight").toDouble());
+	  XSqlQuery setfreight;
+	  setfreight.prepare("UPDATE cohead SET cohead_freight = :newfreight "
+		                 "WHERE cohead_id = :coheadId;");
+	  setfreight.bindValue(":newfreight", newfreight);
+	  setfreight.bindValue(":coheadId", _coheadId);
+	  setfreight.exec();
+	}
+	sFillItemList();
+  }
+  else // User responded No
+  {
+	XSqlQuery fetchfreight;
+	fetchfreight.prepare("SELECT SUM(COALESCE(freightdata_total, 0.00)) AS freight "
+	                     "FROM freightDetail('SO', :coheadId, :custId, :shipto_id, "
+	                     ":orderDate, :shipVia, :orderCurrency);");
+	fetchfreight.bindValue(":coheadId", _coheadId);
+	fetchfreight.bindValue(":custId", _cust->id());
+	fetchfreight.bindValue(":shipto_id", _shipToIdOrig);
+	fetchfreight.bindValue(":orderDate", _orderDate->date());
+	fetchfreight.bindValue(":shipVia", _shipVia->currentText());
+	fetchfreight.bindValue(":orderCurrency", _orderCurrency->id());
+	fetchfreight.exec();
+	if (fetchfreight.first())
+	{
+	  newfreight = (fetchfreight.value("freight").toDouble());
+	  XSqlQuery setfreight;
+	  setfreight.prepare("UPDATE cohead SET cohead_freight = :newfreight "
+		                 "WHERE cohead_id = :coheadId;");
+	  setfreight.bindValue(":newfreight", newfreight);
+	  setfreight.bindValue(":coheadId", _coheadId);
+	  setfreight.exec();
+	}
+    sFillItemList();
   }
 }

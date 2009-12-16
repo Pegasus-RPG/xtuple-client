@@ -90,6 +90,9 @@ public slots:
     virtual void sHandleMore();
     virtual void sCalculateTax();
     virtual void sNewCust();
+    virtual void newParseShipToNumber();
+    virtual void newShipToList();
+	virtual void recalculateprice();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -108,6 +111,8 @@ private:
     double _amountOutstanding;
     double _amountAllocated;
     double _taxableSubtotal;
+	double newitemPrice;
+	double newfreight;
     bool _userEnteredOrderNumber;
     bool _ignoreSignals;
     bool _blanketPos;
@@ -123,7 +128,13 @@ private:
     int _custtaxzoneid;
     int _taxzoneidCache;
     int _crmacctid;
-
+	int _coheadId;
+	int _coitemId;
+	QString shipToNumber_new;
+	QString shipToNumber_orig;
+	int _shipToIdOrig;
+	int _shipToIdNew;
+	int maxlineNum;
 };
 
 #endif // SALESORDER_H
