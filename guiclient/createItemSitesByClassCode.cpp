@@ -102,10 +102,10 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
     _warehouse->setAllowNull(TRUE);
     _warehouse->setNull();
   }
-/* TO DO: Rework
+
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
-  */
+
 }
 
 createItemSitesByClassCode::~createItemSitesByClassCode()
@@ -155,7 +155,7 @@ void createItemSitesByClassCode::sSave()
     _controlMethod->setFocus();
     return;
   }
-/* TO DO: Rework
+
   if(!_costNone->isChecked() && !_costAvg->isChecked()
    && !_costStd->isChecked())
   {
@@ -164,7 +164,7 @@ void createItemSitesByClassCode::sSave()
                              "Item Site before you may save it.") );
     return;
   }
-*/
+
   if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
@@ -332,14 +332,14 @@ void createItemSitesByClassCode::sSave()
     q.bindValue(":itemsite_controlmethod", "L");
   else if (_controlMethod->currentIndex() == 3)
     q.bindValue(":itemsite_controlmethod", "S");
-/*
+
   if(_costNone->isChecked())
     q.bindValue(":itemsite_costmethod", "N");
   else if(_costAvg->isChecked())
     q.bindValue(":itemsite_costmethod", "A");
   else if(_costStd->isChecked())
     q.bindValue(":itemsite_costmethod", "S");
-*/
+
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
   q.exec();
@@ -375,7 +375,7 @@ void createItemSitesByClassCode::sHandleWOSupply(bool pSupplied)
 
 void createItemSitesByClassCode::sHandleControlMethod()
 {
-    /*
+
   if (_controlMethod->currentIndex() == 0)
   {
     _costNone->setChecked(true);
@@ -393,7 +393,7 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
   }
-*/
+
   if ( (_controlMethod->currentIndex() == 2) ||
        (_controlMethod->currentIndex() == 3) )
     _perishable->setEnabled(TRUE);

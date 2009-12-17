@@ -111,10 +111,8 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _disallowBlankWIP->hide();
   }
   
- /* TO DO:  Rework
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
-  */
 }
 
 itemSite::~itemSite()
@@ -294,7 +292,7 @@ void itemSite::sSave()
     _warehouse->setFocus();
     return;
   }
-/* TO DO: Rework
+
   if(!_costNone->isChecked() && !_costAvg->isChecked()
    && !_costStd->isChecked() && !_costJob->isChecked())
   {
@@ -311,7 +309,7 @@ void itemSite::sSave()
                              "Average Costing when it has a negative Qty. On Hand.") );
     return;
   }
-*/
+
   if (_costcat->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
@@ -725,7 +723,7 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_controlmethod", "L");
   else if (_controlMethod->currentIndex() == 3)
     newItemSite.bindValue(":itemsite_controlmethod", "S");
-/* TO DO: Rework
+
   if(_costNone->isChecked())
     newItemSite.bindValue(":itemsite_costmethod", "N");
   else if(_costAvg->isChecked())
@@ -734,7 +732,7 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_costmethod", "S");
   else if(_costJob->isChecked())
     newItemSite.bindValue(":itemsite_costmethod", "J");
-*/
+
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked()));
   newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked()));
     
@@ -850,7 +848,6 @@ void itemSite::sHandleWOSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
-  /* TO DO: Rework
   if(_itemType == 'J')
   {
     _costJob->setChecked(true);
@@ -878,7 +875,7 @@ void itemSite::sHandleControlMethod()
     _costStd->setEnabled(true);
     _costJob->setEnabled(false);
   }
-*/
+
   if ( (_controlMethod->currentIndex() == 2) ||
        (_controlMethod->currentIndex() == 3) )  
   {
@@ -918,7 +915,7 @@ void itemSite::sCacheItemType(char pItemType)
     _planningType->setCurrentIndex(0);
     _planningType->setEnabled(TRUE);
   }
-/* TO DO: Rework
+
   if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
@@ -946,7 +943,7 @@ void itemSite::sCacheItemType(char pItemType)
     _costStd->setEnabled(true);
     _costJob->setEnabled(false);
   }
-*/
+
   if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
 	   (_itemType == 'L') || (_itemType == 'J') || (_itemType == 'K'))
   {  
@@ -1141,7 +1138,7 @@ void itemSite::populate()
     }
     else
       _perishable->setEnabled(FALSE);
-/* TO DO: Rework
+
     if(itemsite.value("itemsite_costmethod").toString() == "N")
       _costNone->setChecked(true);
     else if(itemsite.value("itemsite_costmethod").toString() == "A")
@@ -1150,7 +1147,7 @@ void itemSite::populate()
       _costStd->setChecked(true);
     else if(itemsite.value("itemsite_costmethod").toString() == "J")
       _costJob->setChecked(true);
-*/
+
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());
 
