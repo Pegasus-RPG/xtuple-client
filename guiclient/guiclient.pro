@@ -24,7 +24,7 @@ win32-msvc {
 
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
                -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi \
+               -lxtuplescriptapi -lMetaSQL \
                -lQtDesignerComponents
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
@@ -654,7 +654,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
-               jsHighlighter.h metasqlHighlighter.h                                                   \
+               jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
                xTupleDesigner.h xTupleDesignerActions.h getscreen.h getscreen_classlist.h getscreen_headerlist.h
 
@@ -968,7 +968,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp xerrormessage.cpp                \
-               jsHighlighter.cpp metasqlHighlighter.cpp                                               \
+               jsHighlighter.cpp                                                                      \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \
                xTupleDesigner.cpp xTupleDesignerActions.cpp getscreen.cpp                             \
 
