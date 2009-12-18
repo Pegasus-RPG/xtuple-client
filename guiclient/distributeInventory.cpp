@@ -28,7 +28,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-/*
+
   connect(_bcDistribute,    SIGNAL(clicked()), this, SLOT(sBcDistribute()));
   connect(_default,         SIGNAL(clicked()), this, SLOT(sDefault()));
   connect(_defaultAndPost,  SIGNAL(clicked()), this, SLOT(sDefaultAndPost()));
@@ -44,7 +44,6 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   _trapClose = TRUE;
 
   _item->setReadOnly(TRUE);
-
   _qtyToDistribute->setPrecision(omfgThis->qtyVal());
   _qtyTagged->setPrecision(omfgThis->qtyVal());
   _qtyRemaining->setPrecision(omfgThis->qtyVal());
@@ -57,14 +56,14 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   _itemloc->addColumn(tr("Qty. Before"),  _qtyColumn,  Qt::AlignRight, true, "qty");
   _itemloc->addColumn(tr("Tagged Qty."),  _qtyColumn,  Qt::AlignRight, true, "qtytagged");
   _itemloc->addColumn(tr("Qty. After"),   _qtyColumn,  Qt::AlignRight, true, "balance");
-
+  
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
     _warehouse->hide();
   }
-
+  
   //If not lot serial control, hide info
   if (!_metrics->boolean("LotSerialControl"))
   {
@@ -81,7 +80,6 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   
   _locationDefaultLit->hide();
   _locations->hide();
-  */
 }
 
 distributeInventory::~distributeInventory()
@@ -95,7 +93,6 @@ void distributeInventory::languageChange()
 }
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr)
 {
-    /*
   if (pItemlocSeries != 0)
   {
     XSqlQuery itemloc;
@@ -225,7 +222,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
   }
   
   return XDialog::Accepted;
-  */
 }
 
 enum SetResponse distributeInventory::set(const ParameterList &pParams)
@@ -310,7 +306,6 @@ void distributeInventory::populate()
 
 void distributeInventory::sSelectLocation()
 {
-    /*
   ParameterList params;
   params.append("source_itemlocdist_id", _itemlocdistid);
 
@@ -324,12 +319,10 @@ void distributeInventory::sSelectLocation()
 
   if (newdlg.exec() == XDialog::Accepted)
     sFillList();
-    */
 }
 
 void distributeInventory::sPost()
 {
-    /*
   if (_qtyRemaining->toDouble() != 0.0)
   {
     QMessageBox::critical( this, tr("Cannot Perform Partial Distribution"),
@@ -349,12 +342,10 @@ void distributeInventory::sPost()
     
   _trapClose = FALSE;
   accept();
-  */
 }
 
 bool distributeInventory::sDefault()
 {
-/*
    bool distribOk = true;
    double qty = 0.0;
    double availToDistribute = 0.0;
@@ -403,20 +394,16 @@ bool distributeInventory::sDefault()
     }
     else
        return false;
-       */
 }
 
 void distributeInventory::sDefaultAndPost()
 {
-    /*
   if(sDefault())
     sPost();
-    */
 }
 
 void distributeInventory::sFillList()
 {
-    /*
   q.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
@@ -575,7 +562,6 @@ void distributeInventory::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  */
 }
 
 void distributeInventory::sBcDistribute()
@@ -649,15 +635,12 @@ void distributeInventory::sCatchLotSerialNumber(const QString plotserial)
 
 void distributeInventory::sBcChanged(const QString p)
 {
-    /*
   _post->setDefault(p.isEmpty());
   _bcDistribute->setDefault(! p.isEmpty());
-  */
 }
 
 void distributeInventory::sPopulateDefaultSelector()
 {
-    /*
    XSqlQuery query;
    query.prepare(" SELECT itemsite_id, itemsite_loccntrl, itemsite_location_id"
                  "  FROM itemsite, itemlocdist"
@@ -729,12 +712,10 @@ void distributeInventory::sPopulateDefaultSelector()
        _locationDefaultLit->hide();
        _locations->hide();
     }
-    */
 }
 
 void distributeInventory::sChangeDefaultLocation()
 {
-    /*
    XSqlQuery query;
    query.prepare( " UPDATE itemsite"
                   " SET itemsite_location_id=:itemsite_location_id"
@@ -748,5 +729,4 @@ void distributeInventory::sChangeDefaultLocation()
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
-      */
 }
