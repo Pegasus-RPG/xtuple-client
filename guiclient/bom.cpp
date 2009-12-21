@@ -65,6 +65,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter, true, "bomitem_seqnumber");
   _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,   true, "item_number");
   _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft,   true, "item_description");
+  _bomitem->addColumn(tr("Type"),         _itemColumn,  Qt::AlignCenter, true, "itemtype");
   _bomitem->addColumn(tr("Issue UOM"),    _uomColumn,   Qt::AlignCenter, true, "issueuom");
   _bomitem->addColumn(tr("Issue Method"), _itemColumn,  Qt::AlignCenter, true, "issuemethod");
   _bomitem->addColumn(tr("Fixd. Qty."),   _qtyColumn,   Qt::AlignRight,  true, "bomitem_qtyfxd" );
@@ -249,6 +250,22 @@ bool BOM::setParams(ParameterList &pParams)
     pParams.append("futureDays", 999);
   }
   
+  pParams.append("purchased", tr("Purchased"));
+  pParams.append("manufactured", tr("Manufactured"));
+  pParams.append("job", tr("Job"));
+  pParams.append("phantom", tr("Phantom"));
+  pParams.append("breeder", tr("Breeder"));
+  pParams.append("coProduct", tr("Co-Product"));
+  pParams.append("byProduct", tr("By-Product"));
+  pParams.append("reference", tr("Reference"));
+  pParams.append("costing", tr("Costing"));
+  pParams.append("tooling", tr("Tooling"));
+  pParams.append("outside", tr("Outside Process"));
+  pParams.append("planning", tr("Planning"));
+  pParams.append("assortment", tr("Assortment"));
+  pParams.append("kit", tr("Kit"));
+  pParams.append("error", tr("Error"));
+
   return true;
 }
 
