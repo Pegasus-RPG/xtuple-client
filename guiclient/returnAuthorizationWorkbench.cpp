@@ -485,7 +485,8 @@ void returnAuthorizationWorkbench::sFillListReview()
         "END AS rahead_expiredate_qtforegroundrole "
 			  "FROM rahead "
 			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
-			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id), "
+			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
+			  "  LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), "
 			  " raitem "
 			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
 			  "WHERE ( (rahead_id=raitem_rahead_id)"
@@ -500,6 +501,8 @@ void returnAuthorizationWorkbench::sFillListReview()
 	  sql += " AND (custtype_id=:custtype_id) ";
     else if (_customerSelector->isTypePattern())
 	  sql += " AND (custtype_code ~ :custtype_pattern) ";
+    else if (_customerSelector->isSelectedGroup())
+	  sql += " AND (custgrpitem_custgrp_id=:custgrp_id) ";
 
 	if (!_expired->isChecked())
 	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
@@ -555,6 +558,7 @@ void returnAuthorizationWorkbench::sFillListReview()
 	ra.prepare(sql);
 	ra.bindValue(":cust_id", _customerSelector->custId());
 	ra.bindValue(":custtype_id", _customerSelector->custTypeId());
+    ra.bindValue(":custgrp_id", _customerSelector->custGroupId());
 	ra.bindValue(":custtype_code", _customerSelector->typePattern());
 	ra.bindValue(":undefined",tr("Undefined"));
 	ra.bindValue(":credit",tr("Credit"));
@@ -617,10 +621,11 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  "END AS creditmethod, "
                   "'curr' AS amount_xtnumericrole, "
                   "'curr' AS baseamount_xtnumericrole "
-		  "FROM rahead,custinfo,raitem,custtype "
+		  "FROM rahead,custinfo,raitem,custtype,custgrpitem "
 		  "WHERE ( (rahead_id=raitem_rahead_id) "
 		  " AND (rahead_cust_id=cust_id) "
 		  " AND (cust_custtype_id=custtype_id) "
+		  " AND (custgrpitem_cust_id=cust_id) "
 		  " AND ((raitem_disposition IN ('R','P') AND rahead_timing = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
                   " OR (raitem_disposition IN ('R','P') AND rahead_timing = 'I' AND raitem_qtyauthorized > raitem_qtycredited) "
 		  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
@@ -632,6 +637,8 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  " AND (cust_id=<? value(\"cust_id\") ?>) "
 		  " <? elseif exists(\"custtype_id\") ?>"
 		  " AND (custtype_id=<? value(\"custtype_id\") ?>) "
+		  " <? elseif exists(\"custgrp_id\") ?>"
+          " AND (custgrpitem_custgrp_id=<? value(\"custgrp_id\") ?>) "
 		  " <? elseif exists(\"custtype_pattern\") ?>"
 		  " AND (custtype_code ~ <? value(\"custtype_pattern\") ?>) "
 		  " <? endif ?>"

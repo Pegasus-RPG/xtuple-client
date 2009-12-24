@@ -65,12 +65,16 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), this, SLOT(sClear()));
+  connect(_customerSelector, SIGNAL(newCustGroupId(int)), this, SLOT(sClear()));
+
   connect(_customerSelector, SIGNAL(newState(int)), 
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setState(int)));
   connect(_customerSelector, SIGNAL(newCustId(int)), 
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustId(int)));
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), 
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustTypeId(int)));
+  connect(_customerSelector, SIGNAL(newCustGroupId(int)), 
+          _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustGroupId(int)));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), 
           _aritems->findChild<CustomerSelector*>("_customerSelector"), SLOT(setTypePattern(QString)));
   connect(_customerSelector, SIGNAL(newState(int)), 
@@ -79,6 +83,8 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
           _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustId(int)));
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), 
           _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustTypeId(int)));
+  connect(_customerSelector, SIGNAL(newCustGroupId(int)), 
+          _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setCustGroupId(int)));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), 
           _cctrans->findChild<CustomerSelector*>("_customerSelector"), SLOT(setTypePattern(QString)));
   connect(_debits, SIGNAL(clicked()), 

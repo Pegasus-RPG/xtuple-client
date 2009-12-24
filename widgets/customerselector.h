@@ -32,7 +32,7 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
 
     enum CustomerSelectorState
     {
-      All, Selected, SelectedType, TypePattern
+      All, Selected, SelectedType, SelectedGroup, TypePattern
     };
 
     Q_INVOKABLE virtual void           appendValue(ParameterList &);
@@ -41,16 +41,19 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     enum CustomerSelectorState  state()      { return (CustomerSelectorState)_select->currentIndex(); }
     Q_INVOKABLE virtual int            custId()     { return _cust->id(); }
     Q_INVOKABLE virtual int            custTypeId() { return _customerTypes->id(); }
+	Q_INVOKABLE virtual int            custGroupId() { return _customerGroup->id(); }
 
     Q_INVOKABLE inline bool isAll()          { return _select->currentIndex() == All; }
     Q_INVOKABLE inline bool isSelectedCust() { return _select->currentIndex() == Selected; }
     Q_INVOKABLE inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
+    Q_INVOKABLE inline bool isSelectedGroup() { return _select->currentIndex() == SelectedGroup; }
     Q_INVOKABLE inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
     Q_INVOKABLE virtual bool isValid();
 
   public slots:
     virtual void setCustId(int p);
     virtual void setCustTypeId(int p);
+	virtual void setCustGroupId(int p);
     virtual void setTypePattern(const QString &p);
     virtual void setState(int p) { setState((CustomerSelectorState)p); }
     virtual void setState(enum CustomerSelectorState p);
@@ -60,6 +63,7 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     void newState(int);
     void newCustId(int);
     void newCustTypeId(int);
+	void newCustGroupId(int);
     void updated();
 
   protected slots:

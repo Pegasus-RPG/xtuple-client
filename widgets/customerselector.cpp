@@ -22,6 +22,7 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   _select->setCurrentIndex(All);
   _cust->setId(-1);
   _customerTypes->setId(-1);
+  _customerGroup->setId(-1);
   _customerType->setText("");
 
   connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(updated()));
@@ -33,6 +34,8 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   connect(_customerType,   SIGNAL(editingFinished()), this, SIGNAL(updated()));
   connect(_customerType,   SIGNAL(editingFinished()), this, SLOT(sTypePatternFinished()));
   connect(_customerType,SIGNAL(textChanged(QString)), this, SIGNAL(newTypePattern(QString)));
+  connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(updated()));
+  connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(newCustGroupId(int)));
 
   setFocusProxy(_select);
 }
@@ -56,6 +59,9 @@ void CustomerSelector::appendValue(ParameterList &pParams)
     case SelectedType:
       pParams.append("custtype_id", _customerTypes->id());
       break;
+    case SelectedGroup:
+	  pParams.append("custgrp_id", _customerGroup->id());
+      break;
     case TypePattern:
       pParams.append("custtype_pattern", _customerType->text());
       break;
@@ -75,6 +81,9 @@ void CustomerSelector::bindValue(XSqlQuery &pQuery)
     case SelectedType:
       pQuery.bindValue(":custtype_id", _customerTypes->id());
       break;
+	case SelectedGroup:
+      pQuery.bindValue(":custgrp_id", _customerGroup->id());
+      break;
     case TypePattern:
       pQuery.bindValue(":custtype_pattern", _customerType->text());
       break;
@@ -93,6 +102,9 @@ bool CustomerSelector::isValid()
       break;
     case SelectedType:
       return _customerTypes->isValid();
+      break;
+    case SelectedGroup:
+      return _customerGroup->isValid();
       break;
     case TypePattern:
       return ! _customerType->text().trimmed().isEmpty();
@@ -124,6 +136,12 @@ void CustomerSelector::setTypePattern(const QString &p)
   setState(TypePattern);
 }
 
+void CustomerSelector::setCustGroupId(int p)
+{
+  _customerGroup->setId(p);
+  setState(SelectedGroup);
+}
+
 void CustomerSelector::setState(enum CustomerSelectorState p)
 {
   _select->setCurrentIndex(p);
@@ -147,5 +165,7 @@ void CustomerSelector::synchronize(CustomerSelector *p)
   connect(this, SIGNAL(newState(int)),           p, SLOT(setState(int)));
   connect(this, SIGNAL(newCustId(int)),          p, SLOT(setCustId(int)));
   connect(this, SIGNAL(newCustTypeId(int)),      p, SLOT(setCustTypeId(int)));
+  connect(this, SIGNAL(newCustGroupId(int)),     p, SLOT(setCustGroupId(int)));
+
   p->hide();
 }
