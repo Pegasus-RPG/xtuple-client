@@ -53,6 +53,7 @@
 #include "qfontproto.h"
 #include "qgridlayoutproto.h"
 #include "qiconproto.h"
+#include "qitemdelegateproto.h"
 #include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
 #include "qmenuproto.h"
@@ -151,6 +152,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFontProto(engine);
   setupQGridLayoutProto(engine);
   setupQIconProto(engine);
+  setupQItemDelegateProto(engine);
   setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
   setupQMenuProto(engine);
