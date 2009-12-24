@@ -96,6 +96,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
 
       _paid->clear();
       _save->setText(tr("Post"));
+	  populateStatus();
     }
     else if (param.toString() == "edit")
     {
@@ -128,6 +129,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _terms->setType(XComboBox::Terms);
       _notes->setReadOnly(TRUE);
       _altPrepaid->setEnabled(FALSE);
+	  _status->setEnabled(FALSE);
       _save->hide();
       _close->setText(tr("&Close"));
     }
@@ -239,7 +241,8 @@ void apOpenItem::sSave()
                "    apopen_amount=:apopen_amount,"
                "    apopen_terms_id=:apopen_terms_id, "
 	       "    apopen_notes=:apopen_notes, "
-	       "    apopen_curr_id=:curr_id "
+	           "    apopen_curr_id=:curr_id, "
+		       "    apopen_status = :apopen_status "
                "WHERE (apopen_id=:apopen_id);" );
   }
 
@@ -252,6 +255,12 @@ void apOpenItem::sSave()
   q.bindValue(":apopen_notes",   _notes->toPlainText());
   q.bindValue(":curr_id", _amount->id());
   q.bindValue(":apopen_terms_id", _terms->id());
+  QString temp;
+  if (_status->id() == 1)
+    temp = "O" ;
+  else
+	temp = "H" ;
+  q.bindValue(":apopen_status", temp);
   if(_altPrepaid->isChecked())
     q.bindValue(":apopen_accnt_id", _altAccntid->id());
   else
@@ -316,6 +325,7 @@ void apOpenItem::sClose()
 
 void apOpenItem::populate()
 {
+  populateStatus();
   q.prepare( "SELECT apopen_vend_id, apopen_docdate, apopen_duedate,"
              "       apopen_doctype, apopen_docnumber,"
              "       apopen_ponumber, apopen_journalnumber,"
@@ -323,6 +333,10 @@ void apOpenItem::populate()
              "       (apopen_amount - apopen_paid) AS f_balance,"
              "       apopen_terms_id, apopen_notes, apopen_accnt_id, "
              "       apopen_curr_id, "
+			 "       CASE WHEN apopen_status ='O' THEN 1 "
+             "         ELSE CASE WHEN apopen_status = 'H' THEN 2 "
+             "         END "
+             "       END AS status_id, apopen_status, "
              "       (SELECT COALESCE(SUM(taxhist_tax),0) "
              "        FROM apopentax "
              "        WHERE (taxhist_parent_id=apopen_id)) AS tax, "
@@ -347,6 +361,29 @@ void apOpenItem::populate()
     _paid->setLocalValue(q.value("apopen_paid").toDouble());
     _balance->setLocalValue(q.value("f_balance").toDouble());
     _terms->setId(q.value("apopen_terms_id").toInt());
+	if (q.value("apopen_status").toString() == "C")
+	{
+      QString status;
+      status = " SELECT DISTINCT "
+            " CASE WHEN apopen_status ='C' THEN 0 "
+            " END AS status_id, "
+            " CASE WHEN apopen_status ='C' THEN TEXT('Closed') "
+            " END AS status, "
+            " CASE WHEN apopen_status ='C' THEN TEXT('Closed') "
+            " END AS status "
+            " FROM apopen "
+            " WHERE apopen_status <> '' " ;
+	  _status->populate(status, -1);
+	  _status->setEnabled(FALSE);
+	}
+	_status->setId(q.value("status_id").toInt());
+	
+	XSqlQuery selectpayment;
+    selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
+    selectpayment.bindValue(":apopen_id", _apopenid);
+    selectpayment.exec();
+    if (selectpayment.first())
+      _status->setEnabled(FALSE);
     _notes->setText(q.value("apopen_notes").toString());
     if (q.value("showTax").toBool())
       _tax->setLocalValue(q.value("tax").toDouble());
@@ -550,4 +587,11 @@ void apOpenItem::sTaxDetail()
   }
 }
  
-
+void apOpenItem::populateStatus()
+{
+  QString status;
+  status = "SELECT 1 AS status_id, TEXT('Open') AS status, TEXT('Open') AS status "
+           "UNION "
+           "SELECT 2 AS status_id, TEXT('On Hold') AS status, TEXT('On Hold') AS status;";
+  _status->populate(status, -1);
+}

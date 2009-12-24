@@ -34,7 +34,7 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_apopen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_vend, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -51,6 +51,7 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
   _apopen->addColumn(tr("Balance"),      _bigMoneyColumn, Qt::AlignRight,  true,  "balance"  );
   _apopen->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
   _apopen->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
+  _apopen->addColumn(tr("Status"), _bigMoneyColumn, Qt::AlignCenter,  true,  "apopen_status"  );
 
   if (omfgThis->singleCurrency())
   {
@@ -122,15 +123,31 @@ enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu)
+void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
+  QString status(selected->text(1));
+   
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
   if (!_privileges->check("EditAPOpenItem"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  XSqlQuery menu;
+  menu.prepare("SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
+  menu.bindValue(":apopen_id", _apopen->id());
+  menu.exec();
+  if (menu.first())
+  {
+    menuItem = pMenu->insertItem(tr("On Hold"), this, SLOT(sOnHold()), 0);
+    if((menu.value("apopen_status").toString()  == "H") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+      pMenu->setItemEnabled(menuItem, FALSE);
+	  
+    menuItem = pMenu->insertItem(tr("Open"), this, SLOT(sOpen()), 0);
+    if ((menu.value("apopen_status").toString() == "O") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+	  pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void dspAPOpenItemsByVendor::sEdit()
@@ -185,7 +202,7 @@ void dspAPOpenItemsByVendor::sFillList()
              "            ELSE :other"
              "       END AS f_doctype,"
              "       apopen_invcnumber AS invoicenumber,"
-             "       apopen_docdate, apopen_duedate, apopen_amount,"
+             "       apopen_docdate, apopen_duedate, apopen_amount, apopen_status, "
              "       apopen_paid - COALESCE(SUM(apapply_target_paid),0) AS paid,"
              "       (apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) * "
              "       CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 "
@@ -208,7 +225,7 @@ void dspAPOpenItemsByVendor::sFillList()
              "   AND   (apopen_vend_id=:vend_id) "
              "   AND   (apopen_duedate BETWEEN :startDate AND :endDate) ) "
              " GROUP BY apopen_id, apopen_ponumber, apopen_docnumber,apopen_doctype, apopen_invcnumber, apopen_docdate, "
-             "   apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_curr_rate "
+             "   apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_curr_rate, apopen.apopen_status "
              " ORDER BY apopen_docdate;" );
   _dates->bindValue(q);
   q.bindValue(":vend_id", _vend->id());
@@ -221,3 +238,30 @@ void dspAPOpenItemsByVendor::sFillList()
     _apopen->populate(q);
 }
 
+void dspAPOpenItemsByVendor::sOpen()
+{
+  XSqlQuery open;
+  open.prepare("UPDATE apopen SET apopen_status = 'O' WHERE apopen_id=:apopen_id;");
+  open.bindValue(":apopen_id", _apopen->id());
+  open.exec();
+  sFillList();
+}
+
+void dspAPOpenItemsByVendor::sOnHold()
+{
+  XSqlQuery selectpayment;
+  selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
+  selectpayment.bindValue(":apopen_id", _apopen->id());
+  selectpayment.exec();
+  if (selectpayment.first())
+  {
+    QMessageBox::critical( this, tr("Can not change Status"), tr( "You cannot set this item as On Hold.\nThis Item is already selected for payment." ) );
+    return;
+  }
+  
+  XSqlQuery onhold;
+  onhold.prepare("UPDATE apopen SET apopen_status = 'H' WHERE apopen_id=:apopen_id;");
+  onhold.bindValue(":apopen_id", _apopen->id());
+  onhold.exec();
+  sFillList();
+}

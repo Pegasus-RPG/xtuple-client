@@ -27,11 +27,13 @@ public:
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected);
     virtual void sEdit();
     virtual void sView();
     virtual void sPrint();
     virtual void sFillList();
+	virtual void sOnHold();
+	virtual void sOpen();
 
 protected slots:
     virtual void languageChange();

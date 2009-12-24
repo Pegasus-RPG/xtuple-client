@@ -15,6 +15,7 @@
 #include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+#include <QMessageBox>
 
 #include "guiclient.h"
 #include "selectBankAccount.h"
@@ -39,6 +40,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_apopen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
 
   _ignoreUpdates = false;
   
@@ -56,6 +58,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight , true, "discount" );
   _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft, true, "curr_concat" );
   _apopen->addColumn(tr("Running (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, true, "running_selected"  );
+  _apopen->addColumn(tr("Status"),  _currencyColumn, Qt::AlignCenter, true, "apopen_status" );
 
   if (omfgThis->singleCurrency())
   {
@@ -270,9 +273,22 @@ void selectPayments::sSelect()
   bool update = false;
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
+  XSqlQuery slct;
+  slct.prepare("SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
   for(int i = 0; i < list.size(); i++)
   {
     cursor = (XTreeWidgetItem*)list.at(i);
+    slct.bindValue(":apopen_id", _apopen->id());
+    slct.exec();
+    if (slct.first())
+    {
+      if (slct.value("apopen_status").toString() == "H")
+	  {
+		QMessageBox::critical( this, tr("Can not do Payment"), tr( "Item is On Hold" ) );
+        return;
+	  }
+	  else
+	  {
     ParameterList params;
     params.append("apopen_id", cursor->id());
 
@@ -288,7 +304,8 @@ void selectPayments::sSelect()
   if(update)
     sFillList();
 }
-
+  }
+}
 void selectPayments::sSelectLine()
 {
   ParameterList params;
@@ -308,11 +325,19 @@ void selectPayments::sSelectLine()
     QList<XTreeWidgetItem*> list = _apopen->selectedItems();
     XTreeWidgetItem * cursor = 0;
     q.prepare("SELECT selectPayment(:apopen_id, :bankaccnt_id) AS result;");
+    XSqlQuery slctln;
+    slctln.prepare( "SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
     for(int i = 0; i < list.size(); i++)
     {
       cursor = (XTreeWidgetItem*)list.at(i);
       q.bindValue(":apopen_id", cursor->id());
       q.bindValue(":bankaccnt_id", bankaccntid);
+	  slctln.bindValue(":apopen_id", cursor->id());
+      slctln.exec();
+      if (slctln.first())
+      {
+        if (slctln.value("apopen_status").toString() != "H")
+	    {
       q.exec();
       if (q.first())
       {
@@ -330,9 +355,10 @@ void selectPayments::sSelectLine()
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
+		} 
       update = TRUE;
     }
-  
+    }
     if(update)
       omfgThis->sPaymentsUpdated(-1, -1, TRUE);
   }
@@ -402,7 +428,8 @@ void selectPayments::sFillList()
          "       END AS doctype,"
          "       apopen_docnumber, apopen_ponumber,"
          "       apopen_duedate,"
-         "       apopen_docdate,"
+         "       apopen_docdate, apopen_status, "
+         "       CASE WHEN (apopen_status = 'H') THEN 'error' END AS qtforegroundrole, "
          "       (apopen_amount - apopen_paid - "
          "                   COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
          "                             FROM checkitem, checkhead "
@@ -414,7 +441,12 @@ void selectPayments::sFillList()
          "       COALESCE(SUM(apselect_amount), 0) AS selected,"
          "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS running_selected,"
          "       COALESCE(SUM(apselect_discount),0) AS discount,"
-         "       CASE WHEN (apopen_duedate <= CURRENT_DATE) THEN 'error' END AS qtforegroundrole, "
+         "       CASE WHEN (apopen_duedate < CURRENT_DATE) THEN 'error' "
+		 "         ELSE CASE WHEN(apopen_duedate > CURRENT_DATE) THEN 'emphasis' "
+		 "           ELSE CASE WHEN(CURRENT_DATE <= (apopen_docdate + terms_discdays)) THEN 'altemphasis' "
+		 "           END "
+		 "         END "
+         "		 END AS apopen_duedate_qtforegroundrole, "
          "       apopen_invcnumber,"
          "       currConcat(apopen_curr_id) AS curr_concat, "
          "       'curr' AS amount_xtnumericrole, "
@@ -423,6 +455,7 @@ void selectPayments::sFillList()
          "       'curr' AS running_selected_xtrunningrole, "
          "       'curr' AS discount_xtnumericrole "
          "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
+		 "LEFT OUTER JOIN terms ON (apopen_terms_id=terms_id) "
          "WHERE ( (apopen_open)"
          " AND (apopen_doctype IN ('V', 'D'))"
          " AND (apopen_vend_id=vend_id)"
@@ -447,7 +480,7 @@ void selectPayments::sFillList()
          "GROUP BY apopen_id, apselect_id, vend_number, vend_name,"
          "         apopen_doctype, apopen_docnumber, apopen_ponumber,"
          "         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, "
-         "         curr_concat, apopen_curr_id, apselect_curr_id, apopen_invcnumber "
+         "         curr_concat, apopen_curr_id, apselect_curr_id, apopen_invcnumber, apopen_status, terms.terms_discdays "
          "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC) AS data "
          "WHERE (amount != 0);");
 
@@ -473,4 +506,52 @@ void selectPayments::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
+{
+  QString status(selected->text(1));
+  int menuItem;
+  XSqlQuery menu;
+  menu.prepare( "SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
+  menu.bindValue(":apopen_id", _apopen->id());
+  menu.exec();
+  if (menu.first())
+  {
+    menuItem = pMenu->insertItem(tr("On Hold"), this, SLOT(sOnHold()), 0);
+    if((menu.value("apopen_status").toString()  == "H") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+	menuItem = pMenu->insertItem(tr("Open"), this, SLOT(sOpen()), 0);
+    if ((menu.value("apopen_status").toString() == "O") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+	  pMenu->setItemEnabled(menuItem, FALSE);
+  }
+}
+
+void selectPayments::sOpen()
+{
+  XSqlQuery open;
+  open.prepare("UPDATE apopen SET apopen_status = 'O' WHERE apopen_id=:apopen_id;");
+  open.bindValue(":apopen_id", _apopen->id());
+  open.exec();
+  sFillList();
+}
+
+void selectPayments::sOnHold()
+{
+  XSqlQuery selectpayment;
+  selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
+  selectpayment.bindValue(":apopen_id", _apopen->id());
+  selectpayment.exec();
+  if (selectpayment.first())
+  {
+    QMessageBox::critical( this, tr("Can not change Status"), tr( "You cannot set this item as On Hold.\nThis Item is already selected for payment." ) );
+    return;
+  }
+
+  XSqlQuery onhold;
+  onhold.prepare("UPDATE apopen SET apopen_status = 'H' WHERE apopen_id=:apopen_id;");
+  onhold.bindValue(":apopen_id", _apopen->id());
+  onhold.exec();
+  sFillList();
 }

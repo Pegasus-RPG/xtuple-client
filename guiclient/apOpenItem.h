@@ -26,6 +26,7 @@ public:
     ~apOpenItem();
 
     virtual void populate();
+	virtual void populateStatus();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
