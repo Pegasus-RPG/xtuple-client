@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#ifndef __QITEMDELEGATERPROTO_H__
+#ifndef __QITEMDELEGATEPROTO_H__
 #define __QITEMDELEGATEPROTO_H__
 
 #include <QItemDelegate>
