@@ -257,7 +257,7 @@ void distributeToLocation::populate()
   if (_mode == cLocation)
   {
     q.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(subild.itemlocdist_qty, 0) AS qty, "
-               "       qtyLocation(location_id, NULL, NULL, NULL, topild.itemlocdist_itemsite_id, topild.itemlocdist_order_type, topild.itemlocdist_order_id) AS availqty "
+               "       qtyLocation(location_id, NULL, NULL, NULL, topild.itemlocdist_itemsite_id, topild.itemlocdist_order_type, topild.itemlocdist_order_id, topild.itemlocdist_id) AS availqty "
                "FROM location LEFT OUTER JOIN itemlocdist AS subild"
                "               ON ( (subild.itemlocdist_source_type='L')"
                "                   AND (subild.itemlocdist_source_id=location_id)"

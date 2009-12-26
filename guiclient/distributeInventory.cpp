@@ -16,6 +16,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 
 #include "assignLotSerial.h"
 #include "distributeToLocation.h"
@@ -93,6 +94,10 @@ void distributeInventory::languageChange()
 }
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr)
 {
+  int result;
+  QList<int>  ildsList; // Item Loc Dist Series List
+  QList<int>  ildList; // Item Loc Dist List
+
   if (pItemlocSeries != 0)
   {
     XSqlQuery itemloc;
@@ -172,8 +177,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             params.append("itemlocdist_id", query.value("itemlocdist_id").toInt());
             distributeInventory newdlg(pParent, "", TRUE);
             newdlg.set(params);
-            if (newdlg.exec() == XDialog::Rejected)
+            result = newdlg.exec();
+            if (result == XDialog::Rejected)
               return XDialog::Rejected;
+            else
+              ildList.append(result);
           }
         }
         else
@@ -184,9 +192,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           query.bindValue(":itemlocdist_series", itemlocSeries);
           query.exec();
 
-          query.prepare( "SELECT distributeItemlocSeries(:itemlocdist_series) AS result;");
-          query.bindValue(":itemlocdist_series", itemlocSeries);
-          query.exec();
+          // Append id to list and process at the end
+          ildsList.append(itemlocSeries);
         }
       }
       else
@@ -199,12 +206,42 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
 
         distributeInventory newdlg(pParent, "", TRUE);
         newdlg.set(params);
-        if (newdlg.exec() == XDialog::Rejected)
+        result = newdlg.exec();
+        if (result == XDialog::Rejected)
           return XDialog::Rejected;
+        else
+          ildList.append(result);
+      }
+    }
+
+    XSqlQuery post;
+    
+    // Process Lot/Serial distributions
+    for (int i = 0; i < ildsList.size(); ++i) {
+      post.prepare( "SELECT distributeItemlocSeries(:itemlocdist_series) AS result;");
+      post.bindValue(":itemlocdist_series", ildsList.at(i));
+      post.exec();
+      if (post.lastError().type() != QSqlError::NoError)
+      {
+        systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
+        return XDialog::Rejected;
       }
     }
     
-    XSqlQuery post;
+    // Process location distributions
+              qDebug("size %d", ildList.size());
+    for (int i = 0; i < ildList.size(); ++i) {
+      post.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
+      post.bindValue(":itemlocdist_id", ildList.at(i));
+      post.exec();
+      if (post.lastError().type() != QSqlError::NoError)
+      {
+        systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
+        return XDialog::Rejected;
+      }
+    }
+    
+    //Post inventory history for any remaining non-distributed transactions and trial balance
     post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
     post.bindValue(":itemlocseries",  pItemlocSeries);
     post.exec();
@@ -331,17 +368,9 @@ void distributeInventory::sPost()
     return;
   }
 
-  q.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(0, q.lastError().databaseText(), __FILE__, __LINE__);
-    reject();
-  }
-    
+  // Append id to the list and process at the end   
   _trapClose = FALSE;
-  accept();
+  done(_itemlocdistid);
 }
 
 bool distributeInventory::sDefault()
@@ -351,7 +380,7 @@ bool distributeInventory::sDefault()
    double availToDistribute = 0.0;
 
    q.prepare("SELECT   itemlocdist_qty AS qty, "
-             "         qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS availToDistribute "
+             "         qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id, itemlocdist_id) AS availToDistribute "
              "   FROM   itemlocdist, location, itemsite "
              "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
              "    AND (itemsite_loccntrl)"
@@ -442,89 +471,6 @@ void distributeInventory::sFillList()
       _defaultAndPost->setEnabled(FALSE);
     }
 
-    QString sql( "SELECT id, type, locationname, defaultlocation,"
-		 "       location_netable, lotserial, f_expiration, expired,"
-                 "       qty, qtytagged, (qty + qtytagged) AS balance,"
-                 "       'qty' AS qty_xtnumericrole,"
-                 "       'qty' AS qtytagged_xtnumericrole,"
-                 "       'qty' AS balance_xtnumericrole,"
-                 "       CASE WHEN expired THEN 'error' END AS qtforegroundrole, "
-                 "       CASE WHEN expired THEN 'error' "
-                 "            WHEN defaultlocation AND expired = false THEN 'altemphasis' "
-                 "       ELSE null END AS defaultlocation_qtforegroundrole, "
-                 "       CASE WHEN expired THEN 'error' "
-                 "            WHEN qty > 0 AND expired = false THEN 'altemphasis' "
-                 "       ELSE null END AS qty_qtforegroundrole "
-                 "FROM (" 
-		 "<? if exists(\"cNoIncludeLotSerial\") ?>"
-		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
-		 "       formatLocationName(location_id) AS locationname,"
-		 "       (location_id=itemsite_location_id) AS defaultlocation,"
-		 "       location_netable,"
-		 "       TEXT('') AS lotserial,"
-		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
-		 "       qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
-		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
-		 "FROM itemlocdist, location, itemsite "
-		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-		 " AND (itemsite_loccntrl)"
-		 " AND (itemsite_warehous_id=location_warehous_id)"
-		 " AND (validLocation(location_id, itemsite_id))"
-		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
-		 "<? elseif exists(\"cIncludeLotSerial\") ?>"
-		 "SELECT itemloc_id AS id, <? value(\"itemlocType\") ?> AS type,"
-		 "       COALESCE(formatLocationName(location_id),"
-		 "                <? value(\"undefined\") ?>) AS locationname,"
-		 "       (location_id IS NOT NULL"
-		 "        AND location_id=itemsite_location_id) AS defaultlocation,"
-		 "       COALESCE(location_netable, false) AS location_netable,"
-		 "       ls_number AS lotserial,"
-		 "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
-		 "            ELSE <? value(\"na\") ?>"
-		 "       END AS f_expiration,"
-		 "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration < CURRENT_DATE)"
-		 "            ELSE FALSE" 
-		 "       END AS expired,"
-		 "       qtyLocation(itemloc_location_id, itemloc_ls_id, itemloc_expiration, itemloc_warrpurc, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
-		 "       ( SELECT COALESCE(SUM(target.itemlocdist_qty), 0)"
-		 "         FROM itemlocdist AS target"
-		 "         WHERE ( (target.itemlocdist_source_type='I')"
-		 "          AND (target.itemlocdist_source_id=itemloc_id)"
-		 "          AND (target.itemlocdist_itemlocdist_id=source.itemlocdist_id)) ) AS qtytagged "
-		 "FROM itemlocdist AS source, itemsite, itemloc "
-                 "  LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
-                 "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id) "
-		 "WHERE ( (source.itemlocdist_itemsite_id=itemsite_id)"
-		 " AND (itemloc_itemsite_id=itemsite_id)"
-		 " AND (source.itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
-		 " UNION "
-		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
-		 "       formatLocationName(location_id) AS locationname,"
-		 "       (location_id=itemsite_location_id) AS defaultlocation,"
-		 "       location_netable,"
-		 "       TEXT('') AS lotserial,"
-		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
-		 "       qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
-		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
-		 "FROM itemlocdist, location, itemsite "
-		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-		 " AND (itemsite_loccntrl)"
-		 " AND (itemsite_warehous_id=location_warehous_id)"
-		 " AND (validLocation(location_id, itemsite_id))"
-                 " AND (itemsite_id=<? value(\"itemsite_id\") ?> ) "
-		 " AND (location_id NOT IN (SELECT DISTINCT itemloc_location_id FROM itemloc WHERE (itemloc_itemsite_id=itemsite_id)))"
-		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
-		 "<? endif ?>"
-		 ") AS data "
-                 "WHERE ((TRUE) "
-		 "<? if exists(\"showOnlyTagged\") ?>"
-		 "AND (qtytagged != 0) "
-		 "<? endif ?>"
-                 "<? if exists(\"showQtyOnly\") ?>"
-                 "AND (qty > 0) "
-                 "<? endif ?>"
-		 ") ORDER BY locationname;");
-
     ParameterList params;
 
     if (_mode == cNoIncludeLotSerial)
@@ -547,7 +493,7 @@ void distributeInventory::sFillList()
     params.append("itemlocdist_id", _itemlocdistid);
     params.append("itemsite_id",    q.value("itemsite_id").toInt());
 
-    MetaSQLQuery mql(sql);
+    MetaSQLQuery mql = mqlLoad("distributeInventory", "locations");
     q = mql.toQuery(params);
 
     _itemloc->populate(q, true);
