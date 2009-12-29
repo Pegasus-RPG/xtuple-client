@@ -105,6 +105,8 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
 
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
+  
+  adjustSize();
 
 }
 
