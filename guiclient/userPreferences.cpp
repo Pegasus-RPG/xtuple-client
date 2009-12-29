@@ -81,8 +81,6 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   _user->setType(XComboBox::Users);
 
-  _userGroup->setEnabled(_privileges->check("MaintainUsers"));
-
   _ellipsesAction->append(1, tr("List"));
   _ellipsesAction->append(2, tr("Search"));
 
