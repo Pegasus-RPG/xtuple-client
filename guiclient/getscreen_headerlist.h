@@ -514,7 +514,6 @@
 #include "purgePostedCountSlips.h"
 #include "purgeShippingRecords.h"
 #include "quotes.h"
-#include "rate.h"
 #include "reasonCode.h"
 #include "reasonCodes.h"
 #include "reassignClassCodeByClassCode.h"

@@ -274,7 +274,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                purchaseRequest.ui purgeClosedWorkOrders.ui purgeCreditMemos.ui purgeInvoices.ui       \
                purgePostedCounts.ui purgePostedCountSlips.ui                                          \
                purgeShippingRecords.ui quotes.ui                                                      \
-               rate.ui reasonCode.ui reasonCodes.ui reassignLotSerial.ui recallOrders.ui              \
+               reasonCode.ui reasonCodes.ui reassignLotSerial.ui recallOrders.ui                      \
                rejectCodes.ui rejectCode.ui                                                           \
                reassignClassCodeByClassCode.ui reassignCustomerTypeByCustomerType.ui                  \
                reassignProductCategoryByProductCategory.ui reconcileBankaccount.ui                    \
@@ -579,7 +579,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                purchaseRequest.h purgeClosedWorkOrders.h purgeCreditMemos.h purgeInvoices.h           \
                purgePostedCounts.h purgePostedCountSlips.h                                            \
                purgeShippingRecords.h quotes.h                                                        \
-               rate.h reasonCode.h reasonCodes.h reassignLotSerial.h recallOrders.h                   \
+               reasonCode.h reasonCodes.h reassignLotSerial.h recallOrders.h                          \
                rejectCodes.h rejectCode.h                                                             \
                reassignClassCodeByClassCode.h reassignCustomerTypeByCustomerType.h                    \
                reassignProductCategoryByProductCategory.h reconcileBankaccount.h                      \
@@ -893,7 +893,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                purchaseRequest.cpp purgeClosedWorkOrders.cpp purgeCreditMemos.cpp purgeInvoices.cpp   \
                purgePostedCounts.cpp purgePostedCountSlips.cpp                                        \
                purgeShippingRecords.cpp quotes.cpp                                                    \
-               rate.cpp reasonCode.cpp reasonCodes.cpp reassignLotSerial.cpp recallOrders.cpp         \
+               reasonCode.cpp reasonCodes.cpp reassignLotSerial.cpp recallOrders.cpp                  \
                rejectCodes.cpp rejectCode.cpp                                                         \
                reassignClassCodeByClassCode.cpp reassignCustomerTypeByCustomerType.cpp                \
                reassignProductCategoryByProductCategory.cpp reconcileBankaccount.cpp                  \
