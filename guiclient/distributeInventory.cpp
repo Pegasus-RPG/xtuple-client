@@ -159,7 +159,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           assignLotSerial newdlg(pParent, "", TRUE);
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
-          if (itemlocSeries == -1)
+          if (itemlocSeries != XDialog::Accepted)
             return XDialog::Rejected;
         }
         
