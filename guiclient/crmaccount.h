@@ -50,7 +50,6 @@ protected slots:
     virtual void sNewCharacteristic();
     virtual void sNewReg();
     virtual void sPartner();
-    virtual void sPopulateMenu(QMenu *);
     virtual void sProspect();
     virtual void sSave();
     virtual void sTaxAuth();
@@ -62,6 +61,7 @@ protected slots:
     virtual void sCheckNumber();
     virtual void sHandleButtons();
     virtual void sVendorInfo();
+    virtual void sHandleCntctDetach(int cntctId);
 
 protected:
     virtual void closeEvent(QCloseEvent*);

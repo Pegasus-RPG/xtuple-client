@@ -71,7 +71,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     
   connect(_close,		SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
-  connect(_contacts,            SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_editCharacteristic,	SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
@@ -94,6 +93,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sEditVendor()));
+  connect(_contacts, SIGNAL(cntctDetached(int)), this, SLOT(sHandleCntctDetach(int)));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
@@ -1078,31 +1078,6 @@ void crmaccount::sUpdateRelationships()
   _contacts->sFillList();
 }
 
-void crmaccount::sPopulateMenu(QMenu *pMenu)
-{
-  int menuItem;
-
-  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
-  if (!_privileges->check("MaintainContacts") || _mode == cView)
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainContacts") || _mode == cView)
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  if (!_privileges->check("ViewContacts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("Attach..."), this, SLOT(sAttach()), 0);
-  if (!_privileges->check("MaintainContacts") || _mode == cView)
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("Detach"), this, SLOT(sDetach()), 0);
-  if (!_privileges->check("MaintainContacts") || _mode == cView)
-    pMenu->setItemEnabled(menuItem, FALSE);
-}
-
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
 {
   //XDialog newdlg(parent);
@@ -1285,4 +1260,12 @@ void crmaccount::sHandleButtons()
     _widgetStack->setCurrentIndex(_widgetStack->indexOf(_secondaryPage)); 	 
   else 	 
     _widgetStack->setCurrentIndex(_widgetStack->indexOf(_allPage)); 	 
+}
+
+void crmaccount::sHandleCntctDetach(int cntctId)
+{
+  if (_primary->id() == cntctId)
+    _primary->clear();
+  if (_secondary->id() == cntctId)
+    _secondary->clear();
 }

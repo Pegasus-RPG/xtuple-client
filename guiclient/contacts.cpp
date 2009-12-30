@@ -250,8 +250,9 @@ void contacts::sDetach()
 			QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
   if (answer == QMessageBox::Yes)
   {
+    int cntctId = _contacts->id();
     q.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
-    q.bindValue(":cntct_id", _contacts->id());
+    q.bindValue(":cntct_id", cntctId);
     q.bindValue(":crmacct_id", _crmAccount->id());
     q.exec();
     if (q.first())
@@ -263,6 +264,7 @@ void contacts::sDetach()
 			  .arg(returnVal), __FILE__, __LINE__);
 	return;
       }
+      emit cntctDetached(cntctId);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
