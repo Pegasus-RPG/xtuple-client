@@ -76,7 +76,9 @@ public slots:
     virtual void sShipment();
     virtual void sShipmentStatus();
     virtual void sCheckNumber();
+    virtual void sRecalcFreight();
     virtual void sFreightChanged();
+    virtual void sFreightDetail();
 
 protected slots:
     virtual void languageChange();

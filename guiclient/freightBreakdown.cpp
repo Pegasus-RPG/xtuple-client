@@ -90,8 +90,10 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
     params.append("order_type", _ordertype);
     if (_ordertype == "SO")
       _header->setText(tr("Freight Breakdown for Sales Order:"));
-    else
+    else if (_ordertype == "QU")
       _header->setText(tr("Freight Breakdown for Quote:"));
+    else
+      _header->setText(tr("Freight Breakdown for Return Auth.:"));
   }
 
   param = pParams.value("calcfreight", &valid);

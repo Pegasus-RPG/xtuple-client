@@ -26,6 +26,7 @@
 #include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+#include "freightBreakdown.h"
 #include "printRaForm.h"
 
 #include "salesOrder.h"
@@ -47,6 +48,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
   connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_freightLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sFreightDetail()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -678,6 +680,7 @@ void returnAuthorization::sOrigSoChanged()
         return;
       }
     }
+	sRecalcFreight();
   }
 }
 
@@ -904,6 +907,7 @@ void returnAuthorization::sNew()
   
     if (newdlg.exec() != XDialog::Rejected)
       populate();
+	sRecalcFreight();
   }
 }
 
@@ -936,6 +940,7 @@ void returnAuthorization::sEdit()
     }
     if (fill)
       populate();
+	sRecalcFreight();
   }
 }
 
@@ -979,6 +984,7 @@ void returnAuthorization::sDelete()
       }
     }
     populate();
+	sRecalcFreight();
   }
 }
 
@@ -1439,6 +1445,7 @@ void returnAuthorization::sDispositionChanged()
 // Save the change so that disposition of raitems is changed
     sSave(true);
     sFillList();
+	sRecalcFreight();
   }
 }
 
@@ -1487,6 +1494,7 @@ void returnAuthorization::sAuthorizeLine()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+	sRecalcFreight();
   }
 
   if (_newso->isValid())
@@ -1494,6 +1502,7 @@ void returnAuthorization::sAuthorizeLine()
     
   populate();
 }
+
 void returnAuthorization::sClearAuthorization()
 {
   QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
@@ -1517,6 +1526,7 @@ void returnAuthorization::sClearAuthorization()
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
   populate();
+  sRecalcFreight();
 }
 
 void returnAuthorization::sAuthorizeAll()
@@ -1541,6 +1551,7 @@ void returnAuthorization::sAuthorizeAll()
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
   populate();
+  sRecalcFreight();
 }
 
 void returnAuthorization::sEnterReceipt()
@@ -1664,6 +1675,7 @@ void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 {
   if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
     sFillList();
+	sRecalcFreight();
 }
 
 void returnAuthorization::sRefund()
@@ -1931,6 +1943,29 @@ void returnAuthorization::sCheckNumber()
   }
 }
 
+void returnAuthorization::sRecalcFreight()
+{
+    q.prepare("SELECT SUM(freightdata_total) AS freight "
+              "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
+    q.bindValue(":head_id", _raheadid);
+    q.bindValue(":cust_id", _cust->id());
+    q.bindValue(":shipto_id", _shiptoid);
+    q.bindValue(":orderdate", _authDate->date());
+    q.bindValue(":shipvia", "");
+    q.bindValue(":curr_id", _currency->id());
+    q.exec();
+    if (q.first())
+    {
+      _freight->setLocalValue(q.value("freight").toDouble());
+	  _freight->setEnabled(FALSE);
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+}
+
 void returnAuthorization::sFreightChanged()
 {
   if (_freight->localValue() != _freightCache)
@@ -1941,3 +1976,23 @@ void returnAuthorization::sFreightChanged()
   }
 }
 
+void returnAuthorization::sFreightDetail()
+{
+  ParameterList params;
+  params.append("calcfreight", true);
+  params.append("order_type", "RA");
+  params.append("order_id", _raheadid);
+  params.append("document_number", _authNumber->text());
+  params.append("cust_id", _cust->id());
+  params.append("shipto_id", _shiptoid);
+  params.append("orderdate", _authDate->date());
+  params.append("shipvia", "");
+  params.append("curr_id", _currency->id());
+
+  // mode => view since there are no fields to hold modified freight data
+  params.append("mode", "view");
+
+  freightBreakdown newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
