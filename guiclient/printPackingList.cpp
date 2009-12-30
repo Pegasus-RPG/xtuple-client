@@ -44,6 +44,7 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
 
     omfgThis->inputManager()->notify(cBCSalesOrder, this, _order, SLOT(setId(int)));
     _order->setFocus();
+    adjustSize();
 }
 
 printPackingList::~printPackingList()
@@ -166,7 +167,10 @@ void printPackingList::sPrint()
     q.bindValue(":head_id", _order->id());
   }
 
-  q.bindValue(":form", (_printPack->isChecked()) ? "P" : "L");
+  if (_auto->isChecked())
+     q.bindValue(":form", (_shipment->id() > 0) ? "P" : "L");
+  else
+    q.bindValue(":form", (_printPack->isChecked()) ? "P" : "L");
 
   q.exec();
   if (q.first())
