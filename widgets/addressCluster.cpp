@@ -389,10 +389,12 @@ void AddressCluster::clear()
   c_country    = "";
   c_notes      = "";
 
+  _number->clear();
   _addr1->clear();
   _addr2->clear();
   _addr3->clear();
   _city->clear();
+  _state->clear();
   _postalcode->clear();
   _active->setChecked(c_active);
   _selected = false;
@@ -424,6 +426,7 @@ void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
  */
 int AddressCluster::save(enum SaveFlags flag)
 {
+
   if (_number->text() == "" &&
       _addr1->text() == "" && _addr2->text() == "" &&
       _addr3->text() == "" && _city->text() == "" &&
