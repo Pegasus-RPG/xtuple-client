@@ -109,8 +109,13 @@ void printPackingListBatchByShipvia::sPrint()
 
     if (packq.value("orderhead_status").toString() != "C")
     {
-      orReport report(packq.value( (_pick->isChecked()) ?
-                                   "pickform" : "packform").toString(), params);
+      bool usePickForm;
+      if (_auto->isChecked())
+        usePickForm = packq.value("pack_shiphead_id").isNull();
+      else
+        usePickForm = _pick->isChecked();
+        
+      orReport report(packq.value( usePickForm ? "pickform" : "packform").toString(), params);
 
       if (report.isValid())
       {
