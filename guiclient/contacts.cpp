@@ -58,7 +58,7 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     {
       _attach->setEnabled(true);
       connect(_contacts, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_contacts, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+      connect(_contacts, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
       connect(_contacts, SIGNAL(valid(bool)), _detach, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     }
@@ -102,9 +102,19 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainContacts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  XSqlQuery chk;
+  chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
+  chk.bindValue(":cntct_id", _contacts->id());
+  chk.exec();
+  if (chk.lastError().type() != QSqlError::NoError) {
+    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (chk.first() && !chk.value("inUse").toBool()) {
+    menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+    if (!_privileges->check("MaintainContacts"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void contacts::sNew()
@@ -147,24 +157,31 @@ void contacts::sView()
 
 void contacts::sDelete()
 {
-  q.prepare("SELECT deleteContact(:cntct_id) AS result;");
-  q.bindValue(":cntct_id", _contacts->id());
-  q.exec();
-  if (q.first())
+  if ( QMessageBox::warning(this, tr("Delete Contact?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected contact?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    q.prepare("SELECT deleteContact(:cntct_id) AS result;");
+    q.bindValue(":cntct_id", _contacts->id());
+    q.exec();
+    if (q.first())
     {
-      systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
+        return;
+      }
+
+      sFillList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-
-    sFillList();
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 }
 
@@ -275,3 +292,23 @@ void contacts::sDetach()
     sFillList();
   }
 }
+
+void contacts::sHandleButtons()
+{
+  if (_contacts->id() == -1) {
+    _delete->setEnabled(false);
+    return;
+  }
+  
+  XSqlQuery chk;
+  chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
+  chk.bindValue(":cntct_id", _contacts->id());
+  chk.exec();
+  chk.first();
+  if (chk.lastError().type() != QSqlError::NoError) {
+    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  _delete->setEnabled(!chk.value("inUse").toBool());
+}
+

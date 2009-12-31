@@ -38,6 +38,7 @@ public slots:
     virtual void sFillList();
     virtual void sAttach();
     virtual void sDetach();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
