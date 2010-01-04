@@ -281,7 +281,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                registration.ui                                                                        \
                releasePlannedOrdersByPlannerCode.ui releaseWorkOrdersByPlannerCode.ui                 \
                relativeCalendarItem.ui relocateInventory.ui editOwners.ui                             \
-               releaseTransferOrdersByAgent.ui reports.ui reprioritizeWo.ui                           \
+               releaseTransferOrdersByAgent.ui replacePrices.ui reports.ui reprioritizeWo.ui          \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                reserveSalesOrderItem.ui                                                               \
                resetQOHBalances.ui returnAuthCheck.ui returnAuthorization.ui                          \
@@ -332,7 +332,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateLateCustCreditStatus.ui                                                          \
                updateOUTLevelByItem.ui updateOUTLevels.ui updateOUTLevelsByClassCode.ui               \
                updatePricesByProductCategory.ui  updatePricesByPricingSchedule.ui                     \
-               updateReorderLevels.ui   							      \
+               updatePrices.ui updateReorderLevels.ui 						      \
                users.ui user.ui userList.ui userPreferences.ui                                        \
                userCostingElement.ui costingElements.ui                                               \
                vendor.ui vendors.ui vendorWorkBench.ui vendorPriceList.ui                             \
@@ -586,7 +586,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                registration.h                                                                         \
                releasePlannedOrdersByPlannerCode.h releaseWorkOrdersByPlannerCode.h                   \
                relativeCalendarItem.h relocateInventory.h editOwners.h                                \
-               releaseTransferOrdersByAgent.h reports.h reprioritizeWo.h                              \
+               releaseTransferOrdersByAgent.h replacePrices.h reports.h reprioritizeWo.h              \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                reserveSalesOrderItem.h                                                                \
                resetQOHBalances.h returnAuthCheck.h returnAuthorization.h returnAuthorizationItem.h   \
@@ -640,7 +640,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                updateLateCustCreditStatus.h                                                           \
                updateOUTLevelByItem.h updateOUTLevels.h updateOUTLevelsByClassCode.h                  \
                updatePricesByProductCategory.h  updatePricesByPricingSchedule.h                       \
-               updateReorderLevels.h								      \
+               updatePrices.h updateReorderLevels.h						      \
                users.h user.h userList.h userPreferences.h                                            \
                userCostingElement.h costingElements.h                                                 \
                vendor.h vendors.h vendorWorkBench.h vendorPriceList.h                                 \
@@ -900,7 +900,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                registration.cpp                                                                       \
                releasePlannedOrdersByPlannerCode.cpp releaseWorkOrdersByPlannerCode.cpp               \
                relativeCalendarItem.cpp relocateInventory.cpp editOwners.cpp                          \
-               releaseTransferOrdersByAgent.cpp reports.cpp reprioritizeWo.cpp                        \
+               releaseTransferOrdersByAgent.cpp replacePrices.cpp reports.cpp reprioritizeWo.cpp      \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                reserveSalesOrderItem.cpp                                                              \
                resetQOHBalances.cpp returnAuthCheck.cpp returnAuthorization.cpp                       \
@@ -954,7 +954,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                updateLateCustCreditStatus.cpp                                                         \
                updateOUTLevelByItem.cpp updateOUTLevels.cpp updateOUTLevelsByClassCode.cpp            \
                updatePricesByProductCategory.cpp  updatePricesByPricingSchedule.cpp                   \
-               updateReorderLevels.cpp								      \
+               updatePrices.cpp updateReorderLevels.cpp						      \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
                userCostingElement.cpp costingElements.cpp                                             \
                version.cpp vendor.cpp vendors.cpp vendorWorkBench.cpp vendorPriceList.cpp             \

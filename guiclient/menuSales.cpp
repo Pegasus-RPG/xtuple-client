@@ -58,6 +58,8 @@
 #include "itemPricingSchedules.h"
 #include "pricingScheduleAssignments.h"
 #include "sales.h"
+#include "replacePrices.h"
+#include "updatePrices.h"
 #include "updatePricesByProductCategory.h"
 #include "updatePricesByPricingSchedule.h"
 
@@ -443,15 +445,17 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.updateListPricesByProductCategory", tr("&Update List Prices..."),	SLOT(sUpdateListPricesByProductCategory()), pricingMenu, "MaintainListPrices",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
     { "so.pricingSchedules", tr("Pricing &Schedules..."),	SLOT(sPricingSchedules()), pricingMenu, "MaintainListPrices ViewListPrices",	NULL, NULL, true, NULL },
+    { "so.updatePrices", tr("Update Prices..."),	SLOT(sUpdatePrices()), pricingMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
+    { "so.replacePrices", tr("Replace Pricing Schedules..."),	SLOT(sReplacePrices()), pricingMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
     { "so.pricingScheduleAssignments", tr("Pricing Schedule Assi&gnments..."),	SLOT(sPricingScheduleAssignments()), pricingMenu, "AssignPricingSchedules",	NULL, NULL, true, NULL },
     { "so.sales", tr("S&ales..."),	SLOT(sSales()), pricingMenu, "CreateSales",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
 
     // Sales | Pricing | Update Prices
-    { "menu",	tr("Update &Prices"),       (char*)pricingUpdateMenu,	pricingMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.updatePricesByProductCategory", tr("by Product &Category..."),	SLOT(sUpdatePricesByProductCategory()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
-    { "so.updatePricesByPricingSchedule", tr("by Pricing &Schedule..."),	SLOT(sUpdatePricesByPricingSchedule()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
-    { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
+    //{ "menu",	tr("Update &Prices"),       (char*)pricingUpdateMenu,	pricingMenu,	"true",	NULL, NULL, true, NULL },
+    //{ "so.updatePricesByProductCategory", tr("by Product &Category..."),	SLOT(sUpdatePricesByProductCategory()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
+    //{ "so.updatePricesByPricingSchedule", tr("by Pricing &Schedule..."),	SLOT(sUpdatePricesByPricingSchedule()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
+    //{ "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
 
     // Sales | Pricing | Reports
     { "menu",	tr("&Reports"),	(char*)pricingReportsMenu,	pricingMenu,	"true",	NULL, NULL, true, NULL },
@@ -765,6 +769,16 @@ void menuSales::sPricingScheduleAssignments()
 void menuSales::sSales()
 {
   omfgThis->handleNewWindow(new sales());
+}
+
+void menuSales::sReplacePrices()
+{
+  replacePrices(parent, "", TRUE).exec();
+}
+
+void menuSales::sUpdatePrices()
+{
+  updatePrices(parent, "", TRUE).exec();
 }
 
 void menuSales::sUpdatePricesByProductCategory()

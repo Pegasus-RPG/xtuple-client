@@ -12,8 +12,12 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QValidator>
 #include "xdoublevalidator.h"
+#include <metasql.h>
+#include <parameter.h>
+#include "mqlutil.h"
 
 updateListPricesByProductCategory::updateListPricesByProductCategory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -50,20 +54,18 @@ void updateListPricesByProductCategory::sUpdate()
     return;
   }
 
-  QString sql( "SELECT updateListPrice(item_id, :updatePercent) "
-               "FROM item" );
-
-  if (_productCategory->isSelected())
-    sql += " WHERE (item_prodcat_id=:prodcat_id);";
-  else if (_productCategory->isPattern())
-    sql += " WHERE (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)));";
-  else
-    sql += ";";
-
-  q.prepare(sql);
-  q.bindValue(":updatePercent", (1.0 + (_updateBy->toDouble() / 100.0)));
-  _productCategory->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("updateListPrices", "update");
+  ParameterList params;
+  if (_value->isChecked())
+    params.append("byValue", true);
+  params.append("updateBy", _updateBy->toDouble());
+  _productCategory->appendValue(params);
+  q = mql.toQuery(params);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }

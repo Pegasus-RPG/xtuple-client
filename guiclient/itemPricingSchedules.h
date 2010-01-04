@@ -28,6 +28,7 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
+    virtual void sDeleteExpired();
     virtual void sFillList();
     virtual void sFillList( int pIpsheadid );
     virtual void sSearch( const QString & );

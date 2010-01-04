@@ -33,6 +33,7 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_deleteExpired, SIGNAL(clicked()), this, SLOT(sDeleteExpired()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -186,6 +187,26 @@ void itemPricingSchedules::sDelete()
 
   sFillList();
 }
+
+void itemPricingSchedules::sDeleteExpired()
+{
+  int answer = QMessageBox::question(this, tr("Delete Expired?"),
+                          tr("<p>This will permanently delete all "
+						     "expired Pricing Schedules. <p> "
+                             "OK to continue? "),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No);
+  if (answer == QMessageBox::No)
+    return;
+
+  q.prepare("SELECT deleteexpiredips() AS result;");
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+	systemError(this,q.lastError().databaseText(), __FILE__, __LINE__);
+	
+  sFillList();
+}
+
 void itemPricingSchedules::sFillList()
 {
   sFillList(-1);
