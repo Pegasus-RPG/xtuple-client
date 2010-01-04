@@ -1479,6 +1479,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   pemfile = _metrics->value("CCYPLinPathPEM");
 #endif
 
+#ifndef QT_NO_OPENSSL
   if(!_metrics->boolean("CCUseCurl"))
   {
     // TODO: The specific reference to YourPay should go away, especially when something other than YourPay starts to use this
@@ -1529,6 +1530,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     presponse = _http->readAll();
   }
   else
+#endif // QT_NO_OPENSSL
   {
     // TODO: why have a hard-coded path to curl?
     QProcess proc(this);
