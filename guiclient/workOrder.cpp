@@ -677,7 +677,7 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
   _lastItemid = _item->id();
   _lastWarehousid = pWarehousid;
 
-  q.prepare( "SELECT itemsite_leadtime "
+  q.prepare( "SELECT itemsite_leadtime, itemsite_cosdefault "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -686,7 +686,13 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
   q.exec();
 
   if (q.first())
+  {
     _leadTime->setValue(q.value("itemsite_leadtime").toInt());
+    if (q.value("itemsite_cosdefault").toString() == "D")
+	  _todate->setChecked(TRUE);
+    if (q.value("itemsite_cosdefault").toString() == "P")
+	  _proportional->setChecked(TRUE);
+  }
   else
   {
     QMessageBox::warning(this, tr("Invalid Site"),

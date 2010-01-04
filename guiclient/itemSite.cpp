@@ -274,6 +274,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_mpsTimeFence->setEnabled(FALSE);
   _planningType->setEnabled(false);
   _createPlannedTransfers->setEnabled(false);
+    _woCostGroup->setEnabled(false);
 	_close->setText(tr("&Close"));
 	_save->hide();
 	_comments->setReadOnly(TRUE);
@@ -552,7 +553,7 @@ void itemSite::sSave()
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup, itemsite_ordergroup_first,"
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
-                         "  itemsite_costmethod, itemsite_value,"
+                         "  itemsite_costmethod, itemsite_value, itemsite_cosdefault, "
                          "  itemsite_warrpurc, itemsite_autoreg) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
@@ -570,7 +571,7 @@ void itemSite::sSave()
                          "  FALSE, startOfTime(), :itemsite_ordergroup, :itemsite_ordergroup_first,"
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
-                         "  :itemsite_costmethod, 0,"
+                         "  :itemsite_costmethod, 0, :itemsite_cosdefault, "
                          "  :itemsite_warrpurc, :itemsite_autoreg  );" );
   }
   else if (_mode == cEdit)
@@ -650,7 +651,7 @@ void itemSite::sSave()
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
-                         "    itemsite_costmethod=:itemsite_costmethod,"
+                         "    itemsite_costmethod=:itemsite_costmethod, itemsite_cosdefault=:itemsite_cosdefault, "
                          "    itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
@@ -738,7 +739,15 @@ void itemSite::sSave()
 
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked()));
   newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked()));
-    
+
+  if (_woCostGroup->isChecked())
+  {    
+    if (_todate->isChecked())
+      newItemSite.bindValue(":itemsite_cosdefault", QString("D"));
+    else 
+      newItemSite.bindValue(":itemsite_cosdefault", QString("P"));
+  }
+  
   newItemSite.exec();
   if (newItemSite.lastError().type() != QSqlError::NoError)
   {
@@ -1234,6 +1243,19 @@ void itemSite::populate()
     _purchWarranty->setChecked(itemsite.value("itemsite_warrpurc").toBool());
     _autoRegister->setChecked(itemsite.value("itemsite_autoreg").toBool());
 
+    if (itemsite.value("itemsite_cosdefault").toString() == "D")
+    {
+	  _woCostGroup->setChecked(TRUE);
+	  _todate->setChecked(TRUE);
+	  _proportional->setChecked(FALSE);
+	}
+    else if (itemsite.value("itemsite_cosdefault").toString() == "P")
+    {
+	  _woCostGroup->setChecked(TRUE);
+	  _todate->setChecked(FALSE);
+	  _proportional->setChecked(TRUE);
+	}
+  
     _updates = TRUE;
   }
   else if (itemsite.lastError().type() != QSqlError::NoError)

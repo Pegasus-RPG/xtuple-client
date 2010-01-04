@@ -214,7 +214,7 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_location_comments, itemsite_notes,"
                "  itemsite_abcclass, itemsite_freeze, itemsite_datelastused,"
                "  itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence, "
-               "  itemsite_autoabcclass, itemsite_planning_type, itemsite_costmethod ) "
+               "  itemsite_autoabcclass, itemsite_planning_type, itemsite_costmethod, itemsite_cosdefault ) "
                "SELECT item_id,"
                "       :warehous_id, 0.0, 0.0,"
                "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'K') THEN FALSE "
@@ -259,7 +259,8 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_ordergroup, :itemsite_ordergroup_first, :itemsite_mps_timefence, "
                "       FALSE, "
 			   "       CASE WHEN(item_type='L') THEN 'M' ELSE :itemsite_planning_type END, "
-			   "       CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END "
+			   "       CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END, "
+			   "       :itemsite_cosdefault "
                "FROM item "
                "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
                "                          FROM itemsite"
@@ -342,6 +343,14 @@ void createItemSitesByClassCode::sSave()
   else if(_costStd->isChecked())
     q.bindValue(":itemsite_costmethod", "S");
 
+  if (_woCostGroup->isChecked())
+  {    
+    if (_todate->isChecked())
+	  q.bindValue(":itemsite_cosdefault", QString("D"));
+    else 
+      q.bindValue(":itemsite_cosdefault", QString("P"));
+  }
+  
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
   q.exec();
@@ -483,6 +492,8 @@ void createItemSitesByClassCode::clear()
   _locationComments->clear();
 
   _costcat->setId(-1);
+  
+  _woCostGroup->setChecked(FALSE);
 
   populateLocations();
 }
