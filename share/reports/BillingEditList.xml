@@ -108,26 +108,22 @@ SELECT  cohead_id 								AS orderid,
 	-1 									AS itemid,
         '' 									AS documentnumber, 
         'Sales Tax'								AS name,
-	tax_descrip	 							AS descrip,
+	''		 							AS descrip,
         ''		 							AS f_ordernumber, 
 	cohead_number								as ordernumber,
 	-1				 					AS linenumber,
 	''						 			AS iteminvuom,
         '' 									AS qtytobill,
-        formatExtPrice(cobmisc_tax) 						AS price,
-        formatExtPrice(cobmisc_tax) 						AS extprice,
-	cobmisc_tax								AS subextprice,
-	currtobase(cobmisc_tax_curr_id, cobmisc_tax, cobmisc_invcdate)				AS runningextprice,
+        formatExtPrice(calcCobmiscTax(cobmisc_id))				AS price,
+        formatExtPrice(calcCobmiscTax(cobmisc_id))				AS extprice,
+	calcCobmiscTax(cobmisc_id)						AS subextprice,
+	currtobase(cobmisc_tax_curr_id, calcCobmiscTax(cobmisc_id), cobmisc_invcdate) AS runningextprice,
        '' AS debit,
-        (formatGLAccount(taxaccnt.accnt_id) || ' - ' || taxaccnt.accnt_descrip) AS credit,
+       '' AS credit,
         currConcat(cobmisc_tax_curr_id)     AS currabbr
-FROM cobmisc, cohead, coitem, tax, accnt AS taxaccnt 
+FROM cobmisc, cohead
 WHERE ( (cobmisc_cohead_id=cohead_id)
- AND (coitem_cohead_id=cohead_id)
- AND (tax_id=coitem_tax_id)
- AND (tax_sales_accnt_id=taxaccnt.accnt_id)
  AND (NOT cobmisc_posted)
- AND (cobmisc_tax &lt;> 0)
 &lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
 &lt;? elseif exists("showUnprinted") ?>
@@ -672,7 +668,8 @@ ORDER BY ordernumber, linenumber;
       <query>detail</query>
       <column>subextprice</column>
      </data>
-     <tracktotal subtotal="true" builtin="true" >extprice</tracktotal>
+     <format builtin="true" >extprice</format>
+     <tracktotal subtotal="true" />
     </field>
     <line>
      <xstart>5</xstart>
@@ -1011,7 +1008,8 @@ ORDER BY ordernumber, linenumber;
     <query>detail</query>
     <column>runningextprice</column>
    </data>
-   <tracktotal builtin="true" >extprice</tracktotal>
+   <format builtin="true" >extprice</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>
