@@ -24,8 +24,15 @@ win32-msvc {
 
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
                -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lMetaSQL \
-               -lQtDesignerComponents
+               -lxtuplescriptapi -lMetaSQL
+
+#not the best way to handle this, but it should do
+mac:!static:contains(QT_CONFIG, qt_framework) {
+  LIBS += -framework QtDesignerComponents
+} else {
+  LIBS += -lQtDesignerComponents
+}
+
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
 win32 {
