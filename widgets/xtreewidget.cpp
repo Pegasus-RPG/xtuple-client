@@ -88,8 +88,8 @@ static double cint(double x){
     return x<0?ceil(x):floor(x);
 }
 
-static double round(double r,unsigned places){
-  double off=pow(10,places);
+static double round(double r, int places){
+  double off=pow(10.0,places);
   return cint(r*off)/off;
 }
 
@@ -102,7 +102,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _settingsLoaded = false;
   _menu = new QMenu(this);
   _menu->setObjectName("_menu");
-  _savedId = -1;
+  _savedId = false; // was -1;
   _scol = -1;
   _sord = Qt::AscendingOrder;
 
@@ -221,8 +221,12 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
 
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
-        int colIdx[_roles.size()];
-        int colRole[fieldCount][COLROLE_COUNT];
+        QVector<int> colIdx(_roles.size());
+        // TODO: rewrite code to use a qmap or some other structure that doesn't
+        //       require the initializing a Vector or new'd array values.
+        QVector<int*> colRole(fieldCount, 0);
+        for(int ref = 0; ref < fieldCount; ++ref)
+          colRole[ref] = new int[COLROLE_COUNT];
         int rowRole[ROWROLE_COUNT];
 
         QSqlRecord currRecord = pQuery.record();
@@ -560,6 +564,14 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
         populateCalculatedColumns();
         if (sortColumn() >= 0 && header()->isSortIndicatorShown())
           sortItems(sortColumn(), header()->sortIndicatorOrder());
+
+        // TODO: get rid of this when the code is rewritten
+        //       as per above's todo about the QVector<int*>
+        for(int ref = 0; ref < fieldCount; ++ref)
+        {
+          delete [] colRole[ref];
+          colRole[ref] = 0;
+        }
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
       {
@@ -1137,7 +1149,7 @@ void XTreeWidget::clear()
   if (DEBUG)
     qDebug("%s::clear()", qPrintable(objectName()));
   emit valid(FALSE);
-  _savedId = -1;
+  _savedId = false; // was -1;
 
   QTreeWidget::clear();
 }

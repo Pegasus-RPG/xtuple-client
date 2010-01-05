@@ -12,10 +12,10 @@ DEPENDPATH  += ../scriptapi \
                ../common \
                ../widgets ../widgets/tmp/lib
 
-win32-msvc {
-#PRE_TARGETDEPS += ../lib/xtuplecommon.obj    \
-#                    ../lib/xtuplescriptapi.obj \
-#                    ../lib/xtuplewidgets.obj
+win32-msvc* {
+  PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \
+                    ../lib/xtuplescriptapi.lib \
+                    ../lib/xtuplewidgets.lib
 } else {
   PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
                     ../lib/libxtuplescriptapi.a \
@@ -33,10 +33,8 @@ mac:!static:contains(QT_CONFIG, qt_framework) {
   LIBS += -lQtDesignerComponents
 }
 
-#LIBS        += -L../../payflowpro/win32/lib -lpfpro
-
 win32 {
-  #LIBS += -lshell32
+  win32-msvc*:LIBS += -lshell32
   RC_FILE = rcguiclient.rc
   OBJECTS_DIR = win_obj
 }
@@ -81,7 +79,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
                characteristicPrice.ui check.ui checkFormat.ui checkFormats.ui                         \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
-               commentType.ui commentTypes.ui company.ui companies.ui				      \
+               commentType.ui commentTypes.ui company.ui companies.ui                                 \
                configureCC.ui configureSO.ui configureIM.ui                                           \
                configureGL.ui configureMS.ui configurePD.ui configurePO.ui                            \
                configureWO.ui configureCRM.ui                                                         \
@@ -108,7 +106,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                customers.ui customerTypes.ui customerType.ui customerTypeList.ui                      \
                databaseInformation.ui deletePlannedOrder.ui deletePlannedOrdersByPlannerCode.ui       \
                department.ui departments.ui                                                           \
-               distributeInventory.ui          \
+               distributeInventory.ui                                                                 \
                distributeToLocation.ui                                                                \
                dspAllocations.ui dspAPApplications.ui                                                 \
                dspAPOpenItemsByVendor.ui                                                              \
@@ -151,7 +149,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspMaterialUsageVarianceByBOMItem.ui dspMaterialUsageVarianceByItem.ui                 \
                dspMaterialUsageVarianceByComponentItem.ui                                             \
                dspMaterialUsageVarianceByWorkOrder.ui dspMaterialUsageVarianceByWarehouse.ui          \
-                               dspMRPDetail.ui openReturnAuthorizations.ui                            \
+               dspMRPDetail.ui openReturnAuthorizations.ui                                            \
                openSalesOrders.ui openVouchers.ui dspOrders.ui dspPendingAvailability.ui              \
                dspPendingBOMChanges.ui dspPlannedOrdersByItem.ui dspPlannedOrdersByPlannerCode.ui     \
                dspPoHistory.ui                                                                        \
@@ -175,7 +173,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSalesHistoryBySalesrep.ui dspSalesHistoryByShipTo.ui                                \
                dspSalesOrderStatus.ui dspSalesOrdersByItem.ui dspSalesOrdersByCustomer.ui             \
                dspSalesOrdersByCustomerPO.ui dspSalesOrdersByParameterList.ui                         \
-                                  dspSingleLevelBOM.ui dspSingleLevelWhereUsed.ui                     \
+               dspSingleLevelBOM.ui dspSingleLevelWhereUsed.ui                                        \
                dspShipmentsByDate.ui dspShipmentsBySalesOrder.ui dspShipmentsByShipment.ui            \
                dspSlowMovingInventoryByClassCode.ui                                                   \
                dspStandardJournalHistory.ui maintainShipping.ui                                       \
@@ -201,7 +199,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspUsageStatisticsByItemGroup.ui dspUsageStatisticsByWarehouse.ui                      \
                dspUndefinedManufacturedItems.ui                                                       \
                dspUninvoicedReceivings.ui uninvoicedShipments.ui unpostedPurchaseOrders.ui            \
-               dspUnusedPurchasedItems.ui  dspVendorAPHistory.ui dspValidLocationsByItem.ui           \
+               dspUnusedPurchasedItems.ui dspVendorAPHistory.ui dspValidLocationsByItem.ui            \
                dspVoucherRegister.ui                                                                  \
                dspWoHistoryByClassCode.ui dspWoHistoryByItem.ui dspWoHistoryByNumber.ui               \
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
@@ -215,9 +213,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                errorLog.ui eventManager.ui                                                            \
                expenseCategories.ui expenseCategory.ui expenseTrans.ui                                \
                explodeWo.ui                                                                           \
-	       externalShipping.ui externalShippingList.ui failedPostList.ui                          \
+               externalShipping.ui externalShippingList.ui failedPostList.ui                          \
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
-               financialLayoutSpecial.ui                          financialLayoutColumns.ui           \
+               financialLayoutSpecial.ui financialLayoutColumns.ui                                    \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixACL.ui fixSerial.ui           \
                freightBreakdown.ui freightClass.ui freightClasses.ui getGLDistDate.ui                 \
                getLotInfo.ui glSeries.ui glSeriesItem.ui glTransaction.ui glTransactionDetail.ui      \
@@ -260,7 +258,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                postStandardJournal.ui postStandardJournalGroup.ui                                     \
                postVouchers.ui prepareCheckRun.ui priceList.ui                                        \
                pricingScheduleAssignment.ui pricingScheduleAssignments.ui                             \
-                                                  printArOpenItem.ui                                  \
+               printArOpenItem.ui                                                                     \
                printCheck.ui printChecks.ui printChecksReview.ui                                      \
                printCreditMemo.ui printCreditMemos.ui reprintCreditMemos.ui                           \
                printInvoice.ui printInvoices.ui printInvoicesByShipvia.ui reprintInvoices.ui          \
@@ -289,7 +287,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                releasePlannedOrdersByPlannerCode.ui releaseWorkOrdersByPlannerCode.ui                 \
                relativeCalendarItem.ui relocateInventory.ui editOwners.ui                             \
                releaseTransferOrdersByAgent.ui reports.ui reprioritizeWo.ui                           \
-               reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
+               reschedulePoitem.ui rescheduleSoLineItems.ui rescheduleWo.ui                           \
                reserveSalesOrderItem.ui                                                               \
                resetQOHBalances.ui returnAuthCheck.ui returnAuthorization.ui                          \
                returnAuthorizationItem.ui returnAuthItemLotSerial.ui                                  \
@@ -338,8 +336,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateItemSiteLeadTimes.ui updateListPricesByProductCategory.ui                        \
                updateLateCustCreditStatus.ui                                                          \
                updateOUTLevelByItem.ui updateOUTLevels.ui updateOUTLevelsByClassCode.ui               \
-               updatePricesByProductCategory.ui  updatePricesByPricingSchedule.ui                     \
-               updatePrices.ui updateReorderLevels.ui 						      \
+               updatePricesByProductCategory.ui updatePricesByPricingSchedule.ui                      \
+               updatePrices.ui updateReorderLevels.ui                                                 \
                users.ui user.ui userList.ui userPreferences.ui                                        \
                userCostingElement.ui costingElements.ui                                               \
                vendor.ui vendors.ui vendorWorkBench.ui vendorPriceList.ui                             \
@@ -404,12 +402,12 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                currencies.h currency.h currencyConversion.h currencyConversions.h                     \
                currencySelect.h                                                                       \
                customCommands.h customCommand.h customCommandArgument.h                               \
-               customer.h custCharacteristicDelegate.h  customerGroups.h customerGroup.h creditCard.h \
+               customer.h custCharacteristicDelegate.h customerGroups.h customerGroup.h creditCard.h  \
                customerFormAssignment.h customerFormAssignments.h                                     \
                customers.h customerTypes.h customerType.h customerTypeList.h                          \
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
                department.h departments.h                                                             \
-               distributeInventory.h             \
+               distributeInventory.h                                                                  \
                distributeToLocation.h                                                                 \
                dspAllocations.h dspAPApplications.h                                                   \
                dspAPOpenItemsByVendor.h                                                               \
@@ -453,7 +451,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspMaterialUsageVarianceByBOMItem.h dspMaterialUsageVarianceByItem.h                   \
                dspMaterialUsageVarianceByComponentItem.h                                              \
                dspMaterialUsageVarianceByWorkOrder.h dspMaterialUsageVarianceByWarehouse.h            \
-                              dspMRPDetail.h openReturnAuthorizations.h                               \
+               dspMRPDetail.h openReturnAuthorizations.h                                              \
                openSalesOrders.h openVouchers.h dspOrders.h dspPendingAvailability.h                  \
                dspPendingBOMChanges.h dspPlannedOrdersByItem.h dspPlannedOrdersByPlannerCode.h        \
                dspPoHistory.h                                                                         \
@@ -477,7 +475,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspSalesHistoryBySalesrep.h dspSalesHistoryByShipTo.h                                  \
                dspSalesOrderStatus.h dspSalesOrdersByItem.h dspSalesOrdersByCustomer.h                \
                dspSalesOrdersByCustomerPO.h dspSalesOrdersByParameterList.h                           \
-                                 dspSingleLevelBOM.h dspSingleLevelWhereUsed.h                        \
+               dspSingleLevelBOM.h dspSingleLevelWhereUsed.h                                          \
                dspShipmentsByDate.h dspShipmentsBySalesOrder.h dspShipmentsByShipment.h               \
                dspSlowMovingInventoryByClassCode.h                                                    \
                dspStandardJournalHistory.h maintainShipping.h                                         \
@@ -503,7 +501,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspUsageStatisticsByItemGroup.h dspUsageStatisticsByWarehouse.h                        \
                dspUndefinedManufacturedItems.h                                                        \
                dspUninvoicedReceivings.h uninvoicedShipments.h unpostedPurchaseOrders.h               \
-               dspUnusedPurchasedItems.h  dspVendorAPHistory.h dspValidLocationsByItem.h              \
+               dspUnusedPurchasedItems.h dspVendorAPHistory.h dspValidLocationsByItem.h               \
                dspVoucherRegister.h                                                                   \
                dspWoHistoryByClassCode.h dspWoHistoryByItem.h dspWoHistoryByNumber.h                  \
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
@@ -511,15 +509,15 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
                editICMWatermark.h countSlip.h countTag.h                                              \
-               employee.h employees.h empGroup.h  empGroups.h                                         \
+               employee.h employees.h empGroup.h empGroups.h                                          \
                enterMiscCount.h                                                                       \
                enterPoitemReceipt.h enterPoReceipt.h enterPoitemReturn.h enterPoReturn.h              \
                errorLog.h eventManager.h                                                              \
                expenseCategories.h expenseCategory.h expenseTrans.h                                   \
                explodeWo.h                                                                            \
-	       externalShipping.h externalShippingList.h failedPostList.h                             \
+               externalShipping.h externalShippingList.h failedPostList.h                             \
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
-               financialLayoutSpecial.h                         financialLayoutColumns.h              \
+               financialLayoutSpecial.h financialLayoutColumns.h                                      \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixACL.h fixSerial.h               \
                freightBreakdown.h freightClass.h freightClasses.h getGLDistDate.h                     \
                getLotInfo.h glSeries.h glSeriesItem.h glTransaction.h glTransactionDetail.h           \
@@ -565,7 +563,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                postStandardJournal.h postStandardJournalGroup.h                                       \
                postVouchers.h prepareCheckRun.h priceList.h                                           \
                pricingScheduleAssignment.h pricingScheduleAssignments.h                               \
-                                                 printArOpenItem.h                                    \
+               printArOpenItem.h                                                                      \
                printCheck.h printChecks.h printChecksReview.h                                         \
                printCreditMemo.h printCreditMemos.h reprintCreditMemos.h                              \
                printInvoice.h printInvoices.h printInvoicesByShipvia.h reprintInvoices.h              \
@@ -594,10 +592,10 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                releasePlannedOrdersByPlannerCode.h releaseWorkOrdersByPlannerCode.h                   \
                relativeCalendarItem.h relocateInventory.h editOwners.h                                \
                releaseTransferOrdersByAgent.h reports.h reprioritizeWo.h                              \
-               reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
+               reschedulePoitem.h rescheduleSoLineItems.h rescheduleWo.h                              \
                reserveSalesOrderItem.h                                                                \
                resetQOHBalances.h returnAuthCheck.h returnAuthorization.h returnAuthorizationItem.h   \
-	       returnAuthItemLotSerial.h                                                              \
+               returnAuthItemLotSerial.h                                                              \
                returnAuthorizationWorkbench.h returnWoMaterialBatch.h returnWoMaterialItem.h          \
                reverseGLSeries.h                                                                      \
                sales.h sale.h salesAccount.h salesAccounts.h salesCategories.h salesCategory.h        \
@@ -623,7 +621,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
                taxAdjustment.h taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxCodeRate.h     \
-               taxDetail.h    taxBreakdown.h                                                          \
+               taxDetail.h taxBreakdown.h                                                             \
                taxRegistration.h taxRegistrations.h                                                   \
                taxAssignment.h taxAssignments.h                                                       \
                taxType.h taxTypes.h taxZones.h taxZone.h taxClass.h taxClasses.h                      \
@@ -646,8 +644,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                updateItemSiteLeadTimes.h updateListPricesByProductCategory.h                          \
                updateLateCustCreditStatus.h                                                           \
                updateOUTLevelByItem.h updateOUTLevels.h updateOUTLevelsByClassCode.h                  \
-               updatePricesByProductCategory.h  updatePricesByPricingSchedule.h                       \
-               updatePrices.h updateReorderLevels.h						      \
+               updatePricesByProductCategory.h updatePricesByPricingSchedule.h                        \
+               updatePrices.h updateReorderLevels.h                                                   \
                users.h user.h userList.h userPreferences.h                                            \
                userCostingElement.h costingElements.h                                                 \
                vendor.h vendors.h vendorWorkBench.h vendorPriceList.h                                 \
@@ -658,8 +656,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                warehouses.h warehouse.h warehouseZone.h                                               \
                workOrder.h workOrderMaterials.h                                                       \
                zeroUncountedCountTagsByWarehouse.h                                                    \
-	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
-	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
+               creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
+               yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xerrormessage.h xsltMap.h                            \
@@ -689,7 +687,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                bom.cpp bomItem.cpp bomList.cpp                                                        \
                buyCard.cpp budgets.cpp                                                                \
                calendars.cpp calendar.cpp                                                             \
-               cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
+               cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp\
                changePoitemQty.cpp changeWoQty.cpp                                                    \
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \
                characteristicPrice.cpp check.cpp checkFormat.cpp checkFormats.cpp                     \
@@ -716,13 +714,13 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                currencies.cpp currency.cpp currencyConversion.cpp currencyConversions.cpp             \
                currencySelect.cpp                                                                     \
                customCommands.cpp customCommand.cpp customCommandArgument.cpp                         \
-               customer.cpp custCharacteristicDelegate.cpp  customerGroups.cpp customerGroup.cpp      \
+               customer.cpp custCharacteristicDelegate.cpp customerGroups.cpp customerGroup.cpp       \
                creditCard.cpp                                                                         \
                customerFormAssignment.cpp customerFormAssignments.cpp                                 \
                customers.cpp customerTypes.cpp customerType.cpp customerTypeList.cpp                  \
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
                department.cpp departments.cpp                                                         \
-               distributeInventory.cpp       \
+               distributeInventory.cpp                                                                \
                distributeToLocation.cpp                                                               \
                dspAllocations.cpp dspAPApplications.cpp                                               \
                dspAPOpenItemsByVendor.cpp                                                             \
@@ -766,7 +764,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspMaterialUsageVarianceByBOMItem.cpp dspMaterialUsageVarianceByItem.cpp               \
                dspMaterialUsageVarianceByComponentItem.cpp                                            \
                dspMaterialUsageVarianceByWorkOrder.cpp dspMaterialUsageVarianceByWarehouse.cpp        \
-                                dspMRPDetail.cpp openReturnAuthorizations.cpp                         \
+               dspMRPDetail.cpp openReturnAuthorizations.cpp                                          \
                openSalesOrders.cpp openVouchers.cpp dspOrders.cpp dspPendingAvailability.cpp          \
                dspPendingBOMChanges.cpp dspPlannedOrdersByItem.cpp dspPlannedOrdersByPlannerCode.cpp  \
                dspPoHistory.cpp                                                                       \
@@ -790,7 +788,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspSalesHistoryBySalesrep.cpp dspSalesHistoryByShipTo.cpp                              \
                dspSalesOrderStatus.cpp dspSalesOrdersByItem.cpp dspSalesOrdersByCustomer.cpp          \
                dspSalesOrdersByCustomerPO.cpp dspSalesOrdersByParameterList.cpp                       \
-                                   dspSingleLevelBOM.cpp dspSingleLevelWhereUsed.cpp                  \
+               dspSingleLevelBOM.cpp dspSingleLevelWhereUsed.cpp                                      \
                dspShipmentsByDate.cpp dspShipmentsBySalesOrder.cpp dspShipmentsByShipment.cpp         \
                dspSlowMovingInventoryByClassCode.cpp                                                  \
                dspStandardJournalHistory.cpp maintainShipping.cpp                                     \
@@ -816,7 +814,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                dspUsageStatisticsByItemGroup.cpp dspUsageStatisticsByWarehouse.cpp                    \
                dspUndefinedManufacturedItems.cpp                                                      \
                dspUninvoicedReceivings.cpp uninvoicedShipments.cpp unpostedPurchaseOrders.cpp         \
-               dspUnusedPurchasedItems.cpp  dspVendorAPHistory.cpp dspValidLocationsByItem.cpp        \
+               dspUnusedPurchasedItems.cpp dspVendorAPHistory.cpp dspValidLocationsByItem.cpp         \
                dspVoucherRegister.cpp                                                                 \
                dspWoHistoryByClassCode.cpp dspWoHistoryByItem.cpp dspWoHistoryByNumber.cpp            \
                dspWoMaterialsByItem.cpp dspWoMaterialsByWorkOrder.cpp                                 \
@@ -830,9 +828,9 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                errorLog.cpp eventManager.cpp                                                          \
                expenseCategories.cpp expenseCategory.cpp expenseTrans.cpp                             \
                explodeWo.cpp                                                                          \
-	       externalShipping.cpp externalShippingList.cpp failedPostList.cpp                       \
+               externalShipping.cpp externalShippingList.cpp failedPostList.cpp                       \
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
-               financialLayoutSpecial.cpp                           financialLayoutColumns.cpp        \
+               financialLayoutSpecial.cpp financialLayoutColumns.cpp                                  \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixACL.cpp fixSerial.cpp       \
                freightBreakdown.cpp freightClass.cpp freightClasses.cpp getGLDistDate.cpp             \
                getLotInfo.cpp glSeries.cpp glSeriesItem.cpp glTransaction.cpp glTransactionDetail.cpp \
@@ -842,7 +840,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                images.cpp invoiceList.cpp issueWoMaterialBatch.cpp                                    \
                importXML.cpp                                                                          \
                incident.cpp incidentWorkbench.cpp                                                     \
-               incidentCategory.cpp incidentCategories.cpp incidentPriority.cpp incidentPriorities.cpp \
+               incidentCategory.cpp incidentCategories.cpp incidentPriority.cpp incidentPriorities.cpp\
                incidentSeverity.cpp incidentSeverities.cpp                                            \
                incidentResolution.cpp incidentResolutions.cpp                                         \
                issueWoMaterialItem.cpp issueToShipping.cpp issueLineToShipping.cpp                    \
@@ -879,7 +877,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                postStandardJournal.cpp postStandardJournalGroup.cpp                                   \
                postVouchers.cpp prepareCheckRun.cpp priceList.cpp                                     \
                pricingScheduleAssignment.cpp pricingScheduleAssignments.cpp                           \
-                                                   printArOpenItem.cpp                                \
+               printArOpenItem.cpp                                                                    \
                printCheck.cpp printChecks.cpp printChecksReview.cpp                                   \
                printCreditMemo.cpp printCreditMemos.cpp reprintCreditMemos.cpp                        \
                printInvoice.cpp printInvoices.cpp printInvoicesByShipvia.cpp reprintInvoices.cpp      \
@@ -908,7 +906,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                releasePlannedOrdersByPlannerCode.cpp releaseWorkOrdersByPlannerCode.cpp               \
                relativeCalendarItem.cpp relocateInventory.cpp editOwners.cpp                          \
                releaseTransferOrdersByAgent.cpp reports.cpp reprioritizeWo.cpp                        \
-               reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
+               reschedulePoitem.cpp rescheduleSoLineItems.cpp rescheduleWo.cpp                        \
                reserveSalesOrderItem.cpp                                                              \
                resetQOHBalances.cpp returnAuthCheck.cpp returnAuthorization.cpp                       \
                returnAuthorizationItem.cpp returnAuthItemLotSerial.cpp                                \
@@ -960,8 +958,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                updateItemSiteLeadTimes.cpp updateListPricesByProductCategory.cpp                      \
                updateLateCustCreditStatus.cpp                                                         \
                updateOUTLevelByItem.cpp updateOUTLevels.cpp updateOUTLevelsByClassCode.cpp            \
-               updatePricesByProductCategory.cpp  updatePricesByPricingSchedule.cpp                   \
-               updatePrices.cpp updateReorderLevels.cpp						      \
+               updatePricesByProductCategory.cpp updatePricesByPricingSchedule.cpp                    \
+               updatePrices.cpp updateReorderLevels.cpp                                               \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
                userCostingElement.cpp costingElements.cpp                                             \
                version.cpp vendor.cpp vendors.cpp vendorWorkBench.cpp vendorPriceList.cpp             \
@@ -972,8 +970,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp collec
                warehouses.cpp warehouse.cpp warehouseZone.cpp                                         \
                workOrder.cpp workOrderMaterials.cpp                                                   \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
-	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
-	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
+               creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
+               yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp xerrormessage.cpp                \
                jsHighlighter.cpp                                                                      \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                      \

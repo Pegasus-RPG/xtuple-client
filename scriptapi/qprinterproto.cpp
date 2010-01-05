@@ -126,7 +126,7 @@ QScriptValue constructQPrinter(QScriptContext *context, QScriptEngine *engine)
   if (context->argumentCount() == 0)
     obj = new QPrinter();
   else if (context->argumentCount() == 1 && context->argument(0).isNumber())
-    obj = new QPrinter((QPrinter::PrinterMode)context->argument(0).toInteger());
+    obj = new QPrinter((QPrinter::PrinterMode)context->argument(0).toInt32());
   else
     context->throwError("Scripting does not yet support the "
                         "QPrinter(QPrinterInfo, PrinterMode) constructor");

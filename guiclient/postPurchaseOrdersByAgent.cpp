@@ -40,8 +40,6 @@ void postPurchaseOrdersByAgent::sPost()
     return;
   run = true;
 
-  qDebug("%s called by %s (%p)", __PRETTY_FUNCTION__,
-         qPrintable(sender() ? sender()->objectName() : "null ptr"), sender());
   QString sql("SELECT COUNT(postPurchaseOrder(pohead_id)) AS result "
               "  FROM ( SELECT pohead_id, pohead_agent_username "
               "           FROM pohead, poitem "

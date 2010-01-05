@@ -82,7 +82,7 @@
 
 #include "setupscriptapi.h"
 
-#define CHECK_REGISTERED false
+#define CHECK_REGISTERED 0
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT

@@ -15,7 +15,7 @@
     return 0;
 #define ENDCLASSLIST
 #define CLASSITEM(cn) \
-  else if(classname == #cn) { \
+  if(classname == #cn) { \
     w = new cn(parent, #cn, wflags); \
     w->setObjectName(#cn); \
   }

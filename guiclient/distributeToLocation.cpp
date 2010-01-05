@@ -310,7 +310,7 @@ void distributeToLocation::populate()
     _qtyToDistribute->setDouble(q.value("qtydistrib").toDouble());
     _qtyTagged->setDouble(q.value("qtytagged").toDouble());
     _qtyBalance->setDouble(q.value("qtybalance").toDouble());
-    _balance = round(q.value("qtybalance").toDouble() * pow(10, decimalPlaces("qty"))) / pow(10, decimalPlaces("qty"));
+    _balance = qRound(q.value("qtybalance").toDouble() * pow(10.0, decimalPlaces("qty"))) / pow(10.0, decimalPlaces("qty"));
 
     double locQty = _balance;
     if (_mode == cItemloc || _mode == cLocation)	// lot/serial or Location
