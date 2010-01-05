@@ -39,6 +39,15 @@ CONFIG += release thread
 #CONFIG += debug
 
 QT += qt3support
-macx {
-  CONFIG += x86 ppc
+
+macx:exists(macx.pri) {
+  include(macx.pri)
+}
+
+win32:exists(win32.pri) {
+  include(win32.pri)
+}
+
+unix:exists(unix.pri) {
+  include(unix.pri)
 }
