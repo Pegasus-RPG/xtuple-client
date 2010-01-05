@@ -88,6 +88,7 @@ class CreditCardProcessor : public QObject
     QString		_pport;
     QString		_pserver;
     QHttp             * _http;
+    QList<QPair<QString, QString> > _extraHeaders;
 
 };
 

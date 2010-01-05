@@ -1512,8 +1512,13 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
                     _metricsenc->value("CCProxyLogin"), _metricsenc->value("CCPassword"));
     }
 
+    QHttpRequestHeader request("POST", ccurl.encodedPath());
+    request.setValue("Host", ccurl.host());
+    if(!_extraHeaders.isEmpty())
+      request.setValues(_extraHeaders);
+    
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-    int rid = _http->post(ccurl.encodedPath(), prequest.toAscii());
+    int rid = _http->request(request, prequest.toAscii());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
     {
       QApplication::processEvents(QEventLoop::WaitForMoreEvents);
@@ -1565,6 +1570,15 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       curl_args.append( "-U" );
       curl_args.append(_metricsenc->value("CCProxyLogin") + ":" +
 		       _metricsenc->value("CCPassword"));
+    }
+
+    if(!_extraHeaders.isEmpty())
+    {
+      for(int i = 0; i < _extraHeaders.size(); ++i)
+      {
+        curl_args.append("-H");
+        curl_args.append(_extraHeaders.at(i).first + ": " + _extraHeaders.at(i).second);
+      }
     }
 
     QString curlCmd = curl_path + ((DEBUG) ? (" " + curl_args.join(" ")) : "");
