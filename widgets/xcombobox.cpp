@@ -44,6 +44,7 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   QFont f = font();
   f.setPointSize(f.pointSize() - 2);
   setFont(f);
+  setMinimumHeight(26);
 #endif
 }
 

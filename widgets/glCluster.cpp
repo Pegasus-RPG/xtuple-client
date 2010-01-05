@@ -125,7 +125,7 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
 
   setLayout(_layoutMain);
 #ifdef Q_WS_MAC
-  setMinimumSize(250, 30);
+  setMinimumSize(250, 34);
 #endif
 
 //  Make some internal connections
