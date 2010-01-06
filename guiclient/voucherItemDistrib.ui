@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>582</width>
-    <height>127</height>
+    <height>242</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -94,6 +94,19 @@ to be bound by its terms.</comment>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="_notesLit">
+         <property name="text">
+          <string>Notes:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="_notes"/>
        </item>
        <item>
         <spacer name="Spacer39">

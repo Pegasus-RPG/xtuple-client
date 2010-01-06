@@ -111,6 +111,7 @@ void voucherMiscDistrib::populate()
     _account->setId(q.value("vodist_accnt_id").toInt());
     _amount->setLocalValue(q.value("vodist_amount").toDouble());
     _discountable->setChecked(q.value("vodist_discountable").toBool());
+    _notes->setText(q.value("vodist_notes").toString());
     if(q.value("vodist_expcat_id").toInt() != -1)
     {
       _expcatSelected->setChecked(TRUE);
@@ -174,11 +175,11 @@ void voucherMiscDistrib::sSave()
     q.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
                "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_discountable,"
-               "  vodist_expcat_id, vodist_tax_id ) "
+               "  vodist_expcat_id, vodist_tax_id, vodist_notes ) "
                "VALUES "
                "( :vodist_id, :vodist_vohead_id, -1,"
                "  -1, :vodist_accnt_id, :vodist_amount, :vodist_discountable,"
-               "  :vodist_expcat_id, :vodist_tax_id );" );
+               "  :vodist_expcat_id, :vodist_tax_id, :vodist_notes );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE vodist "
@@ -186,13 +187,15 @@ void voucherMiscDistrib::sSave()
                "    vodist_amount=:vodist_amount,"
                "    vodist_discountable=:vodist_discountable,"
                "    vodist_expcat_id=:vodist_expcat_id, "
-               "    vodist_tax_id = :vodist_tax_id "
+               "    vodist_tax_id = :vodist_tax_id, "
+			   "    vodist_notes=:vodist_notes "
                "WHERE (vodist_id=:vodist_id);" );
   
   q.bindValue(":vodist_id", _vodistid);
   q.bindValue(":vodist_vohead_id", _voheadid);
   q.bindValue(":vodist_amount", _amount->localValue());
   q.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
+  q.bindValue(":vodist_notes", _notes->toPlainText().trimmed());
   if(_accountSelected->isChecked())
   {
     q.bindValue(":vodist_accnt_id", _account->id());
