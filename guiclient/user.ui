@@ -485,7 +485,7 @@ to be bound by its terms.</comment>
      </widget>
      <widget class="QWidget" name="_groupTab">
       <attribute name="title">
-       <string>Groups</string>
+       <string>Roles</string>
       </attribute>
       <layout class="QHBoxLayout">
        <item>

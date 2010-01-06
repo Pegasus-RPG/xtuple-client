@@ -158,7 +158,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.rescanPrivileges",         tr("Rescan &Privileges"),             SLOT(sRescanPrivileges()),         systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
     { "sys.maintainUsers",            tr("Maintain &Users..."),             SLOT(sMaintainUsers()),            systemMenu, "MaintainUsers",       NULL, NULL, true },
-    { "sys.maintainGroups",           tr("Maintain &Groups..."),            SLOT(sMaintainGroups()),           systemMenu, "MaintainGroups",      NULL, NULL, true },
+    { "sys.maintainGroups",           tr("Maintain &Roles..."),            SLOT(sMaintainGroups()),           systemMenu, "MaintainGroups",      NULL, NULL, true },
 
     { "menu",                         tr("&Employees"),                     (char*)employeeMenu,               systemMenu, "true",                                      NULL, NULL, true },
     { "sys.employee",                 tr("&New..."),               	    SLOT(sNewEmployee()),            employeeMenu, "MaintainEmployees",               NULL, NULL, true },

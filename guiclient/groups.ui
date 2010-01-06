@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>List Groups</string>
+   <string>List Roles</string>
   </property>
    <layout class="QHBoxLayout" >
     <item>
@@ -32,7 +32,7 @@ to be bound by its terms.</comment>
       <item>
        <widget class="QLabel" name="_listLit" >
         <property name="text" >
-         <string>Groups:</string>
+         <string>Roles:</string>
         </property>
        </widget>
       </item>

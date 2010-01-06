@@ -48,8 +48,8 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
 
-  _availableGroup->addColumn("Available Groups", -1, Qt::AlignLeft);
-  _grantedGroup->addColumn("Granted Groups", -1, Qt::AlignLeft);
+  _availableGroup->addColumn("Available Roles", -1, Qt::AlignLeft);
+  _grantedGroup->addColumn("Granted Roles", -1, Qt::AlignLeft);
 
   _availableSite->addColumn("Available Sites", -1, Qt::AlignLeft);
   _grantedSite->addColumn("Granted Sites", 	-1, Qt::AlignLeft);
