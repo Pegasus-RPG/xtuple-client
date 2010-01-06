@@ -1205,7 +1205,10 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
   {
     do
     {
-      append(pQuery.value(0).toInt(), pQuery.value(1).toString(), pQuery.value(2).toString());
+      if (pQuery.record().count() < 3)
+        append(pQuery.value(0).toInt(), pQuery.value(1).toString());
+      else
+        append(pQuery.value(0).toInt(), pQuery.value(1).toString(), pQuery.value(2).toString());
 
       if (pQuery.value(0).toInt() == pSelected)
         selected = counter;
