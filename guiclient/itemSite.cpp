@@ -16,6 +16,9 @@
 #include <QVariant>
 #include <QDebug>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "storedProcErrorLookup.h"
 
 itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -37,6 +40,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_toggleRestricted, SIGNAL(clicked()), this, SLOT(sToggleRestricted()));
   connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
+  connect(_autoNumberGroup, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoNumber()));
 
   _planningType->append(0, "None", "N");
 
@@ -64,6 +68,8 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   sHandlePlanningType();
   
+  _itemsiteid = -1;
+  _itemlsid = -1;
   _itemType = 0;
   _qohCache = 0;
 
@@ -76,6 +82,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _maximumOrder->setValidator(omfgThis->qtyVal());
   _orderMultiple->setValidator(omfgThis->qtyVal());
   _safetyStock->setValidator(omfgThis->qtyVal());
+  _nextNumber->setValidator(omfgThis->orderVal());
     
   _restricted->addColumn(tr("Location"), _itemColumn, Qt::AlignLeft, true, "location_name" );
   _restricted->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "location_descrip" );
@@ -101,7 +108,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   {
     _controlMethod->removeItem(3);
     _controlMethod->removeItem(2);
-    _perishable->hide();
+    _autoNumberGroup->hide();
     _tab->removeTab(_tab->indexOf(_expirationTab));
   }
   
@@ -554,7 +561,7 @@ void itemSite::sSave()
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
                          "  itemsite_costmethod, itemsite_value, itemsite_cosdefault, "
-                         "  itemsite_warrpurc, itemsite_autoreg) "
+                         "  itemsite_warrpurc, itemsite_autoreg, itemsite_autolsnum) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -572,7 +579,7 @@ void itemSite::sSave()
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
                          "  :itemsite_costmethod, 0, :itemsite_cosdefault, "
-                         "  :itemsite_warrpurc, :itemsite_autoreg  );" );
+                         "  :itemsite_warrpurc, :itemsite_autoreg, :itemsite_autolsnum  );" );
   }
   else if (_mode == cEdit)
   {
@@ -652,7 +659,8 @@ void itemSite::sSave()
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
                          "    itemsite_costmethod=:itemsite_costmethod, itemsite_cosdefault=:itemsite_cosdefault, "
-                         "    itemsite_warehous_id=:itemsite_warehous_id "
+                         "    itemsite_warehous_id=:itemsite_warehous_id, "
+                         "    itemsite_autolsnum=:itemsite_autolsnum "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
 
@@ -699,6 +707,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_ordergroup", _orderGroup->value());
   newItemSite.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
   newItemSite.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
+  newItemSite.bindValue(":itemsite_autolsnum", _autoNumberGroup->isChecked());
 
   if (_useDefaultLocation->isChecked())
   {
@@ -753,6 +762,20 @@ void itemSite::sSave()
   {
     systemError(this, newItemSite.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  if (_autoNumberGroup->isChecked()) {
+      XSqlQuery itemls;
+      MetaSQLQuery mql = mqlLoad("itemsite", "itemlsupd");
+      ParameterList params;
+      params.append("item_id", _item->id());
+      params.append("prefix", _prefix->text());
+      params.append("length", _length->value());
+      params.append("suffix", _suffix->text());
+      params.append("next_number", _nextNumber->text().toDouble());
+      itemls = mql.toQuery(params);
+      if (itemls.lastError().type() != QSqlError::NoError)
+        systemError(this, itemls.lastError().databaseText(), __FILE__, __LINE__);
   }
     
   omfgThis->sItemsitesUpdated();
@@ -891,11 +914,14 @@ void itemSite::sHandleControlMethod()
   if ( (_controlMethod->currentIndex() == 2) ||
        (_controlMethod->currentIndex() == 3) )  
   {
+    _autoNumberGroup->setEnabled(true);
     _perishable->setEnabled(TRUE);
     _tab->setTabEnabled(_tab->indexOf(_expirationTab),TRUE);
   }
   else
   {
+    _autoNumberGroup->setChecked(false);
+    _autoNumberGroup->setEnabled(false);
     _perishable->setEnabled(FALSE);
     _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
   }
@@ -1053,6 +1079,29 @@ void itemSite::sCacheItemType(char pItemType)
   _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),(_itemType!='K'));
 
   sHandleControlMethod();
+}
+
+void itemSite::populateAutoNumber()
+{
+  XSqlQuery itemls;
+  MetaSQLQuery mql = mqlLoad("itemsite", "itemlssel");
+  ParameterList params;
+  params.append("item_id", _item->id());
+  itemls = mql.toQuery(params);
+  if (itemls.first()) {
+    _itemlsid = itemls.value("itemls_id").toInt();
+    _prefix->setText(itemls.value("itemls_prefix"));
+    _length->setValue(itemls.value("itemls_numlen").toInt());
+    _suffix->setText(itemls.value("itemls_suffix"));
+
+    // We now know we have a lot/serial profile, so get the next number
+    MetaSQLQuery mql2 = mqlLoad("itemsite", "itemlsnumbersel");
+    itemls = mql2.toQuery(params);
+    if (itemls.first())
+      _nextNumber->setText(itemls.value("next_number"));
+    else if (itemls.lastError().type() != QSqlError::NoError)
+      systemError(this, itemls.lastError().databaseText(), __FILE__, __LINE__);
+  }
 }
 
 void itemSite::populateLocations()
@@ -1245,17 +1294,23 @@ void itemSite::populate()
 
     if (itemsite.value("itemsite_cosdefault").toString() == "D")
     {
-	  _woCostGroup->setChecked(TRUE);
-	  _todate->setChecked(TRUE);
-	  _proportional->setChecked(FALSE);
-	}
+      _woCostGroup->setChecked(TRUE);
+      _todate->setChecked(TRUE);
+      _proportional->setChecked(FALSE);
+    }
     else if (itemsite.value("itemsite_cosdefault").toString() == "P")
     {
-	  _woCostGroup->setChecked(TRUE);
-	  _todate->setChecked(FALSE);
-	  _proportional->setChecked(TRUE);
-	}
-  
+      _woCostGroup->setChecked(TRUE);
+      _todate->setChecked(FALSE);
+      _proportional->setChecked(TRUE);
+    }
+
+    // Handle auto numbering
+    if (_metrics->boolean("LotSerialControl")) {
+      populateAutoNumber();
+      _autoNumberGroup->setChecked(itemsite.value("itemsite_autolsnum").toBool());
+    }
+
     _updates = TRUE;
   }
   else if (itemsite.lastError().type() != QSqlError::NoError)
@@ -1302,6 +1357,11 @@ void itemSite::clear()
   _purchWarranty->setChecked(FALSE);
   _autoRegister->setChecked(FALSE);
   _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
+
+  _prefix->setText("");
+  _nextNumber->setText(1);
+  _length->setValue(5);
+  _suffix->setText("");
     
   populateLocations();
 }
@@ -1504,5 +1564,24 @@ void itemSite::sDefaultLocChanged()
   {
     _miscLocation->setEnabled(FALSE);
     _miscLocationName->setEnabled(FALSE);
+  }
+}
+
+void itemSite::sHandleAutoNumber()
+{
+  // Handle Auto lot/serial number
+  if (_autoNumberGroup->isChecked()) {
+    if (_itemlsid == -1) {
+      // Create the lot/serial number profile
+      XSqlQuery itemls;
+      MetaSQLQuery mql = mqlLoad("itemsite", "itemlsins");
+      ParameterList params;
+      params.append("item_id", _item->id());
+      itemls = mql.toQuery(params);
+      if (itemls.lastError().type() != QSqlError::NoError)
+        systemError(this, itemls.lastError().databaseText(), __FILE__, __LINE__);
+      else
+        populateAutoNumber();
+    }
   }
 }

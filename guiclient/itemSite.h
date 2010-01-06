@@ -30,12 +30,14 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sCheckItemsite();
+    virtual void sHandleAutoNumber();
     virtual void sHandlePlanningType();
     virtual void sHandlePOSupplied( bool pSupplied );
     virtual void sHandleWOSupplied( bool pSupplied );
     virtual void sHandleControlMethod();
     virtual void sCacheItemType( const QString & pItemType );
     virtual void sCacheItemType( char pItemType );
+    virtual void populateAutoNumber();
     virtual void populateLocations();
     virtual void populate();
     virtual void clear();
@@ -49,6 +51,7 @@ protected slots:
 private:
     int _mode;
     int _itemsiteid;
+    int _itemlsid;
     bool _captive;
     bool _updates;
     double _qohCache;

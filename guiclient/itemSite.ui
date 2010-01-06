@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>652</height>
+    <height>732</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -335,6 +335,9 @@ to be bound by its terms.</comment>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
             <layout class="QGridLayout" name="gridLayout_14">
+             <property name="spacing">
+              <number>12</number>
+             </property>
              <item row="0" column="0">
               <widget class="QGroupBox" name="_reporting">
                <property name="title">
@@ -641,91 +644,134 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item row="2" column="0" colspan="2">
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
-               <item>
-                <widget class="QGroupBox" name="_woCostGroup">
-                 <property name="title">
-                  <string>Over-ride Work Order Cost Default</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_11">
-                  <item>
-                   <widget class="QRadioButton" name="_todate">
-                    <property name="text">
-                     <string>To Date</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="_proportional">
-                    <property name="text">
-                     <string>Proportional</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="_autoNumberGroup">
-                 <property name="title">
-                  <string>Automatic Lot/Serial Numbering</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_10">
-                  <item>
-                   <widget class="QLabel" name="_nextLsNumberLit">
-                    <property name="text">
-                     <string>Next Number:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="XLineEdit" name="_nextLsNumber"/>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_10">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QGroupBox" name="_woCostGroup">
+               <property name="title">
+                <string>Over-ride Work Order Cost Default</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QRadioButton" name="_todate">
+                  <property name="text">
+                   <string>To Date</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_proportional">
+                  <property name="text">
+                   <string>Proportional</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_7">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="QGroupBox" name="_autoNumberGroup">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="title">
+                <string>Automatic Lot/Serial Numbering</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="XLabel" name="xlabel">
+                  <property name="text">
+                   <string>Prefix:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLineEdit" name="_prefix"/>
+                </item>
+                <item>
+                 <widget class="QLabel" name="_nextNumberLit">
+                  <property name="text">
+                   <string>Next Number:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLineEdit" name="_nextNumber">
+                  <property name="text">
+                   <string>1</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLabel" name="_lengthLit">
+                  <property name="text">
+                   <string>Length:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XSpinBox" name="_length">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLabel" name="xlabel_2">
+                  <property name="text">
+                   <string>Suffix:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLineEdit" name="_suffix"/>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_10">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </item>
@@ -737,7 +783,7 @@ to be bound by its terms.</comment>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>0</height>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -1562,10 +1608,20 @@ to be bound by its terms.</comment>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>xspinbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
