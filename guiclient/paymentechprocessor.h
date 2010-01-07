@@ -33,9 +33,6 @@ class PaymentechProcessor : public CreditCardProcessor
     virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, QString&, int&, ParameterList &);
     virtual bool handlesCreditCards();
     virtual int  handleResponse(const QString&, const int, const QString&, const double, const int, QString&, QString&, int&, ParameterList&);
-
-  private:
-    int fieldValue(const QStringList, const int, QString &);
 };
 
 #endif // PAYMENTECHPROCESSOR_H

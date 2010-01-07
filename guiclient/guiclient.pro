@@ -1231,6 +1231,7 @@ HEADERS = ../common/batchItem.h                 \
           package.h                     \
           packages.h                    \
           packingListBatch.h            \
+          paymentechprocessor.h         \
           plannedOrder.h                \
           plannerCode.h                 \
           plannerCodes.h                \
@@ -1976,6 +1977,7 @@ SOURCES = ../common/batchItem.cpp               \
           package.cpp                   \
           packages.cpp                  \
           packingListBatch.cpp          \
+          paymentechprocessor.cpp       \
           plannedOrder.cpp              \
           plannerCode.cpp               \
           plannerCodes.cpp              \

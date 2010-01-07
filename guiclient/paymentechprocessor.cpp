@@ -40,7 +40,6 @@ PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
 
 int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
 {
-  // TODO: if check and not credit card transaction do something else
   XSqlQuery anq;
   anq.prepare(
     "SELECT ccard_active,"
@@ -84,11 +83,11 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   }
 
   _extraHeaders.clear();
-  _extraHeaders.append(qMakePair("Stateless-Transaction", "true"));
-  _extraHeaders.append(qMakePair("Auth-MID", _metricsenc->value("CCPTDivisionNumber").rightJustified(10, '0', true)));
-  _extraHeaders.append(qMakePair("Auth-User", _metricsenc->value("CCLogin")));
-  _extraHeaders.append(qMakePair("Auth-Password", _metricsenc->value("CCPassword")));
-  _extraHeaders.append(qMakePair("Content-type", "SALEM05210/SLM"));
+  _extraHeaders.append(qMakePair(QString("Stateless-Transaction"), QString("true")));
+  _extraHeaders.append(qMakePair(QString("Auth-MID"), QString(_metricsenc->value("CCPTDivisionNumber").rightJustified(10, '0', true))));
+  _extraHeaders.append(qMakePair(QString("Auth-User"), QString(_metricsenc->value("CCLogin"))));
+  _extraHeaders.append(qMakePair(QString("Auth-Password"), QString(_metricsenc->value("CCPassword"))));
+  _extraHeaders.append(qMakePair(QString("Content-type"), QString("SALEM05210/SLM")));
 
   prequest = "P74V";
   prequest += pordernum.leftJustified(22, ' ', true); // TODO: should we check to make sure isn't empty?
@@ -107,7 +106,7 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   else
   {
     _errorMsg = errorMsg(-209);
-    _return -209;
+    return -209;
   }
   prequest += ccardType;
 
@@ -169,14 +168,17 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
 */
 
   if (pcvv > 0)
-    APPENDFIELD(prequest, "x_card_code", pcvv);
+  {
+    prequest += "FR";
+    prequest += "1";
+    prequest += QString::number(amount).leftJustified(4, ' ', true);
+  }
 
   if (DEBUG)
     qDebug("Paymentech:buildCommon built %s\n", prequest.toAscii().data());
   return 0;
 }
 
-// TODO
 int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -191,35 +193,10 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, const 
   double duty    = pduty;
   int    currid  = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount,   &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    tax     = currToCurr(pcurrid, currid, ptax,     &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    duty    = currToCurr(pcurrid, currid, pduty,    &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
   QString request;
   returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RC");
   if (returnValue != 0)
     return returnValue;
-
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
-  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
-
-  if (! preforder.isEmpty())
-    APPENDFIELD(request, "x_po_num", preforder.left(20));
 
   QString response;
 
@@ -233,7 +210,6 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, const 
   return returnValue;
 }
 
-// TODO
 int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -248,36 +224,11 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
   double duty    = pduty;
   int    currid  = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount,   &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    tax     = currToCurr(pcurrid, currid, ptax,     &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    duty    = currToCurr(pcurrid, currid, pduty,    &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
   QString request;
 
   returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RP");
   if (returnValue !=  0)
     return returnValue;
-
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
-  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
-
-  if (! preforder.isEmpty())
-    APPENDFIELD(request, "x_po_num",   preforder);
 
   QString response;
 
@@ -291,7 +242,6 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
   return returnValue;
 }
 
-// TODO
 int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -303,21 +253,11 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
   double amount  = pamount;
   int    currid  = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
   QString request;
 
   returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU");
   if (returnValue !=  0)
     return returnValue;
-
-  APPENDFIELD(request, "x_trans_id", preforder);
 
   QString response;
 
@@ -331,7 +271,6 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
   return returnValue;
 }
 
-// TODO
 int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -346,34 +285,11 @@ int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const doub
   double duty    = pduty;
   int    currid  = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    tax = currToCurr(pcurrid, currid, ptax, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    duty = currToCurr(pcurrid, currid, pduty, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
   QString request;
 
   returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RF");
   if (returnValue !=  0)
     return returnValue;
-
-  APPENDFIELD(request, "x_trans_id",   preforder);
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
-  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
 
   QString response;
   returnValue = sendViaHTTP(request, response);
@@ -386,7 +302,6 @@ int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const doub
   return returnValue;
 }
 
-// TODO
 int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -401,24 +316,11 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   double amount = pamount;
   int    currid = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-    {
-      _errorMsg = tmpErrorMsg;
-      return returnValue;
-    }
-  }
-
   QString request;
 
   returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AR");
   if (returnValue != 0)
     return returnValue;
-
-  APPENDFIELD(request, "x_trans_id", preforder);
 
   QString response;
 
@@ -434,31 +336,6 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   return returnValue;
 }
 
-// TODO
-int PaymentechProcessor::fieldValue(const QStringList plist, const int pindex, QString &pvalue)
-{
-  if (plist.size() < pindex)
-  {
-    _errorMsg = errorMsg(-205).arg(pindex).arg(plist.size());
-    return -205;
-  }
-
-  if (_metrics->value("CCANEncap").isEmpty())
-    pvalue = plist.at(pindex - 1);
-  else
-  {
-    pvalue = plist.at(pindex - 1);
-    // now strip of the encapsulating char from front and back
-    int firstPos = plist.at(pindex - 1).indexOf(_metrics->value("CCANEncap"));
-    int lastPos  = plist.at(pindex - 1).lastIndexOf(_metrics->value("CCANEncap"));
-    pvalue = pvalue.mid(firstPos + 1, lastPos - firstPos - 1);
-  }
-  if (DEBUG)
-    qDebug("Paymentech:fieldValue of %d is %s", pindex, pvalue.toAscii().data());
-  return 0;
-}
-
-// TODO
 int PaymentechProcessor::handleResponse(const QString &presponse, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -467,16 +344,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 	   ptype.toAscii().data(), pamount, pcurrid,
 	   preforder.toAscii().data(), pccpayid);
 
-  // if we got an error msg very early on
-  if (presponse.startsWith("<HTML>"))
-  {
-    _errorMsg = errorMsg(-207).arg(presponse);
-    return -207;
-  }
-
-  QString delim = _metrics->value("CCANDelim").isEmpty() ? "," :
-						  _metrics->value("CCANDelim");
-  QString encap = _metrics->value("CCANEncap");
+  int returnValue = 0;
 
   QString r_approved;
   QString r_avs;
@@ -492,80 +360,26 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   QString status;
 
-  // TODO: explore using encap here and code from CSV Import to properly split
-
-  /* add an extra field at the beginning. otherwise we'll be off by one
-     because the Advanced Integration Method (AIM) Implementation Guide
-     numbers fields starting at 1 but QString::split() creates a list
-     starting at 0.
-   */
-  QStringList responseFields = presponse.split(delim);
-  
   QString r_response;
-  int returnValue = fieldValue(responseFields, 1, r_response);
-  if (returnValue < 0)
-    return returnValue;
-
-  if (r_response.toInt() == 1)
+  r_response = presponse.mid(27, 3).trimmed();
+  int i_response = r_response.toInt();
+  if ((i_response >= 100 && i_response < 200) || i_response == 704)
     r_approved = "APPROVED";
-  else if (r_response.toInt() == 2)
+  else if((i_response >= 200 && i_response < 300 && i_response != 260) || (i_response >= 740 && i_response <= 768))
+    r_approved = "ERROR"; // REJECTED
+  else
     r_approved = "DECLINED";
-  else if (r_response.toInt() == 3)
-    r_approved = "ERROR";
-  else if (r_response.toInt() == 4)
-    r_approved = "HELDFORREVIEW";
 
-  // fieldValue(responseFields, 2);				// subcode
+  r_reason = r_response;
 
-  returnValue = fieldValue(responseFields, 3, r_reason);	// reason code
-  if (returnValue < 0)
-    return returnValue;
-  returnValue = fieldValue(responseFields, 4, r_message);	// reason text
-  if (returnValue < 0)
-    return returnValue;
+  r_message = "not yet implemented"; // TODO: come up with a way to populate this
 
-  returnValue = fieldValue(responseFields, 5, r_code);	 	// approval code
-  if (returnValue < 0)
-    return returnValue;
-  returnValue = fieldValue(responseFields, 6, r_avs);	 	// avs result
-  if (returnValue < 0)
-    return returnValue;
-  returnValue = fieldValue(responseFields, 7, r_ordernum);	// transaction id
+  r_code = presponse.mid(36, 6).trimmed();
+  r_avs = presponse.mid(42, 2).trimmed();
+  r_ordernum = presponse.mid(5, 22).trimmed();
+  r_cvv = presponse.mid(44, 1).trimmed();
 
-  if (returnValue < 0)
-    return returnValue;
-
-  // fieldValue(responseFields, 8-10);	// echo invoice_number description amount 
-  // fieldValue(responseFields, 11-13);	// echo method type cust_id
-  // fieldValue(responseFields, 14-24);	// echo name, company, and address info
-  // fieldValue(responseFields, 25-32);	// echo ship_to fields
-
-  returnValue = fieldValue(responseFields, 33, r_tax);		// echo x_tax
-  if (returnValue < 0)
-    return returnValue;
-
-  // fieldValue(responseFields, 34);				// echo x_duty
-
-  returnValue = fieldValue(responseFields, 35, r_shipping);	// echo x_freight
-  if (returnValue < 0)
-    return returnValue;
-
-  // fieldValue(responseFields, 36);		// echo x_tax_exempt
-  // fieldValue(responseFields, 37);		// echo x_po_num
-
-  returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
-  if (returnValue < 0)
-    return returnValue;
-
-  // fieldValue(responseFields, 40);		// cavv response code
-  // fieldValue(responseFields, 41-68);		// reserved for future use
-  // fieldValue(responseFields, 69+);		// echo of merchant-defined fields
-
-  /* treat heldforreview as approved because the AIM doc says response
-     reason codes 252 and 253 are both approved but being reviewed.
-     the intent of the other heldforreview, 193, is ambiguous.
-   */
-  if (r_approved == "APPROVED" || r_approved == "HELDFORREVIEW")
+  if (r_approved == "APPROVED")
   {
     _errorMsg = errorMsg(0).arg(r_code);
     if (ptype == "A")
@@ -603,16 +417,15 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
     status = "X";
   }
 
-  // always use the AVS checking configured on the gateway
-  _passedAvs = ((r_reason.toInt() != 27) &&
-	        (r_reason.toInt() != 127));
+  _passedAvs = false; // TODO: figure out the right value to use here
 
   // always use the CVV checking configured on the gateway
-  _passedCvv = (r_reason.toInt() != 78);
+  QString validCvv("MPU ");
+  _passedCvv = validCvv.contains(r_cvv);
 
   if (DEBUG)
     qDebug("Paymentech:%s _passedAvs %d\t%s _passedCvv %d",
-	    r_avs.toAscii().data(), _passedAvs,
+	    r_avs.toAscii().data(), _passedAvs, 
 	    r_cvv.toAscii().data(), _passedCvv);
 
   pparams.append("ccard_id",    pccardid);
@@ -644,43 +457,6 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
     pparams.append("amount",   pamount);
   else
     pparams.append("amount",   0);	// no money changed hands this attempt
-
-  // don't bother checking MD5 if we hit a bigger problem
-  if (returnValue == 0 && _metrics->boolean("CCANMD5HashSetOnGateway"))
-  {
-    QString expected_hash;
-    QString r_hash;
-
-    returnValue = fieldValue(responseFields, 38, r_hash);	// md5 hash
-    XSqlQuery anq;
-    anq.prepare("SELECT UPPER(MD5(:inputstr)) AS expected;");
-    anq.bindValue(":inputstr", _metricsenc->value("CCANMD5Hash") +
-			       _metricsenc->value("CCLogin") +
-			       r_ordernum +
-			       QString::number(pamount, 'f', 2));
-    anq.exec();
-    if (anq.first())
-      expected_hash = anq.value("expected").toString();
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      _errorMsg = errorMsg(-1).arg(anq.lastError().databaseText());
-      returnValue = -1;
-    }
-    if (DEBUG)
-      qDebug("Paymentech:handleResponse expected md5 %s and got %s",
-	      expected_hash.toAscii().data(), r_hash.toAscii().data());
-
-    if (_metrics->value("CCANMD5HashAction") == "F" && expected_hash != r_hash)
-    {
-      _errorMsg = errorMsg(-206);
-      returnValue = -206;
-    }
-    else if (_metrics->value("CCANMD5HashAction") == "W" && expected_hash != r_hash)
-    {
-      _errorMsg = errorMsg(206);
-      returnValue = 206;
-    }
-  }
 
   if (DEBUG)
     qDebug("Paymentech::handleResponse returning %d %s",
