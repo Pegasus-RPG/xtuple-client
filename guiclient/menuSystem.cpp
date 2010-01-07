@@ -58,6 +58,7 @@
 #include "images.h"
 #include "labelForms.h"
 #include "locales.h"
+#include "metasqls.h"
 #include "package.h"
 #include "packages.h"
 #include "reports.h"
@@ -208,15 +209,16 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, "ConfigureImportExport",	NULL, NULL, true },
 
   //  Design
-    { "menu",		   tr("&Design"),	     (char*)designMenu,	     systemMenu, "true",				        NULL, NULL, true },
-    { "sys.reports",	   tr("&Reports..."),	     SLOT(sReports()),       designMenu, "MaintainReports",	NULL, NULL, true },
-    { "separator",	   NULL,		     NULL,		     designMenu, "true",					NULL, NULL, true },
-    { "sys.uiforms",       tr("Screens..."),         SLOT(sUIForms()),       designMenu, "MaintainScreens",	NULL, NULL, true },
-    { "sys.scripts",       tr("Scripts..."),	     SLOT(sScripts()),       designMenu, "MaintainScripts",	NULL, NULL, true },
-    { "separator",	   NULL,		     NULL,		     designMenu, "true",					NULL, NULL, true },
-    { "sys.customCommands",tr("Custom Command&s..."),SLOT(sCustomCommands()),designMenu, "MaintainCustomCommands", NULL, NULL, true },
-    { "separator",	   NULL,		     NULL,		     designMenu, "true",					NULL, NULL, true },
-    { "sys.packages",      tr("&Packages..."),	     SLOT(sPackages()),      designMenu, "ViewPackages #superuser",           NULL, NULL, true },
+    { "menu",           tr("&Design"),                (char*)designMenu,      systemMenu, "true",                        NULL, NULL, true },
+    { "sys.reports",    tr("&Reports..."),            SLOT(sReports()),       designMenu, "MaintainReports",             NULL, NULL, true },
+    { "sys.metasqls",   tr("&MetaSQL Statements..."), SLOT(sMetasqls()),      designMenu, "MaintainMetaSQL ViewMetaSQL", NULL, NULL, true },
+    { "separator",      NULL,                         NULL,                   designMenu, "true",                        NULL, NULL, true },
+    { "sys.uiforms",    tr("S&creens..."),            SLOT(sUIForms()),       designMenu, "MaintainScreens",             NULL, NULL, true },
+    { "sys.scripts",    tr("Scr&ipts..."),            SLOT(sScripts()),       designMenu, "MaintainScripts",             NULL, NULL, true },
+    { "separator",      NULL,                         NULL,                   designMenu, "true",                        NULL, NULL, true },
+    { "sys.customCommands",tr("Custom Command&s..."), SLOT(sCustomCommands()),designMenu, "MaintainCustomCommands",      NULL, NULL, true },
+    { "separator",      NULL,                         NULL,                   designMenu, "true",                        NULL, NULL, true },
+    { "sys.packages",   tr("&Packages..."),           SLOT(sPackages()),      designMenu, "ViewPackages #superuser",     NULL, NULL, true },
 
   // Utilities
     { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
@@ -581,6 +583,11 @@ void menuSystem::sCustomCommands()
 void menuSystem::sPackages()
 {
   omfgThis->handleNewWindow(new packages());
+}
+
+void menuSystem::sMetasqls()
+{
+  omfgThis->handleNewWindow(new metasqls());
 }
 
 void menuSystem::sScripts()

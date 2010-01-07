@@ -423,6 +423,7 @@
 #include "massExpireComponent.h"
 #include "massReplaceComponent.h"
 #include "materialReceiptTrans.h"
+#include "metasqls.h"
 #include "miscCheck.h"
 #include "miscVoucher.h"
 #include "openReturnAuthorizations.h"
