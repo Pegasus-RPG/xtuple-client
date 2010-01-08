@@ -479,6 +479,8 @@ FORMS =   ../common/batchItem.ui                \
           location.ui                   \
           locations.ui                  \
           lotSerial.ui                  \
+          lotSerialSequence.ui          \
+          lotSerialSequences.ui         \
           lotSerialRegistration.ui      \
           maintainBudget.ui             \
           maintainItemCosts.ui          \
@@ -1197,6 +1199,8 @@ HEADERS = ../common/batchItem.h                 \
           location.h                    \
           locations.h                   \
           lotSerial.h                   \
+          lotSerialSequence.h           \
+          lotSerialSequences.h          \
           lotSerialRegistration.h       \
           maintainBudget.h              \
           maintainItemCosts.h           \
@@ -1942,6 +1946,8 @@ SOURCES = ../common/batchItem.cpp               \
           location.cpp                  \
           locations.cpp                 \
           lotSerial.cpp                 \
+          lotSerialSequence.cpp         \
+          lotSerialSequences.cpp        \
           lotSerialRegistration.cpp     \
           main.cpp                      \
           maintainBudget.cpp            \

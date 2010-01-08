@@ -68,6 +68,7 @@
 #include "productCategories.h"
 #include "freightClasses.h"
 #include "characteristics.h"
+#include "lotSerialSequences.h"
 
 #include "dspUndefinedManufacturedItems.h"
 #include "dspUnusedPurchasedItems.h"
@@ -233,6 +234,8 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.productCategories", tr("&Product Categories..."), SLOT(sProductCategories()), masterInfoMenu, "MaintainProductCategories ViewProductCategories", NULL, NULL, true , NULL },
   { "pd.freightClasses", tr("&Freight Classes..."), SLOT(sFreightClasses()), masterInfoMenu, "MaintainFreightClasses ViewFreightClasses", NULL, NULL, true , NULL },
   { "pd.characteristics", tr("C&haracteristics..."), SLOT(sCharacteristics()), masterInfoMenu, "MaintainCharacteristics ViewCharacteristics", NULL, NULL, true , NULL },
+  { "separator", NULL, NULL, masterInfoMenu,	"true", NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
+  { "pd.lotserialsequences", tr("&Lot/Serial Sequences..."), SLOT(sLotSerialSequences()), masterInfoMenu, "MaintainLotSerialSequences ViewLotSerialSequences", NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
 
   //  Produt | Utilies
   { "menu",	tr("&Utilities"), (char*)utilitiesMenu, mainMenu, "true", NULL, NULL, true , NULL },
@@ -578,4 +581,9 @@ void menuProducts::sReassignClassCodeByClassCode()
 void menuProducts::sReassignProductCategoryByProductCategory()
 {
   reassignProductCategoryByProductCategory(parent, "", TRUE).exec();
+}
+
+void menuProducts::sLotSerialSequences()
+{
+  omfgThis->handleNewWindow(new lotSerialSequences());
 }

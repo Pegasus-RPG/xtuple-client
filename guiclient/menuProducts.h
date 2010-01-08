@@ -86,6 +86,7 @@ class menuProducts : public QObject
     void sProductCategories();
     void sFreightClasses();
     void sCharacteristics();
+    void sLotSerialSequences();
 
     void sDspUnusedPurchasedItems();
     void sDspUndefinedManufacturedItems();
