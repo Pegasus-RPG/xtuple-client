@@ -13,25 +13,16 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>827</width>
-    <height>631</height>
+    <width>653</width>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Cash Receipt</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>12</number>
-     </property>
-     <property name="rightMargin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
-      <number>12</number>
-     </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0" colspan="2">
       <layout class="QHBoxLayout">
        <item>
@@ -133,7 +124,7 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="_receivedLit">
           <property name="text">
@@ -150,6 +141,19 @@ to be bound by its terms.</comment>
            <bool>true</bool>
           </property>
          </widget>
+        </item>
+        <item row="0" column="2">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="_amountAppliedLit">
@@ -198,6 +202,23 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="3" column="0">
+         <widget class="QLabel" name="_discountLit">
+          <property name="text">
+           <string>Discount:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="CurrDisplay" name="_discount">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
          <widget class="QLabel" name="_balanceLit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -213,14 +234,10 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="CurrDisplay" name="_balance">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-         </widget>
+        <item row="4" column="1">
+         <widget class="CurrDisplay" name="_balance"/>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="_applyBalLit">
           <property name="text">
            <string>Apply Balance As:</string>
@@ -230,7 +247,7 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <layout class="QHBoxLayout">
           <property name="spacing">
            <number>12</number>
@@ -254,7 +271,7 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="5" column="1">
+        <item row="6" column="1">
          <spacer>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -263,19 +280,6 @@ to be bound by its terms.</comment>
            <size>
             <width>20</width>
             <height>21</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="2">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
            </size>
           </property>
          </spacer>
@@ -997,38 +1001,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_cashrcptmisc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_edit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>33</x>
-     <y>475</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>733</x>
-     <y>503</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cashrcptmisc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_delete</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>33</x>
-     <y>475</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>733</x>
-     <y>530</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_aropen</sender>
    <signal>valid(bool)</signal>
    <receiver>_apply</receiver>
@@ -1057,22 +1029,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>706</x>
      <y>386</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cashrcptmisc</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_edit</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>33</x>
-     <y>475</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>733</x>
-     <y>503</y>
     </hint>
    </hints>
   </connection>
@@ -1159,7 +1115,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_received</sender>
    <signal>idChanged(int)</signal>
-   <receiver>_balance</receiver>
+   <receiver>_discount</receiver>
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1207,7 +1163,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_received</sender>
    <signal>effectiveChanged(QDate)</signal>
-   <receiver>_balance</receiver>
+   <receiver>_discount</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel">

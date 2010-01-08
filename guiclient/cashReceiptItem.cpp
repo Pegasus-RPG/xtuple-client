@@ -9,6 +9,7 @@
  */
 
 #include "cashReceiptItem.h"
+#include "applyARDiscount.h"
 
 #include <QVariant>
 #include <QValidator>
@@ -32,6 +33,7 @@ cashReceiptItem::cashReceiptItem(QWidget* parent, const char* name, bool modal, 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_openAmount, SIGNAL(idChanged(int)), _amountToApply, SLOT(setId(int)));
   connect(_openAmount, SIGNAL(effectiveChanged(const QDate&)), _amountToApply, SLOT(setEffective(const QDate&)));
+  connect(_discount, SIGNAL(clicked()),      this, SLOT(sDiscount()));
 
   _cust->setReadOnly(TRUE);
 }
@@ -102,6 +104,13 @@ enum SetResponse cashReceiptItem::set(const ParameterList &pParams)
   else
     _cashrcptitemid = -1;
 
+  param = pParams.value("amount_to_apply", &valid);
+  if (valid)
+  {
+    _amttoapply = param.toDouble();
+	populate();
+  }
+
   return NoError;
 }
 
@@ -125,24 +134,29 @@ void cashReceiptItem::sSave()
     XSqlQuery newReceipt;
     newReceipt.prepare( "INSERT INTO cashrcptitem "
                         "( cashrcptitem_id, cashrcptitem_cashrcpt_id,"
-                        "  cashrcptitem_aropen_id, cashrcptitem_amount ) "
+                        "  cashrcptitem_aropen_id, cashrcptitem_amount, cashrcptitem_discount ) "
                         "VALUES "
                         "( :cashrcptitem_id, :cashrcptitem_cashrcpt_id,"
-                        "  :cashrcptitem_aropen_id, :cashrcptitem_amount );" );
+                        "  :cashrcptitem_aropen_id, :cashrcptitem_amount, :cashrcptitem_discount );" );
     newReceipt.bindValue(":cashrcptitem_id", _cashrcptitemid);
     newReceipt.bindValue(":cashrcptitem_cashrcpt_id", _cashrcptid);
     newReceipt.bindValue(":cashrcptitem_aropen_id", _aropenid);
     newReceipt.bindValue(":cashrcptitem_amount", _amountToApply->localValue());
+	newReceipt.bindValue(":cashrcptitem_discount", _discountAmount->localValue());
+
     newReceipt.exec();
   }
   else if (_mode == cEdit)
   {
     XSqlQuery updateReceipt;
     updateReceipt.prepare( "UPDATE cashrcptitem "
-                           "SET cashrcptitem_amount=:cashrcptitem_amount "
+                           "SET cashrcptitem_amount=:cashrcptitem_amount, "
+						   "cashrcptitem_discount=:cashrcptitem_discount "
                            "WHERE (cashrcptitem_id=:cashrcptitem_id);" );
     updateReceipt.bindValue(":cashrcptitem_id", _cashrcptitemid);
     updateReceipt.bindValue(":cashrcptitem_amount", _amountToApply->localValue());
+	updateReceipt.bindValue(":cashrcptitem_discount", _discountAmount->localValue());
+
     updateReceipt.exec();
   }
 
@@ -155,36 +169,43 @@ void cashReceiptItem::populate()
 
   if (_mode == cNew)
   {
-    query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype,"
-                   "       aropen_docdate, aropen_duedate,"
-                   "       currToCurr(aropen_curr_id,cashrcpt_curr_id,(aropen_amount - aropen_paid), "
-                   "       cashrcpt_distdate) AS f_amount "
-                   "FROM cashrcpt, aropen "
+    query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype, "
+                   "       aropen_docdate, aropen_duedate, "
+                   "       currToCurr(aropen_curr_id, cashrcpt_curr_id, (aropen_amount - aropen_paid), "
+                   "       cashrcpt_distdate) AS f_amount, "
+				   "       COALESCE(cashrcptitem_discount, 0.00) AS discount "
+                   "FROM cashrcpt, aropen LEFT OUTER JOIN cashrcptitem ON (aropen_id=cashrcptitem_aropen_id) "
                    "WHERE ( (aropen_id=:aropen_id)"
-                   " AND (cashrcpt_id=:cashrcpt_id) );" );
-    query.bindValue(":aropen_id", _aropenid);
+                   " AND (cashrcpt_id=:cashrcpt_id))" );
+	query.bindValue(":aropen_id", _aropenid);
     query.bindValue(":cashrcpt_id", _cashrcptid);
     query.exec();
-    if (query.first())
+	if (query.first())
     {
-      _cust->setId(query.value("aropen_cust_id").toInt());
+	  _cust->setId(query.value("aropen_cust_id").toInt());
       _docNumber->setText(query.value("aropen_docnumber").toString());
       _docType->setText(query.value("aropen_doctype").toString());
       _docDate->setDate(query.value("aropen_docdate").toDate(), true);
       _dueDate->setDate(query.value("aropen_duedate").toDate());
+      _discountAmount->setLocalValue(query.value("discount").toDouble());
       _openAmount->set(query.value("f_amount").toDouble(),
 		       _openAmount->id(),
 		       query.value("aropen_docdate").toDate(), false);
-    }
+	  if(_openAmount->localValue() <= _amttoapply)
+		_amountToApply->setLocalValue(_openAmount->localValue());
+	  else
+		_amountToApply->setLocalValue(_amttoapply);
+    } 
 //  ToDo
   }
   else if (_mode == cEdit)
   {
-    query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype,"
-                   "       aropen_docdate, aropen_duedate,"
-                   "       currToCurr(aropen_curr_id,cashrcpt_curr_id,(aropen_amount - aropen_paid), "
-                   "       cashrcpt_distdate) AS balance,"
-                   "       cashrcptitem_amount, cashrcpt_curr_id "
+    query.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_doctype, "
+                   "       aropen_docdate, aropen_duedate, "
+                   "       currToCurr(aropen_curr_id, cashrcpt_curr_id, (aropen_amount - aropen_paid), "
+                   "       cashrcpt_distdate) AS balance, "
+                   "       cashrcptitem_amount, cashrcpt_curr_id, "
+				   "       cashrcptitem_discount AS discount "
                    "FROM cashrcptitem, cashrcpt, aropen "
                    "WHERE ( (cashrcptitem_cashrcpt_id=cashrcpt_id)"
                    " AND (cashrcptitem_aropen_id=aropen_id)"
@@ -202,8 +223,32 @@ void cashReceiptItem::populate()
 		       query.value("cashrcpt_curr_id").toInt(),
 		       query.value("aropen_docdate").toDate(), false);
       _amountToApply->setLocalValue(query.value("cashrcptitem_amount").toDouble());
+      _discountAmount->setLocalValue(query.value("discount").toDouble());
     }
 //  ToDo
   }
 }
 
+void cashReceiptItem::sDiscount()
+{
+  ParameterList params;
+  params.append("aropen_id", _aropenid);
+  params.append("curr_id", _openAmount->id());
+  if(_discountAmount->localValue() != 0.0)
+    params.append("amount", _discountAmount->localValue());
+
+  applyARDiscount newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if(newdlg.exec() != XDialog::Rejected)
+  {
+    _discountAmount->setLocalValue(newdlg._amount->localValue());
+
+	if(_amttoapply <= (_openAmount->localValue() - _discountAmount->localValue()))
+	  _amountToApply->setLocalValue(_amttoapply - _discountAmount->localValue());
+	else
+      _amountToApply->setLocalValue(_openAmount->localValue() - _discountAmount->localValue());
+
+	_amountToApply->setFocus();
+  }
+}

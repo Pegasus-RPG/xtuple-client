@@ -29,6 +29,7 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
+    virtual void sDiscount();
 
 protected slots:
     virtual void languageChange();
@@ -38,7 +39,7 @@ private:
     int _cashrcptitemid;
     int _aropenid;
     int _mode;
-
+	double _amttoapply;
 };
 
 #endif // CASHRECEIPTITEM_H

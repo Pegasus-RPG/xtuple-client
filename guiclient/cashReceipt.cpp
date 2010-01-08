@@ -102,6 +102,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "balance_curr");
   _aropen->addColumn(tr("Applied"),   _bigMoneyColumn, Qt::AlignRight,  true, "applied");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "applied_curr");
+  _aropen->addColumn(tr("Discount"),  _moneyColumn,    Qt::AlignRight , true, "discount" );
   _aropen->addColumn(tr("All Pending"),_moneyColumn,   Qt::AlignRight,  true, "pending");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "pending_curr");
 
@@ -316,15 +317,17 @@ void cashReceipt::sApply()
     {
       params.append("mode", "edit");
       params.append("cashrcptitem_id", cursor->altId());
+	  params.append("amount_to_apply", _received->localValue());
     }
     else
 	{
       params.append("mode", "new");
+	  params.append("amount_to_apply", _balance->localValue());
 	}
     params.append("cashrcpt_id", _cashrcptid);
     params.append("aropen_id", cursor->id());
     params.append("curr_id", _received->id());
-
+	
     cashReceiptItem newdlg(this, "", TRUE);
     newdlg.set(params);
 
@@ -359,8 +362,8 @@ void cashReceipt::sApplyLineBalance()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("applyCashReceiptLineBalance", result), __FILE__, __LINE__);
-	return;
+	    systemError(this, storedProcErrorLookup("applyCashReceiptLineBalance", result), __FILE__, __LINE__);
+	    return;
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -394,6 +397,7 @@ void cashReceipt::sClear()
   }
 
   sFillApplyList();
+  sUpdateBalance();
 }
 
 void cashReceipt::sAdd()
@@ -603,12 +607,12 @@ int to = -1, from = -1;
                "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
                "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
-               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate ) "
+               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, cashrcpt_discount ) "
                "VALUES "
                "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
                "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
-               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate );" );
+               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, :cashrcpt_discount );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -622,8 +626,9 @@ int to = -1, from = -1;
 	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
 	       "    cashrcpt_curr_id=:curr_id,"
 	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
-               "    cashrcpt_applydate=:cashrcpt_applydate "
-	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
+           "    cashrcpt_applydate=:cashrcpt_applydate,"
+		   "    cashrcpt_discount=:cashrcpt_discount "
+		   "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
   q.bindValue(":cashrcpt_number", _number->text());
@@ -640,6 +645,8 @@ int to = -1, from = -1;
   q.bindValue(":cashrcpt_applydate", _applDate->date());
   q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
   q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
+  q.bindValue(":cashrcpt_discount", _discount->localValue());
+  
   if (_received->id() != _bankaccnt_curr_id)
     q.bindValue(":curr_id", to);
   else
@@ -737,8 +744,28 @@ void cashReceipt::sFillApplyList()
       if(_mindate > _applDate->date())
         _applDate->setDate(_mindate);
     }
+    
+	XSqlQuery discount ;
+
+	discount.prepare( "SELECT SUM(COALESCE(cashrcptitem_discount, 0.00)) AS disc "
+                      "FROM cashrcptitem "
+                      "WHERE (cashrcptitem_cashrcpt_id=:cashrcpt_id);" );
+    discount.bindValue(":cashrcpt_id", _cashrcptid);
+	discount.exec();
+    if (discount.first())
+	{
+      _discount->setLocalValue(discount.value("disc").toDouble());
+	  sUpdateBalance();
+	}
+    else if (discount.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, discount.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
   }
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
+
 }
 
 void cashReceipt::sFillMiscList()
@@ -780,7 +807,7 @@ void cashReceipt::sFillMiscList()
 void cashReceipt::sUpdateBalance()
 {
   _balance->setLocalValue(_received->localValue() - _applied->localValue() -
-                          _miscDistribs->localValue());
+                          _miscDistribs->localValue() - _discount->localValue());
   if (!_balance->isZero())
     _balance->setPaletteForegroundColor(QColor("red"));
 }

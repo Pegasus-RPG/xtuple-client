@@ -33,6 +33,8 @@ arAccountAssignments::arAccountAssignments(QWidget* parent, const char* name, Qt
   _araccnt->addColumn(tr("A/R Account"),     120, Qt::AlignLeft,  true, "araccnt");
   _araccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft,  true, "prepaidaccnt");
   _araccnt->addColumn(tr("Freight Account"), 120, Qt::AlignLeft,  true, "freightaccnt");
+  _araccnt->addColumn(tr("Discount Account"),120, Qt::AlignLeft,  true, "discountaccnt");
+
   if(_metrics->boolean("EnableCustomerDeposits"))
     _araccnt->addColumn(tr("Deferred Rev. Account"), 120, Qt::AlignLeft, true, "deferredaccnt");
 
@@ -124,7 +126,8 @@ void arAccountAssignments::sFillList()
                       "       formatGLAccount(araccnt_ar_accnt_id) AS araccnt,"
                       "       formatGLAccount(araccnt_prepaid_accnt_id) AS prepaidaccnt,"
                       "       formatGLAccount(araccnt_freight_accnt_id) AS freightaccnt,"
-                      "       formatGLAccount(araccnt_deferred_accnt_id) AS deferredaccnt "
+                      "       formatGLAccount(araccnt_deferred_accnt_id) AS deferredaccnt, "
+					  "       formatGLAccount(araccnt_discount_accnt_id) AS discountaccnt  "
                       "  FROM araccnt "
                       " ORDER BY custtypecode;" );
 }

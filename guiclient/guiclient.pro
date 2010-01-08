@@ -79,6 +79,7 @@ FORMS =   ../common/batchItem.ui                \
           apWorkBench.ui                        \
           applyAPCreditMemo.ui                  \
           applyARCreditMemo.ui                  \
+          applyARDiscount.ui                    \
           applyDiscount.ui                      \
           arAccountAssignment.ui                \
           arAccountAssignments.ui               \
@@ -788,6 +789,7 @@ HEADERS = ../common/batchItem.h                 \
           apWorkBench.h                         \
           applyAPCreditMemo.h                   \
           applyARCreditMemo.h                   \
+          applyARDiscount.h                     \
           applyDiscount.h                       \
           arAccountAssignment.h                 \
           arAccountAssignments.h                \
@@ -1536,6 +1538,7 @@ SOURCES = ../common/batchItem.cpp               \
           apWorkBench.cpp                       \
           applyAPCreditMemo.cpp                 \
           applyARCreditMemo.cpp                 \
+          applyARDiscount.cpp                   \
           applyDiscount.cpp                     \
           arAccountAssignment.cpp               \
           arAccountAssignments.cpp              \

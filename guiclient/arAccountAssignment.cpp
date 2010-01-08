@@ -80,6 +80,7 @@ enum SetResponse arAccountAssignment::set(const ParameterList &pParams)
       _prepaid->setReadOnly(TRUE);
       _freight->setReadOnly(TRUE);
       _deferred->setReadOnly(TRUE);
+	  _discount->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -124,6 +125,14 @@ void arAccountAssignment::sSave()
     return;
   }
 
+  if (!_discount->isValid())
+  {
+    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                          tr("You must select a Discount Account before saving this A/R Account Assignment") );
+    _discount->setFocus();
+    return;
+  }
+
   q.prepare("SELECT araccnt_id"
             "  FROM araccnt"
             " WHERE((araccnt_custtype_id=:araccnt_custtype_id)"
@@ -158,11 +167,11 @@ void arAccountAssignment::sSave()
     q.prepare( "INSERT INTO araccnt "
                "( araccnt_id, araccnt_custtype_id, araccnt_custtype,"
                "  araccnt_ar_accnt_id, araccnt_prepaid_accnt_id, araccnt_freight_accnt_id,"
-               "  araccnt_deferred_accnt_id ) "
+               "  araccnt_deferred_accnt_id, araccnt_discount_accnt_id ) "
                "VALUES "
                "( :araccnt_id, :araccnt_custtype_id, :araccnt_custtype,"
                "  :araccnt_ar_accnt_id, :araccnt_prepaid_accnt_id, :araccnt_freight_accnt_id,"
-               "  :araccnt_deferred_accnt_id );" );
+               "  :araccnt_deferred_accnt_id, :araccnt_discount_accnt_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE araccnt "
@@ -170,7 +179,8 @@ void arAccountAssignment::sSave()
                "    araccnt_ar_accnt_id=:araccnt_ar_accnt_id,"
                "    araccnt_prepaid_accnt_id=:araccnt_prepaid_accnt_id,"
                "    araccnt_freight_accnt_id=:araccnt_freight_accnt_id,"
-               "    araccnt_deferred_accnt_id=:araccnt_deferred_accnt_id "
+               "    araccnt_deferred_accnt_id=:araccnt_deferred_accnt_id,"
+			   "    araccnt_discount_accnt_id=:araccnt_discount_accnt_id "
                "WHERE (araccnt_id=:araccnt_id);" );
 
   q.bindValue(":araccnt_id", _araccntid);
@@ -190,6 +200,8 @@ void arAccountAssignment::sSave()
   q.bindValue(":araccnt_prepaid_accnt_id", _prepaid->id());
   q.bindValue(":araccnt_freight_accnt_id", _freight->id());
   q.bindValue(":araccnt_deferred_accnt_id", _deferred->id());
+  q.bindValue(":araccnt_discount_accnt_id", _discount->id());
+
   q.exec();
 
   done(_araccntid);
@@ -199,7 +211,8 @@ void arAccountAssignment::populate()
 {
   q.prepare( "SELECT araccnt_custtype_id, araccnt_custtype,"
              "       araccnt_ar_accnt_id, araccnt_prepaid_accnt_id,"
-             "       araccnt_freight_accnt_id, araccnt_deferred_accnt_id "
+             "       araccnt_freight_accnt_id, araccnt_deferred_accnt_id, "
+			 "       araccnt_discount_accnt_id "
              "FROM araccnt "
              "WHERE (araccnt_id=:araccnt_id);" );
   q.bindValue(":araccnt_id", _araccntid);
@@ -221,6 +234,6 @@ void arAccountAssignment::populate()
     _prepaid->setId(q.value("araccnt_prepaid_accnt_id").toInt());
     _freight->setId(q.value("araccnt_freight_accnt_id").toInt());
     _deferred->setId(q.value("araccnt_deferred_accnt_id").toInt());
+    _discount->setId(q.value("araccnt_discount_accnt_id").toInt());
   }
 }
-
