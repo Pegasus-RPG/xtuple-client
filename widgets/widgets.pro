@@ -62,6 +62,7 @@ HEADERS += \
            plugins/itemclusterplugin.h \
            plugins/itemlineeditplugin.h \
            plugins/lotserialclusterplugin.h \
+           plugins/lotserialseqclusterplugin.h \
            plugins/orderclusterplugin.h \
            plugins/opportunityclusterplugin.h \
            plugins/parametergroupplugin.h \
@@ -142,6 +143,7 @@ SOURCES    += widgets.cpp \
               virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
               xtreewidget.cpp \
               lotserialCluster.cpp \
+              lotserialseqcluster.cpp \
               shipmentCluster.cpp \
               racluster.cpp \
               revisionCluster.cpp \
@@ -199,6 +201,7 @@ HEADERS    += widgets.h \
               virtualCluster.h deptcluster.h shiftcluster.h \
               xtreewidget.h \
               lotserialCluster.h \
+              lotserialseqcluster.h \
               shipmentcluster.h \
               racluster.h \
               revisioncluster.h \

@@ -40,6 +40,7 @@
 #include "plugins/itemclusterplugin.h"
 #include "plugins/itemlineeditplugin.h"
 #include "plugins/lotserialclusterplugin.h"
+#include "plugins/lotserialseqclusterplugin.h"
 #include "plugins/orderclusterplugin.h"
 #include "plugins/opportunityclusterplugin.h"
 #include "plugins/parametergroupplugin.h"
@@ -117,6 +118,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ItemClusterPlugin(this));
   m_plugins.append(new ItemLineEditPlugin(this));
   m_plugins.append(new LotserialClusterPlugin(this));
+  m_plugins.append(new LotserialseqClusterPlugin(this));
   m_plugins.append(new OrderClusterPlugin(this));
   m_plugins.append(new OpportunityClusterPlugin(this));
   m_plugins.append(new ParameterGroupPlugin(this));
