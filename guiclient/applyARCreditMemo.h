@@ -31,6 +31,7 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPost();
     virtual void sApplyBalance();
+    virtual void sApplyLineBalance();
     virtual void sApply();
     virtual void sClear();
     virtual void sClose();

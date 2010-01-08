@@ -25,13 +25,14 @@ applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool mod
 {
   setupUi(this);
 
-  connect(_apply,         SIGNAL(clicked()),      this, SLOT(sApply()));
-  connect(_applyToBalance,SIGNAL(clicked()),      this, SLOT(sApplyBalance()));
-  connect(_available,     SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
-  connect(_clear,         SIGNAL(clicked()),      this, SLOT(sClear()));
-  connect(_close,         SIGNAL(clicked()),      this, SLOT(sClose()));
-  connect(_post,          SIGNAL(clicked()),      this, SLOT(sPost()));
-  connect(_searchDocNum,  SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
+  connect(_apply,            SIGNAL(clicked()),      this, SLOT(sApply()));
+  connect(_applyLineBalance, SIGNAL(clicked()),      this, SLOT(sApplyLineBalance()));
+  connect(_applyToBalance,   SIGNAL(clicked()),      this, SLOT(sApplyBalance()));
+  connect(_available,        SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
+  connect(_clear,            SIGNAL(clicked()),      this, SLOT(sClear()));
+  connect(_close,            SIGNAL(clicked()),      this, SLOT(sClose()));
+  connect(_post,             SIGNAL(clicked()),      this, SLOT(sPost()));
+  connect(_searchDocNum,     SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
 
   _captive = FALSE;
 
@@ -130,6 +131,30 @@ void applyARCreditMemo::sApplyBalance()
 {
   q.prepare("SELECT applyARCreditMemoToBalance(:aropen_id) AS result;");
   q.bindValue(":aropen_id", _aropenid);
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("applyARCreditMemoToBalance", result));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  populate();
+}
+
+void applyARCreditMemo::sApplyLineBalance()
+{
+  q.prepare("SELECT applyARCreditMemoToBalance(:sourceAropenid, :targetAropenid) AS result;");
+  q.bindValue(":sourceAropenid", _aropenid);
+  q.bindValue(":targetAropenid", _aropen->id());
   q.exec();
   if (q.first())
   {

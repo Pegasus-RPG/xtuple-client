@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
+    <width>576</width>
     <height>471</height>
    </rect>
   </property>
@@ -34,18 +34,12 @@ to be bound by its terms.</comment>
        <property name="spacing">
         <number>5</number>
        </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
         <widget class="CustCluster" name="_cust"/>
        </item>
        <item>
         <layout class="QHBoxLayout">
          <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -69,15 +63,9 @@ to be bound by its terms.</comment>
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
            <item>
             <layout class="QVBoxLayout">
              <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="margin">
               <number>0</number>
              </property>
              <item>
@@ -209,9 +197,6 @@ to be bound by its terms.</comment>
               <property name="spacing">
                <number>0</number>
               </property>
-              <property name="margin">
-               <number>0</number>
-              </property>
               <item>
                <widget class="QLabel" name="_docNumber">
                 <property name="minimumSize">
@@ -253,9 +238,6 @@ to be bound by its terms.</comment>
             <item row="1" column="1">
              <layout class="QHBoxLayout">
               <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="margin">
                <number>0</number>
               </property>
               <item>
@@ -320,9 +302,6 @@ to be bound by its terms.</comment>
        <property name="spacing">
         <number>5</number>
        </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
         <widget class="QLabel" name="_searchDocNumLit">
          <property name="text">
@@ -333,9 +312,6 @@ to be bound by its terms.</comment>
        <item>
         <layout class="QHBoxLayout">
          <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -366,9 +342,6 @@ to be bound by its terms.</comment>
        <property name="spacing">
         <number>5</number>
        </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
        <item>
         <widget class="XTreeWidget" name="_aropen"/>
        </item>
@@ -377,16 +350,10 @@ to be bound by its terms.</comment>
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
          <item>
           <layout class="QVBoxLayout">
            <property name="spacing">
             <number>5</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="_applyToBalance">
@@ -400,9 +367,6 @@ to be bound by its terms.</comment>
              <property name="spacing">
               <number>0</number>
              </property>
-             <property name="margin">
-              <number>0</number>
-             </property>
              <item>
               <widget class="QPushButton" name="_apply">
                <property name="enabled">
@@ -410,6 +374,16 @@ to be bound by its terms.</comment>
                </property>
                <property name="text">
                 <string>&amp;Apply</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_applyLineBalance">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Apply Line Bal.</string>
                </property>
               </widget>
              </item>
@@ -473,6 +447,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -613,6 +588,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>443</x>
      <y>302</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_aropen</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_applyLineBalance</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>203</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>468</x>
+     <y>337</y>
     </hint>
    </hints>
   </connection>
