@@ -70,10 +70,18 @@ void metasqls::sNew()
 {
   MQLEdit *newdlg = new MQLEdit(this);
   omfgThis->handleNewWindow(newdlg);
+  connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
 void metasqls::sDelete()
 {
+  if (QMessageBox::question(this, tr("Delete MetaSQL?"),
+                            tr("Are you sure you want to delete this "
+                               "MetaSQL statement?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
   q.prepare("SELECT deleteMetaSQL(:metasql_id) AS returnVal;");
   q.bindValue(":metasql_id", _list->id());
   q.exec();
@@ -101,6 +109,7 @@ void metasqls::sEdit()
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
   omfgThis->handleNewWindow(newdlg);
+  connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
 void metasqls::sFillList()
