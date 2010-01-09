@@ -63,6 +63,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 
     q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
                "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
+               "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
                "       invhist_ordtype, invhist_transtype, invhist_docnumber "
                "FROM itemlocdist, itemsite, item, invhist "
                "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
@@ -75,12 +76,12 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
     {
       if (q.value("itemsite_controlmethod").toString() == "S")
       {
-	_serial = true;
+        _serial = true;
         _qtyToAssign->setText("1");
         _qtyToAssign->setEnabled(FALSE);
       }
       else
-	_serial = false;
+        _serial = false;
 
       _item->setItemsiteid(q.value("itemsite_id").toInt());
       _itemsiteid = q.value("itemsite_id").toInt();
@@ -105,10 +106,31 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _lotSerial->populate(preassign);
         _preassigned = true;
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (preassign.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, preassign.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
+      }
+      else if (q.value("itemsite_lsseq_id").toInt() != -1)
+      {
+        // Auto sequence
+        XSqlQuery fetchlsnum;
+        fetchlsnum.prepare("SELECT fetchlsnumber(:lsseq_id) AS lotserial;");
+        fetchlsnum.bindValue(":lsseq_id", q.value("itemsite_lsseq_id").toInt());
+        fetchlsnum.exec();
+        if (fetchlsnum.first())
+          _lotSerial->setText(fetchlsnum.value("lotserial").toString());
+        else if (fetchlsnum.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, fetchlsnum.lastError().databaseText(), __FILE__, __LINE__);
+          return UndefinedError;
+        }
+        if (!_serial)
+          _qtyToAssign->setFocus();
+        else if (_expiration->isEnabled())
+          _expiration->setFocus();
+        else
+          _warranty->setFocus();
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -214,7 +236,7 @@ void createLotSerial::sAssign()
 
   if (_serial)
   {
-	q.prepare("SELECT COUNT(*) AS count FROM "
+    q.prepare("SELECT COUNT(*) AS count FROM "
 		  "(SELECT itemloc_id AS count "
 		  "FROM itemloc,itemsite,ls "
 		  "WHERE ((itemloc_itemsite_id=:itemsite_id)"
