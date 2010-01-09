@@ -26,6 +26,9 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   (SELECT custtype_code FROM custtype WHERE custtype_id=&lt;? value("custtype_id") ?>) AS selection,
 &lt;? elseif exists("custtype_pattern") ?>
   ('Customer Type pattern = ' || &lt;? value("custtype_pattern") ?>) AS selection,
+&lt;? elseif exists("custgrp_id") ?>
+  (SELECT custgrp_name FROM custgrp WHERE 
+ custgrp_id=&lt;? value("custgrp_id") ?>) AS selection,
 &lt;? else ?>
   'All Customers' AS selection,
 &lt;? endif ?>

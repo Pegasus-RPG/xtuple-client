@@ -19,6 +19,10 @@
          ( SELECT (custtype_code || '-' || custtype_descrip)
              FROM custtype
             WHERE (custtype_id=&lt;? value(&quot;custtype_id&quot;) ?>) )
+      &lt;? elseif exists(&quot;custgrp_id&quot;) ?>
+         ( SELECT (custgrp_name || '-' ||  custgrp_descrip)
+	   FROM custgrp
+            WHERE (custgrp_id=&lt;? value(&quot;custgrp_id&quot;) ?>) )
        &lt;? elseif exists(&quot;custtype_pattern&quot;) ?>
          text(&lt;? value(&quot;custtype_pattern&quot;) ?>)
        &lt;? else ?>
@@ -27,6 +31,8 @@
        AS f_value,
        &lt;? if reExists(&quot;custtype_.*&quot;) ?>
          text('Customer Type:')
+       &lt;? elseif exists(&quot;custgrp_id&quot;) ?>
+         text('Customer Group:')
        &lt;? else ?>
          text('Customer:')
        &lt;? endif ?>
@@ -47,7 +53,8 @@
          cust_number,
          cust_name,
          openARItemsValue(cust_id, calitem_id) AS value
-    FROM cust,
+    FROM cust LEFT OUTER JOIN custgrpitem ON (cust_id=custgrpitem_cust_id)
+         LEFT OUTER JOIN custgrp ON (custgrpitem_custgrp_id=custgrp_id),
          ( SELECT rcalitem_id AS calitem_id,
                   findPeriodStart(rcalitem_id) AS calitem_start,
                   findPeriodEnd(rcalitem_id) AS calitem_end
@@ -80,6 +87,8 @@
    WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
   &lt;? elseif exists(&quot;custtype_id&quot;) ?>
    WHERE (cust_custtype_id=&lt;? value(&quot;custtype_id&quot;) ?>)
+  &lt;? elseif exists(&quot;custgrp_id&quot;) ?>
+   WHERE (custgrp_id=&lt;? value(&quot;custgrp_id&quot;) ?>)
   &lt;? elseif exists(&quot;custtype_pattern&quot;) ?>
    WHERE (cust_custtype_id IN (SELECT custtype_id
                                  FROM custtype
