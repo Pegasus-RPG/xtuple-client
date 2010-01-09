@@ -78,8 +78,6 @@ class menuSales : public QObject
     void sPricingScheduleAssignments();
     void sSales();
     void sUpdatePrices();
-    void sUpdatePricesByProductCategory();
-    void sUpdatePricesByPricingSchedule();
     void sDspPricesByItem();
     void sDspPricesByCustomer();
     void sDspPricesByCustomerType();

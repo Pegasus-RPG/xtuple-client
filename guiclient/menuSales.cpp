@@ -59,8 +59,6 @@
 #include "pricingScheduleAssignments.h"
 #include "sales.h"
 #include "updatePrices.h"
-#include "updatePricesByProductCategory.h"
-#include "updatePricesByPricingSchedule.h"
 
 #include "dspPricesByItem.h"
 #include "dspPricesByCustomer.h"
@@ -449,12 +447,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.sales", tr("S&ales..."),	SLOT(sSales()), pricingMenu, "CreateSales",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
 
-    // Sales | Pricing | Update Prices
-    //{ "menu",	tr("Update &Prices"),       (char*)pricingUpdateMenu,	pricingMenu,	"true",	NULL, NULL, true, NULL },
-    //{ "so.updatePricesByProductCategory", tr("by Product &Category..."),	SLOT(sUpdatePricesByProductCategory()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
-    //{ "so.updatePricesByPricingSchedule", tr("by Pricing &Schedule..."),	SLOT(sUpdatePricesByPricingSchedule()), pricingUpdateMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
-    //{ "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
-
     // Sales | Pricing | Reports
     { "menu",	tr("&Reports"),	(char*)pricingReportsMenu,	pricingMenu,	"true",	NULL, NULL, true, NULL },
     { "so.dspPricesByCustomerType", tr("Item Prices by Customer &Type..."),	SLOT(sDspPricesByCustomerType()), pricingReportsMenu, "ViewCustomerPrices", NULL, NULL,	 true, NULL },
@@ -772,16 +764,6 @@ void menuSales::sSales()
 void menuSales::sUpdatePrices()
 {
   updatePrices(parent, "", TRUE).exec();
-}
-
-void menuSales::sUpdatePricesByProductCategory()
-{
-  updatePricesByProductCategory(parent, "", TRUE).exec();
-}
-
-void menuSales::sUpdatePricesByPricingSchedule()
-{
-  updatePricesByPricingSchedule(parent, "", TRUE).exec();
 }
 
 void menuSales::sDspPricesByItem()

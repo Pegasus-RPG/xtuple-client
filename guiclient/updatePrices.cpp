@@ -39,6 +39,8 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WF
     connect(_update,             SIGNAL(clicked()),     this, SLOT(sUpdate()));
     connect(_showEffective,      SIGNAL(clicked()),     this, SLOT(populate()));
     connect(_showExpired,        SIGNAL(clicked()),     this, SLOT(populate()));
+    connect(_value,              SIGNAL(clicked()),     this, SLOT(sHandleCharPrice()));
+    connect(_percent,            SIGNAL(clicked()),     this, SLOT(sHandleCharPrice()));
     
     _updateBy->setValidator(new XDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
 
@@ -57,7 +59,7 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WF
     _sel->addColumn(tr("Description"),     -1,          Qt::AlignLeft,  true,  "ipshead_descrip");
 	
 	_group->hide();
-	_value->setChecked(true);
+//	_value->setChecked(true);
 	
 	populate();
 }
@@ -106,7 +108,6 @@ void updatePrices::sUpdate()
       return;
     }
 
-    MetaSQLQuery mql = mqlLoad("updateprices", "update");
     ParameterList params;
   
     if (_byItem->isChecked())
@@ -119,11 +120,23 @@ void updatePrices::sUpdate()
     else
       params.append("updateByPercent", true);
 
+    MetaSQLQuery mql = mqlLoad("updateprices", "update");
     q = mql.toQuery(params);
     if (q.lastError().type() != QSqlError::NoError)
 	{
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
+	}
+	
+	if (_updateCharPrices->isChecked())
+	{
+      MetaSQLQuery mql2 = mqlLoad("updateprices", "updatechar");
+      q = mql2.toQuery(params);
+      if (q.lastError().type() != QSqlError::NoError)
+	  {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	    return;
+	  }
 	}
 	
     QMessageBox::information( this, tr("Success"),
@@ -211,4 +224,10 @@ void updatePrices::sHandleBy(bool toggled)
 	  else
 	    _paramGroup->setType(ParameterGroup::ProductCategory);
 	}
+}
+
+void updatePrices::sHandleCharPrice()
+{
+    // Only enable update char prices for percentage updates.
+    _updateCharPrices->setEnabled( _percent->isChecked() );
 }

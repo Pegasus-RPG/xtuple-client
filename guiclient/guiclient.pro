@@ -733,8 +733,6 @@ FORMS =   ../common/batchItem.ui                \
           updateOUTLevels.ui                    \
           updateOUTLevelsByClassCode.ui         \
           updatePrices.ui                       \
-          updatePricesByPricingSchedule.ui      \
-          updatePricesByProductCategory.ui      \
           updateReorderLevels.ui                \
           user.ui                               \
           userCostingElement.ui                 \
@@ -1473,8 +1471,6 @@ HEADERS = ../common/batchItem.h                 \
           updateOUTLevels.h                     \
           updateOUTLevelsByClassCode.h          \
           updatePrices.h                        \
-          updatePricesByPricingSchedule.h       \
-          updatePricesByProductCategory.h       \
           updateReorderLevels.h                 \
           user.h                        \
           userCostingElement.h          \
@@ -2222,8 +2218,6 @@ SOURCES = ../common/batchItem.cpp               \
           updateOUTLevels.cpp                   \
           updateOUTLevelsByClassCode.cpp        \
           updatePrices.cpp                      \
-          updatePricesByPricingSchedule.cpp     \
-          updatePricesByProductCategory.cpp     \
           updateReorderLevels.cpp               \
           user.cpp                              \
           userCostingElement.cpp                \
