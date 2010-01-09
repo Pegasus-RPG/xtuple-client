@@ -42,8 +42,6 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
 
   omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
 
-  _trapClose = TRUE;
-
   _item->setReadOnly(TRUE);
   _qtyToDistribute->setPrecision(omfgThis->qtyVal());
   _qtyTagged->setPrecision(omfgThis->qtyVal());
@@ -104,7 +102,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
                      "       itemlocdist_distlotserial, itemlocdist_qty,"
                      "       itemsite_loccntrl, itemsite_controlmethod,"
-                     "       itemsite_perishable, itemsite_warrpurc "
+                     "       itemsite_perishable, itemsite_warrpurc, "
+                     "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id "
                      "FROM itemlocdist, itemsite "
                      "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                      " AND (itemlocdist_series=:itemlocdist_series) ) "
@@ -152,14 +151,31 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         }
 
         if(itemlocSeries == -1)
-        {
+        { 
           ParameterList params;
           params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+
+          // Auto assign lot/serial if applicable
+          if (itemloc.value("itemsite_lsseq_id").toInt() != -1 &&
+              !itemloc.value("itemsite_perishable").toBool() &&
+              !itemloc.value("itemsite_warrpurc").toBool()) {
+            XSqlQuery autocreatels;
+            autocreatels.prepare("SELECT autocreatels(:itemlocdist_id) AS itemlocseries;");
+            autocreatels.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+            autocreatels.exec();
+            if (autocreatels.first())
+              params.append("itemlocseries", autocreatels.value("itemlocseries").toInt());
+            else if (autocreatels.lastError().type() != QSqlError::NoError)
+            {
+              systemError(0, autocreatels.lastError().databaseText(), __FILE__, __LINE__);
+              return XDialog::Rejected;
+            }
+          }
 
           assignLotSerial newdlg(pParent, "", TRUE);
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
-          if (itemlocSeries != XDialog::Accepted)
+          if (itemlocSeries == XDialog::Rejected)
             return XDialog::Rejected;
         }
         
@@ -229,7 +245,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     }
     
     // Process location distributions
-              qDebug("size %d", ildList.size());
     for (int i = 0; i < ildList.size(); ++i) {
       post.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
       post.bindValue(":itemlocdist_id", ildList.at(i));
@@ -289,16 +304,7 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
 
 void distributeInventory::closeEvent(QCloseEvent *pEvent)
 {
-  if (_trapClose)
-  {
-    QMessageBox::critical( this, tr("Cannot Cancel Distribution"),
-                           tr( "<p>You must select locations to distribute to/from "
-			       "and select the 'Post' button. You may not cancel "
-			       "this action." ) );
-    pEvent->ignore();
-  }
-  else
-    pEvent->accept();
+  pEvent->accept();
 }
 
 void distributeInventory::populate()
@@ -369,7 +375,6 @@ void distributeInventory::sPost()
   }
 
   // Append id to the list and process at the end   
-  _trapClose = FALSE;
   done(_itemlocdistid);
 }
 
@@ -571,7 +576,6 @@ void distributeInventory::sBcDistribute()
 
 void distributeInventory::sCatchLotSerialNumber(const QString plotserial)
 {
-  //qDebug("sCatchLotSerialNumber");
   _bc->setText(plotserial);
   if (_controlMethod == "S")
     _bcDistribute->setFocus();

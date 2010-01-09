@@ -495,7 +495,7 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="0" column="0">
-            <widget class="XTreeView" name="_saleitems">
+            <widget class="XTableView" name="_saleitems">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -847,9 +847,9 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeView</class>
-   <extends>QTreeView</extends>
-   <header>xtreeview.h</header>
+   <class>XTableView</class>
+   <extends>QTableView</extends>
+   <header>xtableview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

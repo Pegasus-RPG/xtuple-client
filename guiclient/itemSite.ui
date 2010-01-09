@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>915</width>
-    <height>761</height>
+    <width>912</width>
+    <height>686</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -330,380 +330,400 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Inventory</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_21">
+        <layout class="QGridLayout" name="gridLayout_23">
          <item row="0" column="0">
-          <widget class="QGroupBox" name="_reporting">
-           <property name="title">
-            <string>Control</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_12">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QGridLayout" name="gridLayout_21">
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="_reporting">
+               <property name="title">
+                <string>Control</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_6">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="_controlMethodLit">
+                 <layout class="QHBoxLayout" name="horizontalLayout_12">
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_12">
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="_controlMethodLit">
+                      <property name="text">
+                       <string>Control Method:</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="XComboBox" name="_controlMethod">
+                      <item>
+                       <property name="text">
+                        <string>None</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Regular</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Lot #</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Serial #</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="_plannerCodeLit">
+                      <property name="text">
+                       <string>&amp;Planner Code:</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="buddy">
+                       <cstring>_plannerCode</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="XComboBox" name="_plannerCode">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="allowNull">
+                       <bool>true</bool>
+                      </property>
+                      <property name="type">
+                       <enum>XComboBox::PlannerCodes</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="_costcatLit">
+                      <property name="text">
+                       <string>Cost Cate&amp;gory:</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="buddy">
+                       <cstring>_costcat</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="XComboBox" name="_costcat">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="allowNull">
+                       <bool>true</bool>
+                      </property>
+                      <property name="type">
+                       <enum>XComboBox::CostCategories</enum>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1" rowspan="2">
+              <widget class="QGroupBox" name="_inventory">
+               <property name="title">
+                <string>Settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_7">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_stocked">
                   <property name="text">
-                   <string>Control Method:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   <string>Stocked</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="XComboBox" name="_controlMethod">
-                  <item>
-                   <property name="text">
-                    <string>None</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Regular</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Lot #</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Serial #</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="_plannerCodeLit">
+                <item row="1" column="0" colspan="3">
+                 <widget class="QCheckBox" name="_autoUpdateABCClass">
                   <property name="text">
-                   <string>&amp;Planner Code:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy">
-                   <cstring>_plannerCode</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="XComboBox" name="_plannerCode">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="allowNull">
-                   <bool>true</bool>
-                  </property>
-                  <property name="type">
-                   <enum>XComboBox::PlannerCodes</enum>
+                   <string>Allow Automatic ABC Updates</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="_costcatLit">
+                 <widget class="QLabel" name="_abcClassLit">
                   <property name="text">
-                   <string>Cost Cate&amp;gory:</string>
+                   <string>ABC Class:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="XComboBox" name="_abcClass">
+                  <item>
+                   <property name="text">
+                    <string>A</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>B</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>C</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="_cycleCountFreqLit">
+                  <property name="text">
+                   <string>Cycl. Cnt. Fre&amp;q.:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                   <property name="buddy">
-                   <cstring>_costcat</cstring>
+                   <cstring>_cycleCountFreq</cstring>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="XComboBox" name="_costcat">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="_cycleCountFreq">
+                  <property name="maximum">
+                   <number>999</number>
                   </property>
-                  <property name="allowNull">
-                   <bool>true</bool>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QLabel" name="_days1Lit">
+                  <property name="text">
+                   <string>Days</string>
                   </property>
-                  <property name="type">
-                   <enum>XComboBox::CostCategories</enum>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="_eventFenceLit">
+                  <property name="text">
+                   <string>Event &amp;Fence:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy">
+                   <cstring>_eventFence</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QSpinBox" name="_eventFence">
+                  <property name="minimum">
+                   <number>0</number>
+                  </property>
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QLabel" name="_days3Lit">
+                  <property name="text">
+                   <string>Days</string>
                   </property>
                  </widget>
                 </item>
                </layout>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1" rowspan="2">
-          <widget class="QGroupBox" name="_inventory">
-           <property name="title">
-            <string>Settings</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_7">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_stocked">
-              <property name="text">
-               <string>Stocked</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="3">
-             <widget class="QCheckBox" name="_autoUpdateABCClass">
-              <property name="text">
-               <string>Allow Automatic ABC Updates</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="_abcClassLit">
-              <property name="text">
-               <string>ABC Class:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="XComboBox" name="_abcClass">
-              <item>
-               <property name="text">
-                <string>A</string>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="_costing">
+               <property name="title">
+                <string>Costing Method</string>
                </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>B</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>C</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="_cycleCountFreqLit">
-              <property name="text">
-               <string>Cycl. Cnt. Fre&amp;q.:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy">
-               <cstring>_cycleCountFreq</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QSpinBox" name="_cycleCountFreq">
-              <property name="maximum">
-               <number>999</number>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="_days1Lit">
-              <property name="text">
-               <string>Days</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="_eventFenceLit">
-              <property name="text">
-               <string>Event &amp;Fence:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy">
-               <cstring>_eventFence</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QSpinBox" name="_eventFence">
-              <property name="minimum">
-               <number>0</number>
-              </property>
-              <property name="maximum">
-               <number>999</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLabel" name="_days3Lit">
-              <property name="text">
-               <string>Days</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QGroupBox" name="_costing">
-           <property name="title">
-            <string>Costing Method</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QRadioButton" name="_costNone">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>None</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_costAvg">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Average</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_costStd">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Standard</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_costJob">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Job</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QGroupBox" name="_woCostGroup">
-           <property name="title">
-            <string>Over-ride Work Order Item Cost Recognition Default</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QRadioButton" name="_todate">
-              <property name="text">
-               <string>To Date</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_proportional">
-              <property name="text">
-               <string>Proportional</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QGroupBox" name="_autoNumberGroup">
-           <property name="title">
-            <string>Automatic Lot/Serial Numbering</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_14"/>
-          </widget>
-         </item>
-         <item row="4" column="0" colspan="2">
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>818</width>
-             <height>64</height>
-            </size>
-           </property>
-          </spacer>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QRadioButton" name="_costNone">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>None</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_costAvg">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Average</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_costStd">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Standard</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_costJob">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Job</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
+                <widget class="QGroupBox" name="_woCostGroup">
+                 <property name="title">
+                  <string>Over-ride Work Order Item Cost Recognition Default</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_9">
+                  <item>
+                   <widget class="QRadioButton" name="_todate">
+                    <property name="text">
+                     <string>To Date</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="_proportional">
+                    <property name="text">
+                     <string>Proportional</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_7">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="_autoNumberGroup">
+                 <property name="title">
+                  <string>Automatic Lot/Serial Numbering</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_14">
+                  <item row="0" column="0">
+                   <widget class="LotserialseqCluster" name="_sequence">
+                    <property name="label">
+                     <string>Sequence #:</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>818</width>
+               <height>64</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -1511,6 +1531,11 @@ to be bound by its terms.</comment>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LotserialseqCluster</class>
+   <extends>QWidget</extends>
+   <header>lotserialseqcluster.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>

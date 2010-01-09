@@ -558,7 +558,7 @@ void itemSite::sSave()
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
                          "  itemsite_costmethod, itemsite_value, itemsite_cosdefault, "
-                         "  itemsite_warrpurc, itemsite_autoreg, itemsite_autolsnum) "
+                         "  itemsite_warrpurc, itemsite_autoreg, itemsite_lsseq_id) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -576,7 +576,7 @@ void itemSite::sSave()
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
                          "  :itemsite_costmethod, 0, :itemsite_cosdefault, "
-                         "  :itemsite_warrpurc, :itemsite_autoreg, :itemsite_autolsnum  );" );
+                         "  :itemsite_warrpurc, :itemsite_autoreg, :itemsite_lsseq_id  );" );
   }
   else if (_mode == cEdit)
   {
@@ -657,7 +657,7 @@ void itemSite::sSave()
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
                          "    itemsite_costmethod=:itemsite_costmethod, itemsite_cosdefault=:itemsite_cosdefault, "
                          "    itemsite_warehous_id=:itemsite_warehous_id, "
-                         "    itemsite_autolsnum=:itemsite_autolsnum "
+                         "    itemsite_lsseq_id=:itemsite_lsseq_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
 
@@ -753,6 +753,8 @@ void itemSite::sSave()
     else 
       newItemSite.bindValue(":itemsite_cosdefault", QString("P"));
   }
+  if (_sequence->isValid())
+    newItemSite.bindValue(":itemsite_lsseq_id", _sequence->id());
   
   newItemSite.exec();
   if (newItemSite.lastError().type() != QSqlError::NoError)
@@ -1264,6 +1266,7 @@ void itemSite::populate()
       _todate->setChecked(FALSE);
       _proportional->setChecked(TRUE);
     }
+    _sequence->setId(itemsite.value("itemsite_lsseq_id").toInt());
 
     _updates = TRUE;
   }

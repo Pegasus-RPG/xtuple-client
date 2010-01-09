@@ -49,8 +49,7 @@ private:
     QString	_controlMethod;
     int		_itemlocdistid;
     int		_mode;
-    bool	_trapClose;
-    int         _itemsite_id;
+    int   _itemsite_id;
 
 };
 

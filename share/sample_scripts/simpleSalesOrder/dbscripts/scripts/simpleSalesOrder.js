@@ -1,5 +1,5 @@
 // Define local variables
-
+debugger
 var _linenumCol = 1;
 var _itemCol    = 2;
 var _statusCol  = 6;	
@@ -49,27 +49,27 @@ var _unitPrice  	= mywindow.findChild("_unitPrice");
 // Set Columns
 with (_saleitems)
 {
-  setColumn("Line#"  		, 40,  0, true,  "line_number");
-  setColumn("Item"   		, -1,  0, true,  "item_number");
-  setColumn("Customer P/N"   	, 100, 0, false, "customer_pn");
-  setColumn("Substitute for"   	, 100, 0, false, "substitute_for");
-  setColumn("Site"   		, 40,  0, false, "sold_from_site");
-  setColumn("Status"   		, 40,  0, false, "status");
-  setColumn("Quantity"		, 100, 0, true,  "qty_ordered");
-  setColumn("Qty UOM"   	, 40,  0, false, "qty_uom");
-  setColumn("Price" 		, 100, 0, true,  "net_unit_price");
-  setColumn("Price UOM"   	, 40,  0, false, "price_uom");
-  setColumn("Extended"		, 100, 0, true,  "extension");
-  setColumn("Sched. Date"	, 100, 0, true,  "scheduled_date");
-  setColumn("Promise Date"	, 80,  0, false, "promise_date");
-  setColumn("Warranty"   	, 40,  0, false, "warranty");
-  setColumn("Tax Type"   	, 80,  0, false, "tax_type");
-  setColumn("Tax Code"   	, 80,  0, false, "tax_code");
-  setColumn("Discount"   	, 40,  0, false, "discount_pct_from_list");
-  setColumn("Create Order"   	, 40,  0, false, "create_order");
-  setColumn("Overwrite P/O"   	, 40,  0, false, "overwrite_po_price");
-  setColumn("Notes"   		,100,  0, false, "notes");
-  setColumn("Alt. COS"   	,100,  0, false, "alternate_cos_account");
+  setColumn("Line#"  		, 40,  Qt.AlignRight, true,  "line_number");
+  setColumn("Item"   		, -1,  Qt.AlignLeft , true,  "item_number");
+  setColumn("Customer P/N"   	, 100, Qt.AlignLeft , false, "customer_pn");
+  setColumn("Substitute for"   	, 100, Qt.AlignLeft , false, "substitute_for");
+  setColumn("Site"   		, 40,  Qt.AlignLeft , false, "sold_from_site");
+  setColumn("Status"   	, 40,  Qt.AlignLeft , false, "status");
+  setColumn("Quantity"		, 100, Qt.AlignRight, true,  "qty_ordered");
+  setColumn("Qty UOM"   	, 40,  Qt.AlignLeft , false, "qty_uom");
+  setColumn("Price" 		, 100, Qt.AlignRight, true,  "net_unit_price");
+  setColumn("Price UOM"   	, 40,  Qt.AlignLeft , false, "price_uom");
+  setColumn("Extended"		, 100, Qt.AlignRight, true,  "extension");
+  setColumn("Sched. Date"	, 100, Qt.AlignLeft , true,  "scheduled_date");
+  setColumn("Promise Date"	, 80,  Qt.AlignLeft , false, "promise_date");
+  setColumn("Warranty"   	, 40,  Qt.AlignLeft , false, "warranty");
+  setColumn("Tax Type"   	, 80,  Qt.AlignLeft , false, "tax_type");
+  setColumn("Tax Code"   	, 80,  Qt.AlignLeft , false, "tax_code");
+  setColumn("Discount"   	, 40,  Qt.AlignRight, false, "discount_pct_from_list");
+  setColumn("Create Order"   	, 40,  Qt.AlignLeft , false, "create_order");
+  setColumn("Overwrite P/O"   	, 40,  Qt.AlignRight, false, "overwrite_po_price");
+  setColumn("Notes"   		,100,  Qt.AlignLeft , false, "notes");
+  setColumn("Alt. COS"   	,100,  Qt.AlignLeft , false, "alternate_cos_account");
 }
 
 // Define connections
@@ -93,7 +93,7 @@ _unitPrice.valueChanged.connect(extension);
 
 // Misc Defaults
 _itemGroup.enabled = false;
-_qty.setValidator(toolbox.qtyVal());
+_qty.setValidator(mainwindow.qtyVal());
 _item.setType(ItemLineEdit.cSold | 
 	ItemLineEdit.cItemActive |
 	ItemLineEdit.cPurchased ^ 
@@ -300,8 +300,10 @@ function prepare()
   // Set header data
   _address.clear();
   var data = toolbox.executeDbQuery("simplesalesorder", "fetchsonumber");
-  if(data.first())
+  if(data.first()) {
     _number.text = data.value("number");
+    _number.setData();
+  }
 
   // Associate sale items to new header
   populateItems();

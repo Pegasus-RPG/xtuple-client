@@ -25,9 +25,8 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
-  connect(this, SIGNAL(rejected()), this, SLOT(sCancel()));
 
+  _itemlocSeries = -1;
   _trapClose = TRUE;
 
   _item->setReadOnly(TRUE);
@@ -58,36 +57,52 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("itemlocseries", &valid);
+  if (valid)
+    _itemlocSeries = param.toInt();
+
   param = pParams.value("itemlocdist_id", &valid);
   if (valid)
   {
-    q.exec("SELECT NEXTVAL('itemloc_series_seq') AS _itemloc_series;");
-    if (q.first())
+    _itemlocdistid = param.toInt();
+
+    if (_itemlocSeries == -1)
     {
-      _itemlocdistid = param.toInt();
-      _itemlocSeries = q.value("_itemloc_series").toInt();
-
-      q.prepare( "SELECT itemlocdist_itemsite_id "
-                 "FROM itemlocdist "
-                 "WHERE (itemlocdist_id=:itemlocdist_id);" );
-      q.bindValue(":itemlocdist_id", _itemlocdistid);
-      q.exec();
-      if (q.first())
-        _item->setItemsiteid(q.value("itemlocdist_itemsite_id").toInt());
-      else if (q.lastError().type() != QSqlError::NoError)
+      q.exec("SELECT NEXTVAL('itemloc_series_seq') AS _itemloc_series;");
+      if (q.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
-
-      sFillList();
-        sNew();
+      else
+      {
+        q.first();
+        _itemlocSeries = q.value("_itemloc_series").toInt();
+      }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+
+    XSqlQuery ild;
+    ild.prepare( "SELECT p.itemlocdist_itemsite_id AS itemlocdist_itemsite_id, "
+               " p.itemlocdist_qty AS trans_qty, "
+               " COALESCE(SUM(c.itemlocdist_qty),0) AS assigned_qty "
+               "FROM itemlocdist p "
+               " LEFT OUTER JOIN itemlocdist c ON ((c.itemlocdist_source_id=p.itemlocdist_id) "
+               "                                  AND (c.itemlocdist_source_type='D')) "
+               "WHERE (p.itemlocdist_id=:itemlocdist_id) "
+               "GROUP BY p.itemlocdist_itemsite_id, p.itemlocdist_qty;" );
+    ild.bindValue(":itemlocdist_id", _itemlocdistid);
+    ild.exec();
+    if (ild.first())
+      _item->setItemsiteid(ild.value("itemlocdist_itemsite_id").toInt());
+    else if (ild.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
+
+    sFillList();
+    if (ild.value("trans_qty").toDouble() > ild.value("assigned_qty").toDouble())
+      sNew();
   }
 
   return NoError;
@@ -250,7 +265,3 @@ void assignLotSerial::sFillList()
   }
 }
 
-void assignLotSerial::sCancel()
-{
-  done(-1);
-}
