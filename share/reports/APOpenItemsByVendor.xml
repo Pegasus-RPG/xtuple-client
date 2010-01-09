@@ -42,7 +42,13 @@
                          END) AS base_balance,
                     formatMoney((apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) 
                     / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
-                         END)) AS f_base_balance
+                         END)) AS f_base_balance,
+                  CASE WHEN (apopen_status='O') THEN TEXT('Open')
+                    ELSE CASE WHEN (apopen_status='H') THEN TEXT('On Hold')
+                      ELSE CASE WHEN (apopen_status='C') THEN TEXT('Close')
+                      END
+                    END
+                  END AS status
              FROM apopen 
                LEFT OUTER JOIN apapply ON (((apopen_id=apapply_target_apopen_id) 
                                        OR (apopen_id=apapply_source_apopen_id)) 
@@ -52,7 +58,7 @@
                 AND   (apopen_vend_id=&lt;? value("vend_id") ?>) 
                 AND   (apopen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) ) 
               GROUP BY apopen_id, apopen_ponumber, apopen_docnumber,apopen_doctype, apopen_invcnumber, apopen_docdate, 
-                apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_curr_rate 
+                apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_curr_rate, apopen_status 
               ORDER BY apopen_docdate;</sql>
  </querysource>
  <rpthead>
@@ -66,7 +72,7 @@
   </line>
   <label>
    <rect>
-    <x>175</x>
+    <x>135</x>
     <y>145</y>
     <width>80</width>
     <height>15</height>
@@ -98,7 +104,7 @@
   </label>
   <label>
    <rect>
-    <x>505</x>
+    <x>510</x>
     <y>145</y>
     <width>50</width>
     <height>15</height>
@@ -200,7 +206,7 @@
   </label>
   <label>
    <rect>
-    <x>575</x>
+    <x>570</x>
     <y>145</y>
     <width>50</width>
     <height>15</height>
@@ -216,7 +222,7 @@
   </label>
   <label>
    <rect>
-    <x>345</x>
+    <x>285</x>
     <y>145</y>
     <width>80</width>
     <height>15</height>
@@ -232,7 +238,7 @@
   </label>
   <label>
    <rect>
-    <x>432</x>
+    <x>445</x>
     <y>145</y>
     <width>50</width>
     <height>15</height>
@@ -318,7 +324,7 @@
   </label>
   <label>
    <rect>
-    <x>90</x>
+    <x>75</x>
     <y>145</y>
     <width>80</width>
     <height>15</height>
@@ -353,7 +359,7 @@
   </field>
   <label>
    <rect>
-    <x>260</x>
+    <x>205</x>
     <y>145</y>
     <width>80</width>
     <height>15</height>
@@ -369,7 +375,7 @@
   </label>
   <field>
    <rect>
-    <x>690</x>
+    <x>685</x>
     <y>145</y>
     <width>50</width>
     <height>15</height>
@@ -388,7 +394,7 @@
   </field>
   <label>
    <rect>
-    <x>630</x>
+    <x>625</x>
     <y>145</y>
     <width>50</width>
     <height>15</height>
@@ -401,6 +407,22 @@
    <hcenter/>
    <vcenter/>
    <string>Curr</string>
+  </label>
+  <label>
+   <rect>
+    <x>365</x>
+    <y>145</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Status</string>
   </label>
  </rpthead>
  <pghead>
@@ -589,7 +611,7 @@
    <height>16</height>
    <field>
     <rect>
-     <x>260</x>
+     <x>205</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -608,7 +630,7 @@
    </field>
    <field>
     <rect>
-     <x>175</x>
+     <x>135</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -627,7 +649,7 @@
    </field>
    <field>
     <rect>
-     <x>575</x>
+     <x>570</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -646,7 +668,7 @@
    </field>
    <field>
     <rect>
-     <x>505</x>
+     <x>510</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -684,7 +706,7 @@
    </field>
    <field>
     <rect>
-     <x>345</x>
+     <x>285</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -703,7 +725,7 @@
    </field>
    <field>
     <rect>
-     <x>432</x>
+     <x>445</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -722,7 +744,7 @@
    </field>
    <field>
     <rect>
-     <x>90</x>
+     <x>75</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -741,7 +763,7 @@
    </field>
    <field>
     <rect>
-     <x>691</x>
+     <x>685</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -760,7 +782,7 @@
    </field>
    <field>
     <rect>
-     <x>630</x>
+     <x>625</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -775,6 +797,25 @@
     <data>
      <query>detail</query>
      <column>currAbbr</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>365</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>status</column>
     </data>
    </field>
   </detail>

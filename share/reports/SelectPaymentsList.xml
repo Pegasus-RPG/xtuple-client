@@ -15,7 +15,7 @@
               formatDate(apopen_duedate) AS f_duedate,
               formatDate(apopen_docdate) AS f_docdate,
               formatMoney(amount) AS f_amount,
-              f_selected, f_late
+              f_selected, f_late, status
  FROM (SELECT apopen_id, COALESCE(apselect_id, -1) AS apselectid,
        (vend_number || '-' || vend_name) AS vendor,
        apopen_docnumber, apopen_ponumber,
@@ -29,7 +29,13 @@
                               AND (NOT checkhead_posted))
                            ), 0)) AS amount,
        formatMoney(COALESCE(SUM(apselect_amount), 0)) AS f_selected,
-       formatBoolYN(apopen_duedate &lt;= CURRENT_DATE) AS f_late
+       formatBoolYN(apopen_duedate &lt;= CURRENT_DATE) AS f_late,
+       CASE WHEN (apopen_status='O') THEN TEXT('Open')
+                    ELSE CASE WHEN (apopen_status='H') THEN TEXT('On Hold')
+                      ELSE CASE WHEN (apopen_status='C') THEN TEXT('Close')
+                      END
+                    END
+                  END AS status
   FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id)
  WHERE ( (apopen_open)
    AND (apopen_doctype IN ('V', 'D'))
@@ -46,7 +52,7 @@
        )
 GROUP BY apopen_id, apselect_id, vend_number, vend_name,
          apopen_docnumber, apopen_ponumber,
-         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id) AS data
+         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_status) AS data
  WHERE (amount &lt;> 0.0)
 ORDER BY apopen_duedate, amount DESC;</sql>
  </querysource>
@@ -113,7 +119,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>215</x>
+    <x>205</x>
     <y>120</y>
     <width>80</width>
     <height>15</height>
@@ -129,7 +135,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>575</x>
+    <x>590</x>
     <y>120</y>
     <width>100</width>
     <height>15</height>
@@ -161,7 +167,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>385</x>
+    <x>360</x>
     <y>120</y>
     <width>80</width>
     <height>15</height>
@@ -177,7 +183,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>300</x>
+    <x>280</x>
     <y>120</y>
     <width>80</width>
     <height>15</height>
@@ -228,7 +234,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
   </field>
   <label>
    <rect>
-    <x>470</x>
+    <x>505</x>
     <y>120</y>
     <width>100</width>
     <height>15</height>
@@ -264,6 +270,22 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    <right/>
    <vcenter/>
    <string>Select Payments List</string>
+  </label>
+  <label>
+   <rect>
+    <x>435</x>
+    <y>120</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Status</string>
   </label>
  </rpthead>
  <pghead>
@@ -417,8 +439,8 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    <height>17</height>
    <field>
     <rect>
-     <x>215</x>
-     <y>0</y>
+     <x>205</x>
+     <y>-1</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -436,7 +458,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </field>
    <field>
     <rect>
-     <x>300</x>
+     <x>280</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -455,7 +477,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </field>
    <field>
     <rect>
-     <x>575</x>
+     <x>590</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -474,7 +496,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </field>
    <field>
     <rect>
-     <x>470</x>
+     <x>505</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -493,7 +515,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </field>
    <field>
     <rect>
-     <x>385</x>
+     <x>360</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -565,6 +587,25 @@ ORDER BY apopen_duedate, amount DESC;</sql>
     <data>
      <query>detail</query>
      <column>vendor</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>435</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>status</column>
     </data>
    </field>
   </detail>

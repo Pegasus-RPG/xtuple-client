@@ -518,13 +518,22 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
   menu.exec();
   if (menu.first())
   {
+    if(menu.value("apopen_status").toString() == "O")
+	{
     menuItem = pMenu->insertItem(tr("On Hold"), this, SLOT(sOnHold()), 0);
-    if((menu.value("apopen_status").toString()  == "H") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+      if (_privileges->check("EditAPOpenItem"))
+	  	pMenu->setItemEnabled(menuItem, TRUE);
+	  else
       pMenu->setItemEnabled(menuItem, FALSE);
-
+    }
+    if(menu.value("apopen_status").toString() == "H")
+	{
 	menuItem = pMenu->insertItem(tr("Open"), this, SLOT(sOpen()), 0);
-    if ((menu.value("apopen_status").toString() == "O") || (menu.value("apopen_status").toString()  == "C") || (!_privileges->check("EditAPOpenItem")))
+	  if (_privileges->check("EditAPOpenItem"))
+	  	pMenu->setItemEnabled(menuItem, TRUE);
+	  else
 	  pMenu->setItemEnabled(menuItem, FALSE);
+	}
   }
 }
 
