@@ -12,10 +12,14 @@
 
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QPrinter>
 #include <QSqlError>
 #include <QVariant>
 
 #include "createLotSerial.h"
+
+#include <parameter.h>
+#include <openreports.h>
 
 assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -25,6 +29,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _itemlocSeries = -1;
   _trapClose = TRUE;
@@ -242,7 +247,9 @@ void assignLotSerial::sFillList()
   }
 
 
-  q.prepare( "SELECT itemlocdist.*, ls_number,"
+  q.prepare( "SELECT itemlocdist_id, itemlocdist_ls_id, "
+             "       itemlocdist_qty,itemlocdist_expiration, "
+             "       itemlocdist_warranty, ls_number,"
              "       CASE WHEN (NOT itemsite_perishable) THEN :na "
              "       END AS itemlocdist_expiration_qtdisplayrole, "
              "       CASE WHEN (NOT itemsite_warrpurc) THEN :na "
@@ -257,11 +264,74 @@ void assignLotSerial::sFillList()
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.bindValue(":na", "N/A");
   q.exec();
-  _itemlocdist->populate(q);
+  _itemlocdist->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void assignLotSerial::sPrint()
+{
+  QPrinter printer(QPrinter::HighResolution);
+  bool setupPrinter = true;
+  bool userCanceled = false;
+  QString label;
+
+  XSqlQuery qlabel;
+  qlabel.prepare("SELECT itemsite_controlmethod "
+            "FROM itemlocdist "
+            " JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
+            "WHERE (itemlocdist_series=:itemlocdist_series) "
+            "LIMIT 1;");
+  qlabel.bindValue(":itemlocdist_series", _itemlocSeries);
+  qlabel.exec();
+  if (qlabel.first()) {
+    qDebug("found " + qlabel.value("itemsite_controlmethod").toString());
+    if (qlabel.value("itemsite_controlmethod").toString() == "L")
+      label = tr("Lot#:");
+    else
+      label = tr("Serial#:");
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+qDebug("Label " + label);
+
+  _itemlocdist->setSelectionMode(QAbstractItemView::MultiSelection);
+  _itemlocdist->selectAll();
+  QList<XTreeWidgetItem*> assigned = _itemlocdist->selectedItems();
+  _itemlocdist->clearSelection();
+  _itemlocdist->setSelectionMode(QAbstractItemView::SingleSelection);
+
+  if (assigned.size() > 0 &&
+      orReport::beginMultiPrint(&printer, userCanceled) == false)
+  {
+    if(!userCanceled)
+      systemError(this, tr("<p>Could not initialize printing system for "
+         "multiple reports."));
+    return;
+  }
+
+  for (int i = 0; i < assigned.size(); i++)
+  {
+    ParameterList params;
+    params.append("label", label);
+    params.append("ls_id", ((XTreeWidgetItem*)(assigned[i]))->altId());
+
+    orReport report("LotSerialLabel", params);
+    if (report.isValid() && report.print(&printer, setupPrinter))
+      setupPrinter = FALSE;
+    else
+    {
+      report.reportError(this);
+      break;
+    }
+  }
+  if (assigned.size() > 0)
+    orReport::endMultiPrint(&printer);
 }
 

@@ -33,6 +33,7 @@ public slots:
     virtual void sClose();
     virtual void sAssign();
     virtual void sFillList();
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
