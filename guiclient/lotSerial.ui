@@ -79,6 +79,16 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="_print">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Print Label</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -510,6 +520,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>549</x>
      <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>552</x>
+     <y>75</y>
     </hint>
    </hints>
   </connection>

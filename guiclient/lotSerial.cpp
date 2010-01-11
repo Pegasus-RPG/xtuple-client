@@ -16,6 +16,7 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include <openreports.h>
 #include <comments.h>
 
 lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -32,6 +33,7 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     connect(_deleteReg,  SIGNAL(clicked()), this, SLOT(sDeleteReg()));
     connect(_editReg,    SIGNAL(clicked()), this, SLOT(sEditReg()));
     connect(_newReg,     SIGNAL(clicked()), this, SLOT(sNewReg()));
+    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
     
     _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
@@ -242,4 +244,49 @@ void lotSerial::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void lotSerial::sPrint()
+{
+  QString lot(tr("Lot#:"));
+  QString serial(tr("Serial#:"));
+  ParameterList params;
+  params.append("ls_id", _lotSerial->id());
+
+  // Try to infer whether this requires a lot or serial number label
+  q.prepare("SELECT DISTINCT itemsite_controlmethod "
+            "FROM itemsite "
+            "WHERE ((itemsite_item_id=:item_id)"
+            " AND (itemsite_controlmethod IN ('L','S')));");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.size() == 1) {
+    q.first();
+    if (q.value("itemsite_controlmethod").toString() == "L")
+      params.append("label", lot);
+    else
+      params.append("label", serial);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else {
+    QString msg(tr("Is this a Lot or a Serial number?"));
+    QMessageBox msgbox;
+    msgbox.setText(msg);
+    msgbox.addButton(tr("Lot"),QMessageBox::AcceptRole);
+    msgbox.addButton(tr("Serial"),QMessageBox::RejectRole);
+    if (msgbox.exec() == QDialog::Accepted)
+      params.append("label", serial);
+    else
+      params.append("label", lot);
+  }
+
+  orReport report("LotSerialLabel",params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }

@@ -36,6 +36,7 @@ public slots:
     virtual void sNewReg();
     virtual void sEditReg();
     virtual void sDeleteReg();
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
