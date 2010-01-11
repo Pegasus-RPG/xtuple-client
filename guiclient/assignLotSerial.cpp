@@ -17,6 +17,8 @@
 #include <QVariant>
 
 #include "createLotSerial.h"
+#include "printOptions.h"
+#include "xtsettings.h"
 
 #include <parameter.h>
 #include <openreports.h>
@@ -30,6 +32,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
 
   _itemlocSeries = -1;
   _trapClose = TRUE;
@@ -191,6 +194,9 @@ void assignLotSerial::sAssign()
     return;
   }
 
+  if (xtsettingsValue(QString("%1.autoPrint").arg(objectName())).toBool())
+    sPrint();
+
   q.prepare( "UPDATE itemlocdist "
              "SET itemlocdist_source_type='O' "
              "WHERE (itemlocdist_series=:itemlocdist_series);"
@@ -278,6 +284,10 @@ void assignLotSerial::sPrint()
   bool setupPrinter = true;
   bool userCanceled = false;
   QString label;
+  QString presetPrinter(xtsettingsValue(QString("%1.defaultPrinter").arg(objectName())).toString());
+
+  if (!presetPrinter.isEmpty())
+    printer.setPrinterName(presetPrinter);
 
   XSqlQuery qlabel;
   qlabel.prepare("SELECT itemsite_controlmethod "
@@ -335,3 +345,8 @@ qDebug("Label " + label);
     orReport::endMultiPrint(&printer);
 }
 
+void assignLotSerial::sOptions()
+{
+  printOptions newdlg(this);
+  newdlg.exec();
+}

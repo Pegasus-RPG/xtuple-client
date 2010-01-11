@@ -548,6 +548,7 @@ FORMS =   ../common/batchItem.ui                \
           printLabelsByOrder.ui                 \
           printLabelsBySo.ui                    \
           printLabelsByTo.ui                    \
+          printOptions.ui                       \
           printPackingList.ui                   \
           printPackingListBatchByShipvia.ui     \
           printPoForm.ui                        \
@@ -1280,6 +1281,7 @@ HEADERS = ../common/batchItem.h                 \
           printLabelsByOrder.h          \
           printLabelsBySo.h             \
           printLabelsByTo.h             \
+          printOptions.h                \
           printPackingList.h            \
           printPackingListBatchByShipvia.h      \
           printPoForm.h                 \
@@ -2027,6 +2029,7 @@ SOURCES = ../common/batchItem.cpp               \
           printLabelsByOrder.cpp                \
           printLabelsBySo.cpp                   \
           printLabelsByTo.cpp                   \
+          printOptions.cpp                      \
           printPackingList.cpp                  \
           printPackingListBatchByShipvia.cpp    \
           printPoForm.cpp                       \
