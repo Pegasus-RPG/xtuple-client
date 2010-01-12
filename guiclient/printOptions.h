@@ -26,6 +26,7 @@ public:
     ~printOptions();
 
 public slots:
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void sHandleCheckbox();
 

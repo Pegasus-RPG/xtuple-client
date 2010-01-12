@@ -32,7 +32,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
+  connect(_options, SIGNAL(clicked()), this, SLOT(sPrintOptions()));
 
   _itemlocSeries = -1;
   _trapClose = TRUE;
@@ -286,67 +286,63 @@ void assignLotSerial::sPrint()
   QString label;
   QString presetPrinter(xtsettingsValue(QString("%1.defaultPrinter").arg(objectName())).toString());
 
-  if (!presetPrinter.isEmpty())
-    printer.setPrinterName(presetPrinter);
-
   XSqlQuery qlabel;
-  qlabel.prepare("SELECT itemsite_controlmethod "
-            "FROM itemlocdist "
-            " JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
-            "WHERE (itemlocdist_series=:itemlocdist_series) "
-            "LIMIT 1;");
+  qlabel.prepare("SELECT ls_id, itemsite_controlmethod "
+                 "FROM itemlocdist "
+                 "LEFT OUTER JOIN itemsite ON (itemlocdist_itemsite_id = itemsite_id) "
+                 "JOIN ls ON (itemlocdist_ls_id=ls_id) "
+                 "WHERE (itemlocdist_series=:itemlocdist_series) "
+                 "ORDER BY ls_number;");
   qlabel.bindValue(":itemlocdist_series", _itemlocSeries);
   qlabel.exec();
   if (qlabel.first()) {
-    qDebug("found " + qlabel.value("itemsite_controlmethod").toString());
     if (qlabel.value("itemsite_controlmethod").toString() == "L")
       label = tr("Lot#:");
     else
       label = tr("Serial#:");
+
+    if (presetPrinter.isEmpty()) {
+      if (orReport::beginMultiPrint(&printer, userCanceled) == false) {
+        if(!userCanceled) {
+          systemError(this, tr("<p>Could not initialize printing system for "
+                               "multiple reports."));
+          return;
+        }
+      }
+    }
+    else {
+      printer.setPrinterName(presetPrinter);
+      orReport::beginMultiPrint(&printer);
+    }
+
+    for (int i = 0; i < qlabel.size(); i++) {
+      ParameterList params;
+      params.append("label", label);
+      params.append("ls_id", qlabel.value("ls_id").toInt());
+
+      orReport report("LotSerialLabel", params);
+      if (report.isValid() && report.print(&printer, setupPrinter))
+        setupPrinter = false;
+      else {
+        report.reportError(this);
+        break;
+      }
+      qlabel.next();
+    }
+    orReport::endMultiPrint(&printer);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
+  else if (q.lastError().type() != QSqlError::NoError) {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-qDebug("Label " + label);
-
-  _itemlocdist->setSelectionMode(QAbstractItemView::MultiSelection);
-  _itemlocdist->selectAll();
-  QList<XTreeWidgetItem*> assigned = _itemlocdist->selectedItems();
-  _itemlocdist->clearSelection();
-  _itemlocdist->setSelectionMode(QAbstractItemView::SingleSelection);
-
-  if (assigned.size() > 0 &&
-      orReport::beginMultiPrint(&printer, userCanceled) == false)
-  {
-    if(!userCanceled)
-      systemError(this, tr("<p>Could not initialize printing system for "
-         "multiple reports."));
-    return;
-  }
-
-  for (int i = 0; i < assigned.size(); i++)
-  {
-    ParameterList params;
-    params.append("label", label);
-    params.append("ls_id", ((XTreeWidgetItem*)(assigned[i]))->altId());
-
-    orReport report("LotSerialLabel", params);
-    if (report.isValid() && report.print(&printer, setupPrinter))
-      setupPrinter = FALSE;
-    else
-    {
-      report.reportError(this);
-      break;
-    }
-  }
-  if (assigned.size() > 0)
-    orReport::endMultiPrint(&printer);
 }
 
-void assignLotSerial::sOptions()
+void assignLotSerial::sPrintOptions()
 {
+  ParameterList params;
+  params.append("parentName", objectName());
+
   printOptions newdlg(this);
+  newdlg.set(params);
   newdlg.exec();
 }

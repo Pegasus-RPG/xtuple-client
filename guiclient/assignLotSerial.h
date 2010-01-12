@@ -34,7 +34,7 @@ public slots:
     virtual void sAssign();
     virtual void sFillList();
     virtual void sPrint();
-    virtual void sOptions();
+    virtual void sPrintOptions();
 
 protected slots:
     virtual void languageChange();

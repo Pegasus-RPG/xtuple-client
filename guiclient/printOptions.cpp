@@ -21,16 +21,10 @@ printOptions::printOptions(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_printerGroup, SIGNAL(toggled(bool)), this, SLOT(sHandleCheckbox()));
 
-  _parentName = parent->objectName();
-
   QPrinterInfo pinfo;
   QList<QPrinterInfo> plist = pinfo.availablePrinters();
   for (int i = 0; i < plist.size(); ++i)
      _printers->addItem(plist.at(i).printerName());
-
-  _autoPrint->setChecked(xtsettingsValue(QString("%1.autoPrint").arg(_parentName)).toBool());
-  _printers->setCurrentText(xtsettingsValue(QString("%1.defaultPrinter").arg(_parentName)).toString());
-  _printerGroup->setChecked(!_printers->currentText().isEmpty());
 }
 
 printOptions::~printOptions()
@@ -41,6 +35,23 @@ printOptions::~printOptions()
 void printOptions::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse printOptions::set(const ParameterList &pParams)
+{
+  XDialog::set(pParams);
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("parentName", &valid);
+  if (valid) {
+    _parentName = param.toString();
+    _autoPrint->setChecked(xtsettingsValue(QString("%1.autoPrint").arg(_parentName)).toBool());
+    _printers->setCurrentText(xtsettingsValue(QString("%1.defaultPrinter").arg(_parentName)).toString());
+    _printerGroup->setChecked(!_printers->currentText().isEmpty());
+  }
+
+  return NoError;
 }
 
 void printOptions::sHandleCheckbox()
