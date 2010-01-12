@@ -32,7 +32,7 @@ bool XSqlTableModel::select()
   bool result;
   result = QSqlRelationalTableModel::select();
   applyColumnRoles();
-  if (result && rowCount());
+  if (result && rowCount())
     emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
   return result;
 }

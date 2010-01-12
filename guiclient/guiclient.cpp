@@ -766,7 +766,7 @@ void GUIClient::showEvent(QShowEvent *event)
 
 void GUIClient::sReportError(const QString &pError)
 {
-  qDebug(pError);
+  qDebug("%s", qPrintable(pError));
 }
 
 void GUIClient::sTick()

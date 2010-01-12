@@ -74,7 +74,7 @@ void updatePrices::languageChange()
     retranslateUi(this);
 }
 
-void updatePrices::closeEvent(QCloseEvent *pEvent)
+void updatePrices::closeEvent(QCloseEvent * /*pEvent*/)
 {
     MetaSQLQuery mql = mqlLoad("updateprices", "dropselsched");
     ParameterList params;

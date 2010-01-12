@@ -26,7 +26,7 @@ class printPoForm : public XDialog, public Ui::printPoForm
     virtual void sPrint();
 
   signals:
-    virtual void finishedPrinting(int);
+            void finishedPrinting(int);
 
   protected slots:
     virtual void languageChange();

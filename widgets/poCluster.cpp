@@ -284,8 +284,8 @@ void PoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 
 void PoCluster::setNumber(const QString& number)
 {
-  qDebug("number " + number);
-  qDebug("curr " + _poNumber->text());
+  qDebug("number %s", qPrintable(number));
+  qDebug("curr %s", qPrintable(_poNumber->text()));
   if (_poNumber->text() == number)
     return
     

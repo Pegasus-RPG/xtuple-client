@@ -1518,7 +1518,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       request.setValues(_extraHeaders);
     
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-    int rid = _http->request(request, prequest.toAscii());
+    _http->request(request, prequest.toAscii());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
     {
       QApplication::processEvents(QEventLoop::WaitForMoreEvents);

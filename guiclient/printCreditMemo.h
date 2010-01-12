@@ -35,7 +35,7 @@ public slots:
     virtual void sEditWatermark();
 
 signals:
-    virtual void finishedPrinting(int);
+            void finishedPrinting(int);
 
 protected slots:
     virtual void languageChange();

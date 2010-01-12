@@ -66,7 +66,7 @@ public slots:
     virtual void sClosedToggled(bool);
 
 signals:
-    virtual void finishedPrintingStatement(int);
+            void finishedPrintingStatement(int);
 
 protected slots:
     virtual void languageChange();

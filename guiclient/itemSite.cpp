@@ -840,7 +840,7 @@ void itemSite::sHandlePlanningType()
 
 } 
 
-void itemSite::sHandlePOSupplied(bool pSupplied)
+void itemSite::sHandlePOSupplied(bool /*pSupplied*/)
 {
     /*
   if ( (pSupplied) &&

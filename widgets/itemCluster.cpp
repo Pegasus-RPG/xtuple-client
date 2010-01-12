@@ -40,7 +40,7 @@ ItemLineEditDelegate::~ItemLineEditDelegate()
 }
 
 QWidget *ItemLineEditDelegate::createEditor(QWidget *parent,
-                                            const QStyleOptionViewItem &option,
+                                            const QStyleOptionViewItem &/*option*/,
                                             const QModelIndex &index) const
 {
     if (!index.isValid())

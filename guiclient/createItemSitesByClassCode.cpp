@@ -360,7 +360,7 @@ void createItemSitesByClassCode::sSave()
   accept();
 }
 
-void createItemSitesByClassCode::sHandlePOSupply(bool pSupplied)
+void createItemSitesByClassCode::sHandlePOSupply(bool /*pSupplied*/)
 {
     /*
   if (pSupplied)

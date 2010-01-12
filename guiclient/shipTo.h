@@ -36,8 +36,8 @@ public slots:
     virtual void sPopulateCommission( int pSalesrepid );
 
 signals:
-    virtual void newId(int);
-    virtual void populated();
+            void newId(int);
+            void populated();
 
 protected slots:
     virtual void languageChange();

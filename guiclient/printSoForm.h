@@ -29,7 +29,7 @@ public slots:
     virtual void sPrint();
 
 signals:
-    virtual void finishedPrinting(int sohead_id);
+            void finishedPrinting(int sohead_id);
 
 protected slots:
     virtual void languageChange();

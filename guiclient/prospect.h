@@ -42,8 +42,8 @@ public slots:
     virtual void	populate();
 
 signals:
-    virtual void newId(int);
-    virtual void populated();
+            void newId(int);
+            void populated();
 
 protected slots:
     virtual void languageChange();
