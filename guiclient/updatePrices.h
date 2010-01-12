@@ -16,25 +16,25 @@
 
 class updatePrices : public XDialog, public Ui::updatePrices
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    updatePrices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~updatePrices();
+  updatePrices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+  ~updatePrices();
 
 public slots:
-    virtual void sUpdate();
-	virtual void populate();
-	virtual void sAdd();
-	virtual void sAddAll();
-	virtual void sRemove();
-	virtual void sRemoveAll();
-    virtual void sHandleBy(bool toggled);
-    virtual void sHandleCharPrice();
-    virtual void closeEvent( QCloseEvent * pEvent );
+  virtual void sUpdate();
+  virtual void populate();
+  virtual void sAdd();
+  virtual void sAddAll();
+  virtual void sRemove();
+  virtual void sRemoveAll();
+  virtual void sHandleBy(bool toggled);
+  virtual void sHandleCharPrice();
+  virtual void closeEvent( QCloseEvent * pEvent );
 
 protected slots:
-    virtual void languageChange();
+  virtual void languageChange();
 
 };
 
