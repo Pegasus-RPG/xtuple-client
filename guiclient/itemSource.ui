@@ -50,7 +50,7 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="_default">
            <property name="text">
             <string>Default</string>
            </property>

@@ -128,6 +128,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
   _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
   _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
+  _itemsrc->addColumn(tr("Default"),      _dateColumn,   Qt::AlignCenter, true, "default");
 
   _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft, true, "itemalias_number"  );
   _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft, true, "itemalias_comments" );
@@ -1949,7 +1950,10 @@ void item::sFillSourceList()
   QString sql( "SELECT itemsrc_id, vend_number,"
                "       vend_name, itemsrc_vend_item_number, "
 	       "       itemsrc_active, itemsrc_manuf_name, "
-               "       itemsrc_manuf_item_number "
+               "       itemsrc_manuf_item_number, "
+			   "       CASE WHEN itemsrc_default = 'TRUE' THEN 'Yes' "
+			   "       ELSE 'No' "
+			   "       END AS default "
                "FROM item, vend, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (itemsrc_vend_id=vend_id)"

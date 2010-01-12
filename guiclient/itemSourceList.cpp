@@ -58,6 +58,7 @@ void itemSourceList::init()
   _itemsrc->addColumn(tr("Vend Item#"),   _itemColumn, Qt::AlignRight, true, "itemsrc_vend_item_number" );
   _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft,  true, "itemsrc_manuf_name");
   _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignRight, true, "itemsrc_manuf_item_number" );
+  _itemsrc->addColumn(tr("Default"),      _itemColumn, Qt::AlignLeft, true, "default" );
 }
 
 enum SetResponse itemSourceList::set(ParameterList &pParams)
@@ -89,7 +90,10 @@ void itemSourceList::sFillList()
 {
   q.prepare( "SELECT itemsrc_id, itemsrc_ranking, vend_name, "
              "  itemsrc_vend_item_number, itemsrc_manuf_name, "
-             "  itemsrc_manuf_item_number "
+             "  itemsrc_manuf_item_number, "
+			 "  CASE WHEN itemsrc_default = 'TRUE' THEN 'Yes' "
+			 "    ELSE 'No' "
+			 "  END AS default "
              "FROM itemsrc, vend "
              "WHERE ( (itemsrc_vend_id=vend_id)"
              " AND (itemsrc_item_id=:item_id) ) "

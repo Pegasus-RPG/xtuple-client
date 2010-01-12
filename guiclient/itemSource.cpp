@@ -145,6 +145,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _active->setEnabled(FALSE);
+	  _default->setEnabled(FALSE);
       _vendor->setEnabled(FALSE);
       _vendorItemNumber->setEnabled(FALSE);
       _vendorItemDescrip->setEnabled(FALSE);
@@ -293,10 +294,18 @@ bool itemSource::sSave()
       return false;
     }
   }
+  if (_default->isChecked())
+  {
+	q.prepare("UPDATE itemsrc SET itemsrc_default = 'FALSE' "
+	          "WHERE (itemsrc_item_id = :itemsrc_item_id) "
+			  " AND ( itemsrc_default = 'TRUE'); ");
+	q.bindValue(":itemsrc_item_id", _item->id());
+    q.exec();
+  }
     
   if (_mode == cNew || _mode == cCopy)
     q.prepare( "INSERT INTO itemsrc "
-               "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_vend_id,"
+               "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
                "  itemsrc_minordqty, itemsrc_multordqty,"
@@ -304,7 +313,7 @@ bool itemSource::sSave()
                "  itemsrc_comments, itemsrc_manuf_name, "
                "  itemsrc_manuf_item_number, itemsrc_manuf_item_descrip ) "
                "VALUES "
-               "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_vend_id,"
+               "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_default, :itemsrc_vend_id,"
                "  :itemsrc_vend_item_number, :itemsrc_vend_item_descrip,"
                "  :itemsrc_vend_uom, :itemsrc_invvendoruomratio,"
                "  :itemsrc_minordqty, :itemsrc_multordqty,"
@@ -314,6 +323,7 @@ bool itemSource::sSave()
   if (_mode == cEdit)
     q.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
+			   "    itemsrc_default=:itemsrc_default,"
                "    itemsrc_vend_id=:itemsrc_vend_id,"
                "    itemsrc_vend_item_number=:itemsrc_vend_item_number,"
                "    itemsrc_vend_item_descrip=:itemsrc_vend_item_descrip,"
@@ -329,6 +339,7 @@ bool itemSource::sSave()
   q.bindValue(":itemsrc_id", _itemsrcid);
   q.bindValue(":itemsrc_item_id", _item->id());
   q.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
+  q.bindValue(":itemsrc_default", QVariant(_default->isChecked()));
   q.bindValue(":itemsrc_vend_id", _vendor->id());
   q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
   q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
@@ -468,6 +479,7 @@ void itemSource::populate()
   {
     _item->setId(itemsrcQ.value("itemsrc_item_id").toInt());
     _active->setChecked(itemsrcQ.value("itemsrc_active").toBool());
+	_default->setChecked(itemsrcQ.value("itemsrc_default").toBool());
     _vendor->setId(itemsrcQ.value("itemsrc_vend_id").toInt());
     _vendorItemNumber->setText(itemsrcQ.value("itemsrc_vend_item_number").toString());
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());

@@ -194,10 +194,10 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_vendor, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       //_new->setEnabled(TRUE);
-
+      int itemsrcid =-1;
       if (itemsiteid != -1)
       {
-	      q.prepare( "SELECT itemsite_item_id, itemsrc_id "
+	      q.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
                    "FROM itemsite, itemsrc "
                    "WHERE ( (itemsrc_item_id=itemsite_item_id)"
                    " AND (itemsite_id=:itemsite_id) ) "
@@ -215,18 +215,32 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                                   "Purchase Orders for it." ) );
           return UndefinedError;
         }
-
+		if (q.first())
+		{
+		  XSqlQuery itemsrcdefault;
+		  itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
+		                         "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) "); 
+          itemsrcdefault.bindValue(":item_id", q.value("itemsite_item_id").toInt());
+		  itemsrcdefault.exec();
+		  if (itemsrcdefault.first())
+		  {
+		    itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
+		  }
+		  else
+		  {
         ParameterList itemSourceParams;
         itemSourceParams.append("item_id", q.value("itemsite_item_id").toInt());
         itemSourceParams.append("qty", qty);
   
         itemSourceList newdlg(omfgThis, "", TRUE);
         newdlg.set(itemSourceParams);
-        int itemsrcid = newdlg.exec();
+        itemsrcid = newdlg.exec();
         if (itemsrcid == XDialog::Rejected)
       	{
           deleteLater();
           return UndefinedError;
+            }
+		  }
         }
 
         q.prepare( "SELECT itemsrc_vend_id "
