@@ -32,6 +32,7 @@ void XCheckBox::constructor()
 {
   _default=false;
   setForgetful(false);
+  _initialized = false;
     
   _mapper = new XDataWidgetMapper(this);
 }
@@ -65,6 +66,8 @@ void XCheckBox::setForgetful(bool p)
 
 void XCheckBox::showEvent(QShowEvent * event)
 {
+  if(_initialized)
+    return;
   QString pname;
   if(window())
     pname = window()->objectName() + "/";
@@ -75,6 +78,7 @@ void XCheckBox::showEvent(QShowEvent * event)
     if (!_forgetful)
       setCheckState((Qt::CheckState)(_x_preferences->value(_settingsName + "/checked").toInt()));
   }
+  _initialized = true;
   QCheckBox::showEvent(event);
 }
 

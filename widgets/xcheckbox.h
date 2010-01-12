@@ -54,6 +54,7 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
 
     bool    _default;
     bool    _forgetful;
+    bool    _initialized;
     QString _settingsName;
     QString _fieldName;
 
