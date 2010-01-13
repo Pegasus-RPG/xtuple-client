@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>981</width>
-    <height>667</height>
+    <width>910</width>
+    <height>692</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -467,260 +467,351 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>General</string>
         </attribute>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="QCheckBox" name="_printSO">
-           <property name="text">
-            <string>Check Print Sales Order on Save by Default</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="_enableReservations">
-           <property name="text">
-            <string>Enable Sales Reservations</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QGroupBox" name="groupBox">
-           <property name="title">
-            <string>Price Control</string>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_allowDiscounts">
-              <property name="text">
-               <string>Allow Price Discounts</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_priceOverride">
-              <property name="text">
-               <string>Disallow Override of Sales Price on Sales Order Entry</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="_hideSOMiscChrg">
-              <property name="text">
-               <string>Hide Misc. Charges on Sales Order screen</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QGroupBox" name="_locationGroup">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="title">
-            <string>Reserve by Location</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="_lowest">
-              <property name="text">
-               <string>Lowest Quantity First</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="_highest">
-              <property name="text">
-               <string>Highest Quantity First</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="_alpha">
-              <property name="text">
-               <string>Alpha by Location Name</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QGroupBox" name="_lineItemPriceing">
-           <property name="title">
-            <string>Pricing on Line Item Edits</string>
-           </property>
-           <layout class="QVBoxLayout">
-            <property name="spacing">
-             <number>12</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_updatePrice">
-              <property name="text">
-               <string>Update Price on Line Item Edit</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_askUpdatePrice">
-              <property name="text">
-               <string>Prompt before Updating Price</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_dontUpdatePrice">
-              <property name="text">
-               <string>Do not Update Price on Line Edit</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="title">
-            <string>Ship Control</string>
-           </property>
-           <layout class="QVBoxLayout">
-            <item>
-             <widget class="QCheckBox" name="_saveAndAdd">
-              <property name="text">
-               <string>Always show 'Save and Add to Packing List' button on Sales Order screen</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_firmAndAdd">
-              <property name="text">
-               <string>Firm Sales Orders when added to Packing List Batch</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_enableSOShipping">
-              <property name="text">
-               <string>Enable Shipping interface from Sales Order screen</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_autoSelectForBilling">
-              <property name="text">
-               <string>Automatically check 'Select for Billing' option on Ship Order screen</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="title">
-            <string>Date Control</string>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_allowASAP">
-              <property name="text">
-               <string>Allow ASAP Schedule Dates</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_enablePromiseDate">
-              <property name="text">
-               <string>Enable Promise Dates</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="title">
-            <string>Change Log</string>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_customerChangeLog">
-              <property name="text">
-               <string>Post Customer Changes</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_salesOrderChangeLog">
-              <property name="text">
-               <string>Post Sales Order Changes</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QGroupBox" name="_freightGroup">
-           <property name="title">
-            <string>Freight Pricing</string>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_calcFreight">
-              <property name="text">
-               <string>Use calculated Freight values by default</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_includePkgWeight">
-              <property name="text">
-               <string>Include Package Weight in Freight Calculation</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>Credit Control</string>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_restrictCreditMemos">
-              <property name="text">
-               <string>Restrict Credit Memos to Items that appear on their Apply-To Document</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_autoAllocateCM">
-              <property name="text">
-               <string>Automatically Allocate Credit Memos to New Sales Order on Save</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0" colspan="2">
+              <widget class="QCheckBox" name="_printSO">
+               <property name="text">
+                <string>Check Print Sales Order on Save by Default</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QCheckBox" name="_enableReservations">
+               <property name="text">
+                <string>Enable Sales Reservations</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QGroupBox" name="groupBox">
+               <property name="title">
+                <string>Price Control</string>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_allowDiscounts">
+                  <property name="text">
+                   <string>Allow Price Discounts</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="_priceOverride">
+                  <property name="text">
+                   <string>Disallow Override of Sales Price on Sales Order</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="_hideSOMiscChrg">
+                  <property name="text">
+                   <string>Hide Misc. Charges on Sales Order screen</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QGroupBox" name="_locationGroup">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="title">
+                <string>Reserve by Location</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="_lowest">
+                  <property name="text">
+                   <string>Lowest Quantity First</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QRadioButton" name="_highest">
+                  <property name="text">
+                   <string>Highest Quantity First</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QRadioButton" name="_alpha">
+                  <property name="text">
+                   <string>Alpha by Location Name</string>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="_priceEffectiveGroup">
+               <property name="title">
+                <string>Price Effective Date</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="_priceCurrent">
+                  <property name="text">
+                   <string>Current</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QRadioButton" name="_priceOrdered">
+                  <property name="text">
+                   <string>Order</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QRadioButton" name="_priceScheduled">
+                  <property name="text">
+                   <string>Scheduled</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QGroupBox" name="_lineItemPriceing">
+               <property name="title">
+                <string>Pricing on Line Item Edits</string>
+               </property>
+               <layout class="QVBoxLayout">
+                <item>
+                 <widget class="QRadioButton" name="_updatePrice">
+                  <property name="text">
+                   <string>Update Price</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_dontUpdatePrice">
+                  <property name="text">
+                   <string>Do not Update Price </string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_askUpdatePrice">
+                  <property name="text">
+                   <string>Prompt before Updating</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout">
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Fixed</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>5</width>
+                      <height>10</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="_ignoreCustDisc">
+                    <property name="text">
+                     <string>Ignore if Discounted</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QGroupBox" name="groupBox_3">
+               <property name="title">
+                <string>Ship Control</string>
+               </property>
+               <layout class="QVBoxLayout">
+                <item>
+                 <widget class="QCheckBox" name="_saveAndAdd">
+                  <property name="text">
+                   <string>Show 'Save and Add to Packing List' button on Sales Order</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_firmAndAdd">
+                  <property name="text">
+                   <string>Firm Sales Orders when added to Packing List Batch</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_enableSOShipping">
+                  <property name="text">
+                   <string>Enable Shipping interface from Sales Order screen</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_autoSelectForBilling">
+                  <property name="text">
+                   <string>Check 'Select for Billing' option on Ship Order</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="title">
+                <string>Date Control</string>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_allowASAP">
+                  <property name="text">
+                   <string>Allow ASAP Schedule Dates</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="_enablePromiseDate">
+                  <property name="text">
+                   <string>Enable Promise Dates</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QGroupBox" name="groupBox_4">
+               <property name="title">
+                <string>Change Log</string>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_customerChangeLog">
+                  <property name="text">
+                   <string>Post Customer Changes</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="_salesOrderChangeLog">
+                  <property name="text">
+                   <string>Post Sales Order Changes</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <widget class="QGroupBox" name="_freightGroup">
+               <property name="title">
+                <string>Freight Pricing</string>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_calcFreight">
+                  <property name="text">
+                   <string>Use calculated Freight values by default</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="_includePkgWeight">
+                  <property name="text">
+                   <string>Include Package Weight in Freight Calculation</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="title">
+                <string>Credit Control</string>
+               </property>
+               <layout class="QGridLayout">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="_restrictCreditMemos">
+                  <property name="text">
+                   <string>Restrict Credit Memos to Items on their Apply-To Document</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="_autoAllocateCM">
+                  <property name="text">
+                   <string>Allocate Credit Memos to New Sales Order on Save</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -781,22 +872,6 @@ to be bound by its terms.</comment>
             </item>
            </layout>
           </widget>
-         </item>
-         <item row="0" column="2">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>171</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="1" column="0">
           <widget class="QGroupBox" name="_invoiceGroup">
@@ -954,6 +1029,22 @@ to be bound by its terms.</comment>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2">
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>171</width>
              <height>40</height>
             </size>
            </property>
@@ -1491,24 +1582,33 @@ to be bound by its terms.</comment>
   <tabstop>_nextCmNumber</tabstop>
   <tabstop>_invoiceNumGeneration</tabstop>
   <tabstop>_nextInNumber</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_printSO</tabstop>
   <tabstop>_allowDiscounts</tabstop>
+  <tabstop>_priceOverride</tabstop>
+  <tabstop>_hideSOMiscChrg</tabstop>
+  <tabstop>_priceCurrent</tabstop>
+  <tabstop>_priceOrdered</tabstop>
+  <tabstop>_priceScheduled</tabstop>
+  <tabstop>_askUpdatePrice</tabstop>
   <tabstop>_allowASAP</tabstop>
+  <tabstop>_enablePromiseDate</tabstop>
+  <tabstop>_calcFreight</tabstop>
+  <tabstop>_includePkgWeight</tabstop>
+  <tabstop>_enableReservations</tabstop>
+  <tabstop>_locationGroup</tabstop>
+  <tabstop>_lowest</tabstop>
+  <tabstop>_highest</tabstop>
+  <tabstop>_alpha</tabstop>
+  <tabstop>_saveAndAdd</tabstop>
+  <tabstop>_firmAndAdd</tabstop>
+  <tabstop>_enableSOShipping</tabstop>
+  <tabstop>_autoSelectForBilling</tabstop>
   <tabstop>_customerChangeLog</tabstop>
   <tabstop>_salesOrderChangeLog</tabstop>
   <tabstop>_restrictCreditMemos</tabstop>
-  <tabstop>_autoSelectForBilling</tabstop>
-  <tabstop>_saveAndAdd</tabstop>
-  <tabstop>_priceOverride</tabstop>
   <tabstop>_autoAllocateCM</tabstop>
-  <tabstop>_hideSOMiscChrg</tabstop>
-  <tabstop>_enableSOShipping</tabstop>
-  <tabstop>_enableReservations</tabstop>
-  <tabstop>_printSO</tabstop>
-  <tabstop>_enablePromiseDate</tabstop>
-  <tabstop>_updatePrice</tabstop>
-  <tabstop>_askUpdatePrice</tabstop>
-  <tabstop>_dontUpdatePrice</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_invcCurrdate</tabstop>
   <tabstop>_invcShipdate</tabstop>
   <tabstop>_invcScheddate</tabstop>
   <tabstop>_invoiceNumOfCopies</tabstop>
@@ -1521,11 +1621,11 @@ to be bound by its terms.</comment>
   <tabstop>_shipform</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_balanceMethod</tabstop>
+  <tabstop>_creditLimit</tabstop>
+  <tabstop>_creditRating</tabstop>
   <tabstop>_partial</tabstop>
   <tabstop>_backorders</tabstop>
   <tabstop>_freeFormShiptos</tabstop>
-  <tabstop>_creditLimit</tabstop>
-  <tabstop>_creditRating</tabstop>
   <tabstop>_enableReturns</tabstop>
   <tabstop>_returnAuthChangeLog</tabstop>
   <tabstop>_disposition</tabstop>
@@ -1560,8 +1660,8 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>646</x>
-     <y>191</y>
+     <x>444</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>645</x>

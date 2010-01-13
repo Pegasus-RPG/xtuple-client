@@ -35,7 +35,6 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sCopy();
-    virtual void sReschedule();
     virtual void sDelete();
     virtual void sPrintPackingList();
     virtual void sAddToPackingListBatch();

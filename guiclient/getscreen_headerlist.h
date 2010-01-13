@@ -538,7 +538,6 @@
 #include "reprintInvoices.h"
 #include "reprioritizeWo.h"
 #include "reschedulePoitem.h"
-#include "rescheduleSoLineItems.h"
 #include "rescheduleWo.h"
 #include "reserveSalesOrderItem.h"
 #include "resetQOHBalances.h"

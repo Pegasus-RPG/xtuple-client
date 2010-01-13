@@ -26,6 +26,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditInvoiceWatermark()));
   connect(_creditLimit,          SIGNAL(editingFinished()), this, SLOT(sEditCreditLimit()));
   connect(_creditMemoWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditCreditMemoWatermark()));
+  connect(_askUpdatePrice, SIGNAL(toggled(bool)), _ignoreCustDisc, SLOT(setEnabled(bool)));
 
   _invoiceWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
   _invoiceWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
@@ -167,13 +168,19 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _creditLimit->setText(_metrics->value("SOCreditLimit"));
   _creditRating->setText(_metrics->value("SOCreditRate"));
 
+  if (_metrics->value("soPriceEffective") == "OrderDate")
+    _priceOrdered->setChecked(true);
+  else if (_metrics->value("soPriceEffective") == "ScheduleDate")
+    _priceScheduled->setChecked(true);
+
   if(_metrics->value("UpdatePriceLineEdit").toInt() == 1)
     _dontUpdatePrice->setChecked(true);
   else if (_metrics->value("UpdatePriceLineEdit").toInt() == 2)
     _askUpdatePrice->setChecked(true);
   else if(_metrics->value("UpdatePriceLineEdit").toInt() == 3)
     _updatePrice->setChecked(true);
-    
+  _ignoreCustDisc->setChecked(_askUpdatePrice->isChecked() && _metrics->boolean("IgnoreCustDisc"));
+
   this->setWindowTitle("Sales Configuration");
 
   //Set status of Returns Authorization based on context
@@ -197,9 +204,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   {
     q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
     if (q.first())
-	  _enableReturns->setCheckable(false);
-	else
-	  _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
+      _enableReturns->setCheckable(false);
+    else
+      _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
 
     q.exec( "SELECT ranumber.orderseq_number AS ranumber "
             "FROM orderseq AS ranumber "
@@ -257,16 +264,17 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     else if(_metrics->value("SOReservationLocationMethod").toInt() == 3)
       _alpha->setChecked(true);
   }
+  adjustSize();
 }
 
 configureSO::~configureSO()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void configureSO::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void configureSO::sSave()
@@ -279,19 +287,19 @@ void configureSO::sSave()
        (!_locationGroup->isChecked()) )
   {
     if (QMessageBox::warning(this, tr("Reserve by Location Disabled"),
-        tr("<p>All existing location reservations will be removed. Are you sure you want to continue?"),
-        QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-	{
+                             tr("<p>All existing location reservations will be removed. Are you sure you want to continue?"),
+                             QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    {
       return;
-	}
-	else
-	{
+    }
+    else
+    {
       q.prepare("DELETE FROM itemlocrsrv "
-	            " WHERE (itemlocrsrv_source='SO');");
+                " WHERE (itemlocrsrv_source='SO');");
       q.exec();
     }	
   }
-	   
+
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
   _metrics->set("CustomerChangeLog", _customerChangeLog->isChecked());
@@ -334,9 +342,16 @@ void configureSO::sSave()
     _metrics->set("SOReservationLocationMethod", 2);
   else if(_alpha->isChecked())
     _metrics->set("SOReservationLocationMethod", 3);
-	
+
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
+
+  if (_priceOrdered->isChecked())
+    _metrics->set("soPriceEffective", "OrderDate");
+  else if (_priceScheduled->isChecked())
+    _metrics->set("soPriceEffective", "ScheduleDate");
+  else
+    _metrics->set("soPriceEffective", "CurrentDate");
 
   //UpdatePriceLineEdit are three Options Either 
   // Don't Update price
@@ -348,6 +363,7 @@ void configureSO::sSave()
     _metrics->set("UpdatePriceLineEdit", 2);
   else if(_updatePrice->isChecked())
     _metrics->set("UpdatePriceLineEdit", 3);
+  _metrics->set("IgnoreCustDisc", _askUpdatePrice->isChecked() && _ignoreCustDisc->isChecked());
 
   if(_invcScheddate->isChecked())
     _metrics->set("InvoiceDateSource", QString("scheddate"));
@@ -378,13 +394,13 @@ void configureSO::sSave()
 
   switch (_balanceMethod->currentIndex())
   {
-    case 0:
-      _metrics->set("DefaultBalanceMethod", QString("B"));
-      break;
+  case 0:
+    _metrics->set("DefaultBalanceMethod", QString("B"));
+    break;
 
-    case 1:
-      _metrics->set("DefaultBalanceMethod", QString("O"));
-      break;
+  case 1:
+    _metrics->set("DefaultBalanceMethod", QString("O"));
+    break;
   }
 
   q.prepare( "SELECT setNextSoNumber(:sonumber), setNextQuNumber(:qunumber),"
@@ -404,16 +420,16 @@ void configureSO::sSave()
   {
     _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentIndex()]));
     if (_timing->currentIndex() == 0)
-	  _metrics->set("DefaultRaTiming", QString("I"));
-	else
-	  _metrics->set("DefaultRaTiming", QString("R"));
+      _metrics->set("DefaultRaTiming", QString("I"));
+    else
+      _metrics->set("DefaultRaTiming", QString("R"));
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentIndex()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
     _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentIndex()]));
 
     q.prepare( "SELECT setNextRaNumber(:ranumber);" );
-	q.bindValue(":ranumber", _nextRaNumber->text().toInt());
+    q.bindValue(":ranumber", _nextRaNumber->text().toInt());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {

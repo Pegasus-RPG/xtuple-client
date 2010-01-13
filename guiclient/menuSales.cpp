@@ -21,7 +21,6 @@
 
 #include "salesOrder.h"
 #include "openSalesOrders.h"
-#include "rescheduleSoLineItems.h"
 #include "quotes.h"
 
 #include "returnAuthorization.h"
@@ -237,9 +236,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, "MaintainSalesOrders", NULL, NULL,	 true, NULL },
     { "so.listOpenSalesOrders",      tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders",	QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
-    { "separator",	NULL,	NULL,	ordersMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.rescheduleAllSoLineItems", tr("&Reschedule..."),	SLOT(sRescheduleSoLineItems()),  ordersMenu, "MaintainSalesOrders",	 NULL, NULL, true, NULL },
-   
+
     // Sales | Billing
     { "menu",	tr("&Billing"),     (char*)billingMenu,		mainMenu,	"true",	NULL, NULL, true, NULL },
     
@@ -566,11 +563,6 @@ void menuSales::sOpenSalesOrders()
   openSalesOrders* win = new openSalesOrders();
   win->set(params);
   omfgThis->handleNewWindow(win);
-}
-
-void menuSales::sRescheduleSoLineItems()
-{
-  rescheduleSoLineItems(parent, "", TRUE).exec();
 }
 
 void menuSales::sPackingListBatch()

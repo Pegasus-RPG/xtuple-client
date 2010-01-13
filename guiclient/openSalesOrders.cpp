@@ -23,7 +23,6 @@
 #include "dspShipmentsBySalesOrder.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
-#include "rescheduleSoLineItems.h"
 #include "salesOrder.h"
 #include "storedProcErrorLookup.h"
 
@@ -148,19 +147,6 @@ void openSalesOrders::sCopy()
   params.append("sohead_id", _so->id());
       
   copySalesOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void openSalesOrders::sReschedule()
-{
-  if (!checkSitePrivs())
-    return;
-    
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-      
-  rescheduleSoLineItems newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -369,10 +355,6 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
-  if (!_privileges->check("MaintainSalesOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
   if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 

@@ -605,7 +605,6 @@ FORMS =   ../common/batchItem.ui                \
           reprintInvoices.ui                    \
           reprioritizeWo.ui                     \
           reschedulePoitem.ui                   \
-          rescheduleSoLineItems.ui              \
           rescheduleWo.ui                       \
           reserveSalesOrderItem.ui              \
           resetQOHBalances.ui                   \
@@ -1338,7 +1337,6 @@ HEADERS = ../common/batchItem.h                 \
           reprintInvoices.h                     \
           reprioritizeWo.h                      \
           reschedulePoitem.h                    \
-          rescheduleSoLineItems.h               \
           rescheduleWo.h                        \
           reserveSalesOrderItem.h               \
           resetQOHBalances.h                    \
@@ -2086,7 +2084,6 @@ SOURCES = ../common/batchItem.cpp               \
           reprintInvoices.cpp                   \
           reprioritizeWo.cpp                    \
           reschedulePoitem.cpp                  \
-          rescheduleSoLineItems.cpp             \
           rescheduleWo.cpp                      \
           reserveSalesOrderItem.cpp             \
           resetQOHBalances.cpp                  \

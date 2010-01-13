@@ -254,12 +254,6 @@ to be bound by its terms.</comment>
            </item>
            <item row="2" column="1">
             <widget class="DLineEdit" name="_shipDate">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
             </widget>
            </item>
            <item row="2" column="2">
@@ -1981,6 +1975,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
   <tabstop>_orderDate</tabstop>
+  <tabstop>_shipDate</tabstop>
   <tabstop>_packDate</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_salesRep</tabstop>
