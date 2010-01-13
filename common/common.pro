@@ -21,6 +21,7 @@ SOURCES = calendarcontrol.cpp \
           qbase64encode.cpp \
           qmd5.cpp \
           storedProcErrorLookup.cpp \
+          xbase32.cpp \
           xtsettings.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
@@ -33,6 +34,7 @@ HEADERS = calendarcontrol.h \
           qbase64encode.h \
           qmd5.h \
           storedProcErrorLookup.h \
+          xbase32.h \
           xtsettings.h
 FORMS = login2.ui login2Options.ui
 
