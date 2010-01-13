@@ -120,7 +120,7 @@ void issueToShipping::sHandleButtons()
   else
     _returnStock->setEnabled(false);
 }
- 
+
 void issueToShipping::sCatchSoheadid(int pSoheadid)
 {
   _order->setId(pSoheadid, "SO");
@@ -202,8 +202,8 @@ void issueToShipping::sCatchItemid(int pItemid)
              "FROM orderitem, itemsite "
              "WHERE ((orderitem_itemsite_id=itemsite_id)"
              "  AND  (itemsite_item_id=:item_id)"
-            "   AND  (orderitem_orderhead_type=:ordertype) "
-            "   AND  (orderitem_orderhead_id=:orderid));");
+             "   AND  (orderitem_orderhead_type=:ordertype) "
+             "   AND  (orderitem_orderhead_id=:orderid));");
   q.bindValue(":item_id",   pItemid);
   q.bindValue(":ordertype", _order->type());
   q.bindValue(":orderid",   _order->id());
@@ -223,9 +223,9 @@ void issueToShipping::sCatchWoid(int pWoid)
   if (_order->isSO())
   {
     q.prepare( " SELECT coitem_cohead_id, coitem_id"
-              "  FROM coitem"
-              " WHERE ((coitem_order_id=:wo_id)"
-              "   AND  (coitem_cohead_id=:sohead_id));" );
+               "  FROM coitem"
+               " WHERE ((coitem_order_id=:wo_id)"
+               "   AND  (coitem_cohead_id=:sohead_id));" );
     q.bindValue(":wo_id",     pWoid);
     q.bindValue(":sohead_id", _order->id());
     q.exec();
@@ -283,36 +283,36 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	ParameterList errp;
-	if (_order->isSO())
-	  errp.append("soitem_id", porderitemid);
-	else if (_order->isTO())
-	  errp.append("toitem_id", porderitemid);
+        ParameterList errp;
+        if (_order->isSO())
+          errp.append("soitem_id", porderitemid);
+        else if (_order->isTO())
+          errp.append("toitem_id", porderitemid);
 
-	QString errs = "<? if exists(\"soitem_id\") ?>"
-		  "SELECT item_number, warehous_code "
-		  "  FROM coitem, item, itemsite, whsinfo "
-		  " WHERE ((coitem_itemsite_id=itemsite_id)"
-		  "   AND  (itemsite_item_id=item_id)"
-		  "   AND  (itemsite_warehous_id=warehous_id)"
-		  "   AND  (coitem_id=<? value(\"soitem_id\") ?>));"
-		  "<? elseif exists(\"toitem_id\")?>"
-		  "SELECT item_number, tohead_srcname AS warehous_code "
-		  "  FROM toitem, tohead, item "
-		  " WHERE ((toitem_item_id=item_id)"
-		  "   AND  (toitem_tohead_id=tohead_id)"
-		  "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
-		  "<? endif ?>" ;
-	MetaSQLQuery errm(errs);
-	q = errm.toQuery(errp);
-	if (! q.first() && q.lastError().type() != QSqlError::NoError)
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	systemError(this,
-		    storedProcErrorLookup("sufficientInventoryToShipItem",
-					  result)
-		    .arg(q.value("item_number").toString())
-		    .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
-	return false;
+        QString errs = "<? if exists(\"soitem_id\") ?>"
+                       "SELECT item_number, warehous_code "
+                       "  FROM coitem, item, itemsite, whsinfo "
+                       " WHERE ((coitem_itemsite_id=itemsite_id)"
+                       "   AND  (itemsite_item_id=item_id)"
+                       "   AND  (itemsite_warehous_id=warehous_id)"
+                       "   AND  (coitem_id=<? value(\"soitem_id\") ?>));"
+                       "<? elseif exists(\"toitem_id\")?>"
+                       "SELECT item_number, tohead_srcname AS warehous_code "
+                       "  FROM toitem, tohead, item "
+                       " WHERE ((toitem_item_id=item_id)"
+                       "   AND  (toitem_tohead_id=tohead_id)"
+                       "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
+                       "<? endif ?>" ;
+        MetaSQLQuery errm(errs);
+        q = errm.toQuery(errp);
+        if (! q.first() && q.lastError().type() != QSqlError::NoError)
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this,
+                    storedProcErrorLookup("sufficientInventoryToShipItem",
+                                          result)
+                    .arg(q.value("item_number").toString())
+                    .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
+        return false;
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -364,7 +364,7 @@ void issueToShipping::sIssueLineBalance()
     
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
-      
+
     q.exec("BEGIN;");
     q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts) AS result;");
     q.bindValue(":ordertype", _order->type());
@@ -378,7 +378,7 @@ void issueToShipping::sIssueLineBalance()
       {
         rollback.exec();
         systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
-              __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         return;
       }
       else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
@@ -429,7 +429,7 @@ void issueToShipping::sIssueAllBalance()
       {
         rollback.exec();
         systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
-              __FILE__, __LINE__);
+                    __FILE__, __LINE__);
         sFillList();
         return;
       }
@@ -477,7 +477,7 @@ void issueToShipping::sReturnStock()
       {
         rollback.exec();
         systemError( this, storedProcErrorLookup("returnItemShipments", result),
-              __FILE__, __LINE__);
+                     __FILE__, __LINE__);
         return;
       }
       else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
@@ -532,7 +532,7 @@ void issueToShipping::sShip()
   else
     QMessageBox::information( this, tr("Cannot Ship Order"),
                               tr("<p>You must issue some amount of Stock to "
-				 "this Order before you may ship it.") );
+                                 "this Order before you may ship it.") );
 }
 
 void issueToShipping::sFillList()
@@ -604,80 +604,98 @@ void issueToShipping::sFillList()
 
   // TODO: add qty_returned to orderitem and all of this can become an orderitem select!
   QString sql = "SELECT *, "
-             "       noNeg(qtyord - qtyshipped + qtyreturned) AS balance,"
-             "       'qty' AS qtyord_xtnumericrole,"
-             "       'qty' AS qtyshipped_xtnumericrole,"
-             "       'qty' AS qtyreturned_xtnumericrole,"
-             "       'qty' AS balance_xtnumericrole,"
-             "       'qty' AS atshipping_xtnumericrole,"
-             "       CASE WHEN (scheddate > CURRENT_DATE AND"
-             "                  noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'future'"
-             "            WHEN (noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'expired'"
-             "       END AS qtforegroundrole "
-             "FROM ("
-             "<? if exists(\"sohead_id\") ?>"
-	     "SELECT coitem_id AS lineitem_id,"
-	     "       formatSoLineNumber(coitem_id) AS linenumber, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-	     "       warehous_code,"
-             "       coitem_scheddate AS scheddate,"
-             "       uom_name,"
-             "       coitem_qtyord AS qtyord,"
-             "       coitem_qtyshipped AS qtyshipped,"
-             "       coitem_qtyreturned AS qtyreturned,"
-             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
-             "       coitem_linenumber AS seq1, coitem_subnumber AS seq2 "
-             "FROM itemsite, item, site(), uom,"
-             "     coitem LEFT OUTER JOIN"
-             "      ( shipitem JOIN shiphead"
-             "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
-             "      ) ON  (shipitem_orderitem_id=coitem_id) "
-             "WHERE ( (coitem_itemsite_id=itemsite_id)"
-             " AND (coitem_qty_uom_id=uom_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (itemsite_warehous_id=warehous_id)"
-             " AND (coitem_status NOT IN ('C','X'))"
-             " AND (item_type != 'K')"
-             " AND (coitem_cohead_id=<? value(\"sohead_id\") ?>) ) "
-             "GROUP BY coitem_id, linenumber, item_number,"
-             "         item_descrip1, item_descrip2, warehous_code,"
-             "         coitem_scheddate, uom_name,"
-             "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, "
-             "         coitem_linenumber, coitem_subnumber "
-	     "<? elseif exists(\"tohead_id\") ?>"
-	     "SELECT toitem_id AS lineitem_id,"
-	     "       toitem_linenumber AS linenumber, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-	     "       tohead_srcname AS warehous_code,"
-             "       toitem_schedshipdate AS scheddate,"
-             "       uom_name,"
-             "       toitem_qty_ordered AS qtyord,"
-             "       toitem_qty_shipped AS qtyshipped,"
-             "       0 AS qtyreturned,"
-             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
-             "       toitem_linenumber AS seq1, 0 AS seq2 "
-             "FROM item, tohead, site(), uom,"
-             "     toitem LEFT OUTER JOIN"
-             "      ( shipitem JOIN shiphead"
-             "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
-             "      ) ON  (shipitem_orderitem_id=toitem_id) "
-             "WHERE ( (toitem_item_id=item_id)"
-             " AND (toitem_status NOT IN ('C','X'))"
-             " AND (toitem_tohead_id=tohead_id)"
-             " AND (tohead_src_warehous_id=warehous_id)"
-             " AND (item_inv_uom_id=uom_id)"
-             " AND (tohead_id=<? value(\"tohead_id\") ?>) ) "
-             "GROUP BY toitem_id, toitem_linenumber, item_number,"
-             "         item_descrip1, item_descrip2, tohead_srcname,"
-             "         toitem_schedshipdate, uom_name,"
-             "         toitem_qty_ordered, toitem_qty_shipped "
-	     "<? endif ?>"
-             ") AS sub "
-             "ORDER BY scheddate, seq1, seq2;"
-	     ;
+                "       noNeg(qtyord - qtyshipped + qtyreturned) AS balance,"
+                "       'qty' AS qtyord_xtnumericrole,"
+                "       'qty' AS qtyshipped_xtnumericrole,"
+                "       'qty' AS qtyreturned_xtnumericrole,"
+                "       'qty' AS balance_xtnumericrole,"
+                "       'qty' AS atshipping_xtnumericrole,"
+                "       CASE WHEN (scheddate > CURRENT_DATE AND"
+                "                  noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'future'"
+                "            WHEN (noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'expired'"
+                "       END AS qtforegroundrole "
+                "FROM ("
+                "<? if exists(\"sohead_id\") ?>"
+                "SELECT coitem_id AS lineitem_id, "
+                "       s2.shiphead_number, "
+                "       formatSoLineNumber(coitem_id) AS linenumber, item_number,"
+                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                "       warehous_code,"
+                "       coitem_scheddate AS scheddate,"
+                "       uom_name,"
+                "       coitem_qtyord AS qtyord,"
+                "       coitem_qtyshipped AS qtyshipped,"
+                "       coitem_qtyreturned AS qtyreturned,"
+                "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
+                "       coitem_linenumber AS seq1, coitem_subnumber AS seq2 "
+                "FROM itemsite, item, site(), uom,"
+                "     coitem LEFT OUTER JOIN"
+                "      ( shipitem JOIN shiphead s1"
+                "        ON ( (shipitem_shiphead_id=s1.shiphead_id) "
+                "         AND (s1.shiphead_order_type='SO') "
+                "         AND (NOT s1.shiphead_shipped) )"
+                "      ) ON  (shipitem_orderitem_id=coitem_id) "
+                "     LEFT OUTER JOIN shiphead s2 ON ((s2.shiphead_order_id=coitem_cohead_id) "
+                "                                 AND (s2.shiphead_order_type='SO') "
+                "                                 AND (NOT s2.shiphead_shipped )) "
+                "WHERE ( (coitem_itemsite_id=itemsite_id)"
+                " AND (coitem_qty_uom_id=uom_id)"
+                " AND (itemsite_item_id=item_id)"
+                " AND (itemsite_warehous_id=warehous_id)"
+                " AND (coitem_status NOT IN ('C','X'))"
+                " AND (item_type != 'K')"
+                " AND (coitem_cohead_id=<? value(\"sohead_id\") ?>) ) "
+                "GROUP BY coitem_id, linenumber, item_number,"
+                "         item_descrip1, item_descrip2, warehous_code,"
+                "         coitem_scheddate, uom_name,"
+                "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, "
+                "         coitem_linenumber, coitem_subnumber, "
+                "         s2.shiphead_number "
+                "<? elseif exists(\"tohead_id\") ?>"
+                "SELECT toitem_id AS lineitem_id, "
+                "       shiphead_number, "
+                "       toitem_linenumber AS linenumber, item_number,"
+                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                "       tohead_srcname AS warehous_code,"
+                "       toitem_schedshipdate AS scheddate,"
+                "       uom_name,"
+                "       toitem_qty_ordered AS qtyord,"
+                "       toitem_qty_shipped AS qtyshipped,"
+                "       0 AS qtyreturned,"
+                "       COALESCE(SUM(shipitem_qty), 0) AS atshipping, "
+                "       toitem_linenumber AS seq1, 0 AS seq2 "
+                "FROM item, tohead, site(), uom,"
+                "     toitem LEFT OUTER JOIN"
+                "      ( shipitem JOIN shiphead s1"
+                "        ON ( (shipitem_shiphead_id=s1.shiphead_id) "
+                "         AND (s1.shiphead_order_type='TO') "
+                "         AND (NOT s1.shiphead_shipped) )"
+                "      ) ON  (shipitem_orderitem_id=toitem_id) "
+                "     LEFT OUTER JOIN shiphead s2 ON ((s2.shiphead_order_id=toitem_tohead_id) "
+                "                                 AND (s2.shiphead_order_type='TO') "
+                "                                 AND (NOT s2.shiphead_shipped )) "
+                "WHERE ( (toitem_item_id=item_id)"
+                " AND (toitem_status NOT IN ('C','X'))"
+                " AND (toitem_tohead_id=tohead_id)"
+                " AND (tohead_src_warehous_id=warehous_id)"
+                " AND (item_inv_uom_id=uom_id)"
+                " AND (tohead_id=<? value(\"tohead_id\") ?>) ) "
+                "GROUP BY toitem_id, toitem_linenumber, item_number,"
+                "         item_descrip1, item_descrip2, tohead_srcname,"
+                "         toitem_schedshipdate, uom_name,"
+                "         toitem_qty_ordered, toitem_qty_shipped, "
+                "         s2.shiphead_number "
+                "<? endif ?>"
+                ") AS sub "
+                "ORDER BY scheddate, seq1, seq2;"
+                ;
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
-  _soitem->populate(listq);
+  if (listq.first())
+  {
+    _shipment->setText(listq.value("shiphead_number").toString());
+    _soitem->populate(listq);
+  }
   if (listq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, listq.lastError().databaseText(), __FILE__, __LINE__);
@@ -690,8 +708,8 @@ void issueToShipping::sBcFind()
   if (_bc->text().isEmpty())
   {
     QMessageBox::warning(this, tr("No Bar Code scanned"),
-			 tr("<p>Cannot search for Items by Bar Code without a "
-			    "Bar Code."));
+                         tr("<p>Cannot search for Items by Bar Code without a "
+                            "Bar Code."));
     _bc->setFocus();
     return;
   }
@@ -701,36 +719,36 @@ void issueToShipping::sBcFind()
   // run the issue button.
   // TODO: can we make this an orderitem select?
   QString sql = "<? if exists(\"sohead_id\") ?>"
-	    "SELECT coitem_id AS lineitem_id, noNeg(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty), 0)) AS balance"
-            "  FROM itemsite, item,"
-            "       coitem LEFT OUTER JOIN"
-            "        ( shipitem JOIN shiphead"
-            "          ON ( (shipitem_shiphead_id=shiphead_id)"
-	    "               AND (NOT shiphead_shipped"
-	    "               AND shiphead_order_type=<? value(\"ordertype\") ?>) )"
-            "        ) ON  (shipitem_orderitem_id=coitem_id) "
-            " WHERE ((coitem_itemsite_id=itemsite_id)"
-            "   AND  (itemsite_item_id=item_id)"
-            "   AND  (coitem_status NOT IN ('C', 'X'))"
-            "   AND  (coitem_cohead_id=<? value(\"sohead_id\") ?>)"
-            "   AND  (item_upccode=<? value(\"bc\") ?>))"
-            " GROUP BY coitem_id, coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned; "
-	    "<? elseif exists(\"tohead_id\") ?>"
-	    "SELECT toitem_id AS lineitem_id, noNeg(noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty), 0)) AS balance"
-            "  FROM item,"
-            "       toitem LEFT OUTER JOIN"
-            "        ( shipitem JOIN shiphead"
-            "          ON ( (shipitem_shiphead_id=shiphead_id)"
-	    "               AND (NOT shiphead_shipped"
-	    "               AND shiphead_order_type=<? value(\"ordertype\") ?>) )"
-            "        ) ON  (shipitem_orderitem_id=toitem_id) "
-            " WHERE ((toitem_item_id=item_id)"
-            "   AND  (toitem_status NOT IN ('C', 'X'))"
-            "   AND  (toitem_tohead_id=<? value(\"tohead_id\") ?>)"
-            "   AND  (item_upccode=<? value(\"bc\") ?>))"
-            " GROUP BY toitem_id, toitem_qty_ordered, toitem_qty_shipped; "
-	    "<? endif ?>"
-	    ;
+                "SELECT coitem_id AS lineitem_id, noNeg(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty), 0)) AS balance"
+                "  FROM itemsite, item,"
+                "       coitem LEFT OUTER JOIN"
+                "        ( shipitem JOIN shiphead"
+                "          ON ( (shipitem_shiphead_id=shiphead_id)"
+                "               AND (NOT shiphead_shipped"
+                "               AND shiphead_order_type=<? value(\"ordertype\") ?>) )"
+                "        ) ON  (shipitem_orderitem_id=coitem_id) "
+                " WHERE ((coitem_itemsite_id=itemsite_id)"
+                "   AND  (itemsite_item_id=item_id)"
+                "   AND  (coitem_status NOT IN ('C', 'X'))"
+                "   AND  (coitem_cohead_id=<? value(\"sohead_id\") ?>)"
+                "   AND  (item_upccode=<? value(\"bc\") ?>))"
+                " GROUP BY coitem_id, coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned; "
+                "<? elseif exists(\"tohead_id\") ?>"
+                "SELECT toitem_id AS lineitem_id, noNeg(noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty), 0)) AS balance"
+                "  FROM item,"
+                "       toitem LEFT OUTER JOIN"
+                "        ( shipitem JOIN shiphead"
+                "          ON ( (shipitem_shiphead_id=shiphead_id)"
+                "               AND (NOT shiphead_shipped"
+                "               AND shiphead_order_type=<? value(\"ordertype\") ?>) )"
+                "        ) ON  (shipitem_orderitem_id=toitem_id) "
+                " WHERE ((toitem_item_id=item_id)"
+                "   AND  (toitem_status NOT IN ('C', 'X'))"
+                "   AND  (toitem_tohead_id=<? value(\"tohead_id\") ?>)"
+                "   AND  (item_upccode=<? value(\"bc\") ?>))"
+                " GROUP BY toitem_id, toitem_qty_ordered, toitem_qty_shipped; "
+                "<? endif ?>"
+                ;
 
   ParameterList findp;
   if (_order->isSO())
@@ -751,7 +769,7 @@ void issueToShipping::sBcFind()
       return;
     }
     XMessageBox::message(this, QMessageBox::Warning, tr("No Match Found"),
-      tr("<p>No Items on this Sales Order match the specified Barcode.") ); 
+                         tr("<p>No Items on this Sales Order match the specified Barcode.") );
     _bc->clear();
     return;
   }
@@ -783,33 +801,33 @@ void issueToShipping::sBcFind()
   // If so we can pop a quick message informing the user.
   // TODO: can we make this an orderitem select?
   sql = "<? if exists(\"sohead_id\") ?>"
-	"SELECT coitem_id,"
-	"       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty), 0) AS remaining"
-	"  FROM coitem LEFT OUTER JOIN"
-	"         ( shipitem JOIN shiphead"
-	"           ON ( (shipitem_shiphead_id=shiphead_id)"
-	"                 AND (NOT shiphead_shipped)"
-	"                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
-	"         ) ON  (shipitem_orderitem_id=coitem_id)"
-	" WHERE ( (coitem_status NOT IN ('C','X'))"
-	"   AND   (coitem_cohead_id=<? value(\"sohead_id\") ?>) )"
-	" GROUP BY coitem_id, coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
-	"HAVING ((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty),0)) > 0);"
-	"<? elseif exists(\"tohead_id\") ?>"
-	"SELECT toitem_id,"
-	"       noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty), 0) AS remaining"
-	"  FROM toitem LEFT OUTER JOIN"
-	"         ( shipitem JOIN shiphead"
-	"           ON ( (shipitem_shiphead_id=shiphead_id)"
-	"                 AND (NOT shiphead_shipped)"
-	"                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
-	"         ) ON  (shipitem_orderitem_id=toitem_id)"
-	" WHERE ( (toitem_status NOT IN ('C','X'))"
-	"   AND   (toitem_tohead_id=<? value(\"tohead_id\") ?>) )"
-	" GROUP BY toitem_id, toitem_qty_ordered, toitem_qty_shipped "
-	"HAVING ((noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty),0)) > 0);"
-	"<? endif ?>"
-	;
+        "SELECT coitem_id,"
+        "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty), 0) AS remaining"
+        "  FROM coitem LEFT OUTER JOIN"
+        "         ( shipitem JOIN shiphead"
+        "           ON ( (shipitem_shiphead_id=shiphead_id)"
+        "                 AND (NOT shiphead_shipped)"
+        "                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
+        "         ) ON  (shipitem_orderitem_id=coitem_id)"
+        " WHERE ( (coitem_status NOT IN ('C','X'))"
+        "   AND   (coitem_cohead_id=<? value(\"sohead_id\") ?>) )"
+        " GROUP BY coitem_id, coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
+        "HAVING ((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty),0)) > 0);"
+        "<? elseif exists(\"tohead_id\") ?>"
+        "SELECT toitem_id,"
+        "       noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty), 0) AS remaining"
+        "  FROM toitem LEFT OUTER JOIN"
+        "         ( shipitem JOIN shiphead"
+        "           ON ( (shipitem_shiphead_id=shiphead_id)"
+        "                 AND (NOT shiphead_shipped)"
+        "                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
+        "         ) ON  (shipitem_orderitem_id=toitem_id)"
+        " WHERE ( (toitem_status NOT IN ('C','X'))"
+        "   AND   (toitem_tohead_id=<? value(\"tohead_id\") ?>) )"
+        " GROUP BY toitem_id, toitem_qty_ordered, toitem_qty_shipped "
+        "HAVING ((noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty),0)) > 0);"
+        "<? endif ?>"
+        ;
 
   ParameterList fullp;
   if (_order->isSO())
@@ -831,6 +849,6 @@ void issueToShipping::sBcFind()
       return;
     }
     XMessageBox::message( this, QMessageBox::Information, tr("Order Complete"),
-      tr("All items for this order have been issued to shipping.") );
+                          tr("All items for this order have been issued to shipping.") );
   }
 }
