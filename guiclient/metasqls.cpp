@@ -116,7 +116,7 @@ void metasqls::sFillList()
 {
   XSqlQuery sql("SELECT metasql_id, metasql_group, metasql_name,"
                 "       REGEXP_REPLACE(metasql_notes, E'\\n.*', '') AS metasql_notes,"
-                "       -1 AS metasql_grade,"
+                "       metasql_grade,"
                 "       CASE WHEN nspname='public' THEN ''"
                 "            ELSE nspname END AS nspname,"
                 "       CASE WHEN pkghead_id IS NULL THEN 0"
@@ -129,7 +129,7 @@ void metasqls::sFillList()
                 " UNION "
                 "SELECT -1, pkghead_name, NULL,"
                 "       REGEXP_REPLACE(pkghead_descrip, E'\\n.*', ''),"
-                "       0, pkghead_name, 0, pkghead_descrip"
+                "       NULL, pkghead_name, 0, pkghead_descrip"
                 "  FROM metasql, pg_class, pg_namespace"
                 "       RIGHT OUTER JOIN pkghead ON (nspname=pkghead_name)"
                 " WHERE ((metasql.tableoid=pg_class.oid)"
