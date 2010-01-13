@@ -19,7 +19,6 @@
 
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "salesOrder.h"
-#include "rescheduleSoLineItems.h"
 #include "printPackingList.h"
 #include "storedProcErrorLookup.h"
 #include "mqlutil.h"
@@ -152,17 +151,6 @@ void dspSummarizedBacklogByWarehouse::sView()
   salesOrder::viewSalesOrder(_so->id());
 }
 
-void dspSummarizedBacklogByWarehouse::sReschedule()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-      
-  rescheduleSoLineItems newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
-}
-
 void dspSummarizedBacklogByWarehouse::sDelete()
 {
   if ( QMessageBox::question(this, tr("Delete Sales Order?"),
@@ -251,10 +239,6 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
 
     menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
     if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
-      pMenu->setItemEnabled(menuItem, FALSE);
-
-    menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
-    if (!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);

@@ -40,7 +40,6 @@ class menuSales : public QObject
   public slots:
     void sNewSalesOrder();
     void sOpenSalesOrders();
-    void sRescheduleSoLineItems();
     void sNewQuote();
     void sQuotes();
 

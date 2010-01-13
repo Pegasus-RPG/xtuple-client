@@ -31,7 +31,6 @@ public slots:
     virtual void sInventoryAvailabilityBySalesOrder();
     virtual void sEdit();
     virtual void sView();
-    virtual void sReschedule();
     virtual void sDelete();
     virtual void sPrintPackingList();
     virtual void sPopulateMenu( QMenu * pMenu );
