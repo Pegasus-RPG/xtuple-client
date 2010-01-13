@@ -70,6 +70,7 @@ void metasqls::sNew()
 {
   MQLEdit *newdlg = new MQLEdit(this);
   omfgThis->handleNewWindow(newdlg);
+  newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
@@ -108,6 +109,7 @@ void metasqls::sEdit()
   MQLEdit *newdlg = new MQLEdit(this);
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
+  newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
   omfgThis->handleNewWindow(newdlg);
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
