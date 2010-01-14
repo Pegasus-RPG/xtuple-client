@@ -174,6 +174,9 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
     prequest += QString::number(amount).leftJustified(4, ' ', true);
   }
 
+
+  _extraHeaders.append(qMakePair(QString("Content-Length"), QString("%1").arg(prequest.size())));
+
   if (DEBUG)
     qDebug("Paymentech:buildCommon built %s\n", prequest.toAscii().data());
   return 0;

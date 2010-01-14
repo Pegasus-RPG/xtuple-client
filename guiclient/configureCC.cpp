@@ -18,7 +18,8 @@
 // Change these definitions to match the indices in the _ccCompany combo box
 #define ANINDEX 0
 #define YPINDEX 1
-#define EXTINDEX 2
+#define PTINDEX 2
+#define EXTINDEX 3
 
 configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -145,6 +146,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccProxyLogin->setText(_metricsenc->value("CCProxyLogin"));
     _ccProxyPassword->setText(_metricsenc->value("CCProxyPassword"));
     _ccYPStoreNum->setText(_metricsenc->value("CCYPStoreNum"));
+    _ccPTDivisionNumber->setText(_metricsenc->value("CCPTDivisionNumber"));
     _anMD5Hash->setText(_metricsenc->value("CCANMD5Hash"));
   }
   else
@@ -154,6 +156,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccProxyLogin->setEnabled(false);
     _ccProxyPassword->setEnabled(false);
     _ccYPStoreNum->setEnabled(false);
+    _ccPTDivisionNumber->setEnabled(false);
     _anMD5Hash->setEnabled(false);
   }
 
@@ -284,6 +287,7 @@ void configureCC::sSave()
     _metricsenc->set("CCProxyLogin",    _ccProxyLogin->text());
     _metricsenc->set("CCProxyPassword", _ccProxyPassword->text());
     _metricsenc->set("CCYPStoreNum",    _ccYPStoreNum->text());
+    _metricsenc->set("CCPTDivisionNumber", _ccPTDivisionNumber->text());
     _metricsenc->set("CCANMD5Hash",     _anMD5Hash->text());
 
     _metricsenc->load();
@@ -347,6 +351,11 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _cvvFailGroup->setEnabled(true);
     _avsCheckGroup->setEnabled(true);
     _avsFailGroup->setEnabled(true);
+  }
+  else if (pindex == PTINDEX)
+  {
+    _fraudDetectionIgnoredLit->setText("");
+    _ccPasswordLit->setText(tr("Password:"));
   }
   else if (pindex == EXTINDEX)
   {

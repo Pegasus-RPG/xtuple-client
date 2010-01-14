@@ -30,6 +30,7 @@
 #include "externalccprocessor.h"
 #include "verisignprocessor.h"
 #include "yourpayprocessor.h"
+#include "paymentechprocessor.h"
 
 #define DEBUG false
 
@@ -122,6 +123,7 @@
     \see AuthorizeDotNetProcessor
     \see ExternalCCProcessor
     \see YourPayProcessor
+    \see PaymentechProcessor
     \see configureCC
 
     \todo figure out how to expose portions of this in the scriptapi doxygen module
@@ -291,6 +293,9 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
   else if (pcompany == "YourPay")
     return new YourPayProcessor();
 
+  else if (pcompany == "Paymentech")
+    return new PaymentechProcessor();
+
   else if (pcompany == "External")
     return new ExternalCCProcessor();
 
@@ -310,6 +315,9 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 
   else if ((_metrics->value("CCCompany") == "YourPay"))
     processor = new YourPayProcessor();
+
+  else if ((_metrics->value("CCCompany") == "Paymentech"))
+    processor = new PaymentechProcessor();
 
   else if ((_metrics->value("CCCompany") == "External"))
     processor = new ExternalCCProcessor();
@@ -1505,6 +1513,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
       cmode = QHttp::ConnectionModeHttp;
     _http = new QHttp(ccurl.host(), cmode, ccurl.port(0));
+    _http->setHost(ccurl.host());
 
     if(_metrics->boolean("CCUseProxyServer"))
     {
@@ -1513,12 +1522,14 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     }
 
     QHttpRequestHeader request("POST", ccurl.encodedPath());
-    request.setValue("Host", ccurl.host());
     if(!_extraHeaders.isEmpty())
+    {
       request.setValues(_extraHeaders);
+    }
+    request.setValue("Host", ccurl.host());
     
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-    _http->request(request, prequest.toAscii());
+    _http->request(request, prequest.utf8());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
     {
       QApplication::processEvents(QEventLoop::WaitForMoreEvents);
