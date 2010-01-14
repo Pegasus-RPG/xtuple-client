@@ -31,6 +31,32 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_close, SIGNAL(released()), this, SLOT(reject()));
   connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
 
+  if (_metrics->value("Application") == "PostBooks")
+  {  
+    _enableDropShip->hide();
+    _billDropShip->hide();
+  }
+  else
+  {
+    q.prepare("SELECT pohead_id FROM pohead "
+	          "WHERE ( (pohead_dropship = 'TRUE') "
+              "  AND (pohead_status = 'O') )");
+    q.exec();
+    if (q.first())
+    {
+      _enableDropShip->setChecked(TRUE);
+	  _enableDropShip->setEnabled(FALSE);
+	  _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
+	  _billDropShip->setEnabled(FALSE);
+
+    }
+    else
+	{
+      _enableDropShip->setChecked(_metrics->boolean("EnableDropShipments"));
+	  _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
+	}
+  }
+
   if (_metrics->value("PONumberGeneration") == "M")
     _orderNumGeneration->setCurrentIndex(0);
   else if (_metrics->value("PONumberGeneration") == "A")
@@ -138,6 +164,8 @@ void configurePO::sSave()
   _metrics->set("VendorChangeLog", _vendorChangeLog->isChecked());
   _metrics->set("UseEarliestAvailDateOnPOItem", _earliestPO->isChecked());
   _metrics->set("DefaultPrintPOOnSave", _printPO->isChecked());
+  _metrics->set("EnableDropShipments", _enableDropShip->isChecked());
+  _metrics->set("BillDropShip", (_billDropShip->isChecked() && _billDropShip->isEnabled()));
  
   _metrics->set("POVendor", _vendorCopy->isChecked());
   _metrics->set("RequireStdCostForPOItem", _requirePoitemStdCost->isChecked());
