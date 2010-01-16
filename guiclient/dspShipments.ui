@@ -7,8 +7,8 @@ It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
- <class>dspShipmentsBySalesOrder</class>
- <widget class="QWidget" name="dspShipmentsBySalesOrder">
+ <class>dspShipments</class>
+ <widget class="QWidget" name="dspShipments">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -29,96 +29,110 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Shipments</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="XLabel" name="_shipmentsByLit">
-           <property name="text">
-            <string>Shipments By:</string>
+          <widget class="QGroupBox" name="_custGroup">
+           <property name="title">
+            <string/>
            </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="0">
+             <widget class="CustomerSelector" name="_cust"/>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
-          <widget class="XComboBox" name="_shipmentsBy">
-           <item>
-            <property name="text">
-             <string>Customer</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Date Range</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Order</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Shipment</string>
-            </property>
-           </item>
+          <widget class="QGroupBox" name="_dateGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="DateCluster" name="_dates"/>
+            </item>
+           </layout>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="_clusterGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QStackedWidget" name="_stackedWidget">
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="_custPage">
-             <layout class="QGridLayout" name="gridLayout_5">
-              <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QGroupBox" name="_orderGroup">
+           <property name="title">
+            <string>Orders</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0" colspan="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QRadioButton" name="_allOrders">
+                <property name="text">
+                 <string>All</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="_selectedShipment_2">
+                <property name="text">
+                 <string>Selected</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="1">
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_3">
-                  <item>
-                   <widget class="CustCluster" name="_cust"/>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
+                 <widget class="OrderCluster" name="_order"/>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_3">
+                 <spacer name="horizontalSpacer">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -132,105 +146,112 @@ to be bound by its terms.</comment>
                 </item>
                </layout>
               </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="_datePage">
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="DateCluster" name="_dates"/>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
-            </widget>
-            <widget class="QWidget" name="_orderPage">
-             <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="0">
-               <layout class="QVBoxLayout" name="verticalLayout">
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="_shipmentGroup">
+           <property name="title">
+            <string>Shipments</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QRadioButton" name="_allShipments">
+                <property name="text">
+                 <string>All</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <property name="topMargin">
+                 <number>6</number>
+                </property>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <widget class="OrderCluster" name="_order"/>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
+                 <widget class="QRadioButton" name="_selectedShipment">
+                  <property name="text">
+                   <string>Selected</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                 <spacer name="verticalSpacer">
+                 <spacer name="verticalSpacer_4">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>20</width>
-                    <height>0</height>
+                    <height>40</height>
                    </size>
                   </property>
                  </spacer>
                 </item>
                </layout>
               </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="_shipmentPage">
-             <layout class="QGridLayout" name="gridLayout_4">
-              <item row="0" column="0">
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <item>
-                   <widget class="ShipmentCluster" name="_shipment">
-                    <property name="label">
-                     <string>Shipment #:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
+              <item>
+               <widget class="ShipmentCluster" name="_shipment">
+                <property name="label">
+                 <string>Shipment #:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
-            </widget>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -241,7 +262,7 @@ to be bound by its terms.</comment>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>0</width>
+         <width>13</width>
          <height>20</height>
         </size>
        </property>
@@ -365,9 +386,9 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>CustCluster</class>
+   <class>CustomerSelector</class>
    <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <header>customerselector.h</header>
   </customwidget>
   <customwidget>
    <class>DateCluster</class>
@@ -385,16 +406,6 @@ to be bound by its terms.</comment>
    <header>shipmentcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLabel</class>
-   <extends>QLabel</extends>
-   <header>xlabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
@@ -410,7 +421,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>dspShipmentsBySalesOrder</receiver>
+   <receiver>dspShipments</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -424,18 +435,34 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_shipmentsBy</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>_stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
+   <sender>_order</sender>
+   <signal>newId(int)</signal>
+   <receiver>_shipment</receiver>
+   <slot>limitToOrder(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>172</x>
-     <y>26</y>
+     <x>253</x>
+     <y>216</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>125</y>
+     <x>655</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_allOrders</sender>
+   <signal>clicked()</signal>
+   <receiver>_shipment</receiver>
+   <slot>removeOrderLimit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>655</x>
+     <y>221</y>
     </hint>
    </hints>
   </connection>

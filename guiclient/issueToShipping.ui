@@ -97,7 +97,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0">
          <widget class="XLabel" name="_issueByLit">
           <property name="text">
-           <string>Issue By:</string>
+           <string>Issue by:</string>
           </property>
          </widget>
         </item>
@@ -304,17 +304,44 @@ to be bound by its terms.</comment>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="XCheckBox" name="_requireInventory">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="text">
-         <string>Require sufficient Inventory</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="XCheckBox" name="_requireInventory">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Require sufficient Inventory</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="xCheckBox">
+          <property name="text">
+           <string>Only show Reserved Items</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -457,7 +484,7 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QLabel" name="_bcLit">
               <property name="text">
-               <string>Issue Items Using UPC Bar Code:</string>
+               <string>Issue Items using UPC bar code:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -577,19 +604,23 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_issueBy</tabstop>
+  <tabstop>_shipment</tabstop>
   <tabstop>_transDate</tabstop>
+  <tabstop>_issueBy</tabstop>
   <tabstop>_order</tabstop>
+  <tabstop>_requireInventory</tabstop>
+  <tabstop>xCheckBox</tabstop>
   <tabstop>_soitem</tabstop>
   <tabstop>_bc</tabstop>
   <tabstop>_bcQty</tabstop>
   <tabstop>_bcFind</tabstop>
-  <tabstop>_ship</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_issueStock</tabstop>
   <tabstop>_issueLine</tabstop>
   <tabstop>_returnStock</tabstop>
   <tabstop>_issueAll</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_ship</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

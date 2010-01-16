@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>789</width>
-    <height>550</height>
+    <height>556</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -468,12 +468,9 @@ to be bound by its terms.</comment>
       <attribute name="title">
        <string>Shipping and Receiving</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
         <layout class="QGridLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="_shipmentNumGenerationLit">
            <property name="text">
@@ -524,60 +521,60 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item>
-        <widget class="QGroupBox" name="_issueByGroup">
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="_shipByGroup">
          <property name="title">
-          <string>Enable issue by Customer in Issue Stock to Shipping window with this default</string>
+          <string>Enable Shipping by Customer</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
-         <layout class="QGridLayout" name="gridLayout_5">
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="XLabel" name="_issueByLit">
-            <property name="text">
-             <string>Issue By:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="XComboBox" name="_issueBy">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <property name="text">
-              <string>Customer</string>
-             </property>
+             <widget class="QLabel" name="_shipByLit">
+              <property name="text">
+               <string>By default Print and Issue by:</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <property name="text">
-              <string>Order</string>
-             </property>
+             <widget class="XComboBox" name="_shipBy">
+              <item>
+               <property name="text">
+                <string>Customer</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Order</string>
+               </property>
+              </item>
+             </widget>
             </item>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="2">
-           <widget class="QCheckBox" name="checkBox">
-            <property name="text">
-             <string>Select default Ship-to address when Customer is selected</string>
-            </property>
-           </widget>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QCheckBox" name="_kitInheritCOS">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -590,7 +587,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <widget class="QCheckBox" name="_disallowReceiptExcess">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -603,99 +600,92 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="_warnIfReceiptDiffers">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Warn if Purchase Order Receipt Qty differs from receivable Qty</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <layout class="QHBoxLayout">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="_warnIfReceiptDiffers">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="_toleranceLit">
            <property name="text">
-            <string>Warn if Purchase Order Receipt Qty differs from receivable Qty</string>
+            <string>By the following amount:</string>
+           </property>
+           <property name="buddy">
+            <cstring>_tolerance</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout">
-           <property name="spacing">
-            <number>2</number>
+          <widget class="QLabel" name="_percentLit">
+           <property name="text">
+            <string>%</string>
            </property>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="_toleranceLit">
-             <property name="text">
-              <string>By the following amount:</string>
-             </property>
-             <property name="buddy">
-              <cstring>_tolerance</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_percentLit">
-             <property name="text">
-              <string>%</string>
-             </property>
-             <property name="buddy">
-              <cstring>_tolerance</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="_tolerance">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+           <property name="buddy">
+            <cstring>_tolerance</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="_tolerance">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
-       <item>
+       <item row="6" column="0">
         <widget class="QGroupBox" name="_shipformGroup">
          <property name="title">
           <string>Default Shipping Form Copies:</string>
@@ -709,14 +699,8 @@ to be bound by its terms.</comment>
           </property>
           <item>
            <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
             <item>
              <layout class="QHBoxLayout">
-              <property name="spacing">
-               <number>5</number>
-              </property>
               <item>
                <widget class="QLabel" name="_shipformNumOfCopiesLit_2">
                 <property name="text">
@@ -852,11 +836,6 @@ to be bound by its terms.</comment>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XLabel</class>
-   <extends>QLabel</extends>
-   <header>xlabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
@@ -870,7 +849,9 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_tab</tabstop>
   <tabstop>_eventFence</tabstop>
+  <tabstop>_warehouseChangeLog</tabstop>
   <tabstop>_itemSiteChangeLog</tabstop>
   <tabstop>_multiWhs</tabstop>
   <tabstop>_toNumGeneration</tabstop>
@@ -879,6 +860,7 @@ to be bound by its terms.</comment>
   <tabstop>_enableToShipping</tabstop>
   <tabstop>_transferOrderChangeLog</tabstop>
   <tabstop>_lotSerial</tabstop>
+  <tabstop>_setDefLoc</tabstop>
   <tabstop>_costAvg</tabstop>
   <tabstop>_costStd</tabstop>
   <tabstop>_costJob</tabstop>
@@ -891,8 +873,12 @@ to be bound by its terms.</comment>
   <tabstop>_checkOnAll</tabstop>
   <tabstop>_shipmentNumGeneration</tabstop>
   <tabstop>_nextShipmentNum</tabstop>
+  <tabstop>_shipByGroup</tabstop>
+  <tabstop>_shipBy</tabstop>
+  <tabstop>_kitInheritCOS</tabstop>
   <tabstop>_disallowReceiptExcess</tabstop>
   <tabstop>_warnIfReceiptDiffers</tabstop>
+  <tabstop>_tolerance</tabstop>
   <tabstop>_shipformNumOfCopies</tabstop>
   <tabstop>_shipformWatermarks</tabstop>
   <tabstop>_save</tabstop>
