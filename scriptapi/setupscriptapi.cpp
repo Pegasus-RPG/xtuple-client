@@ -23,6 +23,7 @@
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
 #include "orreportproto.h"
+#include "parametereditproto.h"
 #include "parametergroupsetup.h"
 #include "parameterlistsetup.h"
 #include "polineeditsetup.h"
@@ -121,6 +122,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
   setupOrReportProto(engine);
+  setupParameterEditProto(engine);
   setupParameterGroup(engine);
   setupParameterList(engine);
   setupPeriodListViewItem(engine);

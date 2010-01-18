@@ -86,6 +86,7 @@ HEADERS +=  setupscriptapi.h                    \
             glclustersetup.h			\
             itemlineeditsetup.h			\
             orderlineeditsetup.h		\
+            parametereditproto.h		\
             parametergroupsetup.h		\
             polineeditsetup.h			\
             projectlineeditsetup.h		\
@@ -170,6 +171,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             glclustersetup.cpp			\
             itemlineeditsetup.cpp		\
             orderlineeditsetup.cpp		\
+            parametereditproto.cpp		\
             parametergroupsetup.cpp		\
             polineeditsetup.cpp			\
             projectlineeditsetup.cpp		\
