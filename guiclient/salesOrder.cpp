@@ -613,7 +613,6 @@ void salesOrder::sSaveAndAdd()
 
 bool salesOrder::save(bool partial)
 {
-  qDebug("saving...");
   //  Make sure that all of the required field have been populated
   if (!_orderDate->isValid())
   {
@@ -1788,6 +1787,8 @@ void salesOrder::sNew()
   params.append("taxzone_id", _taxZone->id());
   if (_warehouse->id() != -1)
     params.append("warehous_id", _warehouse->id());  
+  if (_shipDate->isValid())
+    params.append("shipDate", _shipDate->date());
 
   if ((_mode == cNew) || (_mode == cEdit))
     params.append("mode", "new");
@@ -2503,16 +2504,17 @@ void salesOrder::populate()
 void salesOrder::sFillItemList()
 {
   if (ISORDER(_mode))
-    q.prepare( "SELECT MIN(coitem_scheddate) AS shipdate "
+    q.prepare( "SELECT COALESCE(MIN(coitem_scheddate),:ship_date) AS shipdate "
                "FROM coitem "
                "WHERE ((coitem_status <> 'X')"
                "  AND  (coitem_cohead_id=:head_id));" );
   else
-    q.prepare( "SELECT MIN(quitem_scheddate) AS shipdate "
+    q.prepare( "SELECT COALESCE(MIN(quitem_scheddate),:ship_date) AS shipdate "
                "FROM quitem "
                "WHERE (quitem_quhead_id=:head_id);" );
 
   q.bindValue(":head_id", _soheadid);
+  q.bindValue(":ship_date", _shipDate->date());
   q.exec();
   if (q.first())
   {
@@ -4280,7 +4282,7 @@ void salesOrder::sHandleMore()
 void salesOrder::sRecalculatePrice()
 {
   if (QMessageBox::question(this, tr("Update all prices?"),
-                            tr("Do you want to recalculate all prices for an order including:\n\t- Line items\n\t - Taxes\n\t - Freight ?"),
+                            tr("Do you want to recalculate all prices for the order including:\n\t- Line items\n\t - Taxes\n\t - Freight ?"),
                             QMessageBox::Yes | QMessageBox::Escape,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
@@ -4346,7 +4348,7 @@ void salesOrder::sShipDateChanged()
   params.append("ignoreCustDisc", _metrics->value("IgnoreCustDisc"));
 
   if (QMessageBox::question(this, tr("Update all schedule dates?"),
-                            tr("Changing this date will update the schedule dates on editable line items. "
+                            tr("Changing this date will update the Schedule Date on all editable line items. "
                                "Is this what you want to do?"),
                             QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape)
     == QMessageBox::Yes) {
