@@ -737,7 +737,7 @@ void salesOrderItem::sSave()
     _qtyOrdered->setFocus();
     return;
   }
-  else if (_qtyOrdered->toDouble() != qRound(_qtyOrdered->toDouble()) &&
+  else if (_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
            _qtyOrdered->validator()->inherits("QIntValidator"))
   {
     QMessageBox::warning(this, tr("Invalid Quantity"),
@@ -2901,7 +2901,7 @@ void salesOrderItem::sQtyUOMChanged()
   _priceUOM->setId(_qtyUOM->id());
   sCalculateExtendedPrice();
 
-  if (_qtyOrdered->toDouble() != qRound(_qtyOrdered->toDouble()) &&
+  if (_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
       _qtyOrdered->validator()->inherits("QIntValidator"))
   {
     QMessageBox::warning(this, tr("Invalid Quantity"),

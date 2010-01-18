@@ -511,5 +511,5 @@ void configureSO::sEditCreditMemoWatermark()
 
 void configureSO::sEditCreditLimit()
 {
-  _creditLimit->setDouble(qRound(_creditLimit->toDouble()));
+  _creditLimit->setDouble((double)qRound(_creditLimit->toDouble()));
 }

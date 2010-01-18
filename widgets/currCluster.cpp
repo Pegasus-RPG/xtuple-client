@@ -716,7 +716,7 @@ void CurrDisplay::setLocalValue(double newValue)
        for (int cnt = 0; cnt < _decimals + _localScale; cnt++)
          prec = prec * 10;
          
-	_valueLocal = qRound(newValue*prec)/prec;
+	_valueLocal = (double)qRound(newValue*prec)/prec;
 	_localKnown = true;
 	emit valueLocalChanged(_valueLocal);
 	sValueLocalChanged(_valueLocal);
