@@ -957,6 +957,7 @@ void salesOrderItem::sSave()
                             __FILE__, __LINE__);
                 return;
               }
+              _cScheduledDate=_scheduledDate->date();
             }
             else if (q.lastError().type() != QSqlError::NoError)
             {
@@ -1446,6 +1447,13 @@ void salesOrderItem::sListPrices()
   params.append("qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
   params.append("curr_id", _netUnitPrice->id());
   params.append("effective", _netUnitPrice->effective());
+  if (_metrics->value("soPriceEffective") == "OrderDate")
+    params.append("asof", _netUnitPrice->effective());
+  else if (_metrics->value("soPriceEffective") == "ScheduleDate" &&
+           _scheduledDate->isValid())
+    params.append("asof", _scheduledDate->date());
+  else
+    params.append("asof", omfgThis->dbDate());
 
   priceList newdlg(this);
   newdlg.set(params);
@@ -1470,7 +1478,6 @@ void salesOrderItem::sDeterminePrice()
 
 void salesOrderItem::sDeterminePrice(bool force)
 {
-  qDebug("price1");
   // Determine if we can or should update the price
   if ( _mode == cView ||
        _mode == cViewQuote ||
@@ -1481,16 +1488,15 @@ void salesOrderItem::sDeterminePrice(bool force)
                    !_scheduledDate->isValid() ||
                    _scheduledDate->date() == _dateCache) ) ) )
     return;
-  qDebug("price2");
 
   double charTotal=0;
   bool update=true;
-  bool qtyChanged=(_orderQtyCache == _qtyOrdered->toDouble());
+  bool qtyChanged=(_orderQtyCache != _qtyOrdered->toDouble());
   QDate asOf;
 
-  if (_metrics->value("soPriceEffective") != "ScheduleDate")
+  if (_metrics->value("soPriceEffective") == "ScheduleDate")
     asOf = _scheduledDate->date();
-  else if (_metrics->value("soPriceEffective") != "OrderDate")
+  else if (_metrics->value("soPriceEffective") == "OrderDate")
     asOf = _netUnitPrice->effective();
   else
     asOf = omfgThis->dbDate();
@@ -1498,7 +1504,6 @@ void salesOrderItem::sDeterminePrice(bool force)
   // Okay, we'll update customer price for sure, but how about net unit price?
   if ( _mode == cEdit ||
        _mode == cEditQuote ) {
-  qDebug("price3");
     if ( _customerPrice->localValue() != _netUnitPrice->localValue() && (
         _metrics->boolean("IgnoreCustDisc") || (
             _metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate &&
@@ -1514,12 +1519,10 @@ void salesOrderItem::sDeterminePrice(bool force)
         update = false;
     }
   }
-  qDebug("price4");
   // Go get the new price information
   // For configured items, update characteristic pricing
   if ( _item->isConfigured() )
   {
-      qDebug("price5");
     disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
     _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
 
@@ -1563,7 +1566,6 @@ void salesOrderItem::sDeterminePrice(bool force)
       charTotal += _itemchar->data(idx, Qt::DisplayRole).toDouble();
     }
   }
-  qDebug("price6");
   // Now get item price information
   XSqlQuery itemprice;
   itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
@@ -1582,7 +1584,6 @@ void salesOrderItem::sDeterminePrice(bool force)
   itemprice.exec();
   if (itemprice.first())
   {
-      qDebug("price7");
     if (itemprice.value("price").toDouble() == -9999.0)
     {
       if (!update)
@@ -1597,12 +1598,10 @@ void salesOrderItem::sDeterminePrice(bool force)
       _netUnitPrice->clear();
 
       if (qtyChanged) {
-          qDebug("price8");
         _qtyOrdered->clear();
         _qtyOrdered->setFocus();
       }
       else {
-          qDebug("price9");
         _scheduledDate->clear();
         _scheduledDate->setFocus();
       }
@@ -2382,7 +2381,8 @@ void salesOrderItem::populate()
     _orderId = item.value("coitem_order_id").toInt();
     _orderQtyCache = item.value("qtyord").toDouble();
     _qtyOrdered->setDouble(_orderQtyCache, item.value("locale_qty_scale").toInt());
-    _scheduledDate->setDate(item.value("coitem_scheddate").toDate());
+    _dateCache  = item.value("coitem_scheddate").toDate();
+    _scheduledDate->setDate(_dateCache);
     _notes->setText(item.value("coitem_memo").toString());
     if (!item.value("quitem_createorder").isNull())
       _createOrder->setChecked(item.value("quitem_createorder").toBool());
@@ -2976,7 +2976,7 @@ void salesOrderItem::setItemExtraClause()
   _item->clearExtraClauseList();
   _item->addExtraClause("(itemsite_active)" );
   _item->addExtraClause("(itemsite_sold)");
-  //_item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, %3))").arg(_custid).arg(_shiptoid).arg(_scheduledDate->date()) );
+  _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, %3))").arg(_custid).arg(_shiptoid).arg(_scheduledDate->date().toString(Qt::ISODate)) );
 }
 
 void salesOrderItem::sHandleScheduleDate()

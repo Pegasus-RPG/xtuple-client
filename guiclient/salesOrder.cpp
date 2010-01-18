@@ -114,6 +114,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
+  connect(_orderDate, SIGNAL(newDate(QDate)), this, SLOT(sOrderDateChanged()));
   connect(_shipDate, SIGNAL(newDate(QDate)), this, SLOT(sShipDateChanged()));
   
   _saved = false;
@@ -388,7 +389,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _soheadid = q.value("head_id").toInt();
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
-      _orderDate->setDate(omfgThis->dbDate(), true);
+      _orderDateCache = omfgThis->dbDate();
+      _orderDate->setDate(_orderDateCache, true);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -2179,7 +2181,8 @@ void salesOrder::populate()
       _orderNumber->setText(so.value("cohead_number").toString());
       _orderNumber->setEnabled(FALSE);
 
-      _orderDate->setDate(so.value("cohead_orderdate").toDate(), true);
+      _orderDateCache = so.value("cohead_orderdate").toDate();
+      _orderDate->setDate(_orderDateCache, true);
       _packDate->setDate(so.value("cohead_packdate").toDate());
 
       _fromQuote->setText(so.value("fromQuote").toString());
@@ -2381,7 +2384,8 @@ void salesOrder::populate()
       _orderNumber->setText(qu.value("quhead_number"));
       _orderNumber->setEnabled(FALSE);
 
-      _orderDate->setDate(qu.value("quhead_quotedate").toDate(), true);
+      _orderDateCache = qu.value("quhead_quotedate").toDate();
+      _orderDate->setDate(_orderDateCache, true);
       _packDate->setDate(qu.value("quhead_packdate").toDate());
       if(!qu.value("quhead_expire").isNull())
         _expire->setDate(qu.value("quhead_expire").toDate());
@@ -2994,7 +2998,8 @@ void salesOrder::clear()
   {
     _mode = cNew;
     setObjectName("salesOrder new");
-    _orderDate->setDate(omfgThis->dbDate(), true);
+    _orderDateCache = omfgThis->dbDate();
+    _orderDate->setDate(_orderDateCache, true);
   }
   else if ( (_mode == cEditQuote) || (_mode == cNewQuote) )
     _mode = cNewQuote;
@@ -4291,10 +4296,10 @@ void salesOrder::sRecalculatePrice()
       setitemprice.prepare("UPDATE coitem SET coitem_price=itemprice(item_id, "
                            "cohead_cust_id, :shipto_id, coitem_qtyord, "
                            "coitem_qty_uom_id, coitem_price_uom_id, "
-                           "cohead_curr_id,cohead_orderdate ), "
+                           "cohead_curr_id,cohead_orderdate, :asOf ), "
                            "coitem_custprice=itemprice(item_id, cohead_cust_id, "
                            ":shipto_id,coitem_qtyord, coitem_qty_uom_id, "
-                           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate ) "
+                           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, :asOf ) "
                            "FROM cohead, item, itemsite "
                            "WHERE ( (coitem_status NOT IN ('C','X')) "
                            "AND (NOT coitem_firm) "
@@ -4307,18 +4312,37 @@ void salesOrder::sRecalculatePrice()
       setitemprice.prepare("UPDATE quitem SET quitem_price=itemprice(item_id, "
                            "quhead_cust_id, :shipto_id, quitem_qtyord, "
                            "quitem_qty_uom_id, quitem_price_uom_id, "
-                           "quhead_curr_id,quhead_quotedate ), "
+                           "quhead_curr_id,quhead_quotedate, :asOf ), "
                            "quitem_custprice=itemprice(item_id, quhead_cust_id, "
                            ":shipto_id,quitem_qtyord, quitem_qty_uom_id, "
-                           "quitem_price_uom_id, quhead_curr_id, quhead_quotedate ) "
+                           "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, :asOf ) "
                            "FROM quhead, item, itemsite "
                            "WHERE ( (itemsite_id=quitem_itemsite_id) "
                            "AND (itemsite_item_id=item_id) "
                            "AND (quitem_quhead_id=quhead_id) "
-                           "AND (quhead_id=:quhead_id) );");
+                           "AND (quhead_id=:cohead_id) );");
     }
     setitemprice.bindValue(":cohead_id", _soheadid);
     setitemprice.bindValue(":shipto_id", _shiptoid);
+    if (_metrics->value("soPriceEffective") == "OrderDate") {
+      if (!_orderDate->isValid()) {
+        QMessageBox::critical(this,tr("Order Date Required"),tr("Prices can not be recalculated without a valid Order Date."));
+        _orderDate->setFocus();
+        return;
+      }
+      setitemprice.bindValue(":asOf", _orderDate->date());
+    }
+    else if (_metrics->value("soPriceEffective") == "ScheduleDate") {
+      if (!_orderDate->isValid()) {
+        QMessageBox::critical(this,tr("Schedule Date Required"),tr("Prices can not be recalculated without a valid Schedule Date."));
+        _shipDate->setFocus();
+        return;
+      }
+      setitemprice.bindValue(":asOf", _shipDate->date());
+    }
+    else
+      setitemprice.bindValue(":asOf", omfgThis->dbDate());
+
     setitemprice.exec();
     if (setitemprice.lastError().type() != QSqlError::NoError) {
       systemError(this, setitemprice.lastError().databaseText(), __FILE__, __LINE__);
@@ -4328,6 +4352,24 @@ void salesOrder::sRecalculatePrice()
     _calcfreight = _metrics->boolean("CalculateFreight");
     sFillItemList();
   }
+}
+
+void salesOrder::sOrderDateChanged()
+{
+  if (_orderDate->date() == _orderDateCache ||
+      !_orderDate->isValid())
+    return;
+  else  if (!_soitem->topLevelItemCount() ||
+            !_orderDateCache.isValid() ||
+            _metrics->value("soPriceEffective") != "OrderDate") {
+    _orderDateCache = _orderDate->date();
+    return;
+  }
+
+  sRecalculatePrice();
+  _orderDateCache = _orderDate->date();
+  sFillItemList();
+  omfgThis->sSalesOrdersUpdated(_soheadid);
 }
 
 void salesOrder::sShipDateChanged()
@@ -4368,7 +4410,7 @@ void salesOrder::sShipDateChanged()
             "WHERE ( (itemsite_id=quitem_itemsite_id) "
             "  AND (itemsite_item_id=item_id) "
             "  AND (quhead_id=<? value(\"cohead_id\") ?>) "
-            "  AND (quitem_cohead_id=quhead_id) );";
+            "  AND (quitem_quhead_id=quhead_id) );";
     }
 
     MetaSQLQuery mql(sql);
@@ -4383,7 +4425,8 @@ void salesOrder::sShipDateChanged()
     return;
   }
 
-  sRecalculatePrice();
+  if (_metrics->value("soPriceEffective") == "ScheduleDate")
+    sRecalculatePrice();
   _shipDateCache = _shipDate->date();
   sFillItemList();
   omfgThis->sSalesOrdersUpdated(_soheadid);

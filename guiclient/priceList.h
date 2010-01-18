@@ -35,6 +35,7 @@ public slots:
 protected:
     int _shiptoid;
     QDate _effective;
+    QDate _asOf;
 
 protected slots:
     virtual void languageChange();

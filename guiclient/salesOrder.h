@@ -91,6 +91,7 @@ public slots:
   virtual void sCalculateTax();
   virtual void sNewCust();
   virtual void sRecalculatePrice();
+  virtual void sOrderDateChanged();
   virtual void sShipDateChanged();
 
 protected:
@@ -125,6 +126,7 @@ private:
   int _custtaxzoneid;
   int _taxzoneidCache;
   int _crmacctid;
+  QDate _orderDateCache;
   QDate _shipDateCache;
 
 };

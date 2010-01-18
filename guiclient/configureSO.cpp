@@ -347,11 +347,11 @@ void configureSO::sSave()
   _metrics->set("SOCreditRate", _creditRating->text());
 
   if (_priceOrdered->isChecked())
-    _metrics->set("soPriceEffective", "OrderDate");
+    _metrics->set("soPriceEffective", QString("OrderDate"));
   else if (_priceScheduled->isChecked())
-    _metrics->set("soPriceEffective", "ScheduleDate");
+    _metrics->set("soPriceEffective", QString("ScheduleDate"));
   else
-    _metrics->set("soPriceEffective", "CurrentDate");
+    _metrics->set("soPriceEffective", QString("CurrentDate"));
 
   //UpdatePriceLineEdit are three Options Either 
   // Don't Update price

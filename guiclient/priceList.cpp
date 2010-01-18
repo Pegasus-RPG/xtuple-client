@@ -102,6 +102,9 @@ enum SetResponse priceList::set(const ParameterList &pParams)
   param = pParams.value("effective", &valid);
   _effective = (valid) ? param.toDate() : QDate::currentDate();
 
+  param = pParams.value("asof", &valid);
+  _asOf = (valid) ? param.toDate() : QDate::currentDate();
+
   param = pParams.value("qty", &valid);
   if (valid)
   {
@@ -201,7 +204,7 @@ void priceList::sFillList()
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_cust_id=:cust_id)"
              "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) = 0)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             "        AND (:asof BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
 
              "       UNION SELECT 2 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :custType AS type,"
@@ -215,7 +218,7 @@ void priceList::sFillList()
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_custtype_id=cust_custtype_id)"
              "        AND (cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             "        AND (:asof BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
 
              "       UNION SELECT 3 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :custTypePattern AS type,"
@@ -231,7 +234,7 @@ void priceList::sFillList()
              "        AND (custtype_code ~ ipsass_custtype_pattern)"
              "        AND (cust_custtype_id=custtype_id)"
              "        AND (cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             "        AND (:asof BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
 
              "       UNION SELECT 6 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :shipTo AS type,"
@@ -245,7 +248,7 @@ void priceList::sFillList()
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_shipto_id=:shipto_id)"
              "        AND (ipsass_shipto_id != -1)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             "        AND (:asof BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
      
              "       UNION SELECT 7 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, :shipToPattern AS type,"
@@ -261,7 +264,7 @@ void priceList::sFillList()
              "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0)"
              "        AND (shipto_num ~ ipsass_shipto_pattern)"
              "        AND (ipsass_cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
+             "        AND (:asof BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
      
              "       UNION SELECT 4 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "                    ipshead_name AS schedulename, (:sale || '-' || sale_name) AS type,"
@@ -273,7 +276,7 @@ void priceList::sFillList()
              "       WHERE ((sale_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
-             "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
+             "        AND (:asof BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
 
              "       UNION SELECT 5 AS source, item_id AS sourceid,"
              "               '' AS schedulename, :listPrice AS type,"
@@ -303,6 +306,7 @@ void priceList::sFillList()
   q.bindValue(":shipto_id", _shiptoid);
   q.bindValue(":curr_id", _curr_id);
   q.bindValue(":effective", _effective);
+  q.bindValue(":asof", _asOf);
   q.exec();
   _price->populate(q, TRUE);
 
