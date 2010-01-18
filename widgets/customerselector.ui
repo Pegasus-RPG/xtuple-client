@@ -72,20 +72,6 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_selectedCustomerType">
-      <layout class="QGridLayout" name="gridLayout1">
-       <item row="0" column="0">
-        <widget class="XComboBox" name="_customerTypes">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="type">
-          <enum>XComboBox::CustomerTypes</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="_selectedCustomerGroup">
       <layout class="QGridLayout" name="gridLayoutGroup">
        <item row="0" column="0">
@@ -95,6 +81,20 @@ to be bound by its terms.</comment>
          </property>
          <property name="type">
           <enum>XComboBox::CustomerGroups</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_selectedCustomerType">
+      <layout class="QGridLayout" name="gridLayout1">
+       <item row="0" column="0">
+        <widget class="XComboBox" name="_customerTypes">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="type">
+          <enum>XComboBox::CustomerTypes</enum>
          </property>
         </widget>
        </item>

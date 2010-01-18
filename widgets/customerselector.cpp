@@ -56,11 +56,11 @@ void CustomerSelector::appendValue(ParameterList &pParams)
     case Selected:
       pParams.append("cust_id", _cust->id());
       break;
+    case SelectedGroup:
+    pParams.append("custgrp_id", _customerGroup->id());
+      break;
     case SelectedType:
       pParams.append("custtype_id", _customerTypes->id());
-      break;
-    case SelectedGroup:
-	  pParams.append("custgrp_id", _customerGroup->id());
       break;
     case TypePattern:
       pParams.append("custtype_pattern", _customerType->text());
@@ -78,11 +78,11 @@ void CustomerSelector::bindValue(XSqlQuery &pQuery)
     case Selected:
       pQuery.bindValue(":cust_id", _cust->id());
       break;
+    case SelectedGroup:
+      pQuery.bindValue(":custgrp_id", _customerGroup->id());
+      break;
     case SelectedType:
       pQuery.bindValue(":custtype_id", _customerTypes->id());
-      break;
-	case SelectedGroup:
-      pQuery.bindValue(":custgrp_id", _customerGroup->id());
       break;
     case TypePattern:
       pQuery.bindValue(":custtype_pattern", _customerType->text());
@@ -100,11 +100,11 @@ bool CustomerSelector::isValid()
     case Selected:
       return _cust->isValid();
       break;
-    case SelectedType:
-      return _customerTypes->isValid();
-      break;
     case SelectedGroup:
       return _customerGroup->isValid();
+      break;
+    case SelectedType:
+      return _customerTypes->isValid();
       break;
     case TypePattern:
       return ! _customerType->text().trimmed().isEmpty();
