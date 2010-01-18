@@ -4291,46 +4291,56 @@ void salesOrder::sRecalculatePrice()
                             QMessageBox::Yes | QMessageBox::Escape,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    XSqlQuery setitemprice;
+    ParameterList params;
+    QString sql;
     if (ISORDER(_mode)) {
-      setitemprice.prepare("UPDATE coitem SET coitem_price=itemprice(item_id, "
-                           "cohead_cust_id, :shipto_id, coitem_qtyord, "
-                           "coitem_qty_uom_id, coitem_price_uom_id, "
-                           "cohead_curr_id,cohead_orderdate, :asOf ), "
-                           "coitem_custprice=itemprice(item_id, cohead_cust_id, "
-                           ":shipto_id,coitem_qtyord, coitem_qty_uom_id, "
-                           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, :asOf ) "
-                           "FROM cohead, item, itemsite "
-                           "WHERE ( (coitem_status NOT IN ('C','X')) "
-                           "AND (NOT coitem_firm) "
-                           "AND (itemsite_id=coitem_itemsite_id) "
-                           "AND (itemsite_item_id=item_id) "
-                           "AND (coitem_cohead_id=cohead_id) "
-                           "AND (cohead_id=:cohead_id) );");
+      sql ="UPDATE coitem SET coitem_price=itemprice(item_id, "
+           "cohead_cust_id, <? value(\"shipto_id\") ?>, coitem_qtyord, "
+           "coitem_qty_uom_id, coitem_price_uom_id, "
+           "cohead_curr_id,cohead_orderdate, <? value(\"asOf\") ?> ), "
+           "coitem_custprice=itemprice(item_id, cohead_cust_id, "
+           "<? value(\"shipto_id\") ?>,coitem_qtyord, coitem_qty_uom_id, "
+           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, <? value(\"asOf\") ?> ) "
+           "FROM cohead, item, itemsite "
+           "WHERE ( (coitem_status NOT IN ('C','X')) "
+           "AND (NOT coitem_firm) "
+           "<? if exists(\"ignoreDiscounts\") ?>"
+           "AND (coitem_price = coitem_custprice) "
+           "<? endif ?>"
+           "AND (itemsite_id=coitem_itemsite_id) "
+           "AND (itemsite_item_id=item_id) "
+           "AND (coitem_cohead_id=cohead_id) "
+           "AND (cohead_id=<? value(\"cohead_id\") ?>) );";
     }
     else {
-      setitemprice.prepare("UPDATE quitem SET quitem_price=itemprice(item_id, "
-                           "quhead_cust_id, :shipto_id, quitem_qtyord, "
-                           "quitem_qty_uom_id, quitem_price_uom_id, "
-                           "quhead_curr_id,quhead_quotedate, :asOf ), "
-                           "quitem_custprice=itemprice(item_id, quhead_cust_id, "
-                           ":shipto_id,quitem_qtyord, quitem_qty_uom_id, "
-                           "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, :asOf ) "
-                           "FROM quhead, item, itemsite "
-                           "WHERE ( (itemsite_id=quitem_itemsite_id) "
-                           "AND (itemsite_item_id=item_id) "
-                           "AND (quitem_quhead_id=quhead_id) "
-                           "AND (quhead_id=:cohead_id) );");
+      sql = "UPDATE quitem SET quitem_price=itemprice(item_id, "
+            "quhead_cust_id, <? value(\"shipto_id\") ?>, quitem_qtyord, "
+            "quitem_qty_uom_id, quitem_price_uom_id, "
+            "quhead_curr_id,quhead_quotedate, <? value(\"asOf\") ?> ), "
+            "quitem_custprice=itemprice(item_id, quhead_cust_id, "
+            "<? value(\"shipto_id\") ?>,quitem_qtyord, quitem_qty_uom_id, "
+            "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, <? value(\"asOf\") ?> ) "
+            "FROM quhead, item, itemsite "
+            "WHERE ( (itemsite_id=quitem_itemsite_id) "
+            "<? if exists(\"ignoreDiscounts\") ?>"
+            "AND (quitem_price = quitem_custprice) "
+            "<? endif ?>"
+            "AND (itemsite_item_id=item_id) "
+            "AND (quitem_quhead_id=quhead_id) "
+            "AND (quhead_id=<? value(\"cohead_id\") ?>) );";
     }
-    setitemprice.bindValue(":cohead_id", _soheadid);
-    setitemprice.bindValue(":shipto_id", _shiptoid);
+    params.append("cohead_id", _soheadid);
+    params.append("shipto_id", _shiptoid);
+    if (_metrics->boolean("IgnoreCustDisc"))
+      params.append("ignoreDiscounts", true);
+    MetaSQLQuery mql(sql);
     if (_metrics->value("soPriceEffective") == "OrderDate") {
       if (!_orderDate->isValid()) {
         QMessageBox::critical(this,tr("Order Date Required"),tr("Prices can not be recalculated without a valid Order Date."));
         _orderDate->setFocus();
         return;
       }
-      setitemprice.bindValue(":asOf", _orderDate->date());
+      params.append("asOf", _orderDate->date());
     }
     else if (_metrics->value("soPriceEffective") == "ScheduleDate") {
       if (!_orderDate->isValid()) {
@@ -4338,12 +4348,12 @@ void salesOrder::sRecalculatePrice()
         _shipDate->setFocus();
         return;
       }
-      setitemprice.bindValue(":asOf", _shipDate->date());
+      params.append("asOf", _shipDate->date());
     }
     else
-      setitemprice.bindValue(":asOf", omfgThis->dbDate());
+      params.append("asOf", omfgThis->dbDate());
 
-    setitemprice.exec();
+    XSqlQuery setitemprice = mql.toQuery(params);
     if (setitemprice.lastError().type() != QSqlError::NoError) {
       systemError(this, setitemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
