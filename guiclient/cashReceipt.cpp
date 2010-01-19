@@ -807,9 +807,11 @@ void cashReceipt::sFillMiscList()
 void cashReceipt::sUpdateBalance()
 {
   _balance->setLocalValue(_received->localValue() - _applied->localValue() -
-                          _miscDistribs->localValue() - _discount->localValue());
+                          _miscDistribs->localValue());
   if (!_balance->isZero())
     _balance->setPaletteForegroundColor(QColor("red"));
+  else
+    _balance->setPaletteForegroundColor(QColor("black"));
 }
 
 void cashReceipt::populate()
