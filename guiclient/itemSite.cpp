@@ -31,6 +31,9 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_planningType, SIGNAL(activated(int)), this, SLOT(sHandlePlanningType()));
   connect(_poSupply, SIGNAL(toggled(bool)), this, SLOT(sHandlePOSupplied(bool)));
+  connect(_createPo, SIGNAL(toggled(bool)), this, SLOT(sHandleCreatePO(bool)));
+  connect(_createSoPr, SIGNAL(toggled(bool)), this, SLOT(sHandleCreateSOPR(bool)));
+  connect(_createPr, SIGNAL(toggled(bool)), this, SLOT(sHandleCreateWOPR(bool)));
   connect(_woSupply, SIGNAL(toggled(bool)), this, SLOT(sHandleWOSupplied(bool)));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sCacheItemType(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sCheckItemsite()));
@@ -64,6 +67,11 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   if (!_metrics->boolean("MultiWhs"))
     _createPlannedTransfers->hide();
+
+  if (_metrics->boolean("EnableDropShipments"))
+	_dropShip->setEnabled(FALSE);
+  else
+	_dropShip->hide();
 
   sHandlePlanningType();
   
@@ -254,7 +262,10 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_active->setEnabled(FALSE);
 	_poSupply->setEnabled(FALSE);
 	_woSupply->setEnabled(FALSE);
-//	_createPr->setEnabled(FALSE);
+	_createPr->setEnabled(FALSE);
+	_createSoPr->setEnabled(FALSE);
+	_createPo->setEnabled(FALSE);
+	_dropShip->setEnabled(FALSE);
 	_createWo->setEnabled(FALSE);
 	_sold->setEnabled(FALSE);
 	_soldRanking->setEnabled(FALSE);
@@ -547,7 +558,8 @@ void itemSite::sSave()
                          "  itemsite_ordertoqty, itemsite_minordqty, itemsite_maxordqty, itemsite_multordqty,"
                          "  itemsite_safetystock, itemsite_cyclecountfreq,"
                          "  itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id, itemsite_costcat_id,"
-                         "  itemsite_poSupply, itemsite_woSupply, itemsite_createpr, itemsite_createwo, "
+                         "  itemsite_poSupply, itemsite_woSupply, itemsite_createpr, itemsite_createwo,"
+						 "  itemsite_dropship, itemsite_createsopr, itemsite_createsopo,"
                          "  itemsite_sold, itemsite_soldranking,"
                          "  itemsite_stocked, itemsite_planning_type, itemsite_supply_itemsite_id,"
                          "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
@@ -565,7 +577,8 @@ void itemSite::sSave()
                          "  :itemsite_ordertoqty, :itemsite_minordqty, :itemsite_maxordqty, :itemsite_multordqty,"
                          "  :itemsite_safetystock, :itemsite_cyclecountfreq,"
                          "  :itemsite_leadtime, :itemsite_eventfence, :itemsite_plancode_id, :itemsite_costcat_id,"
-                         "  :itemsite_poSupply, :itemsite_woSupply, :itemsite_createpr, :itemsite_createwo, "
+                         "  :itemsite_poSupply, :itemsite_woSupply, :itemsite_createpr, :itemsite_createwo,"
+						 "  :itemsite_dropship, :itemsite_createsopr, :itemsite_createsopo,"
                          "  :itemsite_sold, :itemsite_soldranking,"
                          "  :itemsite_stocked, :itemsite_planning_type, :itemsite_supply_itemsite_id,"
                          "  :itemsite_controlmethod, :itemsite_perishable, :itemsite_active,"
@@ -640,7 +653,9 @@ void itemSite::sSave()
                          "    itemsite_leadtime=:itemsite_leadtime, itemsite_eventfence=:itemsite_eventfence,"
                          "    itemsite_plancode_id=:itemsite_plancode_id, itemsite_costcat_id=:itemsite_costcat_id,"
                          "    itemsite_poSupply=:itemsite_poSupply, itemsite_woSupply=:itemsite_woSupply,"
-                         "    itemsite_createpr=:itemsite_createpr, itemsite_createwo=:itemsite_createwo, "
+						 "    itemsite_createsopr=:itemsite_createsopr, itemsite_createsopo=:itemsite_createsopo,"
+						 "    itemsite_dropship=:itemsite_dropship,"
+                         "    itemsite_createpr=:itemsite_createpr, itemsite_createwo=:itemsite_createwo,"
                          "    itemsite_sold=:itemsite_sold, itemsite_soldranking=:itemsite_soldranking,"
                          "    itemsite_stocked=:itemsite_stocked, itemsite_planning_type=:itemsite_planning_type,"
                          "    itemsite_supply_itemsite_id=:itemsite_supply_itemsite_id,"
@@ -684,7 +699,10 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_supply_itemsite_id", _supplyItemsiteId);
   newItemSite.bindValue(":itemsite_poSupply", QVariant(_poSupply->isChecked()));
   newItemSite.bindValue(":itemsite_woSupply", QVariant(_woSupply->isChecked()));
-  //newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
+  newItemSite.bindValue(":itemsite_createsopr", QVariant(_createSoPr->isChecked()));
+  newItemSite.bindValue(":itemsite_createsopo", QVariant(_createPo->isChecked()));
+  newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
+  newItemSite.bindValue(":itemsite_dropship", QVariant(_dropShip->isChecked() && _createPo->isChecked()));
   newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked()));
   newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked()));
   newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked()));
@@ -840,18 +858,95 @@ void itemSite::sHandlePlanningType()
 
 } 
 
-void itemSite::sHandlePOSupplied(bool /*pSupplied*/)
+void itemSite::sHandlePOSupplied(bool pSupplied)
 {
-    /*
   if ( (pSupplied) &&
        ( (_itemType == 'P') || (_itemType == 'O') ) )
+  {
     _createPr->setEnabled(TRUE);
+	_createSoPr->setEnabled(TRUE);
+	_createPo->setEnabled(TRUE);
+  }
   else
   {
     _createPr->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
+	_createSoPr->setEnabled(FALSE);
+    _createSoPr->setChecked(FALSE);
+	_createPo->setEnabled(FALSE);
+    _createPo->setChecked(FALSE);
+	_dropShip->setChecked(FALSE);
   }
-  */
+}
+
+void itemSite::sHandleCreatePO(bool pCreate)
+{
+  if (pCreate)
+  {
+    _dropShip->setEnabled(TRUE);
+	_createSoPr->setChecked(FALSE);
+	
+	XSqlQuery source;
+    source.prepare("SELECT * FROM itemsrc "
+	               "WHERE itemsrc_item_id = :item_id "
+				   "LIMIT 1;");
+	source.bindValue(":item_id", _item->id());
+    source.exec();
+	if ( !(source.first()) )
+	  QMessageBox::warning( this, tr("No Item Source found"),
+        tr("Purchase Orders cannot be automatically "
+           "created for this Item as there are no Item "
+           "Sources for it.  You must create one or "
+           "more Item Sources for this Item before "
+           "the application can automatically create "
+           "Purchase Orders for it.") );
+  }
+  else
+	_dropShip->setChecked(FALSE);
+}
+
+void itemSite::sHandleCreateSOPR(bool pCreate)
+{
+  if (pCreate)
+  {
+  	_createPo->setChecked(FALSE);
+
+	XSqlQuery source;
+    source.prepare("SELECT * FROM itemsrc "
+	               "WHERE itemsrc_item_id = :item_id "
+				   "LIMIT 1;");
+	source.bindValue(":item_id", _item->id());
+    source.exec();
+	if ( !(source.first()) )
+	  QMessageBox::warning( this, tr("No Item Source found"),
+        tr("Purchase Orders cannot be automatically "
+           "created for this Item as there are no Item "
+           "Sources for it.  You must create one or "
+           "more Item Sources for this Item before "
+           "the application can automatically create "
+           "Purchase Orders for it.") );
+  }
+}
+
+void itemSite::sHandleCreateWOPR(bool pCreate)
+{
+  if (pCreate)
+  {
+  	XSqlQuery source;
+    source.prepare("SELECT * FROM itemsrc "
+	               "WHERE itemsrc_item_id = :item_id "
+				   "LIMIT 1;");
+	source.bindValue(":item_id", _item->id());
+    source.exec();
+	if ( !(source.first()) )
+	  QMessageBox::warning( this, tr("No Item Source found"),
+        tr("Purchase Orders cannot be automatically "
+           "created for this Item as there are no Item "
+           "Sources for it.  You must create one or "
+           "more Item Sources for this Item before "
+           "the application can automatically create "
+           "Purchase Orders for it.") );
+  }
 } 
 
 void itemSite::sHandleWOSupplied(bool pSupplied)
@@ -996,6 +1091,10 @@ void itemSite::sCacheItemType(char pItemType)
     _woSupply->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
     _createPr->setEnabled(FALSE);
+	_createSoPr->setChecked(FALSE);
+    _createSoPr->setEnabled(FALSE);
+	_createPo->setChecked(FALSE);
+    _createPo->setEnabled(FALSE);
     _createWo->setChecked(_itemType == 'J');
     _createWo->setEnabled(FALSE);
 
@@ -1035,15 +1134,23 @@ void itemSite::sCacheItemType(char pItemType)
 	
     _poSupply->setEnabled(TRUE);
     _woSupply->setEnabled(TRUE);
-  /*
+ 
     if ( (_itemType == 'O') || (_itemType == 'P') )
+	{
       _createPr->setEnabled(_poSupply->isChecked());
+	  _createSoPr->setEnabled(_poSupply->isChecked());
+	  _createPo->setEnabled(_poSupply->isChecked());
+	}
     else
     {
       _createPr->setChecked(FALSE);
       _createPr->setEnabled(FALSE);
+	  _createSoPr->setChecked(FALSE);
+      _createSoPr->setEnabled(FALSE);
+	  _createPo->setChecked(FALSE);
+      _createPo->setEnabled(FALSE);
     }
- */
+
     if ( (_itemType == 'M') )
       _createWo->setEnabled(_woSupply->isChecked());
     else
@@ -1199,9 +1306,19 @@ void itemSite::populate()
 
     if ( (itemsite.value("item_type").toString() == "P") ||
          (itemsite.value("item_type").toString() == "O")    )
+	{
       _createPr->setChecked(itemsite.value("itemsite_createpr").toBool());
+	  _createSoPr->setChecked(itemsite.value("itemsite_createsopr").toBool());
+	  _createPo->setChecked(itemsite.value("itemsite_createsopo").toBool());
+	  _dropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+	}
     else
+	{
       _createPr->setEnabled(FALSE);
+	  _createSoPr->setEnabled(FALSE);
+	  _createPo->setEnabled(FALSE);
+	  _dropShip->setEnabled(FALSE);
+	}
 
     if ( (itemsite.value("item_type").toString() == "M") )
       _createWo->setChecked(itemsite.value("itemsite_createwo").toBool());

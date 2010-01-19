@@ -32,6 +32,9 @@ public slots:
     virtual void sCheckItemsite();
     virtual void sHandlePlanningType();
     virtual void sHandlePOSupplied( bool pSupplied );
+	virtual void sHandleCreatePO( bool pCreate );
+	virtual void sHandleCreateSOPR( bool pCreate );
+	virtual void sHandleCreateWOPR( bool pCreate );
     virtual void sHandleWOSupplied( bool pSupplied );
     virtual void sHandleControlMethod();
     virtual void sCacheItemType( const QString & pItemType );
