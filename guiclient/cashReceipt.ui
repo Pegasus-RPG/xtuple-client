@@ -20,9 +20,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Cash Receipt</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="gridLayout_4">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="gridLayout_3">
      <property name="spacing">
       <number>12</number>
      </property>
@@ -157,7 +157,7 @@ to be bound by its terms.</comment>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <layout class="QFormLayout" name="formLayout">
+             <layout class="QGridLayout" name="gridLayout">
               <item row="0" column="0">
                <widget class="QLabel" name="_receivedLit">
                 <property name="text">
@@ -301,7 +301,7 @@ to be bound by its terms.</comment>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>0</height>
+                <height>13</height>
                </size>
               </property>
              </spacer>
@@ -315,7 +315,7 @@ to be bound by its terms.</comment>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>0</width>
+              <width>13</width>
               <height>20</height>
              </size>
             </property>
