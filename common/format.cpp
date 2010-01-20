@@ -8,8 +8,6 @@
  * to be bound by its terms.
  */
 
-#include <iostream>
-
 #include <string.h>
 
 #include <QMessageBox>
@@ -117,19 +115,20 @@ int decimalPlaces(QString pName)
   if (! loadedLocales)
     loadLocale();
 
+  char *ptr = pName.toAscii().data();
   // the following order is based on the relative frequencies of usage
   // for xtnumericrole in the .cpp and .mql files except for the final
   // else, which ranked 7th overall
-  if (pName.startsWith("qty"))             returnVal = qtyscale;
-  else if (pName.startsWith("curr"))       returnVal = currvalscale;  // TODO: change this to currency-specific value?
-  else if (pName.startsWith("percent"))    returnVal = percentscale;
-  else if (pName.startsWith("cost"))       returnVal = costscale;
-  else if (pName.startsWith("qtyper"))     returnVal = qtyperscale;
-  else if (pName.startsWith("salesprice")) returnVal = salespricescale;
-  else if (pName.startsWith("purchprice")) returnVal = purchpricescale;
-  else if (pName.startsWith("uomratio"))   returnVal = uomratioscale;
-  else if (pName.startsWith("extprice"))   returnVal = extpricescale;
-  else if (pName.startsWith("weight"))     returnVal = weightscale;
+  if (strcmp(ptr, "qty") == 0)             returnVal = qtyscale;
+  else if (strncmp(ptr, "curr", 4) == 0)   returnVal = currvalscale;  // TODO: change this to currency-specific value?
+  else if (strcmp(ptr, "percent") == 0)    returnVal = percentscale;
+  else if (strcmp(ptr, "cost") == 0)       returnVal = costscale;
+  else if (strcmp(ptr, "qtyper") == 0)     returnVal = qtyperscale;
+  else if (strcmp(ptr, "salesprice") == 0) returnVal = salespricescale;
+  else if (strcmp(ptr, "purchprice") == 0) returnVal = purchpricescale;
+  else if (strcmp(ptr, "uomratio") == 0)   returnVal = uomratioscale;
+  else if (strcmp(ptr, "extprice") == 0)   returnVal = extpricescale;
+  else if (strcmp(ptr, "weight") == 0)     returnVal = weightscale;
   else
   {
     bool ok = false;
