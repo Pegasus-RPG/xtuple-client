@@ -44,7 +44,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+                 ItemLineEdit::cPlanning |
 				 ItemLineEdit::cTooling);
 
   _bomitem->setRootIsDecorated(TRUE);

@@ -774,9 +774,6 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
     if (pType & ItemLineEdit::cManufactured)
       types << "'M'";
 
-    if (pType & ItemLineEdit::cJob)
-      types << "'J'";
-
     if (pType & ItemLineEdit::cPhantom)
       types << "'F'";
 

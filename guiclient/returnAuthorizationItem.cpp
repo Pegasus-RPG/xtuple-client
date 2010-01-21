@@ -513,7 +513,7 @@ bool returnAuthorizationItem::sSave()
     }
     if (_qtyAuth->toDouble() != _cQtyOrdered)
     {
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
       {
         if (QMessageBox::question(this, tr("Change W/O Quantity?"),
                   tr("<p>The quantity authorized for this Return "
@@ -570,7 +570,7 @@ bool returnAuthorizationItem::sSave()
          (_orderId == -1) )
       {
         QString chartype;
-        if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+        if (_item->itemType() == "M")
         {
           q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments, :parent_type, :parent_id) AS result, itemsite_id "
                      "FROM itemsite "
@@ -592,7 +592,7 @@ bool returnAuthorizationItem::sSave()
           if (_orderId < 0)
           {
             QString procname;
-            if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+            if (_item->itemType() == "M")
               procname = "createWo";
             else
               procname = "unnamed stored procedure";
@@ -601,7 +601,7 @@ bool returnAuthorizationItem::sSave()
             reject();
           }
 
-          if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+          if (_item->itemType() == "M")
           {
             omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
 
@@ -686,13 +686,6 @@ void returnAuthorizationItem::sPopulateItemInfo()
 
   if (_item->itemType() == "M")
     _createOrder->setEnabled(TRUE);
-
-  else if (_item->itemType() == "J")
-  {
-    _createOrder->setChecked(TRUE);
-    _createOrder->setEnabled(FALSE);
-  }
-
   else
     _createOrder->setEnabled(FALSE);
 
@@ -726,21 +719,13 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
 
       if (cNew == _mode)
       {
-        if (_item->itemType() == "M")
-          _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
-
-        else if (_item->itemType() == "J")
+        if (_costmethod == "J")
         {
           _createOrder->setChecked(TRUE);
           _createOrder->setEnabled(FALSE);
         }
-
-//        else if (_item->itemType() == "K")
-//        {
-//          _qtyAuth->setDouble(0);
-//          _qtyAuth->setEnabled(FALSE);
-//        }
-
+        else if (_item->itemType() == "M")
+          _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
         else
         {
           _createOrder->setChecked(FALSE);
@@ -1358,10 +1343,10 @@ void returnAuthorizationItem::sDispositionChanged()
 {
   if ( (_disposition->currentIndex() == 3) && // service
           (_item->id() != -1) &&
-	  (_item->itemType() != "J") )
+          (_costmethod != "J") )
   {
     QMessageBox::warning( this, tr("Cannot use Service Disposition"),
-      tr("<p>Only Items of type Job may have a disposition of Service.") );
+      tr("<p>Only Items Sites using the Job cost method may have a disposition of Service.") );
 	_disposition->setFocus();
 	_disposition->setCurrentIndex(_dispositionCache);
 	return;
@@ -1378,12 +1363,8 @@ void returnAuthorizationItem::sDispositionChanged()
 	return;
   }
 
-  if ( (_mode == cNew) && (_disposition->currentIndex() == 3) ) // service                     
-      _item->addExtraClause( QString("(item_type = 'J') AND (NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
-  else if (_mode == cNew)                     
+  if (_mode == cNew)
       _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
-  else if (_disposition->currentIndex() == 3) // service                     
-      _item->addExtraClause( QString("(item_type = 'J')") );
 
   if (_disposition->currentIndex() > 2) // service or ship
   {
@@ -1457,7 +1438,7 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
     {
       XSqlQuery query;
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
       {
         if (QMessageBox::question(this, tr("Delete Work Order"),
                                   tr("<p>You are requesting to delete the Work "
@@ -1530,7 +1511,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _shipWhs->id() : _shipWhs->id()));
+      qty.bindValue(":warehous_id", ((_item->itemType() == "M") ? _shipWhs->id() : _shipWhs->id()));
       qty.exec();
       if (qty.first())
         _orderQty->setDouble(qty.value("qty").toDouble());
@@ -1614,7 +1595,7 @@ void returnAuthorizationItem::sDetermineAvailability()
 
 void returnAuthorizationItem::sCalcWoUnitCost()
 {
-  if (_item->itemType() == "J" && _orderId > -1 && _qtyAuth->toDouble() != 0)
+  if (_costmethod == "J" && _orderId > -1 && _qtyAuth->toDouble() != 0)
   {
     q.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
               "FROM wo,raitem "

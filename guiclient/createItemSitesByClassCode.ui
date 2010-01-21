@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>698</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -590,19 +590,6 @@ to be bound by its terms.</comment>
                   </property>
                   <property name="text">
                    <string>Average</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="_costJob">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Job</string>
                   </property>
                  </widget>
                 </item>

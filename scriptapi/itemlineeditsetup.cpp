@@ -27,7 +27,6 @@ void setupItemLineEdit(QScriptEngine *engine)
   widget.setProperty("cTooling",	    QScriptValue(engine, ItemLineEdit::cTooling),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("cOutsideProcess",	    QScriptValue(engine, ItemLineEdit::cOutsideProcess),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("cPlanning",	    QScriptValue(engine, ItemLineEdit::cPlanning),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cJob",	            QScriptValue(engine, ItemLineEdit::cJob),	             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("cKit",	            QScriptValue(engine, ItemLineEdit::cKit),	             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("cAllItemTypes_Mask",  QScriptValue(engine, ItemLineEdit::cAllItemTypes_Mask),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("cPlanningMRP",	    QScriptValue(engine, ItemLineEdit::cPlanningMRP),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);

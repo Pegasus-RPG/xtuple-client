@@ -963,15 +963,7 @@ void itemSite::sHandleWOSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
-  if(_itemType == 'J')
-  {
-    _costJob->setChecked(true);
-    _costNone->setEnabled(false);
-    _costAvg->setEnabled(false);
-    _costStd->setEnabled(false);
-    _costJob->setEnabled(true);
-  }
-  else if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
+  if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -991,6 +983,14 @@ void itemSite::sHandleControlMethod()
     _costJob->setEnabled(false);
   }
 
+  if(_itemType == 'M' && _controlMethod->currentIndex() != 1 )
+    _costJob->setEnabled(true);
+  else
+  {
+    _costJob->setChecked(false);
+    _costJob->setEnabled(false);
+  }
+
   if ( (_controlMethod->currentIndex() == 2) ||
        (_controlMethod->currentIndex() == 3) )  
   {
@@ -1000,7 +1000,6 @@ void itemSite::sHandleControlMethod()
   }
   else
   {
-    _autoNumberGroup->setChecked(false);
     _autoNumberGroup->setEnabled(false);
     _perishable->setEnabled(FALSE);
     _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);

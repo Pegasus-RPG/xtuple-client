@@ -36,10 +36,10 @@ copyBOM::copyBOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _source->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                    ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                   ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                   ItemLineEdit::cPlanning);
   _target->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                    ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                   ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+                   ItemLineEdit::cPlanning);
 }
 
 /*

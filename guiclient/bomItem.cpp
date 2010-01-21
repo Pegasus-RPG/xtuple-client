@@ -471,8 +471,7 @@ void bomItem::populate()
     _comments->setId(_bomitemid);
 
     if (q.value("item_type").toString() == "M" || 
-        q.value("item_type").toString() == "F" || 
-        q.value("item_type").toString() == "J")
+        q.value("item_type").toString() == "F" )
       _createWo->setChecked(q.value("bomitem_createwo").toBool());
       
     if (q.value("item_config").toBool())

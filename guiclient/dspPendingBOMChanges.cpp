@@ -30,8 +30,7 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
-				 ItemLineEdit::cTooling);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cTooling);
 
   _cutoff->setNullString(tr("Latest"));
   _cutoff->setNullDate(omfgThis->endOfTime().addDays(-1));

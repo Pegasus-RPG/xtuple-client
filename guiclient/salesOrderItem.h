@@ -94,15 +94,16 @@ private:
   bool _invIsFractional;
   bool _updateItemsite;
   double _orderQtyCache;
-  double	_cachedPct;
-  double	_cachedRate;
-  int		_taxzoneid;
+  double _cachedPct;
+  double _cachedRate;
+  int _taxzoneid;
   QStandardItemModel * _itemchar;
   int _invuomid;
   double _qtyinvuomratio;
   double _priceinvuomratio;
   double _qtyreserved;
   QDate _dateCache;
+  QString _costmethod;
 
   //For holding variables for characteristic pricing
   QList<QVariant> _charVars;

@@ -48,7 +48,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
+                 ItemLineEdit::cPlanning |
 				 ItemLineEdit::cTooling);
   _batchSize->setValidator(omfgThis->qtyVal());
   _requiredQtyPer->setValidator(omfgThis->qtyPerVal());

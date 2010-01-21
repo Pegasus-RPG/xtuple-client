@@ -98,19 +98,18 @@ bool correctProductionPosting::okToPost()
   }
 
   XSqlQuery itemtypeq;
-  itemtypeq.prepare( "SELECT item_type "
-             "FROM wo, itemsite, item "
+  itemtypeq.prepare( "SELECT itemsite_costmethod "
+             "FROM wo, itemsite "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
              " AND (wo_id=:wo_id) );" );
   itemtypeq.bindValue(":wo_id", _wo->id());
   itemtypeq.exec();
-  if (itemtypeq.first() && (itemtypeq.value("item_type").toString() == "J"))
+  if (itemtypeq.first() && (itemtypeq.value("itemsite_costmethod").toString() == "J"))
   {
     QMessageBox::warning(this, tr("Cannot Post Correction"),
-                         tr("You may not post a correction to a W/O for a "
-                            "Job Item. You must, instead, adjust shipped "
-                            "quantities."));
+                         tr("You may not post a correction to a Work Order for a "
+                            "Item Site with the Job cost method. You must, "
+                            "instead, adjust shipped quantities."));
     return false;
   }
   else if (itemtypeq.lastError().type() != QSqlError::NoError)

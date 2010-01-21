@@ -53,7 +53,6 @@ friend class ItemLineEditDelegate;
       cTooling             = 0x00000100,
       cOutsideProcess      = 0x00000200,
       cPlanning            = 0x00000400,
-      cJob                 = 0x00000800,
       cKit                 = 0x00001000,
 
       // The first 16 bits are reserved for individual item types and we
@@ -85,7 +84,7 @@ friend class ItemLineEditDelegate;
       cGeneralManufactured = cManufactured | cBreeder,
       cGeneralPurchased    = cPurchased | cOutsideProcess,
       cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess | cReference | cTooling,
-      cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
+      cGeneralInventory    = cAllItemTypes_Mask ^ cReference,
       cKitComponents       = cSold | (cAllItemTypes_Mask ^ cKit)
     };
 

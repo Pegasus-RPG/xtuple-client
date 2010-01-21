@@ -88,21 +88,20 @@ bool closeWo::okToSave()
   }
 
   XSqlQuery type;
-  type.prepare( "SELECT item_type "
-                "FROM item,itemsite,wo "
+  type.prepare( "SELECT itemsite_costmethod "
+                "FROM itemsite,wo "
                 "WHERE ((wo_id=:wo_id) "
-                "AND (wo_itemsite_id=itemsite_id) "
-                "AND (itemsite_item_id=item_id)); ");
+                "AND (wo_itemsite_id=itemsite_id)); ");
   type.bindValue(":wo_id", _wo->id());
   type.exec();
   if (type.first())
   {
-    if (type.value("item_type").toString() == "J")
+    if (type.value("itemsite_costmethod").toString() == "J")
     {
       QMessageBox::critical(this, tr("Invalid Work Order"),
-                            tr("<p>Work Orders of Item Type Job are posted "
-                               "when shipping the Sales Order they are "
-                               "associated with.") );
+                            tr("<p>Work Orders for item sites with the Job cost "
+                               "method are posted when shipping the Sales Order "
+                               "they are associated with.") );
       _wo->setFocus();
       return false;
     }

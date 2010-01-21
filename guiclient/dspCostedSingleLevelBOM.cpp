@@ -40,8 +40,7 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
-				 ItemLineEdit::cTooling);
+                 ItemLineEdit::cPlanning |ItemLineEdit::cTooling);
 
   _bomitem->addColumn(tr("#"),          _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");

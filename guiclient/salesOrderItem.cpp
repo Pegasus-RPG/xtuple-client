@@ -765,7 +765,7 @@ void salesOrderItem::sSave()
     return;
   }
 
-  if(_createOrder->isChecked() && ((_item->itemType() == "M") || (_item->itemType() == "J")) && _supplyWarehouse->id() == -1)
+  if(_createOrder->isChecked() && (_item->itemType() == "M") && _supplyWarehouse->id() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
                           tr("<p>Before an Order may be created, a valid Supplied at Site must be selected.") );
@@ -873,7 +873,7 @@ void salesOrderItem::sSave()
     q.bindValue(":soitem_memo", _notes->toPlainText());
     if(_orderId != -1)
     {
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
         q.bindValue(":soitem_order_type", "W");
       else if (_item->itemType() == "P")
         q.bindValue(":soitem_order_type", "R");
@@ -931,9 +931,9 @@ void salesOrderItem::sSave()
     {
       if (_scheduledDate->date() != _cScheduledDate)
       {
-        if((_item->itemType() == "M") || (_item->itemType() == "J"))
+        if(_item->itemType() == "M")
         {
-          if (QMessageBox::question(this, tr("Reschedule W/O?"),
+          if (QMessageBox::question(this, tr("Reschedule Work Order?"),
                                     tr("<p>The Scheduled Date for this Line "
                                        "Item has been changed.  Should the "
                                        "W/O for this Line Item be Re-"
@@ -1004,9 +1004,9 @@ void salesOrderItem::sSave()
 
       if (_qtyOrdered->toDouble() != _cQtyOrdered)
       {
-        if((_item->itemType() == "M") || (_item->itemType() == "J"))
+        if(_item->itemType() == "M")
         {
-          if (QMessageBox::question(this, tr("Change W/O Quantity?"),
+          if (QMessageBox::question(this, tr("Change Work Order Quantity?"),
                                     tr("<p>The quantity ordered for this Sales "
                                        "Order Line Item has been changed. "
                                        "Should the quantity required for the "
@@ -1275,7 +1275,7 @@ void salesOrderItem::sSave()
        (_orderId == -1) )
   {
     QString chartype;
-    if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+    if (_item->itemType() == "M")
     {
       q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments, :parent_type, :parent_id ) AS result, itemsite_id "
                  "FROM itemsite "
@@ -1306,7 +1306,7 @@ void salesOrderItem::sSave()
       {
         rollback.exec();
         QString procname;
-        if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+        if (_item->itemType() == "M")
           procname = "createWo";
         else if (_item->itemType() == "P")
           procname = "createPr";
@@ -1317,7 +1317,7 @@ void salesOrderItem::sSave()
         return;
       }
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
       {
         omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
 
@@ -1399,7 +1399,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT itemsite_leadtime, "
+    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, "
                       "       itemsite_createwo, itemsite_createpr "
                       "FROM item, itemsite "
                       "WHERE ( (itemsite_item_id=item_id)"
@@ -1411,16 +1411,17 @@ void salesOrderItem::sPopulateItemsiteInfo()
     if (itemsite.first())
     {
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
+      _costmethod = itemsite.value("itemsite_costmethod").toString();
 
       if (cNew == _mode || cNewQuote == _mode)
       {
-        if (_item->itemType() == "M")
-          _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
-        else if (_item->itemType() == "J")
+        if (_costmethod == "J")
         {
           _createOrder->setChecked(TRUE);
           _createOrder->setEnabled(FALSE);
         }
+        else if (_item->itemType() == "M")
+          _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
         else if (_item->itemType() == "P")
           _createOrder->setChecked(itemsite.value("itemsite_createpr").toBool());
         else
@@ -1686,7 +1687,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
 
       sCalculateDiscountPrcnt();
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
       {
         if ( (_mode == cNew) || (_mode == cEdit) )
           _createOrder->setEnabled((_item->itemType() == "M"));
@@ -1889,7 +1890,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
       else
         _available->setPaletteForegroundColor(QColor("black"));
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J") || (_item->itemType() == "K"))
+      if ((_item->itemType() == "M") || (_item->itemType() == "K"))
       {
         if(_showIndented->isChecked())
         {
@@ -2126,7 +2127,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
     {
       XSqlQuery query;
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if (_item->itemType() == "M")
       {
         if (QMessageBox::question(this, tr("Delete Work Order"),
                                   tr("<p>You are requesting to delete the Work "
@@ -2225,7 +2226,7 @@ void salesOrderItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _supplyWarehouse->id() : _warehouse->id()));
+      qty.bindValue(":warehous_id", (_item->itemType() == "M") ? _supplyWarehouse->id() : _warehouse->id());
       qty.exec();
       if (qty.first())
         _orderQty->setDouble(qty.value("qty").toDouble());
@@ -2288,7 +2289,7 @@ void salesOrderItem::populate()
 
   XSqlQuery item;
   sql = "<? if exists(\"isSalesOrder\") ?>"
-        "SELECT itemsite_leadtime, warehous_id, warehous_code,"
+        "SELECT itemsite_leadtime, warehous_id, warehous_code, "
         "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
         "       item_inv_uom_id,"
         "       stdCost(item_id) AS stdcost,"
@@ -2347,7 +2348,11 @@ void salesOrderItem::populate()
         "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
         "       0 AS coship_qty,"
         "       quitem_taxtype_id AS coitem_taxtype_id, locale_qty_scale"
-        "  FROM item, uom, quhead, locale LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER), quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+        "  FROM item, uom, quhead, locale "
+        "    LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER), quitem "
+        "    LEFT OUTER JOIN (itemsite "
+        "               JOIN warehous ON (itemsite_warehous_id=warehous_id)) "
+        "                             ON (quitem_itemsite_id=itemsite_id) "
         " WHERE ( (quitem_item_id=item_id)"
         "   AND   (item_inv_uom_id=uom_id)"
         "   AND   (quhead_id=quitem_quhead_id)"
@@ -2459,7 +2464,7 @@ void salesOrderItem::populate()
         if ((query.value("wo_status").toString() == "R") || (query.value("wo_status").toString() == "C"))
           _createOrder->setEnabled(FALSE);
 
-        if ((_item->itemType() == "J") && (query.value("wo_status").toString() != "O"))
+        if (_item->isConfigured() && (query.value("wo_status").toString() != "O"))
           _itemcharView->setEnabled(FALSE);
 
         _supplyWarehouse->clear();
@@ -2947,7 +2952,7 @@ void salesOrderItem::sPriceUOMChanged()
 
 void salesOrderItem::sCalcWoUnitCost()
 {
-  if (_item->itemType() == "J" && _orderId > -1 && _qtyOrdered->toDouble() != 0)
+  if (_costmethod == "J" && _orderId > -1 && _qtyOrdered->toDouble() != 0)
   {
     q.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
               "FROM wo "

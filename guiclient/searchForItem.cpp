@@ -83,11 +83,7 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  if ((((XTreeWidgetItem *)pSelected)->text(2) == tr("Purchased")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Job")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Breeder")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Kit")))
+  if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
     pMenu->insertSeparator();
 
@@ -140,6 +136,9 @@ void searchForItem::sFillList()
     return;
 
   QString sql( "SELECT item_id,"
+               "       CASE WHEN item_type IN ('P','M','B','K') THEN 1"
+               "       ELSE 0 "
+               "       END AS alt_id, "
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                "       CASE WHEN (item_type='P') THEN :purchased"
                "            WHEN (item_type='M') THEN :manufactured" 
@@ -150,9 +149,7 @@ void searchForItem::sFillList()
                "            WHEN (item_type='R') THEN :reference"
                "            WHEN (item_type='S') THEN :costing"
                "            WHEN (item_type='T') THEN :tooling"
-               "            WHEN (item_type='A') THEN :assortment"
                "            WHEN (item_type='O') THEN :outside"
-               "            WHEN (item_type='J') THEN :job"
                "            WHEN (item_type='L') THEN :planning"
                "            WHEN (item_type='K') THEN :kit"
                "            ELSE :error"
@@ -179,8 +176,6 @@ void searchForItem::sFillList()
   q.bindValue(":costing", tr("Costing"));
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outside", tr("Outside Process"));
-  q.bindValue(":assortment", tr("Assortment"));
-  q.bindValue(":job", tr("Job"));
   q.bindValue(":planning", tr("Planning"));
   q.bindValue(":kit", tr("Kit"));
   q.bindValue(":error", tr("Error"));
@@ -189,6 +184,6 @@ void searchForItem::sFillList()
   q.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked()));
   q.bindValue(":searchString", _search->text().toUpper());
   q.exec();
-  _item->populate(q);
+  _item->populate(q,true);
 }
 

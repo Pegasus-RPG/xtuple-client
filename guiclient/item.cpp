@@ -34,7 +34,7 @@
 #include "itemSource.h"
 #include "storedProcErrorLookup.h"
 
-const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
+const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
 
 /*
  *  Constructs a item as a child of 'parent', with the
@@ -636,8 +636,8 @@ void item::sSave()
 
   if (cEdit == _mode && _itemtype->currentText() != _originalItemType)
   {
-    if ((_itemtype->currentText() == "Job") || (_itemtype->currentText() == "Reference") ||
-		(_itemtype->currentText() == "Costing") || (_itemtype->currentText() == "Tooling"))
+    if ((QString(_itemTypes[_itemtype->currentIndex()]) == "R") ||
+        (QString(_itemTypes[_itemtype->currentIndex()]) == "S"))
 	{
       q.prepare( "SELECT itemsite_id "
                  "  FROM itemsite "
@@ -997,7 +997,7 @@ void item::populate()
 {
   XSqlQuery item;
   item.prepare( "SELECT *,"
-                "       ( (item_type IN ('P', 'M', 'J',  'C', 'Y', 'R', 'A')) AND (item_sold) ) AS sold "
+                "       ( (item_type IN ('P', 'M',  'C', 'Y', 'R', 'A')) AND (item_sold) ) AS sold "
                 "FROM item "
                 "WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _itemid);
@@ -1161,16 +1161,6 @@ void item::sHandleItemtype()
     freight  = TRUE;
   }
 
-  if (itemType == "J")
-  {
-    sold     = TRUE;
-    weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
-    freight  = TRUE;
-    _configured->setEnabled(TRUE);
-  }
-
   if (itemType == "F")
     planType = TRUE;
 
@@ -1211,7 +1201,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     freight  = TRUE;
-    _configured->setEnabled(TRUE);
+    config   = TRUE;
   }
 
   if (itemType == "T")
@@ -1249,6 +1239,10 @@ void item::sHandleItemtype()
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
   _transformationsButton->setEnabled(itemType!="K");
+
+  _configured->setEnabled(config);
+  if (!config)
+    _configured->setChecked(false);
 
   _pickListItem->setChecked(pickList);
   _pickListItem->setEnabled(pickList);

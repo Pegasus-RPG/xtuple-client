@@ -32,8 +32,7 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cJob |
-				 ItemLineEdit::cTooling);
+                 ItemLineEdit::cPlanning | ItemLineEdit::cTooling);
 
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
