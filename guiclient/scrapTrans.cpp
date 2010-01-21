@@ -34,7 +34,7 @@ scrapTrans::scrapTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
-  _qty->setValidator(omfgThis->qtyVal());
+  _qty->setValidator(omfgThis->transQtyVal());
   _beforeQty->setPrecision(omfgThis->qtyVal());
   _afterQty->setPrecision(omfgThis->qtyVal());
 
@@ -139,8 +139,8 @@ void scrapTrans::sPost()
   } error[] = {
     { ! _item->isValid(),
       tr("You must select an Item before posting this transaction."), _item },
-    { _qty->text().length() == 0 || _qty->toDouble() <= 0,
-      tr("<p>You must enter a positive Quantity before posting this Transaction."),
+    { _qty->text().length() == 0,
+      tr("<p>You must enter a Quantity before posting this Transaction."),
       _qty },
     { true, "", NULL }
   };
