@@ -322,7 +322,7 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="XCheckBox" name="xCheckBox">
+         <widget class="XCheckBox" name="_onlyReserved">
           <property name="text">
            <string>Only show Reserved Items</string>
           </property>
@@ -609,7 +609,7 @@ to be bound by its terms.</comment>
   <tabstop>_issueBy</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_requireInventory</tabstop>
-  <tabstop>xCheckBox</tabstop>
+  <tabstop>_onlyReserved</tabstop>
   <tabstop>_soitem</tabstop>
   <tabstop>_bc</tabstop>
   <tabstop>_bcQty</tabstop>

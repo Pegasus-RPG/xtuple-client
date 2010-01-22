@@ -1412,11 +1412,13 @@ void salesOrderItem::sPopulateItemsiteInfo()
     {
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
       _costmethod = itemsite.value("itemsite_costmethod").toString();
-
+qDebug("found itemsite");
       if (cNew == _mode || cNewQuote == _mode)
       {
+        qDebug("checking...costmethod = " + _costmethod);
         if (_costmethod == "J")
         {
+          qDebug("setting flags");
           _createOrder->setChecked(TRUE);
           _createOrder->setEnabled(FALSE);
         }
@@ -1688,7 +1690,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       sCalculateDiscountPrcnt();
 
       if (_item->itemType() == "M")
-      {
+      { qDebug("checking flags at item?");
         if ( (_mode == cNew) || (_mode == cEdit) )
           _createOrder->setEnabled((_item->itemType() == "M"));
 
@@ -2981,7 +2983,7 @@ void salesOrderItem::setItemExtraClause()
   _item->clearExtraClauseList();
   _item->addExtraClause("(itemsite_active)" );
   _item->addExtraClause("(itemsite_sold)");
-  _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, %3))").arg(_custid).arg(_shiptoid).arg(_scheduledDate->date().toString(Qt::ISODate)) );
+  _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, '%3'))").arg(_custid).arg(_shiptoid).arg(_scheduledDate->date().toString(Qt::ISODate)) );
 }
 
 void salesOrderItem::sHandleScheduleDate()

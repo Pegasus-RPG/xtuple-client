@@ -34,6 +34,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   adjustSize();
 
   _qtyToAssign->setValidator(omfgThis->qtyVal());
+  _lotSerial->setFocus();
 }
 
 createLotSerial::~createLotSerial()

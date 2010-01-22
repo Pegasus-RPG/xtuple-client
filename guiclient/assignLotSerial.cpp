@@ -47,6 +47,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _qtyToAssign->setPrecision(omfgThis->qtyVal());
   _qtyAssigned->setPrecision(omfgThis->qtyVal());
   _qtyBalance->setPrecision(omfgThis->qtyVal());
+  _assign->setFocus();
 }
 
 assignLotSerial::~assignLotSerial()

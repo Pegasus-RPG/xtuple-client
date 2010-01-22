@@ -77,7 +77,10 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate());
-  
+
+  // Until 9063 implemented:
+  _issueByGroup->hide();
+  _onlyReserved->hide();
 }
 
 issueToShipping::~issueToShipping()
@@ -359,17 +362,67 @@ void issueToShipping::sIssueLineBalance()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
-    if (! sufficientItemInventory(cursor->id()))
-      return;
-    
+    if (cursor->altId() == 0) // Not a Job costed item
+    {
+      if (! sufficientItemInventory(cursor->id()))
+        return;
+    }
+    int invhistid = 0;
+
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
     q.exec("BEGIN;");
-    q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts) AS result;");
+    // If this is a lot/serial controlled job item, we need to post production first
+    if (cursor->altId() == 2)
+    {
+      q.prepare("SELECT postSoLineBalanceProduction(:soitem_id, :ts) AS result;");
+      q.bindValue(":soitem_id", cursor->id());
+      q.bindValue(":ts", _transDate->date());
+      q.exec();
+      if (q.first())
+      {
+        int itemlocSeries = q.value("result").toInt();
+
+        if (itemlocSeries < 0)
+        {
+          rollback.exec();
+          systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
+                      __FILE__, __LINE__);
+          return;
+        }
+        else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+          return;
+        }
+
+        // Need to get the inventory history id so we can auto reverse the distribution when issuing
+        q.prepare("SELECT invhist_id "
+                  "FROM invhist "
+                  "WHERE ((invhist_series = :itemlocseries) "
+                  " AND (invhist_transtype = 'RM')); ");
+        q.bindValue(":itemlocseries" , itemlocSeries);
+        q.exec();
+        if (q.first())
+          invhistid = q.value("invhist_id").toInt();
+        else
+        {
+          rollback.exec();
+          systemError(this, tr("Inventory history not found"),
+                      __FILE__, __LINE__);
+          return;
+        }
+      }
+    }
+
+    q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts, :invhist_id) AS result;");
     q.bindValue(":ordertype", _order->type());
     q.bindValue(":soitem_id", cursor->id());
     q.bindValue(":ts",        _transDate->date());
+    if (invhistid)
+      q.bindValue(":invhist_id", invhistid);
     q.exec();
     if (q.first())
     {
@@ -617,6 +670,14 @@ void issueToShipping::sFillList()
                 "FROM ("
                 "<? if exists(\"sohead_id\") ?>"
                 "SELECT coitem_id AS lineitem_id, "
+                "       CASE "
+                "         WHEN (itemsite_costmethod = 'J' and itemsite_controlmethod IN ('L','S')) THEN "
+                "           2 "
+                "         WHEN (itemsite_costmethod = 'J') THEN "
+                "           1 "
+                "         ELSE "
+                "           0 "
+                "       END AS job, "
                 "       s2.shiphead_number, "
                 "       formatSoLineNumber(coitem_id) AS linenumber, item_number,"
                 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
@@ -650,10 +711,12 @@ void issueToShipping::sFillList()
                 "         coitem_scheddate, uom_name,"
                 "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, "
                 "         coitem_linenumber, coitem_subnumber, "
-                "         s2.shiphead_number "
+                "         s2.shiphead_number, "
+                "         itemsite_costmethod, itemsite_controlmethod "
                 "<? elseif exists(\"tohead_id\") ?>"
                 "SELECT toitem_id AS lineitem_id, "
-                "       shiphead_number, "
+                "       0 AS lsJob, "
+                "       s2.shiphead_number, "
                 "       toitem_linenumber AS linenumber, item_number,"
                 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                 "       tohead_srcname AS warehous_code,"
@@ -694,7 +757,7 @@ void issueToShipping::sFillList()
   if (listq.first())
   {
     _shipment->setText(listq.value("shiphead_number").toString());
-    _soitem->populate(listq);
+    _soitem->populate(listq, true);
   }
   if (listq.lastError().type() != QSqlError::NoError)
   {
