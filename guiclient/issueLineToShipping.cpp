@@ -133,8 +133,7 @@ void issueLineToShipping::sIssue()
     q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid, :orderqty) AS result;");
     q.bindValue(":ordertype",   _ordertype);
     q.bindValue(":orderitemid", _itemid);
-//    if(!_requireInventory)
-      q.bindValue(":orderqty",  _qtyToIssue->toDouble());
+    q.bindValue(":orderqty",  _qtyToIssue->toDouble());
     q.exec();
     if (q.first())
     {
@@ -189,25 +188,28 @@ void issueLineToShipping::sIssue()
   params.append("qty", _qtyToIssue->toDouble());
 
   QString sql = "<? if exists(\"soitem_id\") ?>"
-	    "SELECT (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <"
-	    "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship"
-            "  FROM coitem LEFT OUTER JOIN"
-            "        ( shipitem JOIN shiphead"
-            "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
-            "        ) ON  (shipitem_orderitem_id=coitem_id)"
-            " WHERE (coitem_id=<? value(\"soitem_id\") ?>)"
-            " GROUP BY coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned;"
-	    "<? elseif exists(\"toitem_id\") ?>"
-	    "SELECT (noNeg(toitem_qty_ordered - toitem_qty_shipped) <"
-	    "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship"
-            "  FROM toitem LEFT OUTER JOIN"
-            "        ( shipitem JOIN shiphead"
-            "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
-            "        ) ON  (shipitem_orderitem_id=toitem_id)"
-            " WHERE (toitem_id=<? value(\"toitem_id\") ?>)"
-            " GROUP BY toitem_qty_ordered, toitem_qty_shipped;"
-	    "<? endif ?>"
-	    ;
+                "SELECT  (itemsite_costmethod = 'J' AND itemsite_controlmethod IN ('L','S')) AS postprod,"
+                "  (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <"
+                "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship"
+                "  FROM coitem LEFT OUTER JOIN"
+                "        ( shipitem JOIN shiphead"
+                "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
+                "        ) ON  (shipitem_orderitem_id=coitem_id)"
+                "  JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
+                " WHERE (coitem_id=<? value(\"soitem_id\") ?>)"
+                " GROUP BY coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, "
+                "   itemsite_costmethod, itemsite_controlmethod;"
+                "<? elseif exists(\"toitem_id\") ?>"
+                "SELECT false AS postprod,"
+                "  (noNeg(toitem_qty_ordered - toitem_qty_shipped) <"
+                "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship"
+                "  FROM toitem LEFT OUTER JOIN"
+                "        ( shipitem JOIN shiphead"
+                "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
+                "        ) ON  (shipitem_orderitem_id=toitem_id)"
+                " WHERE (toitem_id=<? value(\"toitem_id\") ?>)"
+                " GROUP BY toitem_qty_ordered, toitem_qty_shipped;"
+                "<? endif ?>";
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   if (q.next() && q.value("overship").toBool())
@@ -226,18 +228,74 @@ void issueLineToShipping::sIssue()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
+  int invhistid = 0;
+  int itemlocSeries = 0;
+
   XSqlQuery issue;
   issue.exec("BEGIN;");
-  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, :ts) AS result;");
+
+  // If this is a lot/serial controlled job item, we need to post production first
+  if (q.value("postprod").toBool())
+  {
+    XSqlQuery prod;
+    prod.prepare("SELECT postSoLineBalanceProduction(:soitem_id, :qty, :ts) AS result;");
+    prod.bindValue(":soitem_id", _itemid);
+    prod.bindValue(":qty", _qtyToIssue->toDouble());
+    prod.bindValue(":ts", _transTS);
+    prod.exec();
+    if (prod.first())
+    {
+      itemlocSeries = q.value("result").toInt();
+
+      if (itemlocSeries < 0)
+      {
+        rollback.exec();
+        systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
+                    __FILE__, __LINE__);
+        return;
+      }
+      else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        return;
+      }
+
+      // Need to get the inventory history id so we can auto reverse the distribution when issuing
+      prod.prepare("SELECT invhist_id "
+                "FROM invhist "
+                "WHERE ((invhist_series = :itemlocseries) "
+                " AND (invhist_transtype = 'RM')); ");
+      prod.bindValue(":itemlocseries" , itemlocSeries);
+      prod.exec();
+      if (prod.first())
+        invhistid = prod.value("invhist_id").toInt();
+      else
+      {
+        rollback.exec();
+        systemError(this, tr("Inventory history not found"),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+  }
+
+  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, :ts, :itemlocseries, :invhist_id) AS result;");
   issue.bindValue(":ordertype",   _ordertype);
   issue.bindValue(":lineitem_id", _itemid);
   issue.bindValue(":qty",         _qtyToIssue->toDouble());
   issue.bindValue(":ts",          _transTS);
+  if (invhistid)
+    issue.bindValue(":invhist_id", invhistid);
+  if (itemlocSeries)
+    issue.bindValue(":itemlocseries", itemlocSeries);
   issue.exec();
 
   if (issue.first())
   {
+    qDebug("result %d", issue.value("result").toInt());
     int result = issue.value("result").toInt();
+    qDebug("result is now %d", result);
     if (result < 0)
     {
       rollback.exec();
@@ -247,6 +305,7 @@ void issueLineToShipping::sIssue()
     }
     else
     {
+      qDebug("gonna distribute %d",result);
       if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
       {
         rollback.exec();

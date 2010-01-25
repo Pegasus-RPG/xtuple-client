@@ -358,103 +358,122 @@ bool issueToShipping::sufficientInventory(int porderheadid)
 
 void issueToShipping::sIssueLineBalance()
 {
+  bool refresh = false;
+
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
-    if (cursor->altId() == 0) // Not a Job costed item
+    if (sIssueLineBalance(cursor->id(), cursor->altId()))
+      refresh = true;
+    else
+      break;
+  }
+
+  if (refresh)
+    sFillList();
+}
+
+bool issueToShipping::sIssueLineBalance(int id, int altId)
+{
+  if (altId == 0) // Not a Job costed item
+  {
+    if (! sufficientItemInventory(id))
+      return false;
+  }
+  int invhistid = 0;
+  int itemlocSeries = 0;
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  XSqlQuery issue;
+  issue.exec("BEGIN;");
+
+  // If this is a lot/serial controlled job item, we need to post production first
+  if (altId == 2)
+  {
+    XSqlQuery prod;
+    prod.prepare("SELECT postSoItemProduction(:soitem_id, :ts) AS result;");
+    prod.bindValue(":soitem_id", id);
+    prod.bindValue(":ts", _transDate->date());
+    prod.exec();
+    if (prod.first())
     {
-      if (! sufficientItemInventory(cursor->id()))
-        return;
-    }
-    int invhistid = 0;
+      itemlocSeries = prod.value("result").toInt();
 
-    XSqlQuery rollback;
-    rollback.prepare("ROLLBACK;");
-
-    q.exec("BEGIN;");
-    // If this is a lot/serial controlled job item, we need to post production first
-    if (cursor->altId() == 2)
-    {
-      q.prepare("SELECT postSoLineBalanceProduction(:soitem_id, :ts) AS result;");
-      q.bindValue(":soitem_id", cursor->id());
-      q.bindValue(":ts", _transDate->date());
-      q.exec();
-      if (q.first())
-      {
-        int itemlocSeries = q.value("result").toInt();
-
-        if (itemlocSeries < 0)
-        {
-          rollback.exec();
-          systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
-                      __FILE__, __LINE__);
-          return;
-        }
-        else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
-        {
-          rollback.exec();
-          QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
-          return;
-        }
-
-        // Need to get the inventory history id so we can auto reverse the distribution when issuing
-        q.prepare("SELECT invhist_id "
-                  "FROM invhist "
-                  "WHERE ((invhist_series = :itemlocseries) "
-                  " AND (invhist_transtype = 'RM')); ");
-        q.bindValue(":itemlocseries" , itemlocSeries);
-        q.exec();
-        if (q.first())
-          invhistid = q.value("invhist_id").toInt();
-        else
-        {
-          rollback.exec();
-          systemError(this, tr("Inventory history not found"),
-                      __FILE__, __LINE__);
-          return;
-        }
-      }
-    }
-
-    q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts, :invhist_id) AS result;");
-    q.bindValue(":ordertype", _order->type());
-    q.bindValue(":soitem_id", cursor->id());
-    q.bindValue(":ts",        _transDate->date());
-    if (invhistid)
-      q.bindValue(":invhist_id", invhistid);
-    q.exec();
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
+      if (itemlocSeries < 0)
       {
         rollback.exec();
-        systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
+        systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
                     __FILE__, __LINE__);
-        return;
+        return false;
       }
-      else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+      else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
-        return;
+        return false;
       }
-      q.exec("COMMIT;");
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+
+      // Need to get the inventory history id so we can auto reverse the distribution when issuing
+      prod.prepare("SELECT invhist_id "
+                "FROM invhist "
+                "WHERE ((invhist_series = :itemlocseries) "
+                " AND (invhist_transtype = 'RM')); ");
+      prod.bindValue(":itemlocseries" , itemlocSeries);
+      prod.exec();
+      if (prod.first())
+        invhistid = prod.value("invhist_id").toInt();
+      else
+      {
+        rollback.exec();
+        systemError(this, tr("Inventory history not found"),
+                    __FILE__, __LINE__);
+        return false;
+      }
     }
   }
 
-  sFillList();
+  issue.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts, :itemlocseries, :invhist_id) AS result;");
+  issue.bindValue(":ordertype", _order->type());
+  issue.bindValue(":soitem_id", id);
+  issue.bindValue(":ts",        _transDate->date());
+  if (invhistid)
+    issue.bindValue(":invhist_id", invhistid);
+  if (itemlocSeries)
+    issue.bindValue(":itemlocseries", itemlocSeries);
+  issue.exec();
+  if (issue.first())
+  {
+    int result = issue.value("result").toInt();
+    if (result < 0)
+    {
+      rollback.exec();
+      systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
+                  __FILE__, __LINE__);
+      return false;
+    }
+    else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+      return false;
+    }
+    issue.exec("COMMIT;");
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    rollback.exec();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  return true;
 }
 
 void issueToShipping::sIssueAllBalance()
 {
+  bool refresh = false;
   int orderid = _order->id();
 
   if (! sufficientInventory(orderid))
@@ -463,48 +482,14 @@ void issueToShipping::sIssueAllBalance()
   for (int i = 0; i < _soitem->topLevelItemCount(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)_soitem->topLevelItem(i);
-    if (! sufficientItemInventory(cursor->id()))
-      return;
-
-    XSqlQuery rollback;
-    rollback.prepare("ROLLBACK;");
-
-    q.exec("BEGIN;");
-    q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, :ts) AS result;");
-    q.bindValue(":ordertype", _order->type());
-    q.bindValue(":soitem_id", cursor->id());
-    q.bindValue(":ts",        _transDate->date());
-    q.exec();
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-        rollback.exec();
-        systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
-                    __FILE__, __LINE__);
-        sFillList();
-        return;
-      }
-      else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
-        sFillList();
-        return;
-      }
-      q.exec("COMMIT;");
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      sFillList();
-      return;
-    }
+    if (sIssueLineBalance(cursor->id(),cursor->altId()))
+      refresh = true;
+    else
+      break;
   }
 
-  sFillList();
+  if (refresh)
+    sFillList();
 }
 
 void issueToShipping::sReturnStock()

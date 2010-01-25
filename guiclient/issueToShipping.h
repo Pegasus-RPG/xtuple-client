@@ -40,6 +40,7 @@ public slots:
     virtual void sHandleButtons();
     virtual void sIssueAllBalance();
     virtual void sIssueLineBalance();
+    virtual bool sIssueLineBalance(int id, int altId);
     virtual void sIssueStock();
     virtual void sReturnStock();
     virtual void sShip();
