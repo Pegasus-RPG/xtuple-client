@@ -238,14 +238,14 @@ void issueLineToShipping::sIssue()
   if (q.value("postprod").toBool())
   {
     XSqlQuery prod;
-    prod.prepare("SELECT postSoLineBalanceProduction(:soitem_id, :qty, :ts) AS result;");
+    prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts) AS result;");
     prod.bindValue(":soitem_id", _itemid);
     prod.bindValue(":qty", _qtyToIssue->toDouble());
     prod.bindValue(":ts", _transTS);
     prod.exec();
     if (prod.first())
     {
-      itemlocSeries = q.value("result").toInt();
+      itemlocSeries = prod.value("result").toInt();
 
       if (itemlocSeries < 0)
       {
@@ -280,15 +280,14 @@ void issueLineToShipping::sIssue()
     }
   }
 
-  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, :ts, :itemlocseries, :invhist_id) AS result;");
+  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, :itemlocseries, :ts, :invhist_id) AS result;");
   issue.bindValue(":ordertype",   _ordertype);
   issue.bindValue(":lineitem_id", _itemid);
   issue.bindValue(":qty",         _qtyToIssue->toDouble());
   issue.bindValue(":ts",          _transTS);
   if (invhistid)
     issue.bindValue(":invhist_id", invhistid);
-  if (itemlocSeries)
-    issue.bindValue(":itemlocseries", itemlocSeries);
+  issue.bindValue(":itemlocseries", itemlocSeries);
   issue.exec();
 
   if (issue.first())

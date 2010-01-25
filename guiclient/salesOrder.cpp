@@ -3902,7 +3902,7 @@ void salesOrder::sIssueLineBalance()
 
       if(_requireInventory->isChecked())
       {
-        q.prepare("SELECT itemsite_id, item_number, warehous_code, "
+        q.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
                   "       (roundQty(item_fractional, noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - "
                   "          ( SELECT COALESCE(SUM(coship_qty), 0) "
                   "              FROM coship, cosmisc "
@@ -3918,7 +3918,7 @@ void salesOrder::sIssueLineBalance()
         q.exec();
         while(q.next())
         {
-          if(!(q.value("isqtyavail").toBool()))
+          if(!(q.value("isqtyavail").toBool()) && q.value("itemsite_costmethod").toString() != "J")
           {
             QMessageBox::critical(this, tr("Insufficient Inventory"),
                                   tr("<p>There is not enough Inventory to issue the amount required"
@@ -3930,7 +3930,8 @@ void salesOrder::sIssueLineBalance()
         }
       }
 
-      q.prepare("SELECT itemsite_id, item_number, warehous_code, "
+      q.prepare("SELECT (itemsite_costmethod = 'J' AND itemsite_controlmethod IN ('L','S')) AS postprod, "
+                "       itemsite_id, itemsite_costmethod, item_number, warehous_code, "
                 "       (COALESCE((SELECT SUM(itemloc_qty) "
                 "                    FROM itemloc "
                 "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, "
@@ -3952,7 +3953,7 @@ void salesOrder::sIssueLineBalance()
       q.exec();
       while(q.next())
       {
-        if(!(q.value("isqtyavail").toBool()))
+        if(!q.value("isqtyavail").toBool() && q.value("itemsite_costmethod").toString() != "J")
         {
           QMessageBox::critical(this, tr("Insufficient Inventory"),
                                 tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
@@ -3965,12 +3966,62 @@ void salesOrder::sIssueLineBalance()
         }
       }
 
+      int invhistid = 0;
+      int itemlocSeries = 0;
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
       q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-      q.prepare("SELECT issueLineBalanceToShipping(:soitem_id) AS result;");
+      // If this is a lot/serial controlled job item, we need to post production first
+      if (q.value("postprod").toBool())
+      {
+        XSqlQuery prod;
+        prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");
+        prod.bindValue(":soitem_id", _soitem->id());
+        prod.exec();
+        if (prod.first())
+        {
+          itemlocSeries = prod.value("result").toInt();
+
+          if (itemlocSeries < 0)
+          {
+            rollback.exec();
+            systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
+                        __FILE__, __LINE__);
+            return;
+          }
+          else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+          {
+            rollback.exec();
+            QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+            return;
+          }
+
+          // Need to get the inventory history id so we can auto reverse the distribution when issuing
+          prod.prepare("SELECT invhist_id "
+                       "FROM invhist "
+                       "WHERE ((invhist_series = :itemlocseries) "
+                       " AND (invhist_transtype = 'RM')); ");
+          prod.bindValue(":itemlocseries" , itemlocSeries);
+          prod.exec();
+          if (prod.first())
+            invhistid = prod.value("invhist_id").toInt();
+          else
+          {
+            rollback.exec();
+            systemError(this, tr("Inventory history not found"),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+      }
+
+      q.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id) AS result;");;
       q.bindValue(":soitem_id", soitem->id());
+      if (invhistid)
+        q.bindValue(":invhist_id", invhistid);
+      if (itemlocSeries)
+        q.bindValue(":itemlocseries", itemlocSeries);
       q.exec();
       if (q.first())
       {
