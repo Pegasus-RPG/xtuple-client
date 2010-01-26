@@ -11,15 +11,16 @@
 #include <QDesktopServices>
 #include <QDialog>
 #include <QUrl>
+#include <QMenu>
 
 #include <openreports.h>
 #include <parameter.h>
 #include <xsqlquery.h>
 
-#include "file.h"
-#include "imageview.h"
-#include "imageAssignment.h"
 #include "documents.h"
+#include "file.h"
+#include "imageAssignment.h"
+#include "docAttach.h"
 
 
 // CAUTION: This will break if the order of this list does not match
@@ -69,39 +70,50 @@ Documents::Documents(QWidget *pParent) :
   _source = Uninitialized;
   _sourceid = -1;
 
-
-  _images->addColumn(tr("Image Name"),  _itemColumn,   Qt::AlignLeft, true, "image_name" );
-  _images->addColumn(tr("Description"), -1,            Qt::AlignLeft, true, "image_descrip" );
-  _images->addColumn(tr("Purpose"),     _itemColumn*2, Qt::AlignLeft, true, "image_purpose" );
-
-  _files->addColumn(tr("Title"),        _itemColumn, Qt::AlignLeft,true, "url_title");
-  _files->addColumn(tr("URL"),          -1, Qt::AlignLeft,true, "url_url");
-
-  connect(_deleteFile, SIGNAL(clicked()), this, SLOT(sDeleteFile()));
-  connect(_editFile, SIGNAL(clicked()), this, SLOT(sEditFile()));
-  connect(_newFile, SIGNAL(clicked()), this, SLOT(sNewFile()));
-  connect(_viewFile, SIGNAL(clicked()), this, SLOT(sViewFile()));
-  connect(_openFile, SIGNAL(clicked()), this, SLOT(sOpenFile()));
+  _doc->addColumn(tr("Type"),  _itemColumn,  Qt::AlignLeft, true, "type" );
+  _doc->addColumn(tr("Name"), -1,  Qt::AlignLeft, true, "name" );
+  _doc->addColumn(tr("Description"),  _itemColumn*2, Qt::AlignLeft, true, "description");
+  _doc->addColumn(tr("Relationship"),  -1, Qt::AlignLeft,true, "doc_purpose");
   
-  connect(_openImage, SIGNAL(clicked()), this, SLOT(sOpenImage()));
-  connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
-  connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
-  connect(_viewImage, SIGNAL(clicked()), this, SLOT(sViewImage()));
-  connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
-  connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
-  
-  connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-  connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
+  connect(_openDoc, SIGNAL(clicked()), this, SLOT(sOpenDoc()));
+  //connect(_attachDoc, SIGNAL(clicked()), this, SLOT(sAttachDoc()));
+  connect(_editDoc, SIGNAL(clicked()), this, SLOT(sEditDoc()));
+  connect(_viewDoc, SIGNAL(clicked()), this, SLOT(sViewDoc()));
+  connect(_printDoc, SIGNAL(clicked()), this, SLOT(sPrintDoc()));
+  connect(_detachDoc, SIGNAL(clicked()), this, SLOT(sDetachDoc()));
+
+  int menuItem;
+  QMenu * newDocMenu = new QMenu;
+
+  menuItem = newDocMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
+  //if (!_privileges->check("MaintainIncidents"))
+  //  newDocMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = newDocMenu->insertItem(tr("To-Do Item"),   this, SLOT(sNewToDo()));
+  //if (!_privileges->check("MaintainPersonalTodoList") &&
+  //    !_privileges->check("MaintainOtherTodoLists"))
+  //  newDocMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = newDocMenu->insertItem(tr("Task"),  this, SLOT(sNewTask()));
+  menuItem = newDocMenu->insertItem(tr("Opportunity"),  this, SLOT(sNewOpp()));
+  menuItem = newDocMenu->insertItem(tr("Project"),  this, SLOT(sNewProj()));
+
+  _newDoc->setMenu(newDocMenu);
+
+  QMenu * attachDocMenu = new QMenu;
+
+  menuItem = attachDocMenu->insertItem(tr("Image"),  this, SLOT(sNewImage()));
+  menuItem = attachDocMenu->insertItem(tr("File"),  this, SLOT(sNewFile()));
+  menuItem = attachDocMenu->insertItem(tr("Other"), this, SLOT(sAttachDoc()));
+  //if (!_privileges->check("MaintainIncidents"))
+  //  newDocMenu->setItemEnabled(menuItem, FALSE);
+
+  _attachDoc->setMenu(attachDocMenu);
 }
 
 void Documents::setType(enum DocumentSources pSource)
 {
   _source = pSource;
-  if (pSource==Item)
-    _images->showColumn(2);
-  else
-   _images->hideColumn(2);
 }
+
 
 void Documents::setId(int pSourceid)
 {
@@ -111,36 +123,45 @@ void Documents::setId(int pSourceid)
 
 void Documents::setReadOnly(bool pReadOnly)
 {
-  _newImage->setEnabled(!pReadOnly);
-  _editImage->setEnabled(!pReadOnly);
-  _deleteImage->setEnabled(!pReadOnly);
-  
-  _newFile->setEnabled(!pReadOnly);
-  _editFile->setEnabled(!pReadOnly);
-  _deleteFile->setEnabled(!pReadOnly);
+  _openDoc->setEnabled(!pReadOnly);
+  _newDoc->setEnabled(!pReadOnly);
+  _attachDoc->setEnabled(!pReadOnly);
+  _editDoc->setEnabled(!pReadOnly);
+  _detachDoc->setEnabled(!pReadOnly);
 
-  disconnect(_files, SIGNAL(doubleClicked(QModelIndex)), _viewFile, SLOT(animateClick()));
-  disconnect(_images, SIGNAL(doubleClicked(QModelIndex)), _viewImage, SLOT(animateClick()));
-  disconnect(_files, SIGNAL(doubleClicked(QModelIndex)), _editFile, SLOT(animateClick()));
-  disconnect(_files, SIGNAL(valid(bool)), _editFile, SLOT(setEnabled(bool)));
-  disconnect(_files, SIGNAL(valid(bool)), _deleteFile, SLOT(setEnabled(bool)));
-  disconnect(_images, SIGNAL(doubleClicked(QModelIndex)), _editImage, SLOT(animateClick()));
-  disconnect(_images, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
-  disconnect(_images, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
+  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
+  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _viewDoc, SLOT(animateClick()));
+  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
+  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
+  disconnect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
+  disconnect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
   if(pReadOnly)
   {
-    connect(_files, SIGNAL(doubleClicked(QModelIndex)), _viewFile, SLOT(animateClick()));
-    connect(_images, SIGNAL(doubleClicked(QModelIndex)), _viewImage, SLOT(animateClick()));
+    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
   }
   else
   {
-    connect(_files, SIGNAL(doubleClicked(QModelIndex)), _editFile, SLOT(animateClick()));
-    connect(_files, SIGNAL(valid(bool)), _editFile, SLOT(setEnabled(bool)));
-    connect(_files, SIGNAL(valid(bool)), _deleteFile, SLOT(setEnabled(bool)));
-    connect(_images, SIGNAL(doubleClicked(QModelIndex)), _editImage, SLOT(animateClick()));
-    connect(_images, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
-    connect(_images, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
+    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
+    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
+    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
+    connect(_doc, SIGNAL(valid(bool)), _openDoc, SLOT(setEnabled(bool)));
+    connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
+    connect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
   }
+}
+
+void Documents::sNewImage()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("sourceType", _source);
+  params.append("source_id", _sourceid);
+
+  imageAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    refresh();
 }
 
 void Documents::sNewFile()
@@ -156,6 +177,60 @@ void Documents::sNewFile()
   refresh();
 }
 
+void Documents::sNewIncdt()
+{
+/*
+    ParameterList params;
+int id;
+  params.append("mode", "new");
+
+  incident newdlg(this, "", true);
+  newdlg.set(params);
+  id = newdlg.exec();
+  if (id != XDialog::Rejected)
+    // function to insert relationship into docass. Pass doc_type and doc_id
+    sInsertDocass('INCDT', id);
+    sFillList();
+ */
+}
+
+/*void Documents::sInsertDocass(QString type, int id)
+{
+// this function will accept 2 arguments, a doc_type and a doc_id and it will insert a row into the docass table
+// this function will be called by the New and Attach buttons
+// this funtion will use the source type and id of the parent, and will default the doc_purpose to S (sibling)
+} */
+
+void Documents::sNewToDo()
+{
+ /* ParameterList params;
+  if (_crmAccount->isValid())
+    params.append("crmacct_id", _crmAccount->id());
+  params.append("mode", "new");
+  if (_selected->isChecked())
+    params.append("username", _usr->username());
+
+  todoItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+  */
+}
+
+void Documents::sNewTask()
+{
+}
+
+void Documents::sNewOpp()
+{
+}
+
+void Documents::sNewProj()
+{
+}
+
+/*
 void Documents::sEditFile()
 {
   ParameterList params;
@@ -182,9 +257,9 @@ void Documents::sViewFile()
 void Documents::sDeleteFile()
 {
   XSqlQuery q;
-  q.prepare("DELETE FROM url"
-            " WHERE (url_id=:url_id);" );
-  q.bindValue(":url_id", _files->id());
+  q.prepare("DELETE FROM docass"
+            " WHERE (docass_id=:docass_id);" );
+  q.bindValue(":url_id", _doc->id());
   q.exec();
   refresh();
 }
@@ -206,19 +281,52 @@ void Documents::sOpenFile()
     QDesktopServices::openUrl(url);
   }
 }
+*/
 
-void Documents::sOpenImage()
-{
+void Documents::sOpenDoc()
+{/*
+  //this function needs to figure out the document type, and then open the doc in the appropriate window
+
+  XSqlQuery q;
+  q.prepare("SELECT url_url"
+            "  FROM url"
+            " WHERE (url_id=:url_id); ");
+  q.bindValue(":url_id", _doc->altId());
+  q.exec();
+  if(q.first())
+  {
+    //If url scheme is missing, we'll assume it is "file" for now.
+    QUrl url(q.value("url_url").toString());
+    if (url.scheme().isEmpty())
+      url.setScheme("file");
+    QDesktopServices::openUrl(url);
+  }
+
   ParameterList params;
   params.append("mode", "view");
-  params.append("image_id", _images->altId());
+  params.append("target_id", _doc->targetid());
 
   imageview newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  */
 }
 
-void Documents::sNewImage()
+void Documents::sAttachDoc()
+{
+  ParameterList params;
+  params.append("sourceType", _source);
+  params.append("source_id", _sourceid);
+
+  docAttach newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+
+  refresh();
+}
+
+/*
+void Documents::sAttachDoc()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -231,12 +339,13 @@ void Documents::sNewImage()
   if (newdlg.exec() != QDialog::Rejected)
     refresh();
 }
+*/
 
-void Documents::sEditImage()
+void Documents::sEditDoc()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("imageass_id", _images->id());
+  params.append("imageass_id", _doc->id());
 
   imageAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -245,11 +354,11 @@ void Documents::sEditImage()
     refresh();
 }
 
-void Documents::sViewImage()
+void Documents::sViewDoc()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("imageass_id", _images->id());
+  params.append("imageass_id", _doc->id());
 
   imageAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -258,21 +367,33 @@ void Documents::sViewImage()
     refresh();
 }
 
-void Documents::sDeleteImage()
+void Documents::sDetachDoc()
 {
   XSqlQuery q;
+  if ( 1 == _doc->altId() )
+  {
   q.prepare( "DELETE FROM imageass "
-             "WHERE (imageass_id=:imageass_id);" );
-  q.bindValue(":imageass_id", _images->id());
+             "WHERE (imageass_id = :docid );" );
+  }
+  else if ( 2 == _doc->altId() )
+  {
+  q.prepare( "DELETE FROM url "
+             "WHERE (url_id = :docid );" );
+  }
+  else
+  {
+  q.prepare( "DELETE FROM docass "
+             "WHERE (docass_id = :docid );" );
+  }
+  q.bindValue(":docid", _doc->id());
   q.exec();
-
   refresh();
 }
 
-void Documents::sPrintImage()
+void Documents::sPrintDoc()
 {
   ParameterList params;
-  params.append("image_id", _images->altId());
+  params.append("image_id", _doc->altId());
 
   orReport report("Image", params);
   if (report.isValid())
@@ -285,77 +406,377 @@ void Documents::refresh()
 {
   if(-1 == _sourceid)
   {
-    _images->clear();
-    _files->clear();
+    _doc->clear();
+   // _files->clear();
     return;
   }
 
   XSqlQuery query;
   
-  //Populate images
-  QString sql( "SELECT imageass_id, imageass_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-               "       CASE WHEN (imageass_purpose='I') THEN :inventory"
-               "            WHEN (imageass_purpose='P') THEN :product"
-               "            WHEN (imageass_purpose='E') THEN :engineering"
-               "            WHEN (imageass_purpose='M') THEN :misc"
-               "            ELSE :other"
-               "       END AS image_purpose "
-               "FROM imageass, image "
-               "WHERE ( (imageass_image_id=image_id)"
-               " AND (imageass_source=:source) "
-               " AND (imageass_source_id=:sourceid) ) "
-               "ORDER BY image_name; ");
+  //Populate doc list
+  QString sql( "SELECT imageass_id AS id, 1, imageass_image_id AS target_id,"
+       " :image AS type,"
+       " image_name AS name, image_descrip AS description,"
+       " CASE WHEN (imageass_purpose='I') THEN :inventory"
+            " WHEN (imageass_purpose='P') THEN :product"
+            " WHEN (imageass_purpose='E') THEN :engineering"
+            " WHEN (imageass_purpose='M') THEN :misc"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM imageass, image"
+               " WHERE (imageass_source=:source)"
+               " AND (imageass_image_id=image_id)"
+               " AND (imageass_source_id=:sourceid)"
+" UNION"
+" SELECT url_id AS id, 2, url_id AS target_id,"
+       "  :url AS type,"
+       "  url_title AS name, url_url AS description,"
+       "  :sibling AS doc_purpose"
+               " FROM url"
+               " WHERE (url_source=:source)"
+               " AND (url_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 3, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " incdt_summary AS name, firstline(incdt_descrip) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, incdt"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='INCDT')"
+               " AND (docass_target_id=incdt_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 4, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " todoitem_name AS name, firstline(todoitem_description) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, todoitem"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='TODO')"
+               " AND (docass_target_id=todoitem_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 5, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " prjtask_name AS name, firstline(prjtask_descrip) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, prjtask"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='TASK')"
+               " AND (docass_target_id=prjtask_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 6, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " prj_name AS name, firstline(prj_descrip) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, prj"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='J')"
+               " AND (docass_target_id=prj_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 7, docass_target_id AS target_id,"
+" CASE WHEN (docass_target_type='IMG') THEN 'Image'"
+            " WHEN (docass_target_type='INCDT') THEN 'Incident'"
+            " WHEN (docass_target_type='TODO') THEN 'To-Do'"
+            " WHEN (docass_target_type='TASK') THEN 'Task'"
+            " WHEN (docass_target_type='J') THEN 'Project'"
+            " WHEN (docass_target_type='I') THEN 'Item'"
+            " WHEN (docass_target_type='CRMA') THEN 'CRM Account'"
+            " WHEN (docass_target_type='C') THEN 'Customer'"
+            " WHEN (docass_target_type='V') THEN 'Vendor'"
+            " WHEN (docass_target_type='T') THEN 'Contact'"
+            " WHEN (docass_target_type='OPP') THEN 'Opportunity'"
+            " WHEN (docass_target_type='URL') THEN 'URL'"
+       " END AS type,"
+       " item_number AS name, firstline(item_descrip1) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, item"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='I')"
+               " AND (docass_target_id=item_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 8, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " crmacct_number AS name, crmacct_name AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, crmacct"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='CRMA')"
+               " AND (docass_target_id=crmacct_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 9, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " cust_name AS name, cust_address1 AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, cust"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='C')"
+               " AND (docass_target_id=cust_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 10, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " vend_name AS name, vend_number AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, vendinfo"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='V')"
+               " AND (docass_target_id=vend_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 11, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " cntct_first_name ||' '|| cntct_last_name AS name, cntct_email AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, cntct"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='T')"
+               " AND (docass_target_id=cntct_id)"
+               " AND (docass_source_id=:sourceid)"
+" UNION"
+" SELECT docass_id AS id, 12, docass_target_id AS target_id,"
+       " CASE WHEN (docass_target_type='IMG') THEN :image"
+            " WHEN (docass_target_type='INCDT') THEN :incident"
+            " WHEN (docass_target_type='TODO') THEN :todo"
+            " WHEN (docass_target_type='TASK') THEN :task"
+            " WHEN (docass_target_type='J') THEN :project"
+            " WHEN (docass_target_type='I') THEN :item"
+            " WHEN (docass_target_type='CRMA') THEN :crma"
+            " WHEN (docass_target_type='C') THEN :cust"
+            " WHEN (docass_target_type='V') THEN :vendor"
+            " WHEN (docass_target_type='T') THEN :contact"
+            " WHEN (docass_target_type='OPP') THEN :opp"
+            " WHEN (docass_target_type='URL') THEN :url"
+       " END AS type,"
+       " ophead_name AS name, firstline(ophead_notes) AS description,"
+       " CASE WHEN (docass_purpose='I') THEN :inventory"
+            " WHEN (docass_purpose='P') THEN :product"
+            " WHEN (docass_purpose='E') THEN :engineering"
+            " WHEN (docass_purpose='M') THEN :misc"
+            " WHEN (docass_purpose='A') THEN :parent"
+            " WHEN (docass_purpose='C') THEN :child"
+            " WHEN (docass_purpose='S') THEN :sibling"
+            " WHEN (docass_purpose='D') THEN :dupe"
+            " ELSE :other"
+       " END AS doc_purpose"
+               " FROM docass, ophead"
+               " WHERE (docass_source_type=:source)"
+               " AND (docass_target_type='OPP')"
+               " AND (docass_target_id=ophead_id)"
+               " AND (docass_source_id=:sourceid);"
+               );
   query.prepare(sql);
   query.bindValue(":inventory", tr("Inventory Description"));
   query.bindValue(":product", tr("Product Description"));
   query.bindValue(":engineering", tr("Engineering Reference"));
   query.bindValue(":misc", tr("Miscellaneous"));
+  query.bindValue(":parent", tr("Parent"));
+  query.bindValue(":child", tr("Child"));
+  query.bindValue(":sibling", tr("Related to"));
+  query.bindValue(":dupe", tr("Duplicate of"));
   query.bindValue(":other", tr("Other"));
+  query.bindValue(":image", tr("Image"));
+  query.bindValue(":incident", tr("Incident"));
+  query.bindValue(":todo", tr("To-Do"));
+  query.bindValue(":task", tr("Task"));
+  query.bindValue(":project", tr("Project"));
+  query.bindValue(":item", tr("Item"));
+  query.bindValue(":crma", tr("CRM Account"));
+  query.bindValue(":cust", tr("Customer"));
+  query.bindValue(":vendor", tr("Vendor"));
+  query.bindValue(":contact", tr("Contact"));
+  query.bindValue(":opp", tr("Opportunity"));
+  query.bindValue(":url", tr("URL"));
   query.bindValue(":sourceCust", _documentMap[Customer].ident);
   query.bindValue(":sourceContact", _documentMap[Contact].ident);
   query.bindValue(":sourceVend", _documentMap[Vendor].ident);
   query.bindValue(":source", _documentMap[_source].ident);
   query.bindValue(":sourceid", _sourceid);
   query.exec();
-  _images->populate(query,TRUE);
-  
-  //Populate file urls
-  sql = "SELECT url_id, url_title, url_url "
-        "FROM url "
-        "WHERE ((url_source_id=:sourceid) "
-        "AND (url_source=:source)) "
-        "ORDER BY url_title; ";
-  query.prepare(sql);
-  query.bindValue(":sourceCust", _documentMap[Customer].ident);
-  query.bindValue(":sourceContact", _documentMap[Contact].ident);
-  query.bindValue(":sourceVend", _documentMap[Vendor].ident);
-  query.bindValue(":source", _documentMap[_source].ident);
-  query.bindValue(":sourceid", _sourceid);
-  query.exec();
-  _files->populate(query);
+  _doc->populate(query,TRUE);
   
 }
 
-void Documents::sImagesToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
-    _filesButton->setChecked(!p);
-    _documentsStack->setCurrentIndex(0);
-    connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
-  }
-}
-
-void Documents::sFilesToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-    _imagesButton->setChecked(!p);
-    _documentsStack->setCurrentIndex(1);
-    connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-  }
-}
 
 

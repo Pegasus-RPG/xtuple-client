@@ -69,21 +69,20 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void setId(int);
     void setReadOnly(bool);
     
-    void sFilesToggled(bool p);
-    void sImagesToggled(bool p);
-
-    void sOpenFile();
-    void sNewFile();
-    void sEditFile();
-    void sViewFile();
-    void sDeleteFile();
-    
-    void sOpenImage();
-    void sPrintImage();
+    void sOpenDoc();
+    void sPrintDoc();
     void sNewImage();
-    void sEditImage();
-    void sViewImage();
-    void sDeleteImage();
+    void sNewFile();
+    void sNewToDo();
+    void sNewIncdt();
+    void sNewTask();
+    void sNewOpp();
+    void sNewProj();
+    // void sInsertDocass(QString, int);
+    void sAttachDoc();
+    void sViewDoc();
+    void sEditDoc();
+    void sDetachDoc();
     
     void refresh();
 
