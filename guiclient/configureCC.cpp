@@ -11,6 +11,7 @@
 #include "configureCC.h"
 
 #include <QMessageBox>
+#include <QSqlError>
 
 #include "configureEncryption.h"
 #include "creditcardprocessor.h"
@@ -40,8 +41,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 		    tr("<p>Cannot read encrypted information from database."));
   }
 
-  _ccDefaultBank->setType(XComboBox::ARBankAccounts);
-
   _ccAccept->setChecked(_metrics->boolean("CCAccept"));
   _ccTest->setChecked(_metrics->boolean("CCTest"));
   _ccValidDays->setValue(_metrics->value("CCValidDays").toInt());
@@ -57,7 +56,25 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   _ccProxyServer->setText(_metrics->value("CCProxyServer"));
   _ccProxyPort->setText(_metrics->value("CCProxyPort"));
 
-  _ccDefaultBank->setId(_metrics->value("CCDefaultBank").toInt());
+  XSqlQuery ccbankq("SELECT * FROM ccbank;");
+  ccbankq.exec();
+  while (ccbankq.next())
+  {
+    if (ccbankq.value("ccbank_ccard_type").toString() == "A")
+      _amexBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+    else if (ccbankq.value("ccbank_ccard_type").toString() == "D")
+      _discoverBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+    else if (ccbankq.value("ccbank_ccard_type").toString() == "M")
+      _mastercardBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+    /* TODO: wait until we support paypal?
+    else if (ccbankq.value("ccbank_ccard_type").toString() == "P")
+      _paypalBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+    */
+    else if (ccbankq.value("ccbank_ccard_type").toString() == "V")
+      _visaBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+  }
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
 
   if (_metrics->value("CCANVer").isEmpty())
     _anVersion->setCurrentText("3.1");
@@ -195,7 +212,71 @@ void configureCC::sSave()
   _metrics->set("CCUseProxyServer",  _ccUseProxyServer->isChecked());
   _metrics->set("CCProxyServer",     _ccProxyServer->text());
   _metrics->set("CCProxyPort",       _ccProxyPort->text());
-  _metrics->set("CCDefaultBank",     _ccDefaultBank->id());
+
+  XSqlQuery ccbankq;
+  ccbankq.prepare("SELECT setCCBankAccnt(:cctype, :bankaccnt_id) AS result;");
+
+  ccbankq.bindValue(":cctype", "A");
+  if (_amexBank->isValid())
+    ccbankq.bindValue(":bankaccnt_id", _amexBank->id());
+  else
+    ccbankq.bindValue(":bankaccnt_id", QVariant());
+  ccbankq.exec();
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
+
+  ccbankq.bindValue(":cctype", "D");
+  if (_discoverBank->isValid())
+    ccbankq.bindValue(":bankaccnt_id", _discoverBank->id());
+  else
+    ccbankq.bindValue(":bankaccnt_id", QVariant());
+  ccbankq.exec();
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
+
+  ccbankq.bindValue(":cctype", "M");
+  if (_mastercardBank->isValid())
+    ccbankq.bindValue(":bankaccnt_id", _mastercardBank->id());
+  else
+    ccbankq.bindValue(":bankaccnt_id", QVariant());
+  ccbankq.exec();
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
+
+  /*
+  ccbankq.bindValue(":cctype", "P");
+  if (_paypalBank->isValid())
+    ccbankq.bindValue(":bankaccnt_id", _paypalBank->id());
+  else
+    ccbankq.bindValue(":bankaccnt_id", QVariant());
+  ccbankq.exec();
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
+  */
+
+  ccbankq.bindValue(":cctype", "V");
+  if (_visaBank->isValid())
+    ccbankq.bindValue(":bankaccnt_id", _visaBank->id());
+  else
+    ccbankq.bindValue(":bankaccnt_id", QVariant());
+  ccbankq.exec();
+  if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
 
   _metrics->set("CCANVer",               _anVersion->currentText());
   _metrics->set("CCANDelim",             _anDelim->text());

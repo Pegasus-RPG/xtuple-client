@@ -901,6 +901,29 @@ void cashReceipt::setCreditCard()
   if (! _metrics->boolean("CCAccept"))
     return;
 
+  XSqlQuery bankq;
+  bankq.prepare("SELECT ccbank_bankaccnt_id"
+                "  FROM ccbank"
+                " WHERE (ccbank_ccard_type=:cardtype);");
+  bankq.bindValue(":cardtype", _fundsType->itemData(_fundsType->currentIndex()));
+  bankq.exec();
+  if (bankq.first())
+    _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
+  else if (bankq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, bankq.lastError().text(), __FILE__, __LINE__);
+    return;
+  }
+  else
+  {
+    QMessageBox::warning(this, tr("No Bank Account"),
+                         tr("<p>Cannot find the Bank Account to post this "
+                         "transaction against. Either this card type is not "
+                         "accepted or the Credit Card configuration is not "
+                         "complete."));
+    return;
+  }
+
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key)) AS result;");
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":key", omfgThis->_key);

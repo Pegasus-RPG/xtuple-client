@@ -143,7 +143,7 @@ static struct {
   {  -1, TR("Database Error")						},
   {  -2, TR("You don't have permission to process Credit Card transactions.") },
   {  -3, TR("The application is not set up to process credit cards.")	},
-  {  -4, TR("The Bank Account is not set for Credit Card transactions.") },
+  {  -4, TR("The Bank Accounts are not set for all Credit Card types.") },
   {  -5, TR("The encryption key is not defined.")			},
   {  -6, TR("The login for the proxy server is not defined.")		},
   {  -7, TR("The password for the proxy server is not defined.")	},
@@ -206,6 +206,9 @@ static struct {
 	    "because of possible fraud.\n%1")				},
 
   // other misc errors
+  { -94, TR("The Bank Account is not set for Credit Card type %1. Either this "
+            "card type is not accepted or the Credit Card configuration is not "
+            "complete.")                                                },
   { -95, TR("The Credit Card Processor returned an error: %1")		},
   { -96, TR("This transaction failed the CVV check.")			},
   { -97, TR("This transaction failed the Address Verification check.")	},
@@ -446,21 +449,21 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 		  "SELECT :cashrcptid,"
 		  "       ccpay_cust_id, :amount, :curr_id,"
 		  "       ccard_type, ccpay_r_ordernum,"
-		  "       :bankaccnt_id, :notes, current_date, :custdeposit"
-		  "  FROM ccpay, ccard "
-		  "WHERE (ccpay_ccard_id=ccard_id);");
+		  "       ccbank_bankaccnt_id, :notes, current_date, :custdeposit"
+		  "  FROM ccpay, ccard LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type)"
+		  " WHERE (ccpay_ccard_id=ccard_id);");
       }
       else
 	cashq.prepare( "UPDATE cashrcpt "
 		       "SET cashrcpt_cust_id=ccard_cust_id,"
 		       "    cashrcpt_amount=:amount,"
 		       "    cashrcpt_fundstype=ccard_type,"
-		       "    cashrcpt_bankaccnt_id=:bankaccnt_id,"
+		       "    cashrcpt_bankaccnt_id=ccbank_bankaccnt_id,"
 		       "    cashrcpt_distdate=CURRENT_DATE,"
 		       "    cashrcpt_notes=:notes, "
 		       "    cashrcpt_curr_id=:curr_id,"
                        "    cashrcpt_usecustdeposit=:custdeposit "
-		       "FROM ccard "
+		       "FROM ccard LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type) "
 		       "WHERE ((cashrcpt_id=:cashrcptid)"
 		       "  AND  (ccard_id=:ccardid));" );
 
@@ -468,7 +471,6 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
       cashq.bindValue(":ccardid",      pccardid);
       cashq.bindValue(":amount",       pamount);
       cashq.bindValue(":curr_id",      pcurrid);
-      cashq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
       cashq.bindValue(":notes",        "Credit Card Pre-Authorization");
       cashq.bindValue(":custdeposit",  _metrics->boolean("EnableCustomerDeposits"));
       cashq.exec();
@@ -816,15 +818,14 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
 	      "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate, cashrcpt_usecustdeposit) "
 	      "SELECT ccpay_cust_id, :amount, :curr_id,"
 	      "       ccard_type, ccpay_r_ordernum,"
-	      "       :bankaccnt_id, :notes, current_date,"
+	      "       ccbank_bankaccnt_id, :notes, current_date,"
               "       :custdeposit"
-	      "  FROM ccpay, ccard "
+	      "  FROM ccpay, ccard LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type) "
 	      "WHERE ((ccpay_ccard_id=ccard_id)"
 	      "  AND  (ccpay_id=:pccpayid));");
     ccq.bindValue(":pccpayid",     pccpayid);
     ccq.bindValue(":amount",       pamount);
     ccq.bindValue(":curr_id",      pcurrid);
-    ccq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
     ccq.bindValue(":notes",        "Converted Pre-auth");
     ccq.bindValue(":custdeposit",  _metrics->boolean("EnableCustomerDeposits"));
     ccq.exec();
@@ -869,7 +870,17 @@ int CreditCardProcessor::testConfiguration()
     return -3;
   }
 
-  if (_metrics->value("CCDefaultBank").isEmpty())
+  XSqlQuery ccbankq("SELECT ccbank_id"
+                    "  FROM ccbank"
+                    " WHERE (ccbank_bankaccnt_id IS NOT NULL);");
+  if (ccbankq.first())
+    ; // we're ok - we can accept at least one credit card
+  else if (ccbankq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = ccbankq.lastError().text();
+    return -1;
+  }
+  else
   {
     _errorMsg = errorMsg(-4);
     return -4;
@@ -1315,9 +1326,10 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
 	     "               setbytea(:key), 'bf')) AS ccard_year_expired,"
              "       formatccnumber(decrypt(setbytea(ccard_number),"
 	     "               setbytea(:key), 'bf')) AS ccard_number_x,"
-             "       ccard_type "
-             "FROM ccard "
-             "WHERE (ccard_id=:ccardid);");
+             "       ccard_type, ccbank_bankaccnt_id "
+             "  FROM ccard"
+             "     LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type)"
+             " WHERE (ccard_id=:ccardid);");
   q.bindValue(":ccardid", pccid);
   q.bindValue(":key",     omfgThis->_key);
   q.exec();
@@ -1329,6 +1341,12 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
     {
       _errorMsg = errorMsg(-10).arg(pccard_x);
       return -10;
+    }
+
+    if (q.value("ccbank_bankaccnt_id").isNull())
+    {
+      _errorMsg = errorMsg(-94).arg(q.value("ccard_type").toString());
+      return -94;
     }
 
     if (q.value("ccard_year_expired").toInt() < QDate::currentDate().year()

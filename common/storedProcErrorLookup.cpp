@@ -934,10 +934,17 @@ void initErrorLookupHash()
 			      "probably because the Customer's Prepaid Account "
 			      "was not found."),			0, "" },
   { "postCashReceipt", -8, TR("Cannot post this Cash Receipt because the "
-                            "credit card records could not be found."),  0, "" },
+                            "credit card records could not be found."), 0, "" },
+
+  { "postCCCashReceipt",  -1, "", -1, "createARCreditMemo" },
+  { "postCCCashReceipt", -10, "", -1, "postCCcredit" },
+  { "postCCCashReceipt", -11, TR("Cannot post this Cash Receipt because the "
+                                 "record of the credit card transaction either "
+                                 "does not exist or is not consistent."),
+                                                                        0, "" },
 
   { "postCCcredit",  -1, TR("Cannot post this Credit Card refund because the "
-                            "default Bank Account for Credit Card transactions "
+                            "default Bank Account for this Credit Card "
                             "could not be found."),                     0, "" },
   { "postCCcredit",  -2, TR("Cannot post this Credit Card refund because an "
                             "invalid id/reference-type pair was passed."),
