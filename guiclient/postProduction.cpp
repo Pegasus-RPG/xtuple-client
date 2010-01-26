@@ -168,7 +168,7 @@ bool postProduction::okToPost()
   }
   
   XSqlQuery type;
-  type.prepare( "SELECT item_costmethod "
+  type.prepare( "SELECT itemsite_costmethod "
                 "FROM itemsite,wo "
                 "WHERE ((wo_id=:wo_id) "
                 "AND (wo_itemsite_id=itemsite_id)); ");
