@@ -3893,6 +3893,7 @@ void salesOrder::sIssueStock()
 
 void salesOrder::sIssueLineBalance()
 {
+  bool job = false;
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -3918,6 +3919,9 @@ void salesOrder::sIssueLineBalance()
         q.exec();
         while(q.next())
         {
+          if (q.value("itemsite_costmethod").toString() == "J")
+            job = true;
+
           if(!(q.value("isqtyavail").toBool()) && q.value("itemsite_costmethod").toString() != "J")
           {
             QMessageBox::critical(this, tr("Insufficient Inventory"),
@@ -3972,7 +3976,7 @@ void salesOrder::sIssueLineBalance()
 
       q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
       // If this is a lot/serial controlled job item, we need to post production first
-      if (q.value("itemsite_costmethod").toString() == "J")
+      if (job)
       {
         XSqlQuery prod;
         prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");

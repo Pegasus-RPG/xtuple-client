@@ -235,7 +235,7 @@ void issueLineToShipping::sIssue()
   issue.exec("BEGIN;");
 
   // If this is a lot/serial controlled job item, we need to post production first
-  if (q.value("itemsite_controlmethod").toString() == "J")
+  if (q.value("itemsite_costmethod").toString() == "J")
   {
     XSqlQuery prod;
     prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts) AS result;");
