@@ -3930,8 +3930,7 @@ void salesOrder::sIssueLineBalance()
         }
       }
 
-      q.prepare("SELECT (itemsite_costmethod = 'J' AND itemsite_controlmethod IN ('L','S')) AS postprod, "
-                "       itemsite_id, itemsite_costmethod, item_number, warehous_code, "
+      q.prepare("SELECT itemsite_id, itemsite_costmethod, item_number, warehous_code, "
                 "       (COALESCE((SELECT SUM(itemloc_qty) "
                 "                    FROM itemloc "
                 "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, "
@@ -3973,7 +3972,7 @@ void salesOrder::sIssueLineBalance()
 
       q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
       // If this is a lot/serial controlled job item, we need to post production first
-      if (q.value("postprod").toBool())
+      if (q.value("itemsite_costmethod").toString() == "J")
       {
         XSqlQuery prod;
         prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");

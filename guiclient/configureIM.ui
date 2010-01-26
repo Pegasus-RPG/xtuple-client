@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
-    <height>556</height>
+    <width>632</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -333,13 +333,13 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QCheckBox" name="_costJob">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
                <string>Job</string>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -456,8 +456,8 @@ to be bound by its terms.</comment>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>536</width>
-           <height>16</height>
+           <width>20</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>

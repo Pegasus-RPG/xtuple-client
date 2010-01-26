@@ -125,6 +125,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
+  _costStd->setVisible(_metrics->boolean("AllowJobCostMethod"));
   
   adjustSize();
   
@@ -973,17 +974,19 @@ void itemSite::sHandleControlMethod()
   }
   else
   {
-    if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
-      _costStd->setChecked(true);
-    else
+    if (_costAvg->isVisibleTo(this) && !_costStd->isChecked() && !_costJob->isChecked())
       _costAvg->setChecked(true);
+    else if(_costStd->isVisibleTo(this) && !_costAvg->isChecked() && !_costJob->isChecked())
+      _costStd->setChecked(true);
+    else if (_costJob->isVisibleTo(this) && !_costAvg->isChecked() && !_costStd->isChecked())
+      _costJob->setChecked(true);
     _costNone->setEnabled(false);
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
     _costJob->setEnabled(false);
   }
 
-  if(_itemType == 'M' && _controlMethod->currentIndex() != 1 )
+  if(_itemType == 'M' && _controlMethod->currentIndex() > 0 && _costJob->isVisibleTo(this) )
     _costJob->setEnabled(true);
   else
   {

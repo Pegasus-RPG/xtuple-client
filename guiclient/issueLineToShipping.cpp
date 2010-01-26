@@ -188,7 +188,7 @@ void issueLineToShipping::sIssue()
   params.append("qty", _qtyToIssue->toDouble());
 
   QString sql = "<? if exists(\"soitem_id\") ?>"
-                "SELECT  (itemsite_costmethod = 'J' AND itemsite_controlmethod IN ('L','S')) AS postprod,"
+                "SELECT  itemsite_costmethod,"
                 "  (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <"
                 "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship"
                 "  FROM coitem LEFT OUTER JOIN"
@@ -235,7 +235,7 @@ void issueLineToShipping::sIssue()
   issue.exec("BEGIN;");
 
   // If this is a lot/serial controlled job item, we need to post production first
-  if (q.value("postprod").toBool())
+  if (q.value("itemsite_controlmethod").toString() == "J")
   {
     XSqlQuery prod;
     prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts) AS result;");

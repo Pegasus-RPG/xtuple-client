@@ -391,7 +391,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   issue.exec("BEGIN;");
 
   // If this is a lot/serial controlled job item, we need to post production first
-  if (altId == 2)
+  if (altId == 1)
   {
     XSqlQuery prod;
     prod.prepare("SELECT postSoItemProduction(:soitem_id, :ts) AS result;");
@@ -418,9 +418,9 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
 
       // Need to get the inventory history id so we can auto reverse the distribution when issuing
       prod.prepare("SELECT invhist_id "
-                "FROM invhist "
-                "WHERE ((invhist_series = :itemlocseries) "
-                " AND (invhist_transtype = 'RM')); ");
+                   "FROM invhist "
+                   "WHERE ((invhist_series = :itemlocseries) "
+                   " AND (invhist_transtype = 'RM')); ");
       prod.bindValue(":itemlocseries" , itemlocSeries);
       prod.exec();
       if (prod.first())
@@ -656,8 +656,6 @@ void issueToShipping::sFillList()
                 "<? if exists(\"sohead_id\") ?>"
                 "SELECT coitem_id AS lineitem_id, "
                 "       CASE "
-                "         WHEN (itemsite_costmethod = 'J' and itemsite_controlmethod IN ('L','S')) THEN "
-                "           2 "
                 "         WHEN (itemsite_costmethod = 'J') THEN "
                 "           1 "
                 "         ELSE "
