@@ -22,6 +22,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "xdoublevalidator.h"
+#include "itemSourceList.h"
 
 #define cNewQuote  (0x20 | cNew)
 #define cEditQuote (0x20 | cEdit)
@@ -135,6 +136,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
   _itemcharView->hideColumn(CHAR_PRICE);
   _baseUnitPriceLit->hide();
   _baseUnitPrice->hide();
+  _dropShip->hide();
 
   _itemcharView->setModel(_itemchar);
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
@@ -729,6 +731,77 @@ void salesOrderItem::sSave()
 {
   _save->setFocus();
 
+  int itemsrcid = -1;
+  bool _createPO = false;
+  bool _createPR = false;
+  q.prepare("SELECT itemsrc_id, item_id, itemsrc_item_id, itemsite_createsopo, itemsite_createsopr "
+            "FROM itemsrc, item LEFT OUTER JOIN itemsite "
+			"  ON (item_id = itemsite_item_id) "
+	        "WHERE ( (itemsrc_item_id = item_id) "
+			"  AND (item_id=:item_id) ) "
+			"LIMIT 1;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    _createPO = q.value("itemsite_createsopo").toBool();
+	_createPR = q.value("itemsite_createsopr").toBool();
+
+	if(_createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
+	{
+	  XSqlQuery shipto;
+      shipto.prepare("SELECT (COALESCE(COALESCE(cohead_shipto_id, shipto_id), -1) = -1) AS shipto_false "
+	                 "FROM cohead LEFT OUTER JOIN shipto ON (cohead_cust_id = shipto_cust_id) "
+					 "WHERE (cohead_id = :sohead_id) "
+					 "LIMIT 1;");
+      shipto.bindValue(":sohead_id", _soheadid);
+      shipto.exec();
+      if(shipto.first())
+      {
+        if(shipto.value("shipto_false").toBool())
+        {
+  	      QMessageBox::critical(this, tr("Cannot Save Sales Order Item"),
+                                      tr("<p>You must enter a valid Ship-To # before saving this Sales Order Item."));
+		  return;
+		}
+	  }
+	  else if (shipto.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+	  }
+		
+	  XSqlQuery itemsrcdefault;
+      itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
+	    	                  "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) "); 
+      itemsrcdefault.bindValue(":item_id", _item->id());
+      itemsrcdefault.exec();
+      if (itemsrcdefault.first())
+      {
+        itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
+      }
+	  else if (itemsrcdefault.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, itemsrcdefault.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+	  }
+      else
+      {
+        ParameterList itemSourceParams;
+        itemSourceParams.append("item_id", _item->id());
+        itemSourceParams.append("qty", _qtyOrdered->toDouble());
+        itemSourceList newdlg(omfgThis, "", TRUE);
+        newdlg.set(itemSourceParams);
+        itemsrcid = newdlg.exec();
+	  }
+	}
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   _error = true;
   if (!(_qtyOrdered->toDouble() > 0))
   {
@@ -875,8 +948,10 @@ void salesOrderItem::sSave()
     {
       if (_item->itemType() == "M")
         q.bindValue(":soitem_order_type", "W");
-      else if (_item->itemType() == "P")
+      else if ((_item->itemType() == "P") && _createPR)
         q.bindValue(":soitem_order_type", "R");
+	  else if ((_item->itemType() == "P") && _createPO)
+        q.bindValue(":soitem_order_type", "P");
     }
     q.bindValue(":soitem_order_id", _orderId);
     q.bindValue(":soitem_id", _soitemid);
@@ -929,81 +1004,122 @@ void salesOrderItem::sSave()
     //  Check to see if a W/O needs changes
     if (_orderId != -1)
     {
-      if (_scheduledDate->date() != _cScheduledDate)
-      {
-        if(_item->itemType() == "M")
-        {
-          if (QMessageBox::question(this, tr("Reschedule Work Order?"),
-                                    tr("<p>The Scheduled Date for this Line "
-                                       "Item has been changed.  Should the "
-                                       "W/O for this Line Item be Re-"
-                                       "Scheduled to reflect this change?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+      XSqlQuery checkPO;
+	  checkPO.prepare("SELECT * FROM poitem JOIN coitem ON "
+		              "(coitem_order_id = poitem_id) "
+		              "WHERE (coitem_id = :soitem_id);"); 
+	  checkPO.bindValue(":soitem_id", _soitemid);
+	  checkPO.exec();
+	  if(checkPO.first())
+	  {
+	    if(checkPO.value("poitem_status").toString()== "C")
+	    {
+	      QMessageBox::critical(this, tr("Quantity Can Not be Updated"),
+                         tr(" The Purchase Order Item this Sales "
+		                    " Order Item is linked to is closed.  "
+							" The quantity may not be updated. "));
+          return ;
+	    }
+		else
+		{
+		  XSqlQuery updtPO;
+		  updtPO.prepare("UPDATE poitem "
+                       "SET poitem_qty_ordered = :qty, "
+                       "poitem_duedate = :schedDate "
+					   " WHERE poitem_pohead_id = :order_id ");
+          updtPO.bindValue(":order_id", _orderId);
+		  updtPO.bindValue(":qty", _orderQty->toDouble());
+		  updtPO.bindValue(":schedDate", _scheduledDate->date());
+          updtPO.exec();
+		  if (updtPO.lastError().type() != QSqlError::NoError)
           {
-            q.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:schedDate-wo_duedate), :schedDate, TRUE) AS result "
+            systemError(this, updtPO.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+		  }
+		}
+	  }
+	  else if (checkPO.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, checkPO.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+	  else
+	  {
+	    if (_scheduledDate->date() != _cScheduledDate)
+        {
+          if(_item->itemType() == "M")
+          {
+            if (QMessageBox::question(this, tr("Reschedule Work Order?"),
+                                          tr("<p>The Scheduled Date for this Line "
+                                             "Item has been changed.  Should the "
+                                             "W/O for this Line Item be Re-"
+                                             "Scheduled to reflect this change?"),
+                                     QMessageBox::Yes | QMessageBox::Default,
+                                     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            {
+              q.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:schedDate-wo_duedate), :schedDate, TRUE) AS result "
                       "FROM wo "
                       "WHERE (wo_id=:wo_id);");
-            q.bindValue(":wo_id", _orderId);
-            q.bindValue(":schedDate", _scheduledDate->date());
-            q.exec();
-            if (q.first())
-            {
-              int result = q.value("result").toInt();
-              if (result < 0)
+              q.bindValue(":wo_id", _orderId);
+              q.bindValue(":schedDate", _scheduledDate->date());
+              q.exec();
+              if (q.first())
+              {
+                int result = q.value("result").toInt();
+                if (result < 0)
+                {
+                  rollback.exec();
+                  systemError(this, storedProcErrorLookup("changeWoDates", result),
+                            __FILE__, __LINE__);
+                  return;
+                }
+                _cScheduledDate=_scheduledDate->date();
+              }
+              else if (q.lastError().type() != QSqlError::NoError)
               {
                 rollback.exec();
-                systemError(this, storedProcErrorLookup("changeWoDates", result),
-                            __FILE__, __LINE__);
+                systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
-              _cScheduledDate=_scheduledDate->date();
-            }
-            else if (q.lastError().type() != QSqlError::NoError)
-            {
-              rollback.exec();
-              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-              return;
             }
           }
-        }
-        else
-        {
-          if (QMessageBox::question(this, tr("Reschedule P/R?"),
+          else
+          {
+            if (QMessageBox::question(this, tr("Reschedule P/R?"),
                                     tr("<p>The Scheduled Date for this Sales "
                                        "Order Line Item has been changed. "
                                        "Should the associated Purchase Request be changed "
                                        "to reflect this?"),
                                     QMessageBox::Yes | QMessageBox::Default,
                                     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-          {
-            q.prepare("SELECT changePrDate(:pr_id, :schedDate) AS result;");
-            q.bindValue(":pr_id", _orderId);
-            q.bindValue(":schedDate", _scheduledDate->date());
-            q.exec();
-            if (q.first())
             {
-              int result = q.value("result").toInt();
-              if (result < 0)
+              q.prepare("SELECT changePrDate(:pr_id, :schedDate) AS result;");
+              q.bindValue(":pr_id", _orderId);
+              q.bindValue(":schedDate", _scheduledDate->date());
+              q.exec();
+              if (q.first())
+              {
+                int result = q.value("result").toInt();
+                if (result < 0)
+                {
+                  rollback.exec();
+                  systemError(this, storedProcErrorLookup("changePrDate", result),
+                            __FILE__, __LINE__);
+                  return;
+                }
+              }
+              else if (q.lastError().type() != QSqlError::NoError)
               {
                 rollback.exec();
-                systemError(this, storedProcErrorLookup("changePrDate", result),
-                            __FILE__, __LINE__);
+                systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
-            else if (q.lastError().type() != QSqlError::NoError)
-            {
-              rollback.exec();
-              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-              return;
-            }
           }
         }
-      }
 
-      if (_qtyOrdered->toDouble() != _cQtyOrdered)
-      {
+        if (_qtyOrdered->toDouble() != _cQtyOrdered)
+        {
         if(_item->itemType() == "M")
         {
           if (QMessageBox::question(this, tr("Change Work Order Quantity?"),
@@ -1038,9 +1154,9 @@ void salesOrderItem::sSave()
             }
           }
         }
-        else
-        {
-          if (QMessageBox::question(this, tr("Change P/R Quantity?"),
+          else if(_createPR)
+          {
+            if (QMessageBox::question(this, tr("Change P/R Quantity?"),
                                     tr("<p>The quantity ordered for this Sales "
                                        "Order Line Item has been changed. "
                                        "Should the quantity required for the "
@@ -1048,31 +1164,31 @@ void salesOrderItem::sSave()
                                        "to reflect this?"),
                                     QMessageBox::Yes | QMessageBox::Default,
                                     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-          {
-            q.prepare("SELECT changePrQty(:pr_id, :qty) AS result;");
-            q.bindValue(":pr_id", _orderId);
-            q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
-            q.exec();
-            if (q.first())
             {
-              bool result = q.value("result").toBool();
-              if (! result)
+              q.prepare("SELECT changePrQty(:pr_id, :qty) AS result;");
+              q.bindValue(":pr_id", _orderId);
+              q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+              q.exec();
+              if (q.first())
+              {
+                bool result = q.value("result").toBool();
+                if (! result)
+                {
+                  rollback.exec();
+                  systemError(this, tr("changePrQty failed"), __FILE__, __LINE__);
+                  return;
+                }
+              }
+              else if (q.lastError().type() != QSqlError::NoError)
               {
                 rollback.exec();
-                systemError(this, tr("changePrQty failed"), __FILE__, __LINE__);
+                systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
-            }
-            else if (q.lastError().type() != QSqlError::NoError)
-            {
-              rollback.exec();
-              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-              return;
             }
           }
         }
       }
-      
       //Update Work Order Characteristics
       QModelIndex idx1, idx2, idx3;
 
@@ -1291,11 +1407,25 @@ void salesOrderItem::sSave()
       q.bindValue(":parent_id", _soitemid);
       q.exec();
     }
-    else if (_item->itemType() == "P")
+    else if ((_item->itemType() == "P") && _createPR)
     {
       q.prepare("SELECT createPr(:orderNumber, 'S', :soitem_id) AS result;");
       q.bindValue(":orderNumber", _orderNumber->text().toInt());
       q.bindValue(":soitem_id", _soitemid);
+      q.exec();
+    }
+	else if ((_item->itemType() == "P") && _createPO)
+    {
+      if(_overridePoPrice->localValue() == 0.00)
+        q.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship) AS result;");
+      else
+	  {
+	    q.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship, :ovrridepoprc) AS result;");
+		q.bindValue(":ovrridepoprc", _overridePoPrice->localValue());
+	  }   
+	  q.bindValue(":soitem_id", _soitemid);
+      q.bindValue(":itemsrc_id", itemsrcid);
+      q.bindValue(":drop_ship", _dropShip->isChecked());
       q.exec();
     }
 
@@ -1308,8 +1438,10 @@ void salesOrderItem::sSave()
         QString procname;
         if (_item->itemType() == "M")
           procname = "createWo";
-        else if (_item->itemType() == "P")
+        else if ((_item->itemType() == "P") && _createPR)
           procname = "createPr";
+		else if ((_item->itemType() == "P") && _createPO)
+          procname = "createPurchaseToSale";
         else
           procname = "unnamed stored procedure";
         systemError(this, storedProcErrorLookup(procname, _orderId),
@@ -1351,7 +1483,7 @@ void salesOrderItem::sSave()
           return;
         }
       }
-      else if (_item->itemType() == "P")
+      else if ((_item->itemType() == "P") && _createPR)
       {
         //  Update the newly created coitem with the newly pr_id
         q.prepare( "UPDATE coitem "
@@ -1399,8 +1531,8 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, "
-                      "       itemsite_createwo, itemsite_createpr "
+    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, itemsite_createsopo, "
+                      "       itemsite_createwo, itemsite_createsopr "
                       "FROM item, itemsite "
                       "WHERE ( (itemsite_item_id=item_id)"
                       " AND (itemsite_warehous_id=:warehous_id)"
@@ -1425,7 +1557,7 @@ qDebug("found itemsite");
         else if (_item->itemType() == "M")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
         else if (_item->itemType() == "P")
-          _createOrder->setChecked(itemsite.value("itemsite_createpr").toBool());
+          _createOrder->setChecked(itemsite.value("itemsite_createsopr").toBool() || itemsite.value("itemsite_createsopo").toBool() );
         else
         {
           _createOrder->setChecked(FALSE);
@@ -1662,15 +1794,114 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
                "       item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, item_fractional,"
-               "       stdcost(item_id) AS f_unitcost,"
+               "       stdcost(item_id) AS f_unitcost, itemsite_createsopo,"
+			   "       itemsite_dropship,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
+			   "LEFT OUTER JOIN itemsite ON ( itemsite_item_id = item_id ) "
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxzone", _taxzoneid);
     q.exec();
     if (q.first())
     {
+      if(q.value("itemsite_createsopo").toBool())
+	  {
+        _createOrder->setTitle(tr("Create Purchase Order"));
+        _orderLit->setText(tr("PO #:"));
+		_orderLineLit->setText(tr("PO Line #:"));
+        _orderStatusLit->show();
+		_overridePoPrice->show();
+        _overridePoPriceLit->show();
+		if(_metrics->boolean("EnableDropShipments"))
+		  _dropShip->show();
+		if(_mode == cNew)
+		{
+		  _orderLit->hide();
+		  _order->hide();
+		  _orderLineLit->hide();
+		  _orderLine->hide();
+		  _orderStatus->hide();
+	      _orderStatusLit->hide();
+		  _dropShip->setChecked(q.value("itemsite_dropship").toBool());
+	    }
+		else
+		{
+		  XSqlQuery povalues;
+		  povalues.prepare("SELECT pohead_number, poitem_linenumber, poitem_status, "
+		                   "ROUND(poitem_qty_ordered, 2) AS poitem_qty_ordered, "
+						   "poitem_duedate, ROUND(poitem_unitprice, 2) AS "
+						   "poitem_unitprice, pohead_dropship "
+						   "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+						   "            JOIN coitem ON (coitem_order_id = poitem_id) "
+						   "WHERE (coitem_id = :soitem_id);");
+          povalues.bindValue(":soitem_id", _soitemid);
+          povalues.exec();
+          if (povalues.first())
+		  {
+			_order->setText(povalues.value("pohead_number").toString());
+			_orderLine->setText(povalues.value("poitem_linenumber").toString());
+			_orderStatus->setText(povalues.value("poitem_status").toString());
+			_orderQty->setDouble(povalues.value("poitem_qty_ordered").toDouble());
+			_orderDueDate->setDate(povalues.value("poitem_duedate").toDate());
+			_dropShip->setChecked(povalues.value("pohead_dropship").toBool());
+			_overridePoPrice->setLocalValue(povalues.value("poitem_unitprice").toDouble());
+
+			_createOrder->setChecked(true);
+			_createOrder->setEnabled(false);
+		  }
+		  else if (povalues.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, povalues.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+		  }
+		}
+
+	    XSqlQuery itemsrc;
+	    itemsrc.prepare("SELECT itemsrc_id, itemsrc_item_id "
+		                "FROM itemsrc "
+						"WHERE (itemsrc_item_id = :item_id) "
+						"LIMIT 1;");
+        itemsrc.bindValue(":item_id", _item->id());
+        itemsrc.exec();
+        if (itemsrc.first())
+		  ;// do nothing
+		else if (itemsrc.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, itemsrc.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+		}
+        else
+        {
+	      QMessageBox::warning( this, tr("Cannot Create P/O"),
+                              tr("<p> Purchase Orders cannot be automatically "
+                                  "created for this Item as there are no Item "
+                                  "Sources for it.  You must create one or "
+                                  "more Item Sources for this Item before "
+                                  "the application can automatically create "
+								  "Purchase Orders for it." ) );
+		  _createOrder->setChecked(FALSE);
+	      _createOrder->setEnabled(FALSE);
+	    }
+	    if(_metrics->boolean("EnableDropShipments") && (_mode == cEdit))
+	    {
+	      XSqlQuery dropship;
+          dropship.prepare("SELECT pohead_dropship "
+		                   "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+						   "  RIGHT OUTER JOIN coitem ON (poitem_id = coitem_order_id) " 
+                           "WHERE (coitem_id = :soitem_id);");
+		  dropship.bindValue(":soitem_id", _soitemid);
+		  dropship.exec();
+		  if(dropship.first())
+		    _dropShip->setChecked(dropship.value("pohead_dropship").toBool());
+          else if (dropship.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, dropship.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+		  }
+		}
+	  }
+
       if (_mode == cNew)
         sDeterminePrice();
 
@@ -1688,56 +1919,70 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _taxtype->setId(q.value("taxtype_id").toInt());
 
       sCalculateDiscountPrcnt();
-
-      if (_item->itemType() == "M")
-      { qDebug("checking flags at item?");
-        if ( (_mode == cNew) || (_mode == cEdit) )
-          _createOrder->setEnabled((_item->itemType() == "M"));
-
-        _createOrder->setTitle(tr("C&reate Work Order"));
-        _orderQtyLit->setText(tr("W/O Q&ty.:"));
-        _orderDueDateLit->setText(tr("W/O Due Date:"));
-        _orderStatusLit->setText(tr("W/O Status:"));
-        if (_metrics->boolean("MultiWhs"))
-        {
-          _supplyWarehouseLit->show();
-          _supplyWarehouse->show();
-        }
-        _overridePoPrice->hide();
-        _overridePoPriceLit->hide();
-      }
-      else if (_item->itemType() == "P")
+	  if(!(q.value("itemsite_createsopo").toBool()))
       {
-        if ( (_mode == cNew) || (_mode == cEdit) )
-          _createOrder->setEnabled(TRUE);
+        if (_item->itemType() == "M")
+        { qDebug("checking flags at item?");
+          if ( (_mode == cNew) || (_mode == cEdit) )
+            _createOrder->setEnabled((_item->itemType() == "M"));
 
-        _createOrder->setTitle(tr("C&reate Purchase Request"));
-        _orderQtyLit->setText(tr("P/R Q&ty.:"));
-        _orderDueDateLit->setText(tr("P/R Due Date:"));
-        _orderStatusLit->setText(tr("P/R Status:"));
-        _supplyWarehouseLit->hide();
-        _supplyWarehouse->hide();
-        _overridePoPrice->show();
-        _overridePoPriceLit->show();
-      }
-      else
-      {
-        if ( (_mode == cNew) || (_mode == cEdit) )
-          _createOrder->setEnabled(_item->itemType() != "K");
-
-        _createOrder->setTitle(tr("C&reate Order"));
-        _orderQtyLit->setText(tr("Order Q&ty.:"));
-        _orderDueDateLit->setText(tr("Order Due Date:"));
-        _orderStatusLit->setText(tr("Order Status:"));
-        if (_metrics->boolean("MultiWhs"))
-        {
-          _supplyWarehouseLit->show();
-          _supplyWarehouse->show();
+          _createOrder->setTitle(tr("C&reate Work Order"));
+          _orderQtyLit->setText(tr("W/O Q&ty.:"));
+          _orderDueDateLit->setText(tr("W/O Due Date:"));
+          _orderStatusLit->setText(tr("W/O Status:"));
+          if (_metrics->boolean("MultiWhs"))
+          {
+            _supplyWarehouseLit->show();
+            _supplyWarehouse->show();
+          }
+          _overridePoPrice->hide();
+          _overridePoPriceLit->hide();
+          _orderLit->hide();
+          _order->hide();
+          _orderLineLit->hide();
+          _orderLine->hide();
         }
-        _overridePoPrice->hide();
-        _overridePoPriceLit->hide();
-      }
-    }
+        else if (_item->itemType() == "P")
+        {
+          if ( (_mode == cNew) || (_mode == cEdit) )
+            _createOrder->setEnabled(TRUE);
+
+          _createOrder->setTitle(tr("C&reate Purchase Request"));
+          _orderQtyLit->setText(tr("P/R Q&ty.:"));
+          _orderDueDateLit->setText(tr("P/R Due Date:"));
+          _orderStatusLit->setText(tr("P/R Status:"));
+          _supplyWarehouseLit->hide();
+          _supplyWarehouse->hide();
+          _overridePoPrice->show();
+          _overridePoPriceLit->show();
+	      _orderLit->hide();
+          _order->hide();
+          _orderLineLit->hide();
+          _orderLine->hide();
+		}
+        else
+        {
+          if ( (_mode == cNew) || (_mode == cEdit) )
+            _createOrder->setEnabled(_item->itemType() != "K");
+
+          _createOrder->setTitle(tr("C&reate Order"));
+          _orderQtyLit->setText(tr("Order Q&ty.:"));
+          _orderDueDateLit->setText(tr("Order Due Date:"));
+          _orderStatusLit->setText(tr("Order Status:"));
+          if (_metrics->boolean("MultiWhs"))
+          {
+            _supplyWarehouseLit->show();
+            _supplyWarehouse->show();
+          }
+          _overridePoPrice->hide();
+          _overridePoPriceLit->hide();
+          _orderLit->hide();
+          _order->hide();
+          _orderLineLit->hide();
+          _orderLine->hide();
+		}
+	  }
+	}
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -2169,39 +2414,85 @@ void salesOrderItem::sHandleWo(bool pCreate)
       }
       else if (_item->itemType() == "P")
       {
-        if (QMessageBox::question(this, tr("Delete Purchase Request"),
+        q.prepare("SELECT poitem_id "
+                  "FROM poitem JOIN coitem ON (poitem_id = coitem_order_id) "
+                  "WHERE ( (coitem_order_type = 'P') "
+                  "  AND (coitem_id = :coitemid) );");
+	    q.bindValue(":coitemid", _soitemid);
+        q.exec();
+        if(q.first())
+        {
+          if (QMessageBox::question(this, tr("Delete Purchase Order Item"),
                                   tr("<p>You are requesting to delete the "
-                                     "Purchase Request created for this Sales "
-                                     "Order Item. Are you sure you want to do "
-                                     "this?"),
+                                     "Purchase Order Item created for this Sales "
+                                     "Order Item. The associated Purchase Order "
+									 "will also be deleted if no other Purchase "
+									 "Order Item exists for that Purcahse Order. "
+									 "Are you sure you want to do this?"),
                                   QMessageBox::Yes | QMessageBox::Default,
                                   QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
-        {
-          query.prepare("SELECT deletePr(:pr_id) AS result;");
-          query.bindValue(":pr_id", _orderId);
-          query.exec();
-          if (q.first())
           {
-            bool result = q.value("result").toBool();
-            if (! result)
+            query.prepare("SELECT deletepoitem(:coitemid) AS result;");
+            query.bindValue(":coitemid", _soitemid);
+            query.exec();
+            if (query.first())
             {
-              systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
+              bool result = query.value("result").toBool();
+              if (! result)
+              {
+                systemError(this, tr("deletepoitem failed"), __FILE__, __LINE__);
+                return;
+              }
+            }
+            else
+            if (query.lastError().type() != QSqlError::NoError)
+            {
+              systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           }
           else
+          {
+            _createOrder->setChecked(TRUE);
+            return;
+          }
+		}
+		else
+		{
+		  if (QMessageBox::question(this, tr("Delete Purchase Request"),
+                                    tr("<p>You are requesting to delete the "
+                                       "Purchase Request created for this Sales "
+                                       "Order Item. Are you sure you want to do "
+                                       "this?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+          {
+            query.prepare("SELECT deletePr(:pr_id) AS result;");
+            query.bindValue(":pr_id", _orderId);
+            query.exec();
+            if (query.first())
+            {
+              bool result = query.value("result").toBool();
+              if (! result)
+              {
+                systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
+                return;
+              }
+            }
+            else
             if (query.lastError().type() != QSqlError::NoError)
             {
-            systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+              systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
+          }
+          else
+          {
+            _createOrder->setChecked(TRUE);
             return;
           }
         }
-        else
-        {
-          _createOrder->setChecked(TRUE);
-          return;
-        }
-      }
+	  }
     }
 
     _orderId = -1;
@@ -2217,6 +2508,71 @@ void salesOrderItem::sPopulateOrderInfo()
 {
   if (_createOrder->isChecked())
   {
+    XSqlQuery checkpo;
+    checkpo.prepare( "SELECT pohead_id, poitem_id, poitem_status "
+                     "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+			    	 "            JOIN coitem ON (coitem_order_id = poitem_id) "
+				     "WHERE (coitem_id = :soitem_id);" );
+    checkpo.bindValue(":soitem_id", _soitemid);
+    checkpo.exec();
+    if (checkpo.first())
+	{
+      if (((checkpo.value("poitem_status").toString()) == "C") && (_qtyOrdered->toDouble() != _orderQtyCache))
+      {
+		QMessageBox::critical(this, tr("Cannot Update Item"),
+                              tr("The Purchase Order Item this Sales Order Item is linked to is closed.  The quantity may not be updated."));
+		_qtyOrdered->setDouble(_orderQtyCache);
+		return;
+      }
+	  else
+	  {
+		_orderDueDate->setDate(_scheduledDate->date());
+
+        if (_createOrder->isChecked())
+        {
+          XSqlQuery qty;
+          qty.prepare( "SELECT validateOrderQty(itemsite_id, :qty, TRUE) AS qty "
+                       "FROM itemsite "
+                       "WHERE ((itemsite_item_id=:item_id)"
+                       " AND (itemsite_warehous_id=:warehous_id));" );
+          qty.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+          qty.bindValue(":item_id", _item->id());
+          qty.bindValue(":warehous_id", (_item->itemType() == "M") ? _supplyWarehouse->id() : _warehouse->id());
+          qty.exec();
+          if (qty.first())
+            _orderQty->setDouble(qty.value("qty").toDouble());
+
+          else if (qty.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+		  }
+			
+	      XSqlQuery updatepo;
+          updatepo.prepare( "UPDATE poitem "
+		                    "SET poitem_duedate = :poitem_duedate, "
+			  			    "    poitem_qty_ordered = :poitem_qty_ordered "
+						    "WHERE (poitem_id = :poitem_id);" );
+          updatepo.bindValue(":poitem_id", (checkpo.value("poitem_id").toInt()));
+		  updatepo.bindValue(":poitem_duedate", _orderDueDate->date());
+		  updatepo.bindValue(":poitem_qty_ordered", _orderQty->toDouble());
+          updatepo.exec();
+		  if (updatepo.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, updatepo.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+		  }
+
+	      return;
+		}
+	  }
+	}
+	else if (checkpo.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, checkpo.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+	
     _orderDueDate->setDate(_scheduledDate->date());
 
     if (_createOrder->isChecked())
@@ -2479,12 +2835,43 @@ void salesOrderItem::populate()
         _createOrder->setChecked(FALSE);
       }
     }
+    else if (item.value("coitem_order_type").toString() == "P")
+    {
+	  _supplyWarehouseLit->hide();
+      _supplyWarehouse->hide();
+      _overridePoPrice->show();
+      _overridePoPriceLit->show();
+	 
+	  XSqlQuery qry ;
+      qry.prepare("SELECT pohead_number, poitem_linenumber, poitem_status, "
+		          "ROUND(poitem_qty_ordered, 2) AS poitem_qty_ordered, "
+				  "poitem_duedate, ROUND(poitem_unitprice, 2) AS "
+				  "poitem_unitprice, pohead_dropship "
+				  "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+				  "WHERE (poitem_id = :poitem_id);"); 
+      qry.bindValue(":poitem_id", _orderId);
+	  qry.exec();
+	  if(qry.first())
+	  {
+		_order->setText(qry.value("pohead_number").toString());
+		_orderLine->setText(qry.value("poitem_linenumber").toString());
+		_orderStatus->setText(qry.value("poitem_status").toString());
+		_orderQty->setText(qry.value("poitem_qty_ordered").toDouble());
+		_orderDueDate->setDate(qry.value("poitem_duedate").toDate());
+		_dropShip->setChecked(qry.value("pohead_dropship").toBool());
+		_overridePoPrice->setLocalValue(qry.value("poitem_unitprice").toDouble());
+
+		_createOrder->setChecked(TRUE);
+	    _createOrder->setEnabled(FALSE);
+	  }
+	}
     else if (item.value("coitem_order_type").toString() == "R")
     {
       _supplyWarehouseLit->hide();
       _supplyWarehouse->hide();
       _overridePoPrice->show();
       _overridePoPriceLit->show();
+	  
       query.prepare( "SELECT pr_status,"
                      "       pr_qtyreq AS qty,"
                      "       pr_duedate "
@@ -2664,15 +3051,15 @@ void salesOrderItem::sPrev()
                                    QMessageBox::No,
                                    QMessageBox::Cancel | QMessageBox::Escape ) )
     {
-    case QMessageBox::Yes:
-      sSave();
-      if(_modified) // catch an error saving
+      case QMessageBox::Yes:
+        sSave();
+        if(_modified) // catch an error saving
+          return;
+      case QMessageBox::No:
+        break;
+      case QMessageBox::Cancel:
+      default:
         return;
-    case QMessageBox::No:
-      break;
-    case QMessageBox::Cancel:
-    default:
-      return;
     }
   }
 
@@ -2765,17 +3152,17 @@ void salesOrderItem::reject()
                                    QMessageBox::No,
                                    QMessageBox::Cancel | QMessageBox::Escape ) )
     {
-    case QMessageBox::Yes:
-      sSave();
-      if(_modified) // catch an error saving
+      case QMessageBox::Yes:
+        sSave();
+        if(_modified) // catch an error saving
+          return;
+        saved = true;
+        break;
+      case QMessageBox::No:
+        break;
+      case QMessageBox::Cancel:
+      default:
         return;
-      saved = true;
-      break;
-    case QMessageBox::No:
-      break;
-    case QMessageBox::Cancel:
-    default:
-      return;
     }
   }
 
@@ -2805,6 +3192,27 @@ void salesOrderItem::sCancel()
   sSave();
   if(_error) 
     return;
+
+  if ( (_mode == cEdit) || (_mode == cNew) )
+  {
+    XSqlQuery existpo;
+    existpo.prepare("SELECT * FROM poitem JOIN coitem ON (coitem_order_id = poitem_id) "
+                    "WHERE (coitem_id = :soitem_id);");
+	existpo.bindValue(":soitem_id", _soitemid);
+	existpo.exec();
+	if(existpo.first())
+	{
+	  QMessageBox::warning(this, tr("Can not delete PO"),
+                        tr("Purchase Order linked to this Sales Order "
+	                       "Item will not be affected. The Purchase Order "
+						   "should be closed or deleted manually if necessary."));
+	}
+    else if (existpo.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, existpo.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+	}
+  }
 
   q.prepare("UPDATE coitem SET coitem_status='X' WHERE (coitem_id=:coitem_id);");
   q.bindValue(":coitem_id", _soitemid);
@@ -2992,9 +3400,31 @@ void salesOrderItem::sHandleScheduleDate()
        (_scheduledDate->date() == _dateCache)))
     return;
 
+  if (_createOrder->isChecked())
+  {
+    XSqlQuery checkpo;
+    checkpo.prepare( "SELECT pohead_id, poitem_id, poitem_status "
+                     "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+			    	 "            JOIN coitem ON (coitem_order_id = poitem_id) "
+				     "WHERE (coitem_id = :soitem_id);" );
+    checkpo.bindValue(":soitem_id", _soitemid);
+    checkpo.exec();
+    if (checkpo.first())
+	{
+      if ((checkpo.value("poitem_status").toString()) == "C")
+      {
+		QMessageBox::critical(this, tr("Cannot Update Item"),
+                              tr("The Purchase Order Item this Sales Order Item is linked to is closed.  The date may not be updated."));
+		_scheduledDate->setDate(_dateCache);
+		return;
+      }
+	}
+  }
+
   //Check effectivity
   setItemExtraClause();
-  if (_item->isValid()) {
+  if (_item->isValid()) 
+  {
     ParameterList params;
     params.append("item_id" , _item->id());
     params.append("cust_id" , _custid);

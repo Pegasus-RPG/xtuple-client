@@ -93,6 +93,12 @@ public slots:
   virtual void sRecalculatePrice();
   virtual void sOrderDateChanged();
   virtual void sShipDateChanged();
+	virtual void sViewWO();
+	virtual void sMaintainWO();
+	virtual void sViewPO();
+	virtual void sMaintainPO();
+	virtual void sReleasePR();
+	virtual void sViewPR();
 
 protected:
   virtual void keyPressEvent( QKeyEvent * e );

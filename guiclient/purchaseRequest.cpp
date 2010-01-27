@@ -102,6 +102,10 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
     {
       _mode = cView;
 
+	  param = pParams.value("pr_id", &valid);
+      if (valid)
+        prid = param.toInt();
+
       _number->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -113,17 +117,18 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
 
       q.prepare( "SELECT pr_itemsite_id,"
                  "       pr_number,"
-                 "       wo_qtyreq,"
+                 "       pr_qtyreq,"
                  "       pr_duedate,"
                  "       pr_prj_id "
                  "FROM pr "
                  "WHERE (pr_id=:pr_id);" );
       q.bindValue(":pr_id", prid);
+	  q.exec();
       if (q.first())
       {
         _number->setText(q.value("pr_number").toString());
         _item->setItemsiteid(q.value("pr_itemsite_id").toInt());
-        _qty->setDouble(q.value("wo_qtyreq").toDouble());
+        _qty->setDouble(q.value("pr_qtyreq").toDouble());
         _dueDate->setDate(q.value("pr_duedate").toDate());
         _project->setId(q.value("pr_prj_id").toInt());
       }

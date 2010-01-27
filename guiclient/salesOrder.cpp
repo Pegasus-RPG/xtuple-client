@@ -41,6 +41,9 @@
 #include "prospect.h"
 #include "reserveSalesOrderItem.h"
 #include "dspReservations.h"
+#include "purchaseRequest.h"
+#include "purchaseOrder.h"
+#include "workOrder.h"
 
 #define cNewQuote  (0x20 | cNew)
 #define cEditQuote (0x20 | cEdit)
@@ -170,6 +173,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  false, "price_uom");
   _soitem->addColumn(tr("Price"),     _priceColumn, Qt::AlignRight, true, "coitem_price");
   _soitem->addColumn(tr("Extended"),  _priceColumn, Qt::AlignRight, true, "extprice");
+  _soitem->addColumn(tr("Supply Type"), _itemColumn, Qt::AlignCenter, false, "spplytype");
+  _soitem->addColumn(tr("Order Number"),_itemColumn, Qt::AlignCenter, false, "ordrnumbr");
 
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
@@ -1273,6 +1278,94 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 
       didsomething = true;
     }
+	XSqlQuery createOrder;
+    createOrder.prepare( "SELECT coitem_order_type "
+	              "FROM coitem "
+				  "WHERE (coitem_id=:coitem_id);");
+	QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+	for (int i = 0; i < selected.size(); i++)
+	{
+      createOrder.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      createOrder.exec();
+      if (createOrder.first())
+      {
+        if(didsomething)
+          pMenu->insertSeparator();
+	    if(createOrder.value("coitem_order_type").toString() == "P")
+	    {
+          XSqlQuery checkPO;
+          checkPO.prepare( "SELECT pohead_id "
+	                       "FROM pohead JOIN poitem ON (pohead_id=poitem_pohead_id) "
+				           "     RIGHT OUTER JOIN coitem ON (poitem_id=coitem_order_id) "
+				           "WHERE (coitem_id=:coitem_id);" );
+		  checkPO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+		  checkPO.exec();
+          if (checkPO.first())
+          {
+		    menuid = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPO()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseOrders"));
+
+  		    menuid = pMenu->insertItem(tr("Edit Purchase Order..."), this, SLOT(sMaintainPO()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
+		  }
+		  else if (checkPO.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, checkPO.lastError().databaseText(), __FILE__, __LINE__);
+	        return;
+		  }
+	    }
+	    else if(createOrder.value("coitem_order_type").toString() == "R")
+	    {
+          XSqlQuery checkPR;
+          checkPR.prepare( "SELECT pr_id "
+	                       "FROM pr JOIN coitem ON (pr_id=coitem_order_id) "
+             			   "WHERE (coitem_id=:coitem_id);" );
+		  checkPR.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+		  checkPR.exec();
+          if (checkPR.first())
+          {
+		    menuid = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sReleasePR()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
+
+		    menuid = pMenu->insertItem(tr("View Purchase Request..."), this, SLOT(sViewPR()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseRequests"));
+          }
+		  else if (checkPR.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, checkPR.lastError().databaseText(), __FILE__, __LINE__);
+	        return;
+		  }
+	    }
+	    else if(createOrder.value("coitem_order_type").toString() == "W")
+	    {
+          XSqlQuery checkWO;
+          checkWO.prepare( "SELECT wo_id "
+	                       "FROM wo JOIN coitem ON (wo_id=coitem_order_id)"
+				           "WHERE (coitem_id=:coitem_id);" );
+		  checkWO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+		  checkWO.exec();
+          if (checkWO.first())
+          {
+		    menuid = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWO()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("ViewWorkOrders"));
+
+ 		    menuid = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sMaintainWO()), 0);
+            pMenu->setItemEnabled(menuid, _privileges->check("MaintainWorkOrders"));
+		  }
+		  else if (checkWO.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, checkWO.lastError().databaseText(), __FILE__, __LINE__);
+	        return;
+		  }
+	    }
+	  }
+	  else if (createOrder.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, createOrder.lastError().databaseText(), __FILE__, __LINE__);
+	    return;
+	  }
+	  didsomething = true;
+	}
   }
 }
 
@@ -2059,7 +2152,18 @@ void salesOrder::sDelete()
       if (q.first())
       {
         int result = q.value("result").toInt();
-        if (result < 0)
+        if (result == -20)
+          QMessageBox::information(this, tr("Cannot Delete Purchase Order Item"),
+                              tr("<p>Purchase Order Item and its associated "
+		                         "Purchase Order will remain open and must be "
+								 "deleted separately if desired."));
+        else if (result == -10)
+          QMessageBox::critical(this, tr("Cannot Delete Sales Order Item"),
+                              tr("<p>Purchase Order Item associated with this "
+		                         "Sales Order Item is Closed or has Receipts. "
+								 "You may not delete the Sales Order line, "
+								 "but instead must cancel it."));
+		else if (result < 0)
           systemError(this, storedProcErrorLookup("deleteSOItem", result), __FILE__, __LINE__);
       }
       else if (q.lastError().type() != QSqlError::NoError)
@@ -2600,12 +2704,30 @@ void salesOrder::sFillItemList()
                   "                  'error'"
                   "       END AS qtforegroundrole,"
                   "       CASE WHEN coitem_subnumber = 0 THEN 0"
-                  "            ELSE 1 END AS xtindentrole "
+                "            ELSE 1 END AS xtindentrole,"
+				"       CASE WHEN coitem_order_type = 'W' THEN TEXT( 'WO')"
+                "         ELSE CASE WHEN coitem_order_type='P' THEN TEXT('PO' )"
+                "           ELSE CASE WHEN coitem_order_type='R' THEN TEXT('PR')"
+                "             ELSE TEXT (' ')"
+                "           END"
+                "         END"
+                "       END AS spplytype,"
+				"       CASE WHEN coitem_order_type = 'W' THEN (wo_number || '-' || wo_subnumber)"
+                "         ELSE CASE WHEN coitem_order_type='P' THEN (pohead_number || '-' || poitem_linenumber)"
+                "           ELSE CASE WHEN coitem_order_type='R' THEN (pr_number || '-' || pr_subnumber)"
+                "             ELSE TEXT (' ')"
+                "           END"
+                "         END"
+                "       END AS ordrnumbr"
                   "  FROM itemsite, item, whsinfo, uom AS quom, uom AS puom,"
                   "       coitem LEFT OUTER JOIN"
                   "       (shipitem JOIN shiphead ON (shipitem_shiphead_id=shiphead_id"
                   "                               AND shiphead_order_id=:cohead_id"
                   "                               AND shiphead_order_type='SO')) ON (shipitem_orderitem_id=coitem_id)"
+				"       LEFT OUTER JOIN wo ON (coitem_order_id = wo_id)"
+				"       LEFT OUTER JOIN pr ON (coitem_order_id = pr_id)"
+				"       LEFT OUTER JOIN (pohead JOIN poitem ON (pohead_id = poitem_pohead_id))"
+				"         ON (coitem_order_id = poitem_id) "
                   " WHERE ( (coitem_itemsite_id=itemsite_id)"
                   "   AND   (coitem_qty_uom_id=quom.uom_id)"
                   "   AND   (coitem_price_uom_id=puom.uom_id)"
@@ -2625,7 +2747,9 @@ void salesOrder::sFillItemList()
            "         quom.uom_name, puom.uom_name,"
            "         coitem_price, coitem_scheddate,"
            "         coitem_qty_invuomratio, coitem_price_invuomratio,"
-           "         coitem_subnumber, item_type "
+           "         coitem_subnumber, coitem_order_type, item_type,"
+		   "         wo_number, wo_subnumber, pohead_number,"
+		   "         poitem_linenumber, pr_number, pr_subnumber "
            "ORDER BY coitem_linenumber, coitem_subnumber;" ;
 
     q.prepare(sql);
@@ -4494,4 +4618,174 @@ void salesOrder::sShipDateChanged()
   _shipDateCache = _shipDate->date();
   sFillItemList();
   omfgThis->sSalesOrdersUpdated(_soheadid);
+}
+
+void salesOrder::sViewWO()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery wo;
+    wo.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
+    wo.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    wo.exec();
+    if (wo.first())
+	{
+	  ParameterList params;
+      params.append("wo_id",  wo.value("coitem_order_id").toInt());
+   	  params.append("mode", "view");
+
+      workOrder * newdlg = new workOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+	}
+	else if (wo.lastError().type() != QSqlError::NoError)
+	{
+      systemError(this, wo.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+  }
+}
+
+void salesOrder::sMaintainWO()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery wo;
+    wo.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
+    wo.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    wo.exec();
+    if (wo.first())
+	{
+	  ParameterList params;
+      params.append("wo_id",  wo.value("coitem_order_id").toInt());
+   	  params.append("mode", "edit");
+	  
+      workOrder * newdlg = new workOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+	}
+	else if (wo.lastError().type() != QSqlError::NoError)
+	{
+      systemError(this, wo.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+  }
+}
+
+void salesOrder::sViewPO()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery po;
+    po.prepare("SELECT poitem_pohead_id "
+	           "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
+			   "WHERE (coitem_id=:soitem_id);");
+    po.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    po.exec();
+    if (po.first())
+	{
+	  ParameterList params;
+      params.append("pohead_id", po.value("poitem_pohead_id").toInt());
+	  params.append("mode", "view");
+
+      purchaseOrder * newdlg = new purchaseOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+	}
+	else if (po.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, po.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}  
+  }
+}
+
+void salesOrder::sMaintainPO()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery po;
+    po.prepare("SELECT poitem_pohead_id "
+	           "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
+			   "WHERE (coitem_id=:soitem_id);");
+    po.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    po.exec();
+    if (po.first())
+	{
+	  ParameterList params;
+      params.append("pohead_id", po.value("poitem_pohead_id").toInt());
+	  params.append("mode", "edit");
+	  
+      purchaseOrder * newdlg = new purchaseOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+	}
+	else if (po.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, po.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}  
+  }
+}
+
+void salesOrder::sReleasePR()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery pr;
+    pr.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
+    pr.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    pr.exec();
+    if (pr.first())
+	{
+	  ParameterList params;
+      params.append("mode", "releasePr");
+      params.append("pr_id", pr.value("coitem_order_id").toInt());
+	  purchaseOrder *newdlg = new purchaseOrder();
+      if(newdlg->set(params) == NoError)
+        omfgThis->handleNewWindow(newdlg);
+      else
+        delete newdlg;
+	}
+	else if (pr.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, pr.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}   
+  }
+}
+
+void salesOrder::sViewPR()
+{
+  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery pr;
+    pr.prepare("SELECT pr_itemsite_id, pr_qtyreq, pr_duedate, pr_order_id, coitem_order_id "
+	           "FROM pr JOIN coitem ON (pr_id = coitem_order_id) "
+			   "WHERE (coitem_id=:soitem_id);");
+    pr.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    pr.exec();
+    if (pr.first())
+	{
+	  ParameterList params;
+	  params.append("mode", "view");
+      params.append("pr_id", pr.value("coitem_order_id").toInt());
+	  purchaseRequest *newdlg = new purchaseRequest();
+      if(newdlg->set(params) == NoError)
+        omfgThis->handleNewWindow(newdlg);
+      else
+        delete newdlg;
+	}
+	else if (pr.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, pr.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+  }
 }
