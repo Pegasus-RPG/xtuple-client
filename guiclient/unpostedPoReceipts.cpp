@@ -217,7 +217,11 @@ void unpostedPoReceipts::sPost()
   }
   
   XSqlQuery postLine;
-  postLine.prepare("SELECT postReceipt(:id, NULL::integer) AS result;");
+  postLine.prepare("SELECT postReceipt(:id, NULL::integer) AS result, "
+                   "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo "
+                   "FROM recv "
+                   " JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
+                   "WHERE (recv_id=:id);");
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -235,18 +239,40 @@ void unpostedPoReceipts::sPost()
         int result = postLine.value("result").toInt();
         if (result < 0)
         {
-          rollback.exec();
           systemError(this, storedProcErrorLookup("postReceipt", result),
               __FILE__, __LINE__);
+          rollback.exec();
           continue;
         }
 
         if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
         {
-          QMessageBox::information( this, tr("Unposted Receipts"), tr("Post Canceled") );
           rollback.exec();
+          QMessageBox::information( this, tr("Unposted Receipts"), tr("Post Canceled") );
           return;
         }
+
+        // Job item for Return Service; issue this to work order
+        if (postLine.value("issuewo").toBool())
+        {
+          XSqlQuery issuewo;
+          issuewo.prepare("SELECT issueWoRtnReceipt(coitem_order_id, invhist_id) AS result "
+                          "FROM invhist, recv "
+                          " JOIN raitem ON (raitem_id=recv_orderitem_id) "
+                          " JOIN coitem ON (coitem_id=raitem_new_coitem_id) "
+                          "WHERE ((invhist_series=:itemlocseries) "
+                          " AND (recv_id=:id));");
+          issuewo.bindValue(":itemlocseries", postLine.value("result").toInt());
+          issuewo.bindValue(":id", id);
+          issuewo.exec();
+          if (issuewo.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, issuewo.lastError().databaseText(), __FILE__, __LINE__);
+            rollback.exec();
+            return;
+          }
+        }
+
         q.exec("COMMIT;");
          
       }

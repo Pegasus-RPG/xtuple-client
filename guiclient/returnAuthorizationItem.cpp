@@ -58,7 +58,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_saleDiscountFromSale, SIGNAL(lostFocus()),                    this, SLOT(sCalculateSaleFromDiscount()));
   connect(_extendedPrice,        SIGNAL(valueChanged()),                 this, SLOT(sCalculateTax()));
   connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
-  connect(_item,                 SIGNAL(privateIdChanged(int)),          this, SLOT(sPopulateItemsiteInfo()));
+  connect(_item,                 SIGNAL(warehouseIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
   connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
   connect(_listPrices,           SIGNAL(clicked()),                      this, SLOT(sListPrices()));
   connect(_saleListPrices,       SIGNAL(clicked()),                      this, SLOT(sSaleListPrices()));
@@ -480,7 +480,24 @@ bool returnAuthorizationItem::sSave()
 //  Check to see if a S/O should be re-scheduled
   if (_orderId != -1)
   {
-    if (_scheduledDate->date() != _cScheduledDate)
+    if (_qtyAuth->toDouble() == 0)
+    {
+      q.prepare("SELECT deletewo(:woid, true, true) AS result;");
+      q.bindValue(":woid", _orderId);
+      q.exec();
+      if (q.value("result").toInt() < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteWo", q.value("result").toInt()),
+                    __FILE__, __LINE__);
+        reject();
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        reject();
+      }
+    }
+    else if (_scheduledDate->date() != _cScheduledDate)
     {
       if (QMessageBox::question(this, tr("Reschedule W/O?"),
                 tr("<p>The Scheduled Date for this Line "
@@ -503,6 +520,7 @@ bool returnAuthorizationItem::sSave()
             __FILE__, __LINE__);
             reject();
           }
+          _cScheduledDate = _scheduledDate->date();
         }
         else if (q.lastError().type() != QSqlError::NoError)
         {
@@ -511,7 +529,9 @@ bool returnAuthorizationItem::sSave()
         }
       }
     }
-    if (_qtyAuth->toDouble() != _cQtyOrdered)
+
+    if (_qtyAuth->toDouble() != _cQtyOrdered &&
+        _qtyAuth->toDouble() > 0)
     {
       if (_item->itemType() == "M")
       {
@@ -566,7 +586,8 @@ bool returnAuthorizationItem::sSave()
       omfgThis->sSalesOrdersUpdated(q.value("rahead_new_cohead_id").toInt());
       //  If requested, create a new W/O or P/R for this coitem
       if ( ( (_mode == cNew) || (_mode == cEdit) ) &&
-         (_createOrder->isChecked())               &&
+         (_createOrder->isChecked()) &&
+         (_qtyAuth->toDouble() > 0) &&
          (_orderId == -1) )
       {
         QString chartype;
@@ -684,10 +705,12 @@ void returnAuthorizationItem::sPopulateItemInfo()
     return;
   } 
 
-  if (_item->itemType() == "M")
+  if (_item->itemType() == "M" && _costmethod != "J")
     _createOrder->setEnabled(TRUE);
   else
     _createOrder->setEnabled(FALSE);
+  if (_costmethod == "J")
+    _createOrder->setChecked(TRUE);
 
   _warehouse->findItemsites(_item->id());
   _shipWhs->findItemsites(_item->id());
@@ -717,14 +740,24 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
       _costmethod = itemsite.value("itemsite_costmethod").toString();
 
+      if (_costmethod == "J")
+      {
+        _createOrder->setChecked(TRUE);
+        _createOrder->setEnabled(FALSE);
+      }
+
       if (cNew == _mode)
       {
-        if (_costmethod == "J")
+        if ( _disposition->currentIndex() == 3 && _costmethod != "J")
         {
-          _createOrder->setChecked(TRUE);
-          _createOrder->setEnabled(FALSE);
+          QMessageBox::warning( this, tr("Cannot use Service Disposition"),
+                                tr("<p>Only Items Sites using the Job cost method may have a Disposition of Service.") );
+          _item->setId(-1);
+          _item->setFocus();
+          return;
         }
-        else if (_item->itemType() == "M")
+
+        if (_item->itemType() == "M" && _costmethod != "J")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
         else
         {
@@ -914,7 +947,7 @@ void returnAuthorizationItem::populate()
     
     if (raitem.value("qtyrcvd").toDouble() > 0 || 
         raitem.value("qtyshipd").toDouble() > 0 ||
-		raitem.value("qtytorcv").toDouble() > 0 ||
+        raitem.value("qtytorcv").toDouble() > 0 ||
         _qtycredited > 0)
       _disposition->setEnabled(FALSE); 
 
@@ -941,8 +974,14 @@ void returnAuthorizationItem::populate()
           _orderDueDate->setDate(query.value("wo_duedate").toDate());
           _orderStatus->setText(query.value("wo_status").toString());
 
-          if ((query.value("wo_status").toString() == "R") || (query.value("wo_status").toString() == "C"))
+          if ((query.value("wo_status").toString() == "R") ||
+              (query.value("wo_status").toString() == "C") ||
+              (query.value("wo_status").toString() == "I"))
+          {
             _createOrder->setEnabled(FALSE);
+            if (_costmethod == "J")
+              _qtyAuth->setEnabled(false);
+          }
         }
         else
         {
@@ -1342,25 +1381,39 @@ void returnAuthorizationItem::updatePriceInfo()
 void returnAuthorizationItem::sDispositionChanged()
 {
   if ( (_disposition->currentIndex() == 3) && // service
-          (_item->id() != -1) &&
-          (_costmethod != "J") )
+       (_item->id() != -1) &&
+       (_costmethod != "J") )
   {
     QMessageBox::warning( this, tr("Cannot use Service Disposition"),
-      tr("<p>Only Items Sites using the Job cost method may have a disposition of Service.") );
-	_disposition->setFocus();
-	_disposition->setCurrentIndex(_dispositionCache);
-	return;
+                          tr("<p>Only Items Sites using the Job cost method may have a Disposition of Service.") );
+    _disposition->setFocus();
+    _disposition->setCurrentIndex(_dispositionCache);
+    return;
   }
-
-  if ( (_disposition->currentIndex() < 2) && // credit or return
-	  (_orderId != -1) )
+  else if (_disposition->currentIndex() == 3)
+  {
+    _shipWhs->setId(_warehouse->id());
+    _shipWhs->setEnabled(false);
+  }
+  else if ( (_disposition->currentIndex() < 2) && // credit or return
+       (_orderId != -1) )
   {
     QMessageBox::warning( this, tr("Cannot change Disposition"),
-      tr("<p>A work order is associated with this Return. "
-	     "First delete the work order, then change this disposition.") );
-	_disposition->setFocus();
-	_disposition->setCurrentIndex(_dispositionCache);
-	return;
+                          tr("<p>A work order is associated with this Return. "
+                             "First delete the work order, then change this disposition.") );
+    _disposition->setFocus();
+    _disposition->setCurrentIndex(_dispositionCache);
+    return;
+  }
+  else if (_disposition->currentIndex() < 2)
+  {
+    _shipWhs->setId(_warehouse->id());
+    _shipWhs->setVisible(false);
+  }
+  else
+  {
+    _shipWhs->setVisible(true);
+    _shipWhs->setEnabled(true);
   }
 
   if (_mode == cNew)

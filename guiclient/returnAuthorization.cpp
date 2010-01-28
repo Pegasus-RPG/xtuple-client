@@ -1482,10 +1482,7 @@ void returnAuthorization::sAuthorizeLine()
   QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
-                  "FROM coitem "
-          "WHERE ((coitem_id=raitem_orig_coitem_id) "
-          "AND (raitem_id=:raitem_id));" );
+    QString sql ( "SELECT authReturnItem(:raitem_id) AS result;" );
     q.prepare(sql);
     q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
     q.exec();
@@ -1494,7 +1491,7 @@ void returnAuthorization::sAuthorizeLine()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-	sRecalcFreight();
+    sRecalcFreight();
   }
 
   if (_newso->isValid())
@@ -1508,11 +1505,7 @@ void returnAuthorization::sClearAuthorization()
   QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-        QString sql ( "UPDATE raitem SET raitem_qtyauthorized=0 "
-                      "FROM coitem "
-                      "WHERE ((coitem_id=raitem_orig_coitem_id) "
-                      "AND (raitem_id=:raitem_id));" );
-        q.prepare(sql);
+        q.prepare ( "SELECT clearReturnItem(:raitem_id) AS result;" );
         q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
         q.exec();
         if (q.lastError().type() != QSqlError::NoError)
@@ -1531,13 +1524,9 @@ void returnAuthorization::sClearAuthorization()
 
 void returnAuthorization::sAuthorizeAll()
 {
-  QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
-                "FROM coitem "
-                "WHERE ((coitem_id=raitem_orig_coitem_id) "
-                "AND (raitem_status = 'O') "
-                "AND (raitem_qtyauthorized < coitem_qtyshipped) "
-                "AND (coitem_qtyshipped >= raitem_qtyreceived) "
-                "AND (raitem_rahead_id=:raitem_rahead_id));" );
+  QString sql ( "SELECT authReturnItem(raitem_id) AS result "
+                "FROM raitem "
+                "WHERE (raitem_rahead_id=:raitem_rahead_id);" );
   q.prepare(sql);
   q.bindValue(":raitem_rahead_id",  _raheadid);
   q.exec();
