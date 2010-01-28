@@ -65,7 +65,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
     q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
                "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
                "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-               "       invhist_ordtype, invhist_transtype, invhist_docnumber "
+               "       invhist_ordtype, invhist_transtype, invhist_ordnumber "
                "FROM itemlocdist, itemsite, item, invhist "
                "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -99,7 +99,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         "AND (lsdetail_ls_id=ls_id) "
                         "AND (lsdetail_qtytoassign > 0) )");
       preassign.bindValue(":transtype", q.value("invhist_transtype").toString());
-      preassign.bindValue(":docnumber", q.value("invhist_docnumber").toString());
+      preassign.bindValue(":docnumber", q.value("invhist_ordnumber").toString());
       preassign.exec();
       if (preassign.first())
       {
