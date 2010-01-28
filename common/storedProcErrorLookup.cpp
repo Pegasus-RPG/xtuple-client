@@ -709,9 +709,13 @@ void initErrorLookupHash()
 			       "instead of trying to Delete it."),
 								 0, "" },
   { "deleteWo",		-2, TR("The Work Order cannot be deleted for Job Item Types. "
-			       "Please maintain the associated Sales Order "
+             "Please close the associated Sales Order "
 			       "instead of trying to Delete it."),
 								 0, "" },
+  { "deleteWo",		-3, TR("The Work Order cannot be deleted in the current status. "
+             "Please close the associated Sales Order "
+             "instead of trying to Delete it."),
+                 0, "" },
 
   { "disablePackage", -1, TR("This version of the PostgreSQL database server "
                              "does not support package enabling or disabling. "
