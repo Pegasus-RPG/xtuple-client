@@ -271,7 +271,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory | Physical Inventory | Reports | Count Tags
     { "menu",                           tr("Count &Tags"),       (char*)physicalReportsTagsMenu,   physicalReportsMenu,     "ViewCountTags",  NULL, NULL, true, NULL },
     { "im.dspCountTagsByItem",          tr("by &Item..."),       SLOT(sDspCountTagsByItem()),      physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
-    { "im.dspCountTagsByWarehouse",     tr("by &Site..."),       SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
+    { "im.dspCountTagsByWarehouse",     tr("by Sit&e..."),       SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
     { "im.dspCountTagsByClassCode",     tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
 
     { "separator",                      NULL,                             NULL,                         mainMenu, "true", NULL, NULL, true, NULL },

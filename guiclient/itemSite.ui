@@ -328,7 +328,7 @@ to be bound by its terms.</comment>
        </property>
        <widget class="QWidget" name="_inventoryTab">
         <attribute name="title">
-         <string>Inventory</string>
+         <string>&amp;Inventory</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_23">
          <item row="0" column="0">
@@ -698,6 +698,9 @@ to be bound by its terms.</comment>
                  <layout class="QGridLayout" name="gridLayout_14">
                   <item row="0" column="0">
                    <widget class="LotserialseqCluster" name="_sequence">
+                    <property name="focusPolicy">
+                     <enum>Qt::StrongFocus</enum>
+                    </property>
                     <property name="label">
                      <string>Sequence #:</string>
                     </property>
@@ -729,7 +732,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_restrictedLocations">
         <attribute name="title">
-         <string>Location</string>
+         <string>&amp;Location</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_16">
          <item row="0" column="0">
@@ -936,7 +939,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_planningTab">
         <attribute name="title">
-         <string>Planning</string>
+         <string>&amp;Planning</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_20">
          <item row="0" column="0">
@@ -1422,7 +1425,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="notesTab">
         <attribute name="title">
-         <string>Notes</string>
+         <string>&amp;Notes</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_18">
          <item row="0" column="0">
@@ -1436,7 +1439,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="commentsTab">
         <attribute name="title">
-         <string>Comments</string>
+         <string>Co&amp;mments</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="0" column="0">
@@ -1453,7 +1456,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_expirationTab">
         <attribute name="title">
-         <string>Expiration</string>
+         <string>E&amp;xpiration</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_15">
          <item row="0" column="0">
@@ -1564,10 +1567,32 @@ to be bound by its terms.</comment>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_active</tabstop>
+  <tabstop>_woSupply</tabstop>
+  <tabstop>_createWo</tabstop>
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
+  <tabstop>_poSupply</tabstop>
+  <tabstop>_createSoPr</tabstop>
+  <tabstop>_createPo</tabstop>
+  <tabstop>_dropShip</tabstop>
+  <tabstop>_createPr</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_controlMethod</tabstop>
   <tabstop>_plannerCode</tabstop>
   <tabstop>_costcat</tabstop>
+  <tabstop>_costNone</tabstop>
+  <tabstop>_costAvg</tabstop>
+  <tabstop>_costStd</tabstop>
+  <tabstop>_costJob</tabstop>
+  <tabstop>_stocked</tabstop>
+  <tabstop>_autoUpdateABCClass</tabstop>
+  <tabstop>_abcClass</tabstop>
+  <tabstop>_cycleCountFreq</tabstop>
+  <tabstop>_eventFence</tabstop>
+  <tabstop>_woCostGroup</tabstop>
+  <tabstop>_todate</tabstop>
+  <tabstop>_proportional</tabstop>
+  <tabstop>_sequence</tabstop>
   <tabstop>_locationControl</tabstop>
   <tabstop>_useDefaultLocation</tabstop>
   <tabstop>_location</tabstop>
@@ -1576,10 +1601,8 @@ to be bound by its terms.</comment>
   <tabstop>_miscLocationName</tabstop>
   <tabstop>_locationComments</tabstop>
   <tabstop>_disallowBlankWIP</tabstop>
-  <tabstop>_abcClass</tabstop>
-  <tabstop>_cycleCountFreq</tabstop>
-  <tabstop>_eventFence</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_restricted</tabstop>
+  <tabstop>_toggleRestricted</tabstop>
   <tabstop>_useParameters</tabstop>
   <tabstop>_reorderLevel</tabstop>
   <tabstop>_orderUpToQty</tabstop>
@@ -1588,13 +1611,15 @@ to be bound by its terms.</comment>
   <tabstop>_orderMultiple</tabstop>
   <tabstop>_useParametersOnManual</tabstop>
   <tabstop>_planningType</tabstop>
+  <tabstop>_safetyStock</tabstop>
   <tabstop>_orderGroup</tabstop>
-  <tabstop>_mpsTimeFence</tabstop>
   <tabstop>_leadTime</tabstop>
+  <tabstop>_mpsTimeFence</tabstop>
+  <tabstop>_createPlannedTransfers</tabstop>
+  <tabstop>_suppliedFromSite</tabstop>
+  <tabstop>_orderGroupFirst</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_restricted</tabstop>
-  <tabstop>_toggleRestricted</tabstop>
   <tabstop>_perishable</tabstop>
   <tabstop>_purchWarranty</tabstop>
   <tabstop>_autoRegister</tabstop>

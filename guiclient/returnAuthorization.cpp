@@ -1022,7 +1022,9 @@ void returnAuthorization::sFillList()
              "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) - "
              "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio),2) AS raitem_netdue,"
              "       och.cohead_number::text || '-' || oc.coitem_linenumber::text AS oldcohead_number, "
+             "       COALESCE(och.cohead_id,-1) AS oldcohead_number_xtidrole, "
              "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text AS newcohead_number, "
+             "       COALESCE(nch.cohead_id,-1) AS newcohead_number_xtidrole, "
              "       raitem_scheddate, "
              "       'qty' AS oldcoitem_qtyshipped_xtnumericrole, "
              "       'qty' AS raitem_qtyauthorized_xtnumericrole, "
@@ -1780,14 +1782,14 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
 {
   int menuItem;
   menuItem = pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
-  if (selected->text(6) == "O")
+  if (((XTreeWidgetItem *)selected)->rawValue("raitem_status").toString() == "O")
     menuItem = pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
-  if (selected->text(6) == "C")
+  if (((XTreeWidgetItem *)selected)->rawValue("raitem_status").toString() == "C")
     menuItem = pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
   menuItem = pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
   pMenu->insertSeparator();
 
-  if (selected->text(17).length() != 0)
+  if (((XTreeWidgetItem *)selected)->id("oldcohead_number") > -1)
   {
     pMenu->insertItem(tr("View Original Order..."), this, SLOT(sViewOrigOrder()), 0);
     if(!_privileges->check("ViewSalesOrders"))
@@ -1796,7 +1798,7 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
   
     pMenu->insertSeparator();
 
-  if (selected->text(18).length() != 0)
+  if (((XTreeWidgetItem *)selected)->id("newcohead_number") > -1)
   {
     menuItem = pMenu->insertItem(tr("Edit New Order..."), this, SLOT(sEditNewOrder()), 0);
     if(!_privileges->check("MaintainSalesOrders"))

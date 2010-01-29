@@ -1020,7 +1020,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>View</string>
+                    <string>&amp;View</string>
                    </property>
                   </widget>
                  </item>
@@ -1063,7 +1063,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Authorize Line</string>
+                    <string>Authorize &amp;Line</string>
                    </property>
                   </widget>
                  </item>
@@ -1076,7 +1076,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Clear Authorization</string>
+                    <string>Clear Authori&amp;zation</string>
                    </property>
                   </widget>
                  </item>
@@ -1109,7 +1109,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Enter Receipt...</string>
+                    <string>Enter &amp;Receipt...</string>
                    </property>
                   </widget>
                  </item>
@@ -1122,7 +1122,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Receive All</string>
+                    <string>Rece&amp;ive All</string>
                    </property>
                   </widget>
                  </item>
@@ -1132,7 +1132,7 @@ to be bound by its terms.</comment>
                     <enum>Qt::ClickFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Post Receipts</string>
+                    <string>&amp;Post Receipts</string>
                    </property>
                   </widget>
                  </item>
@@ -1163,7 +1163,7 @@ to be bound by its terms.</comment>
                   <enum>Qt::ClickFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Refund</string>
+                  <string>Re&amp;fund</string>
                  </property>
                 </widget>
                </item>
@@ -1409,7 +1409,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_authCommentsPage">
         <attribute name="title">
-         <string>Notes</string>
+         <string>N&amp;otes</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
@@ -1419,7 +1419,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_commentsPage">
         <attribute name="title">
-         <string>Comments</string>
+         <string>Co&amp;mments</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">

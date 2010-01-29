@@ -256,12 +256,17 @@ void enterPoReceipt::sPost()
     }
 
     q.exec("BEGIN;");	// because of possible insertgltransaction failures
-    q.prepare("SELECT postReceipt(:recv_id, 0) AS result;");
-    q.bindValue(":recv_id", qi.value("recv_id").toInt());
-    q.exec();
-    if (q.first())
+    XSqlQuery postLine;
+    postLine.prepare("SELECT postReceipt(recv_id, 0) AS result, "
+              "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo "
+              "FROM recv "
+              " JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
+              "WHERE (recv_id=:recv_id);");
+    postLine.bindValue(":recv_id", qi.value("recv_id").toInt());
+    postLine.exec();
+    if (postLine.first())
     {
-      int result = q.value("result").toInt();
+      int result = postLine.value("result").toInt();
       if (result < 0 && result != -11) // ignore -11 as it just means there was no inventory
       {
         rollback.exec();
@@ -276,15 +281,36 @@ void enterPoReceipt::sPost()
         rollback.exec();
         return;
       }
+
+      // Job item for Return Service; issue this to work order
+      if (postLine.value("issuewo").toBool())
+      {
+        XSqlQuery issuewo;
+        issuewo.prepare("SELECT issueWoRtnReceipt(coitem_order_id, invhist_id) AS result "
+                        "FROM invhist, recv "
+                        " JOIN raitem ON (raitem_id=recv_orderitem_id) "
+                        " JOIN coitem ON (coitem_id=raitem_new_coitem_id) "
+                        "WHERE ((invhist_series=:itemlocseries) "
+                        " AND (recv_id=:id));");
+        issuewo.bindValue(":itemlocseries", postLine.value("result").toInt());
+        issuewo.bindValue(":id",  qi.value("recv_id").toInt());
+        issuewo.exec();
+        if (issuewo.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, issuewo.lastError().databaseText(), __FILE__, __LINE__);
+          rollback.exec();
+          return;
+        }
+      }
+      q.exec("COMMIT;");
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (postLine.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    q.exec("COMMIT;");
-  } 
+  }
 
   // TODO: update this to sReceiptsUpdated?
   omfgThis->sPurchaseOrderReceiptsUpdated();
