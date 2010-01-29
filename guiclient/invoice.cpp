@@ -561,14 +561,13 @@ bool invoice::save()
   q.bindValue(":invchead_notes",	_notes->toPlainText());
   q.bindValue(":invchead_prj_id",	_project->id());
   q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
-  q.bindValue(":invchead_recurring", QVariant(_recurring->isChecked()));
-  if(_recurring->isChecked()) // only set the following if it's recurring otherwise they end upp null
+  q.bindValue(":invchead_recurring",    QVariant(_recurring->isRecurring()));
+  if(_recurring->isRecurring()) // if ! recurring then let the following be NULL
   {
-    QString rtype[] = {"D", "W", "M", "Y"};
-    q.bindValue(":invchead_recurring_interval", _recurringInterval->value());
-    q.bindValue(":invchead_recurring_type", rtype[_recurringType->currentIndex()]);
-    if(_recurringUntil->isValid())
-      q.bindValue(":invchead_recurring_until", _recurringUntil->date());
+    q.bindValue(":invchead_recurring_interval", _recurring->frequency());
+    q.bindValue(":invchead_recurring_type",     _recurring->periodCode());
+    if (_recurring->endDate().isValid())
+      q.bindValue(":invchead_recurring_until",  _recurring->endDate());
   }
 
   if (_orderNumber->text().length())
@@ -687,21 +686,11 @@ void invoice::populate()
     _freightCache=q.value("invchead_freight").toDouble();
     _freight->setLocalValue(q.value("invchead_freight").toDouble());
 
-    if(q.value("invchead_recurring").toBool())
-    {
-      _recurring->setChecked(true);
-      _recurringInterval->setValue(q.value("invchead_recurring_interval").toInt());
-      QString rtype = q.value("invchead_recurring_type").toString();
-      if("Y" == rtype)
-        _recurringType->setCurrentIndex(3);
-      else if("M" == rtype)
-        _recurringType->setCurrentIndex(2);
-      else if("W" == rtype)
-        _recurringType->setCurrentIndex(1);
-      else if("D" == rtype)
-        _recurringType->setCurrentIndex(0);
-      _recurringUntil->setDate(q.value("invchead_recurring_until").toDate());
-    }
+    _recurring->set(q.value("invchead_recurring").toBool(),
+                    q.value("invchead_recurring_interval").toInt(),
+                    q.value("invchead_recurring_type").toString(),
+                    QDate(),
+                    q.value("invchead_recurring_until").toDate());
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);

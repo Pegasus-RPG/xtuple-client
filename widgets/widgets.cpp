@@ -53,6 +53,7 @@
 #include "plugins/projectlineeditplugin.h"
 #include "plugins/quoteclusterplugin.h"
 #include "plugins/raclusterplugin.h"
+#include "plugins/recurrencewidgetplugin.h"
 #include "plugins/revisionclusterplugin.h"
 #include "plugins/screenplugin.h"
 #include "plugins/shiftclusterplugin.h"
@@ -131,6 +132,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ProjectLineEditPlugin(this));
   m_plugins.append(new QuoteClusterPlugin(this));
   m_plugins.append(new RaClusterPlugin(this));
+  m_plugins.append(new RecurrenceWidgetPlugin(this));
   m_plugins.append(new RevisionClusterPlugin(this));
   m_plugins.append(new ScreenPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));

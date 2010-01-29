@@ -75,6 +75,7 @@ HEADERS += \
            plugins/projectlineeditplugin.h \
            plugins/quoteclusterplugin.h\
            plugins/raclusterplugin.h\
+           plugins/recurrencewidgetplugin.h \
            plugins/revisionclusterplugin.h\
            plugins/shiftclusterplugin.h \
            plugins/shipmentclusterplugin.h \
@@ -146,6 +147,7 @@ SOURCES    += widgets.cpp \
               lotserialseqcluster.cpp \
               shipmentCluster.cpp \
               racluster.cpp \
+              recurrencewidget.cpp \
               revisionCluster.cpp \
 	      xdatawidgetmapper.cpp \
               xtextedit.cpp \
@@ -205,6 +207,7 @@ HEADERS    += widgets.h \
               lotserialseqcluster.h \
               shipmentcluster.h \
               racluster.h \
+              recurrencewidget.h \
               revisioncluster.h \
               xdatawidgetmapper.h \
               xtextedit.h \
@@ -228,15 +231,16 @@ HEADERS    += widgets.h \
               docAttach.h
 
 FORMS += accountSearch.ui \
-         customerselector.ui \
-         documents.ui \
-         imageview.ui \
-         imageAssignment.ui \
-         file.ui \
          alarms.ui alarmMaint.ui \
+         customerselector.ui \
+         docAttach.ui \
+         documents.ui \
+         file.ui \
+         imageAssignment.ui \
+         imageview.ui \
+         recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
-         docAttach.ui
 
 
 RESOURCES += widgets.qrc
