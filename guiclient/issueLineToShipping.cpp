@@ -311,7 +311,30 @@ void issueLineToShipping::sIssue()
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
         return;
       }
-      
+	
+	  // If Transfer Order then insert special pre-assign records for the lot/serial#
+	  // so they are available when the Transfer Order is received
+	  if (_ordertype == "TO")
+	  {
+        XSqlQuery lsdetail;
+        lsdetail.prepare("INSERT INTO lsdetail "
+	                     "            (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
+	  	  			     "             lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign) "
+					     "SELECT invhist_itemsite_id, NOW(), 'TR', "
+					     "       :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0) "
+					     "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
+					     "WHERE (invhist_series=:itemlocseries);");
+        lsdetail.bindValue(":orderitemid", _itemid);
+        lsdetail.bindValue(":itemlocseries", result);
+        lsdetail.exec();
+        if (lsdetail.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, lsdetail.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+	  }
+	
       issue.exec("COMMIT;");
       accept();
     }
