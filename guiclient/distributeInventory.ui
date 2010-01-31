@@ -306,14 +306,14 @@ to be bound by its terms.</comment>
             <item>
              <widget class="XCheckBox" name="_qtyOnly">
               <property name="text">
-               <string>Locations with Qty</string>
+               <string>&amp;Locations with Qty</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="XCheckBox" name="_taggedOnly">
               <property name="text">
-               <string>Tagged Lines</string>
+               <string>&amp;Tagged Lines</string>
               </property>
              </widget>
             </item>
@@ -440,7 +440,10 @@ to be bound by its terms.</comment>
         <item>
          <widget class="QLabel" name="_validLocationsLit">
           <property name="text">
-           <string>Valid Locations:</string>
+           <string>&amp;Valid Locations:</string>
+          </property>
+          <property name="buddy">
+           <cstring>_itemloc</cstring>
           </property>
          </widget>
         </item>
@@ -471,7 +474,7 @@ to be bound by its terms.</comment>
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>Distribute</string>
+               <string>Distri&amp;bute</string>
               </property>
              </widget>
             </item>
@@ -511,7 +514,10 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QLabel" name="_bcLit">
               <property name="text">
-               <string>Lot/Serial Number:</string>
+               <string>Lot/Serial &amp;Number:</string>
+              </property>
+              <property name="buddy">
+               <cstring>_bc</cstring>
               </property>
              </widget>
             </item>
@@ -526,6 +532,9 @@ to be bound by its terms.</comment>
              <widget class="QLabel" name="_bcQtyLit">
               <property name="text">
                <string>Qty.</string>
+              </property>
+              <property name="buddy">
+               <cstring>_bcQty</cstring>
               </property>
              </widget>
             </item>
@@ -544,7 +553,7 @@ to be bound by its terms.</comment>
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Find</string>
+             <string>F&amp;ind</string>
             </property>
            </widget>
           </item>

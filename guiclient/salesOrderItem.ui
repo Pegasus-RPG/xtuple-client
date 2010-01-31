@@ -189,7 +189,7 @@ to be bound by its terms.</comment>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Previous</string>
+          <string>Pre&amp;vious</string>
          </property>
         </widget>
        </item>
@@ -199,17 +199,17 @@ to be bound by its terms.</comment>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Next</string>
+          <string>Ne&amp;xt</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="_cancel">
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="text">
-          <string>Cancel Item</string>
+          <string>Cance&amp;l Item</string>
          </property>
         </widget>
        </item>
@@ -269,7 +269,7 @@ to be bound by its terms.</comment>
             <item row="0" column="0">
              <widget class="QLabel" name="_warehouseLit">
               <property name="text">
-               <string>&amp;Site:</string>
+               <string>S&amp;ite:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -282,7 +282,7 @@ to be bound by its terms.</comment>
             <item row="0" column="1">
              <widget class="WComboBox" name="_warehouse">
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::ClickFocus</enum>
               </property>
               <property name="type">
                <enum>WComboBox::Sold</enum>
@@ -351,7 +351,7 @@ to be bound by its terms.</comment>
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>&amp;Substitute for:</string>
+               <string>Su&amp;bstitute for:</string>
               </property>
              </widget>
             </item>
@@ -367,7 +367,7 @@ to be bound by its terms.</comment>
                </size>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -446,7 +446,7 @@ to be bound by its terms.</comment>
             <item row="1" column="0">
              <widget class="QLabel" name="_priceUOMLit_2">
               <property name="text">
-               <string>&amp;Qty. UOM:</string>
+               <string>Qty.  &amp;UOM:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -464,7 +464,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="XComboBox" name="_qtyUOM">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::ClickFocus</enum>
                 </property>
                </widget>
               </item>
@@ -590,13 +590,16 @@ to be bound by its terms.</comment>
         <item row="1" column="0">
          <widget class="QLabel" name="_netUnitPriceLit">
           <property name="text">
-           <string>Net Unit Price:</string>
+           <string>&amp;Net Unit Price:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="margin">
            <number>5</number>
+          </property>
+          <property name="buddy">
+           <cstring>_netUnitPrice</cstring>
           </property>
          </widget>
         </item>
@@ -653,7 +656,10 @@ to be bound by its terms.</comment>
         <item row="2" column="0">
          <widget class="QLabel" name="_priceUOMLit">
           <property name="text">
-           <string>&amp;Price UOM:</string>
+           <string>Pric&amp;e UOM:</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::RichText</enum>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -671,7 +677,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="XComboBox" name="_priceUOM">
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::ClickFocus</enum>
             </property>
            </widget>
           </item>
@@ -818,11 +824,11 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="supplyTab">
         <attribute name="title">
-         <string>Supply</string>
+         <string>Suppl&amp;y</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
@@ -1397,7 +1403,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_itemCharacteristicsTab">
         <attribute name="title">
-         <string>Characteristics</string>
+         <string>Ch&amp;aracteristics</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
@@ -1447,9 +1453,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="1" column="0" colspan="3">
           <widget class="QTreeView" name="_itemcharView">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
            <property name="editTriggers">
             <set>QAbstractItemView::AllEditTriggers</set>
            </property>
@@ -1465,7 +1468,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_costs">
         <attribute name="title">
-         <string>Detail</string>
+         <string>De&amp;tail</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
@@ -1693,7 +1696,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_notesTab">
         <attribute name="title">
-         <string>Notes</string>
+         <string>N&amp;otes</string>
         </attribute>
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -1705,7 +1708,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QTextEdit" name="_notes">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1713,7 +1716,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_commentsTab">
         <attribute name="title">
-         <string>Comments</string>
+         <string>Co&amp;mments</string>
         </attribute>
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -1739,7 +1742,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_costofsalesTab">
         <attribute name="title">
-         <string>Accounting</string>
+         <string>Accountin&amp;g</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
@@ -1877,27 +1880,34 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_item</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
+  <tabstop>_qtyUOM</tabstop>
   <tabstop>_discountFromCust</tabstop>
   <tabstop>_netUnitPrice</tabstop>
+  <tabstop>_priceUOM</tabstop>
   <tabstop>_scheduledDate</tabstop>
   <tabstop>_promisedDate</tabstop>
   <tabstop>_warranty</tabstop>
   <tabstop>_tabs</tabstop>
-  <tabstop>_availabilityGroup</tabstop>
+  <tabstop>_showAvailability</tabstop>
+  <tabstop>_inventoryButton</tabstop>
+  <tabstop>_dependenciesButton</tabstop>
   <tabstop>_createOrder</tabstop>
-  <tabstop>_orderQty</tabstop>
   <tabstop>_orderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
+  <tabstop>_dropShip</tabstop>
+  <tabstop>_overridePoPrice</tabstop>
+  <tabstop>_baseUnitPrice</tabstop>
+  <tabstop>_itemcharView</tabstop>
   <tabstop>_taxtype</tabstop>
   <tabstop>_tax</tabstop>
+  <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_availability</tabstop>
   <tabstop>_altCosAccnt</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
-  <tabstop>_prev</tabstop>
-  <tabstop>_next</tabstop>
+  <tabstop>_close</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
  <resources/>
