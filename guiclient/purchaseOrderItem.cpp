@@ -276,6 +276,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
         _dueDate->setFocus();
 
       _comments->setEnabled(FALSE);
+      _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
     }
     else if (param.toString() == "edit")
     {
@@ -375,6 +376,26 @@ void purchaseOrderItem::populate()
              "       poitem_vend_uom,"
              "       poitem_invvenduomratio,"
              "       COALESCE(poitem_expcat_id,-1) AS poitem_expcat_id, "
+			 "       COALESCE(pohead_cohead_id, -1) AS pohead_cohead_id, "
+			 "       COALESCE(poitem_wohead_id, -1) AS poitem_wohead_id, "
+             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN 'Sales Order #' "
+             "         ELSE CASE WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN 'Work Order #' "
+             "           ELSE '' "
+             "         END "
+             "       END AS demand_type, "
+             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN cohead_number "
+             "         ELSE CASE WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN "
+             "           CAST(wo_number AS text) "
+             "         ELSE '' "
+             "         END "
+             "       END AS order_number, "
+             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN "
+             "       CAST(coitem_linenumber AS text) "
+             "         ELSE CASE WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN "
+             "             CAST(wo_subnumber AS text) "
+             "           ELSE '' "
+             "         END "
+             "       END AS orderline_number, "
              "       poitem_duedate,"
              "       poitem_qty_ordered,"
              "       poitem_qty_received,"
@@ -388,7 +409,10 @@ void purchaseOrderItem::populate()
              "       poitem_manuf_name, poitem_manuf_item_number, "
              "       poitem_manuf_item_descrip, "
              "       COALESCE(coitem_prcost, 0.0) AS overrideCost "
-             "FROM pohead, poitem LEFT OUTER JOIN coitem ON (poitem_soitem_id=coitem_id) "
+             "FROM pohead, poitem LEFT OUTER JOIN (cohead JOIN coitem ON (cohead_id = coitem_cohead_id)) "
+             "       ON (poitem_soitem_id=coitem_id) "
+             "       LEFT OUTER JOIN "
+             "       wo ON (poitem_wohead_id = wo_id) "
              "WHERE ( (poitem_pohead_id=pohead_id) "
              " AND (poitem_id=:poitem_id) );" );
   q.bindValue(":poitem_id", _poitemid);
@@ -413,6 +437,23 @@ void purchaseOrderItem::populate()
     _project->setId(q.value("poitem_prj_id").toInt());
     if(q.value("overrideCost").toDouble() > 0)
       _overriddenUnitPrice = true;
+
+    if(q.value("pohead_cohead_id") != -1)
+    {
+      _ordered->setEnabled(FALSE);
+      _dueDate->setEnabled(FALSE);
+	  _soLit->setText(q.value("demand_type").toString());
+	  _so->setText(q.value("order_number").toString());
+	  _soLine->setText(q.value("orderline_number").toString());
+    }
+    else if(q.value("poitem_wohead_id") != -1)
+    {
+      _soLit->setText(q.value("demand_type").toString());
+	  _so->setText(q.value("order_number").toString());
+	  _soLine->setText(q.value("orderline_number").toString());
+	}
+	else
+	  _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
 
     if (q.value("poitem_itemsite_id").toInt() == -1)
     {

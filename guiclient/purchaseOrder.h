@@ -51,6 +51,12 @@ public slots:
     virtual void sCalculateTax();
     virtual void sTaxZoneChanged();
     virtual void sTaxDetail();
+    virtual void sViewSo();
+    virtual void sViewWo();
+    virtual void sEditSo();
+    virtual void sEditWo();
+	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+	virtual void sHandleShipTo();
 
 protected slots:
     virtual void languageChange();

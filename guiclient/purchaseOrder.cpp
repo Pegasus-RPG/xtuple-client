@@ -22,15 +22,19 @@
 #include "purchaseOrderItem.h"
 #include "vendorAddressList.h"
 #include "taxBreakdown.h"
+#include "salesOrder.h"
+#include "workOrder.h"
 
 #define cDelete 0x01
 #define cClose  0x02
+#define ORDERTYPE_COL	12
 
 purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
+  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
@@ -50,6 +54,8 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxZone,      SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_vendaddrList, SIGNAL(clicked()),     this, SLOT(sVendaddrList()));
   connect(_vendor,       SIGNAL(newId(int)),    this, SLOT(sHandleVendor(int)));
+  connect(_vendAddr,     SIGNAL(changed()),     _vendaddrCode, SLOT(clear()));
+  connect(_warehouse,	 SIGNAL(newID(int)),    this, SLOT(sHandleShipTo()));
 
 #ifndef Q_WS_MAC
   _vendaddrList->setMaximumWidth(25);
@@ -69,6 +75,8 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Vend. Item#"), _itemColumn,   Qt::AlignCenter,false, "poitem_vend_item_number");
   _poitem->addColumn(tr("Manufacturer"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_name");
   _poitem->addColumn(tr("Manuf. Item#"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_item_number");
+  _poitem->addColumn(tr("Demand Type"), _itemColumn,   Qt::AlignCenter,false, "demand_type");
+  _poitem->addColumn(tr("Order"),       _itemColumn,   Qt::AlignRight, false, "order_number");
 
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -97,6 +105,12 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _receivingWhseLit->hide();
     _warehouse->hide();
   }
+
+  if (_metrics->boolean("EnableDropShipments"))
+    _dropShip->setEnabled(FALSE);
+  else
+    _dropShip->hide();
+  _so->setReadOnly(TRUE);
 }
 
 void purchaseOrder::setPoheadid(const int pId)
@@ -385,8 +399,13 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
       _vendor->setReadOnly(TRUE);
+	  _vendCntct->setEnabled(FALSE);
+	  _vendAddr->setEnabled(FALSE);
+	  _shiptoCntct->setEnabled(FALSE);
+	  _shiptoAddr->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);
       _fob->setEnabled(FALSE);
+      _status->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _new->setEnabled(FALSE);
       _freight->setEnabled(FALSE);
@@ -460,7 +479,7 @@ void purchaseOrder::createHeader()
   // need to set at least the _order date before the INSERT
   _comments->setId(_poheadid);
   _orderDate->setDate(omfgThis->dbDate(), true);
-  // TO DO: Rework  _status->setText("U");
+  _status->setCurrentIndex(0);
   _vendor->setType(__activeVendors);
 
   q.prepare( "INSERT INTO pohead "
@@ -484,71 +503,105 @@ void purchaseOrder::createHeader()
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+  // Populate Ship To contact and addresses for the Receiving Site
+  sHandleShipTo();
 }
 
 void purchaseOrder::populate()
 {
   XSqlQuery po;
-  po.prepare( "SELECT pohead_number, COALESCE(pohead_warehous_id,-1) AS pohead_warehous_id, "
-              "       pohead_orderdate, pohead_status, pohead_printed, pohead_taxzone_id, "
-              "       pohead_shipvia, pohead_comments,"
-              "       pohead_fob, COALESCE(pohead_terms_id,-1) AS pohead_terms_id, "
-              "       COALESCE(pohead_vend_id,-1) AS pohead_vend_id,"
-              "       pohead_tax, pohead_freight,"
-              "       pohead_agent_username,"
-              "       vend_name, vend_address1, vend_address2, vend_address3,"
-              "       vend_city, vend_state, vend_zip, vend_country,"
+  po.prepare( "SELECT pohead.*, COALESCE(pohead_warehous_id, -1) AS warehous_id,"
+			  "       COALESCE(pohead_cohead_id, -1) AS cohead_id,"
+              "       CASE WHEN (pohead_status='U') THEN 0"
+			  "            WHEN (pohead_status='O') THEN 1"
+			  "            WHEN (pohead_status='C') THEN 2"
+			  "       END AS status,"
+              "       COALESCE(pohead_terms_id, -1) AS terms_id,"
+              "       COALESCE(pohead_vend_id, -1) AS vend_id,"
               "       COALESCE(vendaddr_id, -1) AS vendaddrid,"
-              "       vendaddr_code, vendaddr_name, vendaddr_address1, vendaddr_address2,"
-              "       vendaddr_address3, vendaddr_city, vendaddr_state, vendaddr_zipcode,"
-              "       vendaddr_country, pohead_curr_id "
-              "FROM vend, pohead LEFT OUTER JOIN vendaddr ON (pohead_vendaddr_id=vendaddr_id) "
-              "WHERE ( (pohead_vend_id=vend_id)"
-              " AND (pohead_id=:pohead_id) );" );
+			  "       vendaddr_code "
+              "FROM pohead JOIN vendinfo ON (pohead_vend_id=vend_id)"
+			  "     LEFT OUTER JOIN vendaddrinfo ON (pohead_vendaddr_id=vendaddr_id)"
+			  "     LEFT OUTER JOIN cohead ON (pohead_cohead_id=cohead_id) "
+              "WHERE (pohead_id=:pohead_id);" );
   po.bindValue(":pohead_id", _poheadid);
   po.exec();
   if (po.first())
   {
     _orderNumber->setText(po.value("pohead_number"));
-    _warehouse->setId(po.value("pohead_warehous_id").toInt());
+    _warehouse->setId(po.value("warehous_id").toInt());
     _orderDate->setDate(po.value("pohead_orderdate").toDate(), true);
     _agent->setText(po.value("pohead_agent_username").toString());
-    _status->setText(po.value("pohead_status").toString());
+    _status->setCurrentIndex(po.value("status").toInt());
     _printed = po.value("pohead_printed").toBool();
-    _terms->setId(po.value("pohead_terms_id").toInt());
+    _terms->setId(po.value("terms_id").toInt());
     _shipVia->setText(po.value("pohead_shipvia"));
     _fob->setText(po.value("pohead_fob"));
     _notes->setText(po.value("pohead_comments").toString());
-	
+	_so->setId(po.value("cohead_id").toInt());
+
+	if ((po.value("cohead_id").toInt())!=-1)
+	{
+	  _dropShip->setEnabled(TRUE);
+	  _dropShip->setChecked(po.value("pohead_dropship").toBool());
+	}
+	else
+    {
+	  _dropShip->setChecked(FALSE);
+      _dropShip->setEnabled(FALSE);
+	}
+
     _vendaddrid = po.value("vendaddrid").toInt();
-    /* TO DO: Rework
-    if (_vendaddrid == -1)
-    {
+    
+    _vendCntct->setId(po.value("pohead_vend_cntct_id").toInt());
+    _vendCntct->setHonorific(po.value("pohead_vend_cntct_honorific").toString());
+    _vendCntct->setFirst(po.value("pohead_vend_cntct_first_name").toString());
+    _vendCntct->setMiddle(po.value("pohead_vend_cntct_middle").toString());
+    _vendCntct->setLast(po.value("pohead_vend_cntct_last_name").toString());
+    _vendCntct->setSuffix(po.value("pohead_vend_cntct_suffix").toString());
+    _vendCntct->setPhone(po.value("pohead_vend_cntct_phone").toString());
+    _vendCntct->setTitle(po.value("pohead_vend_cntct_title").toString());
+    _vendCntct->setFax(po.value("pohead_vend_cntct_fax").toString());
+    _vendCntct->setEmailAddress(po.value("pohead_vend_cntct_email").toString());
+
+	_shiptoCntct->setId(po.value("pohead_shipto_cntct_id").toInt());
+    _shiptoCntct->setHonorific(po.value("pohead_shipto_cntct_honorific").toString());
+    _shiptoCntct->setFirst(po.value("pohead_shipto_cntct_first_name").toString());
+    _shiptoCntct->setMiddle(po.value("pohead_shipto_cntct_middle").toString());
+    _shiptoCntct->setLast(po.value("pohead_shipto_cntct_last_name").toString());
+    _shiptoCntct->setSuffix(po.value("pohead_shipto_cntct_suffix").toString());
+    _shiptoCntct->setPhone(po.value("pohead_shipto_cntct_phone").toString());
+    _shiptoCntct->setTitle(po.value("pohead_shipto_cntct_title").toString());
+    _shiptoCntct->setFax(po.value("pohead_shipto_cntct_fax").toString());
+    _shiptoCntct->setEmailAddress(po.value("pohead_shipto_cntct_email").toString());
+
+    disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
+	if (_vendaddrid == -1)
       _vendaddrCode->setText(tr("Main"));
-      _vendaddrName->setText(po.value("vend_name"));
-      _vendaddrAddr1->setText(po.value("vend_address1"));
-      _vendaddrAddr2->setText(po.value("vend_address2"));
-      _vendaddrAddr3->setText(po.value("vend_address3"));
-      _vendaddrCity->setText(po.value("vend_city"));
-      _vendaddrState->setText(po.value("vend_state"));
-      _vendaddrZipCode->setText(po.value("vend_zip"));
-      _vendaddrCountry->setText(po.value("vend_country"));
-    }
-    else
-    {
-      _vendaddrCode->setText(po.value("vendaddr_code"));
-      _vendaddrName->setText(po.value("vendaddr_name"));
-      _vendaddrAddr1->setText(po.value("vendaddr_address1"));
-      _vendaddrAddr2->setText(po.value("vendaddr_address2"));
-      _vendaddrAddr3->setText(po.value("vendaddr_address3"));
-      _vendaddrCity->setText(po.value("vendaddr_city"));
-      _vendaddrState->setText(po.value("vendaddr_state"));
-      _vendaddrZipCode->setText(po.value("vendaddr_zipcode"));
-      _vendaddrCountry->setText(po.value("vendaddr_country"));
-    }
- */
+	else
+	  _vendaddrCode->setText(po.value("vendaddr_code"));
+	_vendAddr->setId(_vendaddrid);
+    _vendAddr->setLine1(po.value("pohead_vendaddress1").toString());
+    _vendAddr->setLine2(po.value("pohead_vendaddress2").toString());
+    _vendAddr->setLine3(po.value("pohead_vendaddress3").toString());
+    _vendAddr->setCity(po.value("pohead_vendcity").toString());
+    _vendAddr->setState(po.value("pohead_vendstate").toString());
+    _vendAddr->setPostalCode(po.value("pohead_vendzipcode").toString());
+    _vendAddr->setCountry(po.value("pohead_vendcountry").toString());
+	connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
+
+	_shiptoAddr->setId(po.value("pohead_shiptoddress_id").toInt());
+    _shiptoAddr->setLine1(po.value("pohead_shiptoaddress1").toString());
+    _shiptoAddr->setLine2(po.value("pohead_shiptoaddress2").toString());
+    _shiptoAddr->setLine3(po.value("pohead_shiptoaddress3").toString());
+    _shiptoAddr->setCity(po.value("pohead_shiptocity").toString());
+    _shiptoAddr->setState(po.value("pohead_shiptostate").toString());
+    _shiptoAddr->setPostalCode(po.value("pohead_shiptozipcode").toString());
+    _shiptoAddr->setCountry(po.value("pohead_shiptocountry").toString());
+
     _comments->setId(_poheadid);
-    _vendor->setId(po.value("pohead_vend_id").toInt());
+    _vendor->setId(po.value("vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
     _tax->setLocalValue(po.value("pohead_tax").toDouble());
@@ -600,6 +653,24 @@ void purchaseOrder::sSave()
     return;
   }
 
+  XSqlQuery postatus;
+  postatus.prepare( "SELECT pohead_status "
+                    "FROM pohead "
+                    "WHERE (pohead_id=:pohead_id);" );
+  postatus.bindValue(":pohead_id", _poheadid);
+  postatus.exec();
+  if (postatus.first())
+  {
+    if ((postatus.value("pohead_status") == "O") && (_status->currentIndex() == 0))
+    {
+	  QMessageBox::critical( this, tr("Cannot Save Purchase Order"),
+                             tr( "This Purchase Order has been released. You may not set its Status back to 'Unreleased'." ) );
+
+      _status->setFocus();
+      return;
+    }
+  }
+
   q.prepare( "UPDATE pohead "
              "SET pohead_warehous_id=:pohead_warehous_id, pohead_orderdate=:pohead_orderdate,"
              "    pohead_shipvia=:pohead_shipvia, pohead_taxzone_id=:pohead_taxzone_id,"
@@ -609,7 +680,44 @@ void purchaseOrder::sSave()
              "    pohead_vendaddr_id=:pohead_vendaddr_id,"
              "    pohead_comments=:pohead_comments, "
              "    pohead_curr_id=:pohead_curr_id,"
-             "    pohead_saved=true "
+             "    pohead_status=:pohead_status,"
+             "    pohead_saved=true,"
+			 "    pohead_vend_cntct_id=:pohead_vend_cntct_id,"
+			 "    pohead_vend_cntct_honorific=:pohead_vend_cntct_honorific,"
+			 "    pohead_vend_cntct_first_name=:pohead_vend_cntct_first_name,"
+			 "    pohead_vend_cntct_middle=:pohead_vend_cntct_middle,"
+			 "    pohead_vend_cntct_last_name=:pohead_vend_cntct_last_name,"
+			 "    pohead_vend_cntct_suffix=:pohead_vend_cntct_suffix,"
+			 "    pohead_vend_cntct_phone=:pohead_vend_cntct_phone,"
+			 "    pohead_vend_cntct_title=:pohead_vend_cntct_title,"
+			 "    pohead_vend_cntct_fax=:pohead_vend_cntct_fax,"
+			 "    pohead_vend_cntct_email=:pohead_vend_cntct_email,"
+			 "    pohead_vendaddress1=:pohead_vendaddress1,"
+			 "    pohead_vendaddress2=:pohead_vendaddress2,"
+			 "    pohead_vendaddress3=:pohead_vendaddress3,"
+			 "    pohead_vendcity=:pohead_vendcity,"
+			 "    pohead_vendstate=:pohead_vendstate,"
+			 "    pohead_vendzipcode=:pohead_vendzipcode,"
+			 "    pohead_vendcountry=:pohead_vendcountry,"
+			 "    pohead_shipto_cntct_id=:pohead_shipto_cntct_id,"
+			 "    pohead_shipto_cntct_honorific=:pohead_shipto_cntct_honorific,"
+			 "    pohead_shipto_cntct_first_name=:pohead_shipto_cntct_first_name,"
+			 "    pohead_shipto_cntct_middle=:pohead_shipto_cntct_middle,"
+			 "    pohead_shipto_cntct_last_name=:pohead_shipto_cntct_last_name,"
+			 "    pohead_shipto_cntct_suffix=:pohead_shipto_cntct_suffix,"
+			 "    pohead_shipto_cntct_phone=:pohead_shipto_cntct_phone,"
+			 "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
+			 "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
+			 "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
+			 "    pohead_shiptoddress_id=:pohead_shiptoddress_id,"
+			 "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
+			 "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
+			 "    pohead_shiptoaddress3=:pohead_shiptoaddress3,"
+			 "    pohead_shiptocity=:pohead_shiptocity,"
+			 "    pohead_shiptostate=:pohead_shiptostate,"
+			 "    pohead_shiptozipcode=:pohead_shiptozipcode,"
+			 "    pohead_shiptocountry=:pohead_shiptocountry,"
+			 "    pohead_dropship=:pohead_dropship "
              "WHERE (pohead_id=:pohead_id);" );
   q.bindValue(":pohead_id", _poheadid);
   if (_warehouse->isValid())
@@ -625,9 +733,54 @@ void purchaseOrder::sSave()
   if (_vendaddrid != -1)
     q.bindValue(":pohead_vendaddr_id", _vendaddrid);
   q.bindValue(":pohead_comments", _notes->toPlainText());
+  if (_vendCntct->isValid())
+    q.bindValue(":pohead_vend_cntct_id", _vendCntct->id());
+  q.bindValue(":pohead_vend_cntct_honorific", _vendCntct->honorific());
+  q.bindValue(":pohead_vend_cntct_first_name", _vendCntct->first());
+  q.bindValue(":pohead_vend_cntct_middle", _vendCntct->middle());
+  q.bindValue(":pohead_vend_cntct_last_name", _vendCntct->last());
+  q.bindValue(":pohead_vend_cntct_suffix", _vendCntct->suffix());
+  q.bindValue(":pohead_vend_cntct_phone", _vendCntct->phone());
+  q.bindValue(":pohead_vend_cntct_title", _vendCntct->title());
+  q.bindValue(":pohead_vend_cntct_fax", _vendCntct->fax());
+  q.bindValue(":pohead_vend_cntct_email", _vendCntct->emailAddress());
+  q.bindValue(":pohead_vendaddress1", _vendAddr->line1());
+  q.bindValue(":pohead_vendaddress2", _vendAddr->line2());
+  q.bindValue(":pohead_vendaddress3", _vendAddr->line3());
+  q.bindValue(":pohead_vendcity", _vendAddr->city());
+  q.bindValue(":pohead_vendstate", _vendAddr->state());
+  q.bindValue(":pohead_vendzipcode", _vendAddr->postalCode());
+  q.bindValue(":pohead_vendcountry", _vendAddr->country());
+  if (_shiptoCntct->isValid())
+    q.bindValue(":pohead_shipto_cntct_id", _shiptoCntct->id());
+  q.bindValue(":pohead_shipto_cntct_honorific", _shiptoCntct->honorific());
+  q.bindValue(":pohead_shipto_cntct_first_name", _shiptoCntct->first());
+  q.bindValue(":pohead_shipto_cntct_middle", _shiptoCntct->middle());
+  q.bindValue(":pohead_shipto_cntct_last_name", _shiptoCntct->last());
+  q.bindValue(":pohead_shipto_cntct_suffix", _shiptoCntct->suffix());
+  q.bindValue(":pohead_shipto_cntct_phone", _shiptoCntct->phone());
+  q.bindValue(":pohead_shipto_cntct_title", _shiptoCntct->title());
+  q.bindValue(":pohead_shipto_cntct_fax", _shiptoCntct->fax());
+  q.bindValue(":pohead_shipto_cntct_email", _shiptoCntct->emailAddress());
+  if (_shiptoAddr->isValid())
+    q.bindValue(":pohead_shiptoddress_id", _shiptoAddr->id());
+  q.bindValue(":pohead_shiptoaddress1", _shiptoAddr->line1());
+  q.bindValue(":pohead_shiptoaddress2", _shiptoAddr->line2());
+  q.bindValue(":pohead_shiptoaddress3", _shiptoAddr->line3());
+  q.bindValue(":pohead_shiptocity", _shiptoAddr->city());
+  q.bindValue(":pohead_shiptostate", _shiptoAddr->state());
+  q.bindValue(":pohead_shiptozipcode", _shiptoAddr->postalCode());
+  q.bindValue(":pohead_shiptocountry", _shiptoAddr->country());
   q.bindValue(":pohead_tax", _tax->localValue());
   q.bindValue(":pohead_freight", _freight->localValue());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
+  if (_status->currentIndex() == 0)
+    q.bindValue(":pohead_status", "U");
+  else if (_status->currentIndex() == 1)
+    q.bindValue(":pohead_status", "O");
+  else if (_status->currentIndex() == 2)
+    q.bindValue(":pohead_status", "C");
+
   q.exec();
  
   omfgThis->sPurchaseOrdersUpdated(_poheadid, TRUE);
@@ -676,17 +829,12 @@ void purchaseOrder::sSave()
     _poCurrency->setEnabled(true);
     _qecurrency->setEnabled(true);
     _qeitem->removeRows(0, _qeitem->rowCount());
-/* TO DO: Rework
     _vendaddrCode->clear();
-    _vendaddrName->clear();
-    _vendaddrAddr1->clear();
-    _vendaddrAddr2->clear();
-    _vendaddrAddr3->clear();
-    _vendaddrCity->clear();
-    _vendaddrState->clear();
-    _vendaddrZipCode->clear();
-    _vendaddrCountry->clear();
-*/
+    _vendCntct->clear();
+    _vendAddr->clear();
+    _shiptoCntct->clear();
+    _shiptoAddr->clear();
+
     _close->setText(tr("&Close"));
 
     createHeader();
@@ -794,17 +942,16 @@ void purchaseOrder::sVendaddrList()
       if (q.first())
       {
         _vendaddrid = vendaddrid;
+		disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
         _vendaddrCode->setText(q.value("vendaddr_code"));
-        /* TO DO: Rework
-        _vendaddrName->setText(q.value("vendaddr_name"));
-        _vendaddrAddr1->setText(q.value("vendaddr_address1"));
-        _vendaddrAddr2->setText(q.value("vendaddr_address2"));
-        _vendaddrAddr3->setText(q.value("vendaddr_address3"));
-        _vendaddrCity->setText(q.value("vendaddr_city"));
-        _vendaddrState->setText(q.value("vendaddr_state"));
-        _vendaddrZipCode->setText(q.value("vendaddr_zipcode"));
-        _vendaddrCountry->setText(q.value("vendaddr_country"));
-        */
+        _vendAddr->setLine1(q.value("vendaddr_address1").toString());
+        _vendAddr->setLine2(q.value("vendaddr_address2").toString());
+        _vendAddr->setLine3(q.value("vendaddr_address3").toString());
+        _vendAddr->setCity(q.value("vendaddr_city").toString());
+        _vendAddr->setState(q.value("vendaddr_state").toString());
+        _vendAddr->setPostalCode(q.value("vendaddr_zipcode").toString());
+        _vendAddr->setCountry(q.value("vendaddr_country").toString());
+		connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
       }
     }
     else
@@ -819,17 +966,16 @@ void purchaseOrder::sVendaddrList()
       if (q.first())
       {
         _vendaddrid = -1;
+		disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
         _vendaddrCode->setText(tr("Main"));
-        /* TO DO: Rework
-        _vendaddrName->setText(q.value("vend_name"));
-        _vendaddrAddr1->setText(q.value("vend_address1"));
-        _vendaddrAddr2->setText(q.value("vend_address2"));
-        _vendaddrAddr3->setText(q.value("vend_address3"));
-        _vendaddrCity->setText(q.value("vend_city"));
-        _vendaddrState->setText(q.value("vend_state"));
-        _vendaddrZipCode->setText(q.value("vend_zip"));
-        _vendaddrCountry->setText(q.value("vend_country"));
-        */
+        _vendAddr->setLine1(q.value("vend_address1").toString());
+        _vendAddr->setLine2(q.value("vend_address2").toString());
+        _vendAddr->setLine3(q.value("vend_address3").toString());
+        _vendAddr->setCity(q.value("vend_city").toString());
+        _vendAddr->setState(q.value("vend_state").toString());
+        _vendAddr->setPostalCode(q.value("vend_zip").toString());
+        _vendAddr->setCountry(q.value("vend_country").toString());
+		connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
       }
     }
   }
@@ -859,7 +1005,6 @@ void purchaseOrder::sHandleDeleteButton()
   }
 }
  
-
 void purchaseOrder::sHandleVendor(int pVendid)
 {
   if ( (pVendid != -1) && (_mode == cNew) )
@@ -876,14 +1021,15 @@ void purchaseOrder::sHandleVendor(int pVendid)
     q.exec();
 
     XSqlQuery vq;
-    // TODO: replace vend with vendinfo JOIN addr
-    vq.prepare("SELECT vend_terms_id, vend_curr_id, "
+    vq.prepare("SELECT addr.*, cntct.*, vend_terms_id, vend_curr_id,"
                "       vend_fobsource, vend_fob, vend_shipvia,"
-               "       vend_name, vend_address1, vend_address2, vend_address3,"
-               "       vend_city, vend_state, vend_zip, vend_country,"
-               "       COALESCE(vendaddr_id, -1) AS vendaddrid,"
-	       "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid "
-               "FROM vend LEFT OUTER JOIN vendaddr ON (vendaddr_vend_id=vend_id) "
+               "       vend_name,"
+               "       COALESCE(vend_addr_id, -1) AS vendaddrid,"
+               "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid,"
+			   "       COALESCE(crmacct_id, -1) AS crmacct_id "
+               "FROM vendinfo JOIN addr ON (vend_addr_id=addr_id)"
+			   "     LEFT OUTER JOIN crmacct ON (vend_id=crmacct_vend_id)"
+			   "     LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
     vq.bindValue(":vend_id", pVendid);
@@ -910,21 +1056,38 @@ void purchaseOrder::sHandleVendor(int pVendid)
         _fob->setText(tr("Destination"));
       }
 
-      if (vq.value("vendaddrid").toInt())
+      if (vq.value("cntct_id").toInt())
+	  {
+		_vendCntct->setId(vq.value("cntct_id").toInt());
+        _vendCntct->setHonorific(vq.value("cntct_honorific").toString());
+        _vendCntct->setFirst(vq.value("cntct_first_name").toString());
+        _vendCntct->setMiddle(vq.value("cntct_middle").toString());
+        _vendCntct->setLast(vq.value("cntct_last_name").toString());
+        _vendCntct->setSuffix(vq.value("cntct_suffix").toString());
+        _vendCntct->setPhone(vq.value("cntct_phone").toString());
+        _vendCntct->setTitle(vq.value("cntct_title").toString());
+        _vendCntct->setFax(vq.value("cntct_fax").toString());
+        _vendCntct->setEmailAddress(vq.value("cntct_email").toString());
+	  }
+
+	  if (vq.value("addr_id").toInt())
       {
         _vendaddrid = -1;
-        /* TO DO: Rework
+		disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
         _vendaddrCode->setText(tr("Main"));
-        _vendaddrName->setText(vq.value("vend_name"));
-        _vendaddrAddr1->setText(vq.value("vend_address1"));
-        _vendaddrAddr2->setText(vq.value("vend_address2"));
-        _vendaddrAddr3->setText(vq.value("vend_address3"));
-        _vendaddrCity->setText(vq.value("vend_city"));
-        _vendaddrState->setText(vq.value("vend_state"));
-        _vendaddrZipCode->setText(vq.value("vend_zip"));
-        _vendaddrCountry->setText(vq.value("vend_country"));
-        */
-      }
+		_vendAddr->setId(vq.value("addr_id").toInt());
+        _vendAddr->setLine1(vq.value("addr_line1").toString());
+        _vendAddr->setLine2(vq.value("addr_line2").toString());
+        _vendAddr->setLine3(vq.value("addr_line3").toString());
+        _vendAddr->setCity(vq.value("addr_city").toString());
+        _vendAddr->setState(vq.value("addr_state").toString());
+        _vendAddr->setPostalCode(vq.value("addr_postalcode").toString());
+        _vendAddr->setCountry(vq.value("addr_country").toString());
+		connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
+	  }
+
+	  if (vq.value("crmacct_id").toInt())
+		_vendCntct->setSearchAcct(vq.value("crmacct_id").toInt());
     }
   }
 }
@@ -939,6 +1102,18 @@ void purchaseOrder::sFillList()
              "            WHEN(poitem_status='O') THEN :open"
              "            ELSE poitem_status"
              "       END AS poitemstatus,"
+             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN :so"
+             "         ELSE CASE WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN :wo"
+             "           ELSE ''"
+             "         END"
+             "       END AS demand_type,"
+             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN"
+             "         cohead_number || '-' || coitem_linenumber"
+             "         ELSE CASE WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN"
+             "           wo_number || '-' || wo_subnumber"
+             "         ELSE ''"
+             "         END"
+             "       END AS order_number,"
              "       CASE WHEN (itemsite_id IS NULL) THEN poitem_vend_item_number"
              "            ELSE item_number"
              "       END AS item_number,"
@@ -950,10 +1125,16 @@ void purchaseOrder::sFillList()
              "       'purchprice' AS poitem_unitprice_xtnumericrole,"
              "       'curr' AS extprice_xtnumericrole, "
              "        poitem_vend_item_number, poitem_manuf_name, poitem_manuf_item_number "
-             "FROM poitem LEFT OUTER JOIN"
+             "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id)"
+			 "     LEFT OUTER JOIN "
              "     ( itemsite JOIN item"
              "       ON (itemsite_item_id=item_id) )"
              "     ON (poitem_itemsite_id=itemsite_id) "
+             "     LEFT OUTER JOIN "
+             "     (cohead JOIN coitem ON (cohead_id = coitem_cohead_id)) "
+             "     ON (poitem_soitem_id = coitem_id) "
+             "     LEFT OUTER JOIN "
+             "     wo ON (poitem_wohead_id = wo_id) "
              "WHERE (poitem_pohead_id=:pohead_id) "
              "ORDER BY poitem_linenumber;" );
   q.bindValue(":pohead_id", _poheadid);
@@ -962,6 +1143,8 @@ void purchaseOrder::sFillList()
   q.bindValue(":partial", tr("Partial"));
   q.bindValue(":received", tr("Received"));
   q.bindValue(":open", tr("Open"));
+  q.bindValue(":so", tr("SO"));
+  q.bindValue(":wo", tr("WO"));
 
   q.exec();
   _poitem->populate(q);
@@ -1251,5 +1434,126 @@ void purchaseOrder::saveDetail()
       systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+  }
+}
+
+void purchaseOrder::sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected )
+{
+  int menuItem;
+
+  if (pSelected->text(ORDERTYPE_COL) == tr("SO") )
+  {
+    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
+
+    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditSo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainSalesOrders"));
+  }
+
+  else if (pSelected->text(ORDERTYPE_COL) == "WO")
+  {
+    menuItem = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewWorkOrders")); 
+
+    menuItem = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sEditWo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWorkOrders"));
+  }
+}
+
+void purchaseOrder::sViewSo()
+{
+  XSqlQuery fetchso;
+  fetchso.prepare( "SELECT pohead_cohead_id "
+                   "FROM pohead "
+                   "WHERE pohead_id = :pohead_id " );
+  fetchso.bindValue(":pohead_id", _poheadid);
+  fetchso.exec();
+  if (fetchso.first())
+    salesOrder::viewSalesOrder(fetchso.value("pohead_cohead_id").toInt());
+}
+
+void purchaseOrder::sEditSo()
+{
+  XSqlQuery fetchso;
+  fetchso.prepare( "SELECT pohead_cohead_id "
+                   "FROM pohead "
+                   "WHERE pohead_id = :pohead_id " );
+  fetchso.bindValue(":pohead_id", _poheadid);
+  fetchso.exec();
+  if (fetchso.first())
+    salesOrder::editSalesOrder(fetchso.value("pohead_cohead_id").toInt(), TRUE);
+}
+
+void purchaseOrder::sViewWo()
+{
+  XSqlQuery fetchwo;
+  fetchwo.prepare( "SELECT wo_id "
+                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id )"
+                   "     JOIN wo ON (poitem_wohead_id=wo_id) "
+                   "WHERE (pohead_id=:pohead_id);" );
+  fetchwo.bindValue(":pohead_id", _poheadid);
+  fetchwo.exec();
+  if (fetchwo.first())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("wo_id", (fetchwo.value("wo_id").toInt()));
+
+    workOrder *newdlg = new workOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void purchaseOrder::sEditWo()
+{
+  XSqlQuery fetchwo;
+  fetchwo.prepare( "SELECT wo_id "
+                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id )"
+                   "     JOIN wo ON (poitem_wohead_id=wo_id) "
+                   "WHERE (pohead_id=:pohead_id);" );
+  fetchwo.bindValue(":pohead_id", _poheadid);
+  fetchwo.exec();
+  if (fetchwo.first())
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("wo_id", (fetchwo.value("wo_id").toInt()));
+
+    workOrder *newdlg = new workOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void purchaseOrder::sHandleShipTo()
+{
+  q.prepare( "SELECT cntct.*, addr.* "
+             "FROM whsinfo LEFT OUTER JOIN cntct ON (warehous_cntct_id=cntct_id)"
+             "     LEFT OUTER JOIN addr ON (warehous_addr_id=addr_id) "
+             "WHERE (warehous_id=:warehous_id);" );
+  q.bindValue(":warehous_id", _warehouse->id());
+  q.exec();
+  if (q.first())
+  {
+    _shiptoCntct->setId(q.value("cntct_id").toInt());
+    _shiptoCntct->setHonorific(q.value("cntct_honorific").toString());
+    _shiptoCntct->setFirst(q.value("cntct_first_name").toString());
+    _shiptoCntct->setMiddle(q.value("cntct_middle").toString());
+    _shiptoCntct->setLast(q.value("cntct_last_name").toString());
+    _shiptoCntct->setSuffix(q.value("cntct_suffix").toString());
+    _shiptoCntct->setPhone(q.value("cntct_phone").toString());
+    _shiptoCntct->setTitle(q.value("cntct_title").toString());
+    _shiptoCntct->setFax(q.value("cntct_fax").toString());
+    _shiptoCntct->setEmailAddress(q.value("cntct_email").toString());
+
+	_shiptoAddr->setId(q.value("addr_id").toInt());
+    _shiptoAddr->setLine1(q.value("addr_line1").toString());
+    _shiptoAddr->setLine2(q.value("addr_line2").toString());
+    _shiptoAddr->setLine3(q.value("addr_line3").toString());
+    _shiptoAddr->setCity(q.value("addr_city").toString());
+    _shiptoAddr->setState(q.value("addr_state").toString());
+    _shiptoAddr->setPostalCode(q.value("addr_postalcode").toString());
+    _shiptoAddr->setCountry(q.value("addr_country").toString());
   }
 }
