@@ -32,7 +32,7 @@
 #include "yourpayprocessor.h"
 #include "paymentechprocessor.h"
 
-#define DEBUG false
+#define DEBUG true
 
 /** \class CreditCardProcessor
 
@@ -1530,8 +1530,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
     if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
       cmode = QHttp::ConnectionModeHttp;
-    _http = new QHttp(ccurl.host(), cmode, ccurl.port(0));
-    _http->setHost(ccurl.host());
+    _http = new QHttp(ccurl.host(), cmode, _metrics->value("CCPort").toInt());
 
     if(_metrics->boolean("CCUseProxyServer"))
     {

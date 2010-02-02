@@ -15,7 +15,7 @@
 #include "guiclient.h"
 #include "paymentechprocessor.h"
 
-#define DEBUG false
+#define DEBUG true
 
 PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
 {
@@ -138,13 +138,48 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   // Bill To Address Information
   prequest += "AB";
   prequest += "               "; // TelephoneType, TelephoneNumber (1,14, Optional)
-  prequest += anq.value("ccard_name").toString().leftJustified(30, ' ', true);
+  QStringList nameParts = anq.value("ccard_name").toString().split(QRegExp("\\s+"));
+  QString name = "";
+  if(!nameParts.isEmpty())
+  {
+    QString lName = nameParts.takeLast();
+    QString fName = nameParts.join(" ");
+    name = fName + " *" + lName;
+  }
+  prequest += name.leftJustified(30, ' ', true);
   prequest += anq.value("ccard_address1").toString().leftJustified(30, ' ', true);
   prequest += anq.value("ccard_address2").toString().leftJustified(28, ' ', true);
 
-  prequest += "  "; // CountryCode (2, optional) ccard_country // TODO: figure out how to handle this appropriately if we want to at all
+  QString cntry = anq.value("ccard_country").toString();
+  XSqlQuery qCntry;
+  qCntry.prepare("SELECT 1 AS ord, country_abbr FROM country WHERE country_name = :cname"
+                 " UNION "
+                 "SELECT 2 AS ord, country_abbr FROM country WHERE country_abbr = :cname"
+                 " ORDER BY ord LIMIT 1;");
+  qCntry.bindValue(":cname", cntry);
+  qCntry.exec();
+  if(qCntry.first())
+    cntry = qCntry.value("country_abbr").toString();
+  else
+    cntry = "";
+  prequest += cntry.leftJustified(2, ' ', true);
+
   prequest += anq.value("ccard_city").toString().leftJustified(20, ' ', true);
-  prequest += "  "; // State (2, optional) ccard_state // TODO: figure out how to handle this appropriately if we want to at all
+
+  QString state = anq.value("ccard_state").toString();
+  XSqlQuery qState;
+  qState.prepare("SELECT 1 AS ord, state_abbr FROM state WHERE state_name = :cname"
+                 " UNION "
+                 "SELECT 2 AS ord, state_abbr FROM state WHERE state_abbr = :cname"
+                 " ORDER BY ord LIMIT 1;");
+  qState.bindValue(":cname", state);
+  qState.exec();
+  if(qState.first())
+    state = qState.value("state_abbr").toString();
+  else
+    state = "";
+  prequest += state.leftJustified(2, ' ', true);
+
   prequest += anq.value("ccard_zip").toString().leftJustified(10, ' ', true);
 
 /* TODO: should probably do something about this in relation to above with the CurrencyCode
@@ -174,6 +209,8 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
     prequest += QString::number(amount).leftJustified(4, ' ', true);
   }
 
+  prequest += "VVISAN\r"; // add version record to end
+  prequest = prequest.toUpper();
 
   _extraHeaders.append(qMakePair(QString("Content-Length"), QString("%1").arg(prequest.size())));
 
@@ -191,13 +228,13 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, const 
 
   int    returnValue = 0;
   double amount  = pamount;
-  double tax     = ptax;
-  double freight = pfreight;
-  double duty    = pduty;
+  //double tax     = ptax;
+  //double freight = pfreight;
+  //double duty    = pduty;
   int    currid  = pcurrid;
 
   QString request;
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RC");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU");
   if (returnValue != 0)
     return returnValue;
 
@@ -222,14 +259,14 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
 
   int    returnValue = 0;
   double amount  = pamount;
-  double tax     = ptax;
-  double freight = pfreight;
-  double duty    = pduty;
+  //double tax     = ptax;
+  //double freight = pfreight;
+  //double duty    = pduty;
   int    currid  = pcurrid;
 
   QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RP");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RP"); // TODO: needs to be handled in batch with different code
   if (returnValue !=  0)
     return returnValue;
 
@@ -258,7 +295,7 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
 
   QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU"); // TODO: needs to be handled in batch with different code
   if (returnValue !=  0)
     return returnValue;
 
@@ -283,14 +320,14 @@ int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const doub
 
   int    returnValue = 0;
   double amount  = pamount;
-  double tax     = ptax;
-  double freight = pfreight;
-  double duty    = pduty;
+  //double tax     = ptax;
+  //double freight = pfreight;
+  //double duty    = pduty;
   int    currid  = pcurrid;
 
   QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RF");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RF"); // TODO: this needs to change with different code 
   if (returnValue !=  0)
     return returnValue;
 
@@ -321,7 +358,7 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
 
   QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AR");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AR"); // TODO: this may need to change
   if (returnValue != 0)
     return returnValue;
 
@@ -364,7 +401,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
   QString status;
 
   QString r_response;
-  r_response = presponse.mid(27, 3).trimmed();
+  r_response = presponse.mid(26, 3).trimmed();
   int i_response = r_response.toInt();
   if ((i_response >= 100 && i_response < 200) || i_response == 704)
     r_approved = "APPROVED";
@@ -375,12 +412,12 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   r_reason = r_response;
 
-  r_message = "not yet implemented"; // TODO: come up with a way to populate this
+  r_message = "Received return code " + r_response; // TODO: come up with a way to populate this
 
-  r_code = presponse.mid(36, 6).trimmed();
-  r_avs = presponse.mid(42, 2).trimmed();
-  r_ordernum = presponse.mid(5, 22).trimmed();
-  r_cvv = presponse.mid(44, 1).trimmed();
+  r_code = presponse.mid(35, 6).trimmed();
+  r_avs = presponse.mid(41, 2).trimmed();
+  r_ordernum = presponse.mid(4, 22).trimmed();
+  r_cvv = presponse.mid(43, 1).trimmed();
 
   if (r_approved == "APPROVED")
   {
@@ -420,7 +457,10 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
     status = "X";
   }
 
-  _passedAvs = false; // TODO: figure out the right value to use here
+  QStringList validAvs;
+  // TODO: is this list correct?
+  validAvs << "N1" << "N2" << "  " << "IG" << "IU" << "ID" << "IA" << "IB" << "IP" << "A1" << "A3" << "A4" << "A7" << "I3" << "I4";
+  _passedAvs = validAvs.contains(r_avs);
 
   // always use the CVV checking configured on the gateway
   QString validCvv("MPU ");
