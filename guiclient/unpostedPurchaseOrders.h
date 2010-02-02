@@ -32,7 +32,7 @@ public slots:
     virtual void sHandleButtons();
     virtual void sNew();
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
-    virtual void sPost();
+    virtual void sRelease();
     virtual void sPrint();
     virtual void sView();
     virtual void sSearch( const QString & pTarget );

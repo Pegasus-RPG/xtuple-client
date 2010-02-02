@@ -818,7 +818,7 @@ void purchaseOrder::sSave()
     _orderNumber->clear();
     _orderDate->clear();
     _shipVia->clear();
-    _status->clear();
+    _status->setCurrentIndex(0);
     _fob->clear();
     _notes->clear();
     _tax->clear();

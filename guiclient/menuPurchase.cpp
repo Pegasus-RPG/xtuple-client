@@ -139,10 +139,10 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     //  Purchase | Purchase Order
     { "menu", tr("&Purchase Order"), (char*)ordersMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.newPurchaseOrder", tr("&New..."), SLOT(sNewPurchaseOrder()), ordersMenu, "MaintainPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sPurchaseOrderEditList()), ordersMenu, "MaintainPurchaseOrders ViewPurchaseOrders", QPixmap(":/images/listUnpostedPo.png"), toolBar, true , tr("List Unposted Purchase Orders") },
+    { "po.listUnpostedPurchaseOrders", tr("&List Open..."), SLOT(sPurchaseOrderEditList()), ordersMenu, "MaintainPurchaseOrders ViewPurchaseOrders", QPixmap(":/images/listUnpostedPo.png"), toolBar, true , tr("List Open Purchase Orders") },
     { "separator", NULL, NULL, ordersMenu, "true", NULL, NULL, true , NULL },
-    { "po.postPurchaseOrder", tr("&Post..."), SLOT(sPostPurchaseOrder()), ordersMenu, "PostPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.postPurchaseOrdersByAgent", tr("Post by A&gent..."), SLOT(sPostPurchaseOrdersByAgent()), ordersMenu, "PostPurchaseOrders", NULL, NULL, true , NULL },
+    { "po.postPurchaseOrder", tr("&Release..."), SLOT(sPostPurchaseOrder()), ordersMenu, "ReleasePurchaseOrders", NULL, NULL, true , NULL },
+    { "po.postPurchaseOrdersByAgent", tr("Release by A&gent..."), SLOT(sPostPurchaseOrdersByAgent()), ordersMenu, "ReleasePurchaseOrders", NULL, NULL, true , NULL },
     { "po.closePurchaseOrder", tr("&Close..."), SLOT(sClosePurchaseOrder()), ordersMenu, "MaintainPurchaseOrders", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, ordersMenu, "true", NULL, NULL, true , NULL },
     { "po.reschedulePurchaseOrderItem", tr("&Reschedule..."), SLOT(sReschedulePoitem()), ordersMenu, "ReschedulePurchaseOrders", NULL, NULL, true , NULL },

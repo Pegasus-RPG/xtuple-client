@@ -16,28 +16,29 @@
 #include <parameter.h>
 
 #include "ui_enterPoReturn.h"
+#include "xerrormessage.h"
 
 class enterPoReturn : public XWidget, public Ui::enterPoReturn
 {
     Q_OBJECT
 
-public:
+  public:
     enterPoReturn(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~enterPoReturn();
 
-public slots:
+  public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sEnter();
     virtual void sFillList();
     virtual void sPost();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
-private:
+  private:
     bool _captive;
-
+    XErrorMessage *_dropshipWarn;
 };
 
 #endif // ENTERPORETURN_H

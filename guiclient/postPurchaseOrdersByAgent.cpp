@@ -18,7 +18,7 @@ postPurchaseOrdersByAgent::postPurchaseOrdersByAgent(QWidget* parent, const char
 {
   setupUi(this);
 
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_release, SIGNAL(clicked()), this, SLOT(sRelease()));
 
   _agent->setText(omfgThis->username());
 }
@@ -33,14 +33,14 @@ void postPurchaseOrdersByAgent::languageChange()
   retranslateUi(this);
 }
 
-void postPurchaseOrdersByAgent::sPost()
+void postPurchaseOrdersByAgent::sRelease()
 {
   static bool run = false;
   if (run)
     return;
   run = true;
 
-  QString sql("SELECT COUNT(postPurchaseOrder(pohead_id)) AS result "
+  QString sql("SELECT COUNT(releasePurchaseOrder(pohead_id)) AS result "
               "  FROM ( SELECT pohead_id, pohead_agent_username "
               "           FROM pohead, poitem "
               "          WHERE ( (poitem_pohead_id=pohead_id)"
@@ -54,8 +54,8 @@ void postPurchaseOrdersByAgent::sPost()
   q.exec();
   if (q.first())
   {
-    QMessageBox::information( this, tr("Purchase Orders Posted"),
-                              tr("%1 Purchase Orders have been posted.")
+    QMessageBox::information( this, tr("Purchase Orders Released"),
+                              tr("%1 Purchase Orders have been released.")
                               .arg(q.value("result").toString()) );
 
     omfgThis->sPurchaseOrdersUpdated(-1, TRUE);

@@ -29,7 +29,7 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_enter,	SIGNAL(clicked()),	this,	SLOT(sEnter()));
-  connect(_po,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
+  connect(_po,      SIGNAL(newId(int, const QString&)), this, SLOT(sFillList()));
   connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
   
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter , true, "poitem_linenumber");
@@ -44,9 +44,15 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_returned");
   _poitem->addColumn(tr("To Return"),    _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_toreturn");
 
+  _dropshipWarn = new XErrorMessage(this);
   _returnAddr->setEnabled(_printReport->isChecked());
   _po->setAllowedStatuses(OrderLineEdit::Open | OrderLineEdit::Closed);
   _po->setAllowedTypes(OrderLineEdit::Purchase);
+
+  if (_metrics->boolean("EnableDropShipments"))
+    _dropShip->setEnabled(FALSE);
+  else
+    _dropShip->hide();
 }
 
 enterPoReturn::~enterPoReturn()
@@ -225,6 +231,11 @@ void enterPoReturn::sEnter()
 {
   ParameterList params;
   params.append("poitem_id", _poitem->id());
+  if(_dropShip->isChecked())
+    _dropshipWarn->showMessage(tr("Returns made against Drop Shipped Purchase Orders "
+                                  "will not reverse shipment transactions generated "
+                                  "by the original receipt. Shipment transactions should "
+                                  "be reversed separately if necessary."));
 
   enterPoitemReturn newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -239,12 +250,12 @@ void enterPoReturn::sFillList()
 
   if (_po->id() != -1)
   {
-    q.prepare( "SELECT 1, vendaddr_addr_id AS addr_id "
+    q.prepare( "SELECT 1, vendaddr_addr_id AS addr_id, pohead_dropship "
 	       "FROM vendaddrinfo, pohead "
 	       "WHERE ((vendaddr_id=pohead_vendaddr_id)"
 	       "  AND  (pohead_id=:pohead_id))"
 	       "UNION "
-	       "SELECT 2, vend_addr_id AS addr_id "
+	       "SELECT 2, vend_addr_id AS addr_id, pohead_dropship "
 	       "FROM vendinfo, pohead "
 	       "WHERE ((vend_id=pohead_vend_id)"
 	       "  AND  (pohead_id=:pohead_id)) "
@@ -253,7 +264,10 @@ void enterPoReturn::sFillList()
     q.bindValue(":pohead_id", _po->id());
     q.exec();
     if (q.first())
+	{
       _returnAddr->setId(q.value("addr_id").toInt());
+	  _dropShip->setChecked(q.value("pohead_dropship").toBool());
+	}
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -325,4 +339,3 @@ void enterPoReturn::closeEvent(QCloseEvent *pEvent)
 
   XWidget::closeEvent(pEvent);
 }
-

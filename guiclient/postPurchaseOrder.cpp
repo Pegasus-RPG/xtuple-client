@@ -26,9 +26,9 @@ postPurchaseOrder::postPurchaseOrder(QWidget* parent, const char* name, bool mod
 
 
     // signals and slots connections
-    connect(_po, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
+    connect(_po, SIGNAL(valid(bool)), _release, SLOT(setEnabled(bool)));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+    connect(_release, SIGNAL(clicked()), this, SLOT(sRelease()));
     init();
 }
 
@@ -69,15 +69,15 @@ enum SetResponse postPurchaseOrder::set(ParameterList &pParams)
   if (valid)
   {
     _po->setId(param.toInt());
-    _post->setFocus();
+    _release->setFocus();
   }
 
   return NoError;
 }
 
-void postPurchaseOrder::sPost()
+void postPurchaseOrder::sRelease()
 {
-  q.prepare("SELECT postPurchaseOrder(:pohead_id) AS result;");
+  q.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
   q.bindValue(":pohead_id", _po->id());
   q.exec();
 
@@ -93,4 +93,3 @@ void postPurchaseOrder::sPost()
     _po->setFocus();
   }
 }
-

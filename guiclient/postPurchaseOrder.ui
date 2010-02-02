@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Post Purchase Order</string>
+      <string>Release Purchase Order</string>
     </property>
     <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -107,12 +107,12 @@ to be bound by its terms.</comment>
                 </widget>
               </item>
               <item>
-                <widget class="QPushButton" name="_post" >
+                <widget class="QPushButton" name="_release" >
                   <property name="enabled" >
                     <bool>false</bool>
                   </property>
                   <property name="text" >
-                    <string>&amp;Post</string>
+                    <string>&amp;Release</string>
                   </property>
                   <property name="autoDefault" >
                     <bool>true</bool>
@@ -148,7 +148,7 @@ to be bound by its terms.</comment>
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <tabstops>
     <tabstop>_po</tabstop>
-    <tabstop>_post</tabstop>
+    <tabstop>_release</tabstop>
     <tabstop>_close</tabstop>
   </tabstops>
   <includes>
@@ -159,7 +159,7 @@ to be bound by its terms.</comment>
     <connection>
       <sender>_po</sender>
       <signal>valid(bool)</signal>
-      <receiver>_post</receiver>
+      <receiver>_release</receiver>
       <slot>setEnabled(bool)</slot>
     </connection>
     <connection>

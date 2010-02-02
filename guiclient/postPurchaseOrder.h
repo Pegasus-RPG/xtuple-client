@@ -28,7 +28,7 @@ public:
 
 public slots:
     virtual enum SetResponse set( ParameterList & pParams );
-    virtual void sPost();
+    virtual void sRelease();
 
 protected slots:
     virtual void languageChange();

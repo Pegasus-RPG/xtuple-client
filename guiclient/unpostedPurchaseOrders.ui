@@ -213,14 +213,14 @@ to be bound by its terms.</comment>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="XCheckBox" name="_allOpenOrders">
+         <widget class="XCheckBox" name="_showUnreleased">
           <property name="text">
            <string>Unreleased</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="XCheckBox" name="xCheckBox">
+         <widget class="XCheckBox" name="_showOpen">
           <property name="text">
            <string>Open</string>
           </property>

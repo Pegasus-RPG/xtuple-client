@@ -29,14 +29,15 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
 {
   setupUi(this);
 
-  connect(_allOpenOrders,SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  connect(_showUnreleased, SIGNAL(toggled(bool)), this,	SLOT(sFillList()));
+  connect(_showOpen, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_new,         SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_pohead,	SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
                                                 this,	SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
   connect(_pohead,	SIGNAL(valid(bool)),	this,	SLOT(sHandleButtons()));
- // connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
+  connect(_release,	SIGNAL(clicked()),	this,	SLOT(sRelease()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
@@ -52,6 +53,8 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
   _pohead->addColumn(tr("Printed"),   _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
 
   _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  _showUnreleased->setChecked(FALSE);
 
   if (_privileges->check("MaintainPurchaseOrders"))
     _new->setEnabled(TRUE);
@@ -191,21 +194,21 @@ void unpostedPurchaseOrders::sPrint()
   sFillList();
 }
 
-void unpostedPurchaseOrders::sPost()
+void unpostedPurchaseOrders::sRelease()
 {
-  if ( QMessageBox::warning( this, tr("Post Selected Purchase Orders"),
-                             tr("<p>Are you sure that you want to post "
+  if ( QMessageBox::warning( this, tr("Release Selected Purchase Orders"),
+                             tr("<p>Are you sure that you want to release "
 			        "the selected Purchase Orders?" ),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
   {
-    q.prepare("SELECT postPurchaseOrder(:pohead_id) AS result;");
+    q.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
 
     QList<XTreeWidgetItem*> list = _pohead->selectedItems();
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
       if ((list[i]->text(3) == "U")
-        && (_privileges->check("PostPurchaseOrders"))
+        && (_privileges->check("ReleasePurchaseOrders"))
         && (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id())))
       {
         q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
@@ -214,7 +217,7 @@ void unpostedPurchaseOrders::sPost()
         {
           int result = q.value("result").toInt();
           if (result < 0)
-            systemError(this, storedProcErrorLookup("postPurchaseOrder", result),
+            systemError(this, storedProcErrorLookup("releasePurchaseOrder", result),
                         __FILE__, __LINE__);
           else
 			done = true;
@@ -254,8 +257,8 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
   menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
   pMenu->setItemEnabled(menuItem, canMaintain);
 
-  menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("PostPurchaseOrders") &&
+  menuItem = pMenu->insertItem(tr("Release..."), this, SLOT(sRelease()), 0);
+  pMenu->setItemEnabled(menuItem, _privileges->check("ReleasePurchaseOrders") &&
 				  pItem->text(3) == "U");
 }
 
@@ -278,7 +281,7 @@ void unpostedPurchaseOrders::sHandleButtons()
   _delete->setEnabled(unposted && _privileges->check("MaintainPurchaseOrders"));
   _edit->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
 		    (open && _privileges->check("MaintainPostedPurchaseOrders")));
-//  _post->setEnabled(unposted && _privileges->check("PostPurchaseOrders"));
+  _release->setEnabled(unposted && _privileges->check("ReleasePurchaseOrders"));
   _print->setEnabled(_privileges->check("PrintPurchaseOrders"));
 
   if ((unposted && _privileges->check("MaintainPurchaseOrders")) ||
@@ -299,8 +302,14 @@ void unpostedPurchaseOrders::sFillList()
   _pohead->clear();
 
   ParameterList params;
-  if (_allOpenOrders->isChecked())
-    params.append("showPosted");
+  if (_showUnreleased->isChecked() && _showOpen->isChecked() )
+    params.append("showBoth");
+  else if (_showUnreleased->isChecked())
+    params.append("showUnreleased");
+  else if (_showOpen->isChecked())
+    params.append("showOpen");
+  else
+    params.append("shownothing");
 
   QString sql( "SELECT pohead_id, pohead_number, vend_name,"
                "       MIN(poitem_duedate) AS min_duedate, "
@@ -308,13 +317,23 @@ void unpostedPurchaseOrders::sFillList()
                "FROM vend, pohead LEFT OUTER JOIN "
                "     poitem ON (poitem_pohead_id=pohead_id) "
                "WHERE ( (pohead_vend_id=vend_id)"
-               "<? if exists(\"showPosted\") ?> "
+               "<? if exists(\"showUnreleased\") ?> "
+               "  AND (pohead_status ='U') "
+               "<? endif ?> "
+               "<? if exists(\"showOpen\") ?>"
+               "  AND (pohead_status='O' )"
+               "  AND (pohead_id NOT IN (SELECT vohead_pohead_id"
+               "                         FROM vohead"
+               "                         WHERE vohead_pohead_id IS NOT NULL)) "
+               "<? endif ?> "
+               "<? if exists(\"showBoth\") ?> "
                "  AND (pohead_status IN ('U', 'O') ) "
                "  AND (pohead_id NOT IN (SELECT vohead_pohead_id"
                "                         FROM vohead"
-               "                         WHERE vohead_pohead_id IS NOT NULL))"
-               "<? else ?> "
-               "  AND (pohead_status='U') "
+               "                         WHERE vohead_pohead_id IS NOT NULL)) "
+               "<? endif ?> "
+               "<? if exists(\"shownothing\") ?> "
+               "  AND (pohead_status NOT IN ('U', 'O', 'C')) "
                "<? endif ?> "
                ") "
                "GROUP BY pohead_number, pohead_id, vend_name, pohead_status, "

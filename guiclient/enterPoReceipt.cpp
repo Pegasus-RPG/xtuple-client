@@ -46,6 +46,11 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 			  OrderLineEdit::Transfer);
   _order->setToSitePrivsEnforced(TRUE);
 
+  if (_metrics->boolean("EnableDropShipments"))
+    _dropShip->setEnabled(FALSE);
+  else
+    _dropShip->hide();
+
   if (_metrics->boolean("EnableReturnAuth"))
   {
       _order->setExtraClause("RA", "(SELECT SUM(raitem_qtyauthorized) > 0 "
@@ -351,6 +356,18 @@ void enterPoReceipt::sEnter()
 void enterPoReceipt::sFillList()
 {
   _orderitem->clear();
+
+  XSqlQuery dropship;
+  dropship.prepare("SELECT pohead_dropship FROM pohead WHERE (pohead_id = :pohead_id);"); 
+  dropship.bindValue(":pohead_id", _order->id());
+  dropship.exec();
+  if(dropship.first())
+  {
+    if(dropship.value("pohead_dropship").toBool())
+	  _dropShip->setChecked(TRUE);
+	else
+	  _dropShip->setChecked(FALSE);
+  }
 
   disconnect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
   if (_order->isValid())

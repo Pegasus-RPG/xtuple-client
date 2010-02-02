@@ -231,9 +231,9 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accaunts Payable | Purchase Orders
     { "menu", tr("Purchase &Order"), (char*)apPurchaseMenu, apMenu, "true", NULL, NULL, true, NULL },
     { "ap.enterPurchaseOrder", tr("&New..."), SLOT(sEnterPurchaseOrder()), apPurchaseMenu, "MaintainPurchaseOrders", NULL, NULL, true , NULL },
-    { "ap.listUnpostedPurchaseOrders", tr("&List Unposted..."), SLOT(sUnpostedPurchaseOrders()), apPurchaseMenu, "MaintainPurchaseOrders ViewPurchaseOrders", NULL, NULL, true , NULL },
+    { "ap.listUnpostedPurchaseOrders", tr("&List Open..."), SLOT(sUnpostedPurchaseOrders()), apPurchaseMenu, "MaintainPurchaseOrders ViewPurchaseOrders", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apPurchaseMenu, "true", NULL, NULL, true, NULL },
-    { "ap.postPurchaseOrder", tr("&Post..."), SLOT(sPostPurchaseOrder()), apPurchaseMenu, "PostPurchaseOrders", NULL, NULL, true , NULL },
+    { "ap.postPurchaseOrder", tr("&Release..."), SLOT(sPostPurchaseOrder()), apPurchaseMenu, "ReleasePurchaseOrders", NULL, NULL, true , NULL },
 
     // Accounting | Accaunts Payable | Vouchers
     { "menu", tr("&Voucher"), (char*)apVoucherMenu, apMenu, "true", NULL, NULL, true, NULL },

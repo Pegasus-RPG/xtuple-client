@@ -24,7 +24,7 @@ public:
     ~postPurchaseOrdersByAgent();
 
 public slots:
-    virtual void sPost();
+    virtual void sRelease();
 
 protected slots:
     virtual void languageChange();
