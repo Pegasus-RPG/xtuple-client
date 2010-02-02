@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef FILE_H
-#define FILE_H
+#ifndef ALARMMAINT_H
+#define ALARMMAINT_H
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -47,4 +47,4 @@ private:
 
 };
 
-#endif // FILE_H
+#endif // ALARMMAINT_H
