@@ -17,6 +17,8 @@
 
 #include <metrics.h>
 
+#include "parameter.h"
+
 #include <QtDesigner/QtDesigner>
 #include <QString>
 #include <QIcon>
@@ -41,6 +43,13 @@ extern Preferences *_x_preferences;
 extern Metrics     *_x_metrics;
 extern QWorkspace  *_x_workspace;
 extern Privileges  *_x_privileges;
+
+class XTUPLEWIDGETS_EXPORT GuiClientInterface
+{
+  public:
+    virtual ~GuiClientInterface() {}
+    virtual QDialog* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
+};
 
 class xTuplePlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
 {

@@ -62,6 +62,8 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( WorkOrder,         "W"   ),
 };
 
+GuiClientInterface* Documents::_guiClientInterface = 0;
+
 Documents::Documents(QWidget *pParent) :
   QWidget(pParent)
 {
@@ -203,20 +205,24 @@ int id;
 
 void Documents::sNewToDo()
 {
- /* ParameterList params;
-  if (_crmAccount->isValid())
-    params.append("crmacct_id", _crmAccount->id());
-  params.append("mode", "new");
-  if (_selected->isChecked())
-    params.append("username", _usr->username());
+  if (_guiClientInterface)
+  {
+    ParameterList params;
+    params.append("mode", "new");
 
-  todoItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    QDialog* newdlg = _guiClientInterface->openDialog("todoItem", params, parentWidget(),Qt::WindowModal);
 
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
-  */
+    if (newdlg->exec() != QDialog::Rejected)
+      refresh();
+  }
 }
+/*
+void CRMAcctLineEdit::sInfo()
+{
+  if (_crmacctInfoAction)
+    _crmacctInfoAction->crmacctInformation(this, id());
+}
+*/
 
 void Documents::sNewTask()
 {

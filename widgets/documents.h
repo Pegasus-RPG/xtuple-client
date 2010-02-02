@@ -15,6 +15,8 @@
 
 #include <xsqlquery.h>
 
+#include "widgets.h"
+
 #include "ui_documents.h"
 
 class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
@@ -47,6 +49,8 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       TransferOrder,	TransferOrderItem,  Vendor,
       Warehouse,	WorkOrder
     };
+
+    static GuiClientInterface *_guiClientInterface;
 
     inline int  sourceid()             { return _sourceid; }
     inline enum DocumentSources type() { return _source;   }

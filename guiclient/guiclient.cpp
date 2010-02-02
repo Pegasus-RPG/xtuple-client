@@ -262,6 +262,27 @@ void Action::init( QWidget *, const char *pName, const QString &/*pDisplayName*/
   __menuEvaluate(this);
 }
 
+class xTupleGuiClientInterface : public GuiClientInterface
+{
+  public:
+  QDialog* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
+  {
+    ScriptToolbox toolbox(0);
+    QWidget* w = toolbox.openWindow(pname, parent, modality, flags);
+    if (w)
+    {
+      if (w->inherits("QDialog"))
+      {
+        XDialog* xdlg = (XDialog*)w;
+        xdlg->set(pparams);
+        QDialog* qdlg = (QDialog*)xdlg;
+        return qdlg;
+      }
+    }
+    return 0;
+  }
+};
+
 class xTupleCustInfoAction : public CustInfoAction
 {
   public:
@@ -473,6 +494,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   connect(_timeoutHandler, SIGNAL(timeout()), this, SLOT(sIdleTimeout()));
   _timeoutHandler->setIdleMinutes(_preferences->value("IdleTimeout").toInt());
   _reportHandler = 0;
+
+  Documents::_guiClientInterface = new xTupleGuiClientInterface();
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;
