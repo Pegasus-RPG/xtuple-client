@@ -24,7 +24,7 @@ class PaymentechProcessor : public CreditCardProcessor
     PaymentechProcessor();
 
   protected:
-    virtual int  buildCommon(QString &, const int, const int, const double, const int, QString&, QString);
+    virtual int  buildCommon(QString &, const int, const int, const double, const int, QString&, QString, const QString & = QString::null, const QString & = QString::null);
     virtual int  doTestConfiguration();
     virtual int  doAuthorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
     virtual int  doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);

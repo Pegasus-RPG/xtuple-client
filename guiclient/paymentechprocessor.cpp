@@ -38,7 +38,7 @@ PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
   _msgHash.insert(-209, tr("The selected credit card is not a know type for Paymentech."));
 }
 
-int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
+int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype, const QString & pAuthcode, const QString & pRespdate)
 {
   XSqlQuery anq;
   anq.prepare(
@@ -135,72 +135,64 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
 
   prequest += " "; // Reserved
 
-  // Bill To Address Information
-  prequest += "AB";
-  prequest += "               "; // TelephoneType, TelephoneNumber (1,14, Optional)
-  QStringList nameParts = anq.value("ccard_name").toString().split(QRegExp("\\s+"));
-  QString name = "";
-  if(!nameParts.isEmpty())
+  if(pordertype == "AU")
   {
-    QString lName = nameParts.takeLast();
-    QString fName = nameParts.join(" ");
-    name = fName + " *" + lName;
-  }
-  prequest += name.leftJustified(30, ' ', true);
-  prequest += anq.value("ccard_address1").toString().leftJustified(30, ' ', true);
-  prequest += anq.value("ccard_address2").toString().leftJustified(28, ' ', true);
+    // Bill To Address Information
+    prequest += "AB";
+    prequest += "               "; // TelephoneType, TelephoneNumber (1,14, Optional)
+    QStringList nameParts = anq.value("ccard_name").toString().split(QRegExp("\\s+"));
+    QString name = "";
+    if(!nameParts.isEmpty())
+    {
+      QString lName = nameParts.takeLast();
+      QString fName = nameParts.join(" ");
+      name = fName + " *" + lName;
+    }
+    prequest += name.leftJustified(30, ' ', true);
+    prequest += anq.value("ccard_address1").toString().leftJustified(30, ' ', true);
+    prequest += anq.value("ccard_address2").toString().leftJustified(28, ' ', true);
 
-  QString cntry = anq.value("ccard_country").toString();
-  XSqlQuery qCntry;
-  qCntry.prepare("SELECT 1 AS ord, country_abbr FROM country WHERE country_name = :cname"
-                 " UNION "
-                 "SELECT 2 AS ord, country_abbr FROM country WHERE country_abbr = :cname"
-                 " ORDER BY ord LIMIT 1;");
-  qCntry.bindValue(":cname", cntry);
-  qCntry.exec();
-  if(qCntry.first())
-    cntry = qCntry.value("country_abbr").toString();
-  else
-    cntry = "";
-  prequest += cntry.leftJustified(2, ' ', true);
+    QString cntry = anq.value("ccard_country").toString();
+    XSqlQuery qCntry;
+    qCntry.prepare("SELECT 1 AS ord, country_abbr FROM country WHERE country_name = :cname"
+                   " UNION "
+                   "SELECT 2 AS ord, country_abbr FROM country WHERE country_abbr = :cname"
+                   " ORDER BY ord LIMIT 1;");
+    qCntry.bindValue(":cname", cntry);
+    qCntry.exec();
+    if(qCntry.first())
+      cntry = qCntry.value("country_abbr").toString();
+    else
+      cntry = "";
+    prequest += cntry.leftJustified(2, ' ', true);
+  
+    prequest += anq.value("ccard_city").toString().leftJustified(20, ' ', true);
+  
+    QString state = anq.value("ccard_state").toString();
+    XSqlQuery qState;
+    qState.prepare("SELECT 1 AS ord, state_abbr FROM state WHERE state_name = :cname"
+                   " UNION "
+                   "SELECT 2 AS ord, state_abbr FROM state WHERE state_abbr = :cname"
+                   " ORDER BY ord LIMIT 1;");
+    qState.bindValue(":cname", state);
+    qState.exec();
+    if(qState.first())
+      state = qState.value("state_abbr").toString();
+    else
+      state = "";
+    prequest += state.leftJustified(2, ' ', true);
+  
+    prequest += anq.value("ccard_zip").toString().leftJustified(10, ' ', true);
 
-  prequest += anq.value("ccard_city").toString().leftJustified(20, ' ', true);
+  } // end Address Billing record
 
-  QString state = anq.value("ccard_state").toString();
-  XSqlQuery qState;
-  qState.prepare("SELECT 1 AS ord, state_abbr FROM state WHERE state_name = :cname"
-                 " UNION "
-                 "SELECT 2 AS ord, state_abbr FROM state WHERE state_abbr = :cname"
-                 " ORDER BY ord LIMIT 1;");
-  qState.bindValue(":cname", state);
-  qState.exec();
-  if(qState.first())
-    state = qState.value("state_abbr").toString();
-  else
-    state = "";
-  prequest += state.leftJustified(2, ' ', true);
-
-  prequest += anq.value("ccard_zip").toString().leftJustified(10, ' ', true);
-
-/* TODO: should probably do something about this in relation to above with the CurrencyCode
-  anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
-  anq.bindValue(":currid", pcurrid);
-  anq.exec();
-  if (anq.first())
+  if(pordertype == "AR")
   {
-    APPENDFIELD(prequest, "x_currency_code", anq.value("curr_abbr").toString());
+    prequest += "PA";
+    prequest += pRespdate.leftJustified(6, '0', true);
+    prequest += pAuthcode.leftJustified(6, ' ', true);
+    prequest += "        "; // DebitTraceNumber: leave blank
   }
-  else if (anq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = anq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
-*/
 
   if (pcvv > 0)
   {
@@ -209,6 +201,7 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
     prequest += QString::number(amount).leftJustified(4, ' ', true);
   }
 
+  // version records -- should always include
   prequest += "VVISAN\r"; // add version record to end
   prequest = prequest.toUpper();
 
@@ -355,10 +348,22 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   int    returnValue = 0;
   double amount = pamount;
   int    currid = pcurrid;
+  QString authcode;
+  QString respdate;
+
+  XSqlQuery ccq;
+  ccq.prepare("SELECT ccpay_r_code, ccpay_yp_r_tdate FROM ccpay WHERE (ccpay_id=:ccpayid);");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if(ccq.first())
+  {
+    authcode = ccq.value("ccpay_r_code").toString();
+    respdate = ccq.value("ccpay_yp_r_tdate").toString();
+  }
 
   QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AR"); // TODO: this may need to change
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AR", authcode, respdate); // TODO: This may need to be different if it was charged already
   if (returnValue != 0)
     return returnValue;
 
@@ -397,6 +402,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
   QString r_ref;
   QString r_shipping;
   QString r_tax;
+  QString r_date;
 
   QString status;
 
@@ -414,6 +420,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   r_message = "Received return code " + r_response; // TODO: come up with a way to populate this
 
+  r_date = presponse.mid(29, 6).trimmed();
   r_code = presponse.mid(35, 6).trimmed();
   r_avs = presponse.mid(41, 2).trimmed();
   r_ordernum = presponse.mid(4, 22).trimmed();
@@ -487,6 +494,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
   pparams.append("tax",         r_tax);
   pparams.append("ref",         r_ref);
   pparams.append("message",     r_message);
+  pparams.append("tdate",       r_date);
 
   if (ptype == "A")
     pparams.append("auth", QVariant(true, 0));
