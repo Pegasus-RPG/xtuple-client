@@ -11,6 +11,7 @@
 #ifndef xlineedit_h
 #define xlineedit_h
 
+#include <QAction>
 #include <QLineEdit>
 #include <QFocusEvent>
 #include <QKeyEvent>
@@ -30,11 +31,11 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
 
     Q_INVOKABLE bool isValid();
     Q_INVOKABLE int  id();
-    Q_INVOKABLE void setValidator(QValidator * v) { QLineEdit::setValidator(v); };
+    Q_INVOKABLE void setValidator(QValidator * v) { QLineEdit::setValidator(v); }
 
     Q_INVOKABLE double toDouble(bool * = 0);
-    virtual QString defaultText() const { return _default; };
-    virtual QString fieldName()   const { return _fieldName; };
+    virtual QString defaultText() const { return _default; }
+    virtual QString fieldName()   const { return _fieldName; }
     virtual void   setText(const QVariant &);
     Q_INVOKABLE virtual void   setDouble(const double, const int = -1);
 
@@ -43,8 +44,8 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     virtual void setData();
     virtual void setData(const QString &text);
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setDefaultText(QString p)  { _default = p; };
-    virtual void setFieldName(QString p)    { _fieldName = p; };
+    virtual void setDefaultText(QString p)  { _default = p; }
+    virtual void setFieldName(QString p)    { _fieldName = p; }
 
   signals:
     void clicked();
@@ -58,11 +59,14 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     int     _id;
     bool    _valid;
     bool    _parsed;
+
+    QAction* _listAct;
+    QAction* _searchAct;
+    QAction* _aliasAct;
     
     void mouseDoubleClickEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
     
   private:    
     QString _default;

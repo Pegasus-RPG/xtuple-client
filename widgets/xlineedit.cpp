@@ -38,7 +38,31 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
 
   _id = -1;
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
-  
+
+  QKeySequence listKey = QKeySequence(tr("Ctrl+L"));
+  _listAct = new QAction(tr("List..."), this);
+  _listAct->setShortcut(listKey);
+  _listAct->setShortcutContext(Qt::WidgetShortcut);
+  _listAct->setToolTip(tr("List all records"));
+  connect(_listAct, SIGNAL(triggered()), this, SIGNAL(requestList()));
+  addAction(_listAct);
+
+  QKeySequence searchKey = QKeySequence(tr("Ctrl+S"));
+  _searchAct = new QAction(tr("Search..."), this);
+  _searchAct->setShortcut(searchKey);
+  _searchAct->setShortcutContext(Qt::WidgetShortcut);
+  _searchAct->setToolTip(tr("Search on specific criteria"));
+  connect(_searchAct, SIGNAL(triggered()), this, SIGNAL(requestSearch()));
+  addAction(_searchAct);
+
+   QKeySequence aliasKey = QKeySequence(tr("Ctrl+A"));
+  _aliasAct = new QAction(tr("Alias..."), this);
+  _aliasAct->setShortcut(aliasKey);
+  _aliasAct->setShortcutContext(Qt::WidgetShortcut);
+  _aliasAct->setToolTip(tr("List of alias records"));
+  connect(_aliasAct, SIGNAL(triggered()), this, SIGNAL(requestAlias()));
+  addAction(_aliasAct);
+
   _mapper = new XDataWidgetMapper(this);
 }
 
@@ -138,40 +162,8 @@ void XLineEdit::mousePressEvent(QMouseEvent *event)
 
 void XLineEdit::keyPressEvent(QKeyEvent *event)
 {
-  _parsed = FALSE;
-  if (event->modifiers() == Qt::ControlModifier)
-  {
-    if (event->key() == Qt::Key_L)
-    {
-      _parsed = TRUE;
-      emit (requestList());
-    }
-
-    else if (event->key() == Qt::Key_S)
-    {
-      _parsed = TRUE;
-      emit (requestSearch());
-    }
-
-    else if (event->key() == Qt::Key_A)
-    {
-      _parsed = TRUE;
-      emit (requestAlias());
-    }
-  }
-
-  if (_parsed)
-    event->accept();
-  else
-    QLineEdit::keyPressEvent(event);
-}
-
-void XLineEdit::focusInEvent(QFocusEvent *pEvent)
-{
-  if(!text().isEmpty())
-    setSelection(0, text().length());
-
-  QLineEdit::focusInEvent(pEvent);
+  _parsed = false;
+  QLineEdit::keyPressEvent(event);
 }
 
 void XLineEdit::setData()
