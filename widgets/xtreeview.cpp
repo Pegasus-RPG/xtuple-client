@@ -31,6 +31,7 @@ XTreeView::XTreeView(QWidget *parent) :
   _resizingInProcess = false;
   _settingsLoaded    = false;
   _forgetful         = false;
+  _ignoreSizing      = false;
 
   _menu = new QMenu(this);
   _menu->setObjectName("_menu");
@@ -407,6 +408,14 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
 {  
   setTable();
   _mapper=mapper; 
+}
+
+void XTreeView::setGeometry( int x, int y, int w, int h )
+{
+  if (_ignoreSizing)
+    QTreeView::setGeometry( x, y, width(), height());
+  else
+    QTreeView::setGeometry( x, y, w, h);
 }
 
 void XTreeView::setFilter(const QString filter)

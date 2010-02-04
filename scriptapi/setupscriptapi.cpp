@@ -13,7 +13,7 @@
 #include "calendarTools.h"
 #include "clineeditsetup.h"
 #include "commentssetup.h"
-#include "contactclustersetup.h"
+#include "contactwidgetsetup.h"
 #include "crmacctlineeditsetup.h"
 #include "currdisplaysetup.h"
 #include "documentssetup.h"
@@ -113,7 +113,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupCLineEdit(engine);
   setupCRMAcctLineEdit(engine);
   setupComments(engine);
-  setupContactCluster(engine);
+  setupContactWidget(engine);
   setupCurrDisplay(engine);
   setupDocuments(engine);
   setupGLCluster(engine);

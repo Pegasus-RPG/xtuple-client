@@ -222,6 +222,8 @@ void userPreferences::sPopulate()
     _ellipsesAction->setId(2);
   else
     _ellipsesAction->setId(1);
+
+  _clusterButtons->setChecked(_pref->boolean("ClusterButtons"));
     
   //Hide for PostBooks 
   if (_metrics->value("Application") == "PostBooks")
@@ -276,6 +278,8 @@ void userPreferences::sSave()
     _pref->set("DefaultEllipsesAction", QString("search"));
   else
     _pref->set("DefaultEllipsesAction", QString("list"));
+
+  _pref->set("ClusterButtons", _clusterButtons->isChecked());
 
   if(_interfaceWorkspace->isChecked())
     _pref->set("InterfaceWindowOption", QString("Workspace"));

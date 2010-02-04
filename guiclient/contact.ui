@@ -20,98 +20,143 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Contact</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="gridLayout_8">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="margin">
-      <number>12</number>
-     </property>
+    <layout class="QGridLayout" name="gridLayout_6">
      <property name="spacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QFrame" name="frame">
-         <property name="minimumSize">
-          <size>
-           <width>640</width>
-           <height>291</height>
-          </size>
+        <widget class="QLabel" name="_numberLit">
+         <property name="text">
+          <string>Number:</string>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="ContactCluster" name="_contact">
-            <property name="listVisible">
-             <bool>false</bool>
-            </property>
-            <property name="activeVisible">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
        <item>
-        <spacer>
+        <widget class="XLineEdit" name="_number">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_active">
+         <property name="text">
+          <string>Active</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>13</width>
+           <width>40</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
+      </layout>
+     </item>
+     <item row="0" column="1" rowspan="2">
+      <layout class="QVBoxLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>Cancel</string>
          </property>
-         <item>
-          <widget class="QPushButton" name="_close">
-           <property name="text">
-            <string>Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_save">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_save">
+         <property name="text">
+          <string>Save</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
      <item row="1" column="0">
+      <widget class="QGroupBox" name="_cntctGroup">
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="ContactWidget" name="_contact">
+             <property name="listVisible">
+              <bool>false</bool>
+             </property>
+             <property name="accountVisible">
+              <bool>true</bool>
+             </property>
+             <property name="ownerVisible">
+              <bool>false</bool>
+             </property>
+             <property name="activeVisible">
+              <bool>true</bool>
+             </property>
+             <property name="initialsVisible">
+              <bool>true</bool>
+             </property>
+             <property name="minimalLayout">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
       <widget class="QTabWidget" name="_tabWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -119,16 +164,83 @@ to be bound by its terms.</comment>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::WheelFocus</enum>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_tabNotes">
+       <widget class="QWidget" name="_generalTab">
         <attribute name="title">
-         <string>Notes</string>
+         <string>General</string>
         </attribute>
-        <layout class="QHBoxLayout">
-         <item>
-          <widget class="QTextEdit" name="_notes"/>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="_accountGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="CRMAcctCluster" name="_crmAccount">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="label">
+               <string>Account #:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QGroupBox" name="_ownerGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="UsernameCluster" name="_owner">
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="label">
+                 <string>Owner:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QGroupBox" name="_notesGroup">
+           <property name="title">
+            <string>Notes</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QTextEdit" name="_notes"/>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -139,6 +251,9 @@ to be bound by its terms.</comment>
         <layout class="QHBoxLayout">
          <item>
           <widget class="Comments" name="_comments">
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
            <property name="type">
             <enum>Comments::Contact</enum>
            </property>
@@ -272,9 +387,24 @@ to be bound by its terms.</comment>
    <header>comments.h</header>
   </customwidget>
   <customwidget>
-   <class>ContactCluster</class>
+   <class>ContactWidget</class>
    <extends>QWidget</extends>
-   <header>contactcluster.h</header>
+   <header>contactwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CRMAcctCluster</class>
+   <extends>QWidget</extends>
+   <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>UsernameCluster</class>
+   <extends>QWidget</extends>
+   <header>usernamecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -285,16 +415,23 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_contact</tabstop>
+  <tabstop>_tabWidget</tabstop>
+  <tabstop>_crmAccount</tabstop>
+  <tabstop>_owner</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
   <tabstop>_deleteCharacteristic</tabstop>
+  <tabstop>_uses</tabstop>
   <tabstop>_editUse</tabstop>
   <tabstop>_viewUse</tabstop>
   <tabstop>_detachUse</tabstop>
   <tabstop>_save</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_number</tabstop>
+  <tabstop>_active</tabstop>
  </tabstops>
  <resources/>
  <connections>

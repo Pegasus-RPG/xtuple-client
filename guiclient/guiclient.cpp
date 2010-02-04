@@ -495,7 +495,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _timeoutHandler->setIdleMinutes(_preferences->value("IdleTimeout").toInt());
   _reportHandler = 0;
 
-  Documents::_guiClientInterface = new xTupleGuiClientInterface();
+  //ContactCluster::_guiClientInterface = new xTupleGuiClientInterface();
+  VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;

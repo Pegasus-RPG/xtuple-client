@@ -20,4 +20,7 @@ DeptClusterLineEdit::DeptClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "dept", "dept_id", "dept_number", "dept_name", 0, 0, pName)
 {
     setTitles(tr("Department"), tr("Departments"));
+    setUiName("department");
+    setEditPriv("MaintainDepartments");
+    setViewPriv("ViewDepartments");
 }

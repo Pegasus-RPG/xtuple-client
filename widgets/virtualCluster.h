@@ -18,11 +18,15 @@
 #include "xcheckbox.h"
 #include "xdatawidgetmapper.h"
 
+#include <QAction>
 #include <QCheckBox>
+#include <QCompleter>
 #include <QDialog>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QPushButton>
+#include <QSqlQueryModel>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -101,7 +105,7 @@ class XTUPLEWIDGETS_EXPORT VirtualInfo : public QDialog
     friend class VirtualClusterLineEdit;
 
     public:
-        VirtualInfo(QWidget*, Qt::WindowFlags = 0);
+        VirtualInfo(QWidget*,  Qt::WindowFlags = 0);
 
     public slots:
         virtual void sPopulate();
@@ -153,14 +157,30 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
                                const char* = 0);
         virtual int  id() const { return _id; }
 
+       void setMenu(QMenu *menu);
+       QMenu *menu() const { return _menu; }
+
+       static GuiClientInterface *_guiClientInterface;
+
+       Q_INVOKABLE        virtual bool canOpen();
+       Q_INVOKABLE inline virtual QString uiName()         const { return _uiName; }
+       Q_INVOKABLE inline virtual QString editPriv()       const { return _editPriv; }
+       Q_INVOKABLE inline virtual QString viewPriv()       const { return _viewPriv; }
+
     public slots:
-        virtual QString extraClause() const { return _extraClause; };
+        virtual QString extraClause() const { return _extraClause; }
         virtual void sEllipses();
         virtual void sInfo();
         virtual void sList();
+        virtual void sOpen();
+        virtual void sNew();
         virtual void sSearch();
         virtual void setId(const int);
         virtual void setNumber(const QString&);
+
+        virtual void setUiName(const QString& name);
+        virtual void setEditPriv(const QString& priv);
+        virtual void setViewPriv(const QString& priv);
 
     protected slots:
         virtual void clear();
@@ -170,10 +190,12 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual VirtualSearch*  searchFactory();
         virtual VirtualInfo*    infoFactory();
 
+        virtual void sHandleCompleter();
         virtual void sParse();
+        virtual void sUpdateMenu();
 
         virtual void setTitles(const QString&, const QString& = 0);
-        inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
+        inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; }
         virtual void setTableAndColumnNames(const char* pTabName,
                                             const char* pIdColumn,
                                             const char* pNumberColumn,
@@ -189,9 +211,18 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         void valid(bool);
 
     protected:
+        virtual bool eventFilter(QObject *obj, QEvent* event);
+        virtual void resizeEvent(QResizeEvent *e);
+
+        QAction* _infoAct;
+        QAction* _openAct;
+        QAction* _newAct;
+        QLabel* _menuLabel;
+        QMenu* _menu;
         QString _titleSingular;
         QString _titlePlural;
         QString _query;
+        QString _hintQuery;
         QString _idClause;
         QString _numClause;
         QString _extraClause;
@@ -201,12 +232,20 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _numColName;
         QString _nameColName;
         QString _descripColName;
-        bool    _hasDescription;
-        bool    _hasName;
-        bool    _strict;
+        QString _uiName;
+        QString _editPriv;
+        QString _viewPriv;
+        bool _hasDescription;
+        bool _hasName;
+        bool _strict;
+
         virtual void silentSetId(const int);
         virtual void keyPressEvent(QKeyEvent *);
 
+    private:
+        void positionMenuLabel();
+
+        QString _cText;
 };
 
 /*
@@ -242,35 +281,35 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualCluster(QWidget*, const char* = 0);
         VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
-        Q_INVOKABLE inline virtual int     id()             const { return _number->id(); };
-                    inline virtual bool    infoVisible()    const { return _info->isVisible(); };
-                    inline virtual bool    listVisible()    const { return _list->isVisible(); };
-                    inline virtual QString label()          const { return _label->text(); };
-                    inline virtual bool    nameVisible()    const { return _name->isVisible(); };
-                    inline virtual QString number()         const { return _number->text(); };
-        Q_INVOKABLE inline virtual QString description()    const { return _description->text(); };
-        Q_INVOKABLE inline virtual bool    isValid()        const { return _number->isValid(); };
-        Q_INVOKABLE        virtual QString name()           const { return _name->text(); };
-        Q_INVOKABLE inline virtual bool    isStrict()       const { return _number->isStrict(); };
-                    inline virtual bool    readOnly()       const { return _readOnly; };
-                           virtual QString defaultNumber()  const { return _default; };
-                    inline virtual QString fieldName()      const { return _fieldName; };
-        Q_INVOKABLE inline virtual QString extraClause()    const { return _number->extraClause(); };
+        Q_INVOKABLE inline virtual int     id()             const { return _number->id(); }
+                    inline virtual bool    infoVisible()    const { return _info->isVisible(); }
+                    inline virtual bool    listVisible()    const { return _list->isVisible(); }
+                    inline virtual QString label()          const { return _label->text(); }
+                    inline virtual bool    nameVisible()    const { return _name->isVisible(); }
+                    inline virtual QString number()         const { return _number->text(); }
+        Q_INVOKABLE inline virtual QString description()    const { return _description->text(); }
+        Q_INVOKABLE inline virtual bool    isValid()        const { return _number->isValid(); }
+        Q_INVOKABLE        virtual QString name()           const { return _name->text(); }
+        Q_INVOKABLE inline virtual bool    isStrict()       const { return _number->isStrict(); }
+                    inline virtual bool    readOnly()       const { return _readOnly; }
+                           virtual QString defaultNumber()  const { return _default; }
+                    inline virtual QString fieldName()      const { return _fieldName; }
+        Q_INVOKABLE inline virtual QString extraClause()    const { return _number->extraClause(); }
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
-        virtual void clearExtraClause()                { _number->clearExtraClause(); };
-        virtual void setDefaultNumber(const QString& p){ _default=p;};
-        virtual void setDescription(const QString& p)  { _description->setText(p); };
-        virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
-        virtual void setFieldName(QString p)           { _fieldName = p; };
-        virtual void setId(const int p)                { _number->setId(p); };
-        virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); };
-        virtual void setListVisible(const bool p)      { _list->setHidden(!p); };
-        virtual void setName(const QString& p)         { _name->setText(p); };
-        virtual void setNameVisible(const bool p)      { _name->setHidden(!p); };
-        virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); };
-        virtual void setNumber(const QString& p)       { _number->setNumber(p); };
+        virtual void clearExtraClause()                { _number->clearExtraClause(); }
+        virtual void setDefaultNumber(const QString& p){ _default=p;}
+        virtual void setDescription(const QString& p)  { _description->setText(p); }
+        virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); }
+        virtual void setFieldName(QString p)           { _fieldName = p; }
+        virtual void setId(const int p)                { _number->setId(p); }
+        virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); }
+        virtual void setListVisible(const bool p)      { _list->setHidden(!p); }
+        virtual void setName(const QString& p)         { _name->setText(p); }
+        virtual void setNameVisible(const bool p)      { _name->setHidden(!p); }
+        virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); }
+        virtual void setNumber(const QString& p)       { _number->setNumber(p); }
 
         virtual void clear();
         virtual void setDataWidgetMap(XDataWidgetMapper* m);

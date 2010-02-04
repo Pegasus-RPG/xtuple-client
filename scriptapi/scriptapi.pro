@@ -79,7 +79,7 @@ HEADERS +=  setupscriptapi.h                    \
             alarmssetup.h			\
             clineeditsetup.h			\
             commentssetup.h			\
-            contactclustersetup.h		\
+            contactwidgetsetup.h		\
             crmacctlineeditsetup.h		\
             currdisplaysetup.h			\
             documentssetup.h			\
@@ -164,7 +164,7 @@ SOURCES +=  setupscriptapi.cpp                  \
             alarmssetup.cpp			\
             clineeditsetup.cpp			\
             commentssetup.cpp			\
-            contactclustersetup.cpp		\
+            contactwidgetsetup.cpp		\
             crmacctlineeditsetup.cpp		\
             currdisplaysetup.cpp		\
             documentssetup.cpp			\

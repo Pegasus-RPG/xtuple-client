@@ -18,6 +18,7 @@
 #include "plugins/cmheadclusterplugin.h"
 #include "plugins/commentsplugin.h"
 #include "plugins/contactclusterplugin.h"
+#include "plugins/contactwidgetplugin.h"
 #include "plugins/crmacctclusterplugin.h"
 #include "plugins/currclusterplugin.h"
 #include "plugins/currdisplayplugin.h"
@@ -97,6 +98,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new CmheadClusterPlugin(this));
   m_plugins.append(new CommentsPlugin(this));
   m_plugins.append(new ContactClusterPlugin(this));
+  m_plugins.append(new ContactWidgetPlugin(this));  
   m_plugins.append(new CRMAcctClusterPlugin(this));
   m_plugins.append(new CurrClusterPlugin(this));
   m_plugins.append(new CurrDisplayPlugin(this));

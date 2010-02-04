@@ -39,6 +39,7 @@ HEADERS += \
            plugins/aropenclusterplugin.h \
            plugins/commentsplugin.h \
            plugins/contactclusterplugin.h \
+           plugins/contactwidgetplugin.h \
            plugins/crmacctclusterplugin.h \
            plugins/currclusterplugin.h \
            plugins/currdisplayplugin.h \
@@ -110,7 +111,8 @@ HEADERS += \
            plugins/xtableviewplugin.h \
 
 SOURCES    += widgets.cpp \
-              addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
+              addressCluster.cpp contactCluster.cpp \
+              contactWidget.cpp crmacctCluster.cpp \
               xlabel.cpp xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
               aropencluster.cpp \
@@ -167,10 +169,11 @@ SOURCES    += widgets.cpp \
               xspinbox.cpp \
               xitemdelegate.cpp \
               xtableview.cpp \
-	      docAttach.cpp
+              docAttach.cpp \
 
 HEADERS    += widgets.h \
-              addresscluster.h contactcluster.h crmacctcluster.h \
+              addresscluster.h contactcluster.h \
+              contactwidget.h crmacctcluster.h \
               xlabel.h xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
               aropencluster.h \
@@ -228,7 +231,7 @@ HEADERS    += widgets.h \
               xspinbox.h \
               xitemdelegate.h \
               xtableview.h \
-              docAttach.h
+              docAttach.h \
 
 FORMS += accountSearch.ui \
          alarms.ui alarmMaint.ui \

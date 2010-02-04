@@ -13,26 +13,17 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>492</height>
+    <width>751</width>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>User Preferences</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
     <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>12</number>
-     </property>
-     <property name="rightMargin">
-      <number>12</number>
-     </property>
-     <property name="bottomMargin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
+     <property name="verticalSpacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
@@ -250,7 +241,7 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="0" column="1" colspan="2">
           <widget class="QGroupBox" name="_warehouseGroup">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -423,6 +414,64 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item row="1" column="1">
+          <widget class="QGroupBox" name="_clusterModeGroup">
+           <property name="title">
+            <string>Search Navigation</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QRadioButton" name="_clusterMenu">
+              <property name="text">
+               <string>Menu</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_clusterButtons">
+              <property name="text">
+               <string>Buttons</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title">
+            <string>Copy Lists to</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="_richText">
+              <property name="text">
+               <string>Rich Text</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="_plainText">
+              <property name="text">
+               <string>Plain Text</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
           <widget class="QGroupBox" name="_defaultsGroup">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -480,51 +529,6 @@ to be bound by its terms.</comment>
                </layout>
               </item>
              </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QGroupBox" name="groupBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>Copy Lists to</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="_richText">
-              <property name="text">
-               <string>Rich Text</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="_plainText">
-              <property name="text">
-               <string>Plain Text</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -1252,7 +1256,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Advanced</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_5">
+        <layout class="QGridLayout" name="gridLayout_6">
          <item row="0" column="0">
           <widget class="QCheckBox" name="_debug">
            <property name="text">

@@ -47,6 +47,9 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       Q_INVOKABLE         void setTable();
       Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;}
       Q_INVOKABLE XSqlTableModel    *model()   { return _model;}
+      virtual bool ignoreGeometrySizing() { return _ignoreSizing; }
+      virtual void setIgnoreGeometrySizing(bool ignore) { _ignoreSizing = ignore; }
+      virtual void setGeometry( int x, int y, int w, int h );
             
     public slots:
       virtual int  currentIndex();
@@ -101,6 +104,7 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 
     private:
       bool                 _forgetful;
+      bool                 _ignoreSizing;
       QSqlRecord           _idx;
       int                  _keyColumns;
       XDataWidgetMapper   *_mapper;

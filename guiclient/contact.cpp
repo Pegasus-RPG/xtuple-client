@@ -26,6 +26,7 @@
 #include "vendor.h"
 #include "vendorAddress.h"
 #include "warehouse.h"
+#include "xsqlquery.h"
 #include <time.h>
 
 contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -59,6 +60,14 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _uses->addColumn(tr("Active"),    _ynColumn, Qt::AlignCenter,true, "active");
 
   _activeCache = false;
+
+  _contact->setMinimalLayout(false);
+  _contact->setAccountVisible(false);
+  _contact->setInitialsVisible(false);
+  _contact->setActiveVisible(false);
+  _contact->setOwnerVisible(false);
+
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 }
 
 contact::~contact()
@@ -77,10 +86,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  _contact->setOwnerVisible(true);
-  if(!_privileges->check("EditOwner")) _contact->setOwnerEnabled(false);
-
-  _contact->setOwnerUsername(omfgThis->username());
 
   param = pParams.value("cntct_id", &valid);
   if (valid)
@@ -116,9 +121,13 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _comments->setId(_contact->id());
       _contact->setFirst("");
 
+      q.exec("SELECT fetchNextNumber('ContactNumber') AS result;");
+      q.first();
+      _number->setText(q.value("result").toString());
+      _contact->setNumber(_number->text());
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-
+      _contact->setOwnerUsername(omfgThis->username());
       _contact->setFocus();
     }
     else if (param.toString() == "edit")
@@ -359,11 +368,34 @@ void contact::sSave()
     return;
   }
 
+  // Would be better to get to these through contact widget, but for now...
+  XSqlQuery cntctUpd;
+  cntctUpd.prepare("UPDATE cntct SET "
+          " cntct_active = :active, "
+          " cntct_crmacct_id = :crmacct_id, "
+          " cntct_owner_username = :owner_username "
+          "WHERE (cntct_id=:cntct_id);");
+  cntctUpd.bindValue(":active", QVariant(_active->isChecked()));
+  if (_crmAccount->id() != -1)
+    cntctUpd.bindValue(":crmacct_id", _crmAccount->id());
+  cntctUpd.bindValue(":owner_username", _owner->username());
+  cntctUpd.bindValue(":cntct_id", _contact->id());
+  cntctUpd.exec();
+  if (cntctUpd.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cntctUpd.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   done(_contact->id());
 }
 
 void contact::sPopulate()
 {
+  _number->setText(_contact->number());
+  _active->setChecked(_contact->active());
+  _crmAccount->setId(_contact->crmAcctId());
+  _owner->setUsername(_contact->owner());
   _notes->setText(_contact->notes());
   _activeCache = _contact->active();
   sFillList();

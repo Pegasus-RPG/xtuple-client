@@ -332,7 +332,7 @@ void OrderLineEdit::sParse()
 	else
 	{
 	  _extraClause += "AND (orderhead_number=" + text() + ")";
-	  sEllipses();
+          sEllipses();
 	  _extraClause += "AND (orderhead_type='" + type() + "')";
 	}
       }
@@ -657,7 +657,7 @@ void OrderLineEdit::silentSetId(const int pId)
       else
       {
 	_extraClause += "AND (orderhead_id=" + QString::number(pId) + ")";
-	sEllipses();
+        sEllipses();
 	_extraClause += "AND (orderhead_type='" + type() + "')";
       }
     }

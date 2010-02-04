@@ -150,7 +150,7 @@ to be bound by its terms.</comment>
         </attribute>
         <layout class="QGridLayout">
          <item row="0" column="0">
-          <widget class="ContactCluster" name="_contact">
+          <widget class="ContactWidget" name="_contact">
            <property name="listVisible">
             <bool>false</bool>
            </property>
@@ -850,9 +850,9 @@ to be bound by its terms.</comment>
    <header>comments.h</header>
   </customwidget>
   <customwidget>
-   <class>ContactCluster</class>
+   <class>ContactWidget</class>
    <extends>QWidget</extends>
-   <header>contactcluster.h</header>
+   <header>contactwidget.h</header>
   </customwidget>
   <customwidget>
    <class>CurrCluster</class>
