@@ -49,6 +49,7 @@
 #include "opportunityTypes.h"
 
 #include "editOwners.h"
+#include "createRecurringItems.h"
 
 #include "menuCRM.h"
 
@@ -165,7 +166,8 @@ menuCRM::menuCRM(GUIClient *Pparent) :
 
     //Utilities
     { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL }
+    { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL },
+    { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainIncidents MaintainProjects MaintainPersonalTodoList MaintainOthertodoLists", NULL, NULL, true, NULL }
 
   };
 
@@ -277,6 +279,11 @@ void menuCRM::sSearchForCRMAccount()
 void menuCRM::sEditOwners()
 {
   omfgThis->handleNewWindow(new editOwners());
+}
+
+void menuCRM::sCreateRecurringItems()
+{
+  omfgThis->handleNewWindow(new createRecurringItems());
 }
 
 void menuCRM::sContact()

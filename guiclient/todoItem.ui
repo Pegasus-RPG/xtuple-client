@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>476</height>
+    <width>676</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -232,7 +232,7 @@ to be bound by its terms.</comment>
          <string>Status</string>
         </attribute>
         <layout class="QGridLayout">
-         <item row="0" column="0">
+         <item row="0" column="0" rowspan="2">
           <widget class="QGroupBox" name="_dateGroup">
            <property name="title">
             <string/>
@@ -379,6 +379,13 @@ to be bound by its terms.</comment>
              </spacer>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="RecurrenceWidget" name="_recurring">
+           <property name="maxVisible">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -598,6 +605,11 @@ to be bound by its terms.</comment>
    <class>OpportunityCluster</class>
    <extends>QWidget</extends>
    <header>opportunitycluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RecurrenceWidget</class>
+   <extends>QWidget</extends>
+   <header>recurrencewidget.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>

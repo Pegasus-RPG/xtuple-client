@@ -101,6 +101,7 @@
 #include "createPlannedOrdersByItem.h"
 #include "createPlannedOrdersByPlannerCode.h"
 #include "createRecurringInvoices.h"
+#include "createRecurringItems.h"
 #include "creditCard.h"
 #include "creditMemoEditList.h"
 #include "creditMemo.h"

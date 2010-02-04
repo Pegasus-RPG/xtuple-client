@@ -162,6 +162,7 @@ FORMS =   ../common/batchItem.ui                \
           createPlannedOrdersByItem.ui          \
           createPlannedOrdersByPlannerCode.ui   \
           createRecurringInvoices.ui            \
+          createRecurringItems.ui               \
           creditCard.ui                         \
           creditMemo.ui                         \
           creditMemoEditList.ui                 \
@@ -871,6 +872,7 @@ HEADERS = ../common/batchItem.h                 \
           createPlannedOrdersByItem.h           \
           createPlannedOrdersByPlannerCode.h    \
           createRecurringInvoices.h             \
+          createRecurringItems.h                \
           creditCard.h                          \
           creditMemo.h                          \
           creditMemoEditList.h                  \
@@ -1619,6 +1621,7 @@ SOURCES = ../common/batchItem.cpp               \
           createPlannedOrdersByItem.cpp         \
           createPlannedOrdersByPlannerCode.cpp  \
           createRecurringInvoices.cpp           \
+          createRecurringItems.cpp              \
           creditCard.cpp                        \
           creditMemo.cpp                        \
           creditMemoEditList.cpp                \

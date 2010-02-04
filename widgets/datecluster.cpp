@@ -641,4 +641,14 @@ void DateCluster::bindValue(XSqlQuery &pQuery)
   pQuery.bindValue(":endDate", _endDate->date());
 }
 
+void DateCluster::setStartVisible(bool p)
+{
+  _startDate->setVisible(p);
+  _startDateLit->setVisible(p);
+}
 
+void DateCluster::setEndVisible(bool p)
+{
+  _endDate->setVisible(p);
+  _endDateLit->setVisible(p);
+}

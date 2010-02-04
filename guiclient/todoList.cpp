@@ -340,11 +340,36 @@ void todoList::sView()
 
 void todoList::sDelete()
 {
-  if ( QMessageBox::warning(this, tr("Delete List Item?"),
-                            tr("<p>Are you sure that you want to completely "
-			       "delete the selected item?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  QString question = tr("<p>Are you sure that you want to completely "
+                        "delete the selected item?");
+
+  if (_todoList->altId() == 1)
+  {
+    XSqlQuery recurq;
+    recurq.prepare("SELECT MAX(todoitem_id) AS max, COUNT(*) AS count"
+                   "  FROM todoitem"
+                   " WHERE todoitem_recurring_todoitem_id=:todoitem_id;");
+    recurq.bindValue(":todoitem_id", _todoList->id());
+    recurq.exec();
+    if (recurq.first())
+    {
+      if (recurq.value("count").toInt() == 1 &&
+          recurq.value("max").toInt() == _todoList->id())
+        question = tr("<p>Are you sure that you want to delete this recurring "
+                      "item? If you do then it will not occur again.<p>You "
+                      "can delete this instance and keep the recurrence if "
+                      "you Create Recurring Items before you delete this one.");
+    }
+    else if (recurq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  if ( QMessageBox::warning(this, tr("Delete List Item?"), question,
+			    QMessageBox::Yes | QMessageBox::No,
+			    QMessageBox::No) == QMessageBox::Yes)
   {
     if (_todoList->altId() == 1)
       q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");

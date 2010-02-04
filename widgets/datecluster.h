@@ -144,6 +144,13 @@ class XTUPLEWIDGETS_EXPORT DateCluster : public QWidget
     Q_INVOKABLE void setStartCaption(const QString &);
     Q_INVOKABLE void setEndCaption(const QString &);
 
+    Q_INVOKABLE bool startVisible() const { return _startDate->isVisible(); };
+    Q_INVOKABLE bool endVisible() const   { return _endDate->isVisible(); };
+
+  public slots:
+    void setStartVisible(bool p);
+    void setEndVisible(bool p);
+
   signals:
     void updated();
 

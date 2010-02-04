@@ -51,6 +51,7 @@ class menuCRM : public QObject
     void sSearchForCRMAccount();
     void sContact();
     void sContacts();
+    void sCreateRecurringItems();
     void sSearchForContact();
     void sDspIncidentsByCRMAccount();
     void sDspTodoByUserAndIncident();

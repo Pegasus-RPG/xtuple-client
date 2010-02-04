@@ -68,6 +68,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
         _todoitemid = q.value("todoitem_id").toInt();
         _alarms->setId(_todoitemid);
 	_comments->setId(_todoitemid);
+        _recurring->setParent(_todoitemid, "TODO");
       }
 
       _name->setFocus();
@@ -153,7 +154,14 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
 
 void todoItem::sSave()
 {
+  RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return;
+
   QString storedProc;
+  XSqlQuery beginq("BEGIN;");
+  XSqlQuery rollbackq;
+  rollbackq.prepare("ROLLBACK;");
   if (_mode == cNew)
   {
     q.prepare( "SELECT createTodoItem(:todoitem_id, :username, :name, :description, "
@@ -204,7 +212,7 @@ void todoItem::sSave()
   else
     status = "N";
   q.bindValue(":status", status);
-  
+
   q.exec();
   if (q.first())
   {
@@ -212,15 +220,44 @@ void todoItem::sSave()
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup(storedProc, result), __FILE__, __LINE__);
+      rollbackq.exec();
       return;
     }
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
+    rollbackq.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  
+
+  // TODO: make this part of {create,update}TodoItem?
+  if (_recurring->isRecurring())
+  {
+    XSqlQuery recurq;
+    recurq.prepare("UPDATE todoitem"
+                   "   SET todoitem_recurring_todoitem_id=:parent_id"
+                   " WHERE todoitem_id=:id;");
+    recurq.bindValue(":parent_id", _recurring->parentId());
+    recurq.bindValue(":id",        _todoitemid);
+    if (! recurq.exec())
+    {
+      rollbackq.exec();
+      systemError(this, q.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  QString errmsg;
+  if (! _recurring->save(true, cp, errmsg))
+  {
+    rollbackq.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return;
+  }
+
+  XSqlQuery commitq("COMMIT;");
+
   accept();
 }
 
@@ -271,7 +308,8 @@ void todoItem::sPopulate()
 
     _alarms->setId(_todoitemid);
     _comments->setId(_todoitemid);
-
+    _recurring->setParent(q.value("todoitem_recurring_todoitem_id").toInt(),
+                          "TODO");
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
