@@ -294,14 +294,6 @@ bool itemSource::sSave()
       return false;
     }
   }
-  if (_default->isChecked())
-  {
-	q.prepare("UPDATE itemsrc SET itemsrc_default = 'FALSE' "
-	          "WHERE (itemsrc_item_id = :itemsrc_item_id) "
-			  " AND ( itemsrc_default = 'TRUE'); ");
-	q.bindValue(":itemsrc_item_id", _item->id());
-    q.exec();
-  }
     
   if (_mode == cNew || _mode == cCopy)
     q.prepare( "INSERT INTO itemsrc "

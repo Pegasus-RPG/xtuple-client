@@ -1065,6 +1065,28 @@ void initErrorLookupHash()
 			   "posted because it has a quantity of 0."),	0, "" },
   { "postReceipt", -12, TR("This Purchase Order Receipt Line has no "
 			   "Standard Cost assigned to it."),		0, "" },
+  { "postReceipt", -16, TR("Cannot not issue item to shipping. "
+			   "No Sales Order item found against this PO Item."), 0, "" },
+  { "postReceipt", -17, TR("Cannot not issue item to shipping. "
+			   "Inventory history not found."),		0, "" },
+  { "postReceipt", -20, "", -1, "issueToShipping" },
+  { "postReceipt", -21, "", -10, "issueToShipping" },
+  { "postReceipt", -22, "", -12, "issueToShipping" },
+  { "postReceipt", -23, "", -13, "issueToShipping" },
+  { "postReceipt", -24, "", -14, "issueToShipping" },
+  { "postReceipt", -25, "", -15, "issueToShipping" },
+  { "postReceipt", -26, "", -12, "shipShipment" },
+  { "postReceipt", -27, "", -13, "shipShipment" },
+  { "postReceipt", -28, "", -14, "shipShipment" },
+  { "postReceipt", -29, "", -15, "shipShipment" },
+  { "postReceipt", -30, "", -1, "shipShipment" },
+  { "postReceipt", -31, "", -3, "shipShipment" },
+  { "postReceipt", -32, "", -4, "shipShipment" },
+  { "postReceipt", -33, "", -5, "shipShipment" },
+  { "postReceipt", -34, "", -6, "shipShipment" },
+  { "postReceipt", -35, "", -8, "shipShipment" },
+  { "postReceipt", -36, "", -50, "shipShipment" },
+  { "postReceipt", -37, "", -99, "shipShipment" },
 
   { "postPoReceipts",   -1, "",	 -1, "postPoReceipt" },
   { "postPoReceipts",   -3, "",	 -3, "postPoReceipt" },

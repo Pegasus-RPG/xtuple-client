@@ -1020,23 +1020,6 @@ void salesOrderItem::sSave()
 							" The quantity may not be updated. "));
           return ;
 	    }
-		else
-		{
-		  XSqlQuery updtPO;
-		  updtPO.prepare("UPDATE poitem "
-                       "SET poitem_qty_ordered = :qty, "
-                       "poitem_duedate = :schedDate "
-					   " WHERE poitem_pohead_id = :order_id ");
-          updtPO.bindValue(":order_id", _orderId);
-		  updtPO.bindValue(":qty", _orderQty->toDouble());
-		  updtPO.bindValue(":schedDate", _scheduledDate->date());
-          updtPO.exec();
-		  if (updtPO.lastError().type() != QSqlError::NoError)
-          {
-            systemError(this, updtPO.lastError().databaseText(), __FILE__, __LINE__);
-            return;
-		  }
-		}
 	  }
 	  else if (checkPO.lastError().type() != QSqlError::NoError)
       {
@@ -2547,22 +2530,6 @@ void salesOrderItem::sPopulateOrderInfo()
             systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
             return;
 		  }
-			
-	      XSqlQuery updatepo;
-          updatepo.prepare( "UPDATE poitem "
-		                    "SET poitem_duedate = :poitem_duedate, "
-			  			    "    poitem_qty_ordered = :poitem_qty_ordered "
-						    "WHERE (poitem_id = :poitem_id);" );
-          updatepo.bindValue(":poitem_id", (checkpo.value("poitem_id").toInt()));
-		  updatepo.bindValue(":poitem_duedate", _orderDueDate->date());
-		  updatepo.bindValue(":poitem_qty_ordered", _orderQty->toDouble());
-          updatepo.exec();
-		  if (updatepo.lastError().type() != QSqlError::NoError)
-          {
-            systemError(this, updatepo.lastError().databaseText(), __FILE__, __LINE__);
-            return;
-		  }
-
 	      return;
 		}
 	  }
