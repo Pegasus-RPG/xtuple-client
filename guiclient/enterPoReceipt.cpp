@@ -64,6 +64,11 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
                        "   AND  (raitem_disposition IN ('R','P','V')) "
                        "   AND  (orderhead_type = 'RA')) "
                        " LIMIT 1)");
+
+      _order->setExtraClause("TO", "(SELECT SUM(toitem_qty_shipped - toitem_qty_received) > 0 "
+                       "  FROM toitem"
+                       "  WHERE ((toitem_tohead_id=orderhead_id)"
+                       "     AND (orderhead_type = 'TO'))) ");
   }
   _order->setFocus();
 
