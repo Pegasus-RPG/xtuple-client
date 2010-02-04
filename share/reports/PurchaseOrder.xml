@@ -122,31 +122,38 @@ WHERE
  <querysource>
   <name>ShipToAddress</name>
   <sql>SELECT pohead_number,
-
-CASE WHEN pohead_vendaddr_id IS NULL THEN
-     warehous_descrip
-ELSE
-     vendaddr_name
-END
-AS warehous_name,
-
-CASE WHEN pohead_vendaddr_id IS NULL THEN
-formataddr(addr_line1, addr_line2, addr_line3, (addr_city || ' ' || addr_state || ' ' || addr_postalcode), addr_country)
-ELSE
-formataddr(vendaddr_address1, vendaddr_address2, vendaddr_address3, (vendaddr_city || ' ' || vendaddr_state || ' ' || vendaddr_zipcode), vendaddr_country)
-END
-AS warehous_address
-
-FROM 
-pohead 
-LEFT OUTER JOIN vendaddr ON (pohead_vendaddr_id = vendaddr_id),
-vend,
-whsinfo
-LEFT OUTER JOIN addr ON (warehous_addr_id = addr_id) 
-WHERE ((pohead_vend_id=vend_id) AND
-       (pohead_warehous_id = warehous_id) AND
-        (pohead_id=&lt;? value("pohead_id") ?>)
-);</sql>
+       formatDate(pohead_orderdate) AS f_orderdate,
+       pohead_fob,
+       pohead_shipvia,
+       terms_descrip,
+       vend_number,
+       vend_name,
+       vend_address1,
+       vend_address2,
+       vend_address3,
+       (vend_city || '  '  || vend_state || '  ' || vend_zip) AS vendcitystatezip,
+       formatcntctname(pohead_vend_cntct_id) AS vend_contact,
+       formataddr(pohead_vendaddress1, pohead_vendaddress2, pohead_vendaddress3, (pohead_vendcity || '  '  || pohead_vendstate || '   ' || pohead_vendzipcode), pohead_vendcountry) as vend_address,
+       warehous_descrip,
+       addr_line1 as warehous_addr1,
+       addr_line2 as warehous_addr2,
+       addr_line3 as warehous_addr3,
+       addr_city  as warehous_addr4,
+       addr_postalcode as zip,
+       addr_state,
+       addr_country,
+       formatcntctname(pohead_shipto_cntct_id) AS shipto_contact,
+       formataddr(pohead_shiptoaddress1, pohead_shiptoaddress2, pohead_shiptoaddress3, (pohead_shiptocity || ' ' || pohead_shiptostate || ' ' || pohead_shiptozipcode), pohead_shiptocountry) as shipto_address,
+       pohead_agent_username AS username,
+       pohead_comments,
+       text(&lt;? value("title") ?>) AS title
+ FROM pohead
+   LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id),
+   vend, whsinfo
+   LEFT OUTER JOIN addr ON (warehous_addr_id = addr_id)
+ WHERE ((pohead_vend_id=vend_id)
+   AND (pohead_warehous_id = warehous_id)
+   AND (pohead_id=&lt;? value("pohead_id") ?>) );</sql>
  </querysource>
  <pghead>
   <height>376</height>
@@ -280,7 +287,7 @@ WHERE ((pohead_vend_id=vend_id) AND
   <text>
    <rect>
     <x>500</x>
-    <y>155</y>
+    <y>142</y>
     <width>300</width>
     <height>17</height>
    </rect>
@@ -294,7 +301,7 @@ WHERE ((pohead_vend_id=vend_id) AND
    <vcenter/>
    <data>
     <query>ShipToAddress</query>
-    <column>warehous_address</column>
+    <column>shipto_contact</column>
    </data>
   </text>
   <label>
@@ -371,25 +378,6 @@ WHERE ((pohead_vend_id=vend_id) AND
     <column>pohead_number</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>500</x>
-    <y>137</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>ShipToAddress</query>
-    <column>warehous_name</column>
-   </data>
-  </field>
   <line>
    <xstart>5</xstart>
    <ystart>360</ystart>
@@ -429,8 +417,8 @@ WHERE ((pohead_vend_id=vend_id) AND
    <left/>
    <vcenter/>
    <data>
-    <query>Head</query>
-    <column>vend_address</column>
+    <query>ShipToAddress</query>
+    <column>vend_contact</column>
    </data>
   </text>
   <line>
@@ -833,6 +821,46 @@ WHERE ((pohead_vend_id=vend_id) AND
    <vcenter/>
    <string>PRINT DATE</string>
   </label>
+  <text>
+   <rect>
+    <x>500</x>
+    <y>162</y>
+    <width>300</width>
+    <height>17</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>ShipToAddress</query>
+    <column>shipto_address</column>
+   </data>
+  </text>
+  <text>
+   <rect>
+    <x>75</x>
+    <y>172</y>
+    <width>300</width>
+    <height>17</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>ShipToAddress</query>
+    <column>vend_address</column>
+   </data>
+  </text>
  </pghead>
  <section>
   <name>detail</name>
