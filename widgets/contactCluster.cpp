@@ -30,6 +30,15 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
              "WHERE (true) ";
 }
 
+void ContactClusterLineEdit::setSearchAcct(int crmAcctId)
+{
+  _searchAcctId = crmAcctId;
+  if (crmAcctId != -1)
+    setExtraClause(QString(" (cntct_crmacct_id=%1)").arg(crmAcctId));
+  else
+    setExtraClause("");
+}
+
 ContactList* ContactClusterLineEdit::listFactory()
 {
     return new ContactList(this);
@@ -40,7 +49,8 @@ ContactSearch* ContactClusterLineEdit::searchFactory()
     ContactSearch* contactSearch = new ContactSearch(this);
     ParameterList params;
     params.append("titalPlural", tr("Contacts"));
-    params.append("searchAcctId", -1);
+    if (_searchAcctId != -1)
+      params.append("searchAcctId", _searchAcctId);
     contactSearch->set(params);
     return contactSearch;
 }
@@ -174,12 +184,8 @@ void ContactCluster::setMinimalLayout(bool isMinimal)
 
 void ContactCluster::setSearchAcct(int crmAcctId)
 {
-  _searchAcctId = crmAcctId;
   ContactClusterLineEdit* ccle = static_cast<ContactClusterLineEdit* >(_number);
-  if (crmAcctId != -1)
-    ccle->setExtraClause(QString(" (cntct_crmacct_id=%1)").arg(crmAcctId));
-  else
-    ccle->setExtraClause("");
+  ccle->setSearchAcct(crmAcctId);
 }
 
 void ContactCluster::populate()

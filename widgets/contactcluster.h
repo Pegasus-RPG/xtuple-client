@@ -26,9 +26,17 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
     public:
       ContactClusterLineEdit(QWidget*, const char* = 0);
 
+      Q_INVOKABLE int searchAcctId() { return _searchAcctId; }
+
+    public slots:
+      void setSearchAcct(int crmAcctId);
+
     protected slots:
       ContactList* listFactory();
-      ContactSearch*  searchFactory();
+      ContactSearch* searchFactory();
+
+    private:
+      int _searchAcctId;
 };
 
 class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
