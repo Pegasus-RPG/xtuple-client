@@ -484,7 +484,7 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QLabel" name="_bcLit">
               <property name="text">
-               <string>Issue Items using UPC bar code:</string>
+               <string>Issue Items using bar code:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -49,6 +49,8 @@ static InputEvent _eventList[] =
   { cBCWorkOrder,          "WOXX", 1, 1, 0 },
   { cBCWorkOrderMaterial,  "WOMR", 1, 1, 1 },
   { cBCWorkOrderOperation, "WOOP", 1, 1, 1 },
+  { cBCPurchaseOrder,         "POXX", 1, 0, 0 },
+  { cBCPurchaseOrderLineItem, "POLI", 1, 1, 0 },
   { cBCSalesOrder,         "SOXX", 1, 0, 0 },
   { cBCSalesOrderLineItem, "SOLI", 1, 1, 0 },
   { cBCTransferOrder,         "TOXX", 1, 0, 0 },
@@ -329,6 +331,10 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
               dispatchWorkOrderOperation();
               break;
 
+            case cBCPurchaseOrder:
+              dispatchPurchaseOrder();
+              break;
+
             case cBCSalesOrder:
               dispatchSalesOrder();
               break;
@@ -347,6 +353,10 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
 
             case cBCSalesOrderLineItem:
               dispatchSalesOrderLineItem();
+              break;
+
+            case cBCPurchaseOrderLineItem:
+              dispatchPurchaseOrderLineItem();
               break;
 
             case cBCTransferOrderLineItem:
@@ -490,6 +500,36 @@ void InputManager::dispatchWorkOrderOperation()
   }
 }
 
+void InputManager::dispatchPurchaseOrder()
+{
+  ReceiverItem receiver = _private->findReceiver(cBCPurchaseOrder);
+  if (!receiver.isNull())
+  {
+    QString number = _private->_buffer.left(_private->_length1);
+
+    XSqlQuery poheadid;
+    poheadid.prepare( "SELECT pohead_id "
+                      "FROM pohead "
+                      "WHERE (pohead_number=:pohead_number);" );
+    poheadid.bindValue(":pohead_number", number);
+    poheadid.exec();
+    if (poheadid.first())
+    {
+      message( tr("Scanned Purchase Order #%1.")
+               .arg(number), 1000 );
+
+      if (connect(this, SIGNAL(readPurchaseOrder(int)), receiver.target(), receiver.slot()))
+      {
+        emit readPurchaseOrder(poheadid.value("pohead_id").toInt());
+        disconnect(this, SIGNAL(readPurchaseOrder(int)), receiver.target(), receiver.slot());
+      }
+    }
+    else
+      message( tr("Purchase Order #%1 does not exist in the Database.")
+               .arg(number), 1000 );
+  }
+}
+
 void InputManager::dispatchSalesOrder()
 {
   ReceiverItem receiver = _private->findReceiver(cBCSalesOrder);
@@ -547,6 +587,107 @@ void InputManager::dispatchTransferOrder()
     else
       message( tr("Transfer Order #%1 does not exist in the Database.")
                .arg(number), 1000 );
+  }
+}
+
+void InputManager::dispatchPurchaseOrderLineItem()
+{
+  ReceiverItem receiver = _private->findReceiver((cBCPurchaseOrderLineItem | cBCPurchaseOrder | cBCItemSite | cBCItem));
+  if (!receiver.isNull())
+  {
+    QString number    = _private->_buffer.left(_private->_length1);
+    QString subNumber = _private->_buffer.right(_private->_length2);
+
+    QString lineNumber = subNumber;
+    QString subSubNumber = "0";
+    int subsep = subNumber.indexOf(".");
+    if(subsep >= 0)
+    {
+      lineNumber = subNumber.left(subsep);
+      subSubNumber = subNumber.right(subNumber.length() - (subsep + 1));
+    }
+
+    if ( (receiver.type() == cBCPurchaseOrderLineItem) ||
+         (receiver.type() == cBCPurchaseOrder) )
+    {
+      XSqlQuery poitemid;
+      poitemid.prepare( "SELECT pohead_id, poitem_id "
+                        "FROM pohead, poitem "
+                        "WHERE ( (poitem_pohead_id=pohead_id)"
+                        " AND (pohead_number=:pohead_number)"
+                        " AND (poitem_linenumber=:poitem_linenumber) );" );
+      poitemid.bindValue(":pohead_number", number);
+      poitemid.bindValue(":poitem_linenumber", lineNumber);
+      poitemid.exec();
+      if (poitemid.first())
+      {
+        message( tr("Scanned Purchase Order Line #%1-%2.")
+                 .arg(number)
+                 .arg(subNumber), 1000 );
+
+        if (receiver.type() == cBCPurchaseOrderLineItem)
+        {
+          if (connect(this, SIGNAL(readPurchaseOrderLineItem(int)), receiver.target(), receiver.slot()))
+          {
+            emit readPurchaseOrderLineItem(poitemid.value("poitem_id").toInt());
+            disconnect(this, SIGNAL(readPurchaseOrderLineItem(int)), receiver.target(), receiver.slot());
+          }
+        }
+        else if (receiver.type() == cBCPurchaseOrder)
+       {
+          if (connect(this, SIGNAL(readPurchaseOrder(int)), receiver.target(), receiver.slot()))
+          {
+            emit readPurchaseOrder(poitemid.value("pohead_id").toInt());
+            disconnect(this, SIGNAL(readPurchaseOrder(int)), receiver.target(), receiver.slot());
+          }
+        }
+      }
+      else
+        message( tr("Purchase Order Line #%1-%2 does not exist in the Database.")
+                 .arg(number)
+                 .arg(subNumber), 1000 );
+    }
+    else if ( (receiver.type() == cBCItemSite) ||
+              (receiver.type() == cBCItem) )
+    {
+      XSqlQuery itemsiteid;
+      itemsiteid.prepare( "SELECT itemsite_id, itemsite_item_id "
+                          "FROM pohead, poitem, itemsite "
+                          "WHERE ( (poitem_cohead_id=pohead_id)"
+                          " AND (poitem_itemsite_id=itemsite_id)"
+                          " AND (pohead_number=:pohead_number)"
+                          " AND (poitem_linenumber=:poitem_linenumber) );" );
+      itemsiteid.bindValue(":pohead_number", number);
+      itemsiteid.bindValue(":poitem_linenumber", lineNumber);
+      itemsiteid.exec();
+      if (itemsiteid.first())
+      {
+        message( tr("Scanned Purchase Order Line #%1-%2.")
+                 .arg(number)
+                 .arg(subNumber), 1000 );
+
+        if (receiver.type() == cBCItemSite)
+        {
+          if (connect(this, SIGNAL(readItemSite(int)), receiver.target(), receiver.slot()))
+          {
+            emit readItemSite(itemsiteid.value("itemsite_id").toInt());
+            disconnect(this, SIGNAL(readItemSite(int)), receiver.target(), receiver.slot());
+          }
+        }
+        else if (receiver.type() == cBCItem)
+        {
+          if (connect(this, SIGNAL(readItem(int)), receiver.target(), receiver.slot()))
+          {
+            emit readItem(itemsiteid.value("itemsite_item_id").toInt());
+            disconnect(this, SIGNAL(readItem(int)), receiver.target(), receiver.slot());
+          }
+        }
+      }
+      else
+        message( tr("Purchase Order Line #%1-%2 does not exist in the Database.")
+                 .arg(number)
+                 .arg(subNumber), 1000 );
+    }
   }
 }
 

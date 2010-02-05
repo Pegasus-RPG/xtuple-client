@@ -300,7 +300,7 @@ bool itemSource::sSave()
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
-               "  itemsrc_minordqty, itemsrc_multordqty,"
+               "  itemsrc_minordqty, itemsrc_multordqty, itemsrc_upccode,"
                "  itemsrc_leadtime, itemsrc_ranking,"
                "  itemsrc_comments, itemsrc_manuf_name, "
                "  itemsrc_manuf_item_number, itemsrc_manuf_item_descrip ) "
@@ -308,7 +308,7 @@ bool itemSource::sSave()
                "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_default, :itemsrc_vend_id,"
                "  :itemsrc_vend_item_number, :itemsrc_vend_item_descrip,"
                "  :itemsrc_vend_uom, :itemsrc_invvendoruomratio,"
-               "  :itemsrc_minordqty, :itemsrc_multordqty,"
+               "  :itemsrc_minordqty, :itemsrc_multordqty, :itemsrc_upccode,"
                "  :itemsrc_leadtime, :itemsrc_ranking,"
                "  :itemsrc_comments, :itemsrc_manuf_name, "
                "  :itemsrc_manuf_item_number, :itemsrc_manuf_item_descrip );" );
@@ -321,6 +321,7 @@ bool itemSource::sSave()
                "    itemsrc_vend_item_descrip=:itemsrc_vend_item_descrip,"
                "    itemsrc_vend_uom=:itemsrc_vend_uom,"
                "    itemsrc_invvendoruomratio=:itemsrc_invvendoruomratio,"
+			   "    itemsrc_upccode=:itemsrc_upccode,"
                "    itemsrc_minordqty=:itemsrc_minordqty, itemsrc_multordqty=:itemsrc_multordqty,"
                "    itemsrc_leadtime=:itemsrc_leadtime, itemsrc_ranking=:itemsrc_ranking,"
                "    itemsrc_comments=:itemsrc_comments, itemsrc_manuf_name=:itemsrc_manuf_name, "
@@ -337,6 +338,7 @@ bool itemSource::sSave()
   q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
   q.bindValue(":itemsrc_vend_uom", _vendorUOM->text().trimmed());
   q.bindValue(":itemsrc_invvendoruomratio", _invVendorUOMRatio->toDouble());
+  q.bindValue(":itemsrc_upccode", _upcCode->text());
   q.bindValue(":itemsrc_minordqty", _minOrderQty->toDouble());
   q.bindValue(":itemsrc_multordqty", _multOrderQty->toDouble());
   q.bindValue(":itemsrc_leadtime", _leadTime->text().toInt());
@@ -477,6 +479,7 @@ void itemSource::populate()
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());
     _vendorUOM->setText(itemsrcQ.value("itemsrc_vend_uom").toString());
     _invVendorUOMRatio->setDouble(itemsrcQ.value("itemsrc_invvendoruomratio").toDouble());
+    _upcCode->setText(itemsrcQ.value("itemsrc_upccode"));
     _minOrderQty->setDouble(itemsrcQ.value("itemsrc_minordqty").toDouble());
     _multOrderQty->setDouble(itemsrcQ.value("itemsrc_multordqty").toDouble());
     _vendorRanking->setValue(itemsrcQ.value("itemsrc_ranking").toInt());

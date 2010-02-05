@@ -10,7 +10,6 @@
 
 #include "enterPoitemReceipt.h"
 
-#include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
@@ -18,6 +17,7 @@
 
 #include <metasql.h>
 
+#include "xmessagebox.h"
 #include "distributeInventory.h"
 #include "itemSite.h"
 #include "mqlutil.h"
@@ -46,6 +46,7 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   _ordertype	= "";
   _receivable	= 0.0;
   _recvid	= -1;
+  _snooze = false;
 }
 
 enterPoitemReceipt::~enterPoitemReceipt()
@@ -72,9 +73,10 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
   {
     if (q.value("result").toBool())
     {
-        QMessageBox::critical( pParent, tr("Cannot Correct"),
-                         tr("<p>Receipt has been split.  The received quantity may not be changed."));
-        return XDialog::Rejected;
+      XMessageBox::message( pParent, QMessageBox::Warning, tr("Cannot Correct"),
+                            tr(  "<p>Receipt has been split.  The received quantity may not be changed." ),
+                            QString::null, QString::null, false );
+      return XDialog::Rejected;
     }
     else
     {
@@ -139,6 +141,15 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
     _recvid = param.toInt();
     populate();
   }
+
+  param = pParams.value("qty", &valid);
+  if (valid)
+    _toReceive->setDouble(param.toDouble());
+
+  _snooze = pParams.inList("snooze");
+
+  if(pParams.inList("receive"))
+    sReceive();
 
   return NoError;
 }
@@ -249,15 +260,17 @@ void enterPoitemReceipt::sReceive()
     
   if(_metrics->boolean("DisallowReceiptExcessQty") && _receivable < _toReceive->toDouble())
   {
-    QMessageBox::critical( this, tr("Cannot Receive"),
-                           tr("<p>Cannot receive more quantity than ordered."));
+    XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
+                          tr(  "<p>Cannot receive more quantity than ordered." ),
+                          QString::null, QString::null, _snooze );
     return;
   }
 
   if(_ordertype == "RA" && _receivable < _toReceive->toDouble())
   {
-    QMessageBox::critical( this, tr("Cannot Receive"),
-                           tr("<p>Cannot receive more quantity than authorized."));
+    XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
+                          tr(  "<p>Cannot receive more quantity than authorized." ),
+                          QString::null, QString::null, _snooze );
     return;
   }
 
@@ -266,10 +279,10 @@ void enterPoitemReceipt::sReceive()
       (_receivable < _toReceive->toDouble() * (1.0 - tolerance) ||
        _receivable > _toReceive->toDouble() * (1.0 + tolerance)))
   {
-    if(QMessageBox::question( this, tr("Receipt Qty. Differs"),
-      tr("<p>The Qty entered does not match the receivable Qty for this order. "
-         "Do you wish to continue anyway?"),
-      QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel)
+    if(XMessageBox::message( (isShown() ? this : parentWidget()) , QMessageBox::Question, tr("Receipt Qty. Differs"),
+        tr("<p>The Qty entered does not match the receivable Qty for this order. "
+		   "Do you wish to continue anyway?"),
+        tr("Yes"), tr("No"), _snooze, 0, 1) == 1)
       return;
   }
 
@@ -332,7 +345,9 @@ void enterPoitemReceipt::sReceive()
     if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
     {
       rollback.exec();
-      QMessageBox::information( this, tr("Enterp PO Receipt"), tr("Transaction Canceled") );
+      XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Enter PO Receipt"),
+                            tr(  "<p>Transaction Cancelled." ),
+                            QString::null, QString::null, _snooze );
       return;
     }
 

@@ -34,6 +34,9 @@ public slots:
     virtual void sDetermineToReceiveInv();
     virtual void sPrintItemLabel();
 
+protected:
+    bool _snooze;
+
 protected slots:
     virtual void languageChange();
 

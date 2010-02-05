@@ -18,6 +18,8 @@
 
 #include <metasql.h>
 
+#include "xmessagebox.h"
+#include "inputManager.h"
 #include "distributeInventory.h"
 #include "enterPoitemReceipt.h"
 #include "getLotInfo.h"
@@ -38,6 +40,7 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
   connect(_orderitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_printLabel, SIGNAL(clicked()), this, SLOT(sPrintItemLabel()));
+  connect(_bcFind, SIGNAL(clicked()), this, SLOT(sBcFind()));
 //  connect(_orderitem, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
@@ -45,6 +48,13 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 			  OrderLineEdit::Return |
 			  OrderLineEdit::Transfer);
   _order->setToSitePrivsEnforced(TRUE);
+
+  omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
+  omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
+  omfgThis->inputManager()->notify(cBCPurchaseOrder, this, this, SLOT(sCatchPoheadid(int)));
+  omfgThis->inputManager()->notify(cBCPurchaseOrderLineItem, this, this, SLOT(sCatchPoitemid(int)));
+  omfgThis->inputManager()->notify(cBCTransferOrder, this, this, SLOT(sCatchToheadid(int)));
+  omfgThis->inputManager()->notify(cBCTransferOrderLineItem, this, this, SLOT(sCatchToitemid(int)));
 
   if (_metrics->boolean("EnableDropShipments"))
     _dropShip->setEnabled(FALSE);
@@ -89,6 +99,8 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _captive = FALSE;
   
+  _bcQty->setValidator(omfgThis->qtyVal());
+
   //Remove lot/serial  if no lot/serial tracking
   if (!_metrics->boolean("LotSerialControl"))
     _singleLot->hide();
@@ -470,5 +482,162 @@ void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem * /*selected*/
   if (_orderitem->altId() != -1)
     menuItem = pMenu->insertItem(tr("Print Label..."), this, SLOT(sPrintItemLabel()), 0);
   menuItem = pMenu->insertItem(tr("Enter Receipt..."), this, SLOT(sEnter()), 0);
+}
+
+void enterPoReceipt::sBcFind()
+{
+  if (!_order->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Order"),
+                         tr("<p>Cannot search for Items by Bar Code without "
+                            "first selecting an Order."));
+    _bc->setFocus();
+    return;
+  }
+
+  if (_bc->text().isEmpty())
+  {
+    QMessageBox::warning(this, tr("No Bar Code scanned"),
+                         tr("<p>Cannot search for Items by Bar Code without a "
+                            "Bar Code."));
+    _bc->setFocus();
+    return;
+  }
+
+  // find item that matches barcode and is a line item in this order.
+  // then call enterPoItemReceipt passing in params to preset and
+  // run the receive button.
+  ParameterList findbc;
+  setParams(findbc);
+  findbc.append("bc", _bc->text());
+  MetaSQLQuery fillm = mqlLoad("receipt", "detail");
+  q = fillm.toQuery(findbc);
+  if(!q.first())
+  {
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    XMessageBox::message(this, QMessageBox::Warning, tr("No Match Found"),
+                         tr("<p>No Items on this Order match the specified Barcode.") );
+    _bc->clear();
+    return;
+  }
+
+  ParameterList params;
+  params.append("lineitem_id", q.value("orderitem_id").toInt());
+  params.append("order_type", _order->type());
+  params.append("mode", "new");
+  params.append("qty", _bcQty->toDouble());
+  params.append("receive");
+  params.append("snooze");
+
+  enterPoitemReceipt newdlg(this, "", TRUE);
+  if (newdlg.set(params) != NoError)
+    return;
+	
+  sFillList();
+  if (_autoPost->isChecked())
+    sPost();
+  _bc->clear();
+  _bcQty->clear();
+}
+
+void enterPoReceipt::sCatchPoheadid(int pPoheadid)
+{
+  _order->setId(pPoheadid, "PO");
+  _orderitem->selectAll();
+}
+
+void enterPoReceipt::sCatchPoitemid(int pPoitemid)
+{
+  q.prepare( "SELECT poitem_pohead_id "
+             "FROM poitem "
+             "WHERE (poitem_id=:poitem_id);" );
+  q.bindValue(":poitem_id", pPoitemid);
+  q.exec();
+  if (q.first())
+  {
+    _order->setId(q.value("poitem_pohead_id").toInt(), "PO");
+    _orderitem->clearSelection();
+    _orderitem->setId(pPoitemid);
+    sEnter();
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void enterPoReceipt::sCatchToheadid(int pToheadid)
+{
+  _order->setId(pToheadid, "TO");
+  _orderitem->selectAll();
+}
+
+void enterPoReceipt::sCatchToitemid(int porderitemid)
+{
+  q.prepare( "SELECT toitem_tohead_id "
+             "FROM toitem "
+             "WHERE (toitem_id=:tohead_id);" );
+  q.bindValue(":tohead_id", porderitemid);
+  q.exec();
+  if (q.first())
+  {
+    _order->setId(q.value("toitem_tohead_id").toInt(), "TO");
+    _orderitem->clearSelection();
+    _orderitem->setId(porderitemid);
+    sEnter();
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void enterPoReceipt::sCatchItemsiteid(int pItemsiteid)
+{
+  q.prepare("SELECT orderitem_id "
+            "FROM orderitem "
+            "WHERE ((orderitem_itemsite_id=:itemsite) "
+            "   AND (orderitem_orderhead_type=:ordertype) "
+            "   AND (orderitem_orderhead_id=:orderid));");
+  q.bindValue(":itemsite",  pItemsiteid);
+  q.bindValue(":ordertype", _order->type());
+  q.bindValue(":orderid",   _order->id());
+  q.exec();
+  if (q.first())
+  {
+    _orderitem->clearSelection();
+    _orderitem->setId(q.value("orderitem_id").toInt());
+    sEnter();
+  }
+  else
+    audioReject();
+}
+
+void enterPoReceipt::sCatchItemid(int pItemid)
+{
+  q.prepare( "SELECT orderitem_id "
+             "FROM orderitem, itemsite "
+             "WHERE ((orderitem_itemsite_id=itemsite_id)"
+             "  AND  (itemsite_item_id=:item_id)"
+             "   AND  (orderitem_orderhead_type=:ordertype) "
+             "   AND  (orderitem_orderhead_id=:orderid));");
+  q.bindValue(":item_id",   pItemid);
+  q.bindValue(":ordertype", _order->type());
+  q.bindValue(":orderid",   _order->id());
+  q.exec();
+  if (q.first())
+  {
+    _orderitem->clearSelection();
+    _orderitem->setId(q.value("orderitem_id").toInt());
+    sEnter();
+  }
+  else
+    audioReject();
 }
 

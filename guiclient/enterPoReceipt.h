@@ -39,6 +39,13 @@ public slots:
     virtual void setParams(ParameterList &);
     virtual void sPrintItemLabel();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sBcFind();
+    virtual void sCatchItemid( int pItemid );
+    virtual void sCatchItemsiteid( int pItemsiteid );
+    virtual void sCatchPoheadid( int pPoheadid );
+    virtual void sCatchPoitemid( int pPoitemid );
+    virtual void sCatchToheadid( int pToheadid );
+    virtual void sCatchToitemid( int porderitemid );
 
 protected slots:
     virtual void languageChange();

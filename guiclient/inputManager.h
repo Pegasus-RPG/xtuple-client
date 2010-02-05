@@ -16,23 +16,25 @@
 
 class InputManagerPrivate;
 
-#define	cBCWorkOrder           0x00000010
-#define	cBCWorkOrderMaterial   0x00000020
-#define	cBCWorkOrderOperation  0x00000040
-#define	cBCSalesOrder          0x00000100
-#define cBCSalesOrderLineItem  0x00000200
-#define cBCItemSite            0x00000400
-#define cBCItem                0x00000800
-#define cBCUPCCode             0x00001000
-#define cBCEANCode             0x00002000
-#define cBCCountTag            0x00004000
-#define cBCLocation            0x00010000
-#define cBCLocationIssue       0x00020000
-#define cBCLocationContents    0x00040000
-#define cBCUser                0x00100000
+#define	cBCWorkOrder              0x00000010
+#define	cBCWorkOrderMaterial      0x00000020
+#define	cBCWorkOrderOperation     0x00000040
+#define	cBCSalesOrder             0x00000100
+#define cBCSalesOrderLineItem     0x00000200
+#define cBCItemSite               0x00000400
+#define cBCItem                   0x00000800
+#define cBCUPCCode                0x00001000
+#define cBCEANCode                0x00002000
+#define cBCCountTag               0x00004000
+#define cBCLocation               0x00010000
+#define cBCLocationIssue          0x00020000
+#define cBCLocationContents       0x00040000
+#define cBCUser                   0x00100000
 #define	cBCTransferOrder          0x00200000
 #define cBCTransferOrderLineItem  0x00400000
-#define cBCLotSerialNumber	  0x00800000
+#define cBCLotSerialNumber	      0x00800000
+#define	cBCPurchaseOrder          0x01000000
+#define cBCPurchaseOrderLineItem  0x02000000
 
 class InputManager : public QObject
 {
@@ -51,6 +53,8 @@ class InputManager : public QObject
     void readWorkOrder(int);
     void readWorkOrderMaterial(int);
     void readWorkOrderOperation(int);
+    void readPurchaseOrder(int);
+    void readPurchaseOrderLineItem(int);
     void readSalesOrder(int);
     void readSalesOrderLineItem(int);
     void readTransferOrder(int);
@@ -72,6 +76,8 @@ class InputManager : public QObject
 
     void dispatchWorkOrder();
     void dispatchWorkOrderOperation();
+    void dispatchPurchaseOrder();
+    void dispatchPurchaseOrderLineItem();
     void dispatchSalesOrder();
     void dispatchSalesOrderLineItem();
     void dispatchTransferOrder();

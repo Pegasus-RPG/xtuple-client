@@ -491,7 +491,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QLabel" name="_upcCodeLit">
                 <property name="text">
-                 <string>UPC Code:</string>
+                 <string>Bar Code:</string>
                 </property>
                </widget>
               </item>
