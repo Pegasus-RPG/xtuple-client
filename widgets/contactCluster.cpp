@@ -22,6 +22,27 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
     setUiName("contact");
     setEditPriv("MaintainContacts");
     setViewPriv("ViewContacts");
+
+    _query = "SELECT cntct_id AS id, cntct_name AS number, cntct_title AS description, "
+             " cntct_first_name, cntct_last_name, crmacct_name, cntct_title, cntct_phone, "
+             " cntct_phone2,cntct_fax, cntct_email, cntct_webaddr "
+             "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) "
+             "WHERE (true) ";
+}
+
+ContactList* ContactClusterLineEdit::listFactory()
+{
+    return new ContactList(this);
+}
+
+ContactSearch* ContactClusterLineEdit::searchFactory()
+{
+    ContactSearch* contactSearch = new ContactSearch(this);
+    ParameterList params;
+    params.append("titalPlural", tr("Contacts"));
+    params.append("searchAcctId", -1);
+    contactSearch->set(params);
+    return contactSearch;
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
@@ -91,52 +112,11 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _addrLayout->addWidget(_addr);
   _addrLayout->addSpacerItem(_addrSpacer);
 
-  // Over-ride standard actions with local versions
-  for (int i = 0; i < _number->actions().count(); i++)
-    _number->removeAction(_number->actions().at(0));
-
-  QKeySequence listKey = QKeySequence(tr("Ctrl+L"));
-  QAction* listAct = new QAction(tr("List"), this);
-  listAct->setShortcut(listKey);
-  listAct->setShortcutContext(Qt::WidgetShortcut);
-  listAct->setToolTip(tr("List all records"));
-  connect(listAct, SIGNAL(triggered()), this, SLOT(sList()));
-  _number->addAction(listAct);
-
-  QKeySequence searchKey = QKeySequence(tr("Ctrl+S"));
-  QAction* searchAct = new QAction(tr("Search"), this);
-  searchAct->setShortcut(searchKey);
-  searchAct->setShortcutContext(Qt::WidgetShortcut);
-  searchAct->setToolTip(tr("Search on specific criteria"));
-  connect(searchAct, SIGNAL(triggered()), this, SLOT(sSearch()));
-  _number->addAction(searchAct);
-
-  ContactClusterLineEdit* ccle = static_cast<ContactClusterLineEdit* >(_number);
-
-  QMenu* menu = new QMenu;
-  menu->addAction(listAct);
-  menu->addAction(searchAct);
-  menu->addSeparator();
-  menu->addAction(ccle->_infoAct);
-  _number->setMenu(menu);
-
   connect(this, SIGNAL(valid(bool)), this, SLOT(populate()));
   connect(_email, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
   connect(_webaddr, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
-  connect(this, SIGNAL(valid(bool)), ccle->_infoAct, SLOT(setEnabled(bool)));
 
   setMinimalLayout(false);
-  
-  /*
-  ccle->_numClause = QString(" AND ( "
-                             " TRIM(REPLACE("
-                             " COALESCE(cntct_honorific,'')        || ' '  || "
-                             " COALESCE(cntct_first_name,'') || ' '  || "
-                             " COALESCE(cntct_middle,'')     || ' '  || "
-                             " COALESCE(cntct_last_name,'')  || ' '  || "
-                             " COALESCE(cntct_suffix,'') "
-                             ",'  ', ' '))"
-                             " ~* :number )"); */
 }
 
 void ContactCluster::setMinimalLayout(bool isMinimal)
@@ -272,13 +252,10 @@ void ContactCluster::sList()
 
 void ContactCluster::sSearch()
 {
-  ContactSearch* newdlg = new ContactSearch(this);
+  ContactClusterLineEdit* ccle = static_cast<ContactClusterLineEdit* >(_number);
+  ContactSearch* newdlg = ccle->searchFactory();
   if (newdlg)
   {
-    ParameterList params;
-    params.append("titalPlural", tr("Contacts"));
-    params.append("searchAcctId", searchAcctId());
-    newdlg->set(params);
     int id = newdlg->exec();
     setId(id);
   }

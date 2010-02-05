@@ -15,6 +15,7 @@
 #include "virtualCluster.h"
 #include "addresscluster.h"
 #include "xurllabel.h"
+#include "contactwidget.h"
 
 
 class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdit
@@ -24,6 +25,10 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
     friend class ContactCluster;
     public:
       ContactClusterLineEdit(QWidget*, const char* = 0);
+
+    protected slots:
+      ContactList* listFactory();
+      ContactSearch*  searchFactory();
 };
 
 class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster

@@ -445,10 +445,17 @@ void VirtualClusterLineEdit::sHandleCompleter()
   numQ.exec();
   if (numQ.first())
   {
+    int numberCol = numQ.record().indexOf("number");
+    int nameCol = numQ.record().indexOf("name");
+    int descripCol = numQ.record().indexOf("description");
     model->setQuery(numQ);
-    view->hideColumn(0);
     for (int i = 0; i < model->columnCount(); i++)
-      view->resizeColumnToContents(i);
+    {
+      if (i == numberCol || i == nameCol || i == descripCol)
+        view->resizeColumnToContents(i);
+      else
+        view->hideColumn(i);
+    }
   }
   else
     model->setQuery(QSqlQuery());
@@ -633,7 +640,7 @@ void VirtualClusterLineEdit::sParse()
           if (newdlg)
           {
             newdlg->setSearchText(text());
-            newdlg->setQuery(numQ);
+            //newdlg->setQuery(numQ);
             int id = newdlg->exec();
             setId(id);
             return;
@@ -917,6 +924,8 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _search = new QLineEdit(this, "_search");
     _searchLit = new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
     _searchNumber = new XCheckBox(tr("Search through Numbers"));
+    _searchNumber->setForgetful(true);
+    _searchNumber->setChecked(true);
     _searchNumber->setObjectName("_searchNumber");
     _searchName = new XCheckBox(tr("Search through Names"));
     _searchName->setObjectName("_searchName");
@@ -1020,6 +1029,7 @@ void VirtualSearch::setQuery(QSqlQuery query)
 void VirtualSearch::setSearchText(const QString& text)
 {
   _search->setText(text);
+  sFillList();
 }
 
 void VirtualSearch::sFillList()
