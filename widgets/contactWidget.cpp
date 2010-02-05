@@ -21,7 +21,7 @@
 
 #include "xsqlquery.h"
 
-#include "contactWidget.h"
+#include "contactwidget.h"
 
 void ContactWidget::init()
 {
