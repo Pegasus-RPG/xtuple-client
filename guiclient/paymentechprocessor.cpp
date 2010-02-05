@@ -90,7 +90,7 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   _extraHeaders.append(qMakePair(QString("Content-type"), QString("SALEM05210/SLM")));
 
   prequest = "P74V";
-  prequest += pordernum.leftJustified(22, ' ', true); // TODO: should we check to make sure isn't empty?
+  prequest += pordernum.leftJustified(22, ' ', true);
 
   QString ccardType = anq.value("ccard_type").toString();
   if("V" == ccardType) // Visa
@@ -243,6 +243,12 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, const 
   return returnValue;
 }
 
+/** \brief This function actually does an Authorization then a Charge Preauth.
+           Changes don't occurr real-time so we do the preauth real-time and
+           if that succeeds just put the record in the correct state to be
+           charged later. If the processor can't do the charge then the transaction
+           must be undone.
+ */
 int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -251,30 +257,57 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
+
+  int refid = 0;
+  returnValue = authorize(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, "", refid);
+  if(returnValue < 0)
+  {
+    return returnValue;
+  }
+
   double amount  = pamount;
-  //double tax     = ptax;
-  //double freight = pfreight;
-  //double duty    = pduty;
   int    currid  = pcurrid;
 
-  QString request;
+  XSqlQuery ccq;
+  ccq.prepare("SELECT ccpay_r_avs, ccpay_r_ordernum, ccpay_r_error,"
+              "       ccpay_r_code, ccpay_r_shipping, ccpay_r_tax,"
+              "       ccpay_r_ref, ccpay_r_message, ccpay_yp_r_tdate"
+              "  FROM ccpay"
+              " WHERE(ccpay_id=:ccpayid);");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if(!ccq.first())
+  {
+    return -1;
+  }
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RP"); // TODO: needs to be handled in batch with different code
-  if (returnValue !=  0)
-    return returnValue;
-
-  QString response;
-
-  returnValue = sendViaHTTP(request, response);
-  if (returnValue < 0)
-    return returnValue;
-
-  returnValue = handleResponse(response, pccardid, "C", amount, currid,
-			       pneworder, preforder, pccpayid, pparams);
-
+  pparams.append("ccard_id",    pccardid);
+  pparams.append("currid",      currid);
+  pparams.append("auth_charge", "C");
+  pparams.append("type",        "C");
+  pparams.append("status",      "C");
+  pparams.append("reforder",    (preforder.isEmpty()) ? pneworder : preforder);
+  pparams.append("ordernum",    pneworder);
+  pparams.append("approved",    "SUBMITTED");
+  pparams.append("avs",         ccq.value("ccpay_r_avs").toString());
+  pparams.append("xactionid",   ccq.value("ccpay_r_ordernum").toString());
+  pparams.append("error",       ccq.value("ccpay_r_error").toString());
+  pparams.append("code",        ccq.value("ccpay_r_code").toString());
+  pparams.append("shipping",    ccq.value("ccpay_r_shipping").toString());
+  pparams.append("tax",         ccq.value("ccpay_r_tax").toString());
+  pparams.append("ref",         ccq.value("ccpay_r_ref").toString());
+  pparams.append("message",     ccq.value("ccpay_r_message").toString());
+  pparams.append("tdate",       ccq.value("ccpay_r_date").toString());
+  pparams.append("auth", QVariant(false, 1));
+  pparams.append("amount",   amount);
   return returnValue;
 }
 
+/** \brief Updated a previously created auth record as a charge with approved
+           string "SUBMITTED" and a separate process will do the actuall processing
+           of the charge updating the record appropriately. If the later processing
+           fails then the appropriate step must be taken to undo any record money.
+ */
 int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -286,24 +319,45 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
   double amount  = pamount;
   int    currid  = pcurrid;
 
-  QString request;
+  XSqlQuery ccq;
+  ccq.prepare("SELECT ccpay_r_avs, ccpay_r_ordernum, ccpay_r_error,"
+              "       ccpay_r_code, ccpay_r_shipping, ccpay_r_tax,"
+              "       ccpay_r_ref, ccpay_r_message, ccpay_yp_r_tdate"
+              "  FROM ccpay"
+              " WHERE(ccpay_id=:ccpayid);");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if(!ccq.first())
+  {
+    return -1;
+  }
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU"); // TODO: needs to be handled in batch with different code
-  if (returnValue !=  0)
-    return returnValue;
-
-  QString response;
-
-  returnValue = sendViaHTTP(request, response);
-  if (returnValue < 0)
-    return returnValue;
-
-  returnValue = handleResponse(response, pccardid, "CP", amount, currid,
-			       pneworder, preforder, pccpayid, pparams);
+  pparams.append("ccard_id",    pccardid);
+  pparams.append("currid",      currid);
+  pparams.append("auth_charge", "CP");
+  pparams.append("type",        "CP");
+  pparams.append("status",      "C");
+  pparams.append("reforder",    (preforder.isEmpty()) ? pneworder : preforder);
+  pparams.append("ordernum",    pneworder);
+  pparams.append("approved",    "SUBMITTED");
+  pparams.append("avs",         ccq.value("ccpay_r_avs").toString());
+  pparams.append("xactionid",   ccq.value("ccpay_r_ordernum").toString());
+  pparams.append("error",       ccq.value("ccpay_r_error").toString());
+  pparams.append("code",        ccq.value("ccpay_r_code").toString());
+  pparams.append("shipping",    ccq.value("ccpay_r_shipping").toString());
+  pparams.append("tax",         ccq.value("ccpay_r_tax").toString());
+  pparams.append("ref",         ccq.value("ccpay_r_ref").toString());
+  pparams.append("message",     ccq.value("ccpay_r_message").toString());
+  pparams.append("tdate",       ccq.value("ccpay_r_date").toString());
+  pparams.append("auth", QVariant(false, 1));
+  pparams.append("amount",   amount);
 
   return returnValue;
 }
 
+/** \brief Create a credit record that will be processed later by a processor.
+           If the processing fails then the record needs to undo any transactions.
+ */
 int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
@@ -313,24 +367,19 @@ int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const doub
 
   int    returnValue = 0;
   double amount  = pamount;
-  //double tax     = ptax;
-  //double freight = pfreight;
-  //double duty    = pduty;
   int    currid  = pcurrid;
 
-  QString request;
 
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "RF"); // TODO: this needs to change with different code 
-  if (returnValue !=  0)
-    return returnValue;
-
-  QString response;
-  returnValue = sendViaHTTP(request, response);
-  if (returnValue < 0)
-    return returnValue;
-
-  returnValue = handleResponse(response, pccardid, "R", amount, currid,
-			       pneworder, preforder, pccpayid, pparams);
+  pparams.append("ccard_id",    pccardid);
+  pparams.append("currid",      currid);
+  pparams.append("auth_charge", "R");
+  pparams.append("type",        "R");
+  pparams.append("status",      "R");
+  pparams.append("reforder",    (preforder.isEmpty()) ? pneworder : preforder);
+  pparams.append("ordernum",    pneworder);
+  pparams.append("approved",    "SUBMITTED");
+  pparams.append("auth", QVariant(false, 1));
+  pparams.append("amount",   amount);
 
   return returnValue;
 }
@@ -352,14 +401,22 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   QString respdate;
 
   XSqlQuery ccq;
-  ccq.prepare("SELECT ccpay_r_code, ccpay_yp_r_tdate FROM ccpay WHERE (ccpay_id=:ccpayid);");
+  ccq.prepare("SELECT ccpay_status, ccpay_approved, ccpay_r_code, ccpay_yp_r_tdate FROM ccpay WHERE (ccpay_id=:ccpayid);");
   ccq.bindValue(":ccpayid", pccpayid);
   ccq.exec();
-  if(ccq.first())
+  if(!ccq.first())
   {
-    authcode = ccq.value("ccpay_r_code").toString();
-    respdate = ccq.value("ccpay_yp_r_tdate").toString();
+    return -1;
   }
+
+  if(ccq.value("ccpay_status").toString() == "C"
+  && ccq.value("ccpay_approved").toString() != "SUBMITTED")
+  {
+    return -60; // we can not void a processed charge.
+  }
+
+  authcode = ccq.value("ccpay_r_code").toString();
+  respdate = ccq.value("ccpay_yp_r_tdate").toString();
 
   QString request;
 
@@ -418,7 +475,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   r_reason = r_response;
 
-  r_message = "Received return code " + r_response; // TODO: come up with a way to populate this
+  r_message = "Received return code " + r_response;
 
   r_date = presponse.mid(29, 6).trimmed();
   r_code = presponse.mid(35, 6).trimmed();
