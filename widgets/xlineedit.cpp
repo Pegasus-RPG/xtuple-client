@@ -39,25 +39,22 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   _id = -1;
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 
-  QKeySequence listKey = QKeySequence(tr("Ctrl+L"));
   _listAct = new QAction(tr("List..."), this);
-  _listAct->setShortcut(listKey);
+  _listAct->setShortcut(QKeySequence(tr("Ctrl+L")));
   _listAct->setShortcutContext(Qt::WidgetShortcut);
   _listAct->setToolTip(tr("List all records"));
   connect(_listAct, SIGNAL(triggered()), this, SIGNAL(requestList()));
   addAction(_listAct);
 
-  QKeySequence searchKey = QKeySequence(tr("Ctrl+S"));
   _searchAct = new QAction(tr("Search..."), this);
-  _searchAct->setShortcut(searchKey);
+  _searchAct->setShortcut(QKeySequence(tr("Ctrl+S")));
   _searchAct->setShortcutContext(Qt::WidgetShortcut);
   _searchAct->setToolTip(tr("Search on specific criteria"));
   connect(_searchAct, SIGNAL(triggered()), this, SIGNAL(requestSearch()));
   addAction(_searchAct);
 
-   QKeySequence aliasKey = QKeySequence(tr("Ctrl+A"));
   _aliasAct = new QAction(tr("Alias..."), this);
-  _aliasAct->setShortcut(aliasKey);
+  _aliasAct->setShortcut(QKeySequence(tr("Ctrl+A")));
   _aliasAct->setShortcutContext(Qt::WidgetShortcut);
   _aliasAct->setToolTip(tr("List of alias records"));
   connect(_aliasAct, SIGNAL(triggered()), this, SIGNAL(requestAlias()));

@@ -283,25 +283,22 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(_listAct, SIGNAL(triggered()), this, SLOT(sList()));
     connect(_searchAct, SIGNAL(triggered()), this, SLOT(sSearch()));
 
-     QKeySequence infoKey = QKeySequence("Ctrl+Alt+I");
     _infoAct = new QAction(tr("Info..."), this);
-    _infoAct->setShortcut(infoKey);
+    _infoAct->setShortcut(QKeySequence(tr("Ctrl+I")));
     _infoAct->setShortcutContext(Qt::WidgetShortcut);
     _infoAct->setToolTip(tr("View record information"));
     _infoAct->setEnabled(false);
     connect(_infoAct, SIGNAL(triggered()), this, SLOT(sInfo()));
 
-     QKeySequence openKey = QKeySequence("Ctrl+Alt+O");
     _openAct = new QAction(tr("Open..."), this);
-    _openAct->setShortcut(openKey);
+    _openAct->setShortcut(QKeySequence::Open);
     _openAct->setShortcutContext(Qt::WidgetShortcut);
     _openAct->setToolTip(tr("Open record detail"));
     _openAct->setEnabled(false);
     connect(_openAct, SIGNAL(triggered()), this, SLOT(sOpen()));
 
-     QKeySequence newKey = QKeySequence("Ctrl+Alt+N");
     _newAct = new QAction(tr("New..."), this);
-    _newAct->setShortcut(newKey);
+    _newAct->setShortcut(QKeySequence::New);
     _newAct->setShortcutContext(Qt::WidgetShortcut);
     _newAct->setToolTip(tr("Create new record"));
     _newAct->setEnabled(false);
@@ -309,7 +306,6 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
-    connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
 
     // Menu set up
     if (_x_preferences)
@@ -336,6 +332,8 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         menu->addSeparator();
         menu->addAction(_infoAct);
         setMenu(menu);
+
+        connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
       }
     }
 }
@@ -394,13 +392,12 @@ void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 
 void VirtualClusterLineEdit::sUpdateMenu()
 {
-  if (!menu())
+  if (!_x_privileges)
     return;
 
   _openAct->setEnabled(canOpen());
-  if (_x_privileges)
-    _newAct->setEnabled(canOpen() &&
-                        _x_privileges->check(_editPriv));
+  _newAct->setEnabled(canOpen() &&
+                      _x_privileges->check(_editPriv));
 
   if (_openAct->isEnabled())
   {
@@ -412,7 +409,7 @@ void VirtualClusterLineEdit::sUpdateMenu()
   }
   else
   {
-    if (menu()->actions().contains(_newAct))
+    if (menu()->actions().contains(_openAct))
       menu()->removeAction(_openAct);
 
     if (menu()->actions().contains(_newAct))
@@ -642,7 +639,19 @@ void VirtualClusterLineEdit::sParse()
 		    QString(";"));
         numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
         numQ.exec();
-        if (numQ.first())
+        if (numQ.size() > 1)
+        {
+          VirtualSearch* newdlg = searchFactory();
+          if (newdlg)
+          {
+            newdlg->setSearchText(text());
+            newdlg->setQuery(numQ);
+            int id = newdlg->exec();
+            setId(id);
+            return;
+          }
+        }
+        else if (numQ.first())
 	{
 	    _valid = true;
             setId(numQ.value("id").toInt());
@@ -684,11 +693,6 @@ void VirtualClusterLineEdit::sList()
 
 void VirtualClusterLineEdit::sSearch()
 {
-  /*
-    QSqlQuery query;
-    if (completer())
-      query = static_cast<QSqlQueryModel* >(completer()->popup()->model())->query();
-*/
     VirtualSearch* newdlg = searchFactory();
     if (newdlg)
     {
@@ -1018,6 +1022,16 @@ void VirtualSearch::sClose()
 void VirtualSearch::sSelect()
 {
     done(_listTab->id());
+}
+
+void VirtualSearch::setQuery(QSqlQuery query)
+{
+  _listTab->populate(query);
+}
+
+void VirtualSearch::setSearchText(const QString& text)
+{
+  _search->setText(text);
 }
 
 void VirtualSearch::sFillList()

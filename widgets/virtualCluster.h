@@ -72,6 +72,9 @@ class XTUPLEWIDGETS_EXPORT VirtualSearch : public QDialog
     public:
         VirtualSearch(QWidget*, Qt::WindowFlags = 0);
 
+        Q_INVOKABLE virtual void setQuery(QSqlQuery query);
+        Q_INVOKABLE virtual void setSearchText(const QString& text);
+
     public slots:
         virtual void sClose();
         virtual void sFillList();
