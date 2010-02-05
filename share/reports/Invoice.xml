@@ -3,8 +3,9 @@
  <title>Invoice</title>
  <name>Invoice</name>
  <description>With Logo - With Invoice Currency</description>
- <parameter default="97" active="true" listtype="static" type="string" name="invchead_id" >
+ <parameter default="97" active="true" listtype="dynamic" type="string" name="invchead_id" >
   <description></description>
+  <query>SELECT invchead_id, invchead_invcnumber FROM invchead ORDER BY invchead_invcnumber;</query>
  </parameter>
  <watermark>
   <data>
@@ -21,75 +22,75 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>GroupHead</name>
-  <sql>SELECT &#xd;
-&#xd;
---Due Date&#xd;
-CASE WHEN terms_type = 'D' THEN&#xd;
-&#xd;
-	FORMATDATE(DATE(invchead_invcdate + terms_duedays))&#xd;
-	&#xd;
-	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN&#xd;
-&#xd;
-	FORMATDATE(DATE(&#xd;
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || &#xd;
-	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || &#xd;
-	terms_duedays&#xd;
-	))&#xd;
-&#xd;
-	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN&#xd;
-&#xd;
-	FORMATDATE(DATE(&#xd;
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || &#xd;
-	(EXTRACT(MONTH FROM(invchead_invcdate)) +1) || '-' || &#xd;
-	terms_duedays&#xd;
-	))&#xd;
-	&#xd;
-	END AS due_date,&#xd;
---Discount Date-------------------------------------&#xd;
-&#xd;
-CASE WHEN terms_type = 'D' THEN&#xd;
-	FORMATDATE(DATE(invchead_invcdate + terms_discdays))&#xd;
-&#xd;
-       WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN&#xd;
-	&#xd;
-	FORMATDATE(DATE(&#xd;
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || &#xd;
-	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || &#xd;
-	terms_discdays&#xd;
-	))&#xd;
-&#xd;
-	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN&#xd;
-&#xd;
-	FORMATDATE(DATE(&#xd;
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || &#xd;
-	(EXTRACT(MONTH FROM(invchead_invcdate)) +1) || '-' || &#xd;
-	terms_discdays&#xd;
-	))&#xd;
-	END AS dis_date,&#xd;
-&#xd;
---Discount Date END --&#xd;
-&#xd;
-&#xd;
-      --remitto.*,&#xd;
-remitto_name,&#xd;
-formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citystatezip, remitto_country) AS remitto_adr,&#xd;
-      invchead_invcnumber AS invoicenumber,&#xd;
-      formatDate(invchead_invcdate) AS f_invoicedate,&#xd;
-      cust_number,&#xd;
-      invchead_billto_name,&#xd;
-      formatAddr(invchead_billto_address1, invchead_billto_address2, invchead_billto_address3, ( invchead_billto_city || '  ' || invchead_billto_state || '  ' || invchead_billto_zipcode ), invchead_billto_country) AS f_billtoaddress,&#xd;
-      invchead_billto_phone,&#xd;
-      invchead_shipto_name,&#xd;
-      formatAddr(invchead_shipto_address1, invchead_shipto_address2, invchead_shipto_address3, ( invchead_shipto_city || '  ' || invchead_shipto_state || ' ' || invchead_shipto_zipcode ), invchead_shipto_country) AS f_shiptoaddress,&#xd;
-      invchead_ordernumber AS ordernumber,&#xd;
-      invchead_ponumber,&#xd;
-      formatDate(invchead_orderdate) AS f_orderdate,&#xd;
-      formatDate(invchead_shipdate) AS f_shipdate,&#xd;
-      invchead_fob, terms_descrip, invchead_shipvia&#xd;
-FROM remitto, cust, invchead&#xd;
-    LEFT OUTER JOIN terms ON (invchead_terms_id=terms_id)&#xd;
-WHERE ( (invchead_cust_id=cust_id)&#xd;
-AND (invchead_id=&lt;? value("invchead_id") ?>) )&#xd;
+  <sql>SELECT 
+
+--Due Date
+CASE WHEN terms_type = 'D' THEN
+
+	FORMATDATE(DATE(invchead_invcdate + terms_duedays))
+	
+	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN
+
+	FORMATDATE(DATE(
+	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
+	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || 
+	terms_duedays
+	))
+
+          WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN
+
+          FORMATDATE(DATE(
+          EXTRACT(YEAR FROM(invchead_invcdate + interval '1 month')) || '-' || 
+          (EXTRACT(MONTH FROM(invchead_invcdate + interval '1 month')) ) || '-' || 
+          terms_duedays
+          ))
+	
+	END AS due_date,
+--Discount Date-------------------------------------
+
+CASE WHEN terms_type = 'D' THEN
+	FORMATDATE(DATE(invchead_invcdate + terms_discdays))
+
+       WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN
+	
+	FORMATDATE(DATE(
+	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
+	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || 
+	terms_discdays
+	))
+
+	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN
+
+	FORMATDATE(DATE(
+	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
+          (EXTRACT(MONTH FROM(invchead_invcdate + interval '1 month')) ) || '-' || 
+	terms_discdays
+	))
+	END AS dis_date,
+
+--Discount Date END --
+
+
+      --remitto.*,
+remitto_name,
+formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citystatezip, remitto_country) AS remitto_adr,
+      invchead_invcnumber AS invoicenumber,
+      formatDate(invchead_invcdate) AS f_invoicedate,
+      cust_number,
+      invchead_billto_name,
+      formatAddr(invchead_billto_address1, invchead_billto_address2, invchead_billto_address3, ( invchead_billto_city || '  ' || invchead_billto_state || '  ' || invchead_billto_zipcode ), invchead_billto_country) AS f_billtoaddress,
+      invchead_billto_phone,
+      invchead_shipto_name,
+      formatAddr(invchead_shipto_address1, invchead_shipto_address2, invchead_shipto_address3, ( invchead_shipto_city || '  ' || invchead_shipto_state || ' ' || invchead_shipto_zipcode ), invchead_shipto_country) AS f_shiptoaddress,
+      invchead_ordernumber AS ordernumber,
+      invchead_ponumber,
+      formatDate(invchead_orderdate) AS f_orderdate,
+      formatDate(invchead_shipdate) AS f_shipdate,
+      invchead_fob, terms_descrip, invchead_shipvia
+FROM remitto, cust, invchead
+    LEFT OUTER JOIN terms ON (invchead_terms_id=terms_id)
+WHERE ( (invchead_cust_id=cust_id)
+AND (invchead_id=&lt;? value("invchead_id") ?>) )
 ORDER BY ordernumber;</sql>
  </querysource>
  <querysource>
