@@ -263,20 +263,23 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     // Completer set up
     if (_x_metrics)
     {
-      if (_x_metrics->value("AutoCompleteMax").toInt());
-      QSqlQueryModel* hints = new QSqlQueryModel(this);
-      QCompleter* completer = new QCompleter(hints,this);
-      QTreeView* view = new QTreeView(this);
-      view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-      view->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-      view->setHeaderHidden(true);
-      view->setRootIsDecorated(false);
-      completer->setPopup(view);
-      completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-      completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-      completer->setCaseSensitivity(Qt::CaseInsensitive);
-      setCompleter(completer);
-      connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
+      if (!_x_metrics->boolean("DisableAutoComplete"));
+      {
+        QSqlQueryModel* hints = new QSqlQueryModel(this);
+        QCompleter* completer = new QCompleter(hints,this);
+        QTreeView* view = new QTreeView(this);
+        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        view->setHeaderHidden(true);
+        view->setRootIsDecorated(false);
+        completer->setPopup(view);
+        completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+        completer->setCaseSensitivity(Qt::CaseInsensitive);
+        completer->setCompletionColumn(1);
+        completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+        setCompleter(completer);
+        connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
+      }
     }
 
     // Set up actions
@@ -431,22 +434,19 @@ void VirtualClusterLineEdit::sHandleCompleter()
   if (stripped.isEmpty())
     return;
 
-  int max = 0;
-  if (_x_metrics)
-    max = _x_metrics->value("AutoCompleteMax").toInt();
-
   QSqlQueryModel* model = static_cast<QSqlQueryModel *>(completer()->model());
   QTreeView * view = static_cast<QTreeView *>(completer()->popup());
   _parsed = true;
   XSqlQuery numQ;
-  numQ.prepare(_hintQuery + _numClause +
+  numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-               QString(";"));
+               QString("ORDER BY %1 LIMIT 10;").arg(_numColName));
   numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
   numQ.exec();
-  if (numQ.size() <= max)
+  if (numQ.first())
   {
     model->setQuery(numQ);
+    view->hideColumn(0);
     for (int i = 0; i < model->columnCount(); i++)
       view->resizeColumnToContents(i);
   }
@@ -472,25 +472,17 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
 
   _query = QString("SELECT %1 AS id, %2 AS number ")
 		  .arg(pIdColumn).arg(pNumberColumn);
-  _hintQuery = QString("SELECT %1 AS number ").arg(pNumberColumn);
 
   _hasName = (pNameColumn && QString(pNameColumn).trimmed().length());
   if (_hasName)
-  {
     _query += QString(", %1 AS name ").arg(pNameColumn);
-    _hintQuery += QString(", %1 AS name ").arg(pNameColumn);
-  }
 
   _hasDescription = (pDescripColumn &&
                      QString(pDescripColumn).trimmed().length());
   if (_hasDescription)
-  {
     _query += QString(", %1 AS description ").arg(pDescripColumn);
-    _hintQuery += QString(", %1 AS description ").arg(pDescripColumn);
-  }
 
   _query += QString("FROM %1 WHERE (TRUE) ").arg(pTabName);
-  _hintQuery += QString("FROM %1 WHERE (TRUE) ").arg(pTabName);
 
   _idClause = QString(" AND (%1=:id) ").arg(pIdColumn);
   _numClause = QString(" AND (%1 ~* E:number) ").arg(pNumberColumn);
@@ -573,8 +565,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       if (completer())
       {
         disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
-        QSqlQuery empty;
-        static_cast<QSqlQueryModel* >(completer()->model())->setQuery(empty);
+        static_cast<QSqlQueryModel* >(completer()->model())->setQuery(QSqlQuery());
       }
 
       _id = pId;
@@ -585,11 +576,8 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       if (_hasDescription)
         _description = idQ.value("description").toString();
 
-      if (_x_metrics)
-      {
-        if (_x_metrics->value("AutoCompleteMax").toInt());
+      if (completer())
         connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
-      }
     }
     else if (idQ.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")

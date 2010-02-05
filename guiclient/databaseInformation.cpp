@@ -52,10 +52,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _server->setText(server);
   _name->setText(database);
 
-  if (_metrics->value("AutoCompleteMax").toInt())
-    _maxList->setValue(_metrics->value("AutoCompleteMax").toInt());
-  else
-    _autoCompleteGroup->setChecked(false);
+  _disableAutoComplete->setChecked(_metrics->boolean("DisableAutoComplete"));
   
   q.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
           "       numOfServerUsers() AS serverusers;" );
@@ -100,10 +97,7 @@ void databaseInformation::sSave()
   else
     _metrics->set("AllowedUserLogins", QString("ActiveOnly"));
 
-  if (_autoCompleteGroup->isChecked())
-    _metrics->set("AutoCompleteMax", QString::number(_maxList->value()));
-  else
-    _metrics->set("AutoCompleteMax", QString::number(0));
+  _metrics->set("DisableAutoComplete", _disableAutoComplete->isChecked());
 
   _metrics->load();
 

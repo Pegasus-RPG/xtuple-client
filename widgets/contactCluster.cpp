@@ -16,7 +16,7 @@
 #include "contactwidget.h"
 
 ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "cntct", "cntct_id", "formatCntctName(cntct_id)", 0, "cntct_title", 0, pName)
+    VirtualClusterLineEdit(pParent, "cntct", "cntct_id", "cntct_name", 0, "cntct_title", 0, pName)
 {
     setTitles(tr("Contact"), tr("Contacts"));
     setUiName("contact");
@@ -44,7 +44,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _grid->removeWidget(_name);
   _grid->setVerticalSpacing(0);
 
-  setLabel(tr("Contact:"));
+  setLabel(tr("Name:"));
   _number->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed); // This is actually name here
   _titleLit = new QLabel(tr("Title:"),this);
   _phoneLit = new QLabel(tr("Phone:"),this);
@@ -127,6 +127,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
 
   setMinimalLayout(false);
   
+  /*
   ccle->_numClause = QString(" AND ( "
                              " TRIM(REPLACE("
                              " COALESCE(cntct_honorific,'')        || ' '  || "
@@ -135,7 +136,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
                              " COALESCE(cntct_last_name,'')  || ' '  || "
                              " COALESCE(cntct_suffix,'') "
                              ",'  ', ' '))"
-                             " ~* :number )");
+                             " ~* :number )"); */
 }
 
 void ContactCluster::setMinimalLayout(bool isMinimal)

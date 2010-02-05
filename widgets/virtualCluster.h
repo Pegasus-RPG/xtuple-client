@@ -225,7 +225,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _titleSingular;
         QString _titlePlural;
         QString _query;
-        QString _hintQuery;
         QString _idClause;
         QString _numClause;
         QString _extraClause;
