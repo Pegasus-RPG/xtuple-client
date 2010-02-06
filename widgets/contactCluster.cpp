@@ -68,7 +68,8 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _name->setVisible(true);
   _description->setVisible(true);
 
-  _cntctSpacer = new QSpacerItem(15, 3,QSizePolicy::Fixed,QSizePolicy::Fixed);
+  setMinimumWidth(500);
+  QSpacerItem* _cntctSpacer = new QSpacerItem(15, 3,QSizePolicy::Fixed,QSizePolicy::Fixed);
   _grid->addItem(_cntctSpacer, 1, 1, 1, 1);
 
   _grid->removeWidget(_description);
@@ -76,7 +77,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _grid->setVerticalSpacing(0);
 
   setLabel(tr("Name:"));
-  _number->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed); // This is actually name here
+  _number->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
   _titleLit = new QLabel(tr("Title:"),this);
   _phoneLit = new QLabel(tr("Phone:"),this);
   _phone2Lit = new QLabel(tr("Alternate:"),this);
@@ -118,7 +119,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _webaddrLit->setAlignment(Qt::AlignRight);
 
   _addrLayout = new QVBoxLayout;
-  _addrSpacer = new QSpacerItem(20,0,QSizePolicy::Preferred,QSizePolicy::Expanding);
+  QSpacerItem* _addrSpacer = new QSpacerItem(20,0,QSizePolicy::Preferred,QSizePolicy::Expanding);
   _addrLayout->addWidget(_addr);
   _addrLayout->addSpacerItem(_addrSpacer);
 
@@ -278,7 +279,13 @@ void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
     if (! _number)
       return;
 
-    _grid->addWidget(_number, 0, 1, 1, 3);
+    QHBoxLayout* hbox = new QHBoxLayout(this);
+ //   QSpacerItem* hspc = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    hbox->addWidget(_number);
+    hbox->addWidget(_list);
+    hbox->addWidget(_info);
+ //   hbox->addItem(hspc);
+    _grid->addLayout(hbox, 0, 1, 1, 3);
     setFocusProxy(pNumberWidget);
 
     connect(_list,      SIGNAL(clicked()),      this,   SLOT(sEllipses()));

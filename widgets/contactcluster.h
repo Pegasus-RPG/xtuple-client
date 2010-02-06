@@ -101,9 +101,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 
       int _searchAcctId;
       AddressCluster* _address;
-      QSpacerItem* _cntctSpacer;
       QVBoxLayout* _addrLayout;
-      QSpacerItem* _addrSpacer;
       QLabel* _titleLit;
       QLabel* _phoneLit;
       QLabel* _phone;

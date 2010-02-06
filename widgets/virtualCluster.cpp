@@ -310,13 +310,14 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
 
+    _menuLabel = new QLabel(this);
     // Menu set up
     if (_x_preferences)
     {
       if (!_x_preferences->boolean("ClusterButtons"))
       {
         _menu = 0;
-        _menuLabel = new QLabel(this);
+        _menuLabel->hide();
         _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
         _menuLabel->installEventFilter(this);
 
@@ -339,7 +340,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
       }
     }
-}
+  }
 
 bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
 {
@@ -365,13 +366,13 @@ void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
 
 void VirtualClusterLineEdit::positionMenuLabel()
 {
-  if (_menuLabel)
+  if (_x_preferences && menu())
   {
-  _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  _menuLabel->setStyleSheet("QLabel { margin-right:6}");
+    _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    _menuLabel->setStyleSheet("QLabel { margin-right:6}");
 
-  _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
-                          _menuLabel->pixmap()->width() + 6, height());
+    _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
+                            _menuLabel->pixmap()->width() + 6, height());
   }
 }
 
@@ -395,7 +396,7 @@ void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 
 void VirtualClusterLineEdit::sUpdateMenu()
 {
-  if (!_x_privileges)
+  if (!_x_privileges || !menu())
     return;
 
   _openAct->setEnabled(canOpen());
