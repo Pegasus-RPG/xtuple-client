@@ -22,7 +22,7 @@
 
 #include "virtualCluster.h"
 
-#define DEBUG false
+#define DEBUG true
 
 void VirtualCluster::init()
 {
@@ -636,15 +636,24 @@ void VirtualClusterLineEdit::sParse()
         numQ.exec();
         if (numQ.size() > 1)
         {
+          blockSignals(true);
           VirtualSearch* newdlg = searchFactory();
           if (newdlg)
           {
             newdlg->setSearchText(text());
-            //newdlg->setQuery(numQ);
+            newdlg->setQuery(numQ);
             int id = newdlg->exec();
-            setId(id);
+            bool newid = (id == _id);
+            silentSetId(id); //Force refresh
+            if (newid)
+            {
+              emit newId(id);
+              emit valid(id);
+            }
+            blockSignals(false);
             return;
           }
+          blockSignals(false);
         }
         else if (numQ.first())
 	{
@@ -673,32 +682,37 @@ void VirtualClusterLineEdit::sParse()
 
 void VirtualClusterLineEdit::sList()
 {
-    VirtualList* newdlg = listFactory();
-    if (newdlg)
-    {
-	int id = newdlg->exec();
-	setId(id);
-    }
-    else
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				      .arg(__FILE__)
-				      .arg(__LINE__),
-			      tr("%1::sList() not yet defined").arg(className()));
+  blockSignals(true);
+  VirtualList* newdlg = listFactory();
+  if (newdlg)
+  {
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sList() not yet defined").arg(className()));
+  blockSignals(false);
 }
 
 void VirtualClusterLineEdit::sSearch()
 {
-    VirtualSearch* newdlg = searchFactory();
-    if (newdlg)
-    {
-	int id = newdlg->exec();
-	setId(id);
-    }
-    else
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				      .arg(__FILE__)
-				      .arg(__LINE__),
-			      tr("%1::sSearch() not yet defined").arg(className()));
+  blockSignals(true);
+  VirtualSearch* newdlg = searchFactory();
+  if (newdlg)
+  {
+    newdlg->setSearchText(text());
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sSearch() not yet defined").arg(className()));
+  blockSignals(false);
 }
 
 void VirtualCluster::sEllipses()
@@ -1023,13 +1037,13 @@ void VirtualSearch::sSelect()
 
 void VirtualSearch::setQuery(QSqlQuery query)
 {
+  _listTab->setFocus();
   _listTab->populate(query);
 }
 
 void VirtualSearch::setSearchText(const QString& text)
 {
   _search->setText(text);
-  sFillList();
 }
 
 void VirtualSearch::sFillList()

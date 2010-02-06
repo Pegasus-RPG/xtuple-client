@@ -18,6 +18,8 @@
 ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "cntct", "cntct_id", "cntct_name", 0, "cntct_title", 0, pName)
 {
+    _searchAcctId = -1;
+
     setTitles(tr("Contact"), tr("Contacts"));
     setUiName("contact");
     setEditPriv("MaintainContacts");

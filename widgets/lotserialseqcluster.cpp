@@ -20,4 +20,7 @@ LotserialseqClusterLineEdit::LotserialseqClusterLineEdit(QWidget* pParent, const
     VirtualClusterLineEdit(pParent, "lsseq", "lsseq_id", "lsseq_number", 0, "lsseq_descrip", 0, pName)
 {
     setTitles(tr("Lot/Serial Sequence"), tr("Lot/Serial Sequences"));
+    setUiName("lotSerialSequence");
+    setEditPriv("MaintainLotSerialSequences");
+    setViewPriv("ViewLotSerialSequences");
 }

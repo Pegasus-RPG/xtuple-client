@@ -25,7 +25,9 @@ EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
 {
   setTitles(tr("Employee"), tr("Employees"));
-  _numClause = QString(" AND (UPPER(emp_code)=UPPER(:number)) ");
+  setUiName("employee");
+  setEditPriv("MaintainEmployees");
+  setViewPriv("ViewEmployees");
 }
 
 VirtualInfo *EmpClusterLineEdit::infoFactory()
