@@ -306,8 +306,8 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); }
         virtual void setFieldName(QString p)           { _fieldName = p; }
         virtual void setId(const int p)                { _number->setId(p); }
-        virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); }
-        virtual void setListVisible(const bool p)      { _list->setHidden(!p); }
+        virtual void setInfoVisible(const bool p);
+        virtual void setListVisible(const bool p);
         virtual void setName(const QString& p)         { _name->setText(p); }
         virtual void setNameVisible(const bool p)      { _name->setHidden(!p); }
         virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); }

@@ -199,6 +199,22 @@ void VirtualCluster::sRefresh()
   _info->setEnabled(_number && _number->_id > 0);
 }
 
+void VirtualCluster::setInfoVisible(bool p)
+{
+  if (_x_preferences)
+    _info->setVisible(p && _x_preferences->boolean("ClusterButtons"));
+
+  _number->_infoAct->setVisible(p);
+}
+
+void VirtualCluster::setListVisible(bool p)
+{
+  if (_x_preferences)
+    _list->setVisible(p && _x_preferences->boolean("ClusterButtons"));
+
+  _number->_listAct->setVisible(p);
+}
+
 void VirtualCluster::setReadOnly(const bool b)
 {
   _readOnly = b;
@@ -210,7 +226,8 @@ void VirtualCluster::setReadOnly(const bool b)
   else
   {
     _number->setEnabled(true);
-    _list->show();
+    if (_x_preferences)
+      _list->setVisible(_x_preferences->boolean("ClusterButtons"));
   }
 }
 
@@ -288,24 +305,27 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     _infoAct = new QAction(tr("Info..."), this);
     _infoAct->setShortcut(QKeySequence(tr("Ctrl+I")));
-    _infoAct->setShortcutContext(Qt::WidgetShortcut);
+    _infoAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _infoAct->setToolTip(tr("View record information"));
     _infoAct->setEnabled(false);
     connect(_infoAct, SIGNAL(triggered()), this, SLOT(sInfo()));
+    addAction(_infoAct);
 
     _openAct = new QAction(tr("Open..."), this);
     _openAct->setShortcut(QKeySequence::Open);
-    _openAct->setShortcutContext(Qt::WidgetShortcut);
+    _openAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _openAct->setToolTip(tr("Open record detail"));
     _openAct->setEnabled(false);
     connect(_openAct, SIGNAL(triggered()), this, SLOT(sOpen()));
+    addAction(_openAct);
 
     _newAct = new QAction(tr("New..."), this);
     _newAct->setShortcut(QKeySequence::New);
-    _newAct->setShortcutContext(Qt::WidgetShortcut);
+    _newAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _newAct->setToolTip(tr("Create new record"));
     _newAct->setEnabled(false);
     connect(_newAct, SIGNAL(triggered()), this, SLOT(sNew()));
+    addAction(_newAct);
 
     connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
@@ -637,7 +657,6 @@ void VirtualClusterLineEdit::sParse()
         numQ.exec();
         if (numQ.size() > 1)
         {
-          blockSignals(true);
           VirtualSearch* newdlg = searchFactory();
           if (newdlg)
           {
@@ -651,10 +670,8 @@ void VirtualClusterLineEdit::sParse()
               emit newId(id);
               emit valid(id);
             }
-            blockSignals(false);
             return;
           }
-          blockSignals(false);
         }
         else if (numQ.first())
 	{
@@ -683,19 +700,23 @@ void VirtualClusterLineEdit::sParse()
 
 void VirtualClusterLineEdit::sList()
 {
-  blockSignals(true);
   VirtualList* newdlg = listFactory();
   if (newdlg)
   {
     int id = newdlg->exec();
-    setId(id);
+    bool newid = (id == _id);
+    silentSetId(id); //Force refresh
+    if (newid)
+    {
+      emit newId(id);
+      emit valid(id);
+    }
   }
   else
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
                           tr("%1::sList() not yet defined").arg(className()));
-  blockSignals(false);
 }
 
 void VirtualClusterLineEdit::sSearch()
@@ -939,8 +960,6 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _search = new QLineEdit(this, "_search");
     _searchLit = new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
     _searchNumber = new XCheckBox(tr("Search through Numbers"));
-    _searchNumber->setForgetful(true);
-    _searchNumber->setChecked(true);
     _searchNumber->setObjectName("_searchNumber");
     _searchName = new XCheckBox(tr("Search through Names"));
     _searchName->setObjectName("_searchName");
