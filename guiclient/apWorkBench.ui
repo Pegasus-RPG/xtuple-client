@@ -127,6 +127,12 @@ to be bound by its terms.</comment>
        <property name="currentIndex" >
         <number>0</number>
        </property>
+       <widget class="QWidget" name="_vouchersTab" >
+        <attribute name="title" >
+         <string>Open Vouchers</string>
+        </attribute>
+        <layout class="QGridLayout" name="_vouchersTabLayout" />
+       </widget>
        <widget class="QWidget" name="_payablesTab" >
         <attribute name="title" >
          <string>Payables</string>

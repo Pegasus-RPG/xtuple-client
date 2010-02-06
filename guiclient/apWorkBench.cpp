@@ -13,6 +13,7 @@
 #include <QSqlError>
  
 #include <metasql.h>
+#include "openVouchers.h"
 #include "selectPayments.h"
 #include "selectedPayments.h"
 #include "viewCheckRun.h"
@@ -24,6 +25,14 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   QWidget *hideme = 0;
+
+  _vouchers = new openVouchers(this, "openVouchers", Qt::Widget);
+  _vouchersTab->layout()->addWidget(_vouchers);
+  hideme = _vouchers->findChild<QWidget*>("_close");
+  if (hideme)
+    hideme->hide();
+  _vouchers->show();
+  _vendorgroup->synchronize((VendorGroup*)(_vouchers->findChild<QWidget*>("_vendorgroup")));
 
   _payables = new selectPayments(this, "selectPayments", Qt::Widget);
   _payablesTab->layout()->addWidget(_payables);
@@ -59,6 +68,7 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendorgroup->synchronize((VendorGroup*)(_checkRun->findChild<QWidget*>("_vendorgroup")));
 
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sCalculateTotalOpen()));
+  connect(_query, SIGNAL(clicked()), _vouchers, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _payables, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _credits, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _selectedPayments, SLOT(sFillList()));

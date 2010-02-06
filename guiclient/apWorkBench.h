@@ -20,6 +20,7 @@
 
 #include "ui_apWorkBench.h"
 
+class openVouchers;
 class selectPayments;
 class selectedPayments;
 class unappliedAPCreditMemos;
@@ -45,6 +46,7 @@ class apWorkBench : public XWidget, public Ui::apWorkBench
     viewCheckRun           *_checkRun;
     unappliedAPCreditMemos *_credits;
     selectPayments         *_payables;
+    openVouchers           *_vouchers;
     selectedPayments       *_selectedPayments;
 };
 

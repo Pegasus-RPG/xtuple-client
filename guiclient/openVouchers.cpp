@@ -16,6 +16,7 @@
 //#include <QStatusBar>
 #include <QVariant>
 
+#include <metasql.h>
 #include <parameter.h>
 #include <openreports.h>
 
@@ -32,6 +33,7 @@ openVouchers::openVouchers(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  (void)statusBar();
 
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_vohead, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -48,6 +50,7 @@ openVouchers::openVouchers(QWidget* parent, const char* name, Qt::WFlags fl)
   _vohead->addColumn(tr("Vendor Invc. #"), _itemColumn,  Qt::AlignRight,  true,  "vohead_invcnumber"  );
   _vohead->addColumn(tr("Dist. Date"),     _dateColumn,  Qt::AlignCenter, true,  "vohead_distdate" );
   _vohead->addColumn(tr("G/L Post Date"),  _dateColumn,  Qt::AlignCenter, true,  "postdate" );
+  _vohead->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "vohead_amount" );
 
   if (! _privileges->check("ChangeVOPostDate"))
     _vohead->hideColumn(6);
@@ -83,9 +86,21 @@ void openVouchers::languageChange()
   retranslateUi(this);
 }
 
+bool openVouchers::setParams(ParameterList &params)
+{
+  _vendorgroup->appendValue(params);
+  params.append("misc", tr("Misc."));
+
+  return true;
+}
+
 void openVouchers::sPrint()
 {
-  orReport report("VoucheringEditList");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  orReport report("VoucheringEditList", params);
   if (report.isValid())
     report.print();
   else
@@ -338,17 +353,28 @@ void openVouchers::sPopulateMenu(QMenu *pMenu)
 
 void openVouchers::sFillList()
 {
-  q.prepare( "SELECT vohead_id, COALESCE(pohead_id, -1), vohead_number,"
-             "       COALESCE(TEXT(pohead_number), TEXT(:misc)) AS ponumber,"
+  MetaSQLQuery mql(
+             "SELECT vohead_id, COALESCE(pohead_id, -1), vohead_number,"
+             "       COALESCE(TEXT(pohead_number), TEXT(<? value(\"misc\") ?>)) AS ponumber,"
              "       (vend_number || '-' || vend_name) AS vendor, vendtype_code, vohead_invcnumber,"
-             "       vohead_distdate, COALESCE(vohead_gldistdate, vohead_distdate) AS postdate "
-             "  FROM vendinfo, vendtype, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id) "
-             " WHERE ((vohead_vend_id=vend_id)"
-             "   AND  (vend_vendtype_id=vendtype_id)"
-             "   AND  (NOT vohead_posted)) "
+             "       vohead_distdate, COALESCE(vohead_gldistdate, vohead_distdate) AS postdate,"
+			 "       vohead_amount, 'curr' AS vohead_amount_xtnumericrole "
+             "  FROM vendinfo JOIN vendtype ON (vendtype_id=vend_vendtype_id)"
+			 "                JOIN vohead ON (vohead_vend_id=vend_id)"
+			 "                LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id) "
+             " WHERE (NOT vohead_posted) "
+             "<? if exists(\"vend_id\") ?>"
+             " AND (vend_id=<? value(\"vend_id\") ?>)"
+             "<? elseif exists(\"vendtype_id\") ?>"
+             " AND (vend_vendtype_id=<? value(\"vendtype_id\") ?>)"
+             "<? elseif exists(\"vendtype_pattern\") ?>"
+             " AND (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)"
+             "<? endif ?>"
              " ORDER BY vohead_number;" );
-  q.bindValue(":misc", tr("Misc."));
-  q.exec();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   _vohead->clear();
   _vohead->populate(q, TRUE);
   if (q.lastError().type() != QSqlError::NoError)

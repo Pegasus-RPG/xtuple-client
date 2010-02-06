@@ -24,6 +24,7 @@ public:
     openVouchers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~openVouchers();
 	
+    virtual bool setParams(ParameterList &);
     virtual bool checkSitePrivs(int orderid);
 
 public slots:
