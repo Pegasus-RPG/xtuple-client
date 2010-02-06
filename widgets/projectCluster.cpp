@@ -30,6 +30,9 @@ ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "prj", "prj_id", "prj_number", "prj_name", 0, 0, pName)
 {
   setTitles(tr("Project"), tr("Projects"));
+  setUiName("project");
+  setEditPriv("MaintainProjects");
+  setViewPriv("ViewProjects");
 
   _type = Undefined;
 }
@@ -38,6 +41,9 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
     VirtualClusterLineEdit(pParent, "prj", "prj_id", "prj_number", "prj_name", 0, 0, pName)
 {
   setTitles(tr("Project"), tr("Projects"));
+  setUiName("project");
+  setEditPriv("MaintainProjects");
+  setViewPriv("ViewProjects");
 
   _type = pPrjType;
 }

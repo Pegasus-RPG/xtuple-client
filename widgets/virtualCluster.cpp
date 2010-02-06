@@ -309,6 +309,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
+    connect(this, SIGNAL(valid(bool)), _openAct, SLOT(sUpdateMenu()));
 
     _menuLabel = new QLabel(this);
     // Menu set up
@@ -398,11 +399,11 @@ void VirtualClusterLineEdit::sUpdateMenu()
   if (!_x_privileges || !menu())
     return;
 
-  _openAct->setEnabled(canOpen());
+  _openAct->setEnabled(canOpen() && _id != -1);
   _newAct->setEnabled(canOpen() &&
                       _x_privileges->check(_editPriv));
 
-  if (_openAct->isEnabled())
+  if (_newAct->isEnabled())
   {
     if (!menu()->actions().contains(_openAct))
       menu()->addAction(_openAct);

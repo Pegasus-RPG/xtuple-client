@@ -357,6 +357,9 @@ to be bound by its terms.</comment>
              <property name="text">
               <string>Save</string>
              </property>
+             <property name="default">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -688,6 +691,7 @@ to be bound by its terms.</comment>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>

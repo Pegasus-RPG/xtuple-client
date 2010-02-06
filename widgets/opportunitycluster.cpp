@@ -20,4 +20,7 @@ OpportunityClusterLineEdit::OpportunityClusterLineEdit(QWidget* pParent, const c
     VirtualClusterLineEdit(pParent, "ophead", "ophead_id", "ophead_name", "ophead_owner_username", "ophead_notes", 0, pName)
 {
     setTitles(tr("Opportunity"), tr("Opportunities"));
+    setUiName("opportunity");
+    setEditPriv("MaintainOpportunities");
+    setViewPriv("ViewOpportunities");
 }
