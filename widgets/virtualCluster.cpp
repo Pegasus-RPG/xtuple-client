@@ -317,7 +317,6 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
       if (!_x_preferences->boolean("ClusterButtons"))
       {
         _menu = 0;
-        _menuLabel->hide();
         _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
         _menuLabel->installEventFilter(this);
 

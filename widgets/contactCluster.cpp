@@ -280,11 +280,9 @@ void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
       return;
 
     QHBoxLayout* hbox = new QHBoxLayout(this);
- //   QSpacerItem* hspc = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Fixed);
     hbox->addWidget(_number);
     hbox->addWidget(_list);
     hbox->addWidget(_info);
- //   hbox->addItem(hspc);
     _grid->addLayout(hbox, 0, 1, 1, 3);
     setFocusProxy(pNumberWidget);
 
