@@ -46,6 +46,15 @@ CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
 {
     setTitles(tr("CRM Account"), tr("CRM Accounts"));
     setSubtype(Crmacct);
+
+    _query = "SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
+           "       addr.*,"
+           "       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
+           "       cntct.* "
+           "    FROM crmacct LEFT OUTER JOIN"
+           "         cntct ON (crmacct_cntct_id_1=cntct_id) LEFT OUTER JOIN"
+           "         addr ON (cntct_addr_id=addr_id)"
+           "    WHERE (true ) ";
 }
 
 VirtualList* CRMAcctLineEdit::listFactory()
