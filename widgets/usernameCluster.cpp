@@ -17,13 +17,20 @@
 #include <xsqlquery.h>
 
 #include "usernamecluster.h"
+#include "format.h"
 
 UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", 0, 0, 0, pName)
 {
   setType(UsersAll);
-
-  //connect(this, SIGNAL(lostFocus()), SLOT(sParse()));
+  if (_x_preferences)
+  {
+    if (!_x_preferences->boolean("ClusterButtons"))
+    {
+      menu()->removeAction(_infoAct);
+      menu()->removeAction(menu()->actions().at(2));
+    }
+  }
 }
 
 void UsernameLineEdit::setId(int pId)
@@ -48,15 +55,16 @@ void UsernameLineEdit::setId(int pId)
     _id = pId;
     _valid = true;
     _username = query.value("usr_username").toString();
+    setStyleSheet("");
+    setText(_username);
   }
   else
   {
     _id = -1;
     _valid = false;
-    _username = "";
+    setStyleSheet(QString("QLineEdit { color: %1 } ").arg(namedColor("error").name()));
   }
 
-  setText(_username);
   emit newId(_id);
   emit valid(_valid);
 
@@ -80,10 +88,20 @@ void UsernameLineEdit::clear()
 
 void UsernameLineEdit::setUsername(const QString & pUsername)
 {
+  if (!pUsername.trimmed().length())
+    return;
+
   XSqlQuery query;
-  query.prepare("SELECT usr_id, usr_username "
+  QString sql("SELECT usr_id, usr_username AS number "
                 "  FROM usr"
-                " WHERE (usr_username ~* :username);");
+                " WHERE ((usr_username ~* :username) ");
+  if(UsersActive == _type)
+    sql += " AND (usr_active)";
+  else if(UsersInactive == _type)
+    sql += " AND (NOT usr_active)";
+  sql += " );";
+
+  query.prepare(sql);
   query.bindValue(":username", QString(pUsername).prepend("^"));
   query.exec();
   if (query.size() > 1)
@@ -91,8 +109,8 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
     VirtualSearch* newdlg = searchFactory();
     if (newdlg)
     {
-      newdlg->setSearchText(text());
       newdlg->setQuery(query);
+      newdlg->setSearchText(text());
       int id = newdlg->exec();
       bool newid = (id == _id);
       silentSetId(id); //Force refresh
@@ -104,10 +122,14 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
       return;
     }
   }
-  if(query.first())
+  else if(query.first())
     setId(query.value("usr_id").toInt());
   else
+  {
+    _username = pUsername;
+    setText(_username);
     setId(-1);
+  }
 }
 
 void UsernameLineEdit::sParse()
@@ -130,7 +152,6 @@ const QString & UsernameLineEdit::username()
 {
   if(hasFocus())
     sParse();
-
   return _username;
 }
 
@@ -150,6 +171,7 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
   : VirtualCluster(parent, name)
 {
   addNumberWidget(new UsernameLineEdit(this, name));
+  _info->hide();
 }
 
 void UsernameCluster::addNumberWidget(UsernameLineEdit* pNumberWidget)
