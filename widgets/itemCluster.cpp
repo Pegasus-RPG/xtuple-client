@@ -235,6 +235,7 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
   _delegate = new ItemLineEditDelegate(this);
 
   connect(this, SIGNAL(requestAlias()), this, SLOT(sAlias()));
+  connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
 
   // Remove info and separator since not implemented here for now
   if (_x_preferences)
@@ -243,6 +244,7 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
     {
       menu()->removeAction(_infoAct);
       menu()->removeAction(menu()->actions().at(2));
+      menu()->addAction(_aliasAct);
     }
   }
 }
