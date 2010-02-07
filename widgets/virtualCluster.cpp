@@ -22,10 +22,11 @@
 
 #include "virtualCluster.h"
 
-#define DEBUG true
+#define DEBUG false
 
 void VirtualCluster::init()
 {
+    setFocusPolicy(Qt::StrongFocus);
     _label = new QLabel(this, "_label");
     _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -325,7 +326,6 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
-    connect(this, SIGNAL(valid(bool)), _openAct, SLOT(sUpdateMenu()));
 
     _menuLabel = new QLabel(this);
     // Menu set up
@@ -1010,8 +1010,8 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     connect(_listTab,	    SIGNAL(itemSelected(int)),	this, SLOT(sSelect()));
     connect(_select,	    SIGNAL(clicked()),		this, SLOT(sSelect()));
     connect(_close,	    SIGNAL(clicked()),		this, SLOT(sClose()));
-    connect(_searchNumber,  SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
-    connect(_searchDescrip, SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
+    connect(_searchNumber,  SIGNAL(clicked()),	        this, SLOT(sFillList()));
+    connect(_searchDescrip, SIGNAL(clicked()),  	this, SLOT(sFillList()));
     connect(_search,	    SIGNAL(lostFocus()),	this, SLOT(sFillList()));
     connect(_listTab,	    SIGNAL(valid(bool)),	_select, SLOT(setEnabled(bool)));
 

@@ -1055,8 +1055,8 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   // signals and slots connections
   connect( _showInactive, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
-  connect( _searchDescrip2, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
-  connect( _searchUpc, SIGNAL( toggled(bool) ), this, SLOT( sFillList() ) );
+  connect( _searchDescrip2, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
+  connect( _searchUpc, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
 
   _listTab->setColumnCount(0);
   _listTab->addColumn(tr("Item Number"), 100,  Qt::AlignLeft, true );
