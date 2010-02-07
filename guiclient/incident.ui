@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>683</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -383,9 +383,6 @@ to be bound by its terms.</comment>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="label">
-           <string/>
-          </property>
           <property name="minimalLayout">
            <bool>true</bool>
           </property>
@@ -472,9 +469,6 @@ to be bound by its terms.</comment>
                     <width>0</width>
                     <height>72</height>
                    </size>
-                  </property>
-                  <property name="focusPolicy">
-                   <enum>Qt::TabFocus</enum>
                   </property>
                  </widget>
                 </item>

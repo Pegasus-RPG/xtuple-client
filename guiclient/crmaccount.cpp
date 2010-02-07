@@ -701,9 +701,8 @@ int crmaccount::saveNoErrorCheck()
   if (_primary->id() > 0)   q.bindValue(":crmacct_cntct_id_1",	_primary->id());
   if (_secondary->id() > 0) q.bindValue(":crmacct_cntct_id_2",	_secondary->id());
   if (_parentCrmacct->id() > 0)
-			q.bindValue(":crmacct_parent_id", _parentCrmacct->id());    
-  if(_owner->isValid())
-    q.bindValue(":crmacct_owner_username", _owner->username());
+  q.bindValue(":crmacct_parent_id", _parentCrmacct->id());
+  q.bindValue(":crmacct_owner_username", _owner->username());
 
   if (! q.exec())
   {

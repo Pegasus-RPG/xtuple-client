@@ -178,8 +178,7 @@ void todoItem::sSave()
     storedProc = "updateTodoItem";
   }
   q.bindValue(":todoitem_id", _todoitemid);
-  if(_owner->isValid())
-    q.bindValue(":owner", _owner->username());
+  q.bindValue(":owner", _owner->username());
   q.bindValue(":username",   _assignedTo->username());
   if(_assigned->date().isValid())
     q.bindValue(":assigned", _assigned->date());

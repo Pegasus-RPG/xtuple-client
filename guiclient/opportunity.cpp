@@ -291,8 +291,7 @@ bool opportunity::save(bool partial)
   q.bindValue(":ophead_active",	QVariant(_active->isChecked()));
   if (_crmacct->id() > 0)
     q.bindValue(":ophead_crmacct_id", _crmacct->id());
-  if(_owner->isValid())
-    q.bindValue(":ophead_owner_username", _owner->username());
+  q.bindValue(":ophead_owner_username", _owner->username());
   if(_oppstage->isValid())
     q.bindValue(":ophead_opstage_id", _oppstage->id());
   if(_oppsource->isValid())

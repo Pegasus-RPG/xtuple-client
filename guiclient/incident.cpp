@@ -410,8 +410,7 @@ bool incident::save(bool partial)
 
   q.bindValue(":incdt_id", _incdtid);
   q.bindValue(":incdt_number", _number->text());
-  if(_owner->isValid())
-    q.bindValue(":incdt_owner_username", _owner->username());
+  q.bindValue(":incdt_owner_username", _owner->username());
   if (_crmacct->id() > 0)
     q.bindValue(":incdt_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
@@ -420,8 +419,7 @@ bool incident::save(bool partial)
   q.bindValue(":incdt_notes", _notes->toPlainText().trimmed());
   if(-1 != _item->id())
     q.bindValue(":incdt_item_id", _item->id());
-  if(_assignedTo->isValid())
-    q.bindValue(":incdt_assigned_username", _assignedTo->username());
+  q.bindValue(":incdt_assigned_username", _assignedTo->username());
   q.bindValue(":incdt_status", _statusCodes.at(_status->currentIndex()));
   if(_category->isValid())
     q.bindValue(":incdt_incdtcat_id", _category->id());
