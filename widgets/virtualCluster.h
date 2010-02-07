@@ -171,6 +171,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
        Q_INVOKABLE inline virtual QString viewPriv()       const { return _viewPriv; }
 
     public slots:
+        virtual void clear();
         virtual QString extraClause() const { return _extraClause; }
         virtual void sEllipses();
         virtual void sInfo();
@@ -186,7 +187,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void setViewPriv(const QString& priv);
 
     protected slots:
-        virtual void clear();
         inline virtual void clearExtraClause() { _extraClause = ""; }
 
         virtual VirtualList*    listFactory();

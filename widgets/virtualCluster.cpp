@@ -203,16 +203,12 @@ void VirtualCluster::setInfoVisible(bool p)
 {
   if (_x_preferences)
     _info->setVisible(p && _x_preferences->boolean("ClusterButtons"));
-
-  _number->_infoAct->setVisible(p);
 }
 
 void VirtualCluster::setListVisible(bool p)
 {
   if (_x_preferences)
     _list->setVisible(p && _x_preferences->boolean("ClusterButtons"));
-
-  _number->_listAct->setVisible(p);
 }
 
 void VirtualCluster::setReadOnly(const bool b)
@@ -386,13 +382,16 @@ void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
 
 void VirtualClusterLineEdit::positionMenuLabel()
 {
-  if (_x_preferences && menu())
+  if (_x_preferences)
   {
-    _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    _menuLabel->setStyleSheet("QLabel { margin-right:6}");
+    if (!_x_preferences->boolean("ClusterButtons"))
+    {
+      _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+      _menuLabel->setStyleSheet("QLabel { margin-right:6}");
 
-    _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
-                            _menuLabel->pixmap()->width() + 6, height());
+      _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
+                              _menuLabel->pixmap()->width() + 6, height());
+    }
   }
 }
 
@@ -416,7 +415,12 @@ void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 
 void VirtualClusterLineEdit::sUpdateMenu()
 {
-  if (!_x_privileges || !menu())
+  if (_x_preferences)
+  {
+    if (_x_preferences->boolean("ClusterButtons"))
+      return;
+  }
+  else
     return;
 
   _openAct->setEnabled(canOpen() && _id != -1);
@@ -660,8 +664,8 @@ void VirtualClusterLineEdit::sParse()
           VirtualSearch* newdlg = searchFactory();
           if (newdlg)
           {
-            newdlg->setSearchText(text());
             newdlg->setQuery(numQ);
+            newdlg->setSearchText(text());
             int id = newdlg->exec();
             bool newid = (id == _id);
             silentSetId(id); //Force refresh
@@ -721,7 +725,6 @@ void VirtualClusterLineEdit::sList()
 
 void VirtualClusterLineEdit::sSearch()
 {
-  blockSignals(true);
   VirtualSearch* newdlg = searchFactory();
   if (newdlg)
   {
@@ -734,7 +737,6 @@ void VirtualClusterLineEdit::sSearch()
                           .arg(__FILE__)
                           .arg(__LINE__),
                           tr("%1::sSearch() not yet defined").arg(className()));
-  blockSignals(false);
 }
 
 void VirtualCluster::sEllipses()

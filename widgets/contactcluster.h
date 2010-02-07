@@ -99,6 +99,8 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       void addNumberWidget(ContactClusterLineEdit* pNumberWidget);
       void setName(int segment, const QString name);
 
+    private:
+      bool _minLayout;
       int _searchAcctId;
       AddressCluster* _address;
       QVBoxLayout* _addrLayout;
@@ -115,9 +117,6 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       QStringList* _fname;
       XURLLabel* _email;
       XURLLabel* _webaddr;
-
-    private:
-      bool _minLayout;
 };
 
 #endif
