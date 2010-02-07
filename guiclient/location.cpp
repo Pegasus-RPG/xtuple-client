@@ -13,7 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
-#include "itemList.h"
+#include "itemCluster.h"
 
 location::location(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -370,10 +370,10 @@ void location::sHandleWarehouse(int pWarehousid)
 void location::sNew()
 {
   ParameterList params;
-  itemList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  itemList* newdlg = new itemList(this);
+  newdlg->set(params);
 
-  int itemid = newdlg.exec();
+  int itemid = newdlg->exec();
   if (itemid != -1)
   {
 //  Make sure that a locitem does not already exist for this

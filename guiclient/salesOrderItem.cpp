@@ -148,6 +148,9 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char * name, Qt::WindowFla
     _promisedDate->hide();
   }
 
+  if (!_preferences->boolean("ClusterButtons"))
+    _subItemList->hide();
+
   _qtyOrdered->setValidator(omfgThis->qtyVal());
   _orderQty->setPrecision(omfgThis->qtyVal());
   _discountFromCust->setValidator(omfgThis->percentVal());

@@ -14,7 +14,7 @@
 #include <QMessageBox>
 //#include <QStatusBar>
 #include <Q3DragObject>
-#include "itemList.h"
+#include "itemCluster.h"
 
 /*
  *  Constructs a itemGroup as a child of 'parent', with the
@@ -199,10 +199,10 @@ void itemGroup::sDelete()
 void itemGroup::sNew()
 {
   ParameterList params;
-  itemList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  itemList* newdlg = new itemList(this);
+  newdlg->set(params);
 
-  int itemid = newdlg.exec();
+  int itemid = newdlg->exec();
   if (itemid != -1)
   {
     q.prepare( "SELECT itemgrpitem_id "

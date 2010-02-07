@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>695</height>
+    <width>820</width>
+    <height>837</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -359,12 +359,6 @@ to be bound by its terms.</comment>
              <widget class="ItemLineEdit" name="_subItem">
               <property name="enabled">
                <bool>false</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
               </property>
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
