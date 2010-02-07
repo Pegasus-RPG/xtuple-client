@@ -11,7 +11,7 @@
 #ifndef __USERNAMECLUSTER_H__
 #define __USERNAMECLUSTER_H__
 
-#include "xlineedit.h"
+#include "virtualCluster.h"
 
 #include "widgets.h"
 
@@ -19,12 +19,30 @@ class QLabel;
 class QPushButton;
 class QScriptEngine;
 
+class UsernameList;
+class UsernameSearch;
 class UsernameCluster;
 
 void setupUsernameLineEdit(QScriptEngine *engine);
 void setupUsernameCluster(QScriptEngine *engine);
 
-class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT UsernameList : public VirtualList
+{
+  Q_OBJECT
+
+public:
+  UsernameList(QWidget*, Qt::WindowFlags = 0);
+};
+
+class XTUPLEWIDGETS_EXPORT UsernameSearch : public VirtualSearch
+{
+  Q_OBJECT
+
+public:
+  UsernameSearch(QWidget*, Qt::WindowFlags = 0);
+};
+
+class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
@@ -40,7 +58,7 @@ class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
     };
 
     Q_INVOKABLE inline enum Type type() const { return _type; }
-    Q_INVOKABLE inline void setType(enum Type pType) { _type = pType; }
+    Q_INVOKABLE void setType(enum Type pType);
 
     Q_INVOKABLE int id();
     Q_INVOKABLE const QString & username();
@@ -51,17 +69,16 @@ class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public XLineEdit
     void clear();
     void sParse();
 
-  signals:
-    void valid(bool);
-    void newId(int);
+  protected:
+    UsernameList* listFactory();
+    UsernameSearch* searchFactory();
 
   private:
     enum Type _type;
-    int _id;
     QString _username;
 };
 
-class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT UsernameCluster : public VirtualCluster
 {
   Q_OBJECT
 
@@ -70,32 +87,18 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public QWidget
   public:
     UsernameCluster(QWidget*, const char* = 0);
 
-    Q_INVOKABLE inline int  id()      const { return _username->id();  }
+    Q_INVOKABLE inline const QString username() const { return static_cast<UsernameLineEdit *>(_number)->username(); }
 
-    Q_INVOKABLE inline const QString username() const { return _username->username(); }
-
-    Q_INVOKABLE inline bool isValid() const { return _username->_valid; }
-
-    Q_INVOKABLE inline UsernameLineEdit::Type type() const { return _username->type(); }
-    Q_INVOKABLE inline void setType(UsernameLineEdit::Type pType) { _username->setType(pType); }
-
-    QString label() const;
+    Q_INVOKABLE inline UsernameLineEdit::Type type() const { return static_cast<UsernameLineEdit *>(_number)->type(); }
+    Q_INVOKABLE inline void setType(UsernameLineEdit::Type pType) { static_cast<UsernameLineEdit *>(_number)->setType(pType); }
 
   public slots:
-    void sList();
-    void setLabel(QString);
     void setUsername(const QString & pUsername);
     void setReadOnly(bool);
-    inline void setId(int pId)  { _username->setId(pId);   }
+    inline void setId(int pId)  { static_cast<UsernameLineEdit *>(_number)->setId(pId);   }
 
-  signals:
-    void newId(int);
-    void valid(bool);
-
-  private:
-    UsernameLineEdit * _username;
-    QPushButton      * _list;
-    QLabel           * _label;
+  protected:
+    void addNumberWidget(UsernameLineEdit* pNumberWidget);
 };
 
 Q_DECLARE_METATYPE(UsernameLineEdit*)

@@ -16,18 +16,14 @@
 #include <parameter.h>
 #include <xsqlquery.h>
 
-#include "usernameList.h"
 #include "usernamecluster.h"
 
-UsernameLineEdit::UsernameLineEdit(QWidget * parent, const char * name)
-  : XLineEdit(parent, name)
+UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
+    VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", 0, 0, 0, pName)
 {
-  _id = -1;
-  _type = UsersAll;
+  setType(UsersAll);
 
-  setMaximumWidth(100);
-
-  connect(this, SIGNAL(lostFocus()), SLOT(sParse()));
+  //connect(this, SIGNAL(lostFocus()), SLOT(sParse()));
 }
 
 void UsernameLineEdit::setId(int pId)
@@ -67,23 +63,51 @@ void UsernameLineEdit::setId(int pId)
   _parsed = true;
 }
 
-void UsernameLineEdit::setUsername(const QString & pUsername)
+void UsernameLineEdit::setType(enum Type pType)
 {
-  XSqlQuery query;
-  query.prepare("SELECT usr_id"
-                "  FROM usr"
-                " WHERE (usr_username=:username);");
-  query.bindValue(":username", pUsername);
-  query.exec();
-  if(query.first())
-    setId(query.value("usr_id").toInt());
-  else
-    setId(-1);
+  _type = pType;
+
+  if(UsersActive == _type)
+    setExtraClause(" (usr_active)");
+  else if(UsersInactive == _type)
+    setExtraClause(" (NOT usr_active)" );
 }
 
 void UsernameLineEdit::clear()
 {
   setId(-1);
+}
+
+void UsernameLineEdit::setUsername(const QString & pUsername)
+{
+  XSqlQuery query;
+  query.prepare("SELECT usr_id, usr_username "
+                "  FROM usr"
+                " WHERE (usr_username ~* :username);");
+  query.bindValue(":username", QString(pUsername).prepend("^"));
+  query.exec();
+  if (query.size() > 1)
+  {
+    VirtualSearch* newdlg = searchFactory();
+    if (newdlg)
+    {
+      newdlg->setSearchText(text());
+      newdlg->setQuery(query);
+      int id = newdlg->exec();
+      bool newid = (id == _id);
+      silentSetId(id); //Force refresh
+      if (newid)
+      {
+        emit newId(id);
+        emit valid(id);
+      }
+      return;
+    }
+  }
+  if(query.first())
+    setId(query.value("usr_id").toInt());
+  else
+    setId(-1);
 }
 
 void UsernameLineEdit::sParse()
@@ -106,58 +130,42 @@ const QString & UsernameLineEdit::username()
 {
   if(hasFocus())
     sParse();
+
   return _username;
 }
 
-UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
-  : QWidget(parent, name)
+UsernameList* UsernameLineEdit::listFactory()
 {
-  QHBoxLayout *layout = new QHBoxLayout(this);
-  layout->setMargin(0);
-  layout->setSpacing(6);
-
-  _label = new QLabel(tr("Username:"), this);
-  _label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(_label);
-
-  _username = new UsernameLineEdit(this);
-  layout->addWidget(_username);
-
-  _list = new QPushButton(tr("..."), this);
-  _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
-#else
-  _list->setMinimumWidth(60);
-  _list->setMinimumHeight(32);
-#endif
-  _list->setFocusPolicy(Qt::NoFocus);
-  layout->addWidget(_list);
-
-  QSpacerItem * spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
-  layout->addItem(spacer);
-
-  setLayout(layout);
-
-  connect(_list, SIGNAL(clicked()), this, SLOT(sList()));
-  connect(_username, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
-  connect(_username, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
-
-  setFocusProxy(_username);
+    return new UsernameList(this);
 }
 
-void UsernameCluster::sList()
+UsernameSearch* UsernameLineEdit::searchFactory()
 {
-  ParameterList params;
-  params.append("id", _username->id());
-  params.append("type", (int)_username->type());
+    return new UsernameSearch(this);
+}
 
-  usernameList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
+///////////////////////////////////////
 
-  int id;
-  if((id = newdlg.exec()) != QDialog::Rejected)
-    _username->setId(id);
+UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
+  : VirtualCluster(parent, name)
+{
+  addNumberWidget(new UsernameLineEdit(this, name));
+}
+
+void UsernameCluster::addNumberWidget(UsernameLineEdit* pNumberWidget)
+{
+    _number = pNumberWidget;
+    if (! _number)
+      return;
+
+    _grid->addWidget(_number, 0, 1);
+    setFocusProxy(pNumberWidget);
+
+    connect(_list,      SIGNAL(clicked()),      this, SLOT(sEllipses()));
+    connect(_info,      SIGNAL(clicked()),      this, SLOT(sInfo()));
+    connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
+    connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
+    connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
 }
 
 void UsernameCluster::setReadOnly(bool pReadOnly)
@@ -166,22 +174,36 @@ void UsernameCluster::setReadOnly(bool pReadOnly)
     _list->hide();
   else
     _list->show();
-  _username->setEnabled(!pReadOnly);
-}
-
-QString UsernameCluster::label() const
-{
-  return _label->text();
-}
-
-void UsernameCluster::setLabel(QString t)
-{
-  _label->setText(t);
+  _number->setEnabled(!pReadOnly);
 }
 
 void UsernameCluster::setUsername(const QString & pUsername)
 {
-  _username->setUsername(pUsername);
+  static_cast<UsernameLineEdit* >(_number)->setUsername(pUsername);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+UsernameList::UsernameList(QWidget* pParent, Qt::WindowFlags pFlags)
+    : VirtualList(pParent, pFlags)
+{
+  setAttribute(Qt::WA_DeleteOnClose);
+  setObjectName( "usernameList" );
+
+  _listTab->setColumnCount(0);
+  _listTab->addColumn(tr("User Name"), -1,  Qt::AlignLeft, true, "number" );
+}
+
+//////////////////////////////////////////////////////////////////////
+
+UsernameSearch::UsernameSearch(QWidget* pParent, Qt::WindowFlags pFlags)
+    : VirtualSearch(pParent, pFlags)
+{
+  setAttribute(Qt::WA_DeleteOnClose);
+  setObjectName( "usernameSearch" );
+
+  _listTab->setColumnCount(0);
+  _listTab->addColumn(tr("User Name"), -1,  Qt::AlignLeft, true, "number" );
 }
 
 // script exposure ////////////////////////////////////////////////////////////

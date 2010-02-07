@@ -11,13 +11,16 @@
 #ifndef itemCluster_h
 #define itemCluster_h
 
-#include "xlineedit.h"
-
+#include "virtualCluster.h"
 #include "qstringlist.h"
 #include <parameter.h>
 
 #include <QItemDelegate>
 #include <QStyleOptionViewItem>
+
+#include "virtualcluster.h"
+
+class ParameterList;
 
 class QPushButton;
 class QLabel;
@@ -25,11 +28,60 @@ class QDragEnterEvent;
 class QDropEvent;
 class QMouseEvent;
 class ItemLineEditDelegate;
+class itemList;
+class itemSearch;
 
-class XTUPLEWIDGETS_EXPORT ItemLineEdit : public XLineEdit
+class XTUPLEWIDGETS_EXPORT itemList : public VirtualList
+{
+    Q_OBJECT
+
+public:
+    itemList(QWidget*, Qt::WindowFlags = 0);
+
+    QCheckBox* _showInactive;
+    QCheckBox* _showMake;
+    QCheckBox* _showBuy;
+
+public slots:
+    virtual void set( ParameterList & pParams );
+    virtual void reject();
+    virtual void sSearch( const QString & pTarget );
+    virtual void sFillList();
+
+private:
+    int _itemid;
+    unsigned int _itemType;
+    bool _useQuery;
+    QString _sql;
+    QStringList _extraClauses;
+};
+
+class XTUPLEWIDGETS_EXPORT itemSearch : public VirtualSearch
+{
+    Q_OBJECT
+
+public:
+    itemSearch(QWidget*, Qt::WindowFlags = 0);
+
+    XCheckBox* _searchDescrip2;
+    XCheckBox* _searchUpc;
+    XCheckBox* _showInactive;
+
+public slots:
+    void set( ParameterList & pParams );
+    void sFillList();
+
+private:
+    int _itemid;
+    unsigned int _itemType;
+    bool _useQuery;
+    QString _sql;
+    QStringList _extraClauses;
+};
+
+class XTUPLEWIDGETS_EXPORT ItemLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QString     number          READ text          WRITE setItemNumber)
   Q_PROPERTY(unsigned int type           READ type          WRITE setType       DESIGNABLE false)
 
 friend class ItemCluster;
@@ -108,7 +160,6 @@ friend class ItemLineEditDelegate;
     bool    isConfigured();
 
   public slots:
-    void sEllipses();
     void sList();
     void sSearch();
     void sSearch(ParameterList params);
@@ -116,8 +167,9 @@ friend class ItemLineEditDelegate;
 
     void silentSetId(int);
     void setId(int);
-    void setItemNumber(QString);
+    void setItemNumber(const QString& pNumber); // Legacy support
     void setItemsiteid(int);
+    void setNumber(const QString& pNumber) { setItemNumber(pNumber); }
     void sParse();
 
   signals:
@@ -132,6 +184,10 @@ friend class ItemLineEditDelegate;
     void configured(bool);
     void warehouseIdChanged(int);
     void valid(bool);
+
+  protected slots:
+    itemList* listFactory();
+    itemSearch* searchFactory();
 
   protected:
     void mousePressEvent(QMouseEvent *);
@@ -174,55 +230,46 @@ class ItemLineEditDelegate : public QItemDelegate
     ItemLineEdit *_template;
 };
 
-class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
+class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
 {
   Q_OBJECT
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber   DESIGNABLE false)
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
-  Q_PROPERTY(QString number         READ itemNumber     WRITE setItemNumber      DESIGNABLE false)
   Q_PROPERTY(unsigned int type      READ type           WRITE setType            DESIGNABLE false)
 
+  friend class ContactList;
+  friend class ContactSearch;
+
   public:
-    ItemCluster(QWidget *, const char * = 0);
+    ItemCluster(QWidget*, const char* = 0);
 
     Q_INVOKABLE void setReadOnly(bool);
     void setEnabled(bool);
     void setDisabled(bool);
 
-    Q_INVOKABLE inline void    setType(unsigned int pType)    { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
-    Q_INVOKABLE inline unsigned int type() const              { return _itemNumber->type();                 }
-    Q_INVOKABLE inline void setDefaultType(unsigned int pType){ _itemNumber->setDefaultType(pType); } 
-    Q_INVOKABLE inline void    setQuery(const QString &pSql)  { _itemNumber->setQuery(pSql); }
-    Q_INVOKABLE inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
-    Q_INVOKABLE QString itemNumber() const                 { return _itemNumber->itemNumber();           }
-    Q_INVOKABLE QString itemType() const                   { return _itemNumber->itemType();             }
-    Q_INVOKABLE bool isConfigured() const                  { return _itemNumber->isConfigured();         }
-    Q_INVOKABLE int id() const                             { return _itemNumber->id();                   }
-    Q_INVOKABLE int isValid() const                        { return _itemNumber->isValid();              }
-    Q_INVOKABLE QString  uom() const                       { return _itemNumber->uom();                  }
-    Q_INVOKABLE QString  upc() const                       { return _itemNumber->upc();                  }
-    inline QString  defaultNumber()  const                 { return _default; }
-    inline QString  fieldName()      const                 { return _fieldName;                          }
+    Q_INVOKABLE inline void    setType(unsigned int pType)    { static_cast<ItemLineEdit*>(_number)->setType(pType);
+                                                                static_cast<ItemLineEdit*>(_number)->setDefaultType(pType); }
+    Q_INVOKABLE inline unsigned int type() const              { return static_cast<ItemLineEdit*>(_number)->type();                 }
+    Q_INVOKABLE inline void setDefaultType(unsigned int pType){ static_cast<ItemLineEdit*>(_number)->setDefaultType(pType); }
+    Q_INVOKABLE inline void setQuery(const QString &pSql)     { static_cast<ItemLineEdit*>(_number)->setQuery(pSql); }
+    Q_INVOKABLE inline void setValidationQuery(const QString &pSql) { static_cast<ItemLineEdit*>(_number)->setValidationQuery(pSql);      }
+    Q_INVOKABLE QString itemNumber() const                 { return static_cast<ItemLineEdit*>(_number)->itemNumber();           }
+    Q_INVOKABLE QString itemType() const                   { return static_cast<ItemLineEdit*>(_number)->itemType();             }
+    Q_INVOKABLE bool isConfigured() const                  { return static_cast<ItemLineEdit*>(_number)->isConfigured();         }
+    Q_INVOKABLE QString  uom() const                       { return static_cast<ItemLineEdit*>(_number)->uom();                  }
+    Q_INVOKABLE QString  upc() const                       { return static_cast<ItemLineEdit*>(_number)->upc();                  }
 
-    Q_INVOKABLE inline void addExtraClause(const QString & pClause) { _itemNumber->addExtraClause(pClause);     }
-    Q_INVOKABLE inline QStringList getExtraClauseList() const       { return _itemNumber->getExtraClauseList(); }
-    Q_INVOKABLE inline void clearExtraClauseList()                  { _itemNumber->clearExtraClauseList();      }
-    ItemLineEdit *itemLineEdit() { return _itemNumber; }
+    Q_INVOKABLE inline void addExtraClause(const QString & pClause) { static_cast<ItemLineEdit*>(_number)->addExtraClause(pClause);     }
+    Q_INVOKABLE inline QStringList getExtraClauseList() const       { return static_cast<ItemLineEdit*>(_number)->getExtraClauseList(); }
+    Q_INVOKABLE inline void clearExtraClauseList()                  { static_cast<ItemLineEdit*>(_number)->clearExtraClauseList();      }
+    ItemLineEdit *itemLineEdit() { return static_cast<ItemLineEdit*>(_number); }
 
   public slots:
-    QItemDelegate *itemDelegate() { return _itemNumber->itemDelegate(); }
-    void setDataWidgetMap(XDataWidgetMapper* m);
-    void setDefaultNumber(QString p)                       { _default = p;     }
-    void setFieldName(QString p)                           { _fieldName = p;   }
-    void setId(int);
+    QItemDelegate *itemDelegate() { return static_cast<ItemLineEdit*>(_number)->itemDelegate(); }
+    void setId(int pId);
     void setItemNumber(QString);
     void setItemsiteid(int);
-    void silentSetId(int);
-    void updateMapperData();
 
   signals:
     void privateIdChanged(int);
-    void newId(int);
     void aliasChanged(const QString &);
     void uomChanged(const QString &);
     void descrip1Changed(const QString &);
@@ -231,17 +278,14 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public QWidget
     void typeChanged(const QString &);
     void upcChanged(const QString &);
     void configured(bool);
-    void valid(bool);
+
+  protected:
+    void addNumberWidget(ItemLineEdit* pNumberWidget);
 
   private:
-    ItemLineEdit *_itemNumber;
-    QPushButton  *_itemList;
     QLabel       *_uom;
-    QLabel       *_descrip1;
     QLabel       *_descrip2;
     QString       _default;
-    QString       _fieldName;
-    XDataWidgetMapper *_mapper;
 };
 
 #endif

@@ -118,7 +118,7 @@ SOURCES    += widgets.cpp \
               aropencluster.cpp \
               custCluster.cpp \
               customerselector.cpp \
-              itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
+              itemCluster.cpp itemAliasList.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
               woCluster.cpp woList.cpp \
               filecluster.cpp glCluster.cpp accountList.cpp accountSearch.cpp \
@@ -138,7 +138,7 @@ SOURCES    += widgets.cpp \
               parametergroup.cpp \
               comment.cpp comments.cpp \
               xurllabel.cpp \
-              currCluster.cpp usernameCluster.cpp usernameList.cpp \
+              currCluster.cpp usernameCluster.cpp \
               workcenterCluster.cpp \
               projectCluster.cpp \
               expensecluster.cpp \
@@ -179,7 +179,7 @@ HEADERS    += widgets.h \
               aropencluster.h \
               custcluster.h \
               customerselector.h \
-              itemcluster.h itemList.h itemSearch.h itemAliasList.h \
+              itemcluster.h itemAliasList.h \
               warehouseCluster.h warehousegroup.h \
               woCluster.h woList.h \
               filecluster.h glcluster.h accountList.h accountSearch.h \
@@ -199,7 +199,7 @@ HEADERS    += widgets.h \
               parametergroup.h \
               comment.h comments.h \
               xurllabel.h \
-              currcluster.h usernamecluster.h usernameList.h \
+              currcluster.h usernamecluster.h \
               workcentercluster.h \
               projectcluster.h \
               expensecluster.h \
