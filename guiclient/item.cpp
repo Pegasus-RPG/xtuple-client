@@ -26,7 +26,7 @@
 #include "image.h"
 #include "itemAlias.h"
 #include "itemAvailabilityWorkbench.h"
-#include "itemCluster.h"
+#include "itemcluster.h"
 #include "itemSite.h"
 #include "itemSubstitute.h"
 #include "itemUOM.h"

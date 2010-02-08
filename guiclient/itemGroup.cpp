@@ -14,7 +14,7 @@
 #include <QMessageBox>
 //#include <QStatusBar>
 #include <Q3DragObject>
-#include "itemCluster.h"
+#include "itemcluster.h"
 
 /*
  *  Constructs a itemGroup as a child of 'parent', with the

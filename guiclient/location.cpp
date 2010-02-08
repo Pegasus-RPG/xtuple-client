@@ -13,7 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
-#include "itemCluster.h"
+#include "itemcluster.h"
 
 location::location(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
