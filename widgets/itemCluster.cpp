@@ -468,6 +468,8 @@ void ItemLineEdit::setItemsiteid(int pItemsiteid)
 
 void ItemLineEdit::sList()
 {
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+
   ParameterList params;
   params.append("item_id", _id);
 
@@ -485,6 +487,8 @@ void ItemLineEdit::sList()
   int id;
   if ((id = newdlg->exec())!= _id)
     setId(id);
+
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 void ItemLineEdit::sSearch()
@@ -495,6 +499,7 @@ void ItemLineEdit::sSearch()
 
 void ItemLineEdit::sSearch(ParameterList params)
 {
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
   params.append("item_id", _id);
 
   if (queryUsed())
@@ -506,11 +511,23 @@ void ItemLineEdit::sSearch(ParameterList params)
     params.append("extraClauses", _extraClauses);
 
   itemSearch* newdlg = searchFactory();
+  QString stripped = text().trimmed();
+  if(stripped.length())
+  {
+    XSqlQuery numQ;
+    numQ.prepare(_query + _numClause +
+                 (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                 QString("ORDER BY %1;").arg(_numColName));
+    numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+    numQ.exec();
+    if (numQ.first())
+      newdlg->setQuery(numQ);
+  }
   newdlg->setSearchText(text());
-  newdlg->set(params);
   int id;
   if ((id = newdlg->exec()) != QDialog::Rejected)
     setId(id);
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 itemList* ItemLineEdit::listFactory()
@@ -718,28 +735,10 @@ void ItemLineEdit::sParse()
       QStringList clauses;
       clauses = _extraClauses;
       clauses << "(item_number ~* :searchString OR item_upccode ~* :searchString)";
-      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type).replace(";"," ORDER BY item_number LIMIT 1;"));
       item.bindValue(":searchString", QString(text().trimmed().toUpper()).prepend("^"));
       item.exec();
-      if (item.size() > 1)
-      {
-        itemSearch* newdlg = searchFactory();
-        if (newdlg)
-        {
-          newdlg->setQuery(item);
-          newdlg->setSearchText(text());
-          int oldid = _id;
-          int newid = newdlg->exec();
-          silentSetId(newid); //Force refresh
-          if (newid != oldid)
-          {
-            emit newId(newid);
-            emit privateIdChanged(newid);
-          }
-          return;
-        }
-      }
-      else if (item.first())
+      if (item.first())
       {
         setId(item.value("item_id").toInt());
         return;

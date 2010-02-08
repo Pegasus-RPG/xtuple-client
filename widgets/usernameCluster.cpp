@@ -94,35 +94,18 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
   XSqlQuery query;
   QString sql("SELECT usr_id, usr_username AS number "
                 "  FROM usr"
-                " WHERE ((usr_username ~* :username) ");
+                " WHERE ((usr_username ~* :username) "
+                " ");
   if(UsersActive == _type)
     sql += " AND (usr_active)";
   else if(UsersInactive == _type)
     sql += " AND (NOT usr_active)";
-  sql += " );";
+  sql += ") ORDER BY usr_username LIMIT 1;";
 
   query.prepare(sql);
   query.bindValue(":username", QString(pUsername).prepend("^"));
   query.exec();
-  if (query.size() > 1)
-  {
-    VirtualSearch* newdlg = searchFactory();
-    if (newdlg)
-    {
-      newdlg->setQuery(query);
-      newdlg->setSearchText(text());
-      int id = newdlg->exec();
-      bool newid = (id == _id);
-      silentSetId(id); //Force refresh
-      if (newid)
-      {
-        emit newId(id);
-        emit valid(id);
-      }
-      return;
-    }
-  }
-  else if(query.first())
+  if(query.first())
     setId(query.value("usr_id").toInt());
   else
   {
@@ -162,7 +145,7 @@ UsernameList* UsernameLineEdit::listFactory()
 
 UsernameSearch* UsernameLineEdit::searchFactory()
 {
-    return new UsernameSearch(this);
+  return new UsernameSearch(this);
 }
 
 ///////////////////////////////////////

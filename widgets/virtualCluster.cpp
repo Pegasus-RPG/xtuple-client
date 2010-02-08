@@ -293,7 +293,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setCompletionColumn(1);
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         //setCompleter(completer);
-        connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
+        connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
       }
     }
 
@@ -325,7 +325,6 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(_newAct, SIGNAL(triggered()), this, SLOT(sNew()));
     addAction(_newAct);
 
-    connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
 
     _menuLabel = new QLabel(this);
@@ -605,10 +604,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
     if (idQ.first())
     {
       if (_completer)
-      {
-        disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
         static_cast<QSqlQueryModel* >(_completer->model())->setQuery(QSqlQuery());
-      }
 
       _id = pId;
       _valid = true;
@@ -617,9 +613,6 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
         _name = (idQ.value("name").toString());
       if (_hasDescription)
         _description = idQ.value("description").toString();
-
-      if (_completer)
-        connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
     }
     else if (idQ.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -658,28 +651,10 @@ void VirtualClusterLineEdit::sParse()
         XSqlQuery numQ;
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		    QString(";"));
+                    QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
         numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
         numQ.exec();
-        if (numQ.size() > 1)
-        {
-          VirtualSearch* newdlg = searchFactory();
-          if (newdlg)
-          {
-            newdlg->setQuery(numQ);
-            newdlg->setSearchText(text());
-            int id = newdlg->exec();
-            bool newid = (id == _id);
-            silentSetId(id); //Force refresh
-            if (newid)
-            {
-              emit newId(id);
-              emit valid(id);
-            }
-            return;
-          }
-        }
-        else if (numQ.first())
+        if (numQ.first())
 	{
 	    _valid = true;
             setId(numQ.value("id").toInt());
@@ -706,6 +681,8 @@ void VirtualClusterLineEdit::sParse()
 
 void VirtualClusterLineEdit::sList()
 {
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+
   VirtualList* newdlg = listFactory();
   if (newdlg)
   {
@@ -723,13 +700,29 @@ void VirtualClusterLineEdit::sList()
                           .arg(__FILE__)
                           .arg(__LINE__),
                           tr("%1::sList() not yet defined").arg(className()));
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 void VirtualClusterLineEdit::sSearch()
 {
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+
   VirtualSearch* newdlg = searchFactory();
   if (newdlg)
   {
+    QString stripped = text().trimmed();
+    if(stripped.length())
+    {
+      XSqlQuery numQ;
+      numQ.prepare(_query + _numClause +
+                   (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                   QString("ORDER BY %1;").arg(_numColName));
+      numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+      numQ.exec();
+      if (numQ.first())
+        newdlg->setQuery(numQ);
+    }
     newdlg->setSearchText(text());
     int id = newdlg->exec();
     setId(id);
@@ -739,6 +732,8 @@ void VirtualClusterLineEdit::sSearch()
                           .arg(__FILE__)
                           .arg(__LINE__),
                           tr("%1::sSearch() not yet defined").arg(className()));
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 void VirtualCluster::sEllipses()
@@ -819,7 +814,7 @@ VirtualList* VirtualClusterLineEdit::listFactory()
 
 VirtualSearch* VirtualClusterLineEdit::searchFactory()
 {
-    return new VirtualSearch(this);
+  return new VirtualSearch(this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
