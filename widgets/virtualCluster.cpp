@@ -292,8 +292,8 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setCompletionColumn(1);
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-        //setCompleter(completer);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+        connect(_completer, SIGNAL(activated(QString)), this, SLOT(setText(QString)));
       }
     }
 
@@ -467,7 +467,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
   numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                QString("ORDER BY %1 LIMIT 10;").arg(_numColName));
-  numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+  numQ.bindValue(":number", "^" + stripped);
   numQ.exec();
   if (numQ.first())
   {
@@ -652,7 +652,7 @@ void VirtualClusterLineEdit::sParse()
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                     QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
-        numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+        numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
         if (numQ.first())
 	{
@@ -718,7 +718,7 @@ void VirtualClusterLineEdit::sSearch()
       numQ.prepare(_query + _numClause +
                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                    QString("ORDER BY %1;").arg(_numColName));
-      numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+      numQ.bindValue(":number", "^" + stripped);
       numQ.exec();
       if (numQ.first())
         newdlg->setQuery(numQ);

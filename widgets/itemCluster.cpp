@@ -518,7 +518,7 @@ void ItemLineEdit::sSearch(ParameterList params)
     numQ.prepare(_query + _numClause +
                  (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                  QString("ORDER BY %1;").arg(_numColName));
-    numQ.bindValue(":number", "^" + stripped + "|\\m" + stripped);
+    numQ.bindValue(":number", "^" + stripped);
     numQ.exec();
     if (numQ.first())
       newdlg->setQuery(numQ);
