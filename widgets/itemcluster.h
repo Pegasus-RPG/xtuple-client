@@ -18,7 +18,7 @@
 #include <QItemDelegate>
 #include <QStyleOptionViewItem>
 
-#include "virtualcluster.h"
+#include "virtualCluster.h"
 
 class ParameterList;
 
