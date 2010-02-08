@@ -76,9 +76,9 @@ void UsernameLineEdit::setType(enum Type pType)
   _type = pType;
 
   if(UsersActive == _type)
-    setExtraClause(" (usr_active)");
+    setExtraClause(" AND (usr_active)");
   else if(UsersInactive == _type)
-    setExtraClause(" (NOT usr_active)" );
+    setExtraClause(" AND (NOT usr_active)" );
 }
 
 void UsernameLineEdit::clear()
