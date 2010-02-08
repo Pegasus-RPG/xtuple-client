@@ -36,9 +36,9 @@ void ContactClusterLineEdit::setSearchAcct(int crmAcctId)
 {
   _searchAcctId = crmAcctId;
   if (crmAcctId != -1)
-    setExtraClause(QString(" AND (cntct_crmacct_id=%1)").arg(crmAcctId));
+    _extraClause = QString(" (cntct_crmacct_id=%1) ").arg(crmAcctId);
   else
-    setExtraClause("");
+    _extraClause = "";
 }
 
 ContactList* ContactClusterLineEdit::listFactory()
