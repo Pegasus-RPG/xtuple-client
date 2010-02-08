@@ -54,8 +54,8 @@ void createRecurringItems::sCreate()
     QString    arg;        // to createRecurringItems()
   } list[] = {
     { _invoices,   "INVOICE"  },
-    { _incidents,  "INCIDENT" },
-    { _projects,   "PROJECT"  },
+    { _incidents,  "INCDT"    },
+    { _projects,   "J"        },
     { _todoItems,  "TODO"     }
   };
 

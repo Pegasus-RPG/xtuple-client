@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>838</width>
+    <height>777</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -446,7 +446,7 @@ to be bound by its terms.</comment>
          <string>Relationships</string>
         </attribute>
         <layout class="QGridLayout">
-         <item row="0" column="0">
+         <item row="0" column="0" rowspan="2">
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
             <string>Item</string>
@@ -479,7 +479,7 @@ to be bound by its terms.</comment>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
+                    <width>0</width>
                     <height>20</height>
                    </size>
                   </property>
@@ -509,7 +509,7 @@ to be bound by its terms.</comment>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
+                    <width>0</width>
                     <height>20</height>
                    </size>
                   </property>
@@ -634,7 +634,27 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="RecurrenceWidget" name="_recurring">
+           <property name="maxVisible">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -795,6 +815,11 @@ to be bound by its terms.</comment>
    <class>LotserialCluster</class>
    <extends>QWidget</extends>
    <header>lotserialcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RecurrenceWidget</class>
+   <extends>QWidget</extends>
+   <header>recurrencewidget.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>

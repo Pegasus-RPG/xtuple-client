@@ -146,7 +146,7 @@ RecurrenceWidget::RecurrenceChangePolicy RecurrenceWidget::getChangePolicy()
       return NoPolicy;
     }
     else if (open == 0)
-      return IgnoreFuture;
+      return ChangeFuture;
   }
   else if (futureq.lastError().type() != QSqlError::NoError)
   {
@@ -380,7 +380,7 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
     QString procname = "deleteOpenRecurringItems";
     XSqlQuery cfq;
     cfq.prepare("SELECT deleteOpenRecurringItems(:parentId, :parentType,"
-                "                                :splitdate) AS result;");
+                "                                :splitdate, FALSE) AS result;");
     cfq.bindValue(":parentId",   _parentId);
     cfq.bindValue(":parentType", _parentType);
     cfq.bindValue(":splitdate",  startDate());

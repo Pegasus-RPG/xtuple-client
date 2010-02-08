@@ -121,12 +121,13 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _comments->setId(_incdtid);
         _documents->setId(_incdtid);
         _alarms->setId(_incdtid);
+        _recurring->setParent(_incdtid, "INCDT");
       }
       else
       {
         QMessageBox::critical( omfgThis, tr("Database Error"),
-                               tr( "A Database Error occured in incident::New.\n"
-                                   "Contact your Systems Administrator." ));
+                               tr( "A Database Error occured in incident::New:"
+                                   "\n%1" ).arg(q.lastError().text()));
         reject();
       }
     }
@@ -358,6 +359,10 @@ bool incident::save(bool partial)
     }
   }
 
+  RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return false;
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -440,6 +445,31 @@ bool incident::save(bool partial)
     return false;
   }
 
+  // TODO: does this belong here?
+  if (_recurring->isRecurring())
+  {
+    XSqlQuery recurq;
+    recurq.prepare("UPDATE incdt"
+                   "   SET incdt_recurring_incdt_id=:parentid"
+                   " WHERE incdt_id=:id;");
+    recurq.bindValue(":parentid", _recurring->parentId());
+    recurq.bindValue(":id",       _incdtid);
+    if (! recurq.exec())
+    {
+      rollback.exec();
+      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+
+  QString errmsg;
+  if (! _recurring->save(true, cp, errmsg))
+  {
+    rollback.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return false;
+  }
+
   q.exec("COMMIT;");
   if(q.lastError().type() != QSqlError::NoError)
   {
@@ -487,9 +517,10 @@ void incident::populate()
             "       incdt_item_id, incdt_ls_id,"
             "       incdt_status, incdt_assigned_username,"
             "       incdt_incdtcat_id, incdt_incdtseverity_id,"
-            "       incdt_incdtpriority_id, incdt_incdtresolution_id, incdt_owner_username, "
-                        "       COALESCE(incdt_aropen_id, -1) AS docId,"
-                        "       COALESCE(aropen_docnumber, '') AS docNumber,"
+            "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
+            "       incdt_owner_username, incdt_recurring_incdt_id,"
+            "       COALESCE(incdt_aropen_id, -1) AS docId,"
+            "       COALESCE(aropen_docnumber, '') AS docNumber,"
             "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
             "            WHEN (aropen_doctype='D') THEN :debitMemo"
             "            WHEN (aropen_doctype='I') THEN :invoice"
@@ -498,7 +529,7 @@ void incident::populate()
             "       END AS docType, "
             "       aropen_doctype "
             "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
-                        "           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
+            "           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
             "WHERE (incdt_id=:incdt_id); ");
   q.bindValue(":incdt_id", _incdtid);
   q.bindValue(":creditMemo", tr("Credit Memo"));
@@ -547,6 +578,10 @@ void incident::populate()
     _ardoctype = q.value("aropen_doctype").toString();
     if (_aropenid > 0)
       _viewAR->setEnabled(true);
+
+    _recurring->setParent(q.value("incdt_recurring_incdt_id").isNull() ?
+                          _incdtid : q.value("incdt_recurring_incdt_id").toInt(),
+                          "INCDT");
 
     sFillHistoryList();
     sFillTodoList();

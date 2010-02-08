@@ -340,25 +340,51 @@ void todoList::sView()
 
 void todoList::sDelete()
 {
-  QString question = tr("<p>Are you sure that you want to completely "
-                        "delete the selected item?");
-
+  QString recurstr;
+  QString recurtype;
   if (_todoList->altId() == 1)
   {
+    recurstr = "SELECT MAX(todoitem_due_date) AS max"
+               "  FROM todoitem"
+               " WHERE todoitem_recurring_todoitem_id=:id"
+               "   AND todoitem_id!=:id;" ;
+    recurtype = "TODO";
+  }
+  /* TODO: can't delete incidents from here. why not?
+  else if (_todoList->altId() == 2)
+  {
+    recurstr = "SELECT MAX(incdt_timestamp) AS max"
+               "   FROM incdt"
+               " WHERE incdt_recurring_incdt_id=:id;" ;
+    recurtype = "INCDT";
+  }
+   */
+
+  bool deleteAll  = false;
+  bool createMore = false;
+  if (! recurstr.isEmpty())
+  {
     XSqlQuery recurq;
-    recurq.prepare("SELECT MAX(todoitem_id) AS max, COUNT(*) AS count"
-                   "  FROM todoitem"
-                   " WHERE todoitem_recurring_todoitem_id=:todoitem_id;");
-    recurq.bindValue(":todoitem_id", _todoList->id());
+    recurq.prepare(recurstr);
+    recurq.bindValue(":id", _todoList->id());
     recurq.exec();
     if (recurq.first())
     {
-      if (recurq.value("count").toInt() == 1 &&
-          recurq.value("max").toInt() == _todoList->id())
-        question = tr("<p>Are you sure that you want to delete this recurring "
-                      "item? If you do then it will not occur again.<p>You "
-                      "can delete this instance and keep the recurrence if "
-                      "you Create Recurring Items before you delete this one.");
+      QMessageBox askdelete(QMessageBox::Question, tr("Delete Recurring Item?"),
+                            tr("<p>This is a recurring item. Do you want to "
+                               "delete just this one item or delete all open "
+                               "items in this recurrence?"),
+                            QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel,
+                            this);
+      askdelete.setDefaultButton(QMessageBox::Cancel);
+      int ret = askdelete.exec();
+      if (ret == QMessageBox::Cancel)
+        return;
+      else if (ret == QMessageBox::YesToAll)
+        deleteAll = true;
+      // user said delete one but the only one that exists is the base
+      else if (ret == QMessageBox::Yes && recurq.value("max").isNull())
+        createMore = true;
     }
     else if (recurq.lastError().type() != QSqlError::NoError)
     {
@@ -366,38 +392,75 @@ void todoList::sDelete()
       return;
     }
   }
-
-  if ( QMessageBox::warning(this, tr("Delete List Item?"), question,
+  else if (QMessageBox::warning(this, tr("Delete List Item?"),
+                                tr("<p>Are you sure that you want to "
+                                   "completely delete the selected item?"),
 			    QMessageBox::Yes | QMessageBox::No,
-			    QMessageBox::No) == QMessageBox::Yes)
+			    QMessageBox::No) == QMessageBox::No)
+    return;
+
+  QString procname;
+  int procresult = 0;
+  if (deleteAll)
   {
-    if (_todoList->altId() == 1)
-      q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-    else if (_todoList->altId() == 3)
-      q.prepare("DELETE FROM prjtask"
-                " WHERE (prjtask_id=:todoitem_id); ");
-    else if (_todoList->altId() == 4)
-      q.prepare("SELECT deleteProject(:todoitem_id) AS result");
-    else
-      return;
-    q.bindValue(":todoitem_id", _todoList->id());
+    procname = "deleteOpenRecurringItems";
+    q.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, TRUE)"
+              "       AS result;");
+    q.bindValue(":id",   _todoList->id());
+    q.bindValue(":type", recurtype);
     q.exec();
     if (q.first())
+      procresult = q.value("result").toInt();
+  }
+  if (procresult >= 0 && createMore)
+  {
+    procname = "createRecurringItems";
+    q.prepare("SELECT createRecurringItems(:id, :type) AS result;");
+    q.bindValue(":id",   _todoList->id());
+    q.bindValue(":type", recurtype);
+    q.exec();
+    if (q.first())
+      procresult = q.value("result").toInt();
+  }
+
+  // not elseif - error handling for 1 or 2 queries
+  if (procresult < 0)
+  {
+    systemError(this, storedProcErrorLookup(procname, procresult));
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (_todoList->altId() == 1)
+    q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+  else if (_todoList->altId() == 3)
+    q.prepare("DELETE FROM prjtask"
+              " WHERE (prjtask_id=:todoitem_id); ");
+  else if (_todoList->altId() == 4)
+    q.prepare("SELECT deleteProject(:todoitem_id) AS result");
+  else
+    return;
+  q.bindValue(":todoitem_id", _todoList->id());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-        systemError(this, storedProcErrorLookup("deleteTodoItem", result));
-        return;
-      }
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("deleteTodoItem", result));
       return;
     }
-    sFillList();
   }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
 }
 
 void todoList::setParams(ParameterList &params)

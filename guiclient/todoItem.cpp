@@ -242,7 +242,7 @@ void todoItem::sSave()
     if (! recurq.exec())
     {
       rollbackq.exec();
-      systemError(this, q.lastError().text(), __FILE__, __LINE__);
+      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
       return;
     }
   }
@@ -307,7 +307,8 @@ void todoItem::sPopulate()
 
     _alarms->setId(_todoitemid);
     _comments->setId(_todoitemid);
-    _recurring->setParent(q.value("todoitem_recurring_todoitem_id").toInt(),
+    _recurring->setParent(q.value("todoitem_recurring_todoitem_id").isNull() ?
+                          _todoitemid : q.value("todoitem_recurring_todoitem_id").toInt(),
                           "TODO");
   }
   else if (q.lastError().type() != QSqlError::NoError)
