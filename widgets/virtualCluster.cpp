@@ -280,18 +280,19 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
       if (!_x_metrics->boolean("DisableAutoComplete"));
       {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
-        QCompleter* completer = new QCompleter(hints,this);
+        _completer = new QCompleter(hints,this);
+        _completer->setWidget(this);
         QTreeView* view = new QTreeView(this);
         view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
-        completer->setPopup(view);
-        completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-        completer->setCaseSensitivity(Qt::CaseInsensitive);
-        completer->setCompletionColumn(1);
-        completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-        setCompleter(completer);
+        _completer->setPopup(view);
+        _completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+        _completer->setCaseSensitivity(Qt::CaseInsensitive);
+        _completer->setCompletionColumn(1);
+        _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+        //setCompleter(completer);
         connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
       }
     }
@@ -459,8 +460,9 @@ void VirtualClusterLineEdit::sHandleCompleter()
   if (stripped.isEmpty())
     return;
 
-  QSqlQueryModel* model = static_cast<QSqlQueryModel *>(completer()->model());
-  QTreeView * view = static_cast<QTreeView *>(completer()->popup());
+  int width = 0;
+  QSqlQueryModel* model = static_cast<QSqlQueryModel *>(_completer->model());
+  QTreeView * view = static_cast<QTreeView *>(_completer->popup());
   _parsed = true;
   XSqlQuery numQ;
   numQ.prepare(_query + _numClause +
@@ -477,7 +479,10 @@ void VirtualClusterLineEdit::sHandleCompleter()
     for (int i = 0; i < model->columnCount(); i++)
     {
       if (i == numberCol || i == nameCol || i == descripCol)
+      {
         view->resizeColumnToContents(i);
+        width += view->columnWidth(i);
+      }
       else
         view->hideColumn(i);
     }
@@ -485,9 +490,14 @@ void VirtualClusterLineEdit::sHandleCompleter()
   else
     model->setQuery(QSqlQuery());
 
-  completer()->setCompletionPrefix(stripped);
-  completer()->complete();
 
+  _completer->setCompletionPrefix(stripped);
+
+  QRect rect;
+  rect.setHeight(height());
+  rect.setWidth(width);
+  rect.setBottomLeft(QPoint(0, height() - 2));
+  _completer->complete(rect);
   _parsed = false;
 }
 
@@ -594,10 +604,10 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
     idQ.exec();
     if (idQ.first())
     {
-      if (completer())
+      if (_completer)
       {
         disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
-        static_cast<QSqlQueryModel* >(completer()->model())->setQuery(QSqlQuery());
+        static_cast<QSqlQueryModel* >(_completer->model())->setQuery(QSqlQuery());
       }
 
       _id = pId;
@@ -608,7 +618,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       if (_hasDescription)
         _description = idQ.value("description").toString();
 
-      if (completer())
+      if (_completer)
         connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
     }
     else if (idQ.lastError().type() != QSqlError::NoError)

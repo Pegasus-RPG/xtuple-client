@@ -220,6 +220,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QAction* _infoAct;
         QAction* _openAct;
         QAction* _newAct;
+        QCompleter* _completer;
         QLabel* _menuLabel;
         QMenu* _menu;
         QString _titleSingular;
