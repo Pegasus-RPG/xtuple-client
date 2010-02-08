@@ -213,7 +213,7 @@ void ItemLineEditDelegate::setModelData(QWidget *editor,
   }
 }
 ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", "item_upccode", 0, pName)
+    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
 {
   setTitles(tr("Item"), tr("Items"));
   /*
@@ -1029,7 +1029,7 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   setObjectName( "itemSearch" );
-  setMinimumWidth(800);
+  setMinimumWidth(600);
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
