@@ -243,7 +243,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool _strict;
 
         virtual void silentSetId(const int);
-        virtual void keyPressEvent(QKeyEvent *);
 
     private:
         void positionMenuLabel();

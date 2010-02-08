@@ -284,7 +284,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setWidget(this);
         QTreeView* view = new QTreeView(this);
         view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
         _completer->setPopup(view);
@@ -630,14 +630,6 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 
   _parsed = TRUE;
   emit parsed();
-}
-
-void VirtualClusterLineEdit::keyPressEvent(QKeyEvent * pEvent)
-{
-  if(pEvent->key() == Qt::Key_Tab)
-    sParse();
-
-  XLineEdit::keyPressEvent(pEvent);
 }
 
 void VirtualClusterLineEdit::setNumber(const QString& pNumber)
