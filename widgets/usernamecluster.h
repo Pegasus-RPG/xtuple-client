@@ -94,7 +94,7 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public VirtualCluster
 
   public slots:
     void setUsername(const QString & pUsername);
-    void setReadOnly(bool);
+    void setReadOnly(const bool);
     inline void setId(const int pId)  { static_cast<UsernameLineEdit *>(_number)->setId(pId);   }
 
   protected:
