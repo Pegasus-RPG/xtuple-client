@@ -346,7 +346,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
   }
 }
 
-void ItemLineEdit::silentSetId(int pId)
+void ItemLineEdit::silentSetId(const int pId)
 {
   XSqlQuery item;
   bool      found = FALSE;
@@ -758,7 +758,7 @@ void ItemCluster::addNumberWidget(ItemLineEdit* pNumberWidget)
     connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
 }
 
-void ItemCluster::setReadOnly(bool pReadOnly)
+void ItemCluster::setReadOnly(const bool pReadOnly)
 {
   if (pReadOnly)
   {
@@ -773,7 +773,7 @@ void ItemCluster::setReadOnly(bool pReadOnly)
   }
 }
 
-void ItemCluster::setEnabled(bool pEnabled)
+void ItemCluster::setEnabled(const bool pEnabled)
 {
   setReadOnly(!pEnabled);
 }
@@ -783,7 +783,7 @@ void ItemCluster::setDisabled(bool pDisabled)
   setReadOnly(pDisabled);
 }
 
-void ItemCluster::setId(int pId)
+void ItemCluster::setId(const int pId)
 {
   _number->setId(pId);
 }

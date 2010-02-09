@@ -33,7 +33,7 @@ UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
   }
 }
 
-void UsernameLineEdit::setId(int pId)
+void UsernameLineEdit::setId(const int pId)
 {
   QString sql("SELECT usr_username"
               "  FROM usr"
@@ -173,7 +173,7 @@ void UsernameCluster::addNumberWidget(UsernameLineEdit* pNumberWidget)
     connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
 }
 
-void UsernameCluster::setReadOnly(bool pReadOnly)
+void UsernameCluster::setReadOnly(const bool pReadOnly)
 {
   if(pReadOnly)
     _list->hide();

@@ -64,7 +64,7 @@ class XTUPLEWIDGETS_EXPORT UsernameLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE const QString & username();
 
   public slots:
-    void setId(int);
+    void setId(const int);
     void setUsername(const QString &);
     void clear();
     void sParse();
@@ -95,7 +95,7 @@ class XTUPLEWIDGETS_EXPORT UsernameCluster : public VirtualCluster
   public slots:
     void setUsername(const QString & pUsername);
     void setReadOnly(bool);
-    inline void setId(int pId)  { static_cast<UsernameLineEdit *>(_number)->setId(pId);   }
+    inline void setId(const int pId)  { static_cast<UsernameLineEdit *>(_number)->setId(pId);   }
 
   protected:
     void addNumberWidget(UsernameLineEdit* pNumberWidget);

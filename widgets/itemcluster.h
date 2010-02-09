@@ -165,8 +165,8 @@ friend class ItemLineEditDelegate;
     void sSearch(ParameterList params);
     void sAlias();
 
-    void silentSetId(int);
-    void setId(int);
+    void silentSetId(const int);
+    void setId(const int);
     void setItemNumber(const QString& pNumber); // Legacy support
     void setItemsiteid(int);
     void setNumber(const QString& pNumber) { setItemNumber(pNumber); }
@@ -234,8 +234,8 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
   public:
     ItemCluster(QWidget*, const char* = 0);
 
-    Q_INVOKABLE void setReadOnly(bool);
-    void setEnabled(bool);
+    Q_INVOKABLE void setReadOnly(const bool);
+    void setEnabled(const bool);
     void setDisabled(bool);
 
     Q_INVOKABLE inline void    setType(unsigned int pType)    { static_cast<ItemLineEdit*>(_number)->setType(pType);
@@ -257,7 +257,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
 
   public slots:
     QItemDelegate *itemDelegate() { return static_cast<ItemLineEdit*>(_number)->itemDelegate(); }
-    void setId(int pId);
+    void setId(const int pId);
     void setItemNumber(QString);
     void setItemsiteid(int);
 

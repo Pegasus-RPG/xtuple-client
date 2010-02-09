@@ -277,7 +277,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     // Completer set up
     if (_x_metrics)
     {
-      if (!_x_metrics->boolean("DisableAutoComplete"));
+      if (!_x_metrics->boolean("DisableAutoComplete"))
       {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
         _completer = new QCompleter(hints,this);
