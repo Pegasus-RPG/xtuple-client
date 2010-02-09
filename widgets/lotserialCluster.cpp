@@ -52,10 +52,9 @@ LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
                      "       item_id,"
                      "       item_number AS name, "
                      "       ls_notes AS description "
-                     "FROM ls, item "
-                     "WHERE (ls_item_id=item_id) ");
-    _idClause = QString("AND (ls_id=:id)");
-    _numClause = QString("AND (UPPER(ls_number)=UPPER(:number))");
+                     "FROM ls "
+                     "  JOIN item ON (ls_item_id=item_id) "
+                     "WHERE (true) ");
     _strict = true;
 }
 
@@ -99,7 +98,20 @@ void LotserialLineEdit::setItemId(const int itemid)
     _itemid = itemid;
     _extraClause = QString(" (item_id=%1) ").arg(itemid);
   }
-  VirtualClusterLineEdit::clear();
+
+  if (_id != -1)
+  {
+    XSqlQuery qry;
+    qry.prepare("SELECT ls_id "
+                "FROM ls "
+                "WHERE ((ls_id=:ls_id) "
+                " AND (ls_item_id=:item_id)); ");
+    qry.bindValue(":ls_id", _id);
+    qry.bindValue(":item_id", _itemid);
+    qry.exec();
+    if (!qry.first())
+      VirtualClusterLineEdit::clear();
+  }
 }
 
 void LotserialLineEdit::clear()
@@ -110,6 +122,7 @@ void LotserialLineEdit::clear()
 void LotserialLineEdit::setId(const int lsid)
 {
   if (_x_metrics)
+  {
     if (_x_metrics->boolean("LotSerialControl"))
     {
       VirtualClusterLineEdit::setId(lsid);
@@ -122,6 +135,7 @@ void LotserialLineEdit::setId(const int lsid)
       if(qq.first())
         emit newItemId(qq.value("ls_item_id").toInt());
     }
+  }
 }
 
 /* copied from virtualCluster.cpp but with one important difference:
@@ -143,8 +157,8 @@ void LotserialLineEdit::sParse()
               XSqlQuery numQ;
               numQ.prepare(_query + _numClause +
                            (_extraClause.isEmpty() ? "" : " AND " + _extraClause) +
-                           QString(";"));
-              numQ.bindValue(":number", stripped);
+                           QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
+              numQ.bindValue(":number", "^" + stripped);
               numQ.exec();
               if (numQ.first())
               {

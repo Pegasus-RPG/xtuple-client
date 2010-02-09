@@ -526,7 +526,7 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
   _query += QString("FROM %1 WHERE (TRUE) ").arg(pTabName);
 
   _idClause = QString(" AND (%1=:id) ").arg(pIdColumn);
-  _numClause = QString(" AND (%1 ~* E:number) ").arg(pNumberColumn);
+  _numClause = QString(" AND (%1 ~* :number) ").arg(pNumberColumn);
 
   _extraClause = "";
 }
