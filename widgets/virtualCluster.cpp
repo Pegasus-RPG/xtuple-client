@@ -288,12 +288,11 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
         _completer->setPopup(view);
-        _completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setCompletionColumn(1);
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
-        connect(_completer, SIGNAL(activated(QString)), this, SLOT(setText(QString)));
+        connect(_completer, SIGNAL(highlighted(QString)), this, SLOT(setText(QString)));
       }
     }
 
