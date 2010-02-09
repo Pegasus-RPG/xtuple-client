@@ -189,13 +189,6 @@ friend class ItemLineEditDelegate;
     itemList* listFactory();
     itemSearch* searchFactory();
 
-  protected:
-    void mousePressEvent(QMouseEvent *);
-    void mouseMoveEvent(QMouseEvent *);
-    void dragEnterEvent(QDragEnterEvent *);
-    void dropEvent(QDropEvent *);
-
-    QPoint dragStartPosition;
   private:
     void constructor();
 
