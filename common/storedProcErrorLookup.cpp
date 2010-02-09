@@ -40,6 +40,23 @@ void initErrorLookupHash()
   int		msgPtr;		// if <> 0 then look up (procName, msgPtr)
   QString	proxyName;	// look up (proxyName, retVal)
 } errors[] = {
+
+  { "attachQuoteToOpportunity", -1, TR("The selected Quote cannot be attached because "
+                            "the Quote cannot be found."),                     0, "" },
+  { "attachQuoteToOpportunity", -2, TR("The selected Quote cannot be attached because "
+                            "the Opportunity cannot be found."),               0, "" },
+  { "attachQuoteToOpportunity", -3, TR("The selected Quote cannot be attached because "
+                            "it is already associated with an Opportunity.  You must "
+                            "detach this Quote before you may attach it."),    0, "" },
+
+  { "attachSalesOrderToOpportunity", -1, TR("The selected Sales Order cannot be attached because "
+                            "the Sales Order cannot be found."),                     0, "" },
+  { "attachSalesOrderToOpportunity", -2, TR("The selected Sales Order cannot be attached because "
+                            "the Opportunity cannot be found."),               0, "" },
+  { "attachSalesOrderToOpportunity", -3, TR("The selected Sales Order cannot be attached because "
+                            "it is already associated with an Opportunity.  You must "
+                            "detach this Sales Order before you may attach it."),    0, "" },
+
   { "changeCMHeadTaxAuth", -1, TR("This Credit Memo was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, TR("This Tax Authority was not found."),	0, "" },
 
@@ -169,6 +186,11 @@ void initErrorLookupHash()
 		     "Item Source."),					0, "" },
   { "copyPO", -4, TR("At least one line item in the original P/O does not have "
 		     "an active Item Source Price for this Vendor."),	0, "" },
+
+  { "copyPrj",  -1, TR("Copying an existing project failed, possibly because "
+                       "the source project does not exist."),           0, "" },
+  { "copyPrj", -10, "",                                      -10, "saveAlarm" },
+
   { "correctOperationPosting",  -1, TR("You may not correct a quantity greater than the amount "
                                        "originally posted."),	0, "" },
   { "correctReceipt",  -12, TR("The receipt has been split and may not be corrected. "
@@ -238,6 +260,10 @@ void initErrorLookupHash()
 								0, "" },
   { "createPurchaseToSale", -1, TR("SO Header Information related to this SO Item not found!"),	0, "" },
   { "createPurchaseToSale", -2, TR("Item Source Information not found!"),	0, "" },
+
+  { "createRecurringItems", -10, TR("Cannot create recurring items with an "
+                                    "unrecognized object type."),       0, "" },
+
   { "CreateRevision", -2, TR("Revision control not enabled."),	0, "" },
   { "createTodoItem",	-1, TR("The To-Do List Item cannot be created as "
 			       "there is no assigned User."),	0, "" },
@@ -464,8 +490,7 @@ void initErrorLookupHash()
 								 	0, "" },
   { "deleteIncident",	-2, TR("This Incident cannot be deleted as there are "
 			       "Comments associated with it."), 	0, "" },
-  { "deleteIncident",	-1, TR("This Incident cannot be deleted as there are "
-			       "To-Do List Items associated with it."), 	0, "" },
+
   { "deleteItem",	-1, TR("This Item cannot be deleted as it is used "
 			       "in one or more bills of materials."), 	0, "" },
   { "deleteItem",	-2, TR("This Item cannot be deleted as there are "
@@ -505,6 +530,13 @@ void initErrorLookupHash()
 			       "there are records for this Item which use this "
                                "UOM."), 	                        0, "" },
 
+  { "deleteOpenRecurringItems",  -1, "",                 -1, "deleteIncident" },
+  { "deleteOpenRecurringItems",  -2, "",                 -2, "deleteIncident" },
+  { "deleteOpenRecurringItems", -10, TR("Cannot delete open recurring items "
+                                        "with an invalid type."),       0, "" },
+  { "deleteOpenRecurringItems", -11, TR("Cannot delete open recurring items "
+                                        "without a valid parent item."),0, "" },
+
   { "deleteOpportunity", -1, TR("The selected Opportunity cannot be deleted because "
                             "there are ToDo Items assigned to it.  You must "
                             "delete or reassign these ToDo Items "
@@ -517,22 +549,6 @@ void initErrorLookupHash()
                             "there are Sales Orders assigned to it.  You must "
                             "delete or reassign these Sales Orders "
                             "before you may delete it."),                      0, "" },
-
-  { "attachQuoteToOpportunity", -1, TR("The selected Quote cannot be attached because "
-                            "the Quote cannot be found."),                     0, "" },
-  { "attachQuoteToOpportunity", -2, TR("The selected Quote cannot be attached because "
-                            "the Opportunity cannot be found."),               0, "" },
-  { "attachQuoteToOpportunity", -3, TR("The selected Quote cannot be attached because "
-                            "it is already associated with an Opportunity.  You must "
-                            "detach this Quote before you may attach it."),    0, "" },
-
-  { "attachSalesOrderToOpportunity", -1, TR("The selected Sales Order cannot be attached because "
-                            "the Sales Order cannot be found."),                     0, "" },
-  { "attachSalesOrderToOpportunity", -2, TR("The selected Sales Order cannot be attached because "
-                            "the Opportunity cannot be found."),               0, "" },
-  { "attachSalesOrderToOpportunity", -3, TR("The selected Sales Order cannot be attached because "
-                            "it is already associated with an Opportunity.  You must "
-                            "detach this Sales Order before you may attach it."),    0, "" },
 
   { "deletePackage", -1, TR("The selected Package cannot be deleted because "
                             "there are other packages that depend on it to "
@@ -864,6 +880,13 @@ void initErrorLookupHash()
 				   "it is frozen."),			0, "" },
 
   { "openAccountingYearPeriod", -1, "", -1, "openAccountingPeriod" },
+
+  { "openRecurringItems", -10, TR("Cannot count open recurring items with an "
+                                  "invalid type."),                     0, "" },
+  { "openRecurringItems", -11, TR("Cannot count open recurring items without "
+                                  "a valid parent item."),              0, "" },
+  { "openRecurringItems", -12, TR("Don't know how to count open recurring "
+                                  "invoices."),                         0, "" },
 
   { "postAPCreditMemoApplication", -1,
       TR("There are no A/P Credit Memo applications to post."),         0, "" },
@@ -1199,6 +1222,8 @@ void initErrorLookupHash()
   { "reverseCashReceipt", -8, TR("Cannot reverse this Cash Receipt because the "
                             "credit card records could not be found."),  0, "" },
 
+  { "saveAlarm", -10, TR("An alarm for this item already exists."), 0, "" },
+
   { "selectForBilling",	-1, TR("The quantity you have selected for Billing is "
 			       "less than the quantity shipped. You may not "
 			       "bill for less than the quantity shipped."),
@@ -1246,6 +1271,10 @@ void initErrorLookupHash()
   { "splitReceipt", -5, TR("Split freight may not be greater than original freight."),		0, "" },
   { "splitReceipt", -6, TR("Receipt not found."),		0, "" },
   { "splitReceipt", -7, TR("The split quantity must be a positive number."),		0, "" },
+
+  { "splitRecurrence", -10, "",                   -10, "createRecurringItems" },
+  { "splitRecurrence", -11, TR("Cannot create recurring items without a valid "
+                               "parent item to copy."),                 0, "" },
 
   { "sufficientInventoryToShipItem", -1,
 	    TR("Cannot figure out which line item to issue."),	0, "" },

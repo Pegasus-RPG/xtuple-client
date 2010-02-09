@@ -47,21 +47,14 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   populate();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 project::~project()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void project::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse project::set(const ParameterList &pParams)
@@ -95,15 +88,14 @@ enum SetResponse project::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
       if (q.first())
         _prjid = q.value("prj_id").toInt();
-      else
+      else if (q.lastError().type() == QSqlError::NoError)
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+        systemError(this, q.lastError().text(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
       _comments->setId(_prjid);
+      _recurring->setParent(_prjid, "J");
 
       _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
 			      _privileges->check("ReassignTodoListItem"));
@@ -152,7 +144,8 @@ void project::populate()
   q.prepare( "SELECT prj_number, prj_name, prj_descrip,"
              "       prj_so, prj_wo, prj_po, prj_status, "
              "       prj_owner_username, prj_username, prj_start_date, "
-             "       prj_assigned_date, prj_due_date, prj_completed_date "
+             "       prj_assigned_date, prj_due_date, prj_completed_date,"
+             "       prj_recurring_prj_id "
              "FROM prj "
              "WHERE (prj_id=:prj_id);" );
   q.bindValue(":prj_id", _prjid);
@@ -173,6 +166,11 @@ void project::populate()
     _due->setDate(q.value("prj_due_date").toDate());
     _completed->setDate(q.value("prj_completed_date").toDate());
     QString status = q.value("prj_status").toString();
+
+    _recurring->setParent(q.value("prj_recurring_prj_id").isNull() ?
+                            _prjid : q.value("prj_recurring_prj_id").toInt(),
+                          "J");
+
     if("P" == status)
       _status->setCurrentIndex(0);
     else if("O" == status)
@@ -206,24 +204,34 @@ void project::sSave()
     return;
   }
 
+  RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return;
+
+  XSqlQuery rollbackq;
+  rollbackq.prepare("ROLLBACK;");
+  XSqlQuery begin("BEGIN;");
+
   if (!_saved)
     q.prepare( "INSERT INTO prj "
                "( prj_id, prj_number, prj_name, prj_descrip,"
                "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
                "  prj_start_date, prj_due_date, prj_assigned_date,"
-               "  prj_completed_date, prj_username ) "
+               "  prj_completed_date, prj_username, prj_recurring_prj_id ) "
                "VALUES "
                "( :prj_id, :prj_number, :prj_name, :prj_descrip,"
                "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username,"
                "  :prj_start_date, :prj_due_date, :prj_assigned_date,"
-               "  :prj_completed_date, :username  );" );
+               "  :prj_completed_date, :username, :prj_recurring_prj_id );" );
   else
     q.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
                "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status, "
                "    prj_owner_username=:prj_owner_username, prj_start_date=:prj_start_date, "
                "    prj_due_date=:prj_due_date, prj_assigned_date=:prj_assigned_date,"
-               "    prj_completed_date=:prj_completed_date, prj_username=:username  "
+               "    prj_completed_date=:prj_completed_date,"
+               "    prj_username=:username,"
+               "    prj_recurring_prj_id=:prj_recurring_prj_id "
                "WHERE (prj_id=:prj_id);" );
 
   q.bindValue(":prj_id", _prjid);
@@ -239,6 +247,8 @@ void project::sSave()
   q.bindValue(":prj_due_date",	_due->date());
   q.bindValue(":prj_assigned_date",	_assigned->date());
   q.bindValue(":prj_completed_date",	_completed->date());
+  if (_recurring->isRecurring())
+    q.bindValue(":prj_recurring_prj_id", _recurring->parentId());
 
   switch(_status->currentIndex())
   {
@@ -256,9 +266,21 @@ void project::sSave()
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
+    rollbackq.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  QString errmsg;
+  if (! _recurring->save(true, cp, errmsg))
+  {
+    qDebug("recurring->save failed");
+    rollbackq.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return;
+  }
+
+  q.exec("COMMIT;");
 
   if (_saved)
     done(_prjid);

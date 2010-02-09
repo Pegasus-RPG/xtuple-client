@@ -17,6 +17,8 @@
 
 #include "storedProcErrorLookup.h"
 
+#define DEBUG true
+
 /**
   \class
   
@@ -125,6 +127,10 @@ int RecurrenceWidget::frequency() const
 
 RecurrenceWidget::RecurrenceChangePolicy RecurrenceWidget::getChangePolicy()
 {
+  if (DEBUG)
+    qDebug("%s::getChangePolicy() entered with id %d type %s",
+           qPrintable(objectName()), _parentId, qPrintable(_parentType));
+
   if (! modified())
     return IgnoreFuture;
 
@@ -222,6 +228,11 @@ QString RecurrenceWidget::periodCode() const
 
 bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString &message)
 {
+  if (DEBUG)
+    qDebug("%s::save(%d, %d, msg) entered with id %d type %s",
+           qPrintable(objectName()), externaltxn, cp, _parentId,
+           qPrintable(_parentType));
+
   if (! modified())
     return true;
 
@@ -287,7 +298,7 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
             if (! externaltxn)
             {
               rollbackq.exec();
-              QMessageBox::warning(this, tr("Procesing Error"), message);
+              QMessageBox::warning(this, tr("Processing Error"), message);
             }
             return false;
           }
@@ -423,9 +434,6 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
       return false;
     }
   }
-
-  if (! isRecurring())
-    clear();
 
   return true;
 }
