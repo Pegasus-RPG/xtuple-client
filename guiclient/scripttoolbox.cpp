@@ -1608,6 +1608,15 @@ QString ScriptToolbox::storedProcErrorLookup(const QString proc, const int resul
   return ::storedProcErrorLookup(proc, result);
 }
 
+/** \brief This functions takes a regexp string and creates and returns a QRegExpValidator. */
+QObject * ScriptToolbox::customVal(const QString & ReqExp)
+{
+  QRegExp rx(ReqExp);
+  QValidator * val = new QRegExpValidator(rx, omfgThis);
+  return val;
+}
+
+
 /** \fn int     ScriptToolbox::decimalPlaces(QString p)	
     \brief This is a wrapper for the C++ core function decimalPlaces.
  */

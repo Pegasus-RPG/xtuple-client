@@ -111,6 +111,7 @@ class ScriptToolbox : public QObject
     QObject * runTimeVal();
     QObject * orderVal();
     QObject * dayVal();
+    QObject * customVal(const QString & ReqExp);
 
     QObject * widgetGetLayout(QWidget * w);
 
