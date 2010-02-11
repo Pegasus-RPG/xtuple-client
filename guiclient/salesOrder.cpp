@@ -4398,8 +4398,8 @@ void salesOrder::sAllocateCreditMemos()
 
     while(balance > 0.0 && q.next())
     {
-      amount = _outstandingCM->localValue();
-      initAmount = amount;
+      amount = q.value("amount").toDouble();
+      initAmount = _outstandingCM->localValue();
 
       if(amount <= 0.0) // if this credit memo does not have a positive value just ignore it
         continue;
