@@ -55,8 +55,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget
     
  public slots:
 	void addParam();
-	void applySaved(int);
-	void applySaved(int, int filter_id);
+        void applySaved(int pId = 0, int filter_id = 0);
 	void changeFilterButton();
 	void changeFilterObject(int);
 	void clearFilters();
@@ -67,9 +66,8 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget
 	void setSavedFiltersIndex(QString);
 	void setType(QString, QString, enum ParameterWidgetTypes = Text);
 	void sManageFilters();
-	void storeFilterValue();
 	void storeFilterValue(QDate);
-	void storeFilterValue(int);
+        void storeFilterValue(int pId = 0);
 
   signals:
 	void cleared();
@@ -89,8 +87,8 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget
 	QPushButton *addFilterRow;
 	QLineEdit *_filterSetName;
 	QSignalMapper *_filterSignalMapper;
-	QMap<QString, QPair<QString, ParameterWidgetTypes>> _types;
-	QMap<int, QPair<QString, QVariant>> _filterValues;
+        QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
+        QMap<int, QPair<QString, QVariant> > _filterValues;
 	
 	void addGroupBox();
 	QString getParameterTypeKey(QString);

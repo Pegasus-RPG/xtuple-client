@@ -153,7 +153,7 @@ void ParameterWidget::addFilters()
 
 void ParameterWidget::appendValue(ParameterList &pParams)
 {
-	QMapIterator<int, QPair<QString, QVariant>> i(_filterValues);
+        QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
 	while (i.hasNext())
 	{
 		i.next();
@@ -241,7 +241,7 @@ void ParameterWidget::addParam()
 	xcomboBox->addItem("", currRow + ":" + "2");
 
 	//grab the items provided by other widgets to populate xcombobox with
-	QMapIterator<QString, QPair<QString, ParameterWidgetTypes>> i(_types);
+        QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > i(_types);
 	while (i.hasNext())
 	{
 		i.next();
@@ -300,12 +300,6 @@ void ParameterWidget::addParam()
 	_filterSignalMapper->setMapping(pushButton_2, nextRow);
 }
 
-
-void ParameterWidget::applySaved(int pId)
-{
-	this->applySaved(pId, NULL);
-}
-
 void ParameterWidget::applySaved(int pId, int filter_id)
 {
 	QGridLayout *container; 
@@ -324,17 +318,17 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
 	this->clearFilters();
 
-	if (this->parent() == NULL)
+        if (!parent())
 		return;
 
-	if (_filterList->id() == NULL)
+        if (!_filterList->id() != -1)
 	{
 		_filterSetName->clear();
 		setSelectedFilter(-1);
 		emit updated();
 		return;	
 	}
-	if (filter_id == NULL && _filterList->id() != NULL)
+        if (filter_id && _filterList->id() != -1)
 	{
 		filter_id = _filterList->id(_filterList->currentIndex());
 	}
@@ -446,17 +440,17 @@ void ParameterWidget::changeFilterButton()
 void ParameterWidget::changeFilterObject(int _index)
 {
 	
-	QHBoxLayout *horizontalLayout;
-	QSpacerItem *horizontalSpacer;
-	QVBoxLayout *verticalLayout;
-	QSpacerItem *verticalSpacer;
-	QLayoutItem *_child;
-	QLayoutItem *_child2;
-	QHBoxLayout *_layout2;
-	QLayoutItem *_childSpacer;
-	QLayoutItem *_button;
-	QWidget *_buttonFound;
-	QWidget *_found;
+        QHBoxLayout *horizontalLayout;
+        QSpacerItem *horizontalSpacer;
+        QVBoxLayout *verticalLayout;
+        QSpacerItem *verticalSpacer;
+        QLayoutItem *_child;
+        QLayoutItem *_child2;
+        QHBoxLayout *_layout2;
+        QLayoutItem *_childSpacer;
+        QLayoutItem *_button;
+        QWidget *_buttonFound;;
+        QWidget *_found;
 
 	XComboBox *_mybox = (XComboBox *)sender();
 	QVariant _filterVar(_mybox->itemData(_index));
@@ -691,7 +685,7 @@ void ParameterWidget::save()
 	else
 	{
 
-		QMapIterator<int, QPair<QString, QVariant>> i(_filterValues);
+                QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
 		while (i.hasNext())
 		{
 			i.next();
@@ -796,7 +790,7 @@ void ParameterWidget::setSavedFilters(int defaultId = NULL)
 		
 		qry.bindValue(":screen", classname);
 		qry.exec();
-		if (defaultId != NULL && defaultId > 0)
+                if (defaultId)
 		{
 			_filterList->populate(qry, defaultId);
 		}
@@ -824,12 +818,6 @@ void ParameterWidget::sManageFilters()
 	filterManager *newdlg = new filterManager(this, "");
 
 	newdlg->exec();
-}
-
-
-void ParameterWidget::storeFilterValue()
-{
-	this->storeFilterValue(NULL);
 }
 
 void ParameterWidget::storeFilterValue(QDate _date)
@@ -875,7 +863,7 @@ void ParameterWidget::storeFilterValue(QDate _date)
 
 
 //stores the value of a filter object into the filtervalues map
-void ParameterWidget::storeFilterValue(int pId = NULL)
+void ParameterWidget::storeFilterValue(int pId)
 {
 	qDebug() << "in storefiltervalue, pId passed is: " << pId;
 
@@ -919,7 +907,7 @@ void ParameterWidget::storeFilterValue(int pId = NULL)
 	const QMetaObject *metaobject = filter->metaObject();     
 	QString classname(metaobject->className());
 
-	if (pId == NULL)
+        if (!pId)
 	{
 		if (classname == "QLineEdit")
 		{
@@ -1053,7 +1041,7 @@ void ParameterWidget::addGroupBox()
 
 QString ParameterWidget::getParameterTypeKey(QString pValue)
 {
-	QMapIterator<QString, QPair<QString, ParameterWidgetTypes>> i(_types);
+        QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > i(_types);
 	while (i.hasNext())
 	{
 		i.next();

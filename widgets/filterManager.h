@@ -11,7 +11,6 @@
 #ifndef FILTERMANAGER_H
 #define FILTERMANAGER_H
 
-#include "guiclient.h"
 #include "parameter.h"
 
 #include "ui_filterManager.h"
