@@ -44,7 +44,7 @@
   FROM remitto, cmhead, cust, curr_symbol
  WHERE ((cmhead_cust_id=cust_id)
        AND (cmhead_curr_id = curr_id)
-       AND (cmhead_id=%1))
+       AND (cmhead_id=&lt;? value("cmhead_id") ?>))
 ORDER BY cmhead_number;</sql>
  </querysource>
  <querysource>
@@ -63,7 +63,7 @@ ORDER BY cmhead_number;</sql>
  WHERE ((cmitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
-   AND (cmitem_cmhead_id=%1))
+   AND (cmitem_cmhead_id=&lt;? value("cmhead_id") ?>))
 ORDER BY cmitem_linenumber;</sql>
  </querysource>
  <querysource>
@@ -73,7 +73,7 @@ ORDER BY cmitem_linenumber;</sql>
  WHERE ((cmitem_cmhead_id=cmhead_id)
    AND (cmitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
-   AND (cmhead_id=%1));</sql>
+   AND (cmhead_id=&lt;? value("cmhead_id") ?>));</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
@@ -87,7 +87,7 @@ ORDER BY cmitem_linenumber;</sql>
                        ( SELECT COALESCE(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) *
                                               cmitem_unitprice / cmitem_price_invuomratio), 0.0)
                          FROM cmitem
-                         WHERE (cmitem_cmhead_id=%1) ) 
+                         WHERE (cmitem_cmhead_id=&lt;? value("cmhead_id") ?>) ) 
                      ) AS totaldue,
        formatExtPrice(COALESCE(cmhead_freight,0.0)) AS freight,
        ( SELECT formatExtPrice(COALESCE(SUM(tax * -1.0), 0))
@@ -97,7 +97,7 @@ ORDER BY cmitem_linenumber;</sql>
                 GROUP BY tax_id ) AS data ) AS tax,
        formatExtPrice(COALESCE(cmhead_misc,0.0)) AS misc
   FROM cmhead
- WHERE (cmhead_id=%1);
+ WHERE (cmhead_id=&lt;? value("cmhead_id") ?>);
 </sql>
  </querysource>
  <querysource>
