@@ -51,7 +51,7 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
   _ship->addColumn(tr("UOM"),              _uomColumn,    Qt::AlignLeft,  true, "uom_name");
   _ship->addColumn(tr("Qty. At Ship"),     _qtyColumn,    Qt::AlignRight, true, "shipqty");
   _ship->addColumn(tr("Value At Ship"),    _moneyColumn,  Qt::AlignRight, true, "shipvalue");
-  _ship->addColumn(tr("Hold Type"),        0,             Qt::AlignCenter,true, "holdtype");
+  _ship->addColumn(tr("Hold Type"),        _statusColumn, Qt::AlignCenter,true, "holdtype");
 
   sFillList();
 }
