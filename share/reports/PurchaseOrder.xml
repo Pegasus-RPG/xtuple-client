@@ -42,10 +42,12 @@
        addr_state,
        addr_country,
        formataddr(addr_line1, addr_line2, addr_line3, (addr_city || ' ' || addr_state || ' ' || addr_postalcode), addr_country) as warehouse_address,
-       pohead_agent_username AS username,
+       pohead_agent_username,
+       usr.usr_propername AS username,
        pohead_comments,
        text(&lt;? value("title") ?>) AS title
  FROM pohead
+   LEFT OUTER JOIN usr ON (pohead.pohead_agent_username = usr.usr_username)
    LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id),
    vend, whsinfo
    LEFT OUTER JOIN addr ON (warehous_addr_id = addr_id)
