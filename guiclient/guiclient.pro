@@ -2266,6 +2266,6 @@ SOURCES = ../common/batchItem.cpp               \
 QT += xml sql script scripttools network
 QT += webkit
 
-RESOURCES += guiclient.qrc
+RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
