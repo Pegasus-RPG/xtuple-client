@@ -33,23 +33,28 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-  parameterWidget->setType("Assigned User", "username", ParameterWidget::User);
-  parameterWidget->setType("Assigned Pattern", "usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Start Date", "startStartDate", ParameterWidget::Date);
-  parameterWidget->setType("End Date", "startEndDate", ParameterWidget::Date);
+  parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User);
+  parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
+  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Start Start Date", "startStartDate", ParameterWidget::Date);
+  parameterWidget->setType("Start End Date", "startEndDate", ParameterWidget::Date);
+	parameterWidget->setType("Due Start Date", "dueStartDate", ParameterWidget::Date);
+  parameterWidget->setType("Due End Date", "dueEndDate", ParameterWidget::Date);
   parameterWidget->applyDefaultFilterSet();
 
   _crmAccount->hide();
-  _dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  _startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  //_dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  //_dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  //_startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  //_startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
 
-  _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  //_usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   q.exec("SELECT current_user;");
-  if (q.first())
-    _usr->setUsername(q.value("current_user").toString());
-  else if (q.lastError().type() != QSqlError::NoError)
+  //if (q.first())
+    //_usr->setUsername(q.value("current_user").toString());
+  //original - else if (q.lastError().type() != QSqlError::NoError)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -57,12 +62,13 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
 
+	connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_completed,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
-  connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_startDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  //connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  //connect(_startDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_todolist,    SIGNAL(toggled(bool)),  this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
@@ -72,20 +78,20 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
 	    this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
-  connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  connect(_all,		SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
-  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
-  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
-  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(handlePrivs()));
-  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
-  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(handlePrivs()));
+  //connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  //connect(_all,		SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
+  //connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList()));
+  //connect(_selected,	SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
+  //connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
+  //connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(handlePrivs()));
+  //connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
+  //connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(handlePrivs()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-  connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_startdateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_assignedTo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_ownedBy, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  //connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  //connect(_startdateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  //connect(_assignedTo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  //connect(_ownedBy, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _todoList->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
@@ -206,7 +212,7 @@ enum SetResponse todoList::set(const ParameterList& pParams)
   param = pParams.value("usr_id", &valid);
   if (valid)
   {
-    _usr->setId(param.toInt());
+    //_usr->setId(param.toInt());
     handlePrivs();
     sFillList();
   }
@@ -250,8 +256,9 @@ void todoList::handlePrivs()
 				            _privileges->check("MaintainProjects"));
   }
 
-  _usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
-		   _privileges->check("ViewOtherTodoLists"));
+  //_usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+		   //original - _privileges->check("ViewOtherTodoLists"));
+		   _privileges->check("ViewOtherTodoLists");
   _new->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
                    _privileges->check("ViewOtherTodoLists"));
   _edit->setEnabled(editTodoPriv && _todoList->id() > 0);
@@ -281,8 +288,8 @@ void todoList::sNew()
   if (_crmAccount->isValid())
     params.append("crmacct_id", _crmAccount->id());
   params.append("mode", "new");
-  if (_selected->isChecked())
-    params.append("username", _usr->username());
+  //if (_selected->isChecked())
+  //  params.append("username", _usr->username());
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -486,26 +493,26 @@ void todoList::setParams(ParameterList &params)
     params.append("projects");
 
 
-  if (_assignedTo->isChecked())
-    params.append("assignedTo");
-  else
-    params.append("ownedBy");
+  //if (_assignedTo->isChecked())
+   // params.append("assignedTo");
+ // else
+    //params.append("ownedBy");
   
-  if (_selected->isChecked())
-    params.append("username", _usr->username());
-  else if (_usePattern->isChecked())
-    params.append("usr_pattern", _pattern->text());
+  //if (_selected->isChecked())
+   // params.append("username", _usr->username());
+  //else if (_usePattern->isChecked())
+   // params.append("usr_pattern", _pattern->text());
 
-  if (_duedateGroup->isChecked())
-  {
-    params.append("dueStartDate", _dueDates->startDate());
-    params.append("dueEndDate",   _dueDates->endDate());
-  }
-  if (_startdateGroup->isChecked())
-  {
-    params.append("startStartDate", _startDates->startDate());
-    params.append("startEndDate",   _startDates->endDate());
-  }
+  //if (_duedateGroup->isChecked())
+  //{
+   // params.append("dueStartDate", _dueDates->startDate());
+   // params.append("dueEndDate",   _dueDates->endDate());
+  //}
+  //if (_startdateGroup->isChecked())
+  //{
+   // params.append("startStartDate", _startDates->startDate());
+   // params.append("startEndDate",   _startDates->endDate());
+  //}
   params.append("todo", tr("To-do"));
   params.append("incident", tr("Incident"));
   params.append("task", tr("Task"));

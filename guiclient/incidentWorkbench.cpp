@@ -52,8 +52,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   _incdt->addColumn(tr("Owner"),       _userColumn, Qt::AlignLeft, true, "incdt_owner_username" );
   _incdt->addColumn(tr("Summary"),     -1,          Qt::AlignLeft, true, "incdt_summary" );
 
-  _createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  //_createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  //_createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -63,7 +63,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
     _statusAssigned->setChecked(true);
   }
 
-  _user->setType(ParameterGroup::User);
+  //_user->setType(ParameterGroup::User);
 }
 
 incidentWorkbench::~incidentWorkbench()
@@ -118,9 +118,9 @@ void incidentWorkbench::sReset()
   _statusAssigned->setChecked(true);
   _statusResolved->setChecked(false);
   _statusClosed->setChecked(false);
-  _createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _textPattern->clear();
+  //_createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  //_createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  //_textPattern->clear();
 }
 
 void incidentWorkbench::setParams(ParameterList & params)
@@ -132,11 +132,14 @@ void incidentWorkbench::setParams(ParameterList & params)
   params.append("resolved",	tr("Resolved"));
   params.append("closed",	tr("Closed"));
 
-  if (_assignedTo->isChecked())
-    params.append("assignedTo");
-  else
-    params.append("ownedBy"); 
-  _user->appendValue(params);
+	params.append("startDate", omfgThis->startOfTime());
+	params.append("endDate", omfgThis->endOfTime());
+
+  //if (_assignedTo->isChecked())
+  //  params.append("assignedTo");
+  //else
+  //  params.append("ownedBy"); 
+  //_user->appendValue(params);
 
   if(_statusNew->isChecked())
     params.append("isnew");
@@ -151,10 +154,10 @@ void incidentWorkbench::setParams(ParameterList & params)
   if(_statusClosed->isChecked())
     params.append("isclosed");
 
-  if(!_textPattern->text().trimmed().isEmpty())
-    params.append("pattern", _textPattern->text().trimmed());
+  //if(!_textPattern->text().trimmed().isEmpty())
+   // params.append("pattern", _textPattern->text().trimmed());
 
-  _createdDates->appendValue(params);
+  //_createdDates->appendValue(params);
   parameterWidget->appendValue(params);
 }
 
