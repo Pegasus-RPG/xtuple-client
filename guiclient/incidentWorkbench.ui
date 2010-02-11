@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>incidentWorkbench</class>
- <widget class="QWidget" name="incidentWorkbench" >
-  <property name="geometry" >
+ <widget class="QWidget" name="incidentWorkbench">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,41 +17,44 @@ to be bound by its terms.</comment>
     <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Incident Workbench</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_6" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="0" column="0">
+    <widget class="ParameterWidget" name="parameterWidget"/>
+   </item>
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="gridLayout_6">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QGridLayout" name="gridLayout_3" >
-         <item row="0" column="0" >
-          <widget class="QGroupBox" name="_contextGroup" >
-           <property name="title" >
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="_contextGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5" >
-            <item row="0" column="0" >
-             <widget class="QRadioButton" name="_assignedTo" >
-              <property name="text" >
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="_assignedTo">
+              <property name="text">
                <string>Assigned to</string>
               </property>
-              <property name="checked" >
+              <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QRadioButton" name="_ownedBy" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="_ownedBy">
+              <property name="text">
                <string>Owned by</string>
               </property>
              </widget>
@@ -58,87 +62,87 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="ParameterGroup" name="_user" >
-           <property name="focusPolicy" >
+         <item row="0" column="1">
+          <widget class="ParameterGroup" name="_user">
+           <property name="focusPolicy">
             <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="fixedSize" >
+           <property name="fixedSize">
             <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="2" >
-          <widget class="QGroupBox" name="_datesGroup" >
-           <property name="title" >
+         <item row="0" column="2">
+          <widget class="QGroupBox" name="_datesGroup">
+           <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" name="gridLayout" >
-            <item row="0" column="0" >
-             <widget class="DateCluster" name="_createdDates" />
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="DateCluster" name="_createdDates"/>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="1" column="0" colspan="3" >
-          <widget class="QGroupBox" name="_statusGroup" >
-           <property name="title" >
+         <item row="1" column="0" colspan="3">
+          <widget class="QGroupBox" name="_statusGroup">
+           <property name="title">
             <string>Status</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_2" >
-            <item row="0" column="0" >
-             <layout class="QHBoxLayout" name="horizontalLayout" >
-              <property name="spacing" >
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="spacing">
                <number>12</number>
               </property>
               <item>
-               <widget class="XCheckBox" name="_statusNew" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusNew">
+                <property name="text">
                  <string>&amp;New</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XCheckBox" name="_statusFeedback" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusFeedback">
+                <property name="text">
                  <string>&amp;Feedback</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XCheckBox" name="_statusConfirmed" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusConfirmed">
+                <property name="text">
                  <string>C&amp;onfirmed</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XCheckBox" name="_statusAssigned" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusAssigned">
+                <property name="text">
                  <string>&amp;Assigned</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XCheckBox" name="_statusResolved" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusResolved">
+                <property name="text">
                  <string>&amp;Resolved</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XCheckBox" name="_statusClosed" >
-                <property name="text" >
+               <widget class="XCheckBox" name="_statusClosed">
+                <property name="text">
                  <string>&amp;Closed</string>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_3" >
-                <property name="orientation" >
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>0</width>
                   <height>20</height>
@@ -151,30 +155,30 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
-         <item row="2" column="0" colspan="3" >
-          <layout class="QHBoxLayout" >
+         <item row="2" column="0" colspan="3">
+          <layout class="QHBoxLayout">
            <item>
-            <widget class="QLabel" name="_textPatternLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_textPatternLit">
+             <property name="text">
               <string>Search:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
-             <property name="buddy" >
+             <property name="buddy">
               <cstring>_textPattern</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="_textPattern" />
+            <widget class="QLineEdit" name="_textPattern"/>
            </item>
            <item>
-            <spacer name="horizontalSpacer_2" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
                <height>20</height>
@@ -187,11 +191,11 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>0</width>
            <height>17</height>
@@ -200,47 +204,47 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
+          <widget class="QPushButton" name="_close">
+           <property name="text">
             <string>Close</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_query" >
-           <property name="text" >
+          <widget class="QPushButton" name="_query">
+           <property name="text">
             <string>Query</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_print" >
-           <property name="text" >
+          <widget class="QPushButton" name="_print">
+           <property name="text">
             <string>Print</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_reset" >
-           <property name="text" >
+          <widget class="QPushButton" name="_reset">
+           <property name="text">
             <string>Reset</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -252,82 +256,82 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QFrame" name="_frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+     <item row="1" column="0">
+      <widget class="QFrame" name="_frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <layout class="QGridLayout" name="gridLayout_4" >
-        <property name="margin" >
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="0" >
-         <layout class="QVBoxLayout" name="verticalLayout" >
-          <property name="spacing" >
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label" >
-            <property name="text" >
+           <widget class="QLabel" name="label">
+            <property name="text">
              <string>Incidents:</string>
             </property>
-            <property name="buddy" >
+            <property name="buddy">
              <cstring>_incdt</cstring>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
+           <layout class="QHBoxLayout">
             <item>
-             <widget class="XTreeWidget" name="_incdt" />
+             <widget class="XTreeWidget" name="_incdt"/>
             </item>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
+             <layout class="QVBoxLayout">
+              <property name="spacing">
                <number>0</number>
               </property>
               <item>
-               <widget class="QPushButton" name="_new" >
-                <property name="text" >
+               <widget class="QPushButton" name="_new">
+                <property name="text">
                  <string>New</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="_edit" >
-                <property name="enabled" >
+               <widget class="QPushButton" name="_edit">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>Edit</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="_view" >
-                <property name="enabled" >
+               <widget class="QPushButton" name="_view">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>View</string>
                 </property>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
                   <height>40</height>
@@ -341,21 +345,21 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="1" column="0" >
-         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="XCheckBox" name="_autoUpdate" >
-            <property name="text" >
+           <widget class="XCheckBox" name="_autoUpdate">
+            <property name="text">
              <string>Automatically Update</string>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_4" >
-            <property name="orientation" >
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
               <height>20</height>
@@ -382,6 +386,11 @@ to be bound by its terms.</comment>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ParameterWidget</class>
+   <extends>QWidget</extends>
+   <header>parameterwidget.h</header>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
@@ -420,11 +429,11 @@ to be bound by its terms.</comment>
    <receiver>incidentWorkbench</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>642</x>
      <y>26</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>352</x>
      <y>230</y>
     </hint>
@@ -436,11 +445,11 @@ to be bound by its terms.</comment>
    <receiver>_edit</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>296</x>
      <y>317</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>642</x>
      <y>284</y>
     </hint>
@@ -452,11 +461,11 @@ to be bound by its terms.</comment>
    <receiver>_edit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>296</x>
      <y>317</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>642</x>
      <y>284</y>
     </hint>
@@ -468,11 +477,11 @@ to be bound by its terms.</comment>
    <receiver>_view</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>296</x>
      <y>317</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>642</x>
      <y>316</y>
     </hint>

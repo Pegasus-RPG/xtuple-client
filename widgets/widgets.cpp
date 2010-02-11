@@ -33,6 +33,7 @@
 #include "plugins/expenseclusterplugin.h"
 #include "plugins/expenselineeditplugin.h"
 #include "plugins/fileclusterplugin.h"
+#include "plugins/filtermanagerplugin.h"
 #include "plugins/glclusterplugin.h"
 #include "plugins/imageclusterplugin.h"
 #include "plugins/invoiceclusterplugin.h"
@@ -45,6 +46,7 @@
 #include "plugins/orderclusterplugin.h"
 #include "plugins/opportunityclusterplugin.h"
 #include "plugins/parametergroupplugin.h"
+#include "plugins/parameterwidgetplugin.h"
 #include "plugins/periodslistviewplugin.h"
 #include "plugins/planordclusterplugin.h"
 #include "plugins/planordlineeditplugin.h"
@@ -113,6 +115,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ExpenseClusterPlugin(this));
   m_plugins.append(new ExpenseLineEditPlugin(this));
   m_plugins.append(new FileClusterPlugin(this));
+  m_plugins.append(new filterManagerPlugin(this));
   m_plugins.append(new GLClusterPlugin(this));
   m_plugins.append(new ImageClusterPlugin(this));
   m_plugins.append(new InvoiceClusterPlugin(this));
@@ -125,6 +128,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new OrderClusterPlugin(this));
   m_plugins.append(new OpportunityClusterPlugin(this));
   m_plugins.append(new ParameterGroupPlugin(this));
+  m_plugins.append(new ParameterWidgetPlugin(this));
   m_plugins.append(new PeriodsListViewPlugin(this));
   m_plugins.append(new PlanOrdClusterPlugin(this));
   m_plugins.append(new PlanOrdLineEditPlugin(this));

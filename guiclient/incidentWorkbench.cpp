@@ -24,6 +24,18 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
 {
   setupUi(this);
 
+  parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
+  parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User);
+  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Pattern", "pattern", ParameterWidget::Text);
+  parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
+  parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
+
+  parameterWidget->applyDefaultFilterSet();
+
+  connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
+
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
@@ -143,6 +155,7 @@ void incidentWorkbench::setParams(ParameterList & params)
     params.append("pattern", _textPattern->text().trimmed());
 
   _createdDates->appendValue(params);
+  parameterWidget->appendValue(params);
 }
 
 void incidentWorkbench::sFillList()

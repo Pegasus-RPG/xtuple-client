@@ -55,6 +55,7 @@ HEADERS += \
            plugins/expenseclusterplugin.h \
            plugins/expenselineeditplugin.h \
            plugins/fileclusterplugin.h \
+           plugins/filtermanagerplugin.h \
            plugins/glclusterplugin.h \
            plugins/imageclusterplugin.h \
            plugins/invoiceclusterplugin.h \
@@ -67,6 +68,7 @@ HEADERS += \
            plugins/orderclusterplugin.h \
            plugins/opportunityclusterplugin.h \
            plugins/parametergroupplugin.h \
+           plugins/parameterwidgetplugin.h \
            plugins/periodslistviewplugin.h \
            plugins/planordclusterplugin.h \
            plugins/planordlineeditplugin.h \
@@ -170,6 +172,8 @@ SOURCES    += widgets.cpp \
               xitemdelegate.cpp \
               xtableview.cpp \
               docAttach.cpp \
+              parameterwidget.cpp \
+              filterManager.cpp \
 
 HEADERS    += widgets.h \
               addresscluster.h contactcluster.h \
@@ -232,6 +236,8 @@ HEADERS    += widgets.h \
               xitemdelegate.h \
               xtableview.h \
               docAttach.h \
+              parameterwidget.h \
+              filterManager.h \
 
 FORMS += accountSearch.ui \
          alarms.ui alarmMaint.ui \
@@ -244,6 +250,7 @@ FORMS += accountSearch.ui \
          recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
+         filterManager.ui \
 
 
 RESOURCES += widgets.qrc

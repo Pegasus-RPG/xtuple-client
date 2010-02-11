@@ -32,6 +32,13 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
+  parameterWidget->setType("Assigned User", "username", ParameterWidget::User);
+  parameterWidget->setType("Assigned Pattern", "usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Start Date", "startStartDate", ParameterWidget::Date);
+  parameterWidget->setType("End Date", "startEndDate", ParameterWidget::Date);
+  parameterWidget->applyDefaultFilterSet();
+
   _crmAccount->hide();
   _dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
@@ -47,6 +54,8 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
   }
+
+  connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
 
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
@@ -501,6 +510,7 @@ void todoList::setParams(ParameterList &params)
   params.append("incident", tr("Incident"));
   params.append("task", tr("Task"));
   params.append("project", tr("Project"));
+  parameterWidget->appendValue(params);
 }
 
 void todoList::sPrint()

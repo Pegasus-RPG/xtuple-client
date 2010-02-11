@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>601</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,16 @@ to be bound by its terms.</comment>
   </property>
   <layout class="QGridLayout" name="gridLayout_9">
    <item row="0" column="0">
+    <widget class="ParameterWidget" name="parameterWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_8">
      <property name="margin">
       <number>12</number>
@@ -432,6 +442,11 @@ to be bound by its terms.</comment>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ParameterWidget</class>
+   <extends>QWidget</extends>
+   <header>parameterwidget.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>
