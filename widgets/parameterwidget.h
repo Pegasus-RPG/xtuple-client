@@ -67,7 +67,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget
 	void setType(QString, QString, enum ParameterWidgetTypes = Text);
 	void sManageFilters();
 	void storeFilterValue(QDate);
-        void storeFilterValue(int pId = 0);
+  void storeFilterValue(int pId = -1);
 
   signals:
 	void cleared();

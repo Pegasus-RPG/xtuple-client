@@ -54,48 +54,57 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 
 void ParameterWidget::addFilters()
 {
-    QGridLayout *gridLayout;
-    QGridLayout *gridLayout_5;
-    QVBoxLayout *verticalLayout;
-    QLabel *label;
-    QVBoxLayout *verticalLayout_3;
-    QLabel *label_3;
-    QGridLayout *gridLayout_3;
+ 	QGridLayout *gridLayout;
+  QGridLayout *gridLayout_5;
+  QVBoxLayout *verticalLayout;
+  QLabel *label;
+  QVBoxLayout *verticalLayout_3;
+  QLabel *label_3;
+  QGridLayout *gridLayout_3;
+	QHBoxLayout *horizontalLayout;
+	QSpacerItem *horizontalSpacer;
 
 	int nextRow;
 	QString currRow;
 
 	nextRow = 1;
 	currRow = currRow.setNum(nextRow);
+  QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+  sizePolicy.setHorizontalStretch(0);
+  sizePolicy.setVerticalStretch(0);
+  sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
+  this->setSizePolicy(sizePolicy);
+  _groupBox = new QGroupBox(this);
+  gridLayout = new QGridLayout(_groupBox);
+  gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+  gridLayout_5 = new QGridLayout();
+  gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+  _window = new QGridLayout();
+  _window->setObjectName(QString::fromUtf8("_window"));
+  verticalLayout = new QVBoxLayout();
+  verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+  label = new QLabel(_groupBox);
+  label->setObjectName(QString::fromUtf8("label"));
+  label->setMaximumSize(QSize(16777215, 18));
 
-	 QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-     sizePolicy.setHorizontalStretch(0);
-     sizePolicy.setVerticalStretch(0);
-     sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
-     this->setSizePolicy(sizePolicy);
-	 _groupBox = new QGroupBox(this);
-     gridLayout = new QGridLayout(_groupBox);
-     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-     gridLayout_5 = new QGridLayout();
-        gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-        _window = new QGridLayout();
-        _window->setObjectName(QString::fromUtf8("_window"));
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        label = new QLabel(_groupBox);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setMaximumSize(QSize(16777215, 18));
+  verticalLayout->addWidget(label);
 
-        verticalLayout->addWidget(label);
+  _window->addLayout(verticalLayout, 0, 0, 1, 1);
 
-        _window->addLayout(verticalLayout, 0, 0, 1, 1);
+  verticalLayout_3 = new QVBoxLayout();
+  verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
 
-        verticalLayout_3 = new QVBoxLayout();
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
         label_3 = new QLabel(_groupBox);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 
-        verticalLayout_3->addWidget(label_3);
+		horizontalLayout = new QHBoxLayout();
+		horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+		horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+		horizontalLayout->addWidget(label_3);
+		horizontalLayout->addItem(horizontalSpacer);
+
+        verticalLayout_3->addLayout(horizontalLayout);
 
         _window->addLayout(verticalLayout_3, 0, 1, 1, 1);
 
@@ -318,17 +327,17 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
 	this->clearFilters();
 
-        if (!parent())
+  if (!parent())
 		return;
 
-        if (!_filterList->id() != -1)
+  if (_filterList->id() == -1)
 	{
 		_filterSetName->clear();
 		setSelectedFilter(-1);
 		emit updated();
 		return;	
 	}
-        if (filter_id && _filterList->id() != -1)
+  if (filter_id == 0 && _filterList->id() != -1)
 	{
 		filter_id = _filterList->id(_filterList->currentIndex());
 	}
@@ -449,7 +458,7 @@ void ParameterWidget::changeFilterObject(int _index)
         QHBoxLayout *_layout2;
         QLayoutItem *_childSpacer;
         QLayoutItem *_button;
-        QWidget *_buttonFound;;
+        QWidget *_buttonFound;
         QWidget *_found;
 
 	XComboBox *_mybox = (XComboBox *)sender();
@@ -685,7 +694,7 @@ void ParameterWidget::save()
 	else
 	{
 
-                QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
+    QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
 		while (i.hasNext())
 		{
 			i.next();
@@ -907,7 +916,7 @@ void ParameterWidget::storeFilterValue(int pId)
 	const QMetaObject *metaobject = filter->metaObject();     
 	QString classname(metaobject->className());
 
-        if (!pId)
+  if (pId == -1)
 	{
 		if (classname == "QLineEdit")
 		{
