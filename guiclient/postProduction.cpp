@@ -348,6 +348,7 @@ void postProduction::sPost()
     {
       ParameterList params;
       params.append("wo_id", _wo->id());
+      params.append("transDate", _transDate->date());
 
       closeWo newdlg(this, "", TRUE);
       newdlg.set(params);

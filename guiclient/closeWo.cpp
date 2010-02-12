@@ -24,10 +24,12 @@ closeWo::closeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_closeWo, SIGNAL(clicked()), this, SLOT(sCloseWo()));
 
   _captive = FALSE;
+  _transDate->setDate(omfgThis->dbDate(), true);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
+  _wo->setFocus();
   
   _postMaterialVariance->setChecked(_metrics->boolean("PostMaterialVariances"));
 }
@@ -50,6 +52,10 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("transDate", &valid);
+  if (valid)
+    _transDate->setDate(param.toDate());
+
   param = pParams.value("wo_id", &valid);
   if (valid)
   {
@@ -63,6 +69,14 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
 
 bool closeWo::okToSave()
 {
+  if (!_transDate->isValid())
+  {
+    QMessageBox::critical(this, tr("Invalid date"),
+                          tr("You must enter a valid transaction date.") );
+    _transDate->setFocus();
+    return false;
+  }
+  
   XSqlQuery tool;
   tool.prepare( "SELECT (count(womatl_id) > 0) AS disttool"
                 " FROM womatl "
@@ -191,9 +205,10 @@ void closeWo::sCloseWo()
                                "Work Order?"),
                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
   {
-    q.prepare("SELECT closeWo(:wo_id, :postMatVar);");
+    q.prepare("SELECT closeWo(:wo_id, :postMatVar, :date);");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":postMatVar",   QVariant(_postMaterialVariance->isChecked()));
+    q.bindValue(":date",  _transDate->date());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
