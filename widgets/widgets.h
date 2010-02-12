@@ -48,8 +48,8 @@ class XTUPLEWIDGETS_EXPORT GuiClientInterface
 {
   public:
     virtual ~GuiClientInterface() {}
-    virtual QDialog* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
-};
+    virtual QWidget* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
+  };
 
 class xTuplePlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
 {
