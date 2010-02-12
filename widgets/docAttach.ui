@@ -105,6 +105,16 @@ to be bound by its terms.</comment>
                  <string>Project</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>Image</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>URL</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>
@@ -280,6 +290,32 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </widget>
+          <widget class="QWidget" name="page_7">
+           <widget class="ImageCluster" name="_img">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>228</width>
+              <height>112</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>10</y>
+              <width>61</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Image:</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="page_8"/>
          </widget>
         </item>
        </layout>
@@ -301,6 +337,11 @@ to be bound by its terms.</comment>
    <class>CustInfo</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ImageCluster</class>
+   <extends>QWidget</extends>
+   <header>imagecluster.h</header>
   </customwidget>
   <customwidget>
    <class>IncidentCluster</class>

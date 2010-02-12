@@ -115,7 +115,11 @@ void docAttach::sSave()
     _targettype = "J";
     _targetid = _proj->id();
   }
-
+  else if (_docType->currentIndex() == 6)
+  {
+    _targettype = "IMG";
+    _targetid = _img->id();
+  }
 
   //set the purpose
   if (_docAttachPurpose->currentIndex() == 0)

@@ -221,7 +221,7 @@ void opportunity::sSave()
   if (! save(false)) // if error
     return;
 
-  accept();
+  done(_opheadid);
 }
 
 bool opportunity::save(bool partial)

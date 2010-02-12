@@ -257,7 +257,7 @@ void todoItem::sSave()
 
   XSqlQuery commitq("COMMIT;");
 
-  accept();
+  done(_todoitemid);
 }
 
 void todoItem::sPopulate()

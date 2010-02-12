@@ -283,8 +283,9 @@ void incident::sSave()
 {
   if (! save(false)) // if error
     return;
-
-  accept();
+  {
+   done(_incdtid);
+  }
 }
 
 bool incident::save(bool partial)
