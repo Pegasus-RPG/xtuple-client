@@ -74,7 +74,7 @@ void ContactClusterLineEdit::sNew()
     if (_searchAcctId != -1)
       params.append("crmacct_id", _searchAcctId);
 
-    QDialog* newdlg = _guiClientInterface->openDialog(_uiName, params, parentWidget(),Qt::WindowModal);
+    QDialog* newdlg = (QDialog*)_guiClientInterface->openDialog(_uiName, params, parentWidget(),Qt::WindowModal);
 
     int id = newdlg->exec();
     if (id != QDialog::Rejected)

@@ -46,8 +46,8 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       Project,		PurchaseOrder,      PurchaseOrderItem,
       ReturnAuth,       ReturnAuthItem,     Quote, 
       QuoteItem,        SalesOrder,         SalesOrderItem,
-      TransferOrder,	TransferOrderItem,  Vendor,
-      Warehouse,	WorkOrder
+      Todo,             TransferOrder,      TransferOrderItem,
+      Vendor,           Warehouse,          WorkOrder
     };
 
     static GuiClientInterface *_guiClientInterface;
@@ -72,17 +72,13 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void setType(enum DocumentSources);
     void setId(int);
     void setReadOnly(bool);
-    
-    void sOpenDoc();
-    void sPrintDoc();
     void sNewImage();
     void sNewFile();
     void sNewToDo();
     void sNewIncdt();
-    void sNewTask();
     void sNewOpp();
     void sNewProj();
-    // void sInsertDocass(QString, int);
+    void sInsertDocass(QString, int);
     void sAttachDoc();
     void sViewDoc();
     void sEditDoc();

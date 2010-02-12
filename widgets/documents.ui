@@ -5,7 +5,7 @@ open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
-is available at www.xtuple.com/CPAL.  By using this software, you agree
+is available at http://www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>documents</class>
  <widget class="QWidget" name="documents">
@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>209</height>
+    <width>502</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -41,123 +41,7 @@ to be bound by its terms.</comment>
        <height>175</height>
       </size>
      </property>
-     <layout class="QGridLayout">
-      <item row="0" column="1">
-       <layout class="QVBoxLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="_openDoc">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Open</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>102</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QVBoxLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_printDoc">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>&amp;Print</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_newDoc">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>&amp;New</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_attachDoc">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>&amp;Attach</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_viewDoc">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>&amp;View</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_editDoc">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>&amp;Edit</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_detachDoc">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>&amp;Detach</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>70</width>
-              <height>41</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="XTreeWidget" name="_doc">
         <property name="sizePolicy">
@@ -183,6 +67,76 @@ to be bound by its terms.</comment>
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QPushButton" name="_newDoc">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>&amp;New</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_attachDoc">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>&amp;Attach</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_viewDoc">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>&amp;View</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_editDoc">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>&amp;Edit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_detachDoc">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>&amp;Detach</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>70</width>
+            <height>41</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -198,38 +152,6 @@ to be bound by its terms.</comment>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>_doc</sender>
-   <signal>itemDoubleClicked(XTreeWidgetItem*,int)</signal>
-   <receiver>_openDoc</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>160</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_doc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_openDoc</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>160</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_doc</sender>
    <signal>valid(bool)</signal>
