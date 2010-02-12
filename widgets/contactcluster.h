@@ -30,6 +30,9 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
 
     public slots:
       void setSearchAcct(int crmAcctId);
+      void sList();
+      void sNew();
+      void sSearch();
 
     protected slots:
       ContactList* listFactory();
@@ -48,49 +51,33 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       ContactCluster(QWidget*, const char* = 0);
       Q_INVOKABLE int searchAcctId() { return _searchAcctId; }
 
-      bool minimalLayout() { return _minLayout; }
+      Q_INVOKABLE int crmAcctId() { return _crmAcctId; }
+      Q_INVOKABLE bool minimalLayout() { return _minLayout; }
 
-      void setHonorific(const QString honorifc);
-      void setFirst(const QString first);
-      void setMiddle(const QString middle);
-      void setLast(const QString last);
-      void setSuffix(const QString suffix);
-      void setPhone(const QString phone);
-      void setTitle(const QString title);
-      void setFax(const QString fax);
-      void setEmailAddress(const QString email);
+      Q_INVOKABLE void setHonorific(const QString honorifc);
+      Q_INVOKABLE void setFirst(const QString first);
+      Q_INVOKABLE void setMiddle(const QString middle);
+      Q_INVOKABLE void setLast(const QString last);
+      Q_INVOKABLE void setSuffix(const QString suffix);
+      Q_INVOKABLE void setPhone(const QString phone);
+      Q_INVOKABLE void setTitle(const QString title);
+      Q_INVOKABLE void setFax(const QString fax);
+      Q_INVOKABLE void setEmailAddress(const QString email);
 
-      QString honorific() const { return _fname->at(0); }
-      QString first() const { return _fname->at(1); }
-      QString middle() const { return _fname->at(2); }
-      QString last() const { return _fname->at(3); }
-      QString suffix() const { return _fname->at(4); }
-      QString title() const { return _description->text(); }
-      QString phone() const { return _phone->text(); }
-      QString fax() const { return _fax->text(); }
-      QString emailAddress() const { return ""; }
-
-      // TODO: Remove these
-      void setAccount(int) { return; }
-      int crmAcctId() { return -1; }
-      void setInitialsVisible(bool) { return; }
-      void setActiveVisible(bool) { return; }
-      void setAccountVisible(bool) { return; }
-      void setOwnerEnabled(bool) { return; }
-      int save(AddressCluster::SaveFlags = AddressCluster::CHECK) { return 2; }
-      int check(AddressCluster::SaveFlags = AddressCluster::CHECK) { return 2; }
-      AddressCluster* addressWidget() const { return _address; }
-      void setOwnerUsername(QString) { return; }
-      bool sChanged() { return false; }
-      QString change() { return QString(); }
+      Q_INVOKABLE QString honorific() const { return _fname->at(0); }
+      Q_INVOKABLE QString first() const { return _fname->at(1); }
+      Q_INVOKABLE QString middle() const { return _fname->at(2); }
+      Q_INVOKABLE QString last() const { return _fname->at(3); }
+      Q_INVOKABLE QString suffix() const { return _fname->at(4); }
+      Q_INVOKABLE QString title() const { return _description->text(); }
+      Q_INVOKABLE QString phone() const { return _phone->text(); }
+      Q_INVOKABLE QString fax() const { return _fax->text(); }
+      Q_INVOKABLE QString emailAddress() const { return ""; }
 
     public slots:
       void openUrl(QString url);
       void setMinimalLayout(bool);
       void setSearchAcct(int crmAcctId);
-
-      void sList();
-      void sSearch();
 
     private slots:
       void populate();
@@ -101,6 +88,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 
     private:
       bool _minLayout;
+      int _crmAcctId;
       int _searchAcctId;
       AddressCluster* _address;
       QVBoxLayout* _addrLayout;

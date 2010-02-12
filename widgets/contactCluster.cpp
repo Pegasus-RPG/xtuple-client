@@ -10,6 +10,7 @@
 
 #include <QUrl>
 #include <QDesktopServices>
+#include <QHBoxLayout>
 #include <QMessageBox>
 
 #include "contactcluster.h"
@@ -41,6 +42,67 @@ void ContactClusterLineEdit::setSearchAcct(int crmAcctId)
     _extraClause = "";
 }
 
+void ContactClusterLineEdit::sList()
+{
+  ContactList* newdlg = listFactory();
+  if (newdlg)
+  {
+    ParameterList params;
+    params.append("titlePlural", tr("Contacts"));
+    if (_searchAcctId != -1)
+      params.append("searchAcctId", _searchAcctId);
+    newdlg->set(params);
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("Could not instantiate a List Dialog"));
+}
+
+void ContactClusterLineEdit::sNew()
+{
+  if (canOpen())
+  {
+    if (!_x_privileges->check(_editPriv))
+      return;
+
+    ParameterList params;
+    params.append("mode", "new");
+    if (_searchAcctId != -1)
+      params.append("crmacct_id", _searchAcctId);
+
+    QDialog* newdlg = _guiClientInterface->openDialog(_uiName, params, parentWidget(),Qt::WindowModal);
+
+    int id = newdlg->exec();
+    if (id != QDialog::Rejected)
+      setId(id);
+    return;
+  }
+}
+
+void ContactClusterLineEdit::sSearch()
+{
+  ContactSearch* newdlg = searchFactory();
+  if (newdlg)
+  {
+    ParameterList params;
+    params.append("titalPlural", tr("Contacts"));
+    if (_searchAcctId != -1)
+      params.append("searchAcctId", _searchAcctId);
+    newdlg->set(params);
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("Could not instantiate a Search Dialog"));
+}
+
 ContactList* ContactClusterLineEdit::listFactory()
 {
     return new ContactList(this);
@@ -48,13 +110,7 @@ ContactList* ContactClusterLineEdit::listFactory()
 
 ContactSearch* ContactClusterLineEdit::searchFactory()
 {
-    ContactSearch* contactSearch = new ContactSearch(this);
-    ParameterList params;
-    params.append("titalPlural", tr("Contacts"));
-    if (_searchAcctId != -1)
-      params.append("searchAcctId", _searchAcctId);
-    contactSearch->set(params);
-    return contactSearch;
+    return new ContactSearch(this);
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
@@ -62,6 +118,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
 {
   addNumberWidget(new ContactClusterLineEdit(this, pName));
 
+  _crmAcctId = -1;
   _minLayout = true;
   _fname = new QStringList();
   for (int i = 0; i < 5; ++i)
@@ -73,13 +130,12 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   setMinimumWidth(500);
   QSpacerItem* _cntctSpacer = new QSpacerItem(15, 3,QSizePolicy::Fixed,QSizePolicy::Fixed);
   _grid->addItem(_cntctSpacer, 1, 1, 1, 1);
-
   _grid->removeWidget(_description);
   _grid->removeWidget(_name);
   _grid->setVerticalSpacing(0);
 
   setLabel(tr("Name:"));
-  _number->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
   _titleLit = new QLabel(tr("Title:"),this);
   _phoneLit = new QLabel(tr("Phone:"),this);
   _phone2Lit = new QLabel(tr("Alternate:"),this);
@@ -108,7 +164,6 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _webaddr->setObjectName("_webaddr");
   _addr->setObjectName("_addr");
 
-  _number->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
   _phone->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
   _description->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
   _addr->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
@@ -150,6 +205,7 @@ void ContactCluster::setMinimalLayout(bool isMinimal)
    _grid->removeWidget(_webaddrLit);
    _grid->removeWidget(_webaddr);
    _grid->removeWidget(_addr);
+   _grid->removeItem(_addrLayout);
 
    if (isMinimal) {
     _addr->hide();
@@ -199,6 +255,12 @@ void ContactCluster::populate()
     _fax->clear();
     _email->clear();
     _webaddr->clear();
+    setName(0, "");
+    setName(1, "");
+    setName(2, "");
+    setName(3, "");
+    setName(4, "");
+    _crmAcctId = -1;
   }
   else
   {
@@ -210,7 +272,8 @@ void ContactCluster::populate()
                   "  cntct_middle, cntct_last_name, cntct_suffix, "
                   "  cntct_phone, cntct_phone2, "
                   "  cntct_fax, cntct_email, cntct_webaddr, "
-                  "  formatAddr(cntct_addr_id) AS address "
+                  "  formatAddr(cntct_addr_id) AS address, "
+                  "  cntct_crmacct_id "
                   "FROM cntct "
                   "WHERE (cntct_id=:id);");
     dataQ.bindValue(":id", id());
@@ -229,6 +292,7 @@ void ContactCluster::populate()
       _email->setURL("mailto:" + dataQ.value("cntct_email").toString());
       _webaddr->setURL("http://" + dataQ.value("cntct_webaddr").toString());
       _addr->setText(dataQ.value("address").toString());
+      _crmAcctId=-1;
     }
     if (_number->completer())
       connect(_number, SIGNAL(textChanged(QString)), _number, SLOT(sHandleCompleter()));
@@ -240,51 +304,20 @@ void ContactCluster::openUrl(QString url)
   QDesktopServices::openUrl(QUrl(url));
 }
 
-void ContactCluster::sList()
-{
-  ContactList* newdlg = new ContactList(this);
-  if (newdlg)
-  {
-    ParameterList params;
-    params.append("titlePlural", tr("Contacts"));
-    params.append("searchAcctId", searchAcctId());
-    newdlg->set(params);
-    int id = newdlg->exec();
-    setId(id);
-  }
-  else
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__),
-                          tr("Could not instantiate a List Dialog"));
-}
-
-void ContactCluster::sSearch()
-{
-  ContactClusterLineEdit* ccle = static_cast<ContactClusterLineEdit* >(_number);
-  ContactSearch* newdlg = ccle->searchFactory();
-  if (newdlg)
-  {
-    int id = newdlg->exec();
-    setId(id);
-  }
-  else
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__),
-                          tr("Could not instantiate a Search Dialog"));
-}
-
 void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
 {
     _number = pNumberWidget;
     if (! _number)
       return;
 
-    QHBoxLayout* hbox = new QHBoxLayout(this);
+    _number->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  //  _number->setMinimumWidth(200);
+    QHBoxLayout* hbox = new QHBoxLayout;
+    QSpacerItem* item = new QSpacerItem(100, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     hbox->addWidget(_number);
     hbox->addWidget(_list);
     hbox->addWidget(_info);
+    hbox->addItem(item);
     _grid->addLayout(hbox, 0, 1, 1, 3);
     setFocusProxy(pNumberWidget);
 
