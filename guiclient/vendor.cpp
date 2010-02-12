@@ -254,45 +254,6 @@ int vendor::id() const
   return _vendid;
 }
 
-// similar code in address, customer, shipto, vendor, vendorAddress, warehouse
-int vendor::saveContact(ContactCluster* pContact)
-{
-  pContact->setAccount(_crmacctid);
-
-  int answer = 2;	// Cancel
-  int saveResult = pContact->save(AddressCluster::CHECK);
-
-  if (-1 == saveResult)
-    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
-  else if (-2 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this address (%1).\n"
-		       "What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
-  else if (-10 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(pContact->label()),
-		    tr("Would you like to update the existing Contact or create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
-  if (0 == answer)
-    return pContact->save(AddressCluster::CHANGEONE);
-  else if (1 == answer)
-    return pContact->save(AddressCluster::CHANGEALL);
-
-  return saveResult;
-}
-
 void vendor::sSave()
 {
   struct {
@@ -397,20 +358,6 @@ void vendor::sSave()
 		      .arg(saveResult), __FILE__, __LINE__);
     rollback.exec();
     _address->setFocus();
-    return;
-  }
-
-  if (saveContact(_contact1) < 0)
-  {
-    rollback.exec();
-    _contact1->setFocus();
-    return;
-  }
-
-  if (saveContact(_contact2) < 0)
-  {
-    rollback.exec();
-    _contact2->setFocus();
     return;
   }
 
@@ -571,40 +518,6 @@ void vendor::sSave()
     return;
   }
 
-//  Get the crmacct that was created by the vendinfo trigger
-  q.prepare("SELECT crmacct_id "
-	    "FROM crmacct "
-	    "WHERE (crmacct_vend_id=:vend_id);");
-  q.bindValue(":vend_id", _vendid);
-  q.exec();
-  if (q.first())
-  {
-    _crmacctid = q.value("crmacct_id").toInt();
-    _contact1->setAccount(_crmacctid);
-    _contact2->setAccount(_crmacctid);
-  }
-  else if (!q.lastError().type() == QSqlError::NoError)
-  {
-    rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-
-// need to save contacts again with updated CRM Account
-  if (saveContact(_contact1) < 0)
-  {
-    rollback.exec();
-    _contact1->setFocus();
-    return;
-  }
-
-  if (saveContact(_contact2) < 0)
-  {
-    rollback.exec();
-    _contact2->setFocus();
-    return;
-  }
 
   q.exec("COMMIT;");
   _NumberGen = -1;

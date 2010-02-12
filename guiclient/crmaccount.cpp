@@ -124,18 +124,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_registrationsTab));
-  
-  _primary->setMinimalLayout(FALSE);
-  _primary->setAccountVisible(FALSE);
-  _primary->setActiveVisible(FALSE);
-  _secondary->setMinimalLayout(FALSE);
-  _secondary->setAccountVisible(FALSE);
-  _secondary->setActiveVisible(FALSE);
-  
-  _primary->setInitialsVisible(false);
-  _secondary->setInitialsVisible(false);
-  _primary->setListVisible(true);
-  _secondary->setListVisible(true);
+
 }
 
 crmaccount::~crmaccount()
@@ -282,44 +271,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   return NoError;
 }
 
-// similar code in address, customer, shipto, vendor, vendorAddress
-int crmaccount::saveContact(ContactCluster* pContact)
-{
-  int answer = 2;	// Cancel
-  int saveResult = pContact->save(AddressCluster::CHECK);
-
-  if (-1 == saveResult)
-    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
-  else if (-2 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("<p>There are multiple Contacts sharing this address (%1)."
-		       " What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change for All"),
-		    tr("Cancel"),
-		    2, 2);
-  else if (-10 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(pContact->label()),
-		    tr("<p>Would you like to update the existing Contact or "
-		       "create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
-  if (0 == answer)
-    return pContact->save(AddressCluster::CHANGEONE);
-  else if (1 == answer)
-    return pContact->save(AddressCluster::CHANGEALL);
-
-  return saveResult;
-}
-
 void crmaccount::sClose()
 {
   if (_mode == cNew)
@@ -408,6 +359,8 @@ void crmaccount::sClose()
 
 void crmaccount::sSave()
 {
+
+  int returnVal = 0;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -543,30 +496,6 @@ void crmaccount::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-
-  int returnVal = 0;
-  
-  _primary->setAccount(_crmacctId);
-  _secondary->setAccount(_crmacctId);
-  if (_primary->sChanged())
-  {
-    returnVal = saveContact(_primary);
-    if (returnVal < 0)
-    {
-      rollback.exec();
-      return;
-    }
-  }
-
-  if (_secondary->sChanged())
-  {
-    returnVal = saveContact(_secondary);
-    if (returnVal < 0)
-    {
-      rollback.exec();
-      return;
-    }
   }
 
   if (! spName.isEmpty())

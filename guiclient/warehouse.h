@@ -36,7 +36,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-    virtual int  saveContact(ContactCluster*);
     virtual void sSave();
 
 

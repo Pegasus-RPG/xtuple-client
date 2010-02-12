@@ -44,8 +44,6 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
  
   _lotSerial->setStrict(true);
-  _cntct->setAccountVisible(FALSE);
-  _cntct->setActiveVisible(FALSE);
 
   _so->setType(cSoReleased);
 
@@ -310,16 +308,6 @@ void lotSerialRegistration::sSave()
     _qty->setFocus();
     return;
   }
-  
-  _cntct->check();
-  // TODO: start explicit transaction?
-  // TODO: make contactcluster smart enough to check its own change() state?
-  if (_cntct->change() == "CHANGEONE")
-    _cntct->save(AddressCluster::CHANGEONE);
-  else if (_cntct->change() == "CHANGEALL")
-    _cntct->save(AddressCluster::CHANGEALL);
-  else
-    _cntct->save();
 
   if (_cntct->id() == -1)
   {

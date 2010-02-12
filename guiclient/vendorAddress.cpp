@@ -97,47 +97,6 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
   return NoError;
 }
 
-
-// similar code in address, customer, shipto, vendor, vendorAddress, warehouse
-int vendorAddress::saveContact(ContactCluster* pContact)
-{
-//  pContact->setAccount(_crmacctid);
-
-  int answer = 2;	// Cancel
-  int saveResult = pContact->save(AddressCluster::CHECK);
-
-  if (-1 == saveResult)
-    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
-  else if (-2 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this address (%1).\n"
-		       "What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
-  else if (-10 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving %").arg(pContact->label()),
-		    tr("Would you like to update the existing Contact or "
-		       "create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
-  if (0 == answer)
-    return pContact->save(AddressCluster::CHANGEONE);
-  else if (1 == answer)
-    return pContact->save(AddressCluster::CHANGEALL);
-
-  return saveResult;
-}
-
 void vendorAddress::sSave()
 {
   if (! q.exec("BEGIN"))
@@ -172,13 +131,6 @@ void vendorAddress::sSave()
 		      .arg(saveResult), __FILE__, __LINE__);
     rollback.exec();
     _address->setFocus();
-    return;
-  }
-
-  if (saveContact(_contact) < 0)
-  {
-    rollback.exec();
-    _contact->setFocus();
     return;
   }
 

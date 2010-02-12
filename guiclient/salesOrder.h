@@ -25,7 +25,6 @@ public:
   ~salesOrder();
 
   Q_INVOKABLE virtual bool save( bool partial );
-  Q_INVOKABLE virtual int saveContact(ContactCluster* pContact);
   Q_INVOKABLE virtual void setViewMode();
   Q_INVOKABLE static void newSalesOrder( int pCustid );
   Q_INVOKABLE static void editSalesOrder( int pId, bool enableSaveAndAdd );

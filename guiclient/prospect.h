@@ -47,7 +47,6 @@ signals:
 
 protected slots:
     virtual void languageChange();
-    virtual int  saveContact(ContactCluster*);
 
 protected:
     virtual void closeEvent(QCloseEvent*);

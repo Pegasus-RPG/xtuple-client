@@ -66,6 +66,7 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _contact->setInitialsVisible(false);
   _contact->setActiveVisible(false);
   _contact->setOwnerVisible(false);
+  _contact->addressWidget()->setInfoVisible(true);
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 }
@@ -99,7 +100,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
   param = pParams.value("crmacct_id", &valid);
   if (valid)
   {
-    _contact->setAccount(param.toInt());
+    _crmAccount->setId(param.toInt());
   }
 
   param = pParams.value("mode", &valid);

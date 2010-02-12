@@ -645,7 +645,7 @@ to be bound by its terms.</comment>
          <item row="0" column="0">
           <widget class="QGroupBox" name="_contact1Box">
            <property name="title">
-            <string/>
+            <string>Contact 1</string>
            </property>
            <layout class="QHBoxLayout">
             <property name="spacing">
@@ -656,14 +656,11 @@ to be bound by its terms.</comment>
             </property>
             <item>
              <widget class="ContactCluster" name="_contact1">
-              <property name="label">
-               <string>Contact 1</string>
-              </property>
-              <property name="initialsVisible">
-               <bool>false</bool>
-              </property>
               <property name="minimalLayout">
                <bool>true</bool>
+              </property>
+              <property name="initialsVisible" stdset="0">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -673,7 +670,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0">
           <widget class="QGroupBox" name="_contact2Box">
            <property name="title">
-            <string/>
+            <string>Contact 2</string>
            </property>
            <layout class="QHBoxLayout">
             <property name="spacing">
@@ -684,9 +681,6 @@ to be bound by its terms.</comment>
             </property>
             <item>
              <widget class="ContactCluster" name="_contact2">
-              <property name="label">
-               <string>Contact 2</string>
-              </property>
               <property name="minimalLayout">
                <bool>true</bool>
               </property>
@@ -1177,11 +1171,13 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

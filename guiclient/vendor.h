@@ -29,7 +29,6 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual int  saveContact(ContactCluster*);
     virtual void sSave();
     virtual void sCheck();
     virtual void populate();

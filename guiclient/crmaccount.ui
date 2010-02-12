@@ -505,19 +505,16 @@ to be bound by its terms.</comment>
             <layout class="QGridLayout">
              <item row="0" column="0">
               <widget class="ContactCluster" name="_primary">
-               <property name="label">
-                <string/>
-               </property>
                <property name="listVisible">
+                <bool>true</bool>
+               </property>
+               <property name="accountVisible" stdset="0">
                 <bool>false</bool>
                </property>
-               <property name="accountVisible">
+               <property name="activeVisible" stdset="0">
                 <bool>false</bool>
                </property>
-               <property name="activeVisible">
-                <bool>false</bool>
-               </property>
-               <property name="initialsVisible">
+               <property name="initialsVisible" stdset="0">
                 <bool>false</bool>
                </property>
               </widget>
@@ -560,16 +557,16 @@ to be bound by its terms.</comment>
                <property name="listVisible">
                 <bool>false</bool>
                </property>
-               <property name="accountVisible">
+               <property name="accountVisible" stdset="0">
                 <bool>false</bool>
                </property>
-               <property name="ownerEnabled">
+               <property name="ownerEnabled" stdset="0">
                 <bool>true</bool>
                </property>
-               <property name="activeVisible">
+               <property name="activeVisible" stdset="0">
                 <bool>false</bool>
                </property>
-               <property name="initialsVisible">
+               <property name="initialsVisible" stdset="0">
                 <bool>false</bool>
                </property>
               </widget>

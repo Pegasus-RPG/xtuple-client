@@ -38,7 +38,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual int  saveContact(ContactCluster*);
     virtual void sClose();
     virtual void sCompetitor();
     virtual void sCustomer();

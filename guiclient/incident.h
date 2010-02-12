@@ -32,7 +32,6 @@ public:
     Q_INVOKABLE virtual int     mode()      const;
     Q_INVOKABLE virtual void    populate();
     Q_INVOKABLE virtual bool    save(bool);
-    Q_INVOKABLE virtual int     saveContact(ContactCluster*);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -49,7 +48,6 @@ public slots:
     virtual void sViewTodoItem();
     virtual void sReturn();
     virtual void sViewAR();
-    virtual void sContactChanged();
     virtual void sAssigned();
 
 signals:

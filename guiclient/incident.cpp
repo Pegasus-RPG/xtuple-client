@@ -34,7 +34,6 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_assignedTo,    SIGNAL(newId(int)),       this, SLOT(sAssigned()));
   connect(_cancel,        SIGNAL(clicked()),        this,       SLOT(sCancel()));
-  connect(_cntct,         SIGNAL(changed()),        this, SLOT(sContactChanged()));
   connect(_crmacct,       SIGNAL(newId(int)),       this,       SLOT(sCRMAcctChanged(int)));
   connect(_deleteTodoItem, SIGNAL(clicked()),       this,       SLOT(sDeleteTodoItem()));
   connect(_editTodoItem,  SIGNAL(clicked()),        this,       SLOT(sEditTodoItem()));
@@ -234,42 +233,6 @@ QString incident::arDoctype() const
   return _ardoctype;
 }
 
-int incident::saveContact(ContactCluster* pContact)
-{
-  int answer = 2;       // Cancel
-  int saveResult = pContact->save(AddressCluster::CHECK);
-
-  if (-1 == saveResult)
-    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-                         "Check the database server log for errors.")
-                      .arg(pContact->label()).arg(saveResult),
-                __FILE__, __LINE__);
-  else if (-2 == saveResult)
-    answer = QMessageBox::question(this,
-                    tr("Question Saving Address"),
-                    tr("There are multiple Contacts sharing this address (%1).\n"
-                       "What would you like to do?")
-                    .arg(pContact->label()),
-                    tr("Change This One"),
-                    tr("Change Address for All"),
-                    tr("Cancel"),
-                    2, 2);
-  else if (-10 == saveResult)
-    answer = QMessageBox::question(this,
-                    tr("Question Saving %1").arg(pContact->label()),
-                    tr("Would you like to update the existing Contact or create a new one?"),
-                    tr("Create New"),
-                    tr("Change Existing"),
-                    tr("Cancel"),
-                    2, 2);
-  if (0 == answer)
-    return pContact->save(AddressCluster::CHANGEONE);
-  else if (1 == answer)
-    return pContact->save(AddressCluster::CHANGEALL);
-
-  return saveResult;
-}
-
 void incident::sCancel()
 {
   if (cNew == _mode)
@@ -370,16 +333,6 @@ bool incident::save(bool partial)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
-  }
-
-  if (! partial)
-  {
-    if (saveContact(_cntct) < 0)
-    {
-      rollback.exec();
-      _cntct->setFocus();
-      return false;
-    }
   }
 
   if (cNew == _mode && !_saved)
@@ -785,12 +738,6 @@ void incident::sViewAR()
   arOpenItem newdlg(this, 0, true);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void incident::sContactChanged()
-{
-  if (_cntct->crmAcctId() != -1 && _crmacct->id() == -1)
-    _crmacct->setId(_cntct->crmAcctId());
 }
 
 void incident::sAssigned()
