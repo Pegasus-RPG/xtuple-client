@@ -290,21 +290,24 @@ class xTupleGuiClientInterface : public GuiClientInterface
       {
         XDialog* xdlg = (XDialog*)w;
         xdlg->set(pparams);
+				w = (QWidget*)xdlg;
         //QDialog* qdlg = (QDialog*)xdlg;
         //return qdlg;
-        return xdlg;
+        return w;
       }
       else if (w->inherits("XMainWindow"))
       {
         XMainWindow* xwind = (XMainWindow*)w;
         xwind->set(pparams);
-        return xwind;
+				w = (QWidget*)xwind;
+        return w;
       }
       else if (w->inherits("XWidget"))
       {
         XWidget* xwind = (XWidget*)w;
         xwind->set(pparams);
-        return xwind;
+				w = (QWidget*)xwind;
+        return w;
       }
    } 
     return 0;
