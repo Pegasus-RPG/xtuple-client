@@ -9,6 +9,7 @@
  */
 
 #include <QDesktopServices>
+#include <QMessageBox>
 #include <QDialog>
 #include <QUrl>
 #include <QMenu>
@@ -55,6 +56,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( QuoteItem,         "QI"  ),
   DocumentMap( SalesOrder,        "S"   ),
   DocumentMap( SalesOrderItem,    "SI"  ),
+  DocumentMap( Todo,              "TODO"),
   DocumentMap( TransferOrder,     "TO"  ),
   DocumentMap( TransferOrderItem, "TI"  ),
   DocumentMap( Vendor,            "V"   ),
@@ -63,6 +65,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
 };
 
 GuiClientInterface* Documents::_guiClientInterface = 0;
+//xTupleGuiClientInterface* Documents::_guiClientInterface = 0;
 
 Documents::Documents(QWidget *pParent) :
   QWidget(pParent)
@@ -73,20 +76,22 @@ Documents::Documents(QWidget *pParent) :
   _sourceid = -1;
 
   _doc->addColumn(tr("Type"),  _itemColumn,  Qt::AlignLeft, true, "type" );
+  _doc->addColumn(tr("Id"), -1, Qt::AlignLeft, false, "target_id" );
   _doc->addColumn(tr("Name"), -1,  Qt::AlignLeft, true, "name" );
-  _doc->addColumn(tr("Description"),  _itemColumn*2, Qt::AlignLeft, true, "description");
+  _doc->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "description");
   _doc->addColumn(tr("Relationship"),  -1, Qt::AlignLeft,true, "doc_purpose");
   
-  connect(_openDoc, SIGNAL(clicked()), this, SLOT(sOpenDoc()));
-  //connect(_attachDoc, SIGNAL(clicked()), this, SLOT(sAttachDoc()));
+  connect(_attachDoc, SIGNAL(clicked()), this, SLOT(sAttachDoc()));
   connect(_editDoc, SIGNAL(clicked()), this, SLOT(sEditDoc()));
   connect(_viewDoc, SIGNAL(clicked()), this, SLOT(sViewDoc()));
-  connect(_printDoc, SIGNAL(clicked()), this, SLOT(sPrintDoc()));
   connect(_detachDoc, SIGNAL(clicked()), this, SLOT(sDetachDoc()));
+  connect(_doc, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(sEditDoc()));
 
   int menuItem;
   QMenu * newDocMenu = new QMenu;
 
+  menuItem = newDocMenu->insertItem(tr("Image"),  this, SLOT(sNewImage()));
+  menuItem = newDocMenu->insertItem(tr("File"),  this, SLOT(sNewFile()));
   menuItem = newDocMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
   //if (!_privileges->check("MaintainIncidents"))
   //  newDocMenu->setItemEnabled(menuItem, FALSE);
@@ -94,28 +99,18 @@ Documents::Documents(QWidget *pParent) :
   //if (!_privileges->check("MaintainPersonalTodoList") &&
   //    !_privileges->check("MaintainOtherTodoLists"))
   //  newDocMenu->setItemEnabled(menuItem, FALSE);
-  menuItem = newDocMenu->insertItem(tr("Task"),  this, SLOT(sNewTask()));
+  //menuItem = newDocMenu->insertItem(tr("Task"),  this, SLOT(sNewTask()));
   menuItem = newDocMenu->insertItem(tr("Opportunity"),  this, SLOT(sNewOpp()));
   menuItem = newDocMenu->insertItem(tr("Project"),  this, SLOT(sNewProj()));
 
   _newDoc->setMenu(newDocMenu);
 
-  QMenu * attachDocMenu = new QMenu;
-
-  menuItem = attachDocMenu->insertItem(tr("Image"),  this, SLOT(sNewImage()));
-  menuItem = attachDocMenu->insertItem(tr("File"),  this, SLOT(sNewFile()));
-  menuItem = attachDocMenu->insertItem(tr("Other"), this, SLOT(sAttachDoc()));
-  //if (!_privileges->check("MaintainIncidents"))
-  //  newDocMenu->setItemEnabled(menuItem, FALSE);
-
-  _attachDoc->setMenu(attachDocMenu);
 }
 
 void Documents::setType(enum DocumentSources pSource)
 {
   _source = pSource;
 }
-
 
 void Documents::setId(int pSourceid)
 {
@@ -125,28 +120,21 @@ void Documents::setId(int pSourceid)
 
 void Documents::setReadOnly(bool pReadOnly)
 {
-  _openDoc->setEnabled(!pReadOnly);
+
   _newDoc->setEnabled(!pReadOnly);
   _attachDoc->setEnabled(!pReadOnly);
   _editDoc->setEnabled(!pReadOnly);
   _detachDoc->setEnabled(!pReadOnly);
 
-  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
   disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _viewDoc, SLOT(animateClick()));
   disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
   disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
   disconnect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
   disconnect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
-  if(pReadOnly)
+  if(!pReadOnly)
   {
-    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
-  }
-  else
-  {
-    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _openDoc, SLOT(animateClick()));
     connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
     connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
-    connect(_doc, SIGNAL(valid(bool)), _openDoc, SLOT(setEnabled(bool)));
     connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
     connect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
   }
@@ -155,7 +143,6 @@ void Documents::setReadOnly(bool pReadOnly)
 void Documents::sNewImage()
 {
   ParameterList params;
-  params.append("mode", "new");
   params.append("sourceType", _source);
   params.append("source_id", _sourceid);
 
@@ -181,27 +168,15 @@ void Documents::sNewFile()
 
 void Documents::sNewIncdt()
 {
-/*
-    ParameterList params;
-int id;
+  ParameterList params;
   params.append("mode", "new");
-
-  incident newdlg(this, "", true);
-  newdlg.set(params);
-  id = newdlg.exec();
-  if (id != XDialog::Rejected)
-    // function to insert relationship into docass. Pass doc_type and doc_id
-    sInsertDocass('INCDT', id);
-    sFillList();
- */
+  int target_id;
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("incident", params, parentWidget(),Qt::WindowModal));
+    target_id = newdlg->exec();
+    if (target_id != QDialog::Rejected)
+       sInsertDocass("INCDT", target_id);
+    refresh();
 }
-
-/*void Documents::sInsertDocass(QString type, int id)
-{
-// this function will accept 2 arguments, a doc_type and a doc_id and it will insert a row into the docass table
-// this function will be called by the New and Attach buttons
-// this funtion will use the source type and id of the parent, and will default the doc_purpose to S (sibling)
-} */
 
 void Documents::sNewToDo()
 {
@@ -209,14 +184,55 @@ void Documents::sNewToDo()
   {
     ParameterList params;
     params.append("mode", "new");
-
-    QDialog* newdlg = _guiClientInterface->openDialog("todoItem", params, parentWidget(),Qt::WindowModal);
-
-    if (newdlg->exec() != QDialog::Rejected)
+    int target_id;
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("todoItem", params, parentWidget(),Qt::WindowModal));
+    target_id = newdlg->exec();
+    if (target_id != QDialog::Rejected)
+       sInsertDocass("TODO", target_id);
       refresh();
   }
 }
-/*
+
+void Documents::sNewProj()
+{
+    ParameterList params;
+    params.append("mode", "new");
+    int target_id;
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("project", params, parentWidget(),Qt::WindowModal));
+    target_id = newdlg->exec();
+    if (target_id != QDialog::Rejected)
+       sInsertDocass("J", target_id);
+      refresh();
+}
+
+void Documents::sNewOpp()
+{
+    ParameterList params;
+    params.append("mode", "new");
+    int target_id;
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("opportunity", params, parentWidget(),Qt::WindowModal));
+    target_id = newdlg->exec();
+    if (target_id != QDialog::Rejected)
+       sInsertDocass("OPP", target_id);
+      refresh();
+}
+
+void Documents::sInsertDocass(QString target_type, int target_id)
+{
+
+XSqlQuery q;
+  q.prepare("INSERT INTO docass ( docass_source_id, docass_source_type, docass_target_id, docass_target_type )"
+            "  VALUES ( :sourceid, :sourcetype::text, :targetid, :targettype); ");
+  q.bindValue(":sourceid", _sourceid);
+  q.bindValue(":sourcetype", _documentMap[_source].ident);
+  q.bindValue(":targetid", target_id);
+  q.bindValue(":targettype", target_type);
+  q.exec();
+
+}
+
+/* Not sure what this function is here for...
+
 void CRMAcctLineEdit::sInfo()
 {
   if (_crmacctInfoAction)
@@ -224,98 +240,315 @@ void CRMAcctLineEdit::sInfo()
 }
 */
 
-void Documents::sNewTask()
+void Documents::sEditDoc()
 {
-}
+  QString docType;
+  QString targetid;
+  XTreeWidgetItem *pItem = _doc->currentItem();
+  docType = pItem->rawValue("type").toString();
+  targetid = pItem->rawValue("target_id").toString();
+  qDebug() << "this is the type:" << docType << "this is the id:" << targetid;
 
-void Documents::sNewOpp()
-{
-}
-
-void Documents::sNewProj()
-{
-}
-
-/*
-void Documents::sEditFile()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("url_id", _files->id());
-
-  file newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  refresh();
-}
-
-void Documents::sViewFile()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("url_id", _files->id());
-
-  file newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void Documents::sDeleteFile()
-{
-  XSqlQuery q;
-  q.prepare("DELETE FROM docass"
-            " WHERE (docass_id=:docass_id);" );
-  q.bindValue(":url_id", _doc->id());
-  q.exec();
-  refresh();
-}
-
-void Documents::sOpenFile()
-{
-  XSqlQuery q;
-  q.prepare("SELECT url_url"
-            "  FROM url"
-            " WHERE (url_id=:url_id); ");
-  q.bindValue(":url_id", _files->id());
-  q.exec();
-  if(q.first())
+  //INCDT
+  if (docType == "Incident")
   {
-    //If url scheme is missing, we'll assume it is "file" for now.
-    QUrl url(q.value("url_url").toString());
-    if (url.scheme().isEmpty())
-      url.setScheme("file");
-    QDesktopServices::openUrl(url);
-  }
-}
-*/
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("incdt_id", targetid);
 
-void Documents::sOpenDoc()
-{/*
-  //this function needs to figure out the document type, and then open the doc in the appropriate window
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("incident", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
 
-  XSqlQuery q;
-  q.prepare("SELECT url_url"
-            "  FROM url"
-            " WHERE (url_id=:url_id); ");
-  q.bindValue(":url_id", _doc->altId());
-  q.exec();
-  if(q.first())
-  {
-    //If url scheme is missing, we'll assume it is "file" for now.
-    QUrl url(q.value("url_url").toString());
-    if (url.scheme().isEmpty())
-      url.setScheme("file");
-    QDesktopServices::openUrl(url);
+    refresh();
   }
 
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("target_id", _doc->targetid());
+  //URL -- In the future this should write to docass
+  else if (docType == "URL")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("url_id", _doc->id());
+    file newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+    refresh();
+  }
 
-  imageview newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  */
+  //image -- In the future this needs to be changed to use docass instead of imageass
+  else if (docType == "Image")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("imageass_id", _doc->id());
+    imageAssignment newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.exec() != QDialog::Rejected)
+    refresh();
+  }
+
+  //todo
+  else if (docType == "Todo")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("todoitem_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("todoItem", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+  //opportunity
+  else if (docType == "Opportunity")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("opphead_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("opportunity", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //project
+  else if (docType == "Project")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("prj_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("project", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //crmacct
+  else if (docType == "CRM Account")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("crmacct_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("crmaccount", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //cntct
+  else if (docType == "Contact")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("cntct_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("contact", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //vendor
+  else if (docType == "Vendor")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("vend_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("vendor", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //item
+  else if (docType == "Item")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("item_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("item", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //project task
+  else if (docType == "Task")
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("prjtask_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("task", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+  else
+      QMessageBox::critical(this, tr("Error"),
+                          tr("That didn't work "));
+}
+
+void Documents::sViewDoc()
+{
+  QString docType;
+  QString targetid;
+  XTreeWidgetItem *pItem = _doc->currentItem();
+  docType = pItem->rawValue("type").toString();
+  targetid = pItem->rawValue("target_id").toString();
+  qDebug() << "this is the type:" << docType << "this is the id:" << targetid;
+
+  //INCDT
+  if (docType == "Incident")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("incdt_id", targetid);
+		if (_guiClientInterface)
+		{
+			QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("incident", params, parentWidget(),Qt::WindowModal));
+			newdlg->exec();
+
+			refresh();
+		}
+  }
+
+  //URL -- In the future this should write to docass
+  else if (docType == "URL")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("url_id", _doc->id());
+    file newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+    refresh();
+  }
+
+  //image -- In the future this needs to be changed to use docass instead of imageass
+  else if (docType == "Image")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("imageass_id", _doc->id());
+    imageAssignment newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.exec() != QDialog::Rejected)
+    refresh();
+  }
+
+  //todo
+  else if (docType == "Todo")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("todoitem_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("todoItem", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+  //opportunity
+  else if (docType == "Opportunity")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("opphead_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("opportunity", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //project
+  else if (docType == "Project")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("prj_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("project", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //crmacct
+  else if (docType == "CRM Account")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("crmacct_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("crmaccount", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //cntct
+  else if (docType == "Contact")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("cntct_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("contact", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+
+  //vendor
+  else if (docType == "Vendor")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("vend_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("vendor", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //item
+  else if (docType == "Item")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("item_id", targetid);
+
+    QWidget* newdlg = _guiClientInterface->openDialog("item", params, parentWidget(),Qt::WindowModal, Qt::Dialog);
+    newdlg->show();
+
+    refresh();
+  }
+
+  //project task
+  else if (docType == "Task")
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("prjtask_id", targetid);
+
+    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog("task", params, parentWidget(),Qt::WindowModal));
+    newdlg->exec();
+
+    refresh();
+  }
+  else
+      QMessageBox::critical(this, tr("Error"),
+                          tr("That didn't work "));
+	
 }
 
 void Documents::sAttachDoc()
@@ -329,48 +562,6 @@ void Documents::sAttachDoc()
   newdlg.exec();
 
   refresh();
-}
-
-/*
-void Documents::sAttachDoc()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("sourceType", _source);
-  params.append("source_id", _sourceid);
-
-  imageAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != QDialog::Rejected)
-    refresh();
-}
-*/
-
-void Documents::sEditDoc()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("imageass_id", _doc->id());
-
-  imageAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != QDialog::Rejected)
-    refresh();
-}
-
-void Documents::sViewDoc()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("imageass_id", _doc->id());
-
-  imageAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != QDialog::Rejected)
-    refresh();
 }
 
 void Documents::sDetachDoc()
@@ -394,18 +585,6 @@ void Documents::sDetachDoc()
   q.bindValue(":docid", _doc->id());
   q.exec();
   refresh();
-}
-
-void Documents::sPrintDoc()
-{
-  ParameterList params;
-  params.append("image_id", _doc->altId());
-
-  orReport report("Image", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void Documents::refresh()
