@@ -166,6 +166,20 @@ static void __menuEvaluate(QAction * act)
   }
 }
 
+static QScriptValue settingsValue(QScriptContext *context, QScriptEngine *engine)
+{
+  if (context->argumentCount() == 2)
+    return xtsettingsValue(context->argument(0).toString(), context->argument(1).toVariant()).toString();
+  else
+    return xtsettingsValue(context->argument(0).toString()).toString();
+}
+
+static QScriptValue settingsSetValue(QScriptContext *context, QScriptEngine *engine)
+{
+  xtsettingsSetValue(context->argument(0).toString(), context->argument(1).toVariant());
+  return settingsValue(context, engine);
+}
+
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled ) :
@@ -1682,6 +1696,12 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
+
+  QScriptValue settingsval = engine->newFunction(settingsValue, 2);
+  engine->globalObject().setProperty("settingsValue", settingsval);
+
+  QScriptValue settingssetval = engine->newFunction(settingsSetValue, 2);
+  engine->globalObject().setProperty("settingsSetValue", settingssetval);
 
   engine->globalObject().setProperty("startOfTime", engine->newDate(QDateTime(_startOfTime)));
   engine->globalObject().setProperty("endOfTime", engine->newDate(QDateTime(_endOfTime)));
