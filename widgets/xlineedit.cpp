@@ -54,7 +54,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   addAction(_searchAct);
 
   _aliasAct = new QAction(tr("Alias..."), this);
-  _aliasAct->setShortcut(QKeySequence(tr("Ctrl+A")));
+  _aliasAct->setShortcut(QKeySequence(tr("Alt+S")));
   _aliasAct->setShortcutContext(Qt::WidgetShortcut);
   _aliasAct->setToolTip(tr("List of alias records"));
   connect(_aliasAct, SIGNAL(triggered()), this, SIGNAL(requestAlias()));

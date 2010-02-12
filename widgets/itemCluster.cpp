@@ -234,7 +234,6 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
   _configured = FALSE;
   _delegate = new ItemLineEditDelegate(this);
 
-  connect(this, SIGNAL(requestAlias()), this, SLOT(sAlias()));
   connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
 
   // Remove info and separator since not implemented here for now
