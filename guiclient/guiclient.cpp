@@ -265,20 +265,34 @@ void Action::init( QWidget *, const char *pName, const QString &/*pDisplayName*/
 class xTupleGuiClientInterface : public GuiClientInterface
 {
   public:
-  QDialog* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
+  QWidget* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
   {
     ScriptToolbox toolbox(0);
-    QWidget* w = toolbox.openWindow(pname, parent, modality, flags);
+		QWidget* w = toolbox.openWindow(pname, parent, modality, flags);
+		
     if (w)
     {
       if (w->inherits("QDialog"))
       {
         XDialog* xdlg = (XDialog*)w;
         xdlg->set(pparams);
-        QDialog* qdlg = (QDialog*)xdlg;
-        return qdlg;
+        //QDialog* qdlg = (QDialog*)xdlg;
+        //return qdlg;
+        return xdlg;
       }
-    }
+      else if (w->inherits("XMainWindow"))
+      {
+        XMainWindow* xwind = (XMainWindow*)w;
+        xwind->set(pparams);
+        return xwind;
+      }
+      else if (w->inherits("XWidget"))
+      {
+        XWidget* xwind = (XWidget*)w;
+        xwind->set(pparams);
+        return xwind;
+      }
+   } 
     return 0;
   }
 };
@@ -497,6 +511,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   //ContactCluster::_guiClientInterface = new xTupleGuiClientInterface();
   VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
+	Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;
