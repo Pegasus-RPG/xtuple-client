@@ -27,7 +27,8 @@ postChecks::postChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _numberOfChecks->setPrecision(0);
 
-  sHandleBankAccount(_bankaccnt->id());
+  _bankaccnt->setAllowNull(TRUE);
+  _bankaccnt->setType(XComboBox::APBankAccounts);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
@@ -42,6 +43,21 @@ postChecks::~postChecks()
 void postChecks::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse postChecks::set(const ParameterList & pParams )
+{
+  XDialog::set(pParams);
+  _captive = TRUE;
+
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("bankaccnt_id", &valid);
+  if (valid)
+    _bankaccnt->setId(param.toInt());
+
+  return NoError;
 }
 
 void postChecks::sPost()

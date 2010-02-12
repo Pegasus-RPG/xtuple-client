@@ -32,6 +32,7 @@ public slots:
     virtual void sHandleItemSelection();
     virtual void sNewMiscCheck();
     virtual void sPost();
+    virtual void sPostChecks();
     virtual void sPrepareCheckRun();
     virtual void sPrint();
     virtual void sPrintCheckRun();

@@ -18,6 +18,7 @@
 #include "miscCheck.h"
 #include "mqlutil.h"
 #include "postCheck.h"
+#include "postChecks.h"
 #include "prepareCheckRun.h"
 #include "printCheck.h"
 #include "printChecks.h"
@@ -33,7 +34,6 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete,         SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit,           SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_newMiscCheck,   SIGNAL(clicked()), this, SLOT(sNewMiscCheck()));
-  connect(_postCheck,      SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_prepareCheckRun,SIGNAL(clicked()), this, SLOT(sPrepareCheckRun()));
   connect(_replace,        SIGNAL(clicked()), this, SLOT(sReplace()));
   connect(_replaceAll,     SIGNAL(clicked()), this, SLOT(sReplaceAll()));
@@ -222,7 +222,6 @@ void viewCheckRun::sHandleItemSelection()
     select = true;
 
     _edit->setEnabled(FALSE);
-    _postCheck->setEnabled(FALSE);
 
     return;
   }
@@ -234,7 +233,6 @@ void viewCheckRun::sHandleItemSelection()
     _replace->setEnabled(TRUE);
 
     _edit->setEnabled(FALSE);
-    _postCheck->setEnabled(FALSE);
   }
   else if (! selected->rawValue("checkhead_void").isNull() &&
            ! selected->rawValue("checkhead_void").toBool())
@@ -250,8 +248,6 @@ void viewCheckRun::sHandleItemSelection()
 
     _edit->setEnabled(selected->rawValue("checkhead_misc").toBool() &&
                       ! selected->rawValue("checkhead_printed").toBool());
-    _postCheck->setEnabled(selected->rawValue("checkhead_printed").toBool() &&
-                           _privileges->check("PostPayments"));
   }
   
   QMenu * printMenu = new QMenu;
@@ -261,6 +257,14 @@ void viewCheckRun::sHandleItemSelection()
     printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"), this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu); 
+
+  QMenu * postMenu = new QMenu;
+  if (selected->rawValue("checkhead_printed").toBool() &&
+      _privileges->check("PostPayments"))
+    postMenu->addAction(tr("Selected Check..."), this, SLOT(sPost()));
+  if (_vendorgroup->isAll())
+    postMenu->addAction(tr("All Checks..."), this, SLOT(sPostChecks()));
+  _postCheck->setMenu(postMenu); 
 }
 
 void viewCheckRun::sFillList(int pBankaccntid)
@@ -276,6 +280,11 @@ void viewCheckRun::sFillList()
     printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"),   this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu);   
+
+  QMenu * postMenu = new QMenu;
+  if (_vendorgroup->isAll())
+    postMenu->addAction(tr("Post All..."), this, SLOT(sPostChecks()));
+  _postCheck->setMenu(postMenu); 
   
   MetaSQLQuery mql = mqlLoad("checkRegister", "detail");
   ParameterList params;
@@ -312,6 +321,17 @@ void viewCheckRun::sPrintCheckRun()
   params.append("bankaccnt_id", _bankaccnt->id()); 
 
   printChecks newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+  newdlg.exec();
+}
+
+void viewCheckRun::sPostChecks()
+{
+  ParameterList params;
+  params.append("bankaccnt_id", _bankaccnt->id()); 
+
+  postChecks newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.setWindowModality(Qt::WindowModal);
   newdlg.exec();

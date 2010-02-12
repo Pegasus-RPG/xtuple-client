@@ -25,12 +25,15 @@ public:
     ~postChecks();
 
 public slots:
+    virtual SetResponse set(const ParameterList &pParams);
     virtual void sPost();
     virtual void sHandleBankAccount( int pBankaccntid );
 
 protected slots:
     virtual void languageChange();
 
+private:
+    bool _captive;
 };
 
 #endif // POSTCHECKS_H

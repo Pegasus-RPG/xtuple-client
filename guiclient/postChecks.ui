@@ -84,17 +84,7 @@ to be bound by its terms.</comment>
             <number>5</number>
            </property>
            <item>
-            <widget class="XComboBox" name="_bankaccnt" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::APBankAccounts</enum>
-             </property>
-            </widget>
+            <widget class="XComboBox" name="_bankaccnt" />
            </item>
            <item>
             <widget class="XLabel" name="_numberOfChecks" >
