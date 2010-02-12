@@ -39,6 +39,19 @@ void ShipmentCluster::limitToOrder(const int head_id)
         setExtraClause(QString(" (shiphead_order_id=%1) ").arg(head_id));
         break;
     }
+    switch (static_cast<ShipmentClusterLineEdit*>(_number)->status())
+    {
+      case ShipmentClusterLineEdit::Shipped:
+        setExtraClause(QString(" AND (shiphead_shipped = TRUE) "));
+        break;
+      case ShipmentClusterLineEdit::Unshipped:
+        setExtraClause(QString(" AND (shiphead_shipped = FALSE) "));
+        break;
+      case ShipmentClusterLineEdit::AllStatus:
+      default:
+        // do nothing;
+        break;
+    }
   }
 //  else
 //    removeOrderLimit();
@@ -55,6 +68,10 @@ void ShipmentCluster::removeOrderLimit()
   ShipmentClusterLineEdit::ShipmentType type = static_cast<ShipmentClusterLineEdit*>(_number)->type();
   clearExtraClause();
   setType(type);
+
+  ShipmentClusterLineEdit::ShipmentStatus status = static_cast<ShipmentClusterLineEdit*>(_number)->status();
+  clearExtraClause();
+  setStatus(status);
 }
 
 void ShipmentClusterLineEdit::setId(const int pid)
@@ -78,13 +95,30 @@ void ShipmentCluster::setType(ShipmentClusterLineEdit::ShipmentType ptype)
   return (static_cast<ShipmentClusterLineEdit*>(_number))->setType(ptype);
 }
 
+ShipmentClusterLineEdit::ShipmentStatus ShipmentCluster::status()
+{
+  return (static_cast<ShipmentClusterLineEdit*>(_number))->status();
+}
+
+void ShipmentCluster::setStatus(QString pstatus)
+{
+  return (static_cast<ShipmentClusterLineEdit*>(_number))->setStatus(pstatus);
+}
+
+void ShipmentCluster::setStatus(ShipmentClusterLineEdit::ShipmentStatus pstatus)
+{
+  return (static_cast<ShipmentClusterLineEdit*>(_number))->setStatus(pstatus);
+}
+
 ShipmentClusterLineEdit::ShipmentClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "shiphead", "shiphead_id", "shiphead_number",
                            "formatdate(shiphead_shipdate)", "shiphead_tracknum", 0, pName)
 {
     _type = All;
+    _status = AllStatus;
     setStrict(false);
     setType(SalesOrder);
+    setStatus(Shipped);
     setTitles(tr("Shipment"), tr("Shipments"));
 }
 
@@ -131,6 +165,52 @@ void ShipmentClusterLineEdit::setType(QString ptype)
                           tr("ShipmentClusterLineEdit::setType received "
                              "an invalid ShipmentType %1").arg(ptype));
     setType(All);
+  }
+}
+
+ShipmentClusterLineEdit::ShipmentStatus ShipmentClusterLineEdit::status()
+{
+  return _status;
+}
+
+void ShipmentClusterLineEdit::setStatus(ShipmentStatus pstatus)
+{
+  if (pstatus != _status)
+  {
+    switch (pstatus)
+    {
+      case AllStatus:
+        clearExtraClause();
+        break;
+      case Shipped:
+        setExtraClause(" (shiphead_shipped = TRUE) ");
+        break;
+      case Unshipped:
+        setExtraClause(" (shiphead_shipped = FALSE) ");
+        break;
+      default:
+        QMessageBox::critical(this, tr("Invalid Shipment Status"),
+                              tr("<p>ShipmentClusterLineEdit::setStatus received "
+                                 "an invalid ShipmentStatus %1").arg(pstatus));
+        return;
+        break;
+    }
+  }
+  _status = pstatus;
+}
+
+void ShipmentClusterLineEdit::setStatus(QString pstatus)
+{
+  if (pstatus == "Shipped")
+    setStatus(Shipped);
+  else if (pstatus == "Unshipped")
+    setStatus(Unshipped);
+  else
+  {
+    QMessageBox::critical(this, tr("Invalid Shipment Status"),
+                          tr("ShipmentClusterLineEdit::setStatus received "
+                             "an invalid ShipmentStatus %1").arg(pstatus));
+    setStatus(AllStatus);
   }
 }
 

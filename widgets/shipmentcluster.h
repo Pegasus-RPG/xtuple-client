@@ -34,19 +34,25 @@ class XTUPLEWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEd
     Q_OBJECT
 
     Q_ENUMS(ShipmentType)
+    Q_ENUMS(ShipmentStatus)
 
     Q_PROPERTY(ShipmentType type READ type WRITE setType )
+    Q_PROPERTY(ShipmentStatus status READ status WRITE setStatus )
 
     public:
       // TODO: make these flags instead of a simple enum?
         enum ShipmentType { All, SalesOrder, TransferOrder };
         ShipmentClusterLineEdit(QWidget*, const char* = 0);
         virtual ShipmentType type();
+        enum ShipmentStatus { AllStatus, Shipped, Unshipped };
+        virtual ShipmentStatus status();
 
     public slots:
         virtual void setId(const int);
         virtual void setType(QString);
         virtual void setType(ShipmentType);
+        virtual void setStatus(QString);
+        virtual void setStatus(ShipmentStatus);
 
     protected slots:
         virtual VirtualList*   listFactory();
@@ -54,6 +60,7 @@ class XTUPLEWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEd
 
     private:
         ShipmentType _type;
+        ShipmentStatus _status;
 };
 
 class XTUPLEWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
@@ -63,6 +70,7 @@ class XTUPLEWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
     public:
         ShipmentCluster(QWidget*, const char* = 0);
         virtual ShipmentClusterLineEdit::ShipmentType type();
+        virtual ShipmentClusterLineEdit::ShipmentStatus status();
 
     public slots:
         virtual void limitToOrder(const int);
@@ -70,6 +78,8 @@ class XTUPLEWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
         virtual void setId(const int);
         virtual void setType(QString);
         virtual void setType(ShipmentClusterLineEdit::ShipmentType);
+        virtual void setStatus(QString);
+        virtual void setStatus(ShipmentClusterLineEdit::ShipmentStatus);
 };
 
 #endif
