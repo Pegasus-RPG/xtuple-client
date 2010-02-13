@@ -41,6 +41,13 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _assignedTo->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
   _assignedTo->setType(UsernameLineEdit::UsersActive);
+
+  _totalHrBud->setPrecision(omfgThis->qtyVal());
+  _totalHrAct->setPrecision(omfgThis->qtyVal());
+  _totalHrBal->setPrecision(omfgThis->qtyVal());
+  _totalExpBud->setPrecision(omfgThis->moneyVal());
+  _totalExpAct->setPrecision(omfgThis->moneyVal());
+  _totalExpBal->setPrecision(omfgThis->moneyVal());
   
   _saved=false;
 
@@ -356,6 +363,26 @@ void project::sDeleteTask()
 
 void project::sFillTaskList()
 {
+  q.prepare( "SELECT COALESCE(SUM(prjtask_hours_budget), 0.0) AS totalhrbud, "
+             "       COALESCE(SUM(prjtask_hours_actual), 0.0) AS totalhract, "
+			 "       COALESCE(SUM(prjtask_hours_budget - prjtask_hours_actual), 0.0) AS totalhrbal, "
+             "       COALESCE(SUM(prjtask_exp_budget), 0.0) AS totalexpbud, "
+             "       COALESCE(SUM(prjtask_exp_actual), 0.0) AS totalexpact, "
+			 "       COALESCE(SUM(prjtask_exp_budget - prjtask_exp_actual), 0.0) AS totalexpbal "
+             "FROM prjtask "
+             "WHERE (prjtask_prj_id=:prj_id);" );
+  q.bindValue(":prj_id", _prjid);
+  q.exec();
+  if (q.first())
+  {
+    _totalHrBud->setDouble(q.value("totalhrbud").toDouble());
+    _totalHrAct->setDouble(q.value("totalhract").toDouble());
+    _totalHrBal->setDouble(q.value("totalhrbal").toDouble());
+    _totalExpBud->setDouble(q.value("totalexpbud").toDouble());
+    _totalExpAct->setDouble(q.value("totalexpact").toDouble());
+    _totalExpBal->setDouble(q.value("totalexpbal").toDouble());
+  }
+  
   q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, "
              "firstLine(prjtask_descrip) AS prjtask_descrip "
              "FROM prjtask "
