@@ -157,7 +157,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
     public:
         VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
                                const char*, const char*, const char*,
-                               const char* = 0);
+                               const char* = 0, const char* = 0);
         virtual int  id() const { return _id; }
 
        void setMenu(QMenu *menu);
@@ -203,7 +203,8 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
                                             const char* pIdColumn,
                                             const char* pNumberColumn,
                                             const char* pNameColumn,
-                                            const char* pDescripColumn);
+                                            const char* pDescripColumn,
+                                            const char* pActiveColumn);
 
         void setStrict(bool);
         bool isStrict() const { return _strict; }
@@ -226,6 +227,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _titleSingular;
         QString _titlePlural;
         QString _query;
+        QString _activeClause;
         QString _idClause;
         QString _numClause;
         QString _extraClause;
@@ -235,11 +237,13 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _numColName;
         QString _nameColName;
         QString _descripColName;
+        QString _activeColName;
         QString _uiName;
         QString _editPriv;
         QString _viewPriv;
         bool _hasDescription;
         bool _hasName;
+        bool _hasActive;
         bool _strict;
 
         virtual void silentSetId(const int);

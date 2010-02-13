@@ -17,7 +17,7 @@
 #include "contactwidget.h"
 
 ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "cntct", "cntct_id", "cntct_name", 0, "cntct_title", 0, pName)
+    VirtualClusterLineEdit(pParent, "cntct", "cntct_id", "cntct_name", 0, "cntct_title", 0, pName, "cntct_active")
 {
     _searchAcctId = -1;
 
@@ -27,6 +27,7 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
     setViewPriv("ViewContacts");
 
     _query = "SELECT cntct_id AS id, cntct_name AS number, cntct_title AS description, "
+             " cntct_active AS active, "
              " cntct_first_name, cntct_last_name, crmacct_name, cntct_title, cntct_phone, "
              " cntct_phone2,cntct_fax, cntct_email, cntct_webaddr "
              "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) "
@@ -116,10 +117,10 @@ ContactSearch* ContactClusterLineEdit::searchFactory()
 void ContactClusterLineEdit::silentSetId(const int pId)
 {
   //Allow any contact to be set from here
-  QString clause = _extraClause;
-  _extraClause = "";
+  bool strict = _strict;
+  setStrict(true);
   VirtualClusterLineEdit::silentSetId(pId);
-  _extraClause = clause;
+  setStrict(strict);
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :

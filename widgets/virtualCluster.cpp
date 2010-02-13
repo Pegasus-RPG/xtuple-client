@@ -246,16 +246,18 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 					       const char* pNameColumn,
 					       const char* pDescripColumn,
 					       const char* pExtra,
-					       const char* pName) :
+                                               const char* pName,
+                                               const char* pActiveColumn) :
     XLineEdit(pParent, pName)
 {
     if (DEBUG)
-      qDebug("VirtualClusterLineEdit(%p, %s, %s, %s, %s, %s, %s, %s)",
+      qDebug("VirtualClusterLineEdit(%p, %s, %s, %s, %s, %s, %s, %s, %s)",
              pParent ? pParent : 0,         pTabName ? pTabName : "",
              pIdColumn ? pIdColumn : "",     pNumberColumn ? pNumberColumn : "",
              pNameColumn ? pNameColumn : "",
              pDescripColumn ? pDescripColumn : "",
-             pExtra ? pExtra : "",           pName ? pName : "");
+             pExtra ? pExtra : "",           pName ? pName : "",
+             pActiveColumn ? pActiveColumn : "");
 
     setObjectName(pName ? pName : "VirtualClusterLineEdit");
 
@@ -263,7 +265,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _parsed = true;
     _strict = true;
 
-    setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn);
+    setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn, pActiveColumn);
 
     if (pExtra && QString(pExtra).trimmed().length())
 	_extraClause = pExtra;
@@ -465,6 +467,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
   XSqlQuery numQ;
   numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+               (_hasActive ? _activeClause : "") +
                QString("ORDER BY %1 LIMIT 10;").arg(_numColName));
   numQ.bindValue(":number", "^" + stripped);
   numQ.exec();
@@ -503,12 +506,14 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
 						    const char* pIdColumn,
 						    const char* pNumberColumn,
 						    const char* pNameColumn,
-						    const char* pDescripColumn)
+                                                    const char* pDescripColumn,
+                                                    const char* pActiveColumn)
 {
   _idColName = QString(pIdColumn);
   _numColName = QString(pNumberColumn);
   _nameColName = QString(pNameColumn);
   _descripColName = QString(pDescripColumn);
+  _activeColName = QString(pActiveColumn);
 
   _query = QString("SELECT %1 AS id, %2 AS number ")
 		  .arg(pIdColumn).arg(pNumberColumn);
@@ -522,10 +527,19 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
   if (_hasDescription)
     _query += QString(", %1 AS description ").arg(pDescripColumn);
 
+  _hasActive = (pActiveColumn && QString(pActiveColumn).trimmed().length());
+  if (_hasActive)
+    _query += QString(", %1 AS active ").arg(pActiveColumn);
+
   _query += QString("FROM %1 WHERE (TRUE) ").arg(pTabName);
 
   _idClause = QString(" AND (%1=:id) ").arg(pIdColumn);
   _numClause = QString(" AND (%1 ~* :number) ").arg(pNumberColumn);
+
+  if (_hasActive)
+    _activeClause = QString(" AND (%1) ").arg(pActiveColumn);
+  else
+    _activeClause = "";
 
   _extraClause = "";
 }
@@ -612,6 +626,12 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
         _name = (idQ.value("name").toString());
       if (_hasDescription)
         _description = idQ.value("description").toString();
+      if (_hasActive)
+      {
+        QFont font;
+        font.setStrikeOut(!idQ.value("active").toBool());
+        setFont(font);
+      }
     }
     else if (idQ.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -650,6 +670,7 @@ void VirtualClusterLineEdit::sParse()
         XSqlQuery numQ;
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                    (_hasActive ? _activeClause : "" ) +
                     QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
         numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
@@ -686,13 +707,7 @@ void VirtualClusterLineEdit::sList()
   if (newdlg)
   {
     int id = newdlg->exec();
-    bool newid = (id == _id);
-    silentSetId(id); //Force refresh
-    if (newid)
-    {
-      emit newId(id);
-      emit valid(id);
-    }
+    setId(id);
   }
   else
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -716,6 +731,7 @@ void VirtualClusterLineEdit::sSearch()
       XSqlQuery numQ;
       numQ.prepare(_query + _numClause +
                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                   (_hasActive ? _activeClause : "" ) +
                    QString("ORDER BY %1;").arg(_numColName));
       numQ.bindValue(":number", "^" + stripped);
       numQ.exec();
@@ -941,6 +957,7 @@ void VirtualList::sFillList()
     XSqlQuery query(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
+                    (_parent->_hasActive ? _parent->_activeClause : "") +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
     _listTab->populate(query);
@@ -1097,6 +1114,7 @@ void VirtualSearch::sFillList()
 		    (search.isEmpty() ? "" :  " AND " + search) +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
+                    (_parent->_hasActive ? _parent->_activeClause : "") +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
                     

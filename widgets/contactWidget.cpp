@@ -997,7 +997,8 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
     
     _searchAcctId = -1;
     _query = "SELECT cntct.*, crmacct_name "
-             "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) ";
+             "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) "
+             "WHERE (cntct_active) ";
 
     if (!pName)
 	setObjectName("ContactList");
@@ -1052,7 +1053,7 @@ void ContactList::set(ParameterList &pParams)
 void ContactList::sFillList(const bool searchAcct)
 {
   if (searchAcct)
-    _extraClause = " WHERE (cntct_crmacct_id=:searchAcctId) ";
+    _extraClause = " AND (cntct_crmacct_id=:searchAcctId) ";
   else
     _extraClause = "";
 
