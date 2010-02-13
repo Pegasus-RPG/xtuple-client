@@ -234,7 +234,7 @@ bool voucher::sSave()
     return false;
   }
 
-  if (_invoiceNum->text().trimmed().length() == 0)
+  if ( (_metrics->boolean("ReqInvRegVoucher")) && (_invoiceNum->text().trimmed().length() == 0) )
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("<p>You must enter a Vendor Invoice Number "

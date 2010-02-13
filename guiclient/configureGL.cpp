@@ -65,6 +65,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
     if (q.first())
       _nextACHBatchNumber->setText(q.value("result"));
   }
+  _reqInvoiceReg->setChecked(_metrics->boolean("ReqInvRegVoucher"));
+  _reqInvoiceMisc->setChecked(_metrics->boolean("ReqInvMiscVoucher"));
     
   // AR
   _nextARMemoNumber->setValidator(omfgThis->orderVal());
@@ -242,6 +244,8 @@ void configureGL::sSave()
       q.exec();
     }
   }
+  _metrics->set("ReqInvRegVoucher", _reqInvoiceReg->isChecked());
+  _metrics->set("ReqInvMiscVoucher", _reqInvoiceMisc->isChecked());
   
   // AR
   q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");

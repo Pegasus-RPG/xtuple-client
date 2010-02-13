@@ -180,7 +180,7 @@ void miscVoucher::sSave()
     return;
   }
 
-  if (_invoiceNum->text().trimmed().length() == 0)
+  if ( (_metrics->boolean("ReqInvMiscVoucher")) && (_invoiceNum->text().trimmed().length() == 0) )
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("You must enter a Vendor Invoice Number before you may save this Voucher.") );

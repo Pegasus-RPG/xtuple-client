@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
-    <height>557</height>
+    <width>756</width>
+    <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -768,7 +768,7 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
+         <item row="4" column="0">
           <spacer>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -783,6 +783,27 @@ to be bound by its terms.</comment>
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="_reqInvoiceLit">
+           <property name="text">
+            <string>Require Vendor Invoice # on:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="_reqInvoiceReg">
+           <property name="text">
+            <string>Regular Vouchers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="_reqInvoiceMisc">
+           <property name="text">
+            <string>Miscellaneous Vouchers</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1177,6 +1198,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
