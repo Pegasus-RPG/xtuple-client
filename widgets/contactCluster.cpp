@@ -105,12 +105,21 @@ void ContactClusterLineEdit::sSearch()
 
 ContactList* ContactClusterLineEdit::listFactory()
 {
-    return new ContactList(this);
+  return new ContactList(this);
 }
 
 ContactSearch* ContactClusterLineEdit::searchFactory()
 {
-    return new ContactSearch(this);
+  return new ContactSearch(this);
+}
+
+void ContactClusterLineEdit::silentSetId(const int pId)
+{
+  //Allow any contact to be set from here
+  QString clause = _extraClause;
+  _extraClause = "";
+  VirtualClusterLineEdit::silentSetId(pId);
+  _extraClause = clause;
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :

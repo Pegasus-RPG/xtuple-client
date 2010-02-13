@@ -37,6 +37,7 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
     protected slots:
       ContactList* listFactory();
       ContactSearch* searchFactory();
+      void silentSetId(const int);
 
     private:
       int _searchAcctId;
