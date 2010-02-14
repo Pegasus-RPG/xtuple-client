@@ -22,7 +22,7 @@ int EmpClusterLineEdit::idFromList(QWidget *pParent)
 }
 
 EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName, "emp_active")
 {
   setTitles(tr("Employee"), tr("Employees"));
   setUiName("employee");
