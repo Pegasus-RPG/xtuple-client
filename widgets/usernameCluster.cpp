@@ -50,19 +50,18 @@ void UsernameLineEdit::setId(const int pId)
   query.prepare(sql);
   query.bindValue(":id", pId);
   query.exec();
+  setStrikeOut(!query.size());
   if(query.first())
   {
     _id = pId;
     _valid = true;
     _username = query.value("usr_username").toString();
-    setStyleSheet("");
     setText(_username);
   }
   else
   {
     _id = -1;
     _valid = false;
-    setStyleSheet(QString("QLineEdit { color: %1 } ").arg(namedColor("error").name()));
   }
 
   emit newId(_id);
@@ -84,6 +83,7 @@ void UsernameLineEdit::setType(enum Type pType)
 void UsernameLineEdit::clear()
 {
   setId(-1);
+  setText(QString());
 }
 
 void UsernameLineEdit::setUsername(const QString & pUsername)
@@ -121,6 +121,8 @@ void UsernameLineEdit::sParse()
   {
     _parsed = true;
     setUsername(text());
+    if (!_valid)
+      clear();
   }
 }
 
