@@ -118,7 +118,7 @@ void ContactClusterLineEdit::silentSetId(const int pId)
 {
   //Allow any contact to be set from here
   bool strict = _strict;
-  setStrict(true);
+  setStrict(false);
   VirtualClusterLineEdit::silentSetId(pId);
   setStrict(strict);
 }
