@@ -137,7 +137,6 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _name->setVisible(true);
   _description->setVisible(true);
 
-  setMinimumWidth(500);
   QSpacerItem* _cntctSpacer = new QSpacerItem(15, 3,QSizePolicy::Fixed,QSizePolicy::Fixed);
   _grid->addItem(_cntctSpacer, 1, 1, 1, 1);
   _grid->removeWidget(_description);
@@ -321,7 +320,7 @@ void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
       return;
 
     _number->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  //  _number->setMinimumWidth(200);
+    _number->setMinimumWidth(200);
     QHBoxLayout* hbox = new QHBoxLayout;
     QSpacerItem* item = new QSpacerItem(100, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     hbox->addWidget(_number);
