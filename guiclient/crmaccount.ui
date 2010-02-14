@@ -502,48 +502,56 @@ to be bound by its terms.</comment>
             <number>0</number>
            </property>
            <widget class="QWidget" name="_primaryPage">
-            <layout class="QGridLayout">
+            <layout class="QGridLayout" name="gridLayout_10">
              <item row="0" column="0">
-              <widget class="ContactCluster" name="_primary">
-               <property name="listVisible">
-                <bool>true</bool>
-               </property>
-               <property name="accountVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="activeVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="initialsVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>662</width>
-                 <height>69</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="1">
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout">
+                 <item>
+                  <widget class="ContactCluster" name="_primary">
+                   <property name="listVisible">
+                    <bool>true</bool>
+                   </property>
+                   <property name="accountVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                   <property name="activeVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                   <property name="initialsVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -553,49 +561,57 @@ to be bound by its terms.</comment>
            <widget class="QWidget" name="_secondaryPage">
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="0" column="0">
-              <widget class="ContactCluster" name="_secondary">
-               <property name="listVisible">
-                <bool>false</bool>
-               </property>
-               <property name="accountVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="ownerEnabled" stdset="0">
-                <bool>true</bool>
-               </property>
-               <property name="activeVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="initialsVisible" stdset="0">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>662</width>
-                 <height>69</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="1">
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <widget class="ContactCluster" name="_secondary">
+                   <property name="listVisible">
+                    <bool>false</bool>
+                   </property>
+                   <property name="accountVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                   <property name="ownerEnabled" stdset="0">
+                    <bool>true</bool>
+                   </property>
+                   <property name="activeVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                   <property name="initialsVisible" stdset="0">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -820,6 +836,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
