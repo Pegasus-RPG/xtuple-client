@@ -42,13 +42,13 @@ CRMAcctLineEdit::CRMAcctSubtype CRMAcctCluster::subtype() const
 }
 
 CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "crmacct", "crmacct_id", "crmacct_number", "crmacct_name", 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "crmacct", "crmacct_id", "crmacct_number", "crmacct_name", 0, 0, pName, "crmacct_active")
 {
     setTitles(tr("CRM Account"), tr("CRM Accounts"));
     setSubtype(Crmacct);
 
     _query = "SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
-           "       addr.*,"
+           "       crmacct_active AS active, addr.*,"
            "       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
            "       cntct.* "
            "    FROM crmacct LEFT OUTER JOIN"
