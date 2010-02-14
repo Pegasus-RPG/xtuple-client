@@ -193,6 +193,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual VirtualSearch*  searchFactory();
         virtual VirtualInfo*    infoFactory();
 
+        virtual void setStrikeOut(bool enable = false);
         virtual void sHandleCompleter();
         virtual void sParse();
         virtual void sUpdateMenu();

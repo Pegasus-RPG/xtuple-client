@@ -502,6 +502,21 @@ void VirtualClusterLineEdit::sHandleCompleter()
   _parsed = false;
 }
 
+void VirtualClusterLineEdit::setStrikeOut(bool enable)
+{
+  if (font().strikeOut() == enable)
+    return;
+
+  QFont font = this->font();
+  font.setStrikeOut(enable);
+  setFont(font);
+
+  if (enable)
+    connect(this, SIGNAL(textEdited(QString)), this, SLOT(setStrikeOut()));
+  else
+    disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(setStrikeOut()));
+}
+
 void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
 						    const char* pIdColumn,
 						    const char* pNumberColumn,
@@ -627,11 +642,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       if (_hasDescription)
         _description = idQ.value("description").toString();
       if (_hasActive)
-      {
-        QFont font;
-        font.setStrikeOut(!idQ.value("active").toBool());
-        setFont(font);
-      }
+        setStrikeOut(!idQ.value("active").toBool());
     }
     else if (idQ.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
