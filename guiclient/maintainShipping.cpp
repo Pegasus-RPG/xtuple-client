@@ -34,10 +34,8 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _ship->setRootIsDecorated(TRUE);
@@ -53,7 +51,6 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
   _ship->addColumn(tr("Value At Ship"),    _moneyColumn,  Qt::AlignRight, true, "shipvalue");
   _ship->addColumn(tr("Hold Type"),        _statusColumn, Qt::AlignCenter,true, "holdtype");
 
-  sFillList();
 }
 
 maintainShipping::~maintainShipping()
