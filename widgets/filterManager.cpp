@@ -22,74 +22,78 @@
 filterManager::filterManager(QWidget* parent, const char* name)
     : QDialog(parent)
 {
-
   if(name)
-  {
     setObjectName(name);
-  }
 
   setupUi(this);
   
+  _filterId=-1;
 
+  _filterSet->addColumn(tr("Filter Set Name"), -1, Qt::AlignLeft, true, "filter_name" );
 
-  _filterId=NULL;
+  connect(_filterSet, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT( getXTreeWidgetItem(XTreeWidgetItem*, int) ) );
+  connect(_edit, SIGNAL(clicked()), this, SLOT( applySaved() ));
+  connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
+  connect(this, SIGNAL(filterSelected(QString)), parent, SLOT( setSavedFiltersIndex(QString) ));
+  connect(this, SIGNAL(filterDeleted()), parent, SLOT(setSavedFilters()) );
+}
 
-  _filterSet->addColumn(tr("Filter Set Name"), 1, Qt::AlignLeft, true, "filter_name" );
+void filterManager::set(ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
 
-  this->populate();
-
-  if (this->parent() != NULL)
+  param = pParams.value("screen", &valid);
+  if (valid)
   {
-	  connect(_filterSet, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT( getXTreeWidgetItem(XTreeWidgetItem*, int) ) );
-	  connect(_edit, SIGNAL(clicked()), this, SLOT( applySaved() ));
-	  connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
-	  connect(this, SIGNAL(filterSelected(QString)), parent, SLOT( setSavedFiltersIndex(QString) ));
-	  connect(this, SIGNAL(filterDeleted()), parent, SLOT(setSavedFilters()) );
-  }	
+    _screen = param.toString();
+    populate();
+  }
 }
 
 void filterManager::populate()
 {
-	if (this->parent() != NULL && this->parent()->parent() != NULL)
-	{
-		QString screen = this->parent()->parent()->objectName();
+  if (parent())
+  {
+    if (parent()->parent())
+    {
+      XSqlQuery qry;
+      qry.prepare("select filter_id, filter_name "
+                  "from filter "
+                  "where filter_username=current_user "
+                  " and filter_screen=:screen;");
+      qry.bindValue(":screen", parent()->parent()->objectName());
+      qry.exec();
 
-		QString query = "select filter_id, filter_name from filter where filter_username=current_user and filter_screen='" + screen + "'";
-		XSqlQuery qry;
-
-		qry.prepare(query);
-		
-		qry.exec();
-	
-		_filterSet->populate(query, false);
-	}
-	
+      _filterSet->populate(qry, false);
+    }
+  }
 }
 
 void filterManager::getXTreeWidgetItem(XTreeWidgetItem* item, int column)
 {
-	_filterId = item->id();
-	_filterText = item->text(0);
+  _filterId = item->id();
+  _filterText = item->text(0);
 }
 
 void filterManager::applySaved()
 {
-	ParameterWidget* pWidget = (ParameterWidget*)this->parent();
-	pWidget->applySaved(0, _filterId);
-	emit filterSelected(_filterText);
-	this->close();
+  ParameterWidget* pWidget = (ParameterWidget*)this->parent();
+  pWidget->applySaved(0, _filterId);
+  emit filterSelected(_filterText);
+  this->close();
 }
 
 void filterManager::deleteFilter()
 {
-	QString query = "delete from filter where filter_id=:filter_id";
-	XSqlQuery qry;
+  QString query = "delete from filter where filter_id=:filter_id";
+  XSqlQuery qry;
 
-	qry.prepare(query);
-	qry.bindValue(":filter_id", _filterId);
-	qry.exec();
+  qry.prepare(query);
+  qry.bindValue(":filter_id", _filterId);
+  qry.exec();
 
-	this->populate();
+  this->populate();
 
-	emit filterDeleted();
+  emit filterDeleted();
 }

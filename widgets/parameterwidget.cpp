@@ -542,7 +542,11 @@ void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetType
 
 void ParameterWidget::sManageFilters()
 {
+  ParameterList params;
+  params.append("screen", parent()->metaObject()->className());
+
   filterManager *newdlg = new filterManager(this, "");
+  newdlg->set(params);
   newdlg->exec();
 }
 

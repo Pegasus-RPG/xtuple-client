@@ -17,6 +17,16 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="_headerLayout">
      <item>
+      <widget class="QLabel" name="_filterListLit">
+       <property name="text">
+        <string>Apply Filter:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XComboBox" name="_filterList"/>
+     </item>
+     <item>
       <widget class="QPushButton" name="_filterButton">
        <property name="text">
         <string>More</string>
@@ -28,9 +38,6 @@
         <bool>true</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="XComboBox" name="_filterList"/>
      </item>
      <item>
       <spacer name="_headerSpacer">
@@ -121,11 +128,18 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>0</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="_filterSetNameLit">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="_filterSetName"/>

@@ -21,20 +21,22 @@ class filterManager : public QDialog, public Ui::filterManager
 
 public:
     filterManager(QWidget* parent = 0, const char* name = 0);
-	void populate();
+    void set( ParameterList & pParams );
+    void populate();
 	
 public slots:
-	void getXTreeWidgetItem(XTreeWidgetItem* item, int column);
-	void applySaved();
-	void deleteFilter();
+    void getXTreeWidgetItem(XTreeWidgetItem* item, int column);
+    void applySaved();
+    void deleteFilter();
 
 signals:
-	void filterSelected(QString);
-	void filterDeleted();
+    void filterSelected(QString);
+    void filterDeleted();
 
 private:
-	int _filterId;
-	QString _filterText;
+   int _filterId;
+   QString _filterText;
+   QString _screen;
 };
 
 #endif // FILTERMANAGER_H
