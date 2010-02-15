@@ -8,91 +8,63 @@
  * to be bound by its terms.
  */
 
-
 #ifndef parameterwidget_h
 #define parameterwidget_h
 
-#include <QGroupBox>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QGridLayout>
-#include <QSplitter>
-#include <QLineEdit>
-#include "widgets.h"
-#include <parameter.h>
-#include <QSizePolicy>
-#include <QApplication>
-#include <QtDebug>
 #include <QSignalMapper>
-#include <QLayoutItem>
 #include <QMap>
 #include <QPair>
-#include <QString>
-#include <QDate>
-#include <QSpacerItem>
-#include <QMessageBox>
+
+#include <parameter.h>
+
+#include "widgets.h"
+#include "ui_parameterwidget.h"
 
 class ParameterList;
-class XComboBox;
 
-class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget
+class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::ParameterWidget
 {
   Q_OBJECT
 
   Q_ENUMS(ParameterWidgetTypes)
    
   public:
-	enum ParameterWidgetTypes
+    enum ParameterWidgetTypes
     {
       Crmacct, User, Text, Date
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
-	void addFilters();
-	void appendValue(ParameterList &);
-	void applyDefaultFilterSet();
+    void appendValue(ParameterList &);
+    void applyDefaultFilterSet();
     
  public slots:
-	void addParam();
-        void applySaved(int pId = 0, int filter_id = 0);
-	void changeFilterButton();
-	void changeFilterObject(int);
-	void clearFilters();
-	void removeParam(int);
-	void save();
-	void setSavedFilters();
-	void setSavedFilters(int defaultId);
-	void setSavedFiltersIndex(QString);
-	void setType(QString, QString, enum ParameterWidgetTypes = Text);
-	void sManageFilters();
-	void storeFilterValue(QDate);
-  void storeFilterValue(int pId = -1);
+    void addParam();
+    void applySaved(int pId = 0, int filter_id = 0);
+    void changeFilterObject(int index);
+    void clearFilters();
+    void removeParam(int);
+    void save();
+    void setSavedFilters(int defaultId = -1);
+    void setSavedFiltersIndex(QString);
+    void setType(QString, QString, enum ParameterWidgetTypes = Text);
+    void sManageFilters();
+    void storeFilterValue(QDate);
+    void storeFilterValue(int pId = -1);
 
   signals:
-	void cleared();
-	void filterSetSaved();
+    void cleared();
+    void filterSetSaved();
     void updated();
 
   private:
-	QPushButton *_filterButton;
-	QPushButton *_saveButton;
-	QPushButton *_manageButton;
-	XComboBox *_filterList;
-	QGridLayout * _window;
-	QHBoxLayout *_hboxLayout;
     enum ParameterWidgetTypes _type;
-	QGroupBox *_groupBox;
-	QVBoxLayout *vbox;
-	QPushButton *addFilterRow;
-	QLineEdit *_filterSetName;
-	QSignalMapper *_filterSignalMapper;
-        QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
-        QMap<int, QPair<QString, QVariant> > _filterValues;
-	
-	void addGroupBox();
-	QString getParameterTypeKey(QString);
-	void setSelectedFilter(int filter_id);
+    QSignalMapper *_filterSignalMapper;
+    QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
+    QMap<int, QPair<QString, QVariant> > _filterValues;
+
+    QString getParameterTypeKey(QString);
+    void setSelectedFilter(int filter_id);
 };
 
 #endif

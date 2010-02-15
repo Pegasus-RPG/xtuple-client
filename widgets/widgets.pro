@@ -247,6 +247,7 @@ FORMS += accountSearch.ui \
          file.ui \
          imageAssignment.ui \
          imageview.ui \
+         parameterwidget.ui \
          recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
