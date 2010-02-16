@@ -307,6 +307,9 @@ void ParameterWidget::changeFilterObject(int index)
   switch (type)
   {
   case Date:
+    delete usernameCluster;
+    delete crmacctCluster;
+    delete lineEdit;
     dLineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, dLineEdit);
@@ -315,6 +318,9 @@ void ParameterWidget::changeFilterObject(int index)
     connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue(QDate) ) );
     break;
   case User:
+    delete dLineEdit;
+    delete crmacctCluster;
+    delete lineEdit;
     usernameCluster->setObjectName("widget" + row);
     usernameCluster->setNameVisible(false);
     usernameCluster->setDescriptionVisible(false);
@@ -326,6 +332,9 @@ void ParameterWidget::changeFilterObject(int index)
     connect(usernameCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     break;
   case Crmacct:
+    delete dLineEdit;
+    delete usernameCluster;
+    delete lineEdit;
     crmacctCluster->setObjectName("widget" + row);
     crmacctCluster->setNameVisible(false);
     crmacctCluster->setDescriptionVisible(false);
@@ -337,6 +346,9 @@ void ParameterWidget::changeFilterObject(int index)
     connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     break;
   default:
+    delete dLineEdit;
+    delete usernameCluster;
+    delete crmacctCluster;
     lineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, lineEdit);
