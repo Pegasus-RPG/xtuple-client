@@ -1269,6 +1269,7 @@ void itemSite::populate()
     {
       _perishable->setEnabled(TRUE);
       _perishable->setChecked(itemsite.value("itemsite_perishable").toBool());
+      _sequence->setId(itemsite.value("itemsite_lsseq_id").toInt());
     }
     else
       _perishable->setEnabled(FALSE);
@@ -1310,19 +1311,19 @@ void itemSite::populate()
 
     if ( (itemsite.value("item_type").toString() == "P") ||
          (itemsite.value("item_type").toString() == "O")    )
-	{
+    {
       _createPr->setChecked(itemsite.value("itemsite_createpr").toBool());
-	  _createSoPr->setChecked(itemsite.value("itemsite_createsopr").toBool());
-	  _createPo->setChecked(itemsite.value("itemsite_createsopo").toBool());
-	  _dropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
-	}
+      _createSoPr->setChecked(itemsite.value("itemsite_createsopr").toBool());
+      _createPo->setChecked(itemsite.value("itemsite_createsopo").toBool());
+      _dropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+    }
     else
-	{
+    {
       _createPr->setEnabled(FALSE);
-	  _createSoPr->setEnabled(FALSE);
-	  _createPo->setEnabled(FALSE);
-	  _dropShip->setEnabled(FALSE);
-	}
+      _createSoPr->setEnabled(FALSE);
+      _createPo->setEnabled(FALSE);
+      _dropShip->setEnabled(FALSE);
+    }
 
     if ( (itemsite.value("item_type").toString() == "M") )
       _createWo->setChecked(itemsite.value("itemsite_createwo").toBool());
@@ -1387,7 +1388,6 @@ void itemSite::populate()
       _todate->setChecked(FALSE);
       _proportional->setChecked(TRUE);
     }
-    _sequence->setId(itemsite.value("itemsite_lsseq_id").toInt());
 
     _updates = TRUE;
   }
