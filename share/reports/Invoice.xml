@@ -147,7 +147,7 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
        formatMoney(total_allocated) AS f_allocated
  FROM (SELECT invchead_misc_amount, invchead_freight,
               invchead_payment, invchead_notes, invchead_misc_descrip,
-              (SELECT SUM(tax) 
+              (SELECT COALESCE(SUM(tax),0) 
                 FROM (
                 SELECT ROUND(SUM(taxdetail_tax),2) AS tax 
                 FROM tax 
