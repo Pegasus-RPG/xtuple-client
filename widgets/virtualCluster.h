@@ -277,6 +277,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    infoVisible    READ infoVisible    WRITE setInfoVisible)
     Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible)
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
+    Q_PROPERTY(bool    descriptionVisible READ descriptionVisible WRITE setDescriptionVisible)
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly)
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
     Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false)
@@ -293,6 +294,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
                     inline virtual bool    listVisible()    const { return _list->isVisible(); }
                     inline virtual QString label()          const { return _label->text(); }
                     inline virtual bool    nameVisible()    const { return _name->isVisible(); }
+                    inline virtual bool    descriptionVisible() const { return _description->isVisible(); }
                     inline virtual QString number()         const { return _number->text(); }
         Q_INVOKABLE inline virtual QString description()    const { return _description->text(); }
         Q_INVOKABLE inline virtual bool    isValid()        const { return _number->isValid(); }
@@ -315,6 +317,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void setListVisible(const bool p);
         virtual void setName(const QString& p)         { _name->setText(p); }
         virtual void setNameVisible(const bool p)      { _name->setHidden(!p); }
+        virtual void setDescriptionVisible(const bool p) { _description->setHidden(!p); }
         virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); }
         virtual void setNumber(const QString& p)       { _number->setNumber(p); }
 

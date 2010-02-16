@@ -313,6 +313,9 @@ void ParameterWidget::changeFilterObject(int index)
   case User:
     UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
     usernameCluster->setObjectName("widget" + row);
+    usernameCluster->setNameVisible(false);
+    usernameCluster->setDescriptionVisible(false);
+    usernameCluster->setLabel("");
 
     layout->insertWidget(0, usernameCluster);
 
@@ -322,6 +325,9 @@ void ParameterWidget::changeFilterObject(int index)
   case Crmacct:
     CRMAcctCluster *crmacctCluster = new CRMAcctCluster(this);
     crmacctCluster->setObjectName("widget" + row);
+    crmacctCluster->setNameVisible(false);
+    crmacctCluster->setDescriptionVisible(false);
+    crmacctCluster->setLabel("");
 
     layout->insertWidget(0, crmacctCluster);
 
