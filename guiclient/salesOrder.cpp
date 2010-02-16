@@ -2699,6 +2699,7 @@ void salesOrder::sFillItemList()
     q.bindValue(":cohead_id", _soheadid);
     q.bindValue(":cust_id", _cust->id());
     q.exec();
+    _cust->setReadOnly(q.size() || !ISNEW(_mode));
     _amountAtShipping->setLocalValue(0.0);
     _soitem->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
@@ -2764,6 +2765,7 @@ void salesOrder::sFillItemList()
                "ORDER BY quitem_linenumber;" );
     q.bindValue(":quhead_id", _soheadid);
     q.exec();
+    _cust->setReadOnly(q.size() || !ISNEW(_mode));
     _soitem->populate(q);
     if (q.lastError().type() != QSqlError::NoError)
     {
