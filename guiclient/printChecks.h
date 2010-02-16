@@ -26,7 +26,7 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList &pParams);
-    virtual void sCreateACH();
+    virtual void sCreateEFT();
     virtual void sHandleBankAccount( int pBankaccntid );
     virtual void sPrint();
 
@@ -37,8 +37,8 @@ protected slots:
 private:
     bool _captive;
     int  _setCheckNumber;
-    bool _allrecips_ach_enabled;
-    bool _somerecips_ach_enabled;
+    bool _allrecips_eft_enabled;
+    bool _somerecips_eft_enabled;
 };
 
 #endif // PRINTCHECKS_H

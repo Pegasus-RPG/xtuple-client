@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
@@ -8,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>configureEncryption</class>
- <widget class="QDialog" name="configureEncryption" >
-  <property name="geometry" >
+ <widget class="QDialog" name="configureEncryption">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -17,95 +17,95 @@ to be bound by its terms.</comment>
     <height>240</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Encryption Configuration</string>
   </property>
-  <layout class="QHBoxLayout" >
+  <layout class="QHBoxLayout">
    <item>
-    <layout class="QGridLayout" >
-     <item row="1" column="0" >
-      <widget class="QLabel" name="_ccEncKeyNameLit" >
-       <property name="text" >
+    <layout class="QGridLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="_ccEncKeyNameLit">
+       <property name="text">
         <string>Key File Name:</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>_ccEncKeyName</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="QLineEdit" name="_ccEncKeyName" >
-       <property name="text" >
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="_ccEncKeyName">
+       <property name="text">
         <string>keyfile.txt</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="_ccWinEncKeyLit" >
-       <property name="whatsThis" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <item row="2" column="0">
+      <widget class="QLabel" name="_ccWinEncKeyLit">
+       <property name="whatsThis">
+        <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis for a label with a buddy that's an empty text field&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;whatsthis for a label with a buddy that's an empty text field&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Windows Location:</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="FileCluster" name="_ccWinEncKey" >
-       <property name="fileMode" >
+     <item row="2" column="1">
+      <widget class="FileCluster" name="_ccWinEncKey">
+       <property name="fileMode">
         <enum>QFileDialog::DirectoryOnly</enum>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="_ccLinEncKeyLit" >
-       <property name="text" >
+     <item row="3" column="0">
+      <widget class="QLabel" name="_ccLinEncKeyLit">
+       <property name="text">
         <string>Linux Location:</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
-      <widget class="FileCluster" name="_ccLinEncKey" >
-       <property name="fileMode" >
+     <item row="3" column="1">
+      <widget class="FileCluster" name="_ccLinEncKey">
+       <property name="fileMode">
         <enum>QFileDialog::Directory</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" >
-      <widget class="QLabel" name="_ccMacEncKeyLit" >
-       <property name="text" >
+     <item row="4" column="0">
+      <widget class="QLabel" name="_ccMacEncKeyLit">
+       <property name="text">
         <string>Mac Location:</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" >
-      <widget class="FileCluster" name="_ccMacEncKey" >
-       <property name="fileMode" >
+     <item row="4" column="1">
+      <widget class="FileCluster" name="_ccMacEncKey">
+       <property name="fileMode">
         <enum>QFileDialog::Directory</enum>
        </property>
       </widget>
      </item>
-     <item row="5" column="1" >
+     <item row="5" column="1">
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>0</height>
@@ -113,40 +113,40 @@ p, li { white-space: pre-wrap; }
        </property>
       </spacer>
      </item>
-     <item row="0" column="0" colspan="2" >
-      <widget class="QLabel" name="_ccEncryptionLabel" >
-       <property name="text" >
-        <string>Encryption Key location for Credit Card and ACH processing:</string>
+     <item row="0" column="0" colspan="2">
+      <widget class="QLabel" name="_ccEncryptionLabel">
+       <property name="text">
+        <string>Encryption Key location for Credit Card and EFT processing:</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" >
+    <layout class="QVBoxLayout">
      <item>
-      <widget class="QPushButton" name="_close" >
-       <property name="text" >
+      <widget class="QPushButton" name="_close">
+       <property name="text">
         <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_save" >
-       <property name="text" >
+      <widget class="QPushButton" name="_save">
+       <property name="text">
         <string>&amp;Save</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>16</height>
@@ -158,7 +158,7 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -180,11 +180,11 @@ p, li { white-space: pre-wrap; }
    <receiver>configureEncryption</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+    <hint type="sourcelabel">
+     <x>519</x>
+     <y>32</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

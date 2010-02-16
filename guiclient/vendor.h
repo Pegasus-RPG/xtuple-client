@@ -62,6 +62,8 @@ protected slots:
 
 protected:
     virtual void closeEvent(QCloseEvent*);
+    QValidator *_accountValidator;
+    QValidator *_routingValidator;
 
 private:
     int _mode;

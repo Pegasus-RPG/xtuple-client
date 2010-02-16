@@ -31,9 +31,6 @@ to be bound by its terms.</comment>
      </property>
      <item row="0" column="1">
       <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
        <item>
         <widget class="QPushButton" name="_close">
          <property name="text">
@@ -607,7 +604,7 @@ to be bound by its terms.</comment>
              <item>
               <widget class="QGroupBox" name="_achGroup">
                <property name="title">
-                <string>Enable ACH Check Printing</string>
+                <string>Enable EFT Check Printing</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>
@@ -688,38 +685,6 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0">
-                 <widget class="QLabel" name="_achSuffixLit">
-                  <property name="text">
-                   <string>Default File Suffix:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="1">
-                 <widget class="QComboBox" name="_achSuffix">
-                  <property name="editable">
-                   <bool>true</bool>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>.ach</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>.dat</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>.txt</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
                 <item row="1" column="2">
                  <widget class="QLabel" name="label">
                   <property name="text">
@@ -746,6 +711,180 @@ to be bound by its terms.</comment>
                   <property name="text">
                    <string>Other</string>
                   </property>
+                 </widget>
+                </item>
+                <item row="6" column="0" colspan="4">
+                 <widget class="QGroupBox" name="_eftStyle">
+                  <property name="title">
+                   <string>Select an EFT Format</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout">
+                   <item row="1" column="0">
+                    <widget class="QRadioButton" name="_eftAch">
+                     <property name="text">
+                      <string>ACH</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QRadioButton" name="_eftAba">
+                     <property name="text">
+                      <string>ABA</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QRadioButton" name="_eftCustom">
+                     <property name="text">
+                      <string>Custom</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="XLabel" name="_eftAchSuffix">
+                     <property name="text">
+                      <string>.ach</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="XLabel" name="_eftAbaSuffix">
+                     <property name="text">
+                      <string>.aba</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="_eftSuffixLit">
+                     <property name="text">
+                      <string>Default Suffix</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="XComboBox" name="_eftCustomSuffix">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="editable">
+                      <bool>true</bool>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>.aba</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>.ach</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>.dat</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>.txt</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="3" column="2">
+                    <widget class="XLineEdit" name="_eftCustomRoutingRegex">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="text">
+                      <string>^\d+$</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="XLabel" name="_eftAbaRoutingRegex">
+                     <property name="text">
+                      <string>^(\d{3}-\d{3})|(\d{6}000)$</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="XLabel" name="_eftAchRoutingRegex">
+                     <property name="text">
+                      <string>^\d{9}$</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="XLabel" name="_eftRoutingRegexLit">
+                     <property name="text">
+                      <string>Routing # Format</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4">
+                    <widget class="XLabel" name="_eftFunctionLit">
+                     <property name="text">
+                      <string>Formatting Procedure</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="4">
+                    <widget class="XLabel" name="_eftAchFunction">
+                     <property name="text">
+                      <string>formatAchChecks</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="4">
+                    <widget class="XLabel" name="_eftAbaFunction">
+                     <property name="text">
+                      <string>formatAbaChecks</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="4">
+                    <widget class="XLineEdit" name="_eftCustomFunction">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="text">
+                      <string>stored procedure name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="3">
+                    <widget class="XLabel" name="_eftAccountRegexLit">
+                     <property name="text">
+                      <string>Account # Format</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="3">
+                    <widget class="XLabel" name="_eftAchAccountRegex">
+                     <property name="text">
+                      <string>^\d{4,17}$</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="3">
+                    <widget class="XLabel" name="_eftAbaAccountRegex">
+                     <property name="text">
+                      <string>^\d{1,9}$</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="3">
+                    <widget class="XLineEdit" name="_eftCustomAccountRegex">
+                     <property name="text">
+                      <string>^\d+$</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -1195,6 +1334,11 @@ to be bound by its terms.</comment>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
@@ -1225,7 +1369,6 @@ to be bound by its terms.</comment>
   <tabstop>_nextACHBatchNumber</tabstop>
   <tabstop>_companyId</tabstop>
   <tabstop>_companyName</tabstop>
-  <tabstop>_achSuffix</tabstop>
   <tabstop>_nextARMemoNumber</tabstop>
   <tabstop>_hideApplyto</tabstop>
   <tabstop>_customerDeposits</tabstop>
@@ -1254,6 +1397,54 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_eftCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_eftCustomFunction</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>562</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_eftCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_eftCustomRoutingRegex</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>376</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_eftCustom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_eftCustomSuffix</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>209</x>
+     <y>385</y>
     </hint>
    </hints>
   </connection>

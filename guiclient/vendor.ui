@@ -963,7 +963,7 @@ to be bound by its terms.</comment>
          <item row="1" column="0">
           <widget class="QStackedWidget" name="_transmitStack">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page_3">
             <layout class="QHBoxLayout" name="horizontalLayout"/>
@@ -973,7 +973,7 @@ to be bound by its terms.</comment>
              <item row="0" column="0">
               <widget class="QGroupBox" name="_achGroup">
                <property name="title">
-                <string>Enable ACH Check Printing</string>
+                <string>Enable EFT Check Printing</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>
@@ -1253,11 +1253,11 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>435</x>
+     <x>561</x>
      <y>283</y>
     </hint>
     <hint type="destinationlabel">
-     <x>571</x>
+     <x>741</x>
      <y>283</y>
     </hint>
    </hints>

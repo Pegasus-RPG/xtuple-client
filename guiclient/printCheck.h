@@ -26,13 +26,13 @@ public:
     printCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
     ~printCheck();
 
-    static QString achFileDir;
+    static QString eftFileDir;
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void done(int r);
-    virtual void sCreateACH();
-    virtual void sEnableCreateACH();
+    virtual void sCreateEFT();
+    virtual void sEnableCreateEFT();
     virtual void sHandleBankAccount( int pBankaccntid );
     virtual void sPrint();
     virtual void populate( int pcheckid );
@@ -41,7 +41,7 @@ protected slots:
     virtual void languageChange();
 
 protected:
-    virtual void storeAchFileDir();
+    virtual void storeEftFileDir();
 
 private:
     bool _captive;

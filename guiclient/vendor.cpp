@@ -49,8 +49,14 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _defaultCurr->setLabel(_defaultCurrLit);
-  _routingNumber->setValidator(new QIntValidator(100000000, 999999999, this));
-  _achAccountNumber->setValidator(new QRegExpValidator(QRegExp("^\\d{4,17}$"), this));
+
+  QRegExp tmpregex = QRegExp(_metrics->value("EFTAccountRegex"));
+  _accountValidator = new QRegExpValidator (tmpregex, this);
+  tmpregex = QRegExp(_metrics->value("EFTRoutingRegex"));
+  _routingValidator = new QRegExpValidator(tmpregex, this);
+
+  _routingNumber->setValidator(_routingValidator);
+  _achAccountNumber->setValidator(_accountValidator);
 
   _vendaddr->addColumn(tr("Number"), 70, Qt::AlignLeft, true, "vendaddr_code");
   _vendaddr->addColumn(tr("Name"),   50, Qt::AlignLeft, true, "vendaddr_name");
@@ -274,24 +280,19 @@ void vendor::sSave()
       tr("You must select a Vendor Type for this Vendor before continuing."),
       _vendtype },
     { _achGroup->isChecked() &&
-      _routingNumber->text().stripWhiteSpace().length() == 0 &&
+      ! _routingNumber->hasAcceptableInput() &&
       !omfgThis->_key.isEmpty(),
-      tr("Please enter a Routing Number if ACH Check Printing is enabled."),
+      tr("The Routing Number is not valid."),
       _routingNumber },
     { _achGroup->isChecked() &&
-      _routingNumber->text().stripWhiteSpace().length() < 9  &&
+      ! _achAccountNumber->hasAcceptableInput() &&
       !omfgThis->_key.isEmpty(),
-      tr("Routing Numbers for ACH Check Printing must be 9 digits long."),
-      _routingNumber },
-    { _achGroup->isChecked() &&
-      _achAccountNumber->text().stripWhiteSpace().length() == 0 &&
-      !omfgThis->_key.isEmpty(),
-      tr("Please enter an Account Number if ACH Check Printing is enabled."),
+      tr("The Account Number is not valid."),
       _achAccountNumber },
     { _achGroup->isChecked() && _useACHSpecial->isChecked() &&
       _individualName->text().stripWhiteSpace().length() == 0 &&
       !omfgThis->_key.isEmpty(),
-      tr("Please enter an Individual Name if ACH Check Printing is enabled and "
+      tr("Please enter an Individual Name if EFT Check Printing is enabled and "
          "'%1' is checked.").arg(_useACHSpecial->title()),
       _individualName }
   };

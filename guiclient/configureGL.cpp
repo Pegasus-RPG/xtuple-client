@@ -48,19 +48,40 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
     }
     if (! _metrics->value("ACHCompanyName").trimmed().isEmpty())
       _companyName->setText(_metrics->value("ACHCompanyName"));
-    if (_metrics->value("ACHDefaultSuffix").trimmed().isEmpty())
-      _achSuffix->setCurrentIndex(_achSuffix->findText(".dat"));
+
+    QString eftsuffix = _metrics->value("ACHDefaultSuffix").trimmed();
+    QString eftRregex = _metrics->value("EFTRoutingRegex").trimmed();
+    QString eftAregex = _metrics->value("EFTAccountRegex").trimmed();
+    QString eftproc   = _metrics->value("EFTFunction").trimmed();
+    if (eftsuffix.isEmpty())
+      _eftAch->setChecked(true);
+    else if (eftsuffix == ".ach" &&
+             eftRregex == _eftAchRoutingRegex->text() &&
+             eftAregex == _eftAchAccountRegex->text() &&
+             eftproc   == _eftAchFunction->text())
+      _eftAch->setChecked(true);
+    else if (eftsuffix == ".aba" &&
+             eftRregex == _eftAbaRoutingRegex->text() &&
+             eftAregex == _eftAbaAccountRegex->text() &&
+             eftproc   == _eftAbaFunction->text())
+      _eftAba->setChecked(true);
     else
     {
-      int suffixidx = _achSuffix->findText(_metrics->value("ACHDefaultSuffix"));
+      _eftCustom->setChecked(true);
+      _eftCustomRoutingRegex->setText(eftRregex);
+      _eftCustomAccountRegex->setText(eftAregex);
+      _eftCustomFunction->setText(eftproc);
+
+       int suffixidx = _eftCustomSuffix->findText(_metrics->value("ACHDefaultSuffix"));
       if (suffixidx < 0)
       {
-        _achSuffix->insertItem(0, _metrics->value("ACHDefaultSuffix"));
-        _achSuffix->setCurrentIndex(0);
+        _eftCustomSuffix->insertItem(0, _metrics->value("ACHDefaultSuffix"));
+        _eftCustomSuffix->setCurrentIndex(0);
       }
       else
-        _achSuffix->setCurrentIndex(suffixidx);
+        _eftCustomSuffix->setCurrentIndex(suffixidx);
     }
+
     q.exec("SELECT currentNumber('ACHBatch') AS result;");
     if (q.first())
       _nextACHBatchNumber->setText(q.value("result"));
@@ -238,7 +259,29 @@ void configureGL::sSave()
           _metrics->set("ACHCompanyIdType", QString("O"));
       }
       _metrics->set("ACHCompanyName",   _companyName->text().trimmed());
-      _metrics->set("ACHDefaultSuffix", _achSuffix->currentText().trimmed());
+
+      if (_eftAch->isChecked())
+      {
+        _metrics->set("ACHDefaultSuffix", _eftAchSuffix->text().trimmed());
+        _metrics->set("EFTRoutingRegex",  _eftAchRoutingRegex->text());
+        _metrics->set("EFTAccountRegex",  _eftAchAccountRegex->text());
+        _metrics->set("EFTFunction",      _eftAchFunction->text());
+      }
+      else if (_eftAba->isChecked())
+      {
+        _metrics->set("ACHDefaultSuffix", _eftAbaSuffix->text().trimmed());
+        _metrics->set("EFTRoutingRegex",  _eftAbaRoutingRegex->text());
+        _metrics->set("EFTAccountRegex",  _eftAbaAccountRegex->text());
+        _metrics->set("EFTFunction",      _eftAbaFunction->text());
+      }
+      else
+      {
+        _metrics->set("ACHDefaultSuffix", _eftCustomSuffix->currentText().trimmed());
+        _metrics->set("EFTRoutingRegex",  _eftCustomRoutingRegex->text().trimmed());
+        _metrics->set("EFTAccountRegex",  _eftCustomAccountRegex->text().trimmed());
+        _metrics->set("EFTFunction",      _eftCustomFunction->text().trimmed());
+      }
+
       q.prepare("SELECT setNextNumber('ACHBatch', :number) AS result;");
       q.bindValue(":number", _nextACHBatchNumber->text().toInt());
       q.exec();

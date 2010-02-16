@@ -22,10 +22,17 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
   connect(_save,               SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
 
   _nextCheckNum->setValidator(omfgThis->orderVal());
-  _routing->setValidator(new QIntValidator(100000000, 999999999, this));
-  _federalReserveDest->setValidator(new QIntValidator(100000000, 999999999, this));
+
+  QRegExp tmpregex = QRegExp(_metrics->value("EFTAccountRegex"));
+  _accountValidator = new QRegExpValidator (tmpregex, this);
+  tmpregex = QRegExp(_metrics->value("EFTRoutingRegex"));
+  _routingValidator = new QRegExpValidator(tmpregex, this);
+
+  _routing->setValidator(_routingValidator);
+  _federalReserveDest->setValidator(_routingValidator);
 
   _assetAccount->setType(GLCluster::cAsset);
   _currency->setType(XComboBox::Currencies);
@@ -159,12 +166,8 @@ void bankAccount::sSave()
       tr("<p>Select an G/L Account for this Bank Account before saving it."),
       _assetAccount
     },
-    { _transmitGroup->isChecked() && _routing->text().trimmed().isEmpty(),
-      tr("<p>The bank's Routing Number is required for ACH Check handling."),
-      _routing
-    },
-    { _transmitGroup->isChecked() && _routing->text().trimmed().size() < 9,
-      tr("<p>The bank's Routing Number must be a 9 digit number."),
+    { _transmitGroup->isChecked() && ! _routing->hasAcceptableInput(),
+      tr("<p>The bank's Routing Number is not valid."),
       _routing
     },
     { _transmitGroup->isChecked() &&
@@ -192,9 +195,8 @@ void bankAccount::sSave()
       _useRoutingNumberDest
     },
     { _transmitGroup->isChecked() && _useFederalReserveDest->isChecked() &&
-      _federalReserveDest->text().trimmed().isEmpty(),
-      tr("<p>You must enter a Federal Reserve Routing Number if you choose "
-         "'Federal Reserve'."),
+      ! _federalReserveDest->hasAcceptableInput(),
+      tr("<p>The Federal Reserve Routing Number is not valid."),
       _federalReserveDest
     },
     { _transmitGroup->isChecked() && _useOtherDest->isChecked() &&
@@ -208,6 +210,10 @@ void bankAccount::sSave()
       tr("<p>You must enter an Immediate Destination number if you choose "
          "'Other'."),
       _otherDest
+    },
+    { _transmitGroup->isChecked() && ! _accountNumber->hasAcceptableInput(),
+      tr("<p>The Account Number is not valid for EFT purposes."),
+      _accountNumber
     }
   };
 
@@ -412,6 +418,7 @@ void bankAccount::populate()
     _notes->setText(q.value("bankaccnt_notes").toString());
 
     _transmitGroup->setChecked(q.value("bankaccnt_ach_enabled").toBool());   
+
     _routing->setText(q.value("bankaccnt_routing").toString());      
     _genCheckNumber->setChecked(q.value("bankaccnt_ach_genchecknum").toBool());
     _settlementLeadtime->setValue(q.value("bankaccnt_ach_leadtime").toInt());
@@ -451,4 +458,10 @@ void bankAccount::sNameChanged(QString pName)
 {
   _useRoutingNumberDest->setText(pName);
   _useRoutingNumberOrigin->setText(pName);
+}
+
+void bankAccount::sHandleTransmitGroup()
+{
+  _accountNumber->setValidator(_transmitGroup->isChecked() ?
+                                                       _accountValidator : 0);
 }

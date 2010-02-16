@@ -33,8 +33,13 @@ public slots:
     virtual void sSave();
     virtual void populate();
 
+protected:
+    QValidator *_accountValidator;
+    QValidator *_routingValidator;
+
 protected slots:
     virtual void languageChange();
+    virtual void sHandleTransmitGroup();
 
 private:
     int _mode;

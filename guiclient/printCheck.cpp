@@ -18,6 +18,7 @@
 #include <QPrintDialog>
 #include <QSqlError>
 
+#include <metasql.h>
 #include <orprerender.h>
 #include <orprintrender.h>
 #include <renderobjects.h>
@@ -26,7 +27,7 @@
 #include "confirmAchOK.h"
 #include "storedProcErrorLookup.h"
 
-QString printCheck::achFileDir = QString();
+QString printCheck::eftFileDir = QString();
 
 printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -34,8 +35,8 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-  connect(_check,     SIGNAL(newID(int)), this, SLOT(sEnableCreateACH()));
-  connect(_createACH, SIGNAL(clicked()),  this, SLOT(sCreateACH()));
+  connect(_check,     SIGNAL(newID(int)), this, SLOT(sEnableCreateEFT()));
+  connect(_createEFT, SIGNAL(clicked()),  this, SLOT(sCreateEFT()));
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
 
   _captive = FALSE;
@@ -45,7 +46,7 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _createACH->setVisible(_metrics->boolean("ACHEnabled"));
+  _createEFT->setVisible(_metrics->boolean("ACHEnabled"));
 }
 
 printCheck::~printCheck()
@@ -79,14 +80,14 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
 
 void printCheck::sPrint()
 {
-  if (_createACH->isEnabled() &&
+  if (_createEFT->isEnabled() &&
       QMessageBox::question(this, tr("Print Anyway?"),
                             tr("<p>The recipient of this check has been "
-                               "configured for ACH transactions. Do you want "
+                               "configured for EFT transactions. Do you want "
                                "to print this check for them anyway?<p>If you "
                                "answer 'Yes' then a check will be printed. "
-                               "If you say 'No' then you should click Create "
-                               "ACH File."),
+                               "If you say 'No' then you should click %1. ")
+                            .arg(_createEFT->text()),
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No) == QMessageBox::No)
     return;
@@ -316,7 +317,7 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
     if (checkNumber.first())
     {
       _setCheckNumber = checkNumber.value("bankaccnt_nextchknum").toInt();
-      _createACH->setEnabled(checkNumber.value("bankaccnt_ach_enabled").toBool());
+      _createEFT->setEnabled(checkNumber.value("bankaccnt_ach_enabled").toBool());
       _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -373,32 +374,36 @@ void printCheck::populate(int pcheckid)
   }
 }
 
-void printCheck::sCreateACH()
+void printCheck::sCreateEFT()
 {
   XSqlQuery releasenum;
   releasenum.prepare("SELECT releaseNumber('ACHBatch', :batch);");
 
   QString batch;
 
-  q.prepare("SELECT * FROM formatACHChecks(:bankaccnt_id, :checkhead_id, :key);");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":checkhead_id", _check->id());
-  q.bindValue(":key",          omfgThis->_key);
-  q.exec();
+  MetaSQLQuery mql("SELECT *"
+                   "  FROM <? literal(\"func\") ?>(<? value(\"bank\") ?>,"
+                   "           <? value(\"check\") ?>, <? value(\"key\") ?>);");
+  ParameterList params;
+  params.append("func", _metrics->value("EFTFunction"));
+  params.append("bank", _bankaccnt->id());
+  params.append("check",_check->id());
+  params.append("key",  omfgThis->_key);
+  q = mql.toQuery(params);
   if (q.first())
   {
     batch = q.value("achline_batch").toString();
     releasenum.bindValue(":batch", batch);
-    if (achFileDir.isEmpty())
+    if (eftFileDir.isEmpty())
     {
-      achFileDir = xtsettingsValue("ACHOutputDirectory").toString();
+      eftFileDir = xtsettingsValue("ACHOutputDirectory").toString();
     }
-    QString suffixes = "*.ach *.dat *.txt";
+    QString suffixes = "*.ach *.aba *.dat *.txt";
     if (! suffixes.contains(_metrics->value("ACHDefaultSuffix")))
       suffixes = "*" + _metrics->value("ACHDefaultSuffix") + " " + suffixes;
-    QString filename = QFileDialog::getSaveFileName(this, tr("ACH Output File"),
-                            printCheck::achFileDir + QDir::separator() +
-                            "ach" + batch + _metrics->value("ACHDefaultSuffix"),
+    QString filename = QFileDialog::getSaveFileName(this, tr("EFT Output File"),
+                            printCheck::eftFileDir + QDir::separator() +
+                            "eft" + batch + _metrics->value("ACHDefaultSuffix"),
                             "(" + suffixes + ")");
     if (filename.isEmpty())
     {
@@ -406,31 +411,31 @@ void printCheck::sCreateACH()
       return;
     }
     QFileInfo fileinfo(filename);
-    achFileDir = fileinfo.absolutePath();
-    QFile achfile(filename);
-    if (! achfile.open(QIODevice::WriteOnly))
+    eftFileDir = fileinfo.absolutePath();
+    QFile eftfile(filename);
+    if (! eftfile.open(QIODevice::WriteOnly))
     {
       releasenum.exec();
       QMessageBox::critical(this, tr("Could Not Open File"),
-                            tr("Could not open %1 for writing ACH data.")
+                            tr("Could not open %1 for writing EFT data.")
                             .arg(filename));
       return;
     }
     do
     {
-      achfile.write(q.value("achline_value").toString().toAscii());
-      achfile.write("\n");
+      eftfile.write(q.value("achline_value").toString().toAscii());
+      eftfile.write("\n");
     } while (q.next());
-    achfile.close();
+    eftfile.close();
     if (q.lastError().type() != QSqlError::NoError)
     {
       releasenum.exec();
-      achfile.remove();
+      eftfile.remove();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (confirmAchOK::askOK(this, achfile))
+    if (confirmAchOK::askOK(this, eftfile))
       markCheckAsPrinted(_check->id());
     else
     {
@@ -457,12 +462,12 @@ void printCheck::sCreateACH()
 
 }
 
-void printCheck::sEnableCreateACH()
+void printCheck::sEnableCreateEFT()
 {
   if (_bankaccnt->isValid() && _check->isValid() &&
       _metrics->boolean("ACHEnabled"))
   {
-    q.prepare("SELECT bankaccnt_ach_enabled AND vend_ach_enabled AS achenabled "
+    q.prepare("SELECT bankaccnt_ach_enabled AND vend_ach_enabled AS eftenabled "
               "FROM bankaccnt"
               "      JOIN checkhead ON (checkhead_bankaccnt_id=bankaccnt_id)"
               "      JOIN vendinfo ON (checkhead_recip_id=vend_id"
@@ -473,31 +478,31 @@ void printCheck::sEnableCreateACH()
     q.bindValue(":checkhead_id", _check->id());
     q.exec();
     if (q.first())
-      _createACH->setEnabled(q.value("achenabled").toBool());
+      _createEFT->setEnabled(q.value("eftenabled").toBool());
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else // not found
-      _createACH->setEnabled(false);
+      _createEFT->setEnabled(false);
   }
   else
-    _createACH->setEnabled(false);
+    _createEFT->setEnabled(false);
 }
 
 
-void printCheck::storeAchFileDir()
+void printCheck::storeEftFileDir()
 {
-  if (_metrics->boolean("ACHEnabled") && !achFileDir.isEmpty())
+  if (_metrics->boolean("ACHEnabled") && !eftFileDir.isEmpty())
   {
-    xtsettingsSetValue("ACHOutputDirectory", achFileDir);
+    xtsettingsSetValue("ACHOutputDirectory", eftFileDir);
   }
 }
 
 void printCheck::done(int /*p*/)
 {
-  storeAchFileDir();
+  storeEftFileDir();
   close();
 }
 
