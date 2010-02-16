@@ -974,10 +974,10 @@ void itemSite::sHandleControlMethod()
   }
   else
   {
-    if (_costAvg->isVisibleTo(this) && !_costStd->isChecked() && !_costJob->isChecked())
-      _costAvg->setChecked(true);
-    else if(_costStd->isVisibleTo(this) && !_costAvg->isChecked() && !_costJob->isChecked())
+    if(_costStd->isVisibleTo(this) && !_costAvg->isChecked() && !_costJob->isChecked())
       _costStd->setChecked(true);
+    else if (_costAvg->isVisibleTo(this) && !_costStd->isChecked() && !_costJob->isChecked())
+      _costAvg->setChecked(true);
     else if (_costJob->isVisibleTo(this) && !_costAvg->isChecked() && !_costStd->isChecked())
       _costJob->setChecked(true);
     _costNone->setEnabled(false);
