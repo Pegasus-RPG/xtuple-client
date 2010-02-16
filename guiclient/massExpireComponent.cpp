@@ -12,6 +12,7 @@
 
 #include <qvariant.h>
 #include <QMessageBox>
+#include <QSqlQuery>
 
 /*
  *  Constructs a massExpireComponent as a child of 'parent', with the
@@ -21,14 +22,22 @@
 massExpireComponent::massExpireComponent(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  _captive = FALSE;
 
-    // signals and slots connections
-    connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
+  _original->setType(ItemLineEdit::cGeneralComponents);
+
+  _expireAsOf->setNullString(tr("Immediate"));
+  _expireAsOf->setNullDate(omfgThis->dbDate());
+  _expireAsOf->setAllowNullDate(true);
+  _expireAsOf->setNull();
+
+  _original->setFocus();
+
+  // signals and slots connections
+  connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 /*
@@ -46,25 +55,6 @@ massExpireComponent::~massExpireComponent()
 void massExpireComponent::languageChange()
 {
     retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlQuery>
-
-void massExpireComponent::init()
-{
-  _captive = FALSE;
-
-//  statusBar()->hide();
-
-  _original->setType(ItemLineEdit::cGeneralComponents);
-
-  _expireAsOf->setNullString(tr("Immediate"));
-  _expireAsOf->setNullDate(omfgThis->startOfTime());
-  _expireAsOf->setAllowNullDate(TRUE);
-  _expireAsOf->setNull();
-
-  _original->setFocus();
 }
 
 enum SetResponse massExpireComponent::set(ParameterList &pParams)
