@@ -1093,9 +1093,9 @@ void itemSite::sCacheItemType(char pItemType)
     _woSupply->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
     _createPr->setEnabled(FALSE);
-	_createSoPr->setChecked(FALSE);
+    _createSoPr->setChecked(FALSE);
     _createSoPr->setEnabled(FALSE);
-	_createPo->setChecked(FALSE);
+    _createPo->setChecked(FALSE);
     _createPo->setEnabled(FALSE);
     _createWo->setChecked(_itemType == 'J');
     _createWo->setEnabled(FALSE);
@@ -1138,11 +1138,11 @@ void itemSite::sCacheItemType(char pItemType)
     _woSupply->setEnabled(TRUE);
  
     if ( (_itemType == 'O') || (_itemType == 'P') )
-	{
+    {
       _createPr->setEnabled(_poSupply->isChecked());
-	  _createSoPr->setEnabled(_poSupply->isChecked());
-	  _createPo->setEnabled(_poSupply->isChecked());
-	}
+      _createSoPr->setEnabled(_poSupply->isChecked());
+      _createPo->setEnabled(_poSupply->isChecked());
+    }
     else
     {
       _createPr->setChecked(FALSE);
@@ -1168,7 +1168,9 @@ void itemSite::sCacheItemType(char pItemType)
     _controlMethod->setEnabled(TRUE);
   }
 
-  _tab->setTabEnabled(_tab->indexOf(_inventoryTab),(_itemType!='K'));
+  if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
+           (_itemType == 'L') || (_itemType == 'K'))
+    _woCostGroup->setEnabled(false);
   _tab->setTabEnabled(_tab->indexOf(_planningTab),(_itemType!='K'));
   _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),(_itemType!='K'));
 
