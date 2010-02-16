@@ -67,6 +67,7 @@ void VirtualCluster::init()
 
     _description = new QLabel(this, "_description");
     _description->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    _description->setVisible(false);
 
     _grid = new QGridLayout(this);
     _grid->setMargin(0);
