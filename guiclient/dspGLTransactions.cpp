@@ -438,7 +438,8 @@ void dspGLTransactions::sViewDocument()
     {
       q.prepare("SELECT apopen_id"
                 "  FROM apopen"
-                " WHERE (apopen_docnumber=:docnumber)");
+                " WHERE ((apopen_docnumber=:docnumber) "
+                "  AND (apopen_doctype='C'));");
       q.bindValue(":docnumber", item->rawValue("docnumber").toString());
       q.exec();
       if(!q.first())
@@ -454,7 +455,8 @@ void dspGLTransactions::sViewDocument()
     {
       q.prepare("SELECT aropen_id"
                 "  FROM aropen"
-                " WHERE (aropen_docnumber=:docnumber)");
+                " WHERE ((aropen_docnumber=:docnumber) "
+                "  AND (aropen_doctype='C'));");
       q.bindValue(":docnumber", item->rawValue("docnumber").toString());
       q.exec();
       if(!q.first())
