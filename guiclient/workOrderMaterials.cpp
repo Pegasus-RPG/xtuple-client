@@ -172,7 +172,7 @@ void workOrderMaterials::sView()
 void workOrderMaterials::sDelete()
 {
   int womatlid = _womatl->id();
-  if (_womatl->currentItem()->data(7, Qt::UserRole).toMap().value("raw").toDouble() > 0)
+  if (_womatl->currentItem()->rawValue("womatl_qtyiss").toDouble() > 0)
   {
     if(_privileges->check("ReturnWoMaterials"))
     {
