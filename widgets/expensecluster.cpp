@@ -15,6 +15,7 @@ ExpenseCluster::ExpenseCluster(QWidget *pParent, const char *pName) :
 {
   addNumberWidget(new ExpenseLineEdit(this, pName));
   _info->hide();
+  _description->show();
 }
 
 ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *pName) :

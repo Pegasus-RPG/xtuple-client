@@ -14,6 +14,7 @@ DeptCluster::DeptCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
     addNumberWidget(new DeptClusterLineEdit(this, pName));
+    _name->show();
 }
 
 DeptClusterLineEdit::DeptClusterLineEdit(QWidget* pParent, const char* pName) :

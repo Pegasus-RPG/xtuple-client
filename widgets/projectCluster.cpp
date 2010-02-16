@@ -14,6 +14,7 @@ ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
     addNumberWidget(new ProjectLineEdit(this, pName));
+    _name->setVisible(true);
 }
 
 ProjectLineEdit::ProjectType ProjectCluster::type()
