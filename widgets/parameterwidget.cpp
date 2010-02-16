@@ -294,6 +294,11 @@ void ParameterWidget::changeFilterObject(int index)
   QWidget *button = _filterGroup->findChild<QPushButton *>("button" + row);
   QHBoxLayout *layout = _filterGroup->findChild<QHBoxLayout *>("widgetLayout1" + row);;
 
+  DLineEdit *dLineEdit= new DLineEdit(_filterGroup);
+  UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
+  CRMAcctCluster *crmacctCluster = new CRMAcctCluster(_filterGroup);
+  QLineEdit *lineEdit = new QLineEdit(_filterGroup);
+
   if (widget && layout && button)
     delete widget;
   else
@@ -302,7 +307,6 @@ void ParameterWidget::changeFilterObject(int index)
   switch (type)
   {
   case Date:
-    DLineEdit *dLineEdit = new DLineEdit(_filterGroup);
     dLineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, dLineEdit);
@@ -311,7 +315,6 @@ void ParameterWidget::changeFilterObject(int index)
     connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue(QDate) ) );
     break;
   case User:
-    UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
     usernameCluster->setObjectName("widget" + row);
     usernameCluster->setNameVisible(false);
     usernameCluster->setDescriptionVisible(false);
@@ -323,7 +326,6 @@ void ParameterWidget::changeFilterObject(int index)
     connect(usernameCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     break;
   case Crmacct:
-    CRMAcctCluster *crmacctCluster = new CRMAcctCluster(this);
     crmacctCluster->setObjectName("widget" + row);
     crmacctCluster->setNameVisible(false);
     crmacctCluster->setDescriptionVisible(false);
@@ -335,7 +337,6 @@ void ParameterWidget::changeFilterObject(int index)
     connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     break;
   default:
-    QLineEdit *lineEdit = new QLineEdit(_filterGroup);
     lineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, lineEdit);
