@@ -47,7 +47,6 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLeadTime(int)));
@@ -70,6 +69,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _woid = -1;
   _sense = 1;
   _wonumber = -1;
+  _oldPriority = _priority->value();
 
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
@@ -495,14 +495,21 @@ void workOrder::sCreate()
     }
   
     if (_woid == -1)
-      QMessageBox::critical( this, tr("Work Order not Exploded"),
-                             tr( "The Work Order was created but not Exploded as there is no valid Bill of Materials for the selected Item.\n"
-                                 "You must create a valid Bill of Materials before you may explode this Work Order." ));
-    else if (_woid == -2)
+    {
+      QMessageBox::critical( this, tr("Work Order not Created"),
+                             tr( "There was an error creating the work order.\n"
+                                 "Make sure the itemsite you are creating the work order in is set to allow manufacturing of the item." ));
+
+      return;
+    }
+    else if (_woid == -2 || _woid == -3)
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as Component Items defined in the Bill of Materials for\n"
                                  "the selected Work Order Item do not exist in the selected  Work Order Site.\n"
                                  "You must create Item Sites for these Component Items before you may explode this Work Order." ));
+    else if (_woid == -4)
+      QMessageBox::critical( this, tr("Work Order not Exploded"),
+                             tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
     else
     {
       if (_printTraveler->isChecked())
@@ -1935,7 +1942,8 @@ void workOrder::populate()
                       .arg(__FILE__)
                       .arg(__LINE__)
                       .arg(_woid) );
-    close();
+    if(_captive)
+      close();
   }
 }
 
