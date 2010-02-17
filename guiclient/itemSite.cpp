@@ -43,6 +43,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_toggleRestricted, SIGNAL(clicked()), this, SLOT(sToggleRestricted()));
   connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
+  connect(_costJob, SIGNAL(toggled(bool)), this, SLOT(sHandleJobCost()));
 
   _planningType->append(0, "None", "N");
 
@@ -836,6 +837,42 @@ void itemSite::sCheckItemsite()
   }
 }
 
+void itemSite::sHandleJobCost()
+{
+  if (_costJob->isChecked())
+  {
+    _safetyStock->setEnabled(false);
+    _abcClass->setEnabled(false);
+    _autoUpdateABCClass->setEnabled(false);
+    _cycleCountFreq->setEnabled(false);
+    _useParameters->setEnabled(false);
+    _woSupply->setChecked(true);
+    _woSupply->setEnabled(false);
+    _createWo->setChecked(true);
+    _sold->setChecked(true);
+    _sold->setEnabled(false);
+    _stocked->setChecked(false);
+    _autoUpdateABCClass->setChecked(false);
+    _cycleCountFreq->setValue(0);
+    _inventory->setEnabled(false);
+    _poSupply->setChecked(false);
+    _poSupply->setEnabled(false);
+    _locationControl->setChecked(false);
+    _useDefaultLocation->setChecked(false);
+    _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),false);
+    _useParameters->setChecked(false);
+    _planningType->setCurrentIndex(0);
+    _safetyStock->setDouble(0);
+    _createPlannedTransfers->setChecked(false);
+    _tab->setTabEnabled(_tab->indexOf(_planningTab),false);
+  }
+  else
+  {
+    _inventory->setEnabled(true);
+    sCacheItemType(_itemType);
+  }
+}
+
 void itemSite::sHandlePlanningType()
 {
   if (_planningType->code() == "M" || _planningType->code() == "S")
@@ -983,10 +1020,11 @@ void itemSite::sHandleControlMethod()
     _costNone->setEnabled(false);
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
-    _costJob->setEnabled(false);
   }
-
-  if(_itemType == 'M' && _controlMethod->currentIndex() > 0 && _costJob->isVisibleTo(this) )
+  if(_itemType == 'M' &&
+     _controlMethod->currentIndex() > 0 &&
+     _costJob->isVisibleTo(this) &&
+     _qohCache == 0)
     _costJob->setEnabled(true);
   else
   {
@@ -1007,6 +1045,8 @@ void itemSite::sHandleControlMethod()
     _perishable->setEnabled(FALSE);
     _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
   }
+  if (_costJob->isChecked())
+    sHandleJobCost();
 }
 
 void itemSite::sCacheItemType(const QString &pItemType)
@@ -1044,14 +1084,6 @@ void itemSite::sCacheItemType(char pItemType)
     _costStd->setEnabled(false);
     _costJob->setEnabled(false);
   }
-  else if(_itemType == 'J')
-  {
-    _costJob->setChecked(true);
-    _costNone->setEnabled(false);
-    _costAvg->setEnabled(false);
-    _costStd->setEnabled(false);
-    _costJob->setEnabled(true);
-  }
   else
   {
     if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
@@ -1065,14 +1097,12 @@ void itemSite::sCacheItemType(char pItemType)
   }
 
   if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
-	   (_itemType == 'L') || (_itemType == 'J') || (_itemType == 'K'))
+           (_itemType == 'L') || (_itemType == 'K'))
   {  
     _safetyStock->setEnabled(FALSE);
     _abcClass->setEnabled(FALSE);
     _autoUpdateABCClass->setEnabled(FALSE);
     _cycleCountFreq->setEnabled(FALSE);
-    _leadTime->setEnabled(_itemType == 'J');
-    _useParameters->setEnabled(!_itemType == 'J');
 
     if(_itemType=='L')
     {
@@ -1097,10 +1127,9 @@ void itemSite::sCacheItemType(char pItemType)
     _createSoPr->setEnabled(FALSE);
     _createPo->setChecked(FALSE);
     _createPo->setEnabled(FALSE);
-    _createWo->setChecked(_itemType == 'J');
     _createWo->setEnabled(FALSE);
 
-    if((_itemType == 'R') || (_itemType == 'J') || (_itemType == 'K'))
+    if((_itemType == 'R') || (_itemType == 'K'))
     {
       _sold->setEnabled(TRUE);
       _controlMethod->setCurrentIndex(0);
@@ -1224,6 +1253,7 @@ void itemSite::populate()
     _active->setChecked(itemsite.value("itemsite_active").toBool());
 
     _qohCache = itemsite.value("itemsite_qtyonhand").toDouble();
+    sHandleControlMethod();
 
     _useParameters->setChecked(itemsite.value("itemsite_useparams").toBool());
     _useParametersOnManual->setChecked(itemsite.value("itemsite_useparamsmanual").toBool());
