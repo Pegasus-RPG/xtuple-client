@@ -73,6 +73,7 @@ bool dspItemsByProductCategory::setParams(ParameterList &params)
   params.append("tooling",      tr("Tooling"));
   params.append("outside",      tr("Outside Process"));
   params.append("kit",          tr("Kit"));
+  params.append("planning",     tr("Planning"));
   params.append("error",        tr("Error"));
 
   return true;

@@ -26,6 +26,7 @@
             WHEN (item_type='O') THEN 'Outside Process'
             WHEN (item_type='J') THEN 'Job'
             WHEN (item_type='K') THEN 'Kit'
+            WHEN (item_type='L') THEN 'Planning'
             ELSE item_type
        END AS itemtype,
        iuom.uom_name AS invuom,
