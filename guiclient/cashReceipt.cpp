@@ -901,6 +901,13 @@ void cashReceipt::setCreditCard()
   if (! _metrics->boolean("CCAccept"))
     return;
 
+  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+  {
+    if(_fundsType->itemData(_fundsType->currentIndex()) == _fundsTypes[i].abbr)
+      if(!_fundsTypes[i].cc)
+        return;
+  }
+
   XSqlQuery bankq;
   bankq.prepare("SELECT ccbank_bankaccnt_id"
                 "  FROM ccbank"
