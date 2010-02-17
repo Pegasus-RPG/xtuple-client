@@ -142,19 +142,6 @@ to be bound by its terms.</comment>
      </property>
      <item>
       <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="_print">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>&amp;Print</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QPushButton" name="_close">
          <property name="text">
@@ -171,7 +158,17 @@ to be bound by its terms.</comment>
           <bool>true</bool>
          </property>
          <property name="default">
-          <bool>true</bool>
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_print">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>&amp;Print</string>
          </property>
         </widget>
        </item>
@@ -2357,7 +2354,6 @@ to be bound by its terms.</comment>
   <tabstop>_returnsButton</tabstop>
   <tabstop>_aritemsButton</tabstop>
   <tabstop>_cashreceiptsButton</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_lastSaleDate</tabstop>
