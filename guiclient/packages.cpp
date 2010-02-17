@@ -134,11 +134,19 @@ void packages::sLoad()
 {
   QProcess proc(this);
 #ifdef Q_WS_MACX
-  QString proc_path = qApp->applicationDirPath() +
-                      "/../../../updater.app/Contents/MacOS/updater" ;
+  QString proc_path = QDir::cleanPath(qApp->applicationDirPath() +
+                      "/../../../updater.app/Contents/MacOS/updater");
+  QString proc_path2= QDir::cleanPath(qApp->applicationDirPath() +
+                      "/../../../../Updater/updater.app/Contents/MacOS/updater");
+#elif defined Q_WS_WIN
+  QString proc_path = QDir::cleanPath(qApp->applicationDirPath() + "/updater.exe");
+  QString proc_path2= QDir::cleanPath(qApp->applicationDirPath() + "/../Updater/updater.exe");
 #else
-  QString proc_path = qApp->applicationDirPath() + QDir::separator() + "updater";
+  QString proc_path = QDir::cleanPath(qApp->applicationDirPath() + "/updater");
+  QString proc_path2= QDir::cleanPath(qApp->applicationDirPath() + "/../Updater/updater");
 #endif
+  if (! QFile::exists(proc_path))
+    proc_path = proc_path2;
   if (! QFile::exists(proc_path))
   {
 #ifdef Q_WS_MACX
