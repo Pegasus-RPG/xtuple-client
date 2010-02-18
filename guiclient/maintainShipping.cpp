@@ -362,6 +362,7 @@ void maintainShipping::sPrint()
   params.append("notPrinted",	tr("No"));
   params.append("dirty",	tr("Dirty"));
   params.append("printed",	tr("Yes"));
+  params.append("includeFormatted");
 
   orReport report("ShipmentsPending", params);
   if (report.isValid())
