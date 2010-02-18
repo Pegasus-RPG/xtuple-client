@@ -24,8 +24,12 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
   addNumberWidget(new RevisionLineEdit(this, pName));
   _info->hide();
   if (_x_metrics)
+  {
     if (!_x_metrics->boolean("RevControl"))
       _list->hide();
+  }
+
+  _description->show();
 
   connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
