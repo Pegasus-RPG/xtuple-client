@@ -510,18 +510,6 @@ void workOrder::sCreate()
     else if (_woid == -4)
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
-    else
-    {
-      if (_printTraveler->isChecked())
-      {
-        ParameterList params;
-        params.append("wo_id", _woid);
-  
-        printWoTraveler newdlg(this, "", TRUE);
-        newdlg.set(params);
-        newdlg.exec();
-      }
-    }
     
     if (_mode == cNew)
     {
@@ -609,6 +597,17 @@ void workOrder::sSave()
   
   omfgThis->sWorkOrdersUpdated(_woid, TRUE);
   
+  if (_printTraveler->isChecked() &&
+      _printTraveler->isVisible())
+  {
+    ParameterList params;
+    params.append("wo_id", _woid);
+
+    printWoTraveler newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+
   if (_captive)
     close();
   else if (cNew == _mode)
@@ -1931,7 +1930,8 @@ void workOrder::populate()
     _leadTimeLit->hide();
     _leadTime->hide();
     _daysLit->hide();
-    _printTraveler->hide();
+    if (_mode != cNew)
+      _printTraveler->hide();
     _bottomSpacer->hide();
 
     _save->setEnabled(true);
