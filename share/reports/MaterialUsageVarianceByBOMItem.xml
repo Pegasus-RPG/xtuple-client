@@ -33,7 +33,7 @@
    AND (parent.item_inv_uom_id=puom.uom_id)
    AND (bomitem_item_id=child.item_id)
    AND (child.item_inv_uom_id=cuom.uom_id)
-   AND (bomitem_id=&lt;? value("component_item_id") ?>) );
+   AND (bomitem_id=&lt;? value("bomitem_id") ?>) );
 </sql>
  </querysource>
  <querysource>
@@ -60,7 +60,7 @@
                 itemsite AS parent
           WHERE ((womatlvar_parent_itemsite_id=parent.itemsite_id)
             AND (womatlvar_component_itemsite_id=component.itemsite_id)
-            AND (womatlvar_bomitem_id=&lt;? value("component_item_id") ?>)
+            AND (womatlvar_bomitem_id=&lt;? value("bomitem_id") ?>)
             AND (womatlvar_posted BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("warehous_id") ?>
             AND (component.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
