@@ -109,6 +109,10 @@ enum SetResponse contact::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      q.exec("SELECT fetchNextNumber('ContactNumber') AS result;");
+      q.first();
+      _number->setText(q.value("result").toString());
+      _contact->setNumber(_number->text());
       _contact->setFirst("Contact" + QDateTime::currentDateTime().toString());
       int cntctSaveResult = _contact->save(AddressCluster::CHANGEONE);
       if (cntctSaveResult < 0)
@@ -121,11 +125,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
       }
       _comments->setId(_contact->id());
       _contact->setFirst("");
-
-      q.exec("SELECT fetchNextNumber('ContactNumber') AS result;");
-      q.first();
-      _number->setText(q.value("result").toString());
-      _contact->setNumber(_number->text());
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       _contact->setOwnerUsername(omfgThis->username());
