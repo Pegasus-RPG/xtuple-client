@@ -138,7 +138,7 @@ void salesRep::sSave()
     return;
   }
 
-  if(_employee->id() != -1 && _employee->number() != _number->text().trimmed())
+  if(_employee->id() != -1 && _employee->name() != _number->text().trimmed())
   {
     QMessageBox::critical( this, tr("Cannot Save Sales Rep."),
                            tr("The Sales Rep. Number and Employee Number do not match. "
