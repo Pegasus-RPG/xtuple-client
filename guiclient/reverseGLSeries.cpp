@@ -54,6 +54,8 @@ enum SetResponse reverseGLSeries::set( const ParameterList & pParams )
     q.exec();
     if(q.first())
     {
+      _notes->setText(tr("Reversal for Journal #") +
+                      q.value("gltrans_journalnumber").toString());
       _journalNum->setText(q.value("gltrans_journalnumber").toString());
       _distDate->setDate(q.value("gltrans_date").toDate());
     }
@@ -106,6 +108,9 @@ void reverseGLSeries::sPost()
       }
       return;
     }
+    else
+      QMessageBox::information( this, tr("Reversed G/L Series"),
+                                tr("Reversing Journal #%1 was sucessfully created.").arg(q.value("result").toString()) );
   }
   else
     systemError( this, tr("A System Error occurred at reverseGLSeries::%1.")
