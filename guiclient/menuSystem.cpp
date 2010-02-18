@@ -223,7 +223,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   // Utilities
     { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL",           NULL, NULL, true },
-    { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial", NULL, NULL, true },
+    { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
     { "sys.importXML",     tr("&Import XML"),      SLOT(sImportXML()),  sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
 
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
