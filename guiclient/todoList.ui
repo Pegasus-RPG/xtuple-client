@@ -29,7 +29,7 @@ to be bound by its terms.</comment>
         <widget class="CRMAcctCluster" name="_crmAccount"/>
        </item>
        <item>
-        <widget class="ParameterWidget" name="parameterWidget">
+        <widget class="ParameterWidget" name="_parameterWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>

@@ -32,16 +32,16 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-  parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User);
-  parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
-  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Start Start Date", "startStartDate", ParameterWidget::Date);
-  parameterWidget->setType("Start End Date", "startEndDate", ParameterWidget::Date);
-	parameterWidget->setType("Due Start Date", "dueStartDate", ParameterWidget::Date);
-  parameterWidget->setType("Due End Date", "dueEndDate", ParameterWidget::Date);
-  parameterWidget->applyDefaultFilterSet();
+  _parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
+  _parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User);
+  _parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
+  _parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->setType("Start Start Date", "startStartDate", ParameterWidget::Date);
+  _parameterWidget->setType("Start End Date", "startEndDate", ParameterWidget::Date);
+	_parameterWidget->setType("Due Start Date", "dueStartDate", ParameterWidget::Date);
+  _parameterWidget->setType("Due End Date", "dueEndDate", ParameterWidget::Date);
+  _parameterWidget->applyDefaultFilterSet();
 
   _crmAccount->hide();
   //_dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -60,7 +60,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     close();
   }
 
-  connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
 
 	connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
@@ -517,7 +517,7 @@ void todoList::setParams(ParameterList &params)
   params.append("incident", tr("Incident"));
   params.append("task", tr("Task"));
   params.append("project", tr("Project"));
-  parameterWidget->appendValue(params);
+  _parameterWidget->appendValue(params);
 }
 
 void todoList::sPrint()
