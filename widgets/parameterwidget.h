@@ -14,6 +14,7 @@
 #include <QSignalMapper>
 #include <QMap>
 #include <QPair>
+#include <QToolButton>
 
 #include <parameter.h>
 
@@ -51,20 +52,29 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void sManageFilters();
     void storeFilterValue(QDate);
     void storeFilterValue(int pId = -1);
+		void setFiltersVisabiltyPreference();
+		void toggleSave();
+		
 
   signals:
     void cleared();
     void filterSetSaved();
     void updated();
+protected:
+    virtual void showEvent(QShowEvent *);
 
   private:
     enum ParameterWidgetTypes _type;
     QSignalMapper *_filterSignalMapper;
     QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
+		QStringList *_usedTypes;
+		QString _settingsName;
     QMap<int, QPair<QString, QVariant> > _filterValues;
+		bool _initialized;
 
     QString getParameterTypeKey(QString);
     void setSelectedFilter(int filter_id);
+		void repopulateComboboxes();
 };
 
 #endif

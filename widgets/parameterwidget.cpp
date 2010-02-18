@@ -29,19 +29,51 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   if(pName)
     setObjectName(pName);
 
+	_initialized = false;
   setSavedFilters(-1);
-
   _filterSignalMapper = new QSignalMapper(this);
+	_usedTypes = new QStringList();
+	_saveButton->setDisabled(true);
+	
   connect(_addFilterRow, SIGNAL(clicked()), this, SLOT( addParam() ) );
+  connect(_filterButton, SIGNAL(clicked()), this, SLOT( setFiltersVisabiltyPreference() ) );
   connect(_filterSignalMapper, SIGNAL(mapped(int)), this, SLOT( removeParam(int) ));
   connect(_saveButton, SIGNAL(clicked()), this, SLOT( save() ) );
   connect(_manageButton, SIGNAL(clicked()), this, SLOT( sManageFilters() ) );
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( applySaved(int) ) );
+	connect(this, SIGNAL(updated()), this, SLOT( toggleSave() ) );
+}
+
+void ParameterWidget::showEvent(QShowEvent * event)
+{
+  if(_initialized)
+    return;
+
+  QString pname;
+  if(window())
+    pname = window()->objectName() + "/";
+  _settingsName = pname + objectName();
+
+  if(_x_preferences)
+  {
+		if (_x_preferences->value(_settingsName + "/checked") == "f")
+		{
+			_filterGroup->setVisible(false);
+			_filterButton->setChecked(false);
+		}
+		else
+		{
+			_filterGroup->setVisible(true);
+			_filterButton->setChecked(true);
+		}
+  }
+  _initialized = true;
+	QWidget::showEvent(event);
 }
 
 void ParameterWidget::appendValue(ParameterList &pParams)
 {
-        QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
+  QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
 	while (i.hasNext())
 	{
 		i.next();
@@ -86,6 +118,10 @@ void ParameterWidget::applyDefaultFilterSet()
       setSavedFiltersIndex(filter_name);
       applySaved(0, filter_id);
     }
+		else
+		{
+			addParam();
+		}
 
   }
 
@@ -94,7 +130,7 @@ void ParameterWidget::applyDefaultFilterSet()
 void ParameterWidget::addParam()
 {
   XComboBox *xcomboBox = new XComboBox(_filterGroup);
-  QPushButton *pushButton = new QPushButton(_filterGroup);
+  QToolButton *toolButton = new QToolButton(_filterGroup);
   QLineEdit *lineEdit = new QLineEdit(_filterGroup);
   QGridLayout *gridLayout = new QGridLayout();
   QVBoxLayout *xcomboLayout = new QVBoxLayout();
@@ -125,8 +161,8 @@ void ParameterWidget::addParam()
   buttonLayout->setObjectName("buttonLayout" + currRow);
   buttonLayout->setContentsMargins(0, 0, 0, 0);
 
-  pushButton->setObjectName("button" + currRow);
-  pushButton->setText(tr("-"));
+  toolButton->setObjectName("button" + currRow);
+  toolButton->setText(tr("-"));
 
   //grab the items provided by other widgets to populate xcombobox with
   QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > i(_types);
@@ -135,9 +171,12 @@ void ParameterWidget::addParam()
     i.next();
     QPair<QString, ParameterWidgetTypes> tempPair = i.value();
     QString value = QString().setNum(nextRow) + ":" + QString().setNum(tempPair.second);
-    xcomboBox->addItem(i.key(), value );
+		if ( _usedTypes->isEmpty() || !_usedTypes->contains(i.key()) )
+      xcomboBox->addItem(i.key(), value );
   }
 
+  //for (int i = 0; i < _usedTypes->size(); ++i)
+   //      qDebug() << _usedTypes->at(i).toLocal8Bit().constData();
   xcomboLayout->addWidget(xcomboBox);
   xcomboLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
@@ -151,7 +190,7 @@ void ParameterWidget::addParam()
   gridLayout->addLayout(widgetLayout2, 0, 0, 1, 1);
 
   // Place Button
-  buttonLayout->addWidget(pushButton);
+  buttonLayout->addWidget(toolButton);
   buttonLayout->addItem(new QSpacerItem(10, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
   gridLayout->addLayout(buttonLayout, 0, 1, 1, 1);
@@ -160,15 +199,17 @@ void ParameterWidget::addParam()
   _filtersLayout->addLayout(xcomboLayout, nextRow, 0, 1, 1);
 
   // Hook up connections
-  connect(pushButton, SIGNAL(clicked()), gridLayout, SLOT( deleteLater() ) );
-  connect(pushButton, SIGNAL(clicked()), xcomboBox, SLOT( deleteLater() ) );
-  connect(pushButton, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
-  connect(pushButton, SIGNAL(clicked()), pushButton, SLOT( deleteLater() ) );
+  connect(toolButton, SIGNAL(clicked()), _filterSignalMapper, SLOT(map()));
+  connect(toolButton, SIGNAL(clicked()), gridLayout, SLOT( deleteLater() ) );
+  connect(toolButton, SIGNAL(clicked()), xcomboBox, SLOT( deleteLater() ) );
+  connect(toolButton, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
+  connect(toolButton, SIGNAL(clicked()), toolButton, SLOT( deleteLater() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
-  connect(pushButton, SIGNAL(clicked()), _filterSignalMapper, SLOT(map()));
   connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
 
-  _filterSignalMapper->setMapping(pushButton, nextRow);
+  _filterSignalMapper->setMapping(toolButton, nextRow);
+
+	_addFilterRow->setDisabled(true);
 }
 
 void ParameterWidget::applySaved(int pId, int filter_id)
@@ -188,6 +229,9 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   if (!parent())
     return;
 
+	if (pId == 0)
+		addParam();
+
   if (_filterList->id() == -1)
   {
     _filterSetName->clear();
@@ -195,6 +239,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     emit updated();
     return;
   }
+
   if (filter_id == 0 && _filterList->id() != -1)
     filter_id = _filterList->id(_filterList->currentIndex());
 
@@ -289,9 +334,10 @@ void ParameterWidget::changeFilterObject(int index)
   QStringList split = mybox->itemData(index).toString().split(":");
   QString row = split.at(0);
   int type = split.at(1).toInt();
+	
 
   QWidget *widget = _filterGroup->findChild<QWidget *>("widget" + row);
-  QWidget *button = _filterGroup->findChild<QPushButton *>("button" + row);
+  QWidget *button = _filterGroup->findChild<QToolButton *>("button" + row);
   QHBoxLayout *layout = _filterGroup->findChild<QHBoxLayout *>("widgetLayout1" + row);;
 
   DLineEdit *dLineEdit= new DLineEdit(_filterGroup);
@@ -357,6 +403,7 @@ void ParameterWidget::changeFilterObject(int index)
     connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
     break;
   }
+	
 }
 
 void ParameterWidget::clearFilters()
@@ -392,7 +439,51 @@ void ParameterWidget::clearFilters()
   }
 
   _filterValues.clear();
+	_usedTypes->clear();
+	_addFilterRow->setDisabled(false);
 }
+
+void ParameterWidget::repopulateComboboxes()
+{
+	QList<XComboBox *> xlist = _filterGroup->findChildren<XComboBox*>();
+	QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > j(_types);
+	QString current;
+	QString value;
+	int idx;
+	for (int i = 0; i < xlist.count(); i++)
+  {
+		current = xlist.at(i)->currentText();
+		QStringList split = xlist.at(i)->itemData(xlist.at(i)->currentIndex()).toString().split(":");
+		disconnect(xlist.at(i), 0, this, 0);
+		xlist.at(i)->clear();
+		qDebug() << "current is: " << current;
+		qDebug() << "xlist count: " << xlist.count();	
+		while (j.hasNext())
+		{
+			j.next();
+			QPair<QString, ParameterWidgetTypes> tempPair = j.value();
+				qDebug() << "j.key(): " << j.key();
+		  value = split[0] + ":" + QString().setNum(tempPair.second);
+			//QString value = QString().setNum(split[0]) + ":" + QString().setNum(tempPair.second);
+			if ( !_usedTypes->contains(j.key()) || current == j.key() )
+			{
+				xlist.at(i)->addItem(j.key(), value );
+			}
+			else
+			{
+				qDebug() << "if failed!";
+				//qDebug() << "current: " << current;
+				//qDebug() << "j.key(): " << j.key();
+			}
+		}
+		j.toFront();
+		
+		idx = xlist.at(i)->findText(current);
+    xlist.at(i)->setCurrentIndex(idx);
+    connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );   
+	}
+}
+
 
 void ParameterWidget::removeParam(int pRow)
 {
@@ -400,11 +491,12 @@ void ParameterWidget::removeParam(int pRow)
   QLayoutItem *test2;
 
   test = _filtersLayout->itemAtPosition(pRow, 0)->layout()->itemAt(0);
-  XComboBox *_mybox = (XComboBox*)test->widget();
-
-  QVariant _filterVar(_mybox->itemData(_mybox->currentIndex()));
-  QString _filterType = _filterVar.toString();
-  QStringList split = _filterType.split(":");
+  XComboBox *mybox = (XComboBox*)test->widget();
+	if (!mybox->currentText().isEmpty())
+	  _usedTypes->removeAll(mybox->currentText());
+  QVariant filterVar(mybox->itemData(mybox->currentIndex()));
+  QString filterType = filterVar.toString();
+  QStringList split = filterType.split(":");
 
   QPair<QString, QVariant> tempPair = _filterValues.value(split[0].toInt());
 
@@ -415,6 +507,8 @@ void ParameterWidget::removeParam(int pRow)
   delete test2;
   test2 = 0;
   _filtersLayout->update();
+	_addFilterRow->setDisabled(false);
+	repopulateComboboxes();
   emit updated();
 }
 
@@ -515,10 +609,26 @@ void ParameterWidget::save()
       emit filterSetSaved();
     }
   }
-  int foundIndex = _filterList->findText(filtersetname);
-  setSavedFilters(foundIndex);
+  setSavedFilters();
+	_filterList->setCurrentIndex(_filterList->findText(filtersetname));
+	//qDebug() << "foundIndex is: " << foundIndex;
+	//applySaved(-1, filter_id);
 }
 
+void ParameterWidget::setFiltersVisabiltyPreference()
+{
+	QString pname;
+  if(window())
+    pname = window()->objectName() + "/";
+  _settingsName = pname + this->objectName();
+
+	if (!_settingsName.isEmpty() && _x_preferences)
+  {
+		_x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());
+		qDebug() << _x_preferences->value(_settingsName + "/checked");
+	}
+
+}
 void ParameterWidget::setSavedFilters(int defaultId)
 {
   QString query;
@@ -541,6 +651,7 @@ void ParameterWidget::setSavedFilters(int defaultId)
 
     qry.bindValue(":screen", classname);
     qry.exec();
+		qDebug() << "in setSavedFilters, defaultId is: " << defaultId;
     if (defaultId)
       _filterList->populate(qry, defaultId);
     else
@@ -569,17 +680,28 @@ void ParameterWidget::sManageFilters()
   newdlg->exec();
 }
 
-void ParameterWidget::storeFilterValue(QDate _date)
+void ParameterWidget::toggleSave()
+{
+	if (!_filterValues.isEmpty())
+	{
+		_saveButton->setDisabled(false);
+	}
+	else
+	{
+		_saveButton->setDisabled(true);
+	}
+}
+void ParameterWidget::storeFilterValue(QDate date)
 {
   QObject *filter = (QObject *)sender();
   QLayoutItem *test;
   QLayoutItem *test2;
-  QLayoutItem *_child;
-  QLayoutItem *_child2;
-  QGridLayout *_layout;
-  QHBoxLayout *_layout2;
-  QWidget *_found;
-  XComboBox *_mybox;
+  QLayoutItem *child;
+  QLayoutItem *child2;
+  QGridLayout *layout;
+  QHBoxLayout *layout2;
+  QWidget *found;
+  XComboBox *mybox;
   int foundRow = 0;
 
   for (int i = 1; i < _filtersLayout->rowCount(); i++)
@@ -587,23 +709,34 @@ void ParameterWidget::storeFilterValue(QDate _date)
     test = _filtersLayout->itemAtPosition(i, 1);
     if (test)
     {
-      _layout = (QGridLayout *)test->layout();
-      _child =_layout->itemAtPosition(0, 0);
-      _layout2 = (QHBoxLayout *)_child->layout()->itemAt(0);
-      _child2 = _layout2->itemAt(0);
-      _found = _child2->widget();
+      layout = (QGridLayout *)test->layout();
+      child =layout->itemAtPosition(0, 0);
+      layout2 = (QHBoxLayout *)child->layout()->itemAt(0);
+      child2 = layout2->itemAt(0);
+      found = child2->widget();
 
-      if (_found == filter )
+      if (found == filter )
         foundRow = i;
     }
   }
 
   test2 = _filtersLayout->itemAtPosition(foundRow, 0)->layout()->itemAt(0);
-  _mybox = (XComboBox*)test2->widget();
-  QString _currText = _mybox->currentText();
-  QPair<QString, ParameterWidgetTypes> tempPair = _types[_currText];
+  mybox = (XComboBox*)test2->widget();
+  QString currText = mybox->currentText();
+  QPair<QString, ParameterWidgetTypes> tempPair = _types[currText];
 
-  _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(_date));
+  _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(date));
+	//if (!mybox->currentText().isEmpty())
+	//{
+	  //_usedTypes->removeAll(mybox->currentText());
+  
+	if (!_usedTypes->isEmpty())
+		_usedTypes->removeAt(foundRow-1);
+
+	_usedTypes->append(mybox->currentText());
+	  _addFilterRow->setDisabled(false);
+		repopulateComboboxes();
+
   emit updated();
 }
 
@@ -615,12 +748,12 @@ void ParameterWidget::storeFilterValue(int pId)
   QObject *filter = (QObject *)sender();
   QLayoutItem *test;
   QLayoutItem *test2;
-  QLayoutItem *_child;
-  QLayoutItem *_child2;
-  QGridLayout *_layout;
-  QHBoxLayout *_layout2;
-  QWidget *_found;
-  XComboBox *_mybox;
+  QLayoutItem *child;
+  QLayoutItem *child2;
+  QGridLayout *layout;
+  QHBoxLayout *layout2;
+  QWidget *found;
+  XComboBox *mybox;
   int foundRow = 0;
 
   for (int i = 1; i < _filtersLayout->rowCount(); i++)
@@ -629,14 +762,14 @@ void ParameterWidget::storeFilterValue(int pId)
     test = _filtersLayout->itemAtPosition(i, 1);
     if (test)
     {
-      _layout = (QGridLayout *)test->layout();
-      _child =_layout->itemAtPosition(0, 0);
-      _layout2 = (QHBoxLayout *)_child->layout()->itemAt(0);
-      _child2 = _layout2->itemAt(0);
+      layout = (QGridLayout *)test->layout();
+      child = layout->itemAtPosition(0, 0);
+      layout2 = (QHBoxLayout *)child->layout()->itemAt(0);
+      child2 = layout2->itemAt(0);
 
-      _found = _child2->widget();
+      found = child2->widget();
 
-      if (_found == filter )
+      if (found == filter )
       {
         foundRow = i;
       }
@@ -645,8 +778,8 @@ void ParameterWidget::storeFilterValue(int pId)
 
 
   test2 = _filtersLayout->itemAtPosition(foundRow, 0)->layout()->itemAt(0);
-  _mybox = (XComboBox*)test2->widget();
-  QString _currText = _mybox->currentText();
+  mybox = (XComboBox*)test2->widget();
+  QString _currText = mybox->currentText();
   QPair<QString, ParameterWidgetTypes> tempPair = _types[_currText];
 
   const QMetaObject *metaobject = filter->metaObject();
@@ -666,8 +799,8 @@ void ParameterWidget::storeFilterValue(int pId)
     if (classname == "UsernameCluster")
     {
       UsernameCluster *usernameCluster = (UsernameCluster *)filter;
-      QString _username = usernameCluster->username();
-      _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(_username));
+      QString username = usernameCluster->username();
+      _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(username));
       emit updated();
     }
     else
@@ -676,6 +809,20 @@ void ParameterWidget::storeFilterValue(int pId)
       emit updated();
     }
   }
+
+
+	if (!_usedTypes->isEmpty())
+		_usedTypes->removeAt(foundRow-1);
+	_usedTypes->append(mybox->currentText());
+	qDebug() << "Used types: ";
+	 for (int i = 0; i < _usedTypes->size(); ++i)
+	 {
+		 qDebug() << _usedTypes->at(i).toLocal8Bit().constData();
+			
+	 }
+	 _addFilterRow->setDisabled(false);
+	 repopulateComboboxes();
+
 }
 
 QString ParameterWidget::getParameterTypeKey(QString pValue)
@@ -717,4 +864,6 @@ void ParameterWidget::setSelectedFilter(int filter_id)
 
   qry.exec();
 }
+
+
 

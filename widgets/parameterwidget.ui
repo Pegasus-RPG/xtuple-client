@@ -6,14 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>439</width>
-    <height>145</height>
+    <width>519</width>
+    <height>310</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="_widgetLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="_headerLayout">
      <item>
