@@ -23,7 +23,7 @@ taxCodeRate::taxCodeRate(QWidget* parent, const char* name, bool modal, Qt::WFla
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   
-  _percent->setValidator(omfgThis->percentVal());
+  _percent->setValidator(omfgThis->negPercentVal());
 }
 
 taxCodeRate::~taxCodeRate()
