@@ -434,7 +434,7 @@ void ContactWidget::setNumber(QString p)
       silentSetId(q.value("cntct_id").toInt());
   }
   else
-    silentSetId(-1);  
+    _number->setText(p);
 }
 
 void ContactWidget::clear()
