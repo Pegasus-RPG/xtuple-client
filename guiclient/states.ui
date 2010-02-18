@@ -54,13 +54,6 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_print">
-       <property name="text">
-        <string>&amp;Print</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -168,6 +161,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -177,7 +171,6 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>

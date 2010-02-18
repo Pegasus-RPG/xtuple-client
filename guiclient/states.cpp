@@ -29,7 +29,6 @@ states::states(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete,  SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit,    SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_new,     SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_print,   SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view,    SIGNAL(clicked()), this, SLOT(sView()));
 
   _state->addColumn(tr("Abbreviation"),_itemColumn, Qt::AlignLeft, true, "state_abbr");
@@ -151,11 +150,3 @@ void states::sView()
   newdlg.exec();
 }
 
-void states::sPrint()
-{
-  orReport report("StatesMasterList");
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
