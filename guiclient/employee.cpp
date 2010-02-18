@@ -220,7 +220,6 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _comments->setEnabled(editing);
   _save->setEnabled(editing);
   _newCharass->setEnabled(editing);
-  _userButton->setEnabled(editing);
 
   _origmode = _mode;
   if (DEBUG)
@@ -301,12 +300,13 @@ void employee::sSave(const bool pClose)
                             QMessageBox::No) == QMessageBox::Yes)
       {
         // don't use sUser() because it asks too many questions
-        ParameterList params;
+		ParameterList params;
         params.append("mode",     "new");
         params.append("username", _code->text().lower());
         user newdlg(this);
         newdlg.set(params);
         newdlg.exec();
+        _user->setChecked(true);
       }
       return;
     }
@@ -752,6 +752,7 @@ void employee::sUser()
     user newdlg(this);
     newdlg.set(params);
     newdlg.exec();
+	_user->setChecked(true);
   }
   else if (usrq.lastError().type() != QSqlError::NoError)
   {
@@ -774,6 +775,7 @@ void employee::sUser()
       user newdlg(this);
       newdlg.set(params);
       newdlg.exec();
+	  _user->setChecked(true);
     }
   }
   else
