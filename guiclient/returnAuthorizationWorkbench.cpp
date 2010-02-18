@@ -596,68 +596,11 @@ void returnAuthorizationWorkbench::sFillListDue()
   {
     bool bc;
     bc = false;
-    QString sql ( "SELECT DISTINCT rahead_id, "
-		  "CASE "
-		  "  WHEN rahead_creditmethod = 'M' THEN "
-		  "    1 "
-		  "  WHEN rahead_creditmethod = 'K' THEN "
-		  "    2 "
-		  "  WHEN rahead_creditmethod = 'C' THEN "
-		  "    3 "
-		  "END, "
-		  "rahead_number, cust_name, "
-		  "rahead_authdate, "
-		  "calcradueamt(rahead_id) AS amount, "
-		  "currConcat(rahead_curr_id) AS currency, "
-		  "currtobase(rahead_curr_id,"
-		  "           calcradueamt(rahead_id), current_date) AS baseamount, "
-		  "CASE "
-		  "  WHEN rahead_creditmethod = 'M' THEN "
-		  "    <? value(\"creditmemo\") ?> "
-		  "  WHEN rahead_creditmethod = 'K' THEN "
-		  "    <? value(\"check\") ?> "
-		  "  WHEN rahead_creditmethod = 'C' THEN "
-		  "    <? value(\"creditcard\") ?> "
-		  "END AS creditmethod, "
-                  "'curr' AS amount_xtnumericrole, "
-                  "'curr' AS baseamount_xtnumericrole "
-		  "FROM rahead,raitem,custtype,custinfo LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id) "
-		  "WHERE ( (rahead_id=raitem_rahead_id) "
-		  " AND (rahead_cust_id=cust_id) "
-		  " AND (cust_custtype_id=custtype_id) "
-		  " AND ((raitem_disposition IN ('R','P') AND rahead_timing = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
-                  " OR (raitem_disposition IN ('R','P') AND rahead_timing = 'I' AND raitem_qtyauthorized > raitem_qtycredited) "
-		  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
-		  " AND (raitem_status = 'O') "
-		  " AND (rahead_creditmethod != 'N') "
-		  " AND (calcradueamt(rahead_id) > 0) "
-		  " AND (raitem_disposition IN ('C','R','P')) "
-		  " <? if exists(\"cust_id\") ?>"
-		  " AND (cust_id=<? value(\"cust_id\") ?>) "
-		  " <? elseif exists(\"custtype_id\") ?>"
-		  " AND (custtype_id=<? value(\"custtype_id\") ?>) "
-		  " <? elseif exists(\"custgrp_id\") ?>"
-          " AND (custgrpitem_custgrp_id=<? value(\"custgrp_id\") ?>) "
-		  " <? elseif exists(\"custtype_pattern\") ?>"
-		  " AND (custtype_code ~ <? value(\"custtype_pattern\") ?>) "
-		  " <? endif ?>"
-		  " AND (rahead_creditmethod IN ('$'"	// avoid stress over commas
-		  " <? if exists(\"doM\") ?>, 'M'<? endif ?>"
-		  " <? if exists(\"doK\") ?>, 'K'<? endif ?>"
-		  " <? if exists(\"doC\") ?>, 'C'<? endif ?>"
-		  " ))"
-                  " AND   ((SELECT COUNT(*)"
-                  "         FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
-                  "                     JOIN site() ON (warehous_id=itemsite_warehous_id)"
-                  "         WHERE (raitem_rahead_id=rahead_id)) > 0)"
-                  " ) "
-		  "ORDER BY rahead_authdate,rahead_number;"
-		  );
 
+    MetaSQLQuery mql = mqlLoad("returnauthorizationworkbench", "duecredit");
     ParameterList params;
     setParams(params);
 
-    MetaSQLQuery mql(sql);
     XSqlQuery radue = mql.toQuery(params);
     if (radue.first())
       _radue->populate(radue,TRUE);
