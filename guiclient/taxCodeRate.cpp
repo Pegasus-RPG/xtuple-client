@@ -116,7 +116,7 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
 }
 
 void taxCodeRate::sSave()
-{
+{ 
   // Check if start date is greater than end date
   if( _dates->startDate() > _dates->endDate()) 
   {
@@ -125,14 +125,13 @@ void taxCodeRate::sSave()
 	_dates->setFocus();
 	return;
   }
-
   // Check for overlapping dates
-  q.prepare("SELECT taxrate_id "
+  q.prepare("SELECT taxrate_id,taxrate_tax_id,taxrate_effective,taxrate_expires "
             "  FROM taxrate "
-            " WHERE ((taxrate_id != :taxrate_id) "
+            " WHERE (taxrate_id != :taxrate_id) "
 			"   AND (taxrate_tax_id = :taxrate_tax_id) "
-			"   AND ((taxrate_effective BETWEEN (:taxrate_effective) AND (:taxrate_expires)) "
-			"    OR (taxrate_expires BETWEEN (:taxrate_effective) AND (:taxrate_expires)))) ");
+			"   AND (taxrate_effective < :taxrate_expires) "
+			"   AND (taxrate_expires > :taxrate_effective ) ");
   q.bindValue(":taxrate_id", _taxrateid);
   q.bindValue(":taxrate_tax_id", _taxId);
   q.bindValue(":taxrate_effective", _dates->startDate());
