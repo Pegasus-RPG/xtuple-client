@@ -15,13 +15,6 @@
 #include <QValidator>
 #include "inputManager.h"
 
-/*
- *  Constructs a woMaterialItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -29,8 +22,6 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
   _bomitemid=-1;
   _wooperid=-1;
 
-
-  // signals and slots connections
   connect(_qtyFxd, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
@@ -59,18 +50,11 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
     _issueMethod->setCurrentIndex(2);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 woMaterialItem::~woMaterialItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void woMaterialItem::languageChange()
 {
   retranslateUi(this);
@@ -161,7 +145,8 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _wo->setFocus();
+      if(_wo->id() == -1)
+        _wo->setFocus();
     }
     else if (param.toString() == "edit")
     {
