@@ -212,6 +212,9 @@ to be bound by its terms.</comment>
         <string>Show</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>12</number>
+        </property>
         <item>
          <widget class="XCheckBox" name="_showUnreleased">
           <property name="text">
