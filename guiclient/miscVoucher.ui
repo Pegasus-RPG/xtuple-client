@@ -132,7 +132,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="VendorCluster" name="_vendor">
             <property name="focusPolicy">
-             <enum>Qt::TabFocus</enum>
+             <enum>Qt::StrongFocus</enum>
             </property>
            </widget>
           </item>
