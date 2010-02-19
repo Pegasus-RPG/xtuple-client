@@ -637,15 +637,15 @@ void initErrorLookupHash()
 			"line items have transaction history.  "),		0, "" },
 
   { "deleteSOItem",  -101, TR("This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
-  { "deleteSOItem",  -102, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping.  "
-			"You must return this stock before "
-		        "you may delete this Sales Order Item."),		0, "" },
+  { "deleteSOItem",  -102, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping."),	0, "" },
   { "deleteSOItem",  -103, TR("This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  "
 			"You must resolve this conflict before "
 		        "you may delete this Sales Order Item."),		0, "" },
   { "deleteSOItem",  -104, TR("This Sales Order Item cannot be deleted as it is linked to an In Process Work Order.  "
 			"You must resolve this conflict before "
 		        "you may delete this Sales Order Item."),		0, "" },
+  { "deleteSOItem",  -105, TR("This Sales Order Item cannot be deleted as it has generated Inventory History.  "
+		        "You may want to consider cancelling this Sales Order Item."),		0, "" },
 
   { "deleteSubaccount", -1,
                         TR("The selected Subaccount cannot be deleted as it "
