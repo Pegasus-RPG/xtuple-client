@@ -102,7 +102,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
     {
       _mode = cView;
 
-	  param = pParams.value("pr_id", &valid);
+      param = pParams.value("pr_id", &valid);
       if (valid)
         prid = param.toInt();
 
@@ -123,7 +123,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
                  "FROM pr "
                  "WHERE (pr_id=:pr_id);" );
       q.bindValue(":pr_id", prid);
-	  q.exec();
+      q.exec();
       if (q.first())
       {
         _number->setText(q.value("pr_number").toString());
@@ -248,9 +248,10 @@ void purchaseRequest::sCreate()
   }
   else if (_mode == cRelease)
   {
-    q.prepare("SELECT createPr(:orderNumber, 'F', :planord_id) AS prid;");
+    q.prepare("SELECT createPr(:orderNumber, 'F', :planord_id, :notes) AS prid;");
     q.bindValue(":orderNumber", _number->text().toInt());
     q.bindValue(":planord_id", _planordid);
+    q.bindValue(":notes", _notes->text());
     q.exec();
     if (q.first())
     {

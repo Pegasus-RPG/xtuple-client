@@ -45,6 +45,7 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   _pr->addColumn(tr("Parent Order"), _itemColumn,   Qt::AlignLeft,   true,  "parent"   );
   _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
   _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
+  _pr->addColumn(tr("Notes"),        -1,            Qt::AlignRight,  true,  "pr_releasenote"  );
 }
 
 dspPurchaseReqsByPlannerCode::~dspPurchaseReqsByPlannerCode()
