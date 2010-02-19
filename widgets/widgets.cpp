@@ -114,7 +114,6 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ExpenseClusterPlugin(this));
   m_plugins.append(new ExpenseLineEditPlugin(this));
   m_plugins.append(new FileClusterPlugin(this));
-  m_plugins.append(new filterManagerPlugin(this));
   m_plugins.append(new GLClusterPlugin(this));
   m_plugins.append(new ImageClusterPlugin(this));
   m_plugins.append(new InvoiceClusterPlugin(this));
