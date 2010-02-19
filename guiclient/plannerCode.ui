@@ -323,11 +323,5 @@ to be bound by its terms.</comment>
       <receiver>plannerCode</receiver>
       <slot>reject()</slot>
     </connection>
-    <connection>
-      <sender>_autoExplode</sender>
-      <signal>toggled(bool)</signal>
-      <receiver>_explosionGroup</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
   </connections>
 </ui>

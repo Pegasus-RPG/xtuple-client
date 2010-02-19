@@ -23,6 +23,8 @@ plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFla
     QButtonGroup* _explosionGroupInt = new QButtonGroup(this);
     _explosionGroupInt->addButton(_singleLevel);
     _explosionGroupInt->addButton(_multipleLevel);
+    _singleLevel->setChecked(true);
+    _explosionGroup->setEnabled(false);
   }
   else
   {
@@ -34,7 +36,6 @@ plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-  connect(_autoExplode, SIGNAL(toggled(bool)), _explosionGroup, SLOT(setEnabled(bool)));
 }
 
 plannerCode::~plannerCode()
@@ -67,15 +68,11 @@ enum SetResponse plannerCode::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _code->setFocus();
-
-      connect(_autoExplode, SIGNAL(toggled(bool)), _explosionGroup, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _code->setFocus();
-
-      connect(_autoExplode, SIGNAL(toggled(bool)), _explosionGroup, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
