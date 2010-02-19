@@ -103,6 +103,26 @@ void shippingChargeTypes::sDelete()
                                tr( "The selected Shipping Charge Type cannot be delete as one or more Customers are assigned to it.\n"
                                    "You must reassigned these Customers before you may delete the selected Shipping Charge Type." ) );
         return;
+      case -2:
+        QMessageBox::critical( this, tr("Cannot Delete Shipping Charge Type"),
+                               tr( "The selected Shipping Charge Type cannot be delete as one or more ShipTo's are assigned to it.\n"
+                                   "You must reassigned these ShipTo's before you may delete the selected Shipping Charge Type." ) );
+        return;
+      case -3:
+        QMessageBox::critical( this, tr("Cannot Delete Shipping Charge Type"),
+                               tr( "The selected Shipping Charge Type cannot be delete as one or more Sales Orders are assigned to it.\n"
+                                   "You must reassigned these Sales Orders before you may delete the selected Shipping Charge Type." ) );
+        return;
+      case -4:
+        QMessageBox::critical( this, tr("Cannot Delete Shipping Charge Type"),
+                               tr( "The selected Shipping Charge Type cannot be delete as one or more Shipments are assigned to it.\n"
+                                   "You must reassigned these Shipments before you may delete the selected Shipping Charge Type." ) );
+        return;
+      case -5:
+        QMessageBox::critical( this, tr("Cannot Delete Shipping Charge Type"),
+                               tr( "The selected Shipping Charge Type cannot be delete as one or more Invoices are assigned to it.\n"
+                                   "You must reassigned these Invoices before you may delete the selected Shipping Charge Type." ) );
+        return;
     }
 
     sFillList();
