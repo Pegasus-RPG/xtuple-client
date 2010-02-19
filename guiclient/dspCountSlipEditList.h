@@ -38,6 +38,7 @@ public slots:
     virtual void sPostAll();
     virtual void sCountTagList();
     virtual void sFillList();
+    virtual void sHandleButtons(bool);
 
 protected slots:
     virtual void languageChange();

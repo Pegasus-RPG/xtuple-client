@@ -49,9 +49,8 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
 
   if (_privileges->check("EnterCountSlips"))
   {
-    connect(_cntslip, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_cntslip, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
     connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-    connect(_cntslip, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
 
   if (_privileges->check("DeleteCountSlips"))
@@ -242,5 +241,19 @@ void dspCountSlipEditList::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void dspCountSlipEditList::sHandleButtons(bool valid)
+{
+  if (valid)
+  {
+    // Handle Edit Button
+    if (_cntslip->currentItem()->rawValue("cntslip_posted") == 0)
+      _edit->setEnabled(true);
+	else
+	  _edit->setEnabled(false);
+  }
+  else
+    _edit->setEnabled(false);
 }
 
