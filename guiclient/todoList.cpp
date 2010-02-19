@@ -37,10 +37,10 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
   _parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
   _parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
-  _parameterWidget->setType("Start Start Date", "startStartDate", ParameterWidget::Date);
-  _parameterWidget->setType("Start End Date", "startEndDate", ParameterWidget::Date);
-	_parameterWidget->setType("Due Start Date", "dueStartDate", ParameterWidget::Date);
-  _parameterWidget->setType("Due End Date", "dueEndDate", ParameterWidget::Date);
+  _parameterWidget->setType("Start Date Before", "startStartDate", ParameterWidget::Date);
+  _parameterWidget->setType("Start Date After", "startEndDate", ParameterWidget::Date);
+	_parameterWidget->setType("Due Date Before", "dueStartDate", ParameterWidget::Date);
+  _parameterWidget->setType("Due Date After", "dueEndDate", ParameterWidget::Date);
   _parameterWidget->applyDefaultFilterSet();
 
   _crmAccount->hide();
