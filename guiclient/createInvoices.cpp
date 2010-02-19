@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "postBillingSelections.h"
+#include "createInvoices.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -18,7 +18,7 @@
 
 #include "storedProcErrorLookup.h"
 
-postBillingSelections::postBillingSelections(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+createInvoices::createInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -30,19 +30,19 @@ postBillingSelections::postBillingSelections(QWidget* parent, const char* name, 
   _post->setFocus();
 }
 
-postBillingSelections::~postBillingSelections()
+createInvoices::~createInvoices()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-void postBillingSelections::languageChange()
+void createInvoices::languageChange()
 {
   retranslateUi(this);
 }
 
-void postBillingSelections::sPost()
+void createInvoices::sPost()
 {
-  QString sql("SELECT postBillingSelections(custtype_id, :consolidate) AS result"
+  QString sql("SELECT createInvoices(custtype_id, :consolidate) AS result"
               " FROM custtype" );
   if (_customerType->isSelected())
     sql += " WHERE (custtype_id=:custtype_id)";
@@ -57,7 +57,7 @@ void postBillingSelections::sPost()
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postBillingSelections", result),
+      systemError(this, storedProcErrorLookup("createInvoices", result),
                   __FILE__, __LINE__);
       return;
     }

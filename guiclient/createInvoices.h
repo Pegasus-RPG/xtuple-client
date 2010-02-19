@@ -8,20 +8,20 @@
  * to be bound by its terms.
  */
 
-#ifndef POSTBILLINGSELECTIONS_H
-#define POSTBILLINGSELECTIONS_H
+#ifndef CREATEINVOICES_H
+#define CREATEINVOICES_H
 
 #include "guiclient.h"
 #include "xdialog.h"
-#include "ui_postBillingSelections.h"
+#include "ui_createInvoices.h"
 
-class postBillingSelections : public XDialog, public Ui::postBillingSelections
+class createInvoices : public XDialog, public Ui::createInvoices
 {
     Q_OBJECT
 
 public:
-    postBillingSelections(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postBillingSelections();
+    createInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~createInvoices();
 
 public slots:
     virtual void sPost();
@@ -31,4 +31,4 @@ protected slots:
 
 };
 
-#endif // POSTBILLINGSELECTIONS_H
+#endif // CREATEINVOICES_H

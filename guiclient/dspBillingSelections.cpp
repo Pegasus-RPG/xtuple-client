@@ -20,7 +20,7 @@
 #include <openreports.h>
 #include "selectOrderForBilling.h"
 #include "printInvoices.h"
-#include "postBillingSelections.h"
+#include "createInvoices.h"
 
 /*
  *  Constructs a dspBillingSelections as a child of 'parent', with the
@@ -125,7 +125,7 @@ void dspBillingSelections::sFillList()
 
 void dspBillingSelections::sPostAll()
 {
-  postBillingSelections newdlg(this, "", TRUE);
+  createInvoices newdlg(this, "", TRUE);
   newdlg.exec();
 }
 
@@ -133,7 +133,7 @@ void dspBillingSelections::sPost()
 {
   int soheadid = _cobill->altId();
 
-  q.prepare("SELECT postBillingSelection(:cobmisc_id) AS result;");
+  q.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
   q.bindValue(":cobmisc_id", _cobill->id());
   q.exec();
   if (q.first())
@@ -141,10 +141,10 @@ void dspBillingSelections::sPost()
     int result = q.value("result").toInt();
 
     if (result == -5)
-      QMessageBox::critical( this, tr("Cannot Post one or more Invoices"),
+      QMessageBox::critical( this, tr("Cannot Create one or more Invoices"),
                              tr( "The G/L Account Assignments for the selected Invoice are not configured correctly.\n"
-                                 "Because of this, G/L Transactions cannot be posted for this Invoices.\n"
-                                 "You must contact your Systems Administrator to have this corrected before you may post this Invoice." ) );
+                                 "Because of this, G/L Transactions cannot be created for this Invoices.\n"
+                                 "You must contact your Systems Administrator to have this corrected before you may Create this Invoice." ) );
     else if (result < 0)
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)

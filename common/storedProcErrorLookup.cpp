@@ -930,11 +930,11 @@ void initErrorLookupHash()
   { "postBankReconciliation", -1, TR("This Bank Reconciliation could not be "
 				     "posted because the G/L Account could not "
 				     "be verified."),		0, "" },
-  { "postBillingSelection",
+  { "createInvoice",
 			-1, TR("This Billing Selection cannot be posted "
 			       "because it has already been posted."),	0, "" },
 
-  { "postBillingSelections",
+  { "createInvoices",
                 -5, TR("The G/L Account Assignments for one or more of the "
                        "Billing Selections that you are trying to post are not "
                        "configured correctly. Therefore, G/L Transactions "

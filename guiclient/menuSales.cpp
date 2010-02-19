@@ -35,7 +35,7 @@
 #include "selectOrderForBilling.h"
 #include "billingEditList.h"
 #include "dspBillingSelections.h"
-#include "postBillingSelections.h"
+#include "createInvoices.h"
 #include "unpostedInvoices.h"
 #include "reprintInvoices.h"
 #include "printInvoices.h"
@@ -249,7 +249,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.billingEditList",		     tr("&Billing Edit List..."),	SLOT(sBillingEditList()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "so.dspBillingSelections",	     tr("Billing &Selections..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", QPixmap(":/images/billingSelections"), toolBar, true, tr("Billing Selections") },
-    { "so.postBillingSelections",	     tr("&Post Billing Selections..."),	SLOT(sPostBillingSelections()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
+    { "so.createInvoices",	     tr("&Create Invoices..."),	SLOT(sCreateInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.listUnpostedInvoices",	     tr("&List Unposted Invoices..."),	SLOT(sUnpostedInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
     { "so.postInvoices",		     tr("Post &Invoices..."),		SLOT(sPostInvoices()), billingInvoicesMenu, "PostMiscInvoices",	NULL, NULL, true, NULL },
@@ -625,9 +625,9 @@ void menuSales::sDspBillingSelections()
   omfgThis->handleNewWindow(new dspBillingSelections());
 }
 
-void menuSales::sPostBillingSelections()
+void menuSales::sCreateInvoices()
 {
-  postBillingSelections(parent, "", TRUE).exec();
+  createInvoices(parent, "", TRUE).exec();
 }
 
 void menuSales::sUnpostedInvoices()

@@ -157,6 +157,7 @@ FORMS =   ../common/batchItem.ui                \
           createCountTagsByItem.ui              \
           createCountTagsByParameterList.ui     \
           createCycleCountTags.ui               \
+          createInvoices.ui                     \
           createItemSitesByClassCode.ui         \
           createLotSerial.ui                    \
           createPlannedOrdersByItem.ui          \
@@ -511,7 +512,6 @@ FORMS =   ../common/batchItem.ui                \
           plannerCode.ui                \
           plannerCodes.ui               \
           poLiabilityDistrib.ui         \
-          postBillingSelections.ui      \
           postCashReceipts.ui           \
           postCheck.ui                  \
           postChecks.ui                 \
@@ -867,6 +867,7 @@ HEADERS = ../common/batchItem.h                 \
           createCountTagsByItem.h       \
           createCountTagsByParameterList.h      \
           createCycleCountTags.h                \
+          createInvoices.h                      \
           createItemSitesByClassCode.h          \
           createLotSerial.h                     \
           createPlannedOrdersByItem.h           \
@@ -1244,7 +1245,6 @@ HEADERS = ../common/batchItem.h                 \
           poLiabilityDistrib.h          \
           poitemTableModel.h            \
           poitemTableView.h             \
-          postBillingSelections.h       \
           postCashReceipts.h            \
           postCheck.h                   \
           postChecks.h                  \
@@ -1616,6 +1616,7 @@ SOURCES = ../common/batchItem.cpp               \
           createCountTagsByItem.cpp             \
           createCountTagsByParameterList.cpp    \
           createCycleCountTags.cpp              \
+          createInvoices.cpp                    \
           createItemSitesByClassCode.cpp        \
           createLotSerial.cpp                   \
           createPlannedOrdersByItem.cpp         \
@@ -1992,7 +1993,6 @@ SOURCES = ../common/batchItem.cpp               \
           poLiabilityDistrib.cpp        \
           poitemTableModel.cpp          \
           poitemTableView.cpp           \
-          postBillingSelections.cpp     \
           postCashReceipts.cpp          \
           postCheck.cpp                 \
           postChecks.cpp                \

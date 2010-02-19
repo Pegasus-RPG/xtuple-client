@@ -166,7 +166,7 @@ static void __menuEvaluate(QAction * act)
   }
 }
 
-static QScriptValue settingsValue(QScriptContext *context, QScriptEngine *engine)
+static QScriptValue settingsValue(QScriptContext *context, QScriptEngine * /*engine*/)
 {
   if (context->argumentCount() == 2)
     return xtsettingsValue(context->argument(0).toString(), context->argument(1).toVariant()).toString();

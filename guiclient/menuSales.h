@@ -51,7 +51,7 @@ class menuSales : public QObject
     void sSelectOrderForBilling();
     void sBillingEditList();
     void sDspBillingSelections();
-    void sPostBillingSelections();
+    void sCreateInvoices();
     void sUnpostedInvoices();
     void sPrintInvoices();
     void sPrintInvoicesByShipvia();
