@@ -33,7 +33,6 @@
 #include "plugins/expenseclusterplugin.h"
 #include "plugins/expenselineeditplugin.h"
 #include "plugins/fileclusterplugin.h"
-#include "plugins/filtermanagerplugin.h"
 #include "plugins/glclusterplugin.h"
 #include "plugins/imageclusterplugin.h"
 #include "plugins/invoiceclusterplugin.h"
