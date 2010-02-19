@@ -326,6 +326,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     {
       setViewMode();
       _cust->setType(CLineEdit::AllCustomers);
+	  _salesRep->setType(XComboBox::SalesReps);
 
       _issueStock->hide();
       _issueLineBalance->hide();
