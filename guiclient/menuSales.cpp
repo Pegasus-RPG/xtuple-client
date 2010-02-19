@@ -392,15 +392,15 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Analysis | Summarized Sales History
     { "menu",	tr("Summari&zed Sales History"),           (char*)analysisSumHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryBySalesRep", tr("by &Sales Rep..."), SLOT(sDspSummarizedSalesBySalesRep()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByShippingZoneByItem", tr("by Shipping &Zone by Item..."), SLOT(sDspSummarizedSalesHistoryByShippingZone()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryBySalesRep", tr("by &Sales Rep..."), SLOT(sDspSummarizedSalesBySalesRep()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByShippingZoneByItem", tr("by Shipping &Zone by Item..."), SLOT(sDspSummarizedSalesHistoryByShippingZone()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
     { "separator",	NULL,	NULL,	analysisSumHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerType", tr("by Customer &Type..."), SLOT(sDspSummarizedSalesByCustomerType()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspSummarizedSalesByCustomer()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerTypeByItem", tr("by Customer T&ype by Item..."), SLOT(sDspSummarizedSalesByCustomerTypeByItem()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerByItem", tr("by C&ustomer by Item..."), SLOT(sDspSummarizedSalesByCustomerByItem()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByCustomerType", tr("by Customer &Type..."), SLOT(sDspSummarizedSalesByCustomerType()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspSummarizedSalesByCustomer()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByCustomerTypeByItem", tr("by Customer T&ype by Item..."), SLOT(sDspSummarizedSalesByCustomerTypeByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByCustomerByItem", tr("by C&ustomer by Item..."), SLOT(sDspSummarizedSalesByCustomerByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
     { "separator",	NULL,	NULL,	analysisSumHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryByItem", tr("by &Item..."), SLOT(sDspSummarizedSalesByItem()), analysisSumHistMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistoryByItem", tr("by &Item..."), SLOT(sDspSummarizedSalesByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
 
     // Sales | Analysis | Time-Phased Sales History
     { "menu",	tr("Time &Phased Sales History"),           (char*)analysisTpHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
