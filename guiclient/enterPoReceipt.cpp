@@ -280,9 +280,9 @@ void enterPoReceipt::sPost()
     q.exec("BEGIN;");	// because of possible insertgltransaction failures
     XSqlQuery postLine;
     postLine.prepare("SELECT postReceipt(recv_id, 0) AS result, "
-              "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo "
+              "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuewo "
               "FROM recv "
-              " JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
+              " LEFT OUTER JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
               "WHERE (recv_id=:recv_id);");
     postLine.bindValue(":recv_id", qi.value("recv_id").toInt());
     postLine.exec();
