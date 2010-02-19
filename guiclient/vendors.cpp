@@ -109,6 +109,13 @@ void vendors::sCopy()
 
 void vendors::sDelete()
 {
+  QString question = tr("Are you sure that you want to delete this vendor?");
+  if (QMessageBox::question(this, tr("Delete Vendor?"),
+                              question,
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
   q.prepare("SELECT deleteVendor(:vend_id) AS result;");
   q.bindValue(":vend_id", _vendor->id());
   q.exec();
