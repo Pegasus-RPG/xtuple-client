@@ -480,7 +480,9 @@ void VirtualClusterLineEdit::sHandleCompleter()
     model->setQuery(numQ);
     for (int i = 0; i < model->columnCount(); i++)
     {
-      if (i == numberCol || i == nameCol || i == descripCol)
+      if ( (i == numberCol) ||
+           (_hasName && i == nameCol ) ||
+           (_hasDescription && i == descripCol) )
       {
         view->resizeColumnToContents(i);
         width += view->columnWidth(i);
@@ -494,6 +496,9 @@ void VirtualClusterLineEdit::sHandleCompleter()
 
 
   _completer->setCompletionPrefix(stripped);
+
+  if (width > 350)
+    width = 350;
 
   QRect rect;
   rect.setHeight(height());
