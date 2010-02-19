@@ -232,12 +232,13 @@ void plannedOrder::sCreate()
   
   q.prepare( "SELECT createPlannedOrder( :orderNumber, :itemsite_id, :qty, "
              "                           (DATE(:dueDate) - :leadTime), :dueDate, "
-             "                           :type, :supply_itemsite_id) AS result;" );
+             "                           :type, :supply_itemsite_id, :notes) AS result;" );
   q.bindValue(":orderNumber", _number->text().toInt());
   q.bindValue(":itemsite_id", itemsiteid);
   q.bindValue(":qty", _qty->toDouble());
   q.bindValue(":dueDate", _dueDate->date());
   q.bindValue(":leadTime", _leadTime->value());
+  q.bindValue(":notes", _notes->text());
   if (_poButton->isChecked())
     q.bindValue(":type", "P");
   else if (_woButton->isChecked())
@@ -312,6 +313,7 @@ void plannedOrder::populate()
     _dueDate->setDate(planord.value("planord_duedate").toDate());
     _startDate->setDate(planord.value("planord_startdate").toDate());
     _leadTime->setValue(planord.value("leadtime").toInt());
+    _notes->setText(planord.value("planord_comments").toString());
     if (planord.value("planord_type").toString() == "P")
       _poButton->setChecked(TRUE);
     else if (planord.value("planord_type").toString() == "W")
