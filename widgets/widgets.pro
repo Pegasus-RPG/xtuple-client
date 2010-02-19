@@ -55,7 +55,6 @@ HEADERS += \
            plugins/expenseclusterplugin.h \
            plugins/expenselineeditplugin.h \
            plugins/fileclusterplugin.h \
-           plugins/filtermanagerplugin.h \
            plugins/glclusterplugin.h \
            plugins/imageclusterplugin.h \
            plugins/invoiceclusterplugin.h \

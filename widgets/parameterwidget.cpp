@@ -175,8 +175,6 @@ void ParameterWidget::addParam()
       xcomboBox->addItem(i.key(), value );
   }
 
-  //for (int i = 0; i < _usedTypes->size(); ++i)
-   //      qDebug() << _usedTypes->at(i).toLocal8Bit().constData();
   xcomboLayout->addWidget(xcomboBox);
   xcomboLayout->addItem(new QSpacerItem(20, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
@@ -205,7 +203,8 @@ void ParameterWidget::addParam()
   connect(toolButton, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
   connect(toolButton, SIGNAL(clicked()), toolButton, SLOT( deleteLater() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
-  connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
+  connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
+  //connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
 
   _filterSignalMapper->setMapping(toolButton, nextRow);
 
@@ -317,6 +316,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         QLineEdit *lineEdit;
         lineEdit = (QLineEdit*)found;
         lineEdit->setText(tempFilterList[1]);
+				storeFilterValue(-1, lineEdit);
         break;
       }
     }//end of if
@@ -400,7 +400,7 @@ void ParameterWidget::changeFilterObject(int index)
     layout->insertWidget(0, lineEdit);
 
     connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
-    connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
+    connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
     break;
   }
 	
@@ -456,24 +456,14 @@ void ParameterWidget::repopulateComboboxes()
 		QStringList split = xlist.at(i)->itemData(xlist.at(i)->currentIndex()).toString().split(":");
 		disconnect(xlist.at(i), 0, this, 0);
 		xlist.at(i)->clear();
-		qDebug() << "current is: " << current;
-		qDebug() << "xlist count: " << xlist.count();	
 		while (j.hasNext())
 		{
 			j.next();
 			QPair<QString, ParameterWidgetTypes> tempPair = j.value();
-				qDebug() << "j.key(): " << j.key();
 		  value = split[0] + ":" + QString().setNum(tempPair.second);
-			//QString value = QString().setNum(split[0]) + ":" + QString().setNum(tempPair.second);
 			if ( !_usedTypes->contains(j.key()) || current == j.key() )
 			{
 				xlist.at(i)->addItem(j.key(), value );
-			}
-			else
-			{
-				qDebug() << "if failed!";
-				//qDebug() << "current: " << current;
-				//qDebug() << "j.key(): " << j.key();
 			}
 		}
 		j.toFront();
@@ -741,11 +731,14 @@ void ParameterWidget::storeFilterValue(QDate date)
 }
 
 //stores the value of a filter object into the filtervalues map
-void ParameterWidget::storeFilterValue(int pId)
+void ParameterWidget::storeFilterValue(int pId, QObject* filter)
 {
  // qDebug() << "in storefiltervalue, pId passed is: " << pId;
+	if (!filter)
+	{
+		filter = (QObject *)sender();
+	}
 
-  QObject *filter = (QObject *)sender();
   QLayoutItem *test;
   QLayoutItem *test2;
   QLayoutItem *child;
