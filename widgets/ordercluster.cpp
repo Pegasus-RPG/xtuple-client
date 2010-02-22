@@ -331,7 +331,7 @@ void OrderLineEdit::sParse()
 	}
 	else
 	{
-	  _extraClause += "AND (orderhead_number=" + text() + ")";
+	  _extraClause += "AND (orderhead_number LIKE '" + text() + "%')";
           sEllipses();
 	  _extraClause += "AND (orderhead_type='" + type() + "')";
 	}
@@ -421,13 +421,13 @@ void OrderLineEdit::setExtraClause(const QString &pType, const QString &pClause)
     _allClause = pClause;
   }
   else if (pType == "PO")
-    _poClause = " (((orderhead_type='PO') AND (" + pClause + ")) OR (orderhead_type != 'PO'))";
+    _poClause = " (((orderhead_type='PO') AND (" + pClause + ")) OR (orderhead_type != 'PO')) ";
   else if (pType == "RA")
-    _raClause = " (((orderhead_type='RA') AND (" + pClause + ")) OR (orderhead_type != 'RA'))";
+    _raClause = " (((orderhead_type='RA') AND (" + pClause + ")) OR (orderhead_type != 'RA')) ";
   else if (pType == "SO")
-    _soClause = " (((orderhead_type='SO') AND (" + pClause + ")) OR (orderhead_type != 'SO'))";
+    _soClause = " (((orderhead_type='SO') AND (" + pClause + ")) OR (orderhead_type != 'SO')) ";
   else if (pType == "TO")
-    _toClause = " (((orderhead_type='TO') AND (" + pClause + ")) OR (orderhead_type != 'TO'))";
+    _toClause = " (((orderhead_type='TO') AND (" + pClause + ")) OR (orderhead_type != 'TO')) ";
   else
   {
     QMessageBox::critical(this, tr("Invalid Order Type"),
@@ -486,20 +486,14 @@ void OrderLineEdit::setFromSitePrivsEnforced(const bool p)
     _fromPrivsClause.clear();
 }
 
-void OrderLineEdit::sList()
+VirtualList * OrderLineEdit::listFactory()
 {
-  OrderList newdlg(this);
-  int id = newdlg.exec();
-  QString type = newdlg.type();
-  setId(id, type);
+  return new OrderList(this);
 }
 
-void OrderLineEdit::sSearch()
+VirtualSearch * OrderLineEdit::searchFactory()
 {
-  OrderSearch newdlg(this);
-  int id = newdlg.exec();
-  QString type = newdlg.type();
-  setId(id, type);
+  return new OrderSearch(this);
 }
 
 OrderLineEdit::OrderStatus  OrderLineEdit::status()

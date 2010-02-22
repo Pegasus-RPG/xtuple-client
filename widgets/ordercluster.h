@@ -64,8 +64,6 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual void          setAllowedType(const QString &);
     virtual void          setAllowedTypes(const OrderTypes);
     virtual void          setId(const int, const QString & = "");
-    virtual void          sList();
-    virtual void          sSearch();
 
   signals:
     void newId(const int, const QString &);
@@ -84,6 +82,8 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
   protected slots:
     virtual void        sNewId(const int);
     virtual void        sParse();
+    virtual VirtualList*    listFactory();
+    virtual VirtualSearch*  searchFactory();
 
 
   private:
