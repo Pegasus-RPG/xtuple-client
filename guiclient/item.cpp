@@ -419,7 +419,7 @@ void item::saveCore()
             "       item_inv_uom_id, item_price_uom_id)"
             "VALUES(:item_id, :item_number, '', '',"
             "       :item_classcode_id,"
-            "       false, false, false, false,"
+            "       false, false, false, :item_active,"
             "       :item_type,"
             "       0.0, 0.0, -1,"
             "       true, 0.0, 0.0,"
@@ -429,6 +429,7 @@ void item::saveCore()
     q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
     q.bindValue(":item_classcode_id", _classcode->id());
     q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+    q.bindValue(":item_active", QVariant(_active->isChecked()));
     if(!q.exec() || q.lastError().type() != QSqlError::NoError)
     {
       q.exec("ROLLBACK;");
