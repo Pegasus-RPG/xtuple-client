@@ -203,6 +203,8 @@ void glSeries::sNew()
 
   ParameterList params;
   params.append("mode", "new");
+  params.append("doctype", _doctype->currentText());
+  params.append("docnumber", _docnumber->text());
   params.append("glSequence", _glsequence);
   params.append("distDate", _date->date());
 

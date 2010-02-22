@@ -23,8 +23,6 @@ glSeriesItem::glSeriesItem(QWidget* parent, const char* name, bool modal, Qt::WF
     setupUi(this);
 
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
-    _standardJournalItem = false;
 }
 
 glSeriesItem::~glSeriesItem()
@@ -50,6 +48,14 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("doctype", &valid);
+  if (valid)
+    _doctype = param.toString();
+
+  param = pParams.value("docnumber", &valid);
+  if (valid)
+    _docnumber = param.toString();
+
   param = pParams.value("glSequence", &valid);
   if (valid)
     _glsequence = param.toInt();
@@ -71,7 +77,9 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
     }
   }
 
-  _standardJournalItem = pParams.inList("postStandardJournal");
+  param = pParams.value("postStandardJournal", &valid);
+  if (valid)
+    _doctype = "ST";
 
   return NoError;
 }
@@ -96,7 +104,7 @@ void glSeriesItem::sSave()
     amount *= -1;
 
   if (_mode == cNew)
-    q.prepare("SELECT insertIntoGLSeries(:glsequence, 'G/L', :doctype, '', :accnt_id, :amount, CURRENT_DATE) AS result;");
+    q.prepare("SELECT insertIntoGLSeries(:glsequence, 'G/L', :doctype, :docnumber, :accnt_id, :amount, CURRENT_DATE) AS result;");
   else if (_mode == cEdit)
     q.prepare( "UPDATE glseries "
                "SET glseries_accnt_id=:accnt_id,"
@@ -105,12 +113,10 @@ void glSeriesItem::sSave()
 
   q.bindValue(":glseries_id",	_glseriesid);
   q.bindValue(":glsequence",	_glsequence);
+  q.bindValue(":doctype",       _doctype);
+  q.bindValue(":docnumber",     _docnumber);
   q.bindValue(":accnt_id",	_account->id());
   q.bindValue(":amount",	amount);
-  if (_standardJournalItem)
-    q.bindValue(":doctype", "ST");
-  else
-    q.bindValue(":doctype", "");
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {

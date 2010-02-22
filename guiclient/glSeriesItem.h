@@ -38,7 +38,8 @@ private:
     int _mode;
     int _glsequence;
     int _glseriesid;
-    bool _standardJournalItem;
+    QString _docnumber;
+    QString _doctype;
 
 };
 
