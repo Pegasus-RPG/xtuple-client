@@ -26,6 +26,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 {
   setupUi(this);
 
+	
   if(pName)
     setObjectName(pName);
 
@@ -95,6 +96,15 @@ void ParameterWidget::applyDefaultFilterSet()
   QString classname;
   QString filter_name;
   int filter_id;
+
+	//hides parameterwidget when it's embedded within another widget with a parent
+	if (this->parent() && this->parent()->parent())
+	{
+		clearFilters();
+		this->hide();
+
+		return;
+	}
 
   QString query = "SELECT filter_id, filter_name "
                   "FROM filter "
