@@ -1526,7 +1526,11 @@ void item::viewItem( int pId )
 void item::sEditBOM()
 {
   ParameterList params;
-  params.append("mode", "edit");
+
+  if(_mode == cView)
+    params.append("mode", "view");
+  else
+    params.append("mode", "edit");
   params.append("item_id", _itemid);
 
   BOM *newdlg = new BOM();
