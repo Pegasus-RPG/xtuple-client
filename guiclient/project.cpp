@@ -33,9 +33,11 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_deleteTask, SIGNAL(clicked()), this, SLOT(sDeleteTask()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
 
-  _prjtask->addColumn( tr("Number"),      _itemColumn, Qt::AlignRight, true, "prjtask_number" );
-  _prjtask->addColumn( tr("Name"),        _itemColumn, Qt::AlignLeft,  true, "prjtask_name"  );
-  _prjtask->addColumn( tr("Description"), -1,          Qt::AlignLeft,  true, "prjtask_descrip" ); 
+  _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignRight, true, "prjtask_number" );
+  _prjtask->addColumn( tr("Name"),				_itemColumn,	Qt::AlignLeft,  true, "prjtask_name"  );
+  _prjtask->addColumn( tr("Description"),		-1,				Qt::AlignLeft,  true, "prjtask_descrip" ); 
+  _prjtask->addColumn( tr("Hours Balance"),		_itemColumn,	Qt::AlignRight, true, "totalhrbal" );
+  _prjtask->addColumn( tr("Expense Balance"),	_itemColumn, 	Qt::AlignRight, true, "totalexpbal" );
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -384,8 +386,14 @@ void project::sFillTaskList()
   }
   
   q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, "
-             "firstLine(prjtask_descrip) AS prjtask_descrip "
-             "FROM prjtask "
+             "firstLine(prjtask_descrip) AS prjtask_descrip, totalhrbal, totalexpbal "
+			 " FROM (SELECT COALESCE(SUM(prjtask_hours_budget), 0.0) AS totalhrbud, "
+             " COALESCE(SUM(prjtask_hours_actual), 0.0) AS totalhract, "
+			 " COALESCE(SUM(prjtask_hours_budget - prjtask_hours_actual), 0.0) AS totalhrbal, "
+             " COALESCE(SUM(prjtask_exp_budget), 0.0) AS totalexpbud, "
+             " COALESCE(SUM(prjtask_exp_actual), 0.0) AS totalexpact, "
+			 " COALESCE(SUM(prjtask_exp_budget - prjtask_exp_actual), 0.0) AS totalexpbal FROM prjtask "
+			 " WHERE prjtask_prj_id = :prj_id) foo, prjtask "
              "WHERE (prjtask_prj_id=:prj_id) "
              "ORDER BY prjtask_number;" );
   q.bindValue(":prj_id", _prjid);
