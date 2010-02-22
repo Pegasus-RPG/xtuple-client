@@ -1222,94 +1222,94 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 
       didsomething = true;
     }
-	XSqlQuery createOrder;
+    XSqlQuery createOrder;
     createOrder.prepare( "SELECT coitem_order_type "
-	              "FROM coitem "
-				  "WHERE (coitem_id=:coitem_id);");
-	QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
-	for (int i = 0; i < selected.size(); i++)
-	{
+                         "FROM coitem "
+                         "WHERE (coitem_id=:coitem_id);");
+    QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
+    {
       createOrder.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
       createOrder.exec();
       if (createOrder.first())
       {
         if(didsomething)
           pMenu->insertSeparator();
-	    if(createOrder.value("coitem_order_type").toString() == "P")
-	    {
+        if(createOrder.value("coitem_order_type").toString() == "P")
+        {
           XSqlQuery checkPO;
           checkPO.prepare( "SELECT pohead_id "
-	                       "FROM pohead JOIN poitem ON (pohead_id=poitem_pohead_id) "
-				           "     RIGHT OUTER JOIN coitem ON (poitem_id=coitem_order_id) "
-				           "WHERE (coitem_id=:coitem_id);" );
-		  checkPO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-		  checkPO.exec();
+                           "FROM pohead JOIN poitem ON (pohead_id=poitem_pohead_id) "
+                           "     RIGHT OUTER JOIN coitem ON (poitem_id=coitem_order_id) "
+                           "WHERE (coitem_id=:coitem_id);" );
+          checkPO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkPO.exec();
           if (checkPO.first())
           {
-		    menuid = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPO()), 0);
+            menuid = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPO()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseOrders"));
 
-  		    menuid = pMenu->insertItem(tr("Edit Purchase Order..."), this, SLOT(sMaintainPO()), 0);
+            menuid = pMenu->insertItem(tr("Edit Purchase Order..."), this, SLOT(sMaintainPO()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
-		  }
-		  else if (checkPO.lastError().type() != QSqlError::NoError)
+          }
+          else if (checkPO.lastError().type() != QSqlError::NoError)
           {
             systemError(this, checkPO.lastError().databaseText(), __FILE__, __LINE__);
-	        return;
-		  }
-	    }
-	    else if(createOrder.value("coitem_order_type").toString() == "R")
-	    {
+            return;
+          }
+        }
+        else if(createOrder.value("coitem_order_type").toString() == "R")
+        {
           XSqlQuery checkPR;
           checkPR.prepare( "SELECT pr_id "
-	                       "FROM pr JOIN coitem ON (pr_id=coitem_order_id) "
-             			   "WHERE (coitem_id=:coitem_id);" );
-		  checkPR.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-		  checkPR.exec();
+                           "FROM pr JOIN coitem ON (pr_id=coitem_order_id) "
+                           "WHERE (coitem_id=:coitem_id);" );
+          checkPR.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkPR.exec();
           if (checkPR.first())
           {
-		    menuid = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sReleasePR()), 0);
+            menuid = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sReleasePR()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
 
-		    menuid = pMenu->insertItem(tr("View Purchase Request..."), this, SLOT(sViewPR()), 0);
+            menuid = pMenu->insertItem(tr("View Purchase Request..."), this, SLOT(sViewPR()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseRequests"));
           }
-		  else if (checkPR.lastError().type() != QSqlError::NoError)
+          else if (checkPR.lastError().type() != QSqlError::NoError)
           {
             systemError(this, checkPR.lastError().databaseText(), __FILE__, __LINE__);
-	        return;
-		  }
-	    }
-	    else if(createOrder.value("coitem_order_type").toString() == "W")
-	    {
+            return;
+          }
+        }
+        else if(createOrder.value("coitem_order_type").toString() == "W")
+        {
           XSqlQuery checkWO;
           checkWO.prepare( "SELECT wo_id "
-	                       "FROM wo JOIN coitem ON (wo_id=coitem_order_id)"
-				           "WHERE (coitem_id=:coitem_id);" );
-		  checkWO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-		  checkWO.exec();
+                           "FROM wo JOIN coitem ON (wo_id=coitem_order_id)"
+                           "WHERE (coitem_id=:coitem_id);" );
+          checkWO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkWO.exec();
           if (checkWO.first())
           {
-		    menuid = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWO()), 0);
+            menuid = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWO()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("ViewWorkOrders"));
 
- 		    menuid = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sMaintainWO()), 0);
+            menuid = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sMaintainWO()), 0);
             pMenu->setItemEnabled(menuid, _privileges->check("MaintainWorkOrders"));
-		  }
-		  else if (checkWO.lastError().type() != QSqlError::NoError)
+          }
+          else if (checkWO.lastError().type() != QSqlError::NoError)
           {
             systemError(this, checkWO.lastError().databaseText(), __FILE__, __LINE__);
-	        return;
-		  }
-	    }
-	  }
-	  else if (createOrder.lastError().type() != QSqlError::NoError)
+            return;
+          }
+        }
+      }
+      else if (createOrder.lastError().type() != QSqlError::NoError)
       {
         systemError(this, createOrder.lastError().databaseText(), __FILE__, __LINE__);
-	    return;
-	  }
-	  didsomething = true;
-	}
+        return;
+      }
+      didsomething = true;
+    }
   }
 }
 
@@ -1792,6 +1792,9 @@ void salesOrder::populateShipto(int pShiptoid)
 
   _shiptoid = pShiptoid;
 
+  if (_saved)
+    save(true);
+
   sFillItemList();
 }
 
@@ -1867,6 +1870,7 @@ void salesOrder::sEdit()
   ParameterList params;
   params.append("soitem_id", _soitem->id());
   params.append("cust_id", _cust->id());
+  params.append("shipto_id", _shiptoid);
   params.append("orderNumber", _orderNumber->text().toInt());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -2692,8 +2696,8 @@ void salesOrder::sFillItemList()
            "         coitem_price, coitem_scheddate,"
            "         coitem_qty_invuomratio, coitem_price_invuomratio,"
            "         coitem_subnumber, coitem_order_type, item_type,"
-		   "         wo_number, wo_subnumber, pohead_number,"
-		   "         poitem_linenumber, pr_number, pr_subnumber "
+           "         wo_number, wo_subnumber, pohead_number,"
+           "         poitem_linenumber, pr_number, pr_subnumber "
            "ORDER BY coitem_linenumber, coitem_subnumber;" ;
 
     q.prepare(sql);
@@ -3008,8 +3012,6 @@ void salesOrder::clear()
 
   _salesOrderInformation->setCurrentPage(0);
 
-  _cust->setReadOnly(FALSE);
-
   _orderNumber->setEnabled(TRUE);
   _orderNumberGen = 0;
   _orderNumber->clear();
@@ -3102,6 +3104,7 @@ void salesOrder::clear()
     systemError(this, headid.lastError().databaseText(), __FILE__, __LINE__);
 
   _soitem->clear();
+  _cust->setReadOnly(FALSE);
 
   _saved = false;
 }

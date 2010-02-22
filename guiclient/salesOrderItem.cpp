@@ -739,55 +739,40 @@ void salesOrderItem::sSave()
   bool _createPR = false;
   q.prepare("SELECT itemsrc_id, item_id, itemsrc_item_id, itemsite_createsopo, itemsite_createsopr "
             "FROM itemsrc, item LEFT OUTER JOIN itemsite "
-			"  ON (item_id = itemsite_item_id) "
-	        "WHERE ( (itemsrc_item_id = item_id) "
-			"  AND (item_id=:item_id) ) "
-			"LIMIT 1;");
+            "  ON (item_id = itemsite_item_id) "
+            "WHERE ( (itemsrc_item_id = item_id) "
+            "  AND (item_id=:item_id) ) "
+            "LIMIT 1;");
   q.bindValue(":item_id", _item->id());
   q.exec();
   if (q.first())
   {
     _createPO = q.value("itemsite_createsopo").toBool();
-	_createPR = q.value("itemsite_createsopr").toBool();
+    _createPR = q.value("itemsite_createsopr").toBool();
 
-	if(_createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
-	{
-	  XSqlQuery shipto;
-      shipto.prepare("SELECT (COALESCE(COALESCE(cohead_shipto_id, shipto_id), -1) = -1) AS shipto_false "
-	                 "FROM cohead LEFT OUTER JOIN shipto ON (cohead_cust_id = shipto_cust_id) "
-					 "WHERE (cohead_id = :sohead_id) "
-					 "LIMIT 1;");
-      shipto.bindValue(":sohead_id", _soheadid);
-      shipto.exec();
-      if(shipto.first())
+    if(_createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
+    {
+      if(_shiptoid < 1)
       {
-        if(shipto.value("shipto_false").toBool())
-        {
-  	      QMessageBox::critical(this, tr("Cannot Save Sales Order Item"),
-                                      tr("<p>You must enter a valid Ship-To # before saving this Sales Order Item."));
-		  return;
-		}
-	  }
-	  else if (shipto.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
+        QMessageBox::critical(this, tr("Cannot Save Sales Order Item"),
+                              tr("<p>You must enter a valid Ship-To # before saving this Sales Order Item."));
         return;
-	  }
-		
-	  XSqlQuery itemsrcdefault;
+      }
+
+      XSqlQuery itemsrcdefault;
       itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
-	    	                  "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) "); 
+                             "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) ");
       itemsrcdefault.bindValue(":item_id", _item->id());
       itemsrcdefault.exec();
       if (itemsrcdefault.first())
       {
         itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
       }
-	  else if (itemsrcdefault.lastError().type() != QSqlError::NoError)
+      else if (itemsrcdefault.lastError().type() != QSqlError::NoError)
       {
         systemError(this, itemsrcdefault.lastError().databaseText(), __FILE__, __LINE__);
         return;
-	  }
+      }
       else
       {
         ParameterList itemSourceParams;
@@ -796,8 +781,8 @@ void salesOrderItem::sSave()
         itemSourceList newdlg(omfgThis, "", TRUE);
         newdlg.set(itemSourceParams);
         itemsrcid = newdlg.exec();
-	  }
-	}
+      }
+    }
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -1400,16 +1385,16 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_id", _soitemid);
       q.exec();
     }
-	else if ((_item->itemType() == "P") && _createPO)
+    else if ((_item->itemType() == "P") && _createPO)
     {
       if(_overridePoPrice->localValue() == 0.00)
         q.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship) AS result;");
       else
-	  {
-	    q.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship, :ovrridepoprc) AS result;");
-		q.bindValue(":ovrridepoprc", _overridePoPrice->localValue());
-	  }   
-	  q.bindValue(":soitem_id", _soitemid);
+      {
+        q.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship, :ovrridepoprc) AS result;");
+        q.bindValue(":ovrridepoprc", _overridePoPrice->localValue());
+      }
+      q.bindValue(":soitem_id", _soitemid);
       q.bindValue(":itemsrc_id", itemsrcid);
       q.bindValue(":drop_ship", _dropShip->isChecked());
       q.exec();
@@ -1530,13 +1515,11 @@ void salesOrderItem::sPopulateItemsiteInfo()
     {
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
       _costmethod = itemsite.value("itemsite_costmethod").toString();
-qDebug("found itemsite");
+
       if (cNew == _mode || cNewQuote == _mode)
       {
-        qDebug("checking...costmethod = " + _costmethod);
         if (_costmethod == "J")
         {
-          qDebug("setting flags");
           _createOrder->setChecked(TRUE);
           _createOrder->setEnabled(FALSE);
         }
@@ -1781,10 +1764,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
                "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, item_fractional,"
                "       stdcost(item_id) AS f_unitcost, itemsite_createsopo,"
-			   "       itemsite_dropship,"
+               "       itemsite_dropship,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
-			   "LEFT OUTER JOIN itemsite ON ( itemsite_item_id = item_id ) "
+               "LEFT OUTER JOIN itemsite ON ( itemsite_item_id = item_id ) "
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxzone", _taxzoneid);
@@ -1792,101 +1775,101 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     if (q.first())
     {
       if(q.value("itemsite_createsopo").toBool())
-	  {
+      {
         _createOrder->setTitle(tr("Create Purchase Order"));
         _orderLit->setText(tr("PO #:"));
-		_orderLineLit->setText(tr("PO Line #:"));
+        _orderLineLit->setText(tr("PO Line #:"));
         _orderStatusLit->show();
-		_overridePoPrice->show();
+        _overridePoPrice->show();
         _overridePoPriceLit->show();
-		if(_metrics->boolean("EnableDropShipments"))
-		  _dropShip->show();
-		if(_mode == cNew)
-		{
-		  _orderLit->hide();
-		  _order->hide();
-		  _orderLineLit->hide();
-		  _orderLine->hide();
-		  _orderStatus->hide();
-	      _orderStatusLit->hide();
-		  _dropShip->setChecked(q.value("itemsite_dropship").toBool());
-	    }
-		else
-		{
-		  XSqlQuery povalues;
-		  povalues.prepare("SELECT pohead_number, poitem_linenumber, poitem_status, "
-		                   "ROUND(poitem_qty_ordered, 2) AS poitem_qty_ordered, "
-						   "poitem_duedate, ROUND(poitem_unitprice, 2) AS "
-						   "poitem_unitprice, pohead_dropship "
-						   "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
-						   "            JOIN coitem ON (coitem_order_id = poitem_id) "
-						   "WHERE (coitem_id = :soitem_id);");
+        if(_metrics->boolean("EnableDropShipments"))
+          _dropShip->show();
+        if(_mode == cNew)
+        {
+          _orderLit->hide();
+          _order->hide();
+          _orderLineLit->hide();
+          _orderLine->hide();
+          _orderStatus->hide();
+          _orderStatusLit->hide();
+          _dropShip->setChecked(q.value("itemsite_dropship").toBool());
+        }
+        else
+        {
+          XSqlQuery povalues;
+          povalues.prepare("SELECT pohead_number, poitem_linenumber, poitem_status, "
+                           "ROUND(poitem_qty_ordered, 2) AS poitem_qty_ordered, "
+                           "poitem_duedate, ROUND(poitem_unitprice, 2) AS "
+                           "poitem_unitprice, pohead_dropship "
+                           "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+                           "            JOIN coitem ON (coitem_order_id = poitem_id) "
+                           "WHERE (coitem_id = :soitem_id);");
           povalues.bindValue(":soitem_id", _soitemid);
           povalues.exec();
           if (povalues.first())
-		  {
-			_order->setText(povalues.value("pohead_number").toString());
-			_orderLine->setText(povalues.value("poitem_linenumber").toString());
-			_orderStatus->setText(povalues.value("poitem_status").toString());
-			_orderQty->setDouble(povalues.value("poitem_qty_ordered").toDouble());
-			_orderDueDate->setDate(povalues.value("poitem_duedate").toDate());
-			_dropShip->setChecked(povalues.value("pohead_dropship").toBool());
-			_overridePoPrice->setLocalValue(povalues.value("poitem_unitprice").toDouble());
+          {
+            _order->setText(povalues.value("pohead_number").toString());
+            _orderLine->setText(povalues.value("poitem_linenumber").toString());
+            _orderStatus->setText(povalues.value("poitem_status").toString());
+            _orderQty->setDouble(povalues.value("poitem_qty_ordered").toDouble());
+            _orderDueDate->setDate(povalues.value("poitem_duedate").toDate());
+            _dropShip->setChecked(povalues.value("pohead_dropship").toBool());
+            _overridePoPrice->setLocalValue(povalues.value("poitem_unitprice").toDouble());
 
-			_createOrder->setChecked(true);
-			_createOrder->setEnabled(false);
-		  }
-		  else if (povalues.lastError().type() != QSqlError::NoError)
+            _createOrder->setChecked(true);
+            _createOrder->setEnabled(false);
+          }
+          else if (povalues.lastError().type() != QSqlError::NoError)
           {
             systemError(this, povalues.lastError().databaseText(), __FILE__, __LINE__);
             return;
-		  }
-		}
+          }
+        }
 
-	    XSqlQuery itemsrc;
-	    itemsrc.prepare("SELECT itemsrc_id, itemsrc_item_id "
-		                "FROM itemsrc "
-						"WHERE (itemsrc_item_id = :item_id) "
-						"LIMIT 1;");
+        XSqlQuery itemsrc;
+        itemsrc.prepare("SELECT itemsrc_id, itemsrc_item_id "
+                        "FROM itemsrc "
+                        "WHERE (itemsrc_item_id = :item_id) "
+                        "LIMIT 1;");
         itemsrc.bindValue(":item_id", _item->id());
         itemsrc.exec();
         if (itemsrc.first())
-		  ;// do nothing
-		else if (itemsrc.lastError().type() != QSqlError::NoError)
+          ;// do nothing
+        else if (itemsrc.lastError().type() != QSqlError::NoError)
         {
           systemError(this, itemsrc.lastError().databaseText(), __FILE__, __LINE__);
           return;
-		}
+        }
         else
         {
-	      QMessageBox::warning( this, tr("Cannot Create P/O"),
-                              tr("<p> Purchase Orders cannot be automatically "
-                                  "created for this Item as there are no Item "
-                                  "Sources for it.  You must create one or "
-                                  "more Item Sources for this Item before "
-                                  "the application can automatically create "
-								  "Purchase Orders for it." ) );
-		  _createOrder->setChecked(FALSE);
-	      _createOrder->setEnabled(FALSE);
-	    }
-	    if(_metrics->boolean("EnableDropShipments") && (_mode == cEdit))
-	    {
-	      XSqlQuery dropship;
+          QMessageBox::warning( this, tr("Cannot Create P/O"),
+                                tr("<p> Purchase Orders cannot be automatically "
+                                   "created for this Item as there are no Item "
+                                   "Sources for it.  You must create one or "
+                                   "more Item Sources for this Item before "
+                                   "the application can automatically create "
+                                   "Purchase Orders for it." ) );
+          _createOrder->setChecked(FALSE);
+          _createOrder->setEnabled(FALSE);
+        }
+        if(_metrics->boolean("EnableDropShipments") && (_mode == cEdit))
+        {
+          XSqlQuery dropship;
           dropship.prepare("SELECT pohead_dropship "
-		                   "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
-						   "  RIGHT OUTER JOIN coitem ON (poitem_id = coitem_order_id) " 
+                           "FROM pohead JOIN poitem ON (pohead_id = poitem_pohead_id) "
+                           "  RIGHT OUTER JOIN coitem ON (poitem_id = coitem_order_id) "
                            "WHERE (coitem_id = :soitem_id);");
-		  dropship.bindValue(":soitem_id", _soitemid);
-		  dropship.exec();
-		  if(dropship.first())
-		    _dropShip->setChecked(dropship.value("pohead_dropship").toBool());
+          dropship.bindValue(":soitem_id", _soitemid);
+          dropship.exec();
+          if(dropship.first())
+            _dropShip->setChecked(dropship.value("pohead_dropship").toBool());
           else if (dropship.lastError().type() != QSqlError::NoError)
           {
             systemError(this, dropship.lastError().databaseText(), __FILE__, __LINE__);
             return;
-		  }
-		}
-	  }
+          }
+        }
+      }
 
       if (_mode == cNew)
         sDeterminePrice();
@@ -1905,10 +1888,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _taxtype->setId(q.value("taxtype_id").toInt());
 
       sCalculateDiscountPrcnt();
-	  if(!(q.value("itemsite_createsopo").toBool()))
+      if(!(q.value("itemsite_createsopo").toBool()))
       {
         if (_item->itemType() == "M")
-        { qDebug("checking flags at item?");
+        {
           if ( (_mode == cNew) || (_mode == cEdit) )
             _createOrder->setEnabled((_item->itemType() == "M"));
 
@@ -1945,7 +1928,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
           _order->hide();
           _orderLineLit->hide();
           _orderLine->hide();
-		}
+        }
         else
         {
           if ( (_mode == cNew) || (_mode == cEdit) )
@@ -1966,9 +1949,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
           _order->hide();
           _orderLineLit->hide();
           _orderLine->hide();
-		}
-	  }
-	}
+        }
+      }
+    }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

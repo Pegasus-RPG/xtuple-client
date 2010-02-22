@@ -40,6 +40,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+private:
+    QList<int> _soheadid;
+
 };
 
 #endif // UNPOSTEDPORECEIPTS_H

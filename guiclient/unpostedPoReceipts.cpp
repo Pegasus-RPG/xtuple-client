@@ -218,20 +218,25 @@ void unpostedPoReceipts::sPost()
   
   XSqlQuery postLine;
   postLine.prepare("SELECT postReceipt(:id, NULL::integer) AS result, "
-                   "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo "
+                   "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo, "
+                   "  COALESCE(pohead_dropship, false) AS dropship "
                    "FROM recv "
                    " JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
+                   "  LEFT OUTER JOIN poitem ON ((recv_order_type='PO') "
+                   "                         AND (recv_orderitem_id=poitem_id)) "
+                   "  LEFT OUTER JOIN pohead ON (poitem_pohead_id=pohead_id) "
                    "WHERE (recv_id=:id);");
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   bool tryagain = false;
   do {
+    q.exec("BEGIN;");
+
     for (int i = 0; i < selected.size(); i++)
     {
       int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
-      q.exec("BEGIN;");
       postLine.bindValue(":id", id);
       postLine.exec();
       if (postLine.first())
@@ -272,9 +277,36 @@ void unpostedPoReceipts::sPost()
             return;
           }
         }
-
-        q.exec("COMMIT;");
-         
+        // Issue drop ship orders to shipping
+        else if (postLine.value("dropship").toBool())
+        {
+          XSqlQuery issue;
+          issue.prepare("SELECT issueToShipping('SO', coitem_id, recv_qty, "
+                        "  :itemlocseries, now(), invhist_id ) AS result, "
+                        "  coitem_cohead_id "
+                        "FROM invhist, recv "
+                        " JOIN poitem ON (poitem_id=recv_orderitem_id) "
+                        " JOIN coitem ON (coitem_id=poitem_soitem_id) "
+                        "WHERE ((invhist_series=:itemlocseries) "
+                        " AND (recv_id=:id));");
+          issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+          issue.bindValue(":id",  id);
+          issue.exec();
+          if (issue.first())
+          {
+            if (!_soheadid.contains(issue.value("coitem_cohead_id").toInt()))
+              _soheadid.append(issue.value("coitem_cohead_id").toInt());
+            issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
+            issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+            issue.exec();
+          }
+          if (issue.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
+            rollback.exec();
+            return;
+          }
+        }    
       }
       // contains() string is hard-coded in stored procedure
       else if (postLine.lastError().databaseText().contains("posted to closed period"))
@@ -293,6 +325,42 @@ void unpostedPoReceipts::sPost()
         systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
       }
     } // for each selected line
+
+    // Ship any drop shipped orders
+    while (_soheadid.count())
+    {
+      XSqlQuery ship;
+      ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
+                   "  shiphead_id "
+                   "FROM shiphead "
+                   "WHERE ( (shiphead_order_type='SO') "
+                   " AND (shiphead_order_id=:cohead_id) "
+                   " AND (NOT shiphead_shipped) );");
+      ship.bindValue(":cohead_id", _soheadid.at(0));
+      ship.exec();
+      if (_metrics->boolean("BillDropShip") && ship.first())
+      {
+        int shipheadid = ship.value("shiphead_id").toInt();
+        ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
+        ship.bindValue(":shiphead_id", shipheadid);
+        ship.exec();
+        if (ship.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+      if (ship.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      _soheadid.takeFirst();
+    }
+
+    q.exec("COMMIT;");
 
     if (triedToClosed.size() > 0)
     {

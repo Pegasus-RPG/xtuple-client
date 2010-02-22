@@ -379,8 +379,6 @@ void enterPoReceipt::sPost()
                  " AND (NOT shiphead_shipped) );");
     ship.bindValue(":cohead_id", _soheadid);
     ship.exec();
-    qDebug("sfb %d", _metrics->boolean("BillDropShip"));
-    qDebug("first %d", ship.first());
     if (_metrics->boolean("BillDropShip") && ship.first())
     {
       int shipheadid = ship.value("shiphead_id").toInt();
