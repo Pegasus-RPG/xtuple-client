@@ -52,6 +52,7 @@ protected slots:
 
 private:
     bool _captive;
+    int _soheadid;
 
 };
 

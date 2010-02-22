@@ -98,6 +98,7 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _orderitem->addColumn(tr("To Receive"),   _qtyColumn,  Qt::AlignRight   , true,  "qty_toreceive");
 
   _captive = FALSE;
+  _soheadid = -1;
   
   _bcQty->setValidator(omfgThis->qtyVal());
 
@@ -247,11 +248,18 @@ void enterPoReceipt::sPost()
   QDate warrdate;
   bool gotlot = false;
 
+  q.exec("BEGIN;");	// because of possible insertgltransaction failures
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc"
-                  "  FROM orderitem, recv LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id)"
+  QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc, "
+                  "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuewo, "
+                  "  COALESCE(pohead_dropship, false) AS dropship "
+                  " FROM orderitem, recv "
+                  "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
+                  "  LEFT OUTER JOIN poitem ON ((recv_order_type='PO') "
+                  "                         AND (recv_orderitem_id=poitem_id)) "
+                  "  LEFT OUTER JOIN pohead ON (poitem_pohead_id=pohead_id) "
                   " WHERE((recv_orderitem_id=orderitem_id)"
                   "   AND (orderitem_orderhead_id=<? value(\"orderid\") ?>)"
                   "   AND (orderitem_orderhead_type=<? value (\"ordertype\") ?>)"
@@ -277,13 +285,10 @@ void enterPoReceipt::sPost()
       }
     }
 
-    q.exec("BEGIN;");	// because of possible insertgltransaction failures
     XSqlQuery postLine;
-    postLine.prepare("SELECT postReceipt(recv_id, 0) AS result, "
-              "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuewo "
-              "FROM recv "
-              " LEFT OUTER JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
-              "WHERE (recv_id=:recv_id);");
+    postLine.prepare("SELECT postReceipt(recv_id, 0) AS result "
+                     "FROM recv "
+                     "WHERE (recv_id=:recv_id);");
     postLine.bindValue(":recv_id", qi.value("recv_id").toInt());
     postLine.exec();
     if (postLine.first())
@@ -305,26 +310,54 @@ void enterPoReceipt::sPost()
       }
 
       // Job item for Return Service; issue this to work order
-      if (postLine.value("issuewo").toBool())
+      if (qi.value("issuewo").toBool())
       {
-        XSqlQuery issuewo;
-        issuewo.prepare("SELECT issueWoRtnReceipt(coitem_order_id, invhist_id) AS result "
+        XSqlQuery issue;
+        issue.prepare("SELECT issueWoRtnReceipt(coitem_order_id, invhist_id) AS result "
                         "FROM invhist, recv "
                         " JOIN raitem ON (raitem_id=recv_orderitem_id) "
                         " JOIN coitem ON (coitem_id=raitem_new_coitem_id) "
                         "WHERE ((invhist_series=:itemlocseries) "
                         " AND (recv_id=:id));");
-        issuewo.bindValue(":itemlocseries", postLine.value("result").toInt());
-        issuewo.bindValue(":id",  qi.value("recv_id").toInt());
-        issuewo.exec();
-        if (issuewo.lastError().type() != QSqlError::NoError)
+        issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+        issue.bindValue(":id",  qi.value("recv_id").toInt());
+        issue.exec();
+        if (issue.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, issuewo.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
           rollback.exec();
           return;
         }
       }
-      q.exec("COMMIT;");
+      // Issue drop ship orders to shipping
+      else if (qi.value("dropship").toBool())
+      {
+        XSqlQuery issue;
+        issue.prepare("SELECT issueToShipping('SO', coitem_id, recv_qty, "
+                      "  :itemlocseries, now(), invhist_id ) AS result, "
+                      "  coitem_cohead_id "
+                      "FROM invhist, recv "
+                      " JOIN poitem ON (poitem_id=recv_orderitem_id) "
+                      " JOIN coitem ON (coitem_id=poitem_soitem_id) "
+                      "WHERE ((invhist_series=:itemlocseries) "
+                      " AND (recv_id=:id));");
+        issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+        issue.bindValue(":id",  qi.value("recv_id").toInt());
+        issue.exec();
+        if (issue.first())
+        {
+          _soheadid = issue.value("coitem_cohead_id").toInt();
+          issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
+          issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+          issue.exec();
+        }
+        else if (issue.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
+          rollback.exec();
+          return;
+        }
+      }
     }
     else if (postLine.lastError().type() != QSqlError::NoError)
     {
@@ -333,6 +366,44 @@ void enterPoReceipt::sPost()
       return;
     }
   }
+
+  // Ship if a drop shipped order
+  if (_soheadid != -1)
+  {
+    XSqlQuery ship;
+    ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
+                 "  shiphead_id "
+                 "FROM shiphead "
+                 "WHERE ( (shiphead_order_type='SO') "
+                 " AND (shiphead_order_id=:cohead_id) "
+                 " AND (NOT shiphead_shipped) );");
+    ship.bindValue(":cohead_id", _soheadid);
+    ship.exec();
+    qDebug("sfb %d", _metrics->boolean("BillDropShip"));
+    qDebug("first %d", ship.first());
+    if (_metrics->boolean("BillDropShip") && ship.first())
+    {
+      int shipheadid = ship.value("shiphead_id").toInt();
+      ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
+      ship.bindValue(":shiphead_id", shipheadid);
+      ship.exec();
+      if (ship.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (ship.lastError().type() != QSqlError::NoError)
+    {
+      rollback.exec();
+      systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  _soheadid = -1;
+
+  q.exec("COMMIT;");
 
   // TODO: update this to sReceiptsUpdated?
   omfgThis->sPurchaseOrderReceiptsUpdated();

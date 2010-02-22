@@ -34,6 +34,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _so->setNameVisible(false);
+  _so->setDescriptionVisible(false);
+
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -682,42 +685,42 @@ void purchaseOrder::sSave()
              "    pohead_curr_id=:pohead_curr_id,"
              "    pohead_status=:pohead_status,"
              "    pohead_saved=true,"
-			 "    pohead_vend_cntct_id=:pohead_vend_cntct_id,"
-			 "    pohead_vend_cntct_honorific=:pohead_vend_cntct_honorific,"
-			 "    pohead_vend_cntct_first_name=:pohead_vend_cntct_first_name,"
-			 "    pohead_vend_cntct_middle=:pohead_vend_cntct_middle,"
-			 "    pohead_vend_cntct_last_name=:pohead_vend_cntct_last_name,"
-			 "    pohead_vend_cntct_suffix=:pohead_vend_cntct_suffix,"
-			 "    pohead_vend_cntct_phone=:pohead_vend_cntct_phone,"
-			 "    pohead_vend_cntct_title=:pohead_vend_cntct_title,"
-			 "    pohead_vend_cntct_fax=:pohead_vend_cntct_fax,"
-			 "    pohead_vend_cntct_email=:pohead_vend_cntct_email,"
-			 "    pohead_vendaddress1=:pohead_vendaddress1,"
-			 "    pohead_vendaddress2=:pohead_vendaddress2,"
-			 "    pohead_vendaddress3=:pohead_vendaddress3,"
-			 "    pohead_vendcity=:pohead_vendcity,"
-			 "    pohead_vendstate=:pohead_vendstate,"
-			 "    pohead_vendzipcode=:pohead_vendzipcode,"
-			 "    pohead_vendcountry=:pohead_vendcountry,"
-			 "    pohead_shipto_cntct_id=:pohead_shipto_cntct_id,"
-			 "    pohead_shipto_cntct_honorific=:pohead_shipto_cntct_honorific,"
-			 "    pohead_shipto_cntct_first_name=:pohead_shipto_cntct_first_name,"
-			 "    pohead_shipto_cntct_middle=:pohead_shipto_cntct_middle,"
-			 "    pohead_shipto_cntct_last_name=:pohead_shipto_cntct_last_name,"
-			 "    pohead_shipto_cntct_suffix=:pohead_shipto_cntct_suffix,"
-			 "    pohead_shipto_cntct_phone=:pohead_shipto_cntct_phone,"
-			 "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
-			 "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
-			 "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
-			 "    pohead_shiptoddress_id=:pohead_shiptoddress_id,"
-			 "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
-			 "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
-			 "    pohead_shiptoaddress3=:pohead_shiptoaddress3,"
-			 "    pohead_shiptocity=:pohead_shiptocity,"
-			 "    pohead_shiptostate=:pohead_shiptostate,"
-			 "    pohead_shiptozipcode=:pohead_shiptozipcode,"
-			 "    pohead_shiptocountry=:pohead_shiptocountry,"
-			 "    pohead_dropship=:pohead_dropship "
+             "    pohead_vend_cntct_id=:pohead_vend_cntct_id,"
+             "    pohead_vend_cntct_honorific=:pohead_vend_cntct_honorific,"
+             "    pohead_vend_cntct_first_name=:pohead_vend_cntct_first_name,"
+             "    pohead_vend_cntct_middle=:pohead_vend_cntct_middle,"
+             "    pohead_vend_cntct_last_name=:pohead_vend_cntct_last_name,"
+             "    pohead_vend_cntct_suffix=:pohead_vend_cntct_suffix,"
+             "    pohead_vend_cntct_phone=:pohead_vend_cntct_phone,"
+             "    pohead_vend_cntct_title=:pohead_vend_cntct_title,"
+             "    pohead_vend_cntct_fax=:pohead_vend_cntct_fax,"
+             "    pohead_vend_cntct_email=:pohead_vend_cntct_email,"
+             "    pohead_vendaddress1=:pohead_vendaddress1,"
+             "    pohead_vendaddress2=:pohead_vendaddress2,"
+             "    pohead_vendaddress3=:pohead_vendaddress3,"
+             "    pohead_vendcity=:pohead_vendcity,"
+             "    pohead_vendstate=:pohead_vendstate,"
+             "    pohead_vendzipcode=:pohead_vendzipcode,"
+             "    pohead_vendcountry=:pohead_vendcountry,"
+             "    pohead_shipto_cntct_id=:pohead_shipto_cntct_id,"
+             "    pohead_shipto_cntct_honorific=:pohead_shipto_cntct_honorific,"
+             "    pohead_shipto_cntct_first_name=:pohead_shipto_cntct_first_name,"
+             "    pohead_shipto_cntct_middle=:pohead_shipto_cntct_middle,"
+             "    pohead_shipto_cntct_last_name=:pohead_shipto_cntct_last_name,"
+             "    pohead_shipto_cntct_suffix=:pohead_shipto_cntct_suffix,"
+             "    pohead_shipto_cntct_phone=:pohead_shipto_cntct_phone,"
+             "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
+             "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
+             "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
+             "    pohead_shiptoddress_id=:pohead_shiptoddress_id,"
+             "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
+             "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
+             "    pohead_shiptoaddress3=:pohead_shiptoaddress3,"
+             "    pohead_shiptocity=:pohead_shiptocity,"
+             "    pohead_shiptostate=:pohead_shiptostate,"
+             "    pohead_shiptozipcode=:pohead_shiptozipcode,"
+             "    pohead_shiptocountry=:pohead_shiptocountry,"
+             "    pohead_dropship=:pohead_dropship "
              "WHERE (pohead_id=:pohead_id);" );
   q.bindValue(":pohead_id", _poheadid);
   if (_warehouse->isValid())
@@ -780,6 +783,7 @@ void purchaseOrder::sSave()
     q.bindValue(":pohead_status", "O");
   else if (_status->currentIndex() == 2)
     q.bindValue(":pohead_status", "C");
+  q.bindValue(":pohead_dropship", QVariant(_dropShip->isChecked()));
 
   q.exec();
  

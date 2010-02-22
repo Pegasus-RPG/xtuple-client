@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>656</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -194,6 +194,13 @@ to be bound by its terms.</comment>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
+             <widget class="QCheckBox" name="_createPr">
+              <property name="text">
+               <string>Create Purchase Requests for Work Order requirements</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QCheckBox" name="_createSoPr">
               <property name="text">
                <string>Create Purchase Requests for Sales Orders</string>
@@ -233,13 +240,6 @@ to be bound by its terms.</comment>
                </widget>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_createPr">
-              <property name="text">
-               <string>Create Purchase Requests for Work Order requirements</string>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -1572,10 +1572,10 @@ to be bound by its terms.</comment>
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
   <tabstop>_poSupply</tabstop>
+  <tabstop>_createPr</tabstop>
   <tabstop>_createSoPr</tabstop>
   <tabstop>_createPo</tabstop>
   <tabstop>_dropShip</tabstop>
-  <tabstop>_createPr</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_controlMethod</tabstop>
   <tabstop>_plannerCode</tabstop>
@@ -1614,10 +1614,10 @@ to be bound by its terms.</comment>
   <tabstop>_safetyStock</tabstop>
   <tabstop>_orderGroup</tabstop>
   <tabstop>_leadTime</tabstop>
+  <tabstop>_orderGroupFirst</tabstop>
   <tabstop>_mpsTimeFence</tabstop>
   <tabstop>_createPlannedTransfers</tabstop>
   <tabstop>_suppliedFromSite</tabstop>
-  <tabstop>_orderGroupFirst</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_perishable</tabstop>
