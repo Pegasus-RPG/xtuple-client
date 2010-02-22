@@ -119,6 +119,7 @@ enum SetResponse address::set(const ParameterList &pParams)
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);
       _editAddrUse->setEnabled(FALSE);
+      _charass->setEnabled(FALSE);
 
       _close->setFocus();
     }
