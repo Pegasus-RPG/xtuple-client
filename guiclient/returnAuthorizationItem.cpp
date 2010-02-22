@@ -704,7 +704,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
-qDebug("test item " + _costmethod);
+
   if (_item->itemType() == "M" && _costmethod != "J")
     _createOrder->setEnabled(TRUE);
   else
@@ -739,10 +739,9 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
     {
       _leadTime = itemsite.value("itemsite_leadtime").toInt();
       _costmethod = itemsite.value("itemsite_costmethod").toString();
-qDebug("test itemsite" + _costmethod);
+
       if (_costmethod == "J")
       {
-        qDebug("is job");
         _createOrder->setChecked(TRUE);
         _createOrder->setEnabled(FALSE);
       }
