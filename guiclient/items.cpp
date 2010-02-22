@@ -121,24 +121,29 @@ void items::sView()
 
 void items::sDelete()
 {
-  q.prepare("SELECT deleteItem(:item_id) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
+  if (QMessageBox::information( this, tr("Delete Item"),
+                                 tr( "Are you sure that you want to delete the Item?"),
+                                tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0  )
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteItem", result), __FILE__, __LINE__);
-      return;
-    }
-    sFillList();
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+	q.prepare("SELECT deleteItem(:item_id) AS returnVal;");
+	q.bindValue(":item_id", _item->id());
+	q.exec();
+	if (q.first())
+	{
+		int returnVal = q.value("returnVal").toInt();
+		if (returnVal < 0)
+		{
+			systemError(this, storedProcErrorLookup("deleteItem", returnVal), __FILE__, __LINE__);
+			return;
+		}
+		sFillList();
+	}
+	else if (q.lastError().type() != QSqlError::NoError)
+	{
+		systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+		return;
+	}
+  }   
 }
 
 void items::sFillList( int pItemid, bool pLocal )
