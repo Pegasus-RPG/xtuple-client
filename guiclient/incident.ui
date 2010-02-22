@@ -413,7 +413,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="_notesTab">
         <attribute name="title">
@@ -653,7 +653,7 @@ to be bound by its terms.</comment>
          <item row="1" column="1">
           <widget class="RecurrenceWidget" name="_recurring">
            <property name="maxVisible">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -741,6 +741,16 @@ to be bound by its terms.</comment>
             <enum>Comments::Incident</enum>
            </property>
           </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Subscribers</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="subscribers" name="_subscribers"/>
          </item>
         </layout>
        </widget>
@@ -840,6 +850,11 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>subscribers</class>
+   <extends>QWidget</extends>
+   <header>subscribers.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -88,6 +88,7 @@
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
 #include "plugins/xtableviewplugin.h"
+#include "plugins/subscribersplugin.h"
 
 xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
 {
@@ -169,6 +170,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XURLLabelPlugin(this));
   m_plugins.append(new XTextEditPlugin(this));
   m_plugins.append(new XTableViewPlugin(this));
+  m_plugins.append(new SubscribersPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> xTuplePlugin::customWidgets() const
