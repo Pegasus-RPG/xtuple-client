@@ -86,6 +86,19 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_userButton,    SIGNAL(clicked()), this, SLOT(sUser()));
   connect(_viewGroup,     SIGNAL(clicked()), this, SLOT(sViewGroup()));
 
+  XSqlQuery xtmfg;
+  xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+  if (xtmfg.first())
+  {
+    _shift->setEnabled(true);
+    _shift->setVisible(true);
+    shiftLit->setVisible(true);
+  } else {
+    _shift->setEnabled(false);
+    _shift->setVisible(false);
+    shiftLit->setVisible(false);
+  }
+
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
 
