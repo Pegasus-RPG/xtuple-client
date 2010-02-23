@@ -115,9 +115,6 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
        <item>
         <widget class="QPushButton" name="_close">
          <property name="text">
@@ -230,41 +227,34 @@ to be bound by its terms.</comment>
     </widget>
    </item>
    <item row="1" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout">
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
+      <widget class="QPushButton" name="_new">
+       <property name="text">
+        <string>New</string>
        </property>
-       <item>
-        <widget class="QPushButton" name="_new">
-         <property name="text">
-          <string>New</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_edit">
-         <property name="text">
-          <string>Edit</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_view">
-         <property name="text">
-          <string>View</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_delete">
-         <property name="text">
-          <string>Delete</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_edit">
+       <property name="text">
+        <string>Edit</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_view">
+       <property name="text">
+        <string>View</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_delete">
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer>
@@ -274,7 +264,7 @@ to be bound by its terms.</comment>
        <property name="sizeHint" stdset="0">
         <size>
          <width>71</width>
-         <height>0</height>
+         <height>13</height>
         </size>
        </property>
       </spacer>
