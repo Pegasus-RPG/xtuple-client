@@ -192,6 +192,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   connect(this, SIGNAL(valid(bool)), this, SLOT(populate()));
   connect(_email, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
   connect(_webaddr, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
+  connect(this, SIGNAL(newId(int)), this, SIGNAL(changed()));
 
   setMinimalLayout(false);
 }
