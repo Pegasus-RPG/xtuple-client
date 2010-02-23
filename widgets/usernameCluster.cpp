@@ -20,7 +20,7 @@
 #include "format.h"
 
 UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", 0, 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", "usr_propername", 0, 0, pName)
 {
   setType(UsersAll);
   if (_x_preferences)
@@ -35,8 +35,9 @@ UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
 
 void UsernameLineEdit::setId(const int pId)
 {
-  QString sql("SELECT usr_username"
-              "  FROM usr"
+  QString sql("SELECT usr_username AS number, "
+              " usr_propername AS name "
+              " FROM usr"
               " WHERE ((usr_id=:id)");
 
   if(UsersActive == _type)
@@ -55,8 +56,9 @@ void UsernameLineEdit::setId(const int pId)
   {
     _id = pId;
     _valid = true;
-    _username = query.value("usr_username").toString();
+    _username = query.value("number").toString();
     setText(_username);
+    _name = query.value("name").toString();
   }
   else
   {
@@ -66,7 +68,7 @@ void UsernameLineEdit::setId(const int pId)
 
   emit newId(_id);
   emit valid(_valid);
-
+  emit parsed();
   _parsed = true;
 }
 
@@ -94,8 +96,7 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
   XSqlQuery query;
   QString sql("SELECT usr_id, usr_username AS number "
                 "  FROM usr"
-                " WHERE ((usr_username ~* :username) "
-                " ");
+                " WHERE ((usr_username ~* :username) ");
   if(UsersActive == _type)
     sql += " AND (usr_active)";
   else if(UsersInactive == _type)
@@ -157,6 +158,7 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
 {
   addNumberWidget(new UsernameLineEdit(this, name));
   _info->hide();
+  _name->setHidden(false);
 }
 
 void UsernameCluster::addNumberWidget(UsernameLineEdit* pNumberWidget)
