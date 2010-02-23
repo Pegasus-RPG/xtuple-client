@@ -372,7 +372,13 @@ void menuManufacture::sReturnWoMaterialItem()
 
 void menuManufacture::sScrapWoMaterialFromWo()
 {
-  scrapWoMaterialFromWIP(parent, "", TRUE).exec();
+  ParameterList params;
+  if (_privileges->check("PostProduction"))
+    params.append("canPostProd", true);
+
+  scrapWoMaterialFromWIP newdlg(parent, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void menuManufacture::sPostProduction()

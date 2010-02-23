@@ -30,7 +30,6 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
     qDebug("postProduction()'s _qty is at %p, _post is at %p", _qty, _post);
 
   connect(_post,  SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
   connect(_wo,   SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
 
   _captive = false;
@@ -291,6 +290,8 @@ void postProduction::sPost()
     return;
   }
 
+  int itemlocSeries = 0;
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -306,7 +307,7 @@ void postProduction::sPost()
   q.exec();
   if (q.first())
   {
-    int itemlocSeries = q.value("result").toInt();
+    itemlocSeries = q.value("result").toInt();
 
     if (itemlocSeries < 0)
     {
@@ -362,8 +363,11 @@ void postProduction::sPost()
     return;
   }
 
+  if (_scrap->isChecked())
+    sScrap();
+
   if (_captive)
-    accept();
+    done(itemlocSeries);
   else
     clear();
 }
