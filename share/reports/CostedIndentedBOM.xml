@@ -21,6 +21,12 @@
          text('Using Standard Costs')
        &lt;? endif ?>
        AS lbl_usecosts,
+       (select sum(extendedcost) from 
+(select CASE WHEN(bomdata_bomwork_parent_id=-1) THEN bomdata_stdextendedcost
+            ELSE 0
+       END AS extendedcost,
+       bomdata_bomwork_level
+FROM indentedBOM(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>,0,0))foo) as t_extendedcost,
        formatCost(actcost(item_id)) AS f_actual,
        formatCost(stdcost(item_id)) AS f_standard
   FROM item JOIN uom ON (uom_id=item_inv_uom_id)
@@ -1135,11 +1141,9 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>detail</query>
-    <column>extendedcost</column>
+    <query>head</query>
+    <column>t_extendedcost</column>
    </data>
-   <format>cost</format>
-   <tracktotal/>
   </field>
   <label>
    <rect>
