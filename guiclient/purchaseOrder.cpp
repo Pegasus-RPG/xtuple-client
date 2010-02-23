@@ -826,7 +826,6 @@ void purchaseOrder::sSave()
     _fob->clear();
     _notes->clear();
     _tax->clear();
-    _subtotal->clear();
     _freight->clear();
     _total->clear();
     _poitem->clear();
@@ -842,6 +841,7 @@ void purchaseOrder::sSave()
     _close->setText(tr("&Close"));
 
     createHeader();
+    _subtotal->clear();
   }
   else
   {
