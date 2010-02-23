@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "exportdata.h"
+#include "exportData.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
