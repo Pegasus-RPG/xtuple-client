@@ -33,6 +33,8 @@ public:
 public slots:
     virtual void sFillList();
     virtual void sPostPreauth();
+    virtual void sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* pItem);
+    virtual void sPrintCCReceipt();
     virtual void sVoidPreauth();
     virtual void sgetCCAmount();
     virtual void sClear();

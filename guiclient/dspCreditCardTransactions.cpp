@@ -29,13 +29,14 @@ dspCreditCardTransactions::dspCreditCardTransactions(QWidget* parent, const char
 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_preauth, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(sgetCCAmount()));
+  connect(_preauth, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_postPreauth, SIGNAL(clicked()), this, SLOT(sPostPreauth()));
   connect(_voidPreauth, SIGNAL(clicked()), this, SLOT(sVoidPreauth()));
   connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), this, SLOT(sClear()));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), this, SLOT(sClear()));
-  
+
   _preauth->addColumn(tr("Timestamp"),   _dateColumn, Qt::AlignLeft, true,  "ccpay_transaction_datetime"  ); 
   _preauth->addColumn(tr("Cust. #"),    _orderColumn, Qt::AlignLeft,  true, "cust_number");  
   _preauth->addColumn(tr("Name"),                 -1, Qt::AlignLeft,  true, "cust_name");
@@ -152,6 +153,30 @@ void dspCreditCardTransactions::sgetCCAmount()
   _CCAmount->clear();
 }
 
+void dspCreditCardTransactions::sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *pItem )
+{ 
+  if (((XTreeWidgetItem *)pItem)->rawValue("status") == "C")
+  {
+    QAction* printAct = new QAction(tr("Print Receipt"), this);
+    connect(printAct, SIGNAL(triggered()), this, SLOT(sPrintCCReceipt()));
+    pMenu->addAction(printAct);
+  }
+
+  if (_postPreauth->isEnabled())
+  {
+    QAction* postAct = new QAction(tr("Post"), this);
+    connect(postAct, SIGNAL(triggered()), this, SLOT(sPostPreauth()));
+    pMenu->addAction(postAct);
+  }
+
+  if (_voidPreauth->isEnabled())
+  {
+    QAction* voidAct = new QAction(tr("Void"), this);
+    connect(voidAct, SIGNAL(triggered()), this, SLOT(sVoidPreauth()));
+    pMenu->addAction(voidAct);
+  }
+}
+
 void dspCreditCardTransactions::sPostPreauth()
 {
   CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
@@ -192,6 +217,11 @@ void dspCreditCardTransactions::sPostPreauth()
   
   _voidPreauth->setEnabled(true);
   _postPreauth->setEnabled(true);
+}
+
+void dspCreditCardTransactions::sPrintCCReceipt()
+{
+  CreditCardProcessor::printReceipt(_preauth->id());
 }
 
 void dspCreditCardTransactions::sVoidPreauth()
