@@ -292,9 +292,7 @@ void issueLineToShipping::sIssue()
 
   if (issue.first())
   {
-    qDebug("result %d", issue.value("result").toInt());
     int result = issue.value("result").toInt();
-    qDebug("result is now %d", result);
     if (result < 0)
     {
       rollback.exec();
@@ -304,7 +302,6 @@ void issueLineToShipping::sIssue()
     }
     else
     {
-      qDebug("gonna distribute %d",result);
       if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
       {
         rollback.exec();
