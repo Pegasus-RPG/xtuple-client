@@ -91,7 +91,10 @@ void UsernameLineEdit::clear()
 void UsernameLineEdit::setUsername(const QString & pUsername)
 {
   if (!pUsername.trimmed().length())
+  {
+    clear();
     return;
+  }
 
   XSqlQuery query;
   QString sql("SELECT usr_id, usr_username AS number "
