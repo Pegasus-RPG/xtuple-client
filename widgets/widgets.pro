@@ -15,7 +15,8 @@ dynamic {
   CONFIG += dll # this is technically redundant as plugin implies dll however it fixes a cross-compile problem
   DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
 
-  LIBS += -L../lib -L../$$OPENRPT_DIR/lib -lxtuplecommon -lwrtembed -lrenderer -lcommon
+  LIBS += -L../lib -L../$$OPENRPT_DIR/lib \
+          -lxtuplecommon -lwrtembed -lrenderer -lcommon -lMetaSQL
   DEFINES += MAKEDLL
 
   MOC_DIR = tmp/dll
@@ -75,6 +76,7 @@ HEADERS += \
            plugins/polineeditplugin.h \
            plugins/projectclusterplugin.h \
            plugins/projectlineeditplugin.h \
+           plugins/querysetplugin.h\
            plugins/quoteclusterplugin.h\
            plugins/raclusterplugin.h\
            plugins/recurrencewidgetplugin.h \
@@ -166,6 +168,8 @@ SOURCES    += widgets.cpp \
               alarms.cpp alarmMaint.cpp \
               cmheadcluster.cpp \
               invoiceCluster.cpp \
+              queryitem.cpp \
+              queryset.cpp \
               quotecluster.cpp quoteList.cpp \
               xdoublevalidator.cpp \
               xspinbox.cpp \
@@ -230,6 +234,8 @@ HEADERS    += widgets.h \
               file.h \
               alarms.h alarmMaint.h \
               cmheadcluster.h \
+              queryitem.h \
+              queryset.h \
               quotecluster.h quoteList.h \
               invoicecluster.h \
               xdoublevalidator.h \
@@ -242,18 +248,21 @@ HEADERS    += widgets.h \
 			  subscriber.h subscribers.h \
 
 FORMS += accountSearch.ui \
-         alarms.ui alarmMaint.ui \
+         alarmMaint.ui \
+         alarms.ui \
          customerselector.ui \
          docAttach.ui \
          documents.ui \
          file.ui \
+         filterManager.ui \
          imageAssignment.ui \
          imageview.ui \
          parameterwidget.ui \
+         queryitem.ui \
+         queryset.ui \
          recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
-         filterManager.ui \
 		 subscriber.ui subscribers.ui \
 
 

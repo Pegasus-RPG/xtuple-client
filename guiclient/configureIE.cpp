@@ -57,7 +57,6 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   _internal->setEnabled(false);
   _internal->setVisible(false);
   _external->setVisible(false);
-  _tabs->removePage(_tabs->page(2));
   
   adjustSize();
 
@@ -76,13 +75,13 @@ void configureIE::languageChange()
 
 void configureIE::sSave()
 {
-  if (_renameFiles->isChecked())
+  if (_importRenameFiles->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("Rename"));
-  else if (_deleteFiles->isChecked())
+  else if (_importDeleteFiles->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("Delete"));
-  else if (_moveFiles->isChecked())
+  else if (_importMoveFiles->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("Move"));
-  else if (_doNothing->isChecked())
+  else if (_importDoNothing->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("None"));
   else
   {
@@ -91,7 +90,7 @@ void configureIE::sSave()
 			     "XML files after they have been successfully "
 			     "imported."));
     _tabs->setCurrentIndex(_tabs->indexOf(_importTab));
-    _renameFiles->setFocus();
+    _importRenameFiles->setFocus();
     return;
   }
 
@@ -126,17 +125,20 @@ void configureIE::sSave()
   _metrics->set("XSLTDefaultDirMac",	  _xsltMacDir->text());
   _metrics->set("XSLTDefaultDirWindows",  _xsltWindowsDir->text());
 
-
   _metrics->set("XSLTProcessorLinux",	  _linuxCmd->text());
   _metrics->set("XSLTProcessorMac",	  _macCmd->text());
   _metrics->set("XSLTProcessorWindows",	  _windowsCmd->text());
 
-  _metrics->set("XMLDefaultDirLinux",	  _linuxDir->text());
-  _metrics->set("XMLDefaultDirMac",	  _macDir->text());
-  _metrics->set("XMLDefaultDirWindows",	  _windowsDir->text());
+  _metrics->set("XMLDefaultDirLinux",	       _importLinuxDir->text());
+  _metrics->set("XMLDefaultDirMac",	       _importMacDir->text());
+  _metrics->set("XMLDefaultDirWindows",	       _importWindowsDir->text());
 
-  _metrics->set("XMLSuccessSuffix",	  _renameSuffix->text());
-  _metrics->set("XMLSuccessDir",	  _moveDir->text());
+  _metrics->set("XMLSuccessSuffix",	       _importRenameSuffix->text());
+  _metrics->set("XMLSuccessDir",	       _importMoveDir->text());
+
+  _metrics->set("XMLExportDefaultDirLinux",    _exportLinuxDir->text());
+  _metrics->set("XMLExportDefaultDirMac",      _exportMacDir->text());
+  _metrics->set("XMLExportDefaultDirWindows",  _exportWindowsDir->text());
 
   accept();
 }
@@ -147,35 +149,32 @@ void configureIE::sPopulate()
   _xsltMacDir->setText(_metrics->value("XSLTDefaultDirMac"));
   _xsltWindowsDir->setText(_metrics->value("XSLTDefaultDirWindows"));
 
-  /*  Will implement this if/when Xalan is embedded
-  if (! _metrics->value("XSLTLibrary").isEmpty())
-  {
-    _internal->setChecked(_metrics->boolean("XSLTLibrary"));
-    _external->setChecked(! _metrics->boolean("XSLTLibrary"));
-  }
-  */
-
+  //  TODO: start using Qt's XSLT processor
   _external->setChecked(TRUE);
 
   _linuxCmd->setText(_metrics->value("XSLTProcessorLinux"));
   _macCmd->setText(_metrics->value("XSLTProcessorMac"));
   _windowsCmd->setText(_metrics->value("XSLTProcessorWindows"));
 
-  _linuxDir->setText(_metrics->value("XMLDefaultDirLinux"));
-  _macDir->setText(_metrics->value("XMLDefaultDirMac"));
-  _windowsDir->setText(_metrics->value("XMLDefaultDirWindows"));
+  _importLinuxDir->setText(_metrics->value("XMLDefaultDirLinux"));
+  _importMacDir->setText(_metrics->value("XMLDefaultDirMac"));
+  _importWindowsDir->setText(_metrics->value("XMLDefaultDirWindows"));
 
   if (_metrics->value("XMLSuccessTreatment") == "Rename")
-    _renameFiles->setChecked(true);
+    _importRenameFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "Delete")
-    _deleteFiles->setChecked(true);
+    _importDeleteFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "Move")
-    _moveFiles->setChecked(true);
+    _importMoveFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "None")
-    _doNothing->setChecked(true);
+    _importDoNothing->setChecked(true);
 
-  _renameSuffix->setText(_metrics->value("XMLSuccessSuffix"));
-  _moveDir->setText(_metrics->value("XMLSuccessDir"));
+  _importRenameSuffix->setText(_metrics->value("XMLSuccessSuffix"));
+  _importMoveDir->setText(_metrics->value("XMLSuccessDir"));
+
+  _exportLinuxDir->setText(_metrics->value("XMLExportDefaultDirLinux"));
+  _exportMacDir->setText(_metrics->value("XMLExportDefaultDirMac"));
+  _exportWindowsDir->setText(_metrics->value("XMLExportDefaultDirWindows"));
 
   sFillList();
 }

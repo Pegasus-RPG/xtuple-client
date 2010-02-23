@@ -137,9 +137,9 @@ void xsltMap::sSave()
 	 "before saving this XSLT Map."),
       _doctype->text().trimmed().isEmpty() ? _doctype : _system
     },
-    { _import->text().trimmed().isEmpty(),
-      tr("<p>You must enter an Import XSLT File Name before saving this XSLT Map."),
-      _import
+    { _import->text().trimmed().isEmpty() && _export->text().trimmed().isEmpty(),
+      tr("<p>You must enter either an Import or Export XSLT File Name before saving this XSLT Map."),
+      (_import->text().trimmed().isEmpty() ? _import : _export)
     },
     { true, "", NULL }
   }; // error[]

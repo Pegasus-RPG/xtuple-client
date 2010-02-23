@@ -97,6 +97,7 @@ class menuSystem : public QObject
 
     void sFixACL();
     void sFixSerial();
+    void sExportData();
     void sImportXML();
 
     void sPrintAlignment();

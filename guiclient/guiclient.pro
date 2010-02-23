@@ -399,6 +399,7 @@ FORMS =   ../common/batchItem.ui                \
           expenseCategory.ui            \
           expenseTrans.ui               \
           explodeWo.ui                  \
+          exportData.ui                 \
           externalCCTransaction.ui      \
           externalShipping.ui           \
           externalShippingList.ui       \
@@ -1111,6 +1112,7 @@ HEADERS = ../common/batchItem.h                 \
           expenseCategory.h                     \
           expenseTrans.h                        \
           explodeWo.h                           \
+          exportData.h                          \
           externalCCTransaction.h               \
           externalShipping.h                    \
           externalShippingList.h                \
@@ -1223,7 +1225,6 @@ HEADERS = ../common/batchItem.h                 \
           menuSystem.h                  \
           miscCheck.h                   \
           miscVoucher.h                 \
-          mqlutil.h                     \
           openReturnAuthorizations.h    \
           openSalesOrders.h             \
           openVouchers.h                \
@@ -1860,6 +1861,7 @@ SOURCES = ../common/batchItem.cpp               \
           expenseCategory.cpp                   \
           expenseTrans.cpp                      \
           explodeWo.cpp                         \
+          exportData.cpp                        \
           externalCCTransaction.cpp             \
           externalShipping.cpp                  \
           externalShippingList.cpp              \
@@ -1971,7 +1973,6 @@ SOURCES = ../common/batchItem.cpp               \
           menuSystem.cpp                \
           miscCheck.cpp                 \
           miscVoucher.cpp               \
-          mqlutil.cpp                   \
           openReturnAuthorizations.cpp  \
           openSalesOrders.cpp           \
           openVouchers.cpp              \

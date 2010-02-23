@@ -12,6 +12,7 @@ UI_DIR      = tmp
 
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
+          exporthelper.cpp \
           format.cpp \
           graphicstextbuttonitem.cpp \
           login2.cpp \
@@ -25,6 +26,7 @@ SOURCES = calendarcontrol.cpp \
           xtsettings.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
+          exporthelper.h \
           format.h \
           graphicstextbuttonitem.h \
           login2.h \
@@ -38,8 +40,6 @@ HEADERS = calendarcontrol.h \
           xtsettings.h
 FORMS = login2.ui login2Options.ui
 
-
-#The following line was inserted by qt3to4
-QT +=  sql
+QT +=  sql xml
 
 RESOURCES += xTupleCommon.qrc

@@ -289,6 +289,7 @@ bool importXML::importOne(const QString &pFileName)
       return false;
     }
 
+    // TODO: switch to use ExportHelper::XSLTConvert()?
     QTemporaryFile tmpfile(_defaultXMLDir + QDir::separator() +
 			   doc.doctype().name() + "TOxtupleimport");
     tmpfile.setAutoRemove(false);

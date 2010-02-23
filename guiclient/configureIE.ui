@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
@@ -8,90 +8,90 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>configureIE</class>
- <widget class="QDialog" name="configureIE" >
-  <property name="geometry" >
+ <widget class="QDialog" name="configureIE">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>712</height>
+    <height>664</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>800</width>
     <height>0</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Configure Import and Export</string>
   </property>
-  <layout class="QHBoxLayout" >
+  <layout class="QHBoxLayout">
    <item>
-    <layout class="QVBoxLayout" >
+    <layout class="QVBoxLayout">
      <item>
-      <widget class="QTabWidget" name="_tabs" >
-       <property name="currentIndex" >
+      <widget class="QTabWidget" name="_tabs">
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_mappingTab" >
-        <attribute name="title" >
-         <string>XSLT Mapping</string>
+       <widget class="QWidget" name="_mappingTab">
+        <attribute name="title">
+         <string>XSLT Settings</string>
         </attribute>
-        <layout class="QVBoxLayout" >
+        <layout class="QVBoxLayout">
          <item>
-          <widget class="QGroupBox" name="_xsltDefaultDirBox" >
-           <property name="title" >
+          <widget class="QGroupBox" name="_xsltDefaultDirBox">
+           <property name="title">
             <string>Default XSLT File Directories</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_xsltLinuxDirLit" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="_xsltLinuxDirLit">
+              <property name="text">
                <string>Linux:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="FileCluster" name="_xsltLinuxDir" >
-              <property name="fileMode" >
+            <item row="0" column="1">
+             <widget class="FileCluster" name="_xsltLinuxDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_xsltWindowsDirLit" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="QLabel" name="_xsltWindowsDirLit">
+              <property name="text">
                <string>Windows:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="FileCluster" name="_xsltWindowsDir" >
-              <property name="fileMode" >
+            <item row="1" column="1">
+             <widget class="FileCluster" name="_xsltWindowsDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_xsltMacDirLit" >
-              <property name="text" >
+            <item row="2" column="0">
+             <widget class="QLabel" name="_xsltMacDirLit">
+              <property name="text">
                <string>Macintosh:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="FileCluster" name="_xsltMacDir" >
-              <property name="fileMode" >
+            <item row="2" column="1">
+             <widget class="FileCluster" name="_xsltMacDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
@@ -100,52 +100,52 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_mapLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_mapLit">
+           <property name="text">
             <string>Map of XSLT import and export filters:</string>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout">
            <item>
-            <widget class="XTreeWidget" name="_map" />
+            <widget class="XTreeWidget" name="_map"/>
            </item>
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QPushButton" name="_newMap" >
-               <property name="text" >
+              <widget class="QPushButton" name="_newMap">
+               <property name="text">
                 <string>New</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_editMap" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_editMap">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Edit</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_deleteMap" >
-               <property name="enabled" >
+              <widget class="QPushButton" name="_deleteMap">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Delete</string>
                </property>
               </widget>
              </item>
              <item>
               <spacer>
-               <property name="orientation" >
+               <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
                  <height>40</height>
@@ -157,52 +157,45 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_importTab" >
-        <attribute name="title" >
-         <string>XML Import</string>
-        </attribute>
-        <layout class="QVBoxLayout" >
          <item>
-          <widget class="QGroupBox" name="_processorBox" >
-           <property name="title" >
+          <widget class="QGroupBox" name="_processorBox">
+           <property name="title">
             <string>XSLT Processor:</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" colspan="2" >
-             <layout class="QHBoxLayout" >
+           <layout class="QGridLayout">
+            <item row="0" column="0" colspan="2">
+             <layout class="QHBoxLayout">
               <item>
-               <widget class="QRadioButton" name="_internal" >
-                <property name="text" >
+               <widget class="QRadioButton" name="_internal">
+                <property name="text">
                  <string>Use Internal XSLT Processor</string>
                 </property>
-                <property name="checked" >
+                <property name="checked">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="_external" >
-                <property name="text" >
+               <widget class="QRadioButton" name="_external">
+                <property name="text">
                  <string>Use External XSLT Processor. Commands:</string>
                 </property>
-                <property name="checked" >
+                <property name="checked">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
-            <item row="1" column="0" >
+            <item row="1" column="0">
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeType" >
+              <property name="sizeType">
                <enum>QSizePolicy::Fixed</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>16</width>
                 <height>192</height>
@@ -210,110 +203,110 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="1" column="1" >
-             <layout class="QGridLayout" >
-              <item row="4" column="0" >
-               <widget class="QLabel" name="_sub1Symbol" >
-                <property name="text" >
+            <item row="1" column="1">
+             <layout class="QGridLayout">
+              <item row="4" column="0">
+               <widget class="QLabel" name="_sub1Symbol">
+                <property name="text">
                  <string>%f</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="1" >
-               <widget class="QLabel" name="_sub1Meaning" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+              <item row="4" column="1">
+               <widget class="QLabel" name="_sub1Meaning">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>1</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>XML file to process</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="0" >
-               <widget class="QLabel" name="_sub2Symbol" >
-                <property name="text" >
+              <item row="5" column="0">
+               <widget class="QLabel" name="_sub2Symbol">
+                <property name="text">
                  <string>%x</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="1" >
-               <widget class="QLabel" name="_sub2Meaning" >
-                <property name="text" >
+              <item row="5" column="1">
+               <widget class="QLabel" name="_sub2Meaning">
+                <property name="text">
                  <string>XSLT file to use when filtering the XML file</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="0" >
-               <widget class="QLabel" name="_exampleLit" >
-                <property name="text" >
+              <item row="6" column="0">
+               <widget class="QLabel" name="_exampleLit">
+                <property name="text">
                  <string>Example:</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="1" >
-               <widget class="QLabel" name="_example" >
-                <property name="text" >
+              <item row="6" column="1">
+               <widget class="QLabel" name="_example">
+                <property name="text">
                  <string>MyXSLTProcessor --filter %x --input %f</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="0" colspan="2" >
-               <widget class="QLabel" name="_subLit_2" >
-                <property name="text" >
+              <item row="3" column="0" colspan="2">
+               <widget class="QLabel" name="_subLit_2">
+                <property name="text">
                  <string>Build external commands with these parameters:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0" >
-               <widget class="QLabel" name="_macCmdLit" >
-                <property name="text" >
+              <item row="2" column="0">
+               <widget class="QLabel" name="_macCmdLit">
+                <property name="text">
                  <string>Macintosh:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1" >
-               <widget class="QLineEdit" name="_macCmd" >
-                <property name="enabled" >
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="_macCmd">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="_windowsCmdLit" >
-                <property name="text" >
+              <item row="1" column="0">
+               <widget class="QLabel" name="_windowsCmdLit">
+                <property name="text">
                  <string>Windows:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1" >
-               <widget class="QLineEdit" name="_windowsCmd" >
-                <property name="enabled" >
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="_windowsCmd">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_linuxCmdLit" >
-                <property name="text" >
+              <item row="0" column="0">
+               <widget class="QLabel" name="_linuxCmdLit">
+                <property name="text">
                  <string>Linux:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" >
-               <widget class="QLineEdit" name="_linuxCmd" >
-                <property name="enabled" >
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="_linuxCmd">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
@@ -323,59 +316,66 @@ to be bound by its terms.</comment>
            </layout>
           </widget>
          </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_importTab">
+        <attribute name="title">
+         <string>XML Import</string>
+        </attribute>
+        <layout class="QVBoxLayout">
          <item>
-          <widget class="QGroupBox" name="_fileBox" >
-           <property name="title" >
+          <widget class="QGroupBox" name="_importFileBox">
+           <property name="title">
             <string>Default Import File Directories</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_linuxDirLit" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="__importLinuxDirLit">
+              <property name="text">
                <string>Linux:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="FileCluster" name="_linuxDir" >
-              <property name="fileMode" >
+            <item row="0" column="1">
+             <widget class="FileCluster" name="_importLinuxDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_windowsDirLit" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="QLabel" name="_importWindowsDirLit">
+              <property name="text">
                <string>Windows:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="FileCluster" name="_windowsDir" >
-              <property name="fileMode" >
+            <item row="1" column="1">
+             <widget class="FileCluster" name="_importWindowsDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_macDirLit" >
-              <property name="text" >
+            <item row="2" column="0">
+             <widget class="QLabel" name="_importMacDirLit">
+              <property name="text">
                <string>Macintosh:</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="FileCluster" name="_macDir" >
-              <property name="fileMode" >
+            <item row="2" column="1">
+             <widget class="FileCluster" name="_importMacDir">
+              <property name="fileMode">
                <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
@@ -384,40 +384,40 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="_fileHandlingBox" >
-           <property name="title" >
+          <widget class="QGroupBox" name="_importFileHandlingBox">
+           <property name="title">
             <string>XML File Handling Options:</string>
            </property>
-           <layout class="QVBoxLayout" >
+           <layout class="QVBoxLayout">
             <item>
-             <widget class="QRadioButton" name="_doNothing" >
-              <property name="text" >
+             <widget class="QRadioButton" name="_importDoNothing">
+              <property name="text">
                <string>Do nothing after successful import</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
+             <layout class="QHBoxLayout">
               <item>
-               <widget class="QRadioButton" name="_renameFiles" >
-                <property name="text" >
+               <widget class="QRadioButton" name="_importRenameFiles">
+                <property name="text">
                  <string>Rename after successful import. Append:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="_renameSuffix" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="_importRenameSuffix">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
                   <height>20</height>
@@ -428,20 +428,20 @@ to be bound by its terms.</comment>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
+             <layout class="QHBoxLayout">
               <item>
-               <widget class="QRadioButton" name="_moveFiles" >
-                <property name="text" >
+               <widget class="QRadioButton" name="_importMoveFiles">
+                <property name="text">
                  <string>Move after successful import to:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="FileCluster" name="_moveDir" >
-                <property name="enabled" >
+               <widget class="FileCluster" name="_importMoveDir">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="fileMode" >
+                <property name="fileMode">
                  <enum>QFileDialog::DirectoryOnly</enum>
                 </property>
                </widget>
@@ -449,8 +449,8 @@ to be bound by its terms.</comment>
              </layout>
             </item>
             <item>
-             <widget class="QRadioButton" name="_deleteFiles" >
-              <property name="text" >
+             <widget class="QRadioButton" name="_importDeleteFiles">
+              <property name="text">
                <string>Delete after successful import</string>
               </property>
              </widget>
@@ -460,10 +460,10 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -473,20 +473,83 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_exportTab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="_exportTab">
+        <attribute name="title">
          <string>XML Export</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="_exportLit" >
-           <property name="text" >
-            <string>Data Export in XML has not yet been implemented.</string>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QGroupBox" name="_exportFileBox">
+           <property name="title">
+            <string>Default Export File Directories</string>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignCenter</set>
-           </property>
+           <layout class="QGridLayout" name="_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="_exportLinuxDirLit">
+              <property name="text">
+               <string>Linux:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="FileCluster" name="_exportLinuxDir">
+              <property name="fileMode">
+               <enum>QFileDialog::DirectoryOnly</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="_exportWindowsDirLit">
+              <property name="text">
+               <string>Windows:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="FileCluster" name="_exportWindowsDir">
+              <property name="fileMode">
+               <enum>QFileDialog::DirectoryOnly</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="_exportMacDirLit">
+              <property name="text">
+               <string>Macintosh:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="FileCluster" name="_exportMacDir">
+              <property name="fileMode">
+               <enum>QFileDialog::DirectoryOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>400</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -495,27 +558,27 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" >
+    <layout class="QVBoxLayout">
      <item>
-      <widget class="QPushButton" name="_cancel" >
-       <property name="text" >
+      <widget class="QPushButton" name="_cancel">
+       <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_save" >
-       <property name="text" >
+      <widget class="QPushButton" name="_save">
+       <property name="text">
         <string>Save</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>0</height>
@@ -539,6 +602,25 @@ to be bound by its terms.</comment>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_tabs</tabstop>
+  <tabstop>_map</tabstop>
+  <tabstop>_newMap</tabstop>
+  <tabstop>_editMap</tabstop>
+  <tabstop>_deleteMap</tabstop>
+  <tabstop>_internal</tabstop>
+  <tabstop>_external</tabstop>
+  <tabstop>_linuxCmd</tabstop>
+  <tabstop>_windowsCmd</tabstop>
+  <tabstop>_macCmd</tabstop>
+  <tabstop>_importDoNothing</tabstop>
+  <tabstop>_importRenameFiles</tabstop>
+  <tabstop>_importRenameSuffix</tabstop>
+  <tabstop>_importMoveFiles</tabstop>
+  <tabstop>_importDeleteFiles</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cancel</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -547,77 +629,29 @@ to be bound by its terms.</comment>
    <receiver>configureIE</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>674</x>
-     <y>27</y>
+    <hint type="sourcelabel">
+     <x>787</x>
+     <y>39</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>363</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_external</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_linuxCmd</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>135</x>
-     <y>84</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>416</x>
-     <y>151</y>
+    <hint type="destinationlabel">
+     <x>786</x>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>_external</sender>
+   <sender>_importRenameFiles</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_macCmd</receiver>
+   <receiver>_importRenameSuffix</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>135</x>
-     <y>84</y>
+    <hint type="sourcelabel">
+     <x>255</x>
+     <y>292</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>416</x>
-     <y>215</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_external</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_windowsCmd</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>135</x>
-     <y>84</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>416</x>
-     <y>183</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_renameFiles</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_renameSuffix</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>224</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>460</x>
-     <y>462</y>
+    <hint type="destinationlabel">
+     <x>495</x>
+     <y>292</y>
     </hint>
    </hints>
   </connection>
@@ -627,13 +661,13 @@ to be bound by its terms.</comment>
    <receiver>_editMap</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>246</x>
-     <y>467</y>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>357</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>506</x>
-     <y>335</y>
+    <hint type="destinationlabel">
+     <x>671</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
@@ -643,29 +677,77 @@ to be bound by its terms.</comment>
    <receiver>_deleteMap</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>246</x>
-     <y>467</y>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>357</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>506</x>
-     <y>367</y>
+    <hint type="destinationlabel">
+     <x>671</x>
+     <y>350</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>_moveFiles</sender>
+   <sender>_importMoveFiles</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_moveDir</receiver>
+   <receiver>_importMoveDir</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>164</x>
-     <y>612</y>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>336</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>406</x>
-     <y>611</y>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>342</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_external</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_macCmd</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>414</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>507</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_external</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_windowsCmd</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>414</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>477</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_external</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_linuxCmd</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>414</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>446</y>
     </hint>
    </hints>
   </connection>

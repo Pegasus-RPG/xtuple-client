@@ -8,17 +8,23 @@
  * to be bound by its terms.
  */
 
-#ifndef __MQLUTIL_H__
-#define __MQLUTIL_H__
 
+#ifndef __EXPORTHELPER_H__
+#define __EXPORTHELPER_H__
+
+#include <QFile>
+#include <QObject>
 #include <QString>
 
-#include <metasql.h>
-#include <xsqlquery.h>
+#include <parameter.h>
 
-MetaSQLQuery mqlLoad(const QString &, bool * = 0);
-MetaSQLQuery mqlLoad(const QString &, const QString &, bool * = 0);
-QString mqlLastError();
-void mqlClearLastError();
+class ExportHelper : public QObject
+{
+  Q_OBJECT
+
+  public:
+    Q_INVOKABLE static bool exportXML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg, const int xsltmapid = -1);
+    Q_INVOKABLE static bool XSLTConvert(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
+};
 
 #endif

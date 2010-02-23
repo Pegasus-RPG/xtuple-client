@@ -335,6 +335,7 @@
 #include "expenseCategory.h"
 #include "expenseTrans.h"
 #include "explodeWo.h"
+#include "exportData.h"
 #include "externalCCTransaction.h"
 #include "externalShipping.h"
 #include "externalShippingList.h"

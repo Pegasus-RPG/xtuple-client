@@ -53,6 +53,7 @@
 #include "plugins/polineeditplugin.h"
 #include "plugins/projectclusterplugin.h"
 #include "plugins/projectlineeditplugin.h"
+#include "plugins/querysetplugin.h"
 #include "plugins/quoteclusterplugin.h"
 #include "plugins/raclusterplugin.h"
 #include "plugins/recurrencewidgetplugin.h"
@@ -135,6 +136,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new PoLineEditPlugin(this));
   m_plugins.append(new ProjectClusterPlugin(this));
   m_plugins.append(new ProjectLineEditPlugin(this));
+  m_plugins.append(new QuerySetPlugin(this));
   m_plugins.append(new QuoteClusterPlugin(this));
   m_plugins.append(new RaClusterPlugin(this));
   m_plugins.append(new RecurrenceWidgetPlugin(this));

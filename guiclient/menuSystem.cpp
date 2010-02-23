@@ -68,6 +68,7 @@
 
 #include "fixACL.h"
 #include "fixSerial.h"
+#include "exportData.h"
 #include "importXML.h"
 
 #include "configureIE.h"
@@ -225,6 +226,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL",           NULL, NULL, true },
     { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
     { "sys.importXML",     tr("&Import XML"),      SLOT(sImportXML()),  sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
+    { "sys.exportData",    tr("&Export Data"),     SLOT(sExportData()), sysUtilsMenu,  "ExportXML",       NULL, NULL, true },
 
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	"true",	NULL,	NULL,	true	},
@@ -735,6 +737,11 @@ void menuSystem::sFixACL()
 void menuSystem::sFixSerial()
 {
   omfgThis->handleNewWindow(new fixSerial());
+}
+
+void menuSystem::sExportData()
+{
+  omfgThis->handleNewWindow(new exportData());
 }
 
 void menuSystem::sImportXML()
