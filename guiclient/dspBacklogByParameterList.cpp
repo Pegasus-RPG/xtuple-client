@@ -279,6 +279,9 @@ void dspBacklogByParameterList::sAddToPackingListBatch()
 
 void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
 {
+  if (_soitem->id() <= 0)
+    return;
+
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
 
   int menuItem;

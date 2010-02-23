@@ -63,6 +63,9 @@ void dspBacklogBySalesOrder::languageChange()
 
 void dspBacklogBySalesOrder::sPopulateMenu(QMenu *pMenu)
 {
+  if (_soitem->id() <= 0)
+    return;
+
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);

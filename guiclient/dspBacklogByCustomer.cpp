@@ -190,6 +190,9 @@ void dspBacklogByCustomer::sAddToPackingListBatch()
 
 void dspBacklogByCustomer::sPopulateMenu(QMenu *pMenu)
 {
+  if (_soitem->id() <= 0)
+    return;
+
   bool hasParents     = FALSE;
   bool hasChildren    = FALSE;
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
