@@ -91,7 +91,7 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
         {
           schemaName = itemq.value("qryitem_group").toString();
           qtext = "SELECT * FROM " +
-                  (schemaName.isEmpty() ? "" : schemaName + ".") +
+                  (schemaName.isEmpty() ? QString("") : schemaName + QString(".")) +
                   itemq.value("qryitem_detail").toString();
         }
         else if (itemq.value("qryitem_src").toString() == "MQL")
