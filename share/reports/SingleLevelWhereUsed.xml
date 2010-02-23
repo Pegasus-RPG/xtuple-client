@@ -37,7 +37,7 @@
        formatBoolYN(bomitem_createwo) AS f_createwo,
        CASE WHEN (bomitem_issuemethod='S') THEN 'Push'
             WHEN (bomitem_issuemethod='L') THEN 'Pull'
-            WHEN (bomitem_issuemethod='M') THEN 'Mixxed'
+            WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS f_issuemethod,
        formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper) * (1 + bomitem_scrap))) as f_qtyreq
