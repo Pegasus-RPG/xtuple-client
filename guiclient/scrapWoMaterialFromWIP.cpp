@@ -16,7 +16,7 @@
 #include <QValidator>
 #include "inputManager.h"
 #include "distributeInventory.h"
-#include "postproduction.h"
+#include "postProduction.h"
 #include "returnWoMaterialItem.h"
 
 scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
