@@ -187,7 +187,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.dspWoHistoryByNumber",    tr("by &W/O Number..."), SLOT(sDspWoHistoryByNumber()),    reportsHistoryMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
 
     { "separator",        NULL,                   NULL,                   reportsMenu, "true",      0, 0, true, NULL },
-    { "wo.dspJobCosting", tr("&Job Costing..."),  SLOT(sDspJobCosting()), reportsMenu, "ViewCosts", 0, 0, true, NULL },
+    { "wo.dspJobCosting", tr("Work Order &Costing..."),  SLOT(sDspJobCosting()), reportsMenu, "ViewCosts", 0, 0, true, NULL },
     
     //  Production | Reports | Material Usage Variance
     { "menu",                                      tr("Material &Usage Variance"),(char*)reportsMatlUseVarMenu,                    reportsMenu,           "true",                  0, 0, true, NULL },

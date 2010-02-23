@@ -42,8 +42,7 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
                   "WHERE ((wo_itemsite_id=itemsite_id)"
                   " AND (itemsite_item_id=item_id)"
                   " AND (item_inv_uom_id=uom_id)"
-                  " AND (itemsite_warehous_id=warehous_id)"
-                  " AND (itemsite_costmethod = 'J')) "
+                  " AND (itemsite_warehous_id=warehous_id)) "
                   "ORDER BY formatWONumber(wo_id) DESC");
   
   _cost->addColumn(tr("Type"),            _itemColumn, Qt::AlignLeft,  true, "type");

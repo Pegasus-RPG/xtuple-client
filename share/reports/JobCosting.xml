@@ -236,7 +236,7 @@ sort,code;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Job Costing</string>
+   <string>Work Order Costing</string>
   </label>
  </rpthead>
  <pghead>
@@ -572,7 +572,8 @@ sort,code;</sql>
     <query>detail</query>
     <column>cost</column>
    </data>
-   <tracktotal subtotal="true" builtin="true" >price</tracktotal>
+   <format builtin="true" >price</format>
+   <tracktotal subtotal="true" />
   </field>
   <label>
    <rect>
