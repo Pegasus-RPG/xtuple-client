@@ -73,6 +73,9 @@ to be bound by its terms.</comment>
            </item>
            <item>
             <widget class="QPushButton" name="_save">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>&amp;Save</string>
              </property>
@@ -685,6 +688,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_vend</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_save</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>522</x>
+     <y>50</y>
     </hint>
    </hints>
   </connection>
