@@ -1,3 +1,4 @@
+
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
@@ -123,7 +124,10 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
               for (int i = 0; i < qry.record().count(); i++)
               {
                 QDomElement fieldElem = xmldoc.createElement(qry.record().fieldName(i));
-                fieldElem.appendChild(xmldoc.createTextNode(qry.record().value(i).toString()));
+                if (qry.record().value(i).isNull())
+                  fieldElem.appendChild(xmldoc.createTextNode("[NULL]"));
+                else
+                  fieldElem.appendChild(xmldoc.createTextNode(qry.record().value(i).toString()));
                 tableElem.appendChild(fieldElem);
                 if (DEBUG)
                   qDebug("exportXML added %s %s",
