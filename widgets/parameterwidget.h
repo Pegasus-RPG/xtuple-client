@@ -32,7 +32,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
   public:
     enum ParameterWidgetTypes
     {
-      Crmacct, User, Text, Date, XComBox
+      Crmacct, User, Text, Date, XComBox, Cntct
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
@@ -50,6 +50,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void setSavedFiltersIndex(QString);
     void setType(QString, QString, enum ParameterWidgetTypes = Text);
 		void setXComboBoxType(QString, QString, enum XComboBox::XComboBoxTypes);
+		void setXComboBoxType(QString, QString, QString);
     void sManageFilters();
     void storeFilterValue(QDate);
     void storeFilterValue(int pId = -1, QObject* filter = 0);
@@ -72,6 +73,7 @@ protected:
 		QString _settingsName;
     QMap<int, QPair<QString, QVariant> > _filterValues;
 		QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
+		QMap<QString, QString > _comboQuery;
 		bool _initialized;
 
     QString getParameterTypeKey(QString);

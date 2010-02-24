@@ -365,7 +365,7 @@ void ParameterWidget::changeFilterObject(int index)
   QStringList split = mybox->itemData(index).toString().split(":");
   QString row = split.at(0);
   int type = split.at(1).toInt();
-	
+	XSqlQuery qry;
 
   QWidget *widget = _filterGroup->findChild<QWidget *>("widget" + row);
   QWidget *button = _filterGroup->findChild<QToolButton *>("button" + row);
@@ -434,14 +434,16 @@ void ParameterWidget::changeFilterObject(int index)
     delete lineEdit;
 		delete crmacctCluster;
 
-		//tempPair = _types[mybox->currentText()];
 
 		xBox->setObjectName("widget" + row);
-		//xBox->setNameVisible(false);
-    //xBox->setDescriptionVisible(false);
-    //xBox->setLabel("");
 		xBox->setType(_comboTypes[mybox->currentText()]);
+		if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
+		{
+			qry.prepare( _comboQuery[mybox->currentText()] );
 
+			qry.exec();
+			xBox->populate(qry);
+		}
 		layout->insertWidget(0, xBox);
 		connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
 		connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
@@ -719,7 +721,13 @@ void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetType
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType)
 {
 	_comboTypes[pName] = xType;
-        _types[pName] = qMakePair(pParam, XComBox);
+	_types[pName] = qMakePair(pParam, XComBox);
+}
+void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry)
+{
+	_comboTypes[pName] = XComboBox::Adhoc;
+	_comboQuery[pName] = pQry;
+	_types[pName] = qMakePair(pParam, XComBox);
 
 }
 void ParameterWidget::sManageFilters()
