@@ -64,6 +64,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
   _oplist->findChild<QRadioButton*>("_all")->setChecked(true);
   _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
+  _oplist->sHandleMore(false);
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 

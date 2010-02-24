@@ -38,7 +38,7 @@ class opportunityList : public XWidget, public Ui::opportunityList
     virtual void	sDeactivate();
     virtual void	sActivate();
     virtual void 	setParams(ParameterList &);
-    virtual void	sHandleMore();
+    virtual void	sHandleMore(bool more);
 
   private:
     int		_mode;

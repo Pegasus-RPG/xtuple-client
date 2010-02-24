@@ -50,7 +50,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_list,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_list,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-  connect(_more,        SIGNAL(clicked()), this, SLOT(sHandleMore()));
+  connect(_more,        SIGNAL(toggeled(bool)), this, SLOT(sHandleMore(bool)));
   connect(_usePattern,  SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
 
   if(_privileges->check("MaintainOpportunities"))
@@ -83,7 +83,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   
   _more->setChecked(_preferences->boolean("opListShowAll"));
   _usr->setNameVisible(false);
-  sHandleMore();
+  sHandleMore(_more->isChecked());
   _search->setFocus();
 }
 
@@ -294,12 +294,12 @@ void opportunityList::sFillList()
   _list->populate(itemQ, true);
 }
 
-void opportunityList::sHandleMore()
+void opportunityList::sHandleMore(bool more)
 {
-  _crmAccountGroup->setVisible(_more->isChecked());
-  _opsource->setVisible(_more->isChecked());
-  _opstage->setVisible(_more->isChecked());
-  _optype->setVisible(_more->isChecked());
+  _crmAccountGroup->setVisible(more);
+  _opsource->setVisible(more);
+  _opstage->setVisible(more);
+  _optype->setVisible(more);
 }
 
 

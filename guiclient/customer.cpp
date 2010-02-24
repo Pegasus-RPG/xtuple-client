@@ -62,6 +62,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
   _oplist->findChild<QRadioButton*>("_all")->setChecked(true);
   _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
+  _oplist->sHandleMore(false);
   
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
