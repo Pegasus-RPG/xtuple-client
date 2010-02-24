@@ -33,7 +33,7 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_export,          SIGNAL(clicked()), this, SLOT(sSaveFile()));
   connect(_find,            SIGNAL(clicked()), this, SLOT(sFind()));
-  connect(_findText,SIGNAL(editingFinished()), this, SLOT(sFind()));
+  connect(_findText,SIGNAL(editingFinished()), this, SLOT(sFindSignal()));
   connect(_import,          SIGNAL(clicked()), this, SLOT(sImport()));
   connect(_line,    SIGNAL(editingFinished()), this, SLOT(sGoto()));
   connect(_save,            SIGNAL(clicked()), this, SLOT(sSave()));
@@ -54,6 +54,7 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _scriptid      = -1;
   _pkgheadidOrig = -1;
+  _findCnt = 0;
   
   QSettings settings("xTuple.com", "scriptEditor");
   lastSaveDir = settings.value("LastDirectory").toString();
@@ -410,8 +411,34 @@ void scriptEditor::sGoto()
   _source->setFocus();
 }
 
+/** Called from a timer set in sFindSignal. This function checks the _findCnt and if it's greater than 0 it
+    will call sFind. This is done to prevent the calling of sFind twice under some circumstances.
+ */
+void scriptEditor::sFindDo()
+{
+  if(_findCnt > 0)
+    sFind();
+}
+
+/** Called when _findText emits editingFinished. Increments count and triggers 1ms singleshot timer to call sFindDo.
+    This part of a solution to prevent double-finding when the user edits a text and then clicks the find button
+    which was causing sFind to be called twice.
+ */
+void scriptEditor::sFindSignal()
+{
+  _findCnt++;
+  QTimer::singleShot(1, this, SLOT(sFindDo()));
+}
+
+/** Called by the find button and sFindDo function. It decrements a _findCnt value down to 0 so sFindDo can evaluate
+    if it needs to call this function after an initial editingFinished signal from the _findText widget is emitted.
+ */
 void scriptEditor::sFind()
 {
+  _findCnt --;
+  if(_findCnt < 0)
+    _findCnt = 0;
+
   if (_findText->text().isEmpty())
     return;
 

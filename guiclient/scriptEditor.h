@@ -43,6 +43,8 @@ protected slots:
     virtual void setMode(const int);
     virtual void sBlockCountChanged(const int);
     virtual void sPositionChanged();
+    virtual void sFindSignal();
+    virtual void sFindDo();
 
   protected:
     virtual void closeEvent(QCloseEvent *);
@@ -53,6 +55,7 @@ private:
     int _scriptid;
     JSHighlighter *_highlighter;
     QTextDocument *_document;
+    int _findCnt;
 
 };
 
