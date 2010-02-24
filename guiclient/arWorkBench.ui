@@ -103,58 +103,7 @@ to be bound by its terms.</comment>
          <string>Receivables</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="spacing">
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_debits">
-             <property name="text">
-              <string>Debits</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_credits">
-             <property name="text">
-              <string>Credits</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_both">
-             <property name="text">
-              <string>Both</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_print">
-             <property name="text">
-              <string>&amp;Print</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <layout class="QHBoxLayout">
            <item>
             <widget class="XLabel" name="_findLit">
@@ -279,7 +228,7 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QFrame" name="_aropenFrame">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -302,6 +251,64 @@ to be bound by its terms.</comment>
             </property>
            </layout>
           </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_debits">
+             <property name="text">
+              <string>Debits</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_credits">
+             <property name="text">
+              <string>Credits</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_both">
+             <property name="text">
+              <string>Both</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XCheckBox" name="_unposted">
+             <property name="text">
+              <string>Unposted</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_print">
+             <property name="text">
+              <string>&amp;Print</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -428,6 +435,11 @@ to be bound by its terms.</comment>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

@@ -185,6 +185,8 @@ void arWorkBench::sFillList()
     _aritems->findChild<DateCluster*>("_dates")->setStartDate(_startDate->date());
     _aritems->findChild<DateCluster*>("_dates")->setEndDate(_endDate->date());
   }
+
+  _aritems->findChild<XCheckBox*>("_unposted")->setChecked(_unposted->isChecked());
   
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
