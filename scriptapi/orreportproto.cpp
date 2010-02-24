@@ -39,7 +39,7 @@ QScriptValue scriptBeginMultiPrint(QScriptContext *context,
                                    QScriptEngine  * /*engine*/)
 {
   bool result = false;
-  if (context->argumentCount() > 0)
+  if (context->argumentCount() > 1)
   {
     QPrinter *printer = qscriptvalue_cast<QPrinter*>(context->argument(0).toObject());
     bool userCanceled = false;
@@ -49,6 +49,11 @@ QScriptValue scriptBeginMultiPrint(QScriptContext *context,
              printer, userCanceled, result);
     if (context->argumentCount() > 1)
       ; // TODO: figure out how to set userCanceled in the script
+  }
+  else
+  {
+    QPrinter *printer = qscriptvalue_cast<QPrinter*>(context->argument(0).toObject());
+    result  = orReport::beginMultiPrint(printer);
   }
 
   return result;
