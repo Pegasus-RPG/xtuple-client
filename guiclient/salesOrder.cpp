@@ -3299,6 +3299,8 @@ void salesOrder::sFreightDetail()
   freightBreakdown newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  if (_saved)
+    populate();
 }
 
 void salesOrder::setFreeFormShipto(bool pFreeForm)

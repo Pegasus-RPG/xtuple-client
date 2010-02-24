@@ -142,6 +142,26 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
 
 void freightBreakdown::sSave()
 {
+  XSqlQuery ord;
+
+  if (_ordertype == "SO")
+  {
+    ord.prepare("UPDATE cohead "
+                " SET cohead_calcfreight=:calc "
+                "WHERE (cohead_id=:ordid); ");
+  }
+  else if (_ordertype == "QU")
+  {
+    ord.prepare("UPDATE quhead "
+                " SET quhead_calcfreight=:calc "
+                "WHERE (quhead_id=:ordid); ");
+  }
+  else
+    accept();
+
+  ord.bindValue(":ordid", _orderid);
+  ord.bindValue(":calc", QVariant(_calculated->isChecked()));
+  ord.exec();
   accept();
 }
 
