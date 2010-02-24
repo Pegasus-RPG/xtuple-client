@@ -61,16 +61,17 @@ void commentTypes::sFillList()
 
 void commentTypes::sHandleButtons()
 {
-  bool enableButtons;
-
   XTreeWidgetItem *selected = (XTreeWidgetItem*)_cmnttype->currentItem();
   if (selected)
-    enableButtons = ! selected->rawValue("cmnttype_sys").toBool();
+  {
+    _edit->setEnabled(true);
+    _delete->setEnabled(!selected->rawValue("cmnttype_sys").toBool());
+  }
   else
-    enableButtons = FALSE;
-
-  _edit->setEnabled(enableButtons);
-  _delete->setEnabled(enableButtons);
+  {
+    _edit->setEnabled(false);
+    _delete->setEnabled(false);
+  }
 }
 
 void commentTypes::sNew()

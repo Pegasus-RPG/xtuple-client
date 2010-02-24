@@ -172,6 +172,12 @@ void commentType::populate()
     _name->setText(q.value("cmnttype_name"));
     _description->setText(q.value("cmnttype_descrip"));
     _editable->setChecked(q.value("cmnttype_editable").toBool());
+    if(q.value("cmnttype_sys").toBool())
+    {
+      _name->setEnabled(false);
+      if(_name->text() == "ChangeLog")
+        _editable->setEnabled(false);
+    }
     
     q.prepare( "SELECT source_module "
                "FROM cmnttypesource, source "
