@@ -114,7 +114,7 @@ void dspTrialBalances::setParams(ParameterList & params)
   if (_selectedPeriod->isChecked())
     params.append("period_id", _period->id());
     
-  if (_showZero->isChecked())
+  if (_showZero->isChecked() || (_selectedAccount->isChecked() && _selectedPeriod->isChecked()))
     params.append("showZero");
 }
 
