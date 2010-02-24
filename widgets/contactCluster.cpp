@@ -134,7 +134,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   for (int i = 0; i < 5; ++i)
     _fname->append("");
 
-  _name->setVisible(true);
+  _name->setVisible(false);
   _description->setVisible(true);
 
   QSpacerItem* _cntctSpacer = new QSpacerItem(15, 3,QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -195,6 +195,23 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   connect(this, SIGNAL(newId(int)), this, SIGNAL(changed()));
 
   setMinimalLayout(false);
+}
+
+void ContactCluster::setDescriptionVisible(bool p)
+{
+  _titleLit->setVisible(p);
+  _description->setVisible(p);
+  _phoneLit->setVisible(p);
+  _phone->setVisible(p);
+  _phone2Lit->setVisible(p);
+  _phone2->setVisible(p);
+  _emailLit->setVisible(p);
+  _email->setVisible(p);
+  _faxLit->setVisible(p);
+  _fax->setVisible(p);
+  _webaddrLit->setVisible(p);
+  _webaddr->setVisible(p);
+  _addr->setVisible(p);
 }
 
 void ContactCluster::setMinimalLayout(bool isMinimal)

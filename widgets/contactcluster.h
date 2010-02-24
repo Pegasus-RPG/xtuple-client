@@ -77,7 +77,9 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
 
     public slots:
       void openUrl(QString url);
+      void setDescriptionVisible(const bool p);
       void setMinimalLayout(bool);
+      void setNameVisible(const bool) { }
       void setSearchAcct(int crmAcctId);
 
     private slots:
