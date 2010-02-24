@@ -379,7 +379,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -642,7 +642,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -930,7 +930,8 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
      <query>detail</query>
      <column>total</column>
     </data>
-    <tracktotal builtin="true" >money</tracktotal>
+    <format builtin="true">money</format>
+    <tracktotal/>
    </field>
    <label>
     <rect>

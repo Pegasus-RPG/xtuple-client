@@ -151,7 +151,7 @@ ORDER BY cohist_invcdate, cohist_orderdate;
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -411,7 +411,7 @@ ORDER BY cohist_invcdate, cohist_orderdate;
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -720,7 +720,8 @@ ORDER BY cohist_invcdate, cohist_orderdate;
     <query>detail</query>
     <column>total</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>

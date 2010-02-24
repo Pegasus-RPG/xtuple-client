@@ -3,13 +3,13 @@
  <title>Sales History By Parameter List</title>
  <name>SalesHistoryByParameterList</name>
  <description></description>
- <parameter default="25" active="true" listtype="static" type="string" name="custgrp_id" >
+ <parameter default="25" active="true" listtype="static" type="string" name="custgrp_id">
   <description></description>
  </parameter>
- <parameter default="'01-01-2010'" active="true" listtype="static" type="string" name="endDate" >
+ <parameter default="'01-01-2010'" active="true" listtype="static" type="string" name="endDate">
   <description></description>
  </parameter>
- <parameter default="'01-01-2000'" active="true" listtype="static" type="string" name="startDate" >
+ <parameter default="'01-01-2000'" active="true" listtype="static" type="string" name="startDate">
   <description></description>
  </parameter>
  <size>Letter</size>
@@ -242,7 +242,7 @@ ORDER BY cohist_invcdate, item_number;      </sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -578,7 +578,7 @@ ORDER BY cohist_invcdate, item_number;      </sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -889,7 +889,8 @@ ORDER BY cohist_invcdate, item_number;      </sql>
      <query>detail</query>
      <column>total</column>
     </data>
-    <tracktotal builtin="true" >money</tracktotal>
+    <format builtin="true">money</format>
+    <tracktotal/>
    </field>
    <label>
     <rect>

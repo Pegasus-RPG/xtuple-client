@@ -469,7 +469,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -652,7 +652,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -951,7 +951,8 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <query>detail</query>
     <column>total</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <field>
    <rect>
@@ -971,7 +972,8 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <query>detail</query>
     <column>shipped</column>
    </data>
-   <tracktotal builtin="true" >qty</tracktotal>
+   <format builtin="true">qty</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>

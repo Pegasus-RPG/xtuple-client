@@ -244,7 +244,7 @@ ORDER BY cohist_invcdate, item_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -548,7 +548,7 @@ ORDER BY cohist_invcdate, item_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Doc. #</string>
   </label>
   <label>
    <rect>
@@ -900,7 +900,8 @@ ORDER BY cohist_invcdate, item_number;</sql>
      <query>detail</query>
      <column>total</column>
     </data>
-    <tracktotal builtin="true" >money</tracktotal>
+    <format builtin="true">money</format>
+    <tracktotal/>
    </field>
   </detail>
  </section>

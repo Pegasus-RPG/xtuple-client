@@ -54,7 +54,7 @@ dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char
   _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("Customer"),            -1,              Qt::AlignLeft,   true,  "cust_name"  );
-  _sohist->addColumn(tr("S/O #"),               _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"  );
+  _sohist->addColumn(tr("Doc. #"),              _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"  );
   _sohist->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"  );
   _sohist->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate");
   _sohist->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate");
