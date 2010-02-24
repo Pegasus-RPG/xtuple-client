@@ -369,7 +369,12 @@ void plannedOrder::sHandleItemsite(int pWarehousid)
     _woButton->setEnabled(TRUE);
   else
     _woButton->setEnabled(FALSE);
-  if ( q.value("itemsite_wosupply").toBool() )
+  if ( q.value("itemsite_wosupply").toBool() && q.value("itemsite_posupply").toBool() && q.value("item_type").toString() == "P" )
+  {
+    _poButton->setChecked(TRUE);
+    _woButton->setChecked(FALSE);
+  }
+  else if ( q.value("itemsite_wosupply").toBool() )
   {
     _poButton->setChecked(FALSE);
     _woButton->setChecked(TRUE);
