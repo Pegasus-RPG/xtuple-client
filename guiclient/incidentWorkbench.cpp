@@ -31,10 +31,13 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   parameterWidget->setType("Pattern", "pattern", ParameterWidget::Text);
   parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
   parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
+	parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
+	parameterWidget->setXComboBoxType("Severity", "severity_id", XComboBox::IncidentSeverity);
+	parameterWidget->setXComboBoxType("Category", "category_id", XComboBox::IncidentCategory);
 
-  parameterWidget->applyDefaultFilterSet();
 
   connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
+  parameterWidget->applyDefaultFilterSet();
 
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
