@@ -68,7 +68,7 @@ void metasqls::languageChange()
 
 void metasqls::sNew()
 {
-  MQLEdit *newdlg = new MQLEdit(this);
+  MQLEdit *newdlg = new MQLEdit(0);
   omfgThis->handleNewWindow(newdlg);
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
@@ -106,7 +106,7 @@ void metasqls::sDelete()
 
 void metasqls::sEdit()
 {
-  MQLEdit *newdlg = new MQLEdit(this);
+  MQLEdit *newdlg = new MQLEdit(0);
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
