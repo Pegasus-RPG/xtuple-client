@@ -43,17 +43,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
-  connect(_crmAccount, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_showInactive,	SIGNAL(toggled(bool)),	this,   SLOT(sFillList()));
-  connect(_search,		SIGNAL(lostFocus()),	this,   SLOT(sFillList()));
-  connect(_targetDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_opsource,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_opstage,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_optype,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList())); 
-  connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
-  connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
+  connect(_query,       SIGNAL(clicked()),      this,   SLOT(sFillList()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
@@ -92,6 +82,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _list->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
   
   _more->setChecked(_preferences->boolean("opListShowAll"));
+  _usr->setNameVisible(false);
   sHandleMore();
   _search->setFocus();
 }
@@ -309,7 +300,6 @@ void opportunityList::sHandleMore()
   _opsource->setVisible(_more->isChecked());
   _opstage->setVisible(_more->isChecked());
   _optype->setVisible(_more->isChecked());
-  sFillList();
 }
 
 
