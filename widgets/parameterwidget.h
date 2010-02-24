@@ -15,7 +15,7 @@
 #include <QMap>
 #include <QPair>
 #include <QToolButton>
-
+#include <QRegExp>
 #include <parameter.h>
 
 #include "widgets.h"
@@ -32,7 +32,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
   public:
     enum ParameterWidgetTypes
     {
-      Crmacct, User, Text, Date
+      Crmacct, User, Text, Date, XComBox
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
@@ -49,6 +49,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
     void setType(QString, QString, enum ParameterWidgetTypes = Text);
+		void setXComboBoxType(QString, QString, enum XComboBox::XComboBoxTypes);
     void sManageFilters();
     void storeFilterValue(QDate);
     void storeFilterValue(int pId = -1, QObject* filter = 0);
@@ -67,14 +68,16 @@ protected:
     enum ParameterWidgetTypes _type;
     QSignalMapper *_filterSignalMapper;
     QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
-		QStringList *_usedTypes;
+		QMap<int, QString > _usedTypes;
 		QString _settingsName;
     QMap<int, QPair<QString, QVariant> > _filterValues;
+		QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
 		bool _initialized;
 
     QString getParameterTypeKey(QString);
     void setSelectedFilter(int filter_id);
 		void repopulateComboboxes();
+		bool containsUsedType(QString);
 };
 
 #endif
