@@ -16,7 +16,7 @@ dynamic {
   DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
 
   LIBS += -L../lib -L../$$OPENRPT_DIR/lib \
-          -lxtuplecommon -lwrtembed -lrenderer -lcommon -lMetaSQL
+          -lxtuplecommon -lwrtembed -lrenderer -lMetaSQL -lcommon
   DEFINES += MAKEDLL
 
   MOC_DIR = tmp/dll
