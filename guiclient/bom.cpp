@@ -289,6 +289,10 @@ void BOM::sPopulateMenu(QMenu *menuThis)
     menuThis->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
     menuThis->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);
     menuThis->insertItem(tr("Replace"), this, SLOT(sReplace()), 0);
+
+    menuThis->insertSeparator();
+
+    menuThis->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
     
     menuThis->insertSeparator();
     
@@ -340,6 +344,23 @@ void BOM::sExpire()
   q.exec();
   
   omfgThis->sBOMsUpdated(_item->id(), TRUE);
+}
+
+void BOM::sDelete()
+{
+  if (QMessageBox::question(this, tr("Delete Item?"),
+                            tr("<p>This action can not be undone. "
+                               "Are you sure you want to delete this Item?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare( "DELETE FROM bomitem "
+               "WHERE (bomitem_id=:bomitem_id);" );
+    q.bindValue(":bomitem_id", _bomitem->id());
+    q.exec();
+
+    omfgThis->sBOMsUpdated(_item->id(), TRUE);
+  }
 }
 
 void BOM::sReplace()
