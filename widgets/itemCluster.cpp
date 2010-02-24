@@ -437,9 +437,10 @@ void ItemLineEdit::silentSetId(const int pId)
 
 void ItemLineEdit::setId(int pId)
 {
-  if (pId != _id)
+  bool changed = (pId != _id);
+  silentSetId(pId);
+  if (changed)
   {
-    silentSetId(pId);
     emit privateIdChanged(_id);
     emit newId(_id);
   }

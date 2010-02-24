@@ -610,13 +610,15 @@ void VirtualClusterLineEdit::setId(const int pId)
 
     if (pId == -1)
 	clear();
-    else if (pId == _id)
-	return;
     else
     {
+      bool changed = (pId != _id);
       silentSetId(pId);
-      emit newId(pId);
-      emit valid(_valid);
+      if (changed)
+      {
+        emit newId(pId);
+        emit valid(_valid);
+      }
     }
 }
 
