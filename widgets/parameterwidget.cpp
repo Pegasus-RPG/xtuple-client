@@ -719,7 +719,7 @@ void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetType
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType)
 {
 	_comboTypes[pName] = xType;
-	_types[pName] = qMakePair(pParam, ParameterWidgetTypes::XComBox);
+        _types[pName] = qMakePair(pParam, XComBox);
 
 }
 void ParameterWidget::sManageFilters()
