@@ -37,6 +37,7 @@ exportData::exportData(QWidget *parent, const char *name, Qt::WFlags fl)
     lyt->addWidget(_paramedit, 4, 0, 1, -1);
 
   connect(_otherXML,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_deleteQuerySet,SIGNAL(clicked()),   this, SLOT(sDeleteQuerySet()));
   connect(_editQuerySet,SIGNAL(clicked()),     this, SLOT(sEditQuerySet()));
   connect(_export,      SIGNAL(clicked()),     this, SLOT(sExport()));
   connect(_exportList,  SIGNAL(newId(int)),    this, SLOT(sHandleButtons()));
@@ -79,6 +80,35 @@ exportData::~exportData()
 void exportData::languageChange()
 {
   retranslateUi(this);
+}
+
+void exportData::sDeleteQuerySet()
+{
+  if (QMessageBox::question(this, tr("Delete Query Set?"),
+                            tr("<p>Are you sure you want to delete this "
+                               "Query Set?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
+  {
+    XSqlQuery delq;
+    delq.exec("BEGIN;");
+    delq.prepare("DELETE FROM qryitem WHERE (qryitem_qryhead_id=:id);");
+    delq.bindValue(":id", _qrySetList->id());
+    if (delq.exec())
+    {
+      delq.prepare("DELETE FROM qryhead WHERE (qryhead_id=:id);");
+      delq.bindValue(":id", _qrySetList->id());
+      delq.exec();
+    }
+    if (delq.lastError().type() != QSqlError::NoError)
+    {
+      XSqlQuery rollback("ROLLBACK;");
+      systemError(this, delq.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+
+    sFillList();
+  }
 }
 
 void exportData::sEditQuerySet()

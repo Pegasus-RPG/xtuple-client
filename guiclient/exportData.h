@@ -35,6 +35,7 @@ class exportData : public XWidget, public Ui::exportData
 
   protected slots:
     virtual void languageChange();
+    virtual void sDeleteQuerySet();
     virtual void sEditQuerySet();
     virtual void sExport();
     virtual void sFillList();
