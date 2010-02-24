@@ -1237,7 +1237,8 @@ void item::sHandleItemtype()
     _fractional->setChecked(false);
   }
   _fractional->setEnabled(itemType!="K");
-  _workbench->setVisible(itemType!="K");
+  if(_privileges->check("ViewItemAvailabilityWorkbench"))
+	  _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
   _transformationsButton->setEnabled(itemType!="K");
 
