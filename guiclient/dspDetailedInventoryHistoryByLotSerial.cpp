@@ -33,6 +33,8 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_selected, SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_pattern, SIGNAL(clicked()), this, SLOT(sSelect()));
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -268,3 +270,16 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
   _invhist->expandAll();
 }
 
+void dspDetailedInventoryHistoryByLotSerial::sSelect()
+{
+  if (_selected->isChecked())
+  {
+    _lotSerial->setEnabled(true);
+    _lotSerialPattern->setEnabled(false);
+  }
+  else if (_pattern->isChecked())
+  {
+    _lotSerial->setEnabled(false);
+    _lotSerialPattern->setEnabled(true);
+  }
+}
