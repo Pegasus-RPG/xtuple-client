@@ -137,7 +137,7 @@ void printInvoice::sPrint()
                 "                  CASE WHEN (item_id IS NULL) THEN 1"
                 "                       ELSE invcitem_price_invuomratio"
                 "                  END), 2)),0) + "
-                "       invchead_freight + invchead_tax + "
+                "       invchead_freight + COALESCE(invchead_tax, 0) + "
                 "       invchead_misc_amount AS subtotal "
                 "  FROM invchead LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
                 "       item ON (invcitem_item_id=item_id) "
