@@ -112,7 +112,7 @@ void exportData::sExport()
   
   QString errmsg;
 
-  ParameterList params;
+  ParameterList params = _paramedit->getParameterList();
   bool success = ExportHelper::exportXML(_qrySetList->id(), params,
                                          filename,          errmsg,
                                          (_otherXML->isChecked() ?
