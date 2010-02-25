@@ -91,6 +91,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   }
 
   sPopulate();
+  adjustSize();
 }
 
 userPreferences::~userPreferences()
