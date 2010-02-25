@@ -13,168 +13,189 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
-    <height>404</height>
+    <width>741</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CRM Configuration</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="_acctGenerationLit">
-     <property name="text">
-      <string>Account # Generation:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>_acctGeneration</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="_acctGeneration">
-     <item>
-      <property name="text">
-       <string>Manual</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Automatic</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Automatic, Allow Override</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="_nextAcctNumberLit">
-     <property name="text">
-      <string>Next #:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>_nextAcctNumber</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="XLineEdit" name="_nextAcctNumber">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>16777215</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4" rowspan="9">
-    <layout class="QVBoxLayout">
-     <item>
-      <widget class="QPushButton" name="_cancel">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="_acctGenerationLit">
        <property name="text">
-        <string>Cancel</string>
+        <string>Account # Generation:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>_acctGeneration</cstring>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="_save">
+     <item row="0" column="1">
+      <widget class="QComboBox" name="_acctGeneration">
+       <item>
+        <property name="text">
+         <string>Manual</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Automatic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Automatic, Allow Override</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="_nextAcctNumberLit">
        <property name="text">
-        <string>&amp;Save</string>
+        <string>Next #:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>_nextAcctNumber</cstring>
        </property>
       </widget>
      </item>
+     <item row="0" column="3">
+      <widget class="XLineEdit" name="_nextAcctNumber">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="_incidentGenerationLit">
+       <property name="text">
+        <string>Incident # Generation:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>_incidentGeneration</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="_incidentGeneration">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>Automatic</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="_nextInNumberLit">
+       <property name="text">
+        <string>Next #:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>_nextInNumber</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="XLineEdit" name="_nextInNumber">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="2" rowspan="5">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>0</height>
+         <width>0</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
+     <item>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QPushButton" name="_cancel">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_save">
+         <property name="text">
+          <string>&amp;Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="_incidentGenerationLit">
-     <property name="text">
-      <string>Incident # Generation:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>_incidentGeneration</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="_incidentGeneration">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <item>
-      <property name="text">
-       <string>Automatic</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLabel" name="_nextInNumberLit">
-     <property name="text">
-      <string>Next #:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>_nextInNumber</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="XLineEdit" name="_nextInNumber">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>16777215</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
     <widget class="QCheckBox" name="_useProjects">
      <property name="text">
       <string>Use Projects</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QCheckBox" name="_autoCreate">
      <property name="enabled">
       <bool>false</bool>
@@ -184,14 +205,14 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <widget class="QCheckBox" name="_opportunityChangeLog">
      <property name="text">
       <string>Post Opportunity Changes to the Change Log</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4">
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout">
      <item>
       <widget class="QLabel" name="_incdtEmailProfileLit">
@@ -220,7 +241,7 @@ to be bound by its terms.</comment>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>0</width>
          <height>20</height>
         </size>
        </property>
@@ -228,7 +249,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
+   <item row="5" column="0">
     <widget class="QGroupBox" name="_incdtDelGroup">
      <property name="enabled">
       <bool>true</bool>
@@ -275,7 +296,84 @@ to be bound by its terms.</comment>
      </layout>
     </widget>
    </item>
-   <item row="7" column="0" colspan="4">
+   <item row="5" column="1" colspan="2">
+    <widget class="QGroupBox" name="_incdtStatus_2">
+     <property name="title">
+      <string>Incident Status Colors</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="_newLit">
+          <property name="text">
+           <string>New:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="XLineEdit" name="_new"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="_feedbackLit">
+          <property name="text">
+           <string>Feedback:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="XLineEdit" name="_feedback"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="_confirmedLit">
+          <property name="text">
+           <string>Confirmed:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="XLineEdit" name="_confirmed"/>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="_assignedLit">
+          <property name="text">
+           <string>Assigned:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="XLineEdit" name="_assigned"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="_resolvedLit">
+          <property name="text">
+           <string>Resolved:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="XLineEdit" name="_resolved"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="_closedLit">
+          <property name="text">
+           <string>Closed:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="XLineEdit" name="_closed"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="3">
     <layout class="QHBoxLayout" name="_countryLayout">
      <item>
       <widget class="XLabel" name="_countryLit">
@@ -328,22 +426,6 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="8" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -382,6 +464,14 @@ to be bound by its terms.</comment>
   <tabstop>_incdtStatus</tabstop>
   <tabstop>_incdtUpdated</tabstop>
   <tabstop>_incdtComments</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_feedback</tabstop>
+  <tabstop>_confirmed</tabstop>
+  <tabstop>_assigned</tabstop>
+  <tabstop>_resolved</tabstop>
+  <tabstop>_closed</tabstop>
+  <tabstop>_country</tabstop>
+  <tabstop>_strictCountries</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>

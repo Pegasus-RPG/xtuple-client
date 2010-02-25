@@ -83,6 +83,20 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
     _incdtDelGroup->hide();
   }
 
+  q.exec("SELECT * FROM status WHERE (status_type='INCDT') ORDER BY status_seq;");
+  q.first();
+  _new->setText(q.value("status_color"));
+  q.next();
+  _feedback->setText(q.value("status_color"));
+  q.next();
+  _confirmed->setText(q.value("status_color"));
+  q.next();
+  _assigned->setText(q.value("status_color"));
+  q.next();
+  _resolved->setText(q.value("status_color"));
+  q.next();
+  _closed->setText(q.value("status_color"));
+
   adjustSize();
 }
 
@@ -130,6 +144,28 @@ void configureCRM::sSave()
     _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
     _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
   }
+
+  q.prepare("UPDATE status SET status_color = :color "
+            "WHERE ((status_type='INCDT') "
+            " AND (status_code=:code));");
+  q.bindValue(":code", "N");
+  q.bindValue(":color", _new->text());
+  q.exec();
+  q.bindValue(":code", "F");
+  q.bindValue(":color", _feedback->text());
+  q.exec();
+  q.bindValue(":code", "C");
+  q.bindValue(":color", _confirmed->text());
+  q.exec();
+  q.bindValue(":code", "A");
+  q.bindValue(":color", _assigned->text());
+  q.exec();
+  q.bindValue(":code", "R");
+  q.bindValue(":color", _resolved->text());
+  q.exec();
+  q.bindValue(":code", "L");
+  q.bindValue(":color", _closed->text());
+  q.exec();
   
   _metrics->load();
 

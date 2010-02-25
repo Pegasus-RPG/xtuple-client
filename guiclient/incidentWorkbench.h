@@ -13,6 +13,8 @@
 
 #include "xwidget.h"
 
+#include <QAction>
+
 #include <parameter.h>
 #include "ui_incidentWorkbench.h"
 
@@ -25,18 +27,26 @@ public:
     ~incidentWorkbench();
 
 public slots:
+    virtual void setParams(ParameterList&);
     virtual void sNew();
     virtual void sEdit();
     virtual void sFillList();
     virtual void sHandleAutoUpdate(bool);
     virtual void sPrint();
-    virtual void sReset();
     virtual void sView();
-    virtual void setParams(ParameterList&);
+    virtual void sPopulateShiptoMenu( QMenu * menu );
 
 protected slots:
     virtual void languageChange();
 
+private:
+
+    QAction* _closeAct;
+    QAction* _queryAct;
+    QAction* _printAct;
+    QAction* _newAct;
+    QAction* _editAct;
+    QAction* _viewAct;
 };
 
 #endif // INCIDENTWORKBENCH_H

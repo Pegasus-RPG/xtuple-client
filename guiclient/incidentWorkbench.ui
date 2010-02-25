@@ -20,115 +20,51 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Incident Workbench</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="ParameterWidget" name="parameterWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="ParameterWidget" name="parameterWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QLabel" name="_searchLit">
+         <property name="text">
+          <string>Search:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="_statusGroup">
-         <property name="title">
-          <string>Status</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="spacing">
-             <number>12</number>
-            </property>
-            <item>
-             <widget class="XCheckBox" name="_statusNew">
-              <property name="text">
-               <string>&amp;New</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_statusFeedback">
-              <property name="text">
-               <string>&amp;Feedback</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_statusConfirmed">
-              <property name="text">
-               <string>C&amp;onfirmed</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_statusAssigned">
-              <property name="text">
-               <string>&amp;Assigned</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_statusResolved">
-              <property name="text">
-               <string>&amp;Resolved</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XCheckBox" name="_statusClosed">
-              <property name="text">
-               <string>&amp;Closed</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+        <widget class="XLineEdit" name="_search"/>
        </item>
       </layout>
      </item>
+    </layout>
+   </item>
+   <item row="0" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="_close">
-         <property name="text">
-          <string>Close</string>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QPushButton" name="_query">
@@ -145,33 +81,30 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="_reset">
+        <widget class="QPushButton" name="_close">
          <property name="text">
-          <string>Reset</string>
+          <string>Close</string>
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="2">
     <widget class="QFrame" name="_frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -185,86 +118,31 @@ to be bound by its terms.</comment>
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="spacing">
-         <number>0</number>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Incidents:</string>
         </property>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Incidents:</string>
-          </property>
-          <property name="buddy">
-           <cstring>_incdt</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout">
-          <item>
-           <widget class="XTreeWidget" name="_incdt">
-            <zorder>qt_scrollarea_viewport</zorder>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout">
-            <item>
-             <widget class="QPushButton" name="_new">
-              <property name="text">
-               <string>New</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_edit">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Edit</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_view">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>View</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+        <property name="buddy">
+         <cstring>_incdt</cstring>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
+       <widget class="XTreeWidget" name="_incdt">
+        <zorder>qt_scrollarea_viewport</zorder>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="XCheckBox" name="_autoUpdate">
+         <widget class="QPushButton" name="_new">
           <property name="text">
-           <string>Automatically Update</string>
+           <string>&amp;New</string>
           </property>
          </widget>
         </item>
@@ -280,6 +158,13 @@ to be bound by its terms.</comment>
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="_autoUpdate">
+          <property name="text">
+           <string>Automatically Update</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -300,6 +185,11 @@ to be bound by its terms.</comment>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
@@ -307,85 +197,11 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_statusNew</tabstop>
-  <tabstop>_statusFeedback</tabstop>
-  <tabstop>_statusConfirmed</tabstop>
-  <tabstop>_statusAssigned</tabstop>
-  <tabstop>_statusResolved</tabstop>
-  <tabstop>_statusClosed</tabstop>
   <tabstop>_incdt</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
-  <tabstop>_new</tabstop>
-  <tabstop>_edit</tabstop>
-  <tabstop>_view</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>incidentWorkbench</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>642</x>
-     <y>26</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>352</x>
-     <y>230</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_incdt</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_edit</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>296</x>
-     <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>642</x>
-     <y>284</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_incdt</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_edit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>296</x>
-     <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>642</x>
-     <y>284</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_incdt</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_view</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>296</x>
-     <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>642</x>
-     <y>316</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

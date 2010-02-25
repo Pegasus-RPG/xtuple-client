@@ -24,49 +24,78 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
 {
   setupUi(this);
 
+  QString qryStatus = QString("SELECT status_seq, "
+                              " CASE WHEN status_code = 'N' THEN '%1' "
+                              " WHEN status_code = 'F' THEN '%2' "
+                              " WHEN status_code = 'C' THEN '%3' "
+                              " WHEN status_code = 'A' THEN '%4' "
+                              " WHEN status_code = 'R' THEN '%5' "
+                              " WHEN status_code = 'L' THEN '%6' "
+                              " END AS name, status_code AS code "
+                              "FROM status; ")
+      .arg(tr("New"))
+      .arg(tr("Feedback"))
+      .arg(tr("Confirmed"))
+      .arg(tr("Assigned"))
+      .arg(tr("Resolved"))
+      .arg(tr("Closed"));
+
   parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
   parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User);
   parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
   parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Pattern", "pattern", ParameterWidget::Text);
   parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
   parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
-	parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-	parameterWidget->setXComboBoxType("Severity", "severity_id", XComboBox::IncidentSeverity);
-	parameterWidget->setXComboBoxType("Category", "category_id", XComboBox::IncidentCategory);
+  parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
+  parameterWidget->setType("Contact","cntct_id", ParameterWidget::Contact);
+  parameterWidget->setXComboBoxType("Severity", "severity_id", XComboBox::IncidentSeverity);
+  parameterWidget->setXComboBoxType("Category", "category_id", XComboBox::IncidentCategory);
+  parameterWidget->setXComboBoxType("Status is", "status_equal", qryStatus);
+  parameterWidget->setXComboBoxType("Hide Status above", "status_above", qryStatus);
 
+  _closeAct = new QAction(tr("Close"), this);
+  _closeAct->setShortcut(QKeySequence::Close);
+  
+  _queryAct = new QAction(tr("Query"), this);
 
-  connect(parameterWidget, SIGNAL(updated()), this, SLOT(sFillList()));
+  _printAct = new QAction(tr("Print"), this);
+  _printAct->setShortcut(QKeySequence::Print);
+
+  _newAct = new QAction(tr("New"), this);
+  _newAct->setShortcut(QKeySequence::New);
+
+  _editAct = new QAction(tr("Edit"), this);
+  _viewAct = new QAction(tr("View"), this);
+
   parameterWidget->applyDefaultFilterSet();
 
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
-  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
-  connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
-  connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
+  connect(_close,       SIGNAL(clicked()),      this,   SLOT(close()));
+  connect(_closeAct,    SIGNAL(triggered()),    this,   SLOT(close()));
+  connect(_editAct,     SIGNAL(triggred()),     this,   SLOT(sEdit()));
+  connect(_new,         SIGNAL(clicked()),      this,   SLOT(sNew()));
+  connect(_newAct,	SIGNAL(triggered()),	this,	SLOT(sNew()));
+  connect(_print,       SIGNAL(clicked()),      this,   SLOT(sPrint()));
+  connect(_printAct,	SIGNAL(triggered()),	this,	SLOT(sPrint()));
+  connect(_queryAct,    SIGNAL(triggered()),    this,   SLOT(sFillList()));
   connect(_query,	SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  connect(_reset,	SIGNAL(clicked()),	this,	SLOT(sReset()));
-  connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
+  connect(_incdt,       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  connect(_incdt,       SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateShiptoMenu(QMenu*)));
 
   _incdt->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
   _incdt->addColumn(tr("Created"),     _dateColumn, Qt::AlignLeft, true, "incdt_timestamp" );
   _incdt->addColumn(tr("Account"),     _itemColumn, Qt::AlignLeft, true, "crmacct_name" );
   _incdt->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft, true, "incdt_status" );
+  _incdt->addColumn(tr("Updated"),     _dateColumn, Qt::AlignLeft, true, "incdt_updated" );
   _incdt->addColumn(tr("Assigned To"), _userColumn, Qt::AlignLeft, true, "incdt_assigned_username" ); 
   _incdt->addColumn(tr("Owner"),       _userColumn, Qt::AlignLeft, true, "incdt_owner_username" );
   _incdt->addColumn(tr("Summary"),     -1,          Qt::AlignLeft, true, "incdt_summary" );
+  _incdt->addColumn(tr("Category"),    _userColumn, Qt::AlignLeft, false, "incdtcat_name");
+  _incdt->addColumn(tr("Severity"),    _userColumn, Qt::AlignLeft, false, "incdtseverity_name");
+  _incdt->addColumn(tr("Priority"),    _userColumn, Qt::AlignLeft, false, "incdtpriority_name");
+  _incdt->addColumn(tr("Contact"),     _userColumn, Qt::AlignLeft, false, "cntct_name");
 
-  //_createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  //_createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-
-  if (_preferences->boolean("XCheckBox/forgetful"))
-  {
-    _statusFeedback->setChecked(true);
-    _statusConfirmed->setChecked(true);
-    _statusNew->setChecked(true);
-    _statusAssigned->setChecked(true);
-  }
-
-  //_user->setType(ParameterGroup::User);
+  sFillList();
 }
 
 incidentWorkbench::~incidentWorkbench()
@@ -77,6 +106,12 @@ incidentWorkbench::~incidentWorkbench()
 void incidentWorkbench::languageChange()
 {
     retranslateUi(this);
+}
+
+void incidentWorkbench::sPopulateShiptoMenu(QMenu *menu)
+{
+  menu->addAction(_editAct);
+  menu->addAction(_viewAct);
 }
 
 void incidentWorkbench::sNew()
@@ -113,19 +148,6 @@ void incidentWorkbench::sView()
   newdlg.exec();
 }
 
-void incidentWorkbench::sReset()
-{
-  _statusNew->setChecked(true);
-  _statusFeedback->setChecked(true);
-  _statusConfirmed->setChecked(true);
-  _statusAssigned->setChecked(true);
-  _statusResolved->setChecked(false);
-  _statusClosed->setChecked(false);
-  //_createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  //_createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  //_textPattern->clear();
-}
-
 void incidentWorkbench::setParams(ParameterList & params)
 {
   params.append("new",		tr("New"));
@@ -135,33 +157,12 @@ void incidentWorkbench::setParams(ParameterList & params)
   params.append("resolved",	tr("Resolved"));
   params.append("closed",	tr("Closed"));
 
-	params.append("startDate", omfgThis->startOfTime());
-	params.append("endDate", omfgThis->endOfTime());
+  params.append("startDate", omfgThis->startOfTime());
+  params.append("endDate", omfgThis->endOfTime());
 
-  //if (_assignedTo->isChecked())
-  //  params.append("assignedTo");
-  //else
-  //  params.append("ownedBy"); 
-  //_user->appendValue(params);
-
-  if(_statusNew->isChecked())
-    params.append("isnew");
-  if(_statusFeedback->isChecked())
-    params.append("isfeedback");
-  if(_statusConfirmed->isChecked())
-    params.append("isconfirmed");
-  if(_statusAssigned->isChecked())
-    params.append("isassigned");
-  if(_statusResolved->isChecked())
-    params.append("isresolved");
-  if(_statusClosed->isChecked())
-    params.append("isclosed");
-
-  //if(!_textPattern->text().trimmed().isEmpty())
-   // params.append("pattern", _textPattern->text().trimmed());
-
-  //_createdDates->appendValue(params);
   parameterWidget->appendValue(params);
+
+  params.append("pattern", _search->text());
 }
 
 void incidentWorkbench::sFillList()
