@@ -64,15 +64,11 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   _newAct = new QAction(tr("New"), this);
   _newAct->setShortcut(QKeySequence::New);
 
-  _editAct = new QAction(tr("Edit"), this);
-  _viewAct = new QAction(tr("View"), this);
-
   parameterWidget->applyDefaultFilterSet();
 
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_close,       SIGNAL(clicked()),      this,   SLOT(close()));
   connect(_closeAct,    SIGNAL(triggered()),    this,   SLOT(close()));
-  connect(_editAct,     SIGNAL(triggred()),     this,   SLOT(sEdit()));
   connect(_new,         SIGNAL(clicked()),      this,   SLOT(sNew()));
   connect(_newAct,	SIGNAL(triggered()),	this,	SLOT(sNew()));
   connect(_print,       SIGNAL(clicked()),      this,   SLOT(sPrint()));
@@ -110,8 +106,8 @@ void incidentWorkbench::languageChange()
 
 void incidentWorkbench::sPopulateShiptoMenu(QMenu *menu)
 {
-  menu->addAction(_editAct);
-  menu->addAction(_viewAct);
+  menu->addAction(tr("Edit"), this, SLOT(sEdit()));
+  menu->addAction(tr("View"), this, SLOT(sView()));
 }
 
 void incidentWorkbench::sNew()

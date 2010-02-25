@@ -45,8 +45,6 @@ private:
     QAction* _queryAct;
     QAction* _printAct;
     QAction* _newAct;
-    QAction* _editAct;
-    QAction* _viewAct;
 };
 
 #endif // INCIDENTWORKBENCH_H
