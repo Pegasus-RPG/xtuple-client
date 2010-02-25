@@ -20,6 +20,7 @@
 #include "datecluster.h"
 #include "crmacctcluster.h"
 #include "filterManager.h"
+#include "contactcluster.h"
 
 ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
     QWidget(pParent)
@@ -213,7 +214,6 @@ void ParameterWidget::addParam()
   connect(toolButton, SIGNAL(clicked()), toolButton, SLOT( deleteLater() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
   connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
-  //connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
 
   _filterSignalMapper->setMapping(toolButton, nextRow);
 
@@ -235,7 +235,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   int xid;
 
   QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
-
 
   clearFilters();
 
@@ -326,7 +325,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         crmacctCluster = (CRMAcctCluster*)found;
         crmacctCluster->setId(tempFilterList[1].toInt());
         break;
-                        case XComBox:
+      case Contact:
+        ContactCluster *contactCluster;
+        contactCluster = (ContactCluster*)found;
+        contactCluster->setId(tempFilterList[1].toInt());
+        break;
+      case XComBox:
         XComboBox *xBox;
         xBox = (XComboBox*)found;
 
@@ -378,6 +382,7 @@ void ParameterWidget::changeFilterObject(int index)
   CRMAcctCluster *crmacctCluster = new CRMAcctCluster(_filterGroup);
   QLineEdit *lineEdit = new QLineEdit(_filterGroup);
   XComboBox *xBox = new XComboBox(_filterGroup);
+  ContactCluster *contactCluster = new ContactCluster(_filterGroup);
 
   if (widget && layout && button)
     delete widget;
@@ -391,6 +396,7 @@ void ParameterWidget::changeFilterObject(int index)
     delete crmacctCluster;
     delete lineEdit;
     delete xBox;
+    delete contactCluster;
     dLineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, dLineEdit);
@@ -403,6 +409,7 @@ void ParameterWidget::changeFilterObject(int index)
     delete crmacctCluster;
     delete lineEdit;
     delete xBox;
+    delete contactCluster;
     usernameCluster->setObjectName("widget" + row);
     usernameCluster->setNameVisible(false);
     usernameCluster->setDescriptionVisible(false);
@@ -418,6 +425,7 @@ void ParameterWidget::changeFilterObject(int index)
     delete usernameCluster;
     delete lineEdit;
     delete xBox;
+    delete contactCluster;
     crmacctCluster->setObjectName("widget" + row);
     crmacctCluster->setNameVisible(false);
     crmacctCluster->setDescriptionVisible(false);
@@ -428,12 +436,27 @@ void ParameterWidget::changeFilterObject(int index)
     connect(button, SIGNAL(clicked()), crmacctCluster, SLOT( deleteLater() ) );
     connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     break;
-        case XComBox:
+  case Contact:
+    delete dLineEdit;
+    delete usernameCluster;
+    delete lineEdit;
+    delete xBox;
+    delete crmacctCluster;
+    contactCluster->setObjectName("widget" + row);
+    contactCluster->setDescriptionVisible(false);
+    contactCluster->setLabel("");
+
+    layout->insertWidget(0, contactCluster);
+
+    connect(button, SIGNAL(clicked()), contactCluster, SLOT( deleteLater() ) );
+    connect(contactCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    break;
+  case XComBox:
     delete dLineEdit;
     delete usernameCluster;
     delete lineEdit;
     delete crmacctCluster;
-
+    delete contactCluster;
 
     xBox->setObjectName("widget" + row);
     xBox->setType(_comboTypes[mybox->currentText()]);
@@ -449,12 +472,12 @@ void ParameterWidget::changeFilterObject(int index)
     connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     break;
 
-
   default:
     delete dLineEdit;
     delete usernameCluster;
     delete crmacctCluster;
     delete xBox;
+    delete contactCluster;
     lineEdit->setObjectName("widget" + row);
 
     layout->insertWidget(0, lineEdit);
@@ -688,13 +711,13 @@ void ParameterWidget::setSavedFilters(int defaultId)
     const QMetaObject *metaobject = this->parent()->metaObject();
     QString classname(metaobject->className());
 
-    query = " SELECT 0 AS filter_id, :none AS filter_name "
+    query = " SELECT 0 AS filter_id, :none AS filter_name, 1 AS seq "
             " UNION "
-            " SELECT filter_id, filter_name "
+            " SELECT filter_id, filter_name, 2 AS seq "
             " FROM filter "
             " WHERE filter_username=current_user "
             " AND filter_screen=:screen "
-            " ORDER BY filter_name ";
+            " ORDER BY seq, filter_name ";
 
     qry.prepare(query);
 

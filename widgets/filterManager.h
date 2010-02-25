@@ -25,7 +25,7 @@ public:
     void populate();
 	
 public slots:
-    void getXTreeWidgetItem(XTreeWidgetItem* item, int column);
+    void getXTreeWidgetItem(XTreeWidgetItem* item);
     void applySaved();
     void deleteFilter();
 

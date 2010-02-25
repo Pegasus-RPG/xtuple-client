@@ -31,7 +31,7 @@ filterManager::filterManager(QWidget* parent, const char* name)
 
   _filterSet->addColumn(tr("Filter Set Name"), -1, Qt::AlignLeft, true, "filter_name" );
 
-  connect(_filterSet, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT( getXTreeWidgetItem(XTreeWidgetItem*, int) ) );
+  connect(_filterSet, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT( getXTreeWidgetItem(XTreeWidgetItem*) ) );
   connect(_edit, SIGNAL(clicked()), this, SLOT( applySaved() ));
   connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
   connect(this, SIGNAL(filterSelected(QString)), parent, SLOT( setSavedFiltersIndex(QString) ));
@@ -70,7 +70,7 @@ void filterManager::populate()
   }
 }
 
-void filterManager::getXTreeWidgetItem(XTreeWidgetItem* item, int column)
+void filterManager::getXTreeWidgetItem(XTreeWidgetItem* item)
 {
   _filterId = item->id();
   _filterText = item->text(0);
