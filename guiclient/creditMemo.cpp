@@ -515,8 +515,6 @@ void creditMemo::populateShipto(int pShiptoid)
     _shipToAddr->clear();
   }
 
-  _shipToAddr->setEnabled(FALSE);
-
   _shiptoid = pShiptoid;
 }
 
@@ -543,6 +541,8 @@ void creditMemo::sPopulateCustomerInfo()
       {
         _ffShipto = query.value("cust_ffshipto").toBool();
         _copyToShipto->setEnabled(_ffShipto);
+		_shipToName->setEnabled(_ffShipto);
+		_shipToAddr->setEnabled(_ffShipto);
 
         _salesRep->setId(query.value("cust_salesrep_id").toInt());
         _commission->setDouble(query.value("cust_commprcnt").toDouble() * 100);
@@ -579,6 +579,7 @@ void creditMemo::sPopulateCustomerInfo()
       _custtaxzoneid	= -1;
 
       _shipToName->setEnabled(_ffShipto);
+	  _shipToAddr->setEnabled(_ffShipto);
       _shipToNumber->clear();
       _shipToName->clear();
       _shipToAddr->clear();
@@ -934,12 +935,9 @@ void creditMemo::populate()
     _billToAddr->setPostalCode(cmhead.value("cmhead_billtozip").toString());
     _billToAddr->setCountry(cmhead.value("cmhead_billtocountry").toString());
 
-    if (_mode == cEdit)
-      _ffShipto = cmhead.value("cust_ffshipto").toBool();
-    else
-      _ffShipto = FALSE;
-
+    _ffShipto = cmhead.value("cust_ffshipto").toBool();
     _shipToName->setEnabled(_ffShipto);
+	_shipToAddr->setEnabled(_ffShipto);
 
     _shiptoid = cmhead.value("cmhead_shipto_id").toInt();
     _shipToName->setText(cmhead.value("cmhead_shipto_name"));
