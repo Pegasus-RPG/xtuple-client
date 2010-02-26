@@ -58,7 +58,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
   _oplist->findChild<QWidget*>("_close")->hide();
-  _oplist->findChild<QWidget*>("_usrGroup")->hide();
+//  _oplist->findChild<QWidget*>("_usrGroup")->hide();
   _oplist->findChild<QWidget*>("_dates")->hide();
   _oplist->findChild<QWidget*>("_more")->hide();
   _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
