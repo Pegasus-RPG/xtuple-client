@@ -391,7 +391,7 @@ ORDER BY f_priority DESC, item_number
    </font>
    <hcenter/>
    <vcenter/>
-   <string>$</string>
+   <string>Amount</string>
   </label>
  </rpthead>
  <pghead>
