@@ -902,7 +902,8 @@ void creditMemo::populate()
     _commission->setDouble(cmhead.value("cmhead_commission").toDouble() * 100);
     // do taxauth first so we can overwrite the result of the signal cascade
     _taxzoneidCache = cmhead.value("cmhead_taxzone_id").toInt();
-    _taxzone->setId(cmhead.value("cmhead_taxzone_id").toInt());
+    if (!cmhead.value("cmhead_taxzone_id").isNull() && cmhead.value("cmhead_taxzone_id").toInt() != -1)
+      _taxzone->setId(cmhead.value("cmhead_taxzone_id").toInt());
 
     _memoNumber->setText(cmhead.value("cmhead_number"));
     _cust->setId(cmhead.value("cmhead_cust_id").toInt());
