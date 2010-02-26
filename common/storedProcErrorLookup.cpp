@@ -1156,6 +1156,11 @@ void initErrorLookupHash()
 			       "made before G/L Transactions can be posted and"
 			       "this Sales Order is allowed to be recalled."),
 								0, "" },
+
+  { "releasePurchaseOrder",
+			-1, TR("Cannot release this Purchase Order because it "
+			       "does not have any unreleased Purchase Order Items."),	0, "" },
+
   { "releaseUnusedBillingHeader",
 			-1, TR("Cannot release this Billing Header because it "
 			       "has already been posted."),	0, "" },
