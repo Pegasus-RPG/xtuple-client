@@ -25,51 +25,9 @@
   <sql>SELECT 
 
 --Due Date
-CASE WHEN terms_type = 'D' THEN
-
-	FORMATDATE(DATE(invchead_invcdate + terms_duedays))
-	
-	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN
-
-	FORMATDATE(DATE(
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
-	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || 
-	terms_duedays
-	))
-
-          WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN
-
-          FORMATDATE(DATE(
-          EXTRACT(YEAR FROM(invchead_invcdate + interval '1 month')) || '-' || 
-          (EXTRACT(MONTH FROM(invchead_invcdate + interval '1 month')) ) || '-' || 
-          terms_duedays
-          ))
-	
-	END AS due_date,
---Discount Date-------------------------------------
-
-CASE WHEN terms_type = 'D' THEN
-	FORMATDATE(DATE(invchead_invcdate + terms_discdays))
-
-       WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate))&lt;= terms_cutoffday THEN
-	
-	FORMATDATE(DATE(
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
-	EXTRACT(MONTH FROM(invchead_invcdate)) || '-' || 
-	terms_discdays
-	))
-
-	WHEN terms_type = 'P' AND EXTRACT(DAY FROM(invchead_invcdate)) > terms_cutoffday THEN
-
-	FORMATDATE(DATE(
-	EXTRACT(YEAR FROM(invchead_invcdate)) || '-' || 
-          (EXTRACT(MONTH FROM(invchead_invcdate + interval '1 month')) ) || '-' || 
-	terms_discdays
-	))
-	END AS dis_date,
-
---Discount Date END --
-
+formatDate(determineDueDate(invchead_terms_id, invchead_invcdate) AS due_date,
+--Discount Date
+formatDate(determineDiscountDate(invchead_terms_id, invchead_invcdate) AS dis_date,
 
       --remitto.*,
 remitto_name,
@@ -88,7 +46,6 @@ formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citysta
       formatDate(invchead_shipdate) AS f_shipdate,
       invchead_fob, terms_descrip, invchead_shipvia
 FROM remitto, cust, invchead
-    LEFT OUTER JOIN terms ON (invchead_terms_id=terms_id)
 WHERE ( (invchead_cust_id=cust_id)
 AND (invchead_id=&lt;? value("invchead_id") ?>) )
 ORDER BY ordernumber;</sql>
