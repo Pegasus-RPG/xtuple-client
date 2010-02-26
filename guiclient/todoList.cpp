@@ -525,6 +525,13 @@ void todoList::sPrint()
   ParameterList params;
   setParams(params);
 
+  if (_todoList->topLevelItemCount() == 0)
+  {
+    QMessageBox::information( this, tr("Cannot Print To-do List"),
+                              tr("The list is empty, the is nothing to print.")  );
+    return;
+  }
+
   orReport report("TodoList", params);
   if (report.isValid())
     report.print();
