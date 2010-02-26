@@ -33,7 +33,7 @@ VendorLineEdit::VendorLineEdit(QWidget *pParent, const char *name) :
   setMaximumWidth(100);
 
   setAcceptDrops(TRUE);
-  setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+  setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
   _id       = -1;
   _valid    = FALSE;
@@ -252,6 +252,7 @@ VendorInfo::VendorInfo(QWidget *parent, const char *name) :
   layoutNumber->addWidget(_vendorNumberLit);
 
   _vendorNumber = new VendorLineEdit(this, "_vendorNumber");
+  _vendorNumber->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _vendorNumber->setMinimumWidth(100);
   layoutNumber->addWidget(_vendorNumber);
   layoutMain->addLayout(layoutNumber);
