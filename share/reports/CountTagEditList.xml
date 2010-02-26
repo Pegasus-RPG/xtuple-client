@@ -69,10 +69,10 @@
             ELSE formatQty(invcnt_qoh_after - itemsite_qtyonhand)
        END AS f_variance,
        CASE WHEN (invcnt_qoh_after IS NULL) THEN ''
-            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after > 0)) THEN formatScrap(1)
-            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after &lt; 0)) THEN formatScrap(-1)
-            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after = 0)) THEN formatScrap(0)
-            ELSE formatScrap((1 - (invcnt_qoh_after / itemsite_qtyonhand)) * -1)
+            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after > 0)) THEN formatPrcnt(1)
+            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after &lt; 0)) THEN formatPrcnt(-1)
+            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after = 0)) THEN formatPrcnt(0)
+            ELSE formatPrcnt((1 - (invcnt_qoh_after / itemsite_qtyonhand)) * -1)
        END AS f_percent,
        formatExtPrice(stdcost(item_id) * (invcnt_qoh_after - itemsite_qtyonhand)) AS f_amount
   FROM invcnt LEFT OUTER JOIN location ON (invcnt_location_id=location_id),

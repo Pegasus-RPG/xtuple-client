@@ -548,6 +548,8 @@ void dspCountTagEditList::sFillList()
                "       CASE WHEN (xtindentrole = 0) THEN NULL ELSE '' END AS invcnt_priority_qtdisplayrole,"
                "       'qty' AS qoh_xtnumericrole,"
                "       'qty' AS qohafter_xtnumericrole,"
+               "       'qty' AS variance_xtnumericrole,"
+               "       'percent' AS varianceprcnt_xtnumericrole,"
                "       'curr' AS variancecost_xtnumericrole "
                " FROM ("
                "SELECT invcnt_id, -1 AS cntslip_id, invcnt_priority,"
