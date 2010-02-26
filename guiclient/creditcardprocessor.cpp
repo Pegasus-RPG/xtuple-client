@@ -1078,14 +1078,16 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 		 "    ccpay_auth_charge, ccpay_auth,"
 		 "    ccpay_amount,"
 		 "    ccpay_curr_id, ccpay_type, ccpay_status,"
-		 "    ccpay_order_number, ccpay_order_number_seq"
+                 "    ccpay_order_number, ccpay_order_number_seq, "
+                 "    ccpay_ccpay_id "
 		 ") SELECT "
 		 "    :newccpayid, ccpay_ccard_id, ccpay_cust_id,"
 		 "    ccpay_auth_charge, ccpay_auth,"
 		 "    :amount, :currid, 'R', 'X',"
-		 "    ccpay_order_number, :nextseq "
+                 "    ccpay_order_number, :nextseq, ccpay_id "
 		 "FROM ccpay "
 		 "WHERE (ccpay_id=:oldccpayid);");
+
     ccq.bindValue(":newccpayid", pccpayid);
     ccq.bindValue(":currid",     pcurrid);
     ccq.bindValue(":amount",     pamount);

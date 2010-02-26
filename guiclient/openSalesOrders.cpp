@@ -169,7 +169,7 @@ void openSalesOrders::sDelete()
     {
       bool closeInstead = false;
       int result = q.value("result").toInt();
-      if (result == -4 && _privileges->check("ProcessCreditCards"))
+      if (result == -1 && _privileges->check("ProcessCreditCards"))
       {
 	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
 				   storedProcErrorLookup("deleteSo", result) + 
@@ -185,11 +185,11 @@ void openSalesOrders::sDelete()
 	  else
 	  {
 	    XSqlQuery ccq;
-	    ccq.prepare("SELECT ccpay_ccard_id, ccpay_curr_id,"
+            ccq.prepare("SELECT ccpay_id, ccpay_ccard_id, ccpay_curr_id,"
 			"       SUM(ccpay_amount     * sense) AS amount,"
 			"       SUM(ccpay_r_tax      * sense) AS tax,"
 			"       SUM(ccpay_r_shipping * sense) AS freight "
-			"FROM (SELECT ccpay_ccard_id, ccpay_curr_id, "
+                        "FROM (SELECT ccpay_id, ccpay_ccard_id, ccpay_curr_id, "
 			"             CASE WHEN ccpay_status = 'C' THEN  1"
 			"                  WHEN ccpay_status = 'R' THEN -1"
 			"             END AS sense,"
@@ -201,7 +201,7 @@ void openSalesOrders::sDelete()
 			"        AND  (ccpay_status IN ('C', 'R'))"
 			"        AND  (payco_cohead_id=:coheadid)) "
 			"      ) AS dummy "
-			"GROUP BY ccpay_ccard_id, ccpay_curr_id;");
+                        "GROUP BY ccpay_id, ccpay_ccard_id, ccpay_curr_id;");
 	    ccq.bindValue(":coheadid", _so->id());
 	    ccq.exec();
 	    if (ccq.first())
@@ -209,7 +209,7 @@ void openSalesOrders::sDelete()
 	    {
 	      QString docnum = _so->currentItem()->text(0);
 	      QString refnum = docnum;
-	      int ccpayid = -1;
+              int ccpayid = ccq.value("ccpay_id").toInt();
 	      int coheadid = _so->id();
 	      int returnVal = cardproc->credit(ccq.value("ccpay_ccard_id").toInt(),
 					       -2,
@@ -239,6 +239,8 @@ void openSalesOrders::sDelete()
 				     cardproc->errorMsg());
 		closeInstead = true;
 	      }
+              else
+                closeInstead = true;
 	    } while (ccq.next());
 	    else if (ccq.lastError().type() != QSqlError::NoError)
 	    {
@@ -256,7 +258,7 @@ void openSalesOrders::sDelete()
 	  }
 	}
       }
-      else if (result == -1 || result == -5)
+      else if (result == -2 || result == -5)
       {
 	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
 				   storedProcErrorLookup("deleteSo", result) + 
