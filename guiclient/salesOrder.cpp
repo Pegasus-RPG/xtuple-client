@@ -1700,7 +1700,8 @@ void salesOrder::sShipToList()
   if (shiptoid != -1)
   {
     populateShipto(shiptoid);
-    sRecalculatePrice();
+	if (_soitem->topLevelItemCount())
+		sRecalculatePrice();
   }
 }
 
@@ -1732,7 +1733,8 @@ void salesOrder::sParseShipToNumber()
       else
       {
         populateShipto(shiptoid.value("shipto_id").toInt());
-        sRecalculatePrice();
+		if (_soitem->topLevelItemCount())
+          sRecalculatePrice();
       }
     }
   }
