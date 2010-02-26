@@ -511,21 +511,25 @@ void workOrder::sCreate()
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
     
-    if (_mode == cNew)
-    {
-      disconnect(_woNumber, SIGNAL(lostFocus()), this, SLOT(sCreate()));
-      disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
-      disconnect(_qty, SIGNAL(lostFocus()), this, SLOT(sCreate()));
-      disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
-      
-      connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
-      connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
-      connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
-      connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
-    }
-     
-    populate();
-    omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+
+	if (_woid > 0)
+	{
+		if (_mode == cNew)
+		{
+		  disconnect(_woNumber, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+		  disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
+		  disconnect(_qty, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+		  disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
+	      
+		  connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+		  connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
+		  connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+		  connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+		}
+	     
+		populate();
+		omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+	}
   }
 }
 
@@ -752,18 +756,20 @@ void workOrder::populateWoNumber()
 
 void workOrder::sClose()
 {
-  if ( ( (_mode == cNew) || (_mode == cRelease)) &&
-       ((_metrics->value("WONumberGeneration") == "A") || (_metrics->value("WONumberGeneration") == "O")) )
+  if (_woid > 0)
   {
-    q.prepare("SELECT deleteWo(:wo_id,true);"
-              "SELECT releaseWoNumber(:wonumber);");
-    q.bindValue(":woNumber", _wonumber);
-    q.bindValue(":wo_id", _woid);
-    q.exec();
-    
-    omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+	  if ( ( (_mode == cNew) || (_mode == cRelease)) &&
+		   ((_metrics->value("WONumberGeneration") == "A") || (_metrics->value("WONumberGeneration") == "O")) )
+	  {
+		q.prepare("SELECT deleteWo(:wo_id,true);"
+				  "SELECT releaseWoNumber(:wonumber);");
+		q.bindValue(":woNumber", _wonumber);
+		q.bindValue(":wo_id", _woid);
+		q.exec();
+	    
+		omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+	  }
   }
-
   close();
 }
 
