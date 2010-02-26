@@ -91,6 +91,9 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   }
   
   _so->setSitePrivsEnforced(false);
+
+  _paymentLit->hide();
+  _payment->hide(); // Issue 10254:  if no objections over time, we should ultimately remove this. 
 }
 
 selectOrderForBilling::~selectOrderForBilling()
