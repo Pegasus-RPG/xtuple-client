@@ -243,7 +243,7 @@ to be bound by its terms.</comment>
          <item row="0" column="1">
           <widget class="QStackedWidget" name="_whsTypeStack">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="_standardWhsStack">
             <layout class="QGridLayout" name="gridLayout_15">
@@ -679,7 +679,7 @@ to be bound by its terms.</comment>
                   <item>
                    <widget class="XComboBox" name="_shipform">
                     <property name="allowNull">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </property>
                     <property name="type">
                      <enum>XComboBox::ShippingForms</enum>
@@ -819,6 +819,9 @@ to be bound by its terms.</comment>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
              <widget class="ContactCluster" name="_contact">
+              <property name="label">
+               <string/>
+              </property>
               <property name="minimalLayout">
                <bool>true</bool>
               </property>
@@ -1174,6 +1177,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
