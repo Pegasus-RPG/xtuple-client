@@ -13,14 +13,14 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>433</height>
+    <width>527</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Employee</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout">
      <property name="spacing">
@@ -152,7 +152,7 @@ to be bound by its terms.</comment>
          <item row="0" column="0">
           <widget class="ContactWidget" name="_contact">
            <property name="listVisible">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="accountVisible">
             <bool>false</bool>
@@ -348,89 +348,31 @@ to be bound by its terms.</comment>
            <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="_wageTypeLit">
-              <property name="text">
-               <string>Type:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="XComboBox" name="_wagetype">
-              <property name="allowNull">
-               <bool>true</bool>
-              </property>
-              <property name="fieldName">
-               <string>wage_type</string>
-              </property>
-              <item>
+           <widget class="QWidget" name="layoutWidget">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>170</width>
+              <height>26</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="_startDateLit">
                <property name="text">
-                <string/>
+                <string>Start Date:</string>
                </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Hourly</string>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Salaried</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="_rateLit">
-              <property name="text">
-               <string>Rate:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="CurrCluster" name="_rate">
-              <property name="fieldNameValue">
-               <string>wage</string>
-              </property>
-              <property name="currencyEditable" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="currencyVisible">
-               <bool>false</bool>
-              </property>
-              <property name="fieldNameCurr">
-               <string>wage_currency</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="_perLit">
-              <property name="text">
-               <string>Per:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="XComboBox" name="_per">
-              <property name="allowNull">
-               <bool>true</bool>
-              </property>
-              <property name="fieldName">
-               <string>wage_period</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="DLineEdit" name="_startDate"/>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
          <item row="1" column="0">
@@ -625,18 +567,38 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="2" column="1" colspan="2">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="_vendorButton">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Preferred</enum>
+              <property name="text">
+               <string>&amp;Vendor...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="XCheckBox" name="_vendor">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="fieldName">
+               <string>is_vendor</string>
+              </property>
+              <property name="forgetful">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <spacer name="spacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
-                <height>0</height>
+                <width>40</width>
+                <height>20</height>
                </size>
               </property>
              </spacer>
@@ -653,6 +615,170 @@ to be bound by its terms.</comment>
             <size>
              <width>20</width>
              <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Financial</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="_wageTypeLit">
+             <property name="text">
+              <string>Type:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="XComboBox" name="_wagetype">
+             <property name="allowNull">
+              <bool>true</bool>
+             </property>
+             <property name="fieldName">
+              <string>wage_type</string>
+             </property>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hourly</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Salaried</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="_rateLit">
+             <property name="text">
+              <string>Compensation:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="CurrCluster" name="_rate">
+             <property name="fieldNameValue">
+              <string>wage</string>
+             </property>
+             <property name="currencyEditable" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="currencyVisible">
+              <bool>false</bool>
+             </property>
+             <property name="fieldNameCurr">
+              <string>wage_currency</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="_perLit">
+             <property name="text">
+              <string>Per:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="XComboBox" name="_per">
+             <property name="allowNull">
+              <bool>true</bool>
+             </property>
+             <property name="fieldName">
+              <string>wage_period</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="_rateLit_2">
+             <property name="text">
+              <string>External Billing Rate:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="CurrCluster" name="_externalRate">
+             <property name="fieldNameValue">
+              <string>wage</string>
+             </property>
+             <property name="currencyEditable" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="currencyVisible">
+              <bool>false</bool>
+             </property>
+             <property name="fieldNameCurr">
+              <string>wage_currency</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="_perLit_2">
+             <property name="text">
+              <string>Per:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="XComboBox" name="_perExt">
+             <property name="allowNull">
+              <bool>true</bool>
+             </property>
+             <property name="fieldName">
+              <string>billing_period</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>154</height>
             </size>
            </property>
           </spacer>
@@ -870,6 +996,11 @@ to be bound by its terms.</comment>
    <header>deptcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>EmpCluster</class>
    <extends>QWidget</extends>
    <header>empcluster.h</header>
@@ -919,31 +1050,37 @@ to be bound by its terms.</comment>
   <tabstop>_code</tabstop>
   <tabstop>_number</tabstop>
   <tabstop>_active</tabstop>
-  <tabstop>_contact</tabstop>
   <tabstop>_tabWidget</tabstop>
+  <tabstop>_contact</tabstop>
+  <tabstop>_image</tabstop>
   <tabstop>_site</tabstop>
   <tabstop>_mgr</tabstop>
-  <tabstop>_wagetype</tabstop>
-  <tabstop>_rate</tabstop>
-  <tabstop>_per</tabstop>
   <tabstop>_dept</tabstop>
   <tabstop>_shift</tabstop>
+  <tabstop>_startDate</tabstop>
   <tabstop>_user</tabstop>
   <tabstop>_userButton</tabstop>
   <tabstop>_salesrep</tabstop>
   <tabstop>_salesrepButton</tabstop>
+  <tabstop>_vendor</tabstop>
+  <tabstop>_vendorButton</tabstop>
+  <tabstop>_wagetype</tabstop>
+  <tabstop>_rate</tabstop>
+  <tabstop>_per</tabstop>
+  <tabstop>_externalRate</tabstop>
+  <tabstop>_perExt</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newCharass</tabstop>
   <tabstop>_editCharass</tabstop>
   <tabstop>_deleteCharass</tabstop>
   <tabstop>_groups</tabstop>
-  <tabstop>_attachGroup</tabstop>
-  <tabstop>_detachGroup</tabstop>
-  <tabstop>_viewGroup</tabstop>
   <tabstop>_editGroup</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_viewGroup</tabstop>
+  <tabstop>_detachGroup</tabstop>
+  <tabstop>_attachGroup</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
  <connections>

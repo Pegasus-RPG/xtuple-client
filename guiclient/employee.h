@@ -44,6 +44,7 @@ class employee : public XDialog, public Ui::employee
     virtual void sHandleButtons();
     virtual void sNewCharass();
     virtual void sSalesrep();
+	virtual void sVendor();
     virtual void sUser();
     virtual void sViewGroup();
 

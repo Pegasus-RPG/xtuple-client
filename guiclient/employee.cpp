@@ -19,6 +19,7 @@
 #include "empGroup.h"
 #include "empgroupcluster.h"
 #include "salesRep.h"
+#include "vendor.h"
 #include "storedProcErrorLookup.h"
 #include "user.h"
 
@@ -75,28 +76,29 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   setupUi(this);
 
   connect(_attachGroup,   SIGNAL(clicked()), this, SLOT(sAttachGroup()));
-  connect(_code,  SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
+  connect(_code,		  SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
   connect(_deleteCharass, SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
   connect(_detachGroup,   SIGNAL(clicked()), this, SLOT(sDetachGroup()));
   connect(_editCharass,   SIGNAL(clicked()), this, SLOT(sEditCharass()));
   connect(_editGroup,     SIGNAL(clicked()), this, SLOT(sEditGroup()));
   connect(_newCharass,    SIGNAL(clicked()), this, SLOT(sNewCharass()));
   connect(_salesrepButton,SIGNAL(clicked()), this, SLOT(sSalesrep()));
+  connect(_vendorButton,  SIGNAL(clicked()), this, SLOT(sVendor()));
   connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_userButton,    SIGNAL(clicked()), this, SLOT(sUser()));
   connect(_viewGroup,     SIGNAL(clicked()), this, SLOT(sViewGroup()));
 
-  XSqlQuery xtmfg;
-  xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
-  if (xtmfg.first())
-  {
-    _shift->setEnabled(true);
-    _shift->setVisible(true);
-    shiftLit->setVisible(true);
-  } else {
-    _shift->setEnabled(false);
-    _shift->setVisible(false);
-    shiftLit->setVisible(false);
+  XSqlQuery xtmfg;                                                                        
+  xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");              
+  if (xtmfg.first())                                                                      
+  {                                                                                       
+    _shift->setEnabled(true);                                                             
+    _shift->setVisible(true);                                                             
+    shiftLit->setVisible(true);                                                           
+  } else {                                                                                
+    _shift->setEnabled(false);                                                            
+    _shift->setVisible(false);                                                            
+    shiftLit->setVisible(false);                                                          
   }
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
@@ -125,6 +127,9 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   if (_privileges->check("MaintainSalesReps") ||
       _privileges->check("ViewSalesReps"))
     connect(_salesrep, SIGNAL(toggled(bool)), _salesrepButton, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainVendors") ||
+      _privileges->check("ViewVendors"))
+    connect(_vendor, SIGNAL(toggled(bool)), _vendorButton, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainUsers"))
     connect(_user, SIGNAL(toggled(bool)), _userButton, SLOT(setEnabled(bool)));
 
@@ -134,6 +139,13 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _per->append(2, tr("Week"),      "Week");
   _per->append(3, tr("Bi-Weekly"), "Biweek");
   _per->append(4, tr("Year"),      "Year");
+
+  _perExt->append(-1,   "",           "");
+  _perExt->append(0, tr("Hour"),      "Hour");
+  _perExt->append(1, tr("Day"),       "Day");
+  _perExt->append(2, tr("Week"),      "Week");
+  _perExt->append(3, tr("Bi-Weekly"), "Biweek");
+  _perExt->append(4, tr("Year"),      "Year");
 
   _comments->setId(-1);
 
@@ -226,6 +238,8 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _wagetype->setEnabled(editing);
   _rate->setEnabled(editing);
   _per->setEnabled(editing);
+  _externalRate->setEnabled(editing);
+  _perExt->setEnabled(editing);
   _dept->setEnabled(editing);
   _shift->setEnabled(editing);
   _notes->setEnabled(editing);
@@ -381,7 +395,7 @@ void employee::sSave(const bool pClose)
 
   if (_mode == cNew)
     q.prepare("INSERT INTO api.employee ("
-              " code, number, active,"
+              " code, number, active, start_date,"
               " contact_number, honorific, first, last, job_title,"
               " voice, alternate, fax, email,"
               " web, contact_change,"
@@ -390,9 +404,10 @@ void employee::sSave(const bool pClose)
               " country, address_change,"
               " site, manager_code,"
               " wage_type, wage, wage_currency, wage_period,"
-              " department, shift, is_user, is_salesrep, notes, image"
+              " department, shift, is_user, is_salesrep, notes, image, "
+			  " rate, billing_currency, billing_period"
               ") VALUES ("
-              " :code, :number, :active,"
+			  " :code, :number, :active, :start_date,"
               " :cntctnumber, :hnfc, :first, :last, :jobtitle,"
               " :voice, :alt, :fax, :email,"
               " :web, :cntctmode,"
@@ -401,13 +416,14 @@ void employee::sSave(const bool pClose)
               " :country, :addrmode,"
               " :site, :mgrcode,"
               " :wagetype, :wage, :wagecurr, :wageper,"
-              " :dept, :shift, :isusr, :isrep, :notes, :image);");
+			  " :dept, :shift, :isusr, :isrep, :notes, :image, :rate, :billing_currency, :billing_period);");
 
   else if (_mode == cEdit)
     q.prepare("UPDATE api.employee SET"
               " code=:code,"
               " number=:number,"
               " active=:active,"
+			  " start_date=:start_date,"
               " contact_number=:cntctnumber,"
               " honorific=:hnfc,"
               " first=:first,"
@@ -439,12 +455,16 @@ void employee::sSave(const bool pClose)
               " is_user=:isusr,"
               " is_salesrep=:isrep,"
               " notes=:notes,"
-              " image=:image"
+              " image=:image,"
+			  " rate=:rate,"
+			  " billing_currency=:billing_currency,"
+			  " billing_period=:billing_period"
               " WHERE (code=:origcode);" );
 
   q.bindValue(":code",        _code->text());
   q.bindValue(":number",      _number->text());
   q.bindValue(":active",      _active->isChecked());
+  q.bindValue(":start_date",   _startDate->date());
   q.bindValue(":cntctnumber", _contact->number());
   q.bindValue(":hnfc",        _contact->honorific());
   q.bindValue(":first",       _contact->first());
@@ -478,6 +498,10 @@ void employee::sSave(const bool pClose)
   q.bindValue(":notes",       _notes->text());
   q.bindValue(":origcode",    _empcode);
   q.bindValue(":image",       _image->number());
+  q.bindValue(":rate",		  _externalRate->localValue());
+  q.bindValue(":billing_currency",	_currabbr);
+  q.bindValue(":billing_period",	_perExt->code());
+
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -542,6 +566,7 @@ void employee::sPopulate()
     _code->setText(q.value("code").toString());
     _number->setText(q.value("number").toString());
     _active->setChecked(q.value("active").toBool());
+	_startDate->setDate(q.value("start_date").toDate());
     _contact->setNumber(q.value("contact_number").toString());
     _contact->setHonorific(q.value("honorific").toString());
     _contact->setFirst(q.value("first").toString());
@@ -565,14 +590,19 @@ void employee::sPopulate()
     _rate->set(q.value("wage").toDouble(),
                q.value("curr_id").toInt(),
                QDate::currentDate());
-    _currabbr = q.value("curr_abbr").toString();
+    _externalRate->set(q.value("rate").toDouble(),
+               q.value("curr_id").toInt(),
+               QDate::currentDate());
+	_currabbr = q.value("curr_abbr").toString();
     _per->setCode(q.value("wage_period").toString());
-    _dept->setNumber(q.value("department").toString());
+    _perExt->setCode(q.value("billing_period").toString());
+	_dept->setNumber(q.value("department").toString());
     _shift->setNumber(q.value("shift").toString());
 
     _user->setChecked(q.value("is_user").toBool());
     _salesrep->setChecked(q.value("is_salesrep").toBool());
-    _notes->setText(q.value("notes").toString());
+    _vendor->setChecked(q.value("is_vendor").toBool());
+	_notes->setText(q.value("notes").toString());
     _image->setNumber(q.value("image").toString());
 
     _user->setEnabled(_createUsers && ! _user->isChecked());
@@ -584,6 +614,13 @@ void employee::sPopulate()
     _salesrepButton->setEnabled((_privileges->check("MaintainSalesReps") ||
                                  _privileges->check("ViewSalesReps")) &&
                                 _salesrep->isChecked());
+
+	_vendor->setEnabled(_privileges->check("MaintainVendors") &&
+                          ! _vendor->isChecked());
+    _vendorButton->setEnabled((_privileges->check("MaintainVendors") ||
+                                 _privileges->check("ViewVendors")) &&
+                                _vendor->isChecked());
+
 
     if (DEBUG)
       qDebug("image %s and %s",
@@ -700,8 +737,8 @@ void employee::sSalesrep()
   {
     srq.prepare("SELECT salesrep_id "
                 "FROM salesrep "
-                "WHERE (salesrep_number=:code);");
-    srq.bindValue(":code", _code->text());
+                "WHERE (salesrep_number=:number);");
+    srq.bindValue(":number", _number->text());
   }
 
   srq.exec();
@@ -748,6 +785,76 @@ void employee::sSalesrep()
     }
   }
 }
+
+
+void employee::sVendor()
+{
+  XSqlQuery srq;
+  if (_empid < 0 && _code->text().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Specify an Employee Code"),
+                         tr("<p>You must either be editing an existing "
+                            "Employee or have at least given an Employee Code "
+                            "before trying to associate this Employee with a "
+                            "Vendor."));
+    return;
+  }
+  else
+  {
+    srq.prepare("SELECT vend_id "
+                "FROM vendinfo "
+                "WHERE (vend_number=:number);");
+    srq.bindValue(":number", _number->text());
+  }
+
+  srq.exec();
+  if (srq.first() &&
+      (_privileges->check("MaintainVendors") ||
+       _privileges->check("ViewVendors"))
+      )
+  {
+    _vendor->setEnabled(true);
+	sSave(false);
+    ParameterList params;
+    if (_mode == cView || ! _privileges->check("MaintainVendors"))
+      params.append("mode", "view");
+    else
+	params.append("vend_id", srq.value("vend_id"));
+    params.append("crmacct_number", _number->text());
+    params.append("crmacct_name", _code->text().lower());
+    params.append("mode", "edit");
+    vendor *newdlg = new vendor(this);
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (srq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, srq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else if (_privileges->check("MaintainVendors") &&
+           (_mode == cEdit || _mode == cNew))
+  {
+    if (QMessageBox::question(this, tr("Create Vendor?"),
+                              tr("<p>There does not appear to be a Vendor "
+                                 "associated with this Employee. "
+								 "Would you like to create a new Vendor?"),
+				  QMessageBox::Yes | QMessageBox::Default,
+				  QMessageBox::No) == QMessageBox::Yes)
+    {
+      sSave(false);
+      ParameterList params;
+      params.append("crmacct_number", _number->text());
+      params.append("crmacct_name", _code->text().lower());
+	  params.append("mode",     "new");
+      vendor *newdlg = new vendor(this);
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
+}
+
+
 
 void employee::sUser()
 {
