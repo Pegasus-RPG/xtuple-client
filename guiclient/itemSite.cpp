@@ -541,6 +541,16 @@ void itemSite::sSave()
     }
   }
 
+  if (_orderGroup->value() == 0)
+  {
+    if (_metrics->value("Application") != "PostBooks")
+	{
+		QMessageBox::warning( this, tr("Cannot Save Item Site"),
+          tr("The Group Planned Orders days can't be 0.") );
+      return;
+	}
+  }
+
   XSqlQuery newItemSite;
     
   if (_mode == cNew)
