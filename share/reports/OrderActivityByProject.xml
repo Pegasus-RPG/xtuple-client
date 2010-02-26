@@ -287,7 +287,7 @@ UNION
 SELECT poitem_id AS id, 
        80 AS typeid,
        text('Section 5 - Purchase Expense') AS section,
-       text('Purcahse Order - Inventory Items') AS type, 
+       text('Purchase Order - Inventory Items') AS type, 
        (text(pohead_number) || '-' || text(poitem_linenumber)) AS ordernumber,
        poitem_status AS status, 
 
@@ -301,7 +301,7 @@ SELECT poitem_id AS id,
   FROM pohead, poitem
  WHERE ((poitem_pohead_id = pohead_id)
    AND  (poitem_prj_id = &lt;? value("prj_id") ?>)
-   AND  (poitem_itemsite_id = '-1'))
+   AND  (poitem_itemsite_id is null))
 
 &lt;? endif ?>
 
@@ -624,7 +624,8 @@ ORDER BY section, typeid, ordernumber;</sql>
       <query>detail</query>
       <column>amt_value</column>
      </data>
-     <tracktotal subtotal="true" builtin="true" >money</tracktotal>
+     <format builtin="true">money</format>
+     <tracktotal subtotal="true"/>
     </field>
    </foot>
   </group>
@@ -830,7 +831,8 @@ ORDER BY section, typeid, ordernumber;</sql>
     <query>detail</query>
     <column>amt_report</column>
    </data>
-   <tracktotal builtin="true" >qty</tracktotal>
+   <format builtin="true">qty</format>
+   <tracktotal/>
   </field>
   <line>
    <xstart>305</xstart>
