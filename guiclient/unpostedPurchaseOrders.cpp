@@ -150,6 +150,19 @@ void unpostedPurchaseOrders::sDelete()
       {
         if (list[i]->text(3) == "U")
         {
+          if (list[i]->altId() != -1)
+		  {
+            QString question = tr("<p>The Purchase Order that you selected to delete was created "
+            "to satisfy Sales Order demand. If you delete the selected "
+            "Purchase Order then the Sales Order demand will remain but "
+            "the Purchase Order to relieve that demand will not. Are you "
+            "sure that you want to delete the selected Purchase Order?" );
+            if (QMessageBox::question(this, tr("Delete Purchase Order?"),
+                                      question,
+                                      QMessageBox::Yes,
+                                      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+			  continue;
+		  }
           q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
           q.exec();
           if (q.first() && ! q.value("result").toBool())
@@ -311,7 +324,8 @@ void unpostedPurchaseOrders::sFillList()
   else
     params.append("shownothing");
 
-  QString sql( "SELECT pohead_id, pohead_number, vend_name,"
+  QString sql( "SELECT pohead_id, COALESCE(pohead_cohead_id, -1) AS pohead_cohead_id,"
+               "       pohead_number, vend_name,"
                "       MIN(poitem_duedate) AS min_duedate, "
                "       pohead_status, pohead_printed "
                "FROM vend, pohead LEFT OUTER JOIN "
@@ -336,8 +350,8 @@ void unpostedPurchaseOrders::sFillList()
                "  AND (pohead_status NOT IN ('U', 'O', 'C')) "
                "<? endif ?> "
                ") "
-               "GROUP BY pohead_number, pohead_id, vend_name, pohead_status, "
-               "         pohead_printed "
+               "GROUP BY pohead_number, pohead_id, pohead_cohead_id,"
+			   "         vend_name, pohead_status, pohead_printed "
                "ORDER BY pohead_number;" );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
@@ -346,7 +360,7 @@ void unpostedPurchaseOrders::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _pohead->populate(q);
+  _pohead->populate(q, true);
 }
 
 bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
