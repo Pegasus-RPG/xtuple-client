@@ -356,6 +356,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         setMenu(menu);
 
         connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
+        connect(menu, SIGNAL(aboutToShow()), this, SLOT(sUpdateMenu()));
       }
     }
   }
@@ -425,11 +426,16 @@ void VirtualClusterLineEdit::sUpdateMenu()
   else
     return;
 
-  _openAct->setEnabled(canOpen() && _id != -1);
-  _newAct->setEnabled(canOpen() &&
-                      _x_privileges->check(_editPriv));
+  _listAct->setEnabled(isEnabled());
+  _searchAct->setEnabled(isEnabled());
+  _aliasAct->setEnabled(isEnabled());
+  _openAct->setEnabled((_x_privileges->check(_editPriv) ||
+                        _x_privileges->check(_viewPriv)) &&
+                       _id != -1);
+  _newAct->setEnabled(_x_privileges->check(_editPriv) &&
+                      isEnabled());
 
-  if (_newAct->isEnabled())
+  if (canOpen())
   {
     if (!menu()->actions().contains(_openAct))
       menu()->addAction(_openAct);
@@ -574,13 +580,7 @@ void VirtualClusterLineEdit::setTitles(const QString& s, const QString& p)
 bool VirtualClusterLineEdit::canOpen()
 {
   if (!_uiName.isEmpty() && _guiClientInterface)
-  {
-    if  (_x_privileges)
-    {
-      if (_x_privileges->check(_editPriv) || _x_privileges->check(_viewPriv))
-        return true;
-    }
-  }
+    return true;
   return false;
 }
 
