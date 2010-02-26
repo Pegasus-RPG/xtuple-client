@@ -180,7 +180,14 @@ void BOM::sSave()
       tr("<p>The Batch Size quantity must be greater than zero.") );
     return;
   }
-  
+
+  if (_bomitem->topLevelItemCount() == 0)
+  {
+    QMessageBox::information( this, tr("Empty Bill of Materials"),
+                              tr("The materials list is empty, add at least one material.")  );
+    return;
+  }
+
   if(!sCheckRequiredQtyPer())
     return;
   
