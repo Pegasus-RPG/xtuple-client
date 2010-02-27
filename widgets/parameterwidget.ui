@@ -141,16 +141,6 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="_filterSetNameLit">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="_filterSetName"/>
-        </item>
-        <item>
          <widget class="QPushButton" name="_saveButton">
           <property name="text">
            <string>Save</string>

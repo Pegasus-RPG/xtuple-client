@@ -76,9 +76,45 @@ void filterManager::shareFilter()
 {
   XSqlQuery qry;
 
-  qry.prepare("UPDATE filter SET filter_username=NULL WHERE (filter_id=:filter_id);");
+  // See if there is already a shared filter by this name
+  qry.prepare("SELECT shr.filter_id AS filter_id "
+              "FROM filter prv "
+              " JOIN filter shr ON ((prv.filter_name=shr.filter_name) "
+              "                 AND (prv.filter_screen=shr.filter_screen) "
+              "                 AND (shr.filter_id != prv.filter_id)) "
+              "WHERE ((shr.filter_username IS NULL) "
+              " AND (prv.filter_id=:filter_id)); ");
   qry.bindValue(":filter_id", _filterSet->id());
   qry.exec();
+  if (qry.first())
+  {
+    if ( QMessageBox::question( this, tr("Shared Filter Exists"),
+                                tr("<p>This will replace a shared filter with the same name.\n"
+                                   " Are you sure this is what you want to do?"),
+                                QMessageBox::No | QMessageBox::Default,
+                                QMessageBox::Yes) == QMessageBox::No )
+      return;
+    else
+    {
+      int filterid = qry.value("filter_id").toInt();
+      qry.prepare("UPDATE filter shr SET filter_value=prv.filter_value "
+                  "FROM filter prv "
+                  "WHERE ((shr.filter_id=:shr_filter_id) "
+                  " AND (prv.filter_id=:prv_filter_id)); "
+                  "DELETE FROM filter WHERE (filter_id=:prv_filter_id);");
+      qry.bindValue(":shr_filter_id", filterid);
+      qry.bindValue(":prv_filter_id", _filterSet->id());
+      qry.exec();
+
+      emit filterDeleted();
+    }
+  }
+  else
+  {
+    qry.prepare("UPDATE filter SET filter_username=NULL WHERE (filter_id=:filter_id);");
+    qry.bindValue(":filter_id", _filterSet->id());
+    qry.exec();
+  }
 
   populate();
 }

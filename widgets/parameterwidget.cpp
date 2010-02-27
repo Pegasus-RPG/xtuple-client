@@ -21,6 +21,7 @@
 #include "crmacctcluster.h"
 #include "filterManager.h"
 #include "contactcluster.h"
+#include "filtersave.h"
 
 ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
     QWidget(pParent)
@@ -246,7 +247,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
   if (_filterList->id() == -1)
   {
-    _filterSetName->clear();
     setSelectedFilter(-1);
     emit updated();
     return;
@@ -355,7 +355,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     windowIdx++;
   }//end of for
 
-  _filterSetName->setText( _filterList->currentText() );
   setSelectedFilter(filter_id);
   emit updated();
 }
@@ -594,96 +593,43 @@ void ParameterWidget::save()
   QString query;
   QVariant tempVar;
   int filter_id;
-  QMessageBox msgBox;
 
-  filtersetname = _filterSetName->text();
-
-  if ( filtersetname.isEmpty() )
+  QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
+  while (i.hasNext())
   {
-    msgBox.setText(tr("Please enter a name for this filter set before saving."));
-    msgBox.exec();
+    i.next();
+    QPair<QString, QVariant> tempPair = i.value();
+
+    tempVar = tempPair.second;
+
+    QLayoutItem *test = _filtersLayout->itemAtPosition(i.key(), 0)->layout()->itemAt(0);
+    XComboBox* mybox = (XComboBox*)test->widget();
+    QStringList split = mybox->itemData(mybox->currentIndex()).toString().split(":");
+
+    if ( tempVar.canConvert<QString>() )
+    {
+      variantString = tempVar.toString();
+      filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
+    }
+  }
+
+  const QMetaObject *metaobject = this->parent()->metaObject();
+  QString classname(metaobject->className());
+
+  ParameterList params;
+  params.append("filter", filter);
+  params.append("filtersetname", filtersetname);
+  params.append("classname", classname);
+
+  filterSave newdlg(this);
+  newdlg.set(params);
+  filter_id = newdlg.exec();
+  if (!filter_id)
     return;
-  }
-  else
-  {
+  emit filterSetSaved();
 
-    QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
-    while (i.hasNext())
-    {
-      i.next();
-      QPair<QString, QVariant> tempPair = i.value();
-
-      tempVar = tempPair.second;
-
-      QLayoutItem *test = _filtersLayout->itemAtPosition(i.key(), 0)->layout()->itemAt(0);
-      XComboBox* mybox = (XComboBox*)test->widget();
-      QStringList split = mybox->itemData(mybox->currentIndex()).toString().split(":");
-
-      if ( tempVar.canConvert<QString>() )
-      {
-        variantString = tempVar.toString();
-        filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
-      }
-    }
-
-    const QMetaObject *metaobject = this->parent()->metaObject();
-    QString classname(metaobject->className());
-
-    XSqlQuery qry, qry2, qry3;
-
-    qry.exec("SELECT current_user;");
-    if (qry.first())
-      username = qry.value("current_user").toString();
-
-    //check to see if filter name exists for this screen
-    QString filter_query = "select filter_name "
-                           "from filter "
-                           "where filter_name=:name and filter_username=:username "
-                           " and filter_screen=:screen";
-    qry2.prepare(filter_query);
-    qry2.bindValue(":name", filtersetname);
-    qry2.bindValue(":username" , username);
-    qry2.bindValue(":screen", classname);
-
-    qry2.exec();
-
-    //if the filter name is found, update it
-    if (qry2.first() && !qry2.isNull(0))
-      query = "update filter set filter_value=:value "
-              "where filter_screen=:screen "
-              " and filter_name=:name "
-              " and filter_username=:username";
-    else
-      query = "insert into filter (filter_screen, filter_name, filter_value, filter_username) "
-              " values (:screen, :name, :value, :username) ";
-
-    qry.prepare(query);
-    qry.bindValue(":screen", classname);
-    qry.bindValue(":value", filter);
-    qry.bindValue(":username" , username);
-    qry.bindValue(":name", filtersetname );
-
-    if (qry.exec())
-    {
-      query = "select filter_id "
-              "from filter "
-              "where filter_name=:name "
-              " and filter_username=:username "
-              " and filter_screen=:screen";
-      qry3.prepare(query);
-      qry3.bindValue(":screen", classname);
-      qry3.bindValue(":username" , username);
-      qry3.bindValue(":name", filtersetname );
-      qry3.exec();
-
-      if (qry3.first())
-        filter_id = qry.value("filter_id").toInt();
-
-      emit filterSetSaved();
-    }
-  }
   setSavedFilters();
-  _filterList->setCurrentIndex(_filterList->findText(filtersetname));
+  _filterList->setId(filter_id);
 }
 
 void ParameterWidget::setFiltersVisabiltyPreference()

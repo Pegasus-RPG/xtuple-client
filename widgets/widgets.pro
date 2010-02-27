@@ -178,7 +178,8 @@ SOURCES    += widgets.cpp \
               docAttach.cpp \
               parameterwidget.cpp \
               filterManager.cpp \
-			  subscribers.cpp subscriber.cpp \
+              subscribers.cpp subscriber.cpp \
+              filterSave.cpp
 
 HEADERS    += widgets.h \
               addresscluster.h contactcluster.h \
@@ -245,7 +246,8 @@ HEADERS    += widgets.h \
               docAttach.h \
               parameterwidget.h \
               filterManager.h \
-			  subscriber.h subscribers.h \
+              subscriber.h subscribers.h \
+              filtersave.h \
 
 FORMS += accountSearch.ui \
          alarmMaint.ui \
@@ -255,6 +257,7 @@ FORMS += accountSearch.ui \
          documents.ui \
          file.ui \
          filterManager.ui \
+         filterSave.ui \
          imageAssignment.ui \
          imageview.ui \
          parameterwidget.ui \
@@ -263,7 +266,7 @@ FORMS += accountSearch.ui \
          recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
-		 subscriber.ui subscribers.ui \
+         subscriber.ui subscribers.ui \
 
 
 RESOURCES += widgets.qrc
