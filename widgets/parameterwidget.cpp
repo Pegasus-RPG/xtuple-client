@@ -261,12 +261,9 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   //look up filter from database
   query = " SELECT filter_value "
           " FROM filter "
-          " WHERE filter_username=current_user "
-          " AND filter_id=:id "
-          " AND filter_screen=:screen ";
+          " WHERE filter_id=:id ";
 
   qry.prepare(query);
-  qry.bindValue(":screen", classname);
   qry.bindValue(":id", filter_id );
 
   qry.exec();
@@ -715,7 +712,7 @@ void ParameterWidget::setSavedFilters(int defaultId)
             " UNION "
             " SELECT filter_id, filter_name, 2 AS seq "
             " FROM filter "
-            " WHERE filter_username=current_user "
+            " WHERE COALESCE(filter_username,current_user)=current_user "
             " AND filter_screen=:screen "
             " ORDER BY seq, filter_name ";
 

@@ -26,15 +26,13 @@ filterManager::filterManager(QWidget* parent, const char* name)
     setObjectName(name);
 
   setupUi(this);
-  
-  _filterId=-1;
 
   _filterSet->addColumn(tr("Filter Set Name"), -1, Qt::AlignLeft, true, "filter_name" );
+  _filterSet->addColumn(tr("Shared"), _ynColumn, Qt::AlignLeft, true, "shared");
 
-  connect(_filterSet, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT( getXTreeWidgetItem(XTreeWidgetItem*) ) );
-  connect(_edit, SIGNAL(clicked()), this, SLOT( applySaved() ));
+  connect(_filterSet, SIGNAL(valid(bool)), this, SLOT( handleButtons(bool) ));
+  connect(_share, SIGNAL(clicked()), this, SLOT( shareFilter() ));
   connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
-  connect(this, SIGNAL(filterSelected(QString)), parent, SLOT( setSavedFiltersIndex(QString) ));
   connect(this, SIGNAL(filterDeleted()), parent, SLOT(setSavedFilters()) );
 }
 
@@ -58,10 +56,14 @@ void filterManager::populate()
     if (parent()->parent())
     {
       XSqlQuery qry;
-      qry.prepare("select filter_id, filter_name "
+      qry.prepare("select filter_id, filter_name, "
+                  " case when filter_username is null then "
+                  "  true "
+                  " else false end as shared "
                   "from filter "
-                  "where filter_username=current_user "
-                  " and filter_screen=:screen;");
+                  "where COALESCE(filter_username,current_user)=current_user "
+                  " and filter_screen=:screen "
+                  "order by filter_name;");
       qry.bindValue(":screen", parent()->parent()->objectName());
       qry.exec();
 
@@ -70,18 +72,15 @@ void filterManager::populate()
   }
 }
 
-void filterManager::getXTreeWidgetItem(XTreeWidgetItem* item)
+void filterManager::shareFilter()
 {
-  _filterId = item->id();
-  _filterText = item->text(0);
-}
+  XSqlQuery qry;
 
-void filterManager::applySaved()
-{
-  ParameterWidget* pWidget = (ParameterWidget*)this->parent();
-  pWidget->applySaved(0, _filterId);
-  emit filterSelected(_filterText);
-  this->close();
+  qry.prepare("UPDATE filter SET filter_username=NULL WHERE (filter_id=:filter_id);");
+  qry.bindValue(":filter_id", _filterSet->id());
+  qry.exec();
+
+  populate();
 }
 
 void filterManager::deleteFilter()
@@ -90,10 +89,17 @@ void filterManager::deleteFilter()
   XSqlQuery qry;
 
   qry.prepare(query);
-  qry.bindValue(":filter_id", _filterId);
+  qry.bindValue(":filter_id", _filterSet->id());
   qry.exec();
 
   this->populate();
 
   emit filterDeleted();
+}
+
+void filterManager::handleButtons(bool valid)
+{
+  _share->setEnabled(valid &&
+                     !_filterSet->currentItem()->rawValue("shared").toBool());
+  _delete->setEnabled(valid);
 }

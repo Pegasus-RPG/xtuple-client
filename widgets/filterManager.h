@@ -25,17 +25,16 @@ public:
     void populate();
 	
 public slots:
-    void getXTreeWidgetItem(XTreeWidgetItem* item);
-    void applySaved();
+    void shareFilter();
     void deleteFilter();
 
+private slots:
+    void handleButtons(bool valid);
+
 signals:
-    void filterSelected(QString);
     void filterDeleted();
 
 private:
-   int _filterId;
-   QString _filterText;
    QString _screen;
 };
 
