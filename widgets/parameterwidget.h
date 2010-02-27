@@ -62,7 +62,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void cleared();
     void filterSetSaved();
     void updated();
-protected:
+  protected:
     virtual void showEvent(QShowEvent *);
 
   private:
@@ -75,11 +75,13 @@ protected:
     QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
     QMap<QString, QString > _comboQuery;
     bool _initialized;
+    bool _shared;
 
     QString getParameterTypeKey(QString);
     void setSelectedFilter(int filter_id);
     void repopulateComboboxes();
     bool containsUsedType(QString);
+
 };
 
 #endif

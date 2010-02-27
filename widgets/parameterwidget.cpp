@@ -33,6 +33,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
     setObjectName(pName);
 
   _initialized = false;
+  _shared = false;
   setSavedFilters(-1);
   _filterSignalMapper = new QSignalMapper(this);
   _saveButton->setDisabled(true);
@@ -259,7 +260,9 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   QString classname(metaobject->className());
 
   //look up filter from database
-  query = " SELECT filter_value "
+  query = " SELECT filter_value, "
+          "  CASE WHEN (filter_username IS NULL) THEN true "
+          "  ELSE false END AS shared "
           " FROM filter "
           " WHERE filter_id=:id ";
 
@@ -269,7 +272,10 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   qry.exec();
 
   if (qry.first())
+  {
     filterValue = qry.value("filter_value").toString();
+    _shared = qry.value("shared").toBool();
+  }
 
   QStringList filterRows = filterValue.split("|");
   QString tempFilter = QString();
@@ -587,7 +593,6 @@ void ParameterWidget::removeParam(int pRow)
 void ParameterWidget::save()
 {
   QString filter;
-  QString filtersetname;
   QString variantString;
   QString username;
   QString query;
@@ -618,8 +623,11 @@ void ParameterWidget::save()
 
   ParameterList params;
   params.append("filter", filter);
-  params.append("filtersetname", filtersetname);
+  if (_filterList->id())
+    params.append("filtersetname", _filterList->currentText());
   params.append("classname", classname);
+  if (_shared)
+    params.append("shared", true);
 
   filterSave newdlg(this);
   newdlg.set(params);

@@ -48,6 +48,10 @@ void filterSave::set(ParameterList &pParams)
   param = pParams.value("classname", &valid);
   if (valid)
     _classname = param.toString();
+
+  param = pParams.value("shared", &valid);
+  if (valid)
+    _shared->setChecked(true);
 }
 
 void filterSave::save()
@@ -96,8 +100,10 @@ void filterSave::save()
     }
 
     filterid = qry.value("filter_id").toInt();
-    query = "update filter set filter_value=:value "
-            "where filter_id=:filter_id";
+    query = QString("update filter set "
+                    "  filter_value=:value, "
+                    "  filter_username=%1 "
+                    "where filter_id=:filter_id;").arg(user);
   }
   else
   {
