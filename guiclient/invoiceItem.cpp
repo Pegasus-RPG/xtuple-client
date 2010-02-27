@@ -145,6 +145,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
+      connect(_billed, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
       connect(_billed, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
       connect(_price, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
 
@@ -454,9 +455,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     q.exec();
     if (q.first())
     {
-      if (_mode == cNew)
-        sDeterminePrice();
-
+      sDeterminePrice();
       _priceRatioCache = q.value("invpricerat").toDouble();
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
 

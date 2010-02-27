@@ -605,6 +605,7 @@ void invoice::sEdit()
 	
   ParameterList params;
   params.append("mode", "edit");
+  params.append("invchead_id", _invcheadid);
   params.append("invcitem_id", _invcitem->id());
 
   invoiceItem newdlg(this);
@@ -617,6 +618,7 @@ void invoice::sView()
 {
   ParameterList params;
   params.append("mode", "view");
+  params.append("invchead_id", _invcheadid);
   params.append("invcitem_id", _invcitem->id());
 
   invoiceItem newdlg(this);
