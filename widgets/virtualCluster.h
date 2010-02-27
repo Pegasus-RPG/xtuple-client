@@ -217,6 +217,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
     protected:
         virtual bool eventFilter(QObject *obj, QEvent* event);
+        virtual void focusInEvent(QFocusEvent * event);
         virtual void resizeEvent(QResizeEvent *e);
 
         QAction* _infoAct;

@@ -378,6 +378,12 @@ bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
+void VirtualClusterLineEdit::focusInEvent(QFocusEvent * event)
+{
+  sUpdateMenu();
+  XLineEdit::focusInEvent(event);
+}
+
 void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
 {
   positionMenuLabel();
