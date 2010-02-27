@@ -113,6 +113,7 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
   Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
   Q_PROPERTY(QString                    number         READ number        WRITE setNumber        DESIGNABLE false)
   Q_PROPERTY(bool                       labelVisible   READ labelVisible  WRITE setLabelVisible                  )
+  Q_PROPERTY(bool                       infoVisible    READ infoVisible   WRITE setInfoVisible                   )
   Q_PROPERTY(bool                       canEdit        READ canEdit       WRITE setCanEdit                       ) 
 
   public:
@@ -130,8 +131,10 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
     inline bool canEdit()       { return _canEdit;                  }
     inline bool editMode()      { return _editMode;                 }
     inline bool labelVisible()  { return _labelVisible;             }
+    inline bool infoVisible()   { return _infoVisible;             }
     
     void setLabelVisible(bool);
+    void setInfoVisible(bool);
     void setCanEdit(bool);
 
     Q_INVOKABLE void setExtraClause(CLineEdit::CLineEditTypes type, const QString &);
@@ -178,6 +181,7 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
 
   private:
     bool _labelVisible;
+    bool _infoVisible;
     bool _canEdit;
     bool _editMode;
     QLabel *_customerNumberLit;

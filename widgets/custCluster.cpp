@@ -643,6 +643,12 @@ void CustInfo::setLabelVisible(bool p)
   _labelVisible=p;
 }
 
+void CustInfo::setInfoVisible(bool p)
+{
+  _info->setVisible(p);
+  _infoVisible=p;
+}
+
 void CustInfo::setCanEdit(bool p)
 {
   if (_canEdit == p)

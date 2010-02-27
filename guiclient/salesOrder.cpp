@@ -1547,7 +1547,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
                 "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
-                "       cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id "
+                "       cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
+				"       true AS iscustomer "
                 "FROM custtype, custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
                 "                 AND (shipto_default)) "
@@ -1565,7 +1566,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
                 "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id "
+                "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
+				"       false AS iscustomer "
                 "FROM prospect "
                 "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
                 "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
@@ -1618,6 +1620,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _holdType->setCurrentIndex(1);
       }
 
+	  _cust->setInfoVisible(cust.value("iscustomer").toBool());
       sFillCcardList();    
       _usesPos = cust.value("cust_usespos").toBool();
       _blanketPos = cust.value("cust_blanketpos").toBool();
