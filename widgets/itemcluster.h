@@ -160,6 +160,7 @@ friend class ItemLineEditDelegate;
     bool    isConfigured();
 
   public slots:
+    void sHandleCompleter();
     void sList();
     void sSearch();
     void sSearch(ParameterList params);

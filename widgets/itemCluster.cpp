@@ -466,6 +466,71 @@ void ItemLineEdit::setItemsiteid(int pItemsiteid)
   }
 }
 
+void ItemLineEdit::sHandleCompleter()
+{
+  if (!hasFocus())
+    return;
+
+  QString stripped = text().trimmed().toUpper();
+  if (stripped.isEmpty())
+    return;
+
+  int width = 0;
+  QSqlQueryModel* model = static_cast<QSqlQueryModel *>(_completer->model());
+  QTreeView * view = static_cast<QTreeView *>(_completer->popup());
+  _parsed = true;
+  XSqlQuery numQ;
+
+  if (_useQuery)
+    numQ.prepare(QString(_sql).remove(";").append(" LIMIT 10;"));
+  else
+  {
+    QString pre( "SELECT DISTINCT item_id, item_number, "
+                 "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, "
+                 "item_upccode AS description " );
+
+    QStringList clauses;
+    clauses = _extraClauses;
+    clauses << "(item_number ~* :searchString OR item_upccode ~* :searchString)";
+    numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type).replace(";"," ORDER BY item_number LIMIT 10;"));
+    numQ.bindValue(":searchString", QString(text().trimmed().toUpper()).prepend("^"));
+  }
+
+  numQ.exec();
+  if (numQ.first())
+  {
+    int numberCol = numQ.record().indexOf("item_number");
+    int descripCol = numQ.record().indexOf("itemdescrip");
+    model->setQuery(numQ);
+    for (int i = 0; i < model->columnCount(); i++)
+    {
+      if ( (i == numberCol) ||
+           (i == descripCol) )
+      {
+        view->resizeColumnToContents(i);
+        width += view->columnWidth(i);
+      }
+      else
+        view->hideColumn(i);
+    }
+  }
+  else
+    model->setQuery(QSqlQuery());
+
+
+  _completer->setCompletionPrefix(stripped);
+
+  if (width > 350)
+    width = 350;
+
+  QRect rect;
+  rect.setHeight(height());
+  rect.setWidth(width);
+  rect.setBottomLeft(QPoint(0, height() - 2));
+  _completer->complete(rect);
+  _parsed = false;
+}
+
 void ItemLineEdit::sList()
 {
   disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
@@ -614,7 +679,6 @@ void ItemLineEdit::sParse()
       setId(-1);
       return;
     }
-
     else if (_useValidationQuery)
     {
       XSqlQuery item;
@@ -648,10 +712,17 @@ void ItemLineEdit::sParse()
       XSqlQuery item;
       item.prepare(_sql);
       item.exec();
-      if (item.findFirst("item_number", text().trimmed().toUpper()) != -1)
+      if (item.first())
       {
-        setId(item.value("item_id").toInt());
-        return;
+        do
+        {
+          if (item.value("item_number").toString().startsWith(text().trimmed().toUpper()))
+          {
+            setId(item.value("item_id").toInt());
+            return;
+          }
+        }
+        while (item.next());
       }
     }
     else
