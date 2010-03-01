@@ -220,9 +220,9 @@ void maintainShipping::sPrintShippingForm()
 void maintainShipping::sIssueStock()
 {
   ParameterList params;
-  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "SO")
-    params.append("sohead_id", _ship->id());
-  else if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "TO")
+  if (_ship->currentItem()->rawValue("ordertype").toString() == "SO")
+	  params.append("sohead_id", _ship->id());
+  else if (_ship->currentItem()->rawValue("ordertype").toString() == "TO")
     params.append("tohead_id", _ship->id());
 
   issueToShipping *newdlg = new issueToShipping();
@@ -270,7 +270,8 @@ void maintainShipping::sViewLine()
 {
   ParameterList params;
   params.append("mode", "view");
-  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "SO")
+  
+  if (_ship->currentItem()->rawValue("ordertype").toString() == "SO")
   {
     params.append("soitem_id", _ship->altId());
     salesOrderItem newdlg(this);
@@ -278,7 +279,7 @@ void maintainShipping::sViewLine()
     newdlg.exec();
   }
 
-  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "TO")
+  if (_ship->currentItem()->rawValue("ordertype").toString() == "TO")
   {
     params.append("toitem_id", _ship->altId());
     transferOrderItem newdlg(this);
