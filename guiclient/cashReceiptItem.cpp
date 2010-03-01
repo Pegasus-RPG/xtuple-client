@@ -245,7 +245,7 @@ void cashReceiptItem::sDiscount()
     _discountAmount->setLocalValue(newdlg._amount->localValue());
 
 	if(_amttoapply <= (_openAmount->localValue() - _discountAmount->localValue()))
-	  _amountToApply->setLocalValue(_amttoapply - _discountAmount->localValue());
+	  _amountToApply->setLocalValue(_amttoapply);
 	else
       _amountToApply->setLocalValue(_openAmount->localValue() - _discountAmount->localValue());
 
