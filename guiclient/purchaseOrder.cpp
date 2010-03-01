@@ -24,6 +24,7 @@
 #include "taxBreakdown.h"
 #include "salesOrder.h"
 #include "workOrder.h"
+#include "openPurchaseOrder.h" 
 
 #define cDelete 0x01
 #define cClose  0x02
@@ -214,6 +215,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       connect(_vendor, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       //_new->setEnabled(TRUE);
       int itemsrcid =-1;
+      int openpoid =-1;
       if (itemsiteid != -1)
       {
 	      q.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
@@ -262,8 +264,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 		  }
         }
 
-        q.prepare( "SELECT itemsrc_vend_id "
-                   "FROM itemsrc "
+        q.prepare( "SELECT itemsrc_vend_id, vend_name  "
+                   "from itemsrc left join vend on vend.vend_id = itemsrc.itemsrc_vend_id "
                    "WHERE (itemsrc_id=:itemsrc_id);" );
         q.bindValue(":itemsrc_id", itemsrcid);
         q.exec();
@@ -277,6 +279,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         else
         {
           int vendid = q.value("itemsrc_vend_id").toInt();;
+          QString vendname = q.value("vend_name").toString();
 
           q.prepare( "SELECT pohead_id "
                      "FROM pohead "
@@ -294,10 +297,22 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                    "Click Yes to use the existing Purchase Order otherwise a new one will be created."),
                 QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
             {
+              ParameterList openPurchaseOrderParams;
+              openPurchaseOrderParams.append("vend_id", vendid);
+              openPurchaseOrderParams.append("vend_name", vendname);
+              openPurchaseOrder newdlg(omfgThis, "", TRUE);
+              newdlg.set(openPurchaseOrderParams);
+              openpoid = newdlg.exec();
+
+              if (openpoid == XDialog::Rejected)
+              {
+                deleteLater();
+                return UndefinedError;
+              }
 //  Use an existing pohead
               _mode = cEdit;
 
-              setPoheadid(q.value("pohead_id").toInt());
+              setPoheadid(openpoid);
               _orderNumber->setEnabled(FALSE);
               _orderDate->setEnabled(FALSE);
               _vendor->setReadOnly(TRUE);

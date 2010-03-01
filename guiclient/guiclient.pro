@@ -495,6 +495,7 @@ FORMS =   ../common/batchItem.ui                \
           metasqls.ui                   \
           miscCheck.ui                  \
           miscVoucher.ui                \
+          openPurchaseOrder.ui          \
           openReturnAuthorizations.ui   \
           openSalesOrders.ui            \
           openVouchers.ui               \
@@ -1225,6 +1226,7 @@ HEADERS = ../common/batchItem.h                 \
           menuSystem.h                  \
           miscCheck.h                   \
           miscVoucher.h                 \
+          openPurchaseOrder.h           \
           openReturnAuthorizations.h    \
           openSalesOrders.h             \
           openVouchers.h                \
@@ -1973,6 +1975,7 @@ SOURCES = ../common/batchItem.cpp               \
           menuSystem.cpp                \
           miscCheck.cpp                 \
           miscVoucher.cpp               \
+          openPurchaseOrder.cpp         \
           openReturnAuthorizations.cpp  \
           openSalesOrders.cpp           \
           openVouchers.cpp              \
