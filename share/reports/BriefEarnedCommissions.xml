@@ -44,7 +44,7 @@ WHERE ( (cohist_commission &lt;> 0)
 &lt;? endif ?>
 
 &lt;? if exists("salesrep_id") ?>
-  AND (salesrep_id=&lt;? value("salesrep_id") ?>)
+  AND (cohist_salesrep_id=&lt;? value("salesrep_id") ?>)
 &lt;? endif ?>
 )
 GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
@@ -774,7 +774,8 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate
     <query>detail</query>
     <column>extprice</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <field>
    <rect>
@@ -794,7 +795,8 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate
     <query>detail</query>
     <column>commission</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>
