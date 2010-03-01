@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "filterSave.h"
+#include "filtersave.h"
 #include <xsqlquery.h>
 #include <QMessageBox>
 #include <QSqlError>
