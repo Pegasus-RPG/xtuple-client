@@ -483,6 +483,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     _priceUOM->setEnabled(!viewMode);
     _warranty->setEnabled(!viewMode);
     _listPrices->setEnabled(!viewMode);
+    _altCosAccnt->setEnabled(!viewMode);
 
     _subItemList->setVisible(!viewMode);
     _save->setVisible(!viewMode);
