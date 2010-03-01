@@ -373,6 +373,10 @@ bool importXML::importOne(const QString &pFileName)
      rollback just that view-level element if it generates an error.
   */
 
+  // the silent attribute provides the user the option to turn off 
+  // the interactive message for the view-level element
+
+
   q.exec("BEGIN;");
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -392,6 +396,9 @@ bool importXML::importOne(const QString &pFileName)
 
     bool ignoreErr = (viewElem.attribute("ignore", "false").isEmpty() ||
                       viewElem.attribute("ignore", "false") == "true");
+
+    bool silent = (viewElem.attribute("silent", "false").isEmpty() ||
+                   viewElem.attribute("silent", "false") == "true");
 
     QString mode = viewElem.attribute("mode", "insert");
     QStringList keyList;
@@ -492,10 +499,13 @@ bool importXML::importOne(const QString &pFileName)
       {
         QString warning = q.lastError().databaseText();
         q.exec("ROLLBACK TO SAVEPOINT " + savepointName + ";");
-        QMessageBox::warning(this, tr("Ignoring Error"),
+        if (! silent)
+        {
+          QMessageBox::warning(this, tr("Ignoring Error"),
                              tr("Ignoring database error while importing %1:\n\n%2")
                               .arg(viewElem.tagName())
                               .arg(warning));
+        }                  
       }
       else
       {
