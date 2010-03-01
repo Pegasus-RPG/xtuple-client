@@ -52,6 +52,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_more,        SIGNAL(toggeled(bool)), this, SLOT(sHandleMore(bool)));
   connect(_usePattern,  SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
+  connect(_selected,  SIGNAL(toggled(bool)), _usr, SLOT(setEnabled(bool)));
 
   if(_privileges->check("MaintainOpportunities"))
   {
