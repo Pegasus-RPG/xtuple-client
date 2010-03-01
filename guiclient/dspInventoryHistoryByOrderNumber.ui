@@ -1,4 +1,5 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
@@ -7,8 +8,8 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>dspInventoryHistoryByOrderNumber</class>
- <widget class="QWidget" name="dspInventoryHistoryByOrderNumber" >
-  <property name="geometry" >
+ <widget class="QWidget" name="dspInventoryHistoryByOrderNumber">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -16,107 +17,85 @@ to be bound by its terms.</comment>
     <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Inventory History by Order Number</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_4" >
-     <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <property name="margin">
       <number>12</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <layout class="QGridLayout" name="gridLayout_3" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout" >
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QGroupBox" name="_orderGroup" >
-             <property name="title" >
+            <widget class="QGroupBox" name="_orderGroup">
+             <property name="title">
               <string/>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_4" >
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="QLabel" name="_orderNumberLit" >
-                <property name="text" >
+               <widget class="QLabel" name="_orderNumberLit">
+                <property name="text">
                  <string>Order #:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XLineEdit" name="_orderNumber" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>100</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-               </widget>
+               <widget class="SoLineEdit" name="_orderNumber"/>
               </item>
               <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
+               <widget class="QPushButton" name="_salesOrderList">
+                <property name="text">
+                 <string>...</string>
                 </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::MinimumExpanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
              </layout>
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="_transGroup" >
-             <property name="title" >
+            <widget class="QGroupBox" name="_transGroup">
+             <property name="title">
               <string/>
              </property>
-             <layout class="QGridLayout" name="gridLayout" >
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_transTypeLit" >
-                <property name="text" >
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="_transTypeLit">
+                <property name="text">
                  <string>Trans. Types:</string>
                 </property>
-                <property name="alignment" >
+                <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" >
-               <widget class="XComboBox" name="_transType" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <item row="0" column="1">
+               <widget class="XComboBox" name="_transType">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                </widget>
               </item>
-              <item row="0" column="2" >
+              <item row="0" column="2">
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>0</width>
                   <height>20</height>
@@ -129,33 +108,33 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="1" column="0" >
-          <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="WarehouseGroup" name="_warehouse" >
-             <property name="title" >
+            <widget class="WarehouseGroup" name="_warehouse">
+             <property name="title">
               <string/>
              </property>
-             <property name="fixedSize" >
+             <property name="fixedSize">
               <bool>false</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="_dateGroup" >
-             <property name="title" >
+            <widget class="QGroupBox" name="_dateGroup">
+             <property name="title">
               <string/>
              </property>
-             <layout class="QGridLayout" >
-              <item row="0" column="0" >
-               <widget class="DateCluster" name="_dates" />
+             <layout class="QGridLayout">
+              <item row="0" column="0">
+               <widget class="DateCluster" name="_dates"/>
               </item>
-              <item row="0" column="1" >
-               <spacer name="horizontalSpacer" >
-                <property name="orientation" >
+              <item row="0" column="1">
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>0</width>
                   <height>20</height>
@@ -172,13 +151,13 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>0</width>
            <height>78</height>
@@ -187,38 +166,38 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
+            <widget class="QPushButton" name="_close">
+             <property name="text">
               <string>&amp;Close</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_query" >
-             <property name="text" >
+            <widget class="QPushButton" name="_query">
+             <property name="text">
               <string>&amp;Query</string>
              </property>
-             <property name="autoDefault" >
+             <property name="autoDefault">
               <bool>true</bool>
              </property>
-             <property name="default" >
+             <property name="default">
               <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_print" >
-             <property name="text" >
+            <widget class="QPushButton" name="_print">
+             <property name="text">
               <string>&amp;Print</string>
              </property>
             </widget>
@@ -227,13 +206,13 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -245,38 +224,38 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QFrame" name="_frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <item row="1" column="0">
+      <widget class="QFrame" name="_frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" >
-        <property name="margin" >
+       <layout class="QGridLayout">
+        <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="0" >
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+        <item row="0" column="0">
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="lblInventoryHistoryLit" >
-            <property name="text" >
+           <widget class="QLabel" name="lblInventoryHistoryLit">
+            <property name="text">
              <string>Inventory History:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="XTreeWidget" name="_invhist" />
+           <widget class="XTreeWidget" name="_invhist"/>
           </item>
          </layout>
         </item>
@@ -287,13 +266,18 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SoLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>socluster.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
@@ -318,13 +302,12 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
+  <tabstop>_salesOrderList</tabstop>
   <tabstop>_transType</tabstop>
-  <tabstop>_warehouse</tabstop>
-  <tabstop>_dates</tabstop>
-  <tabstop>_query</tabstop>
   <tabstop>_invhist</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_query</tabstop>
+  <tabstop>_print</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -334,11 +317,11 @@ to be bound by its terms.</comment>
    <receiver>dspInventoryHistoryByOrderNumber</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

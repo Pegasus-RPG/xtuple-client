@@ -24,6 +24,7 @@
 #include "mqlutil.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
+#include "salesOrderList.h"
 #include "transferTrans.h"
 
 dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -35,7 +36,13 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_orderNumber, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
+
+#ifndef Q_WS_MAC
+  _salesOrderList->setMaximumWidth(25);
+#endif
 
   _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
   _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
@@ -70,6 +77,21 @@ dspInventoryHistoryByOrderNumber::~dspInventoryHistoryByOrderNumber()
 void dspInventoryHistoryByOrderNumber::languageChange()
 {
   retranslateUi(this);
+}
+
+
+void dspInventoryHistoryByOrderNumber::sSalesOrderList()
+{
+  ParameterList params;
+  params.append("sohead_id", _orderNumber->id());
+  params.append("soType", cSoOpen);
+
+  salesOrderList newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+    _orderNumber->setId(id);
 }
 
 void dspInventoryHistoryByOrderNumber::setParams(ParameterList & params)

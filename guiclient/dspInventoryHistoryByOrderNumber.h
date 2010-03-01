@@ -31,6 +31,7 @@ public slots:
     virtual void sViewTransInfo();
     virtual void sPopulateMenu( QMenu * menuThis, QTreeWidgetItem * );
     virtual void sFillList();
+	virtual void sSalesOrderList();
 
 protected slots:
     virtual void languageChange();
