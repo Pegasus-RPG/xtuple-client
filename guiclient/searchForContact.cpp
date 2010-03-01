@@ -13,9 +13,11 @@
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include <parameter.h>
+#include "storedProcErrorLookup.h"
 
 #include "contact.h"
 
@@ -38,6 +40,7 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   connect(_showInactive, SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_cntct,	 SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *)));
   connect(_view,	 SIGNAL(clicked()),	this, SLOT(sView()));
+  connect(_delete,	 SIGNAL(clicked()),	this, SLOT(sDelete()));
 
   _cntct->addColumn(tr("First"),       50, Qt::AlignLeft           , true, "cntct_first_name");
   _cntct->addColumn(tr("Last"),        -1, Qt::AlignLeft           , true, "cntct_last_name" );
@@ -57,10 +60,12 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   {
     connect(_cntct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_cntct, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+	
+	connect(_cntct, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_cntct, SIGNAL(itemSelected(int)), _delete, SLOT(animateClick()));
   }
   else if (_viewpriv)
     connect(_cntct, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    
 }
 
 searchForContact::~searchForContact()
@@ -82,6 +87,20 @@ void searchForContact::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
   pMenu->setItemEnabled(menuItem, _viewpriv);
+
+  XSqlQuery chk;
+  chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
+  chk.bindValue(":cntct_id", _cntct->id());
+  chk.exec();
+  if (chk.lastError().type() != QSqlError::NoError) {
+    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (chk.first() && !chk.value("inUse").toBool()) {
+	menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
+    pMenu->setItemEnabled(menuItem, _editpriv);
+  }
+
 }
 
 void searchForContact::sEdit()
@@ -106,6 +125,36 @@ void searchForContact::sView()
   contact newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void searchForContact::sDelete()
+{
+  if ( QMessageBox::warning(this, tr("Delete Contact?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected contact?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare("SELECT deleteContact(:cntct_id) AS result;");
+    q.bindValue(":cntct_id", _cntct->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
+        return;
+      }
+
+      sFillList();
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }
 
 void searchForContact::sFillList()
@@ -209,3 +258,4 @@ void searchForContact::sFillList()
   }
   _cntct->populate(fillq);
 }
+
