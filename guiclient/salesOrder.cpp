@@ -3344,6 +3344,8 @@ void salesOrder::setViewMode()
 
   _orderNumber->setEnabled(FALSE);
   _packDate->setEnabled(FALSE);
+  _shipDate->setEnabled(FALSE);
+  _opportunity->setEnabled(FALSE);
   _cust->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
   _salesRep->setEnabled(FALSE);
@@ -3358,6 +3360,7 @@ void salesOrder::setViewMode()
   _miscCharge->setEnabled(FALSE);
   _miscChargeDescription->setEnabled(FALSE);
   _miscChargeAccount->setReadOnly(TRUE);
+  _miscChargeAccount->setEnabled(FALSE);
   _freight->setEnabled(FALSE);
   _orderComments->setEnabled(FALSE);
   _shippingComments->setEnabled(FALSE);
