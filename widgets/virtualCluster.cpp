@@ -718,10 +718,10 @@ void VirtualClusterLineEdit::sParse()
                         numQ.lastError().databaseText());
 	}
       }
+      emit valid(_valid);
+      emit parsed();
     }
     _parsed = TRUE;
-    emit valid(_valid);
-    emit parsed();
 }
 
 void VirtualClusterLineEdit::sList()

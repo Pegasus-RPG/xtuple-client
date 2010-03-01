@@ -158,7 +158,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
                                const char*, const char*, const char*,
                                const char* = 0, const char* = 0);
-        virtual int  id() const { return _id; }
 
        void setMenu(QMenu *menu);
        QMenu *menu() const { return _menu; }
