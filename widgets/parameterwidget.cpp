@@ -528,6 +528,16 @@ void ParameterWidget::clearFilters()
   _addFilterRow->setDisabled(false);
 }
 
+
+ParameterList ParameterWidget::parameters()
+{
+	ParameterList params;
+
+	appendValue(params);
+
+	return params;
+}
+
 void ParameterWidget::repopulateComboboxes()
 {
   QRegExp rx("^xcomboBox");
