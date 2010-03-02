@@ -143,6 +143,10 @@ void costCategory::sSave()
       tr("<p>You must select an Inventory Asset Account before saving."),
       _asset
     },
+    { _expense->id() < 0,
+      tr("<p>You must select an Expense Asset Account before saving."),
+      _asset
+    },
     { _wip->id() < 0,
       tr("<p>You must select a WIP Asset Account before saving."),
       _wip
@@ -237,7 +241,8 @@ void costCategory::sSave()
                "  costcat_adjustment_accnt_id, costcat_scrap_accnt_id, costcat_mfgscrap_accnt_id,"
                "  costcat_transform_accnt_id, costcat_wip_accnt_id,"
                "  costcat_purchprice_accnt_id,"
-               "  costcat_shipasset_accnt_id, costcat_toliability_accnt_id ) "
+               "  costcat_shipasset_accnt_id, costcat_toliability_accnt_id, "
+               "  costcat_exp_accnt_id) "
                "VALUES "
                "( :costcat_id, :costcat_code, :costcat_descrip,"
                "  :costcat_asset_accnt_id, :costcat_invcost_accnt_id,"
@@ -245,7 +250,8 @@ void costCategory::sSave()
                "  :costcat_adjustment_accnt_id, :costcat_scrap_accnt_id, :costcat_mfgscrap_accnt_id,"
                "  :costcat_transform_accnt_id, :costcat_wip_accnt_id,"
                "  :costcat_purchprice_accnt_id,"
-               "  :costcat_shipasset_accnt_id, :costcat_toliability_accnt_id );" );
+               "  :costcat_shipasset_accnt_id, :costcat_toliability_accnt_id "
+               "  :costcat_exp_accnt_id);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE costcat "
@@ -261,7 +267,8 @@ void costCategory::sSave()
                "    costcat_wip_accnt_id=:costcat_wip_accnt_id,"
                "    costcat_purchprice_accnt_id=:costcat_purchprice_accnt_id,"
                "    costcat_shipasset_accnt_id=:costcat_shipasset_accnt_id,"
-               "    costcat_toliability_accnt_id=:costcat_toliability_accnt_id "
+               "    costcat_toliability_accnt_id=:costcat_toliability_accnt_id, "
+               "    costcat_exp_accnt_id=:costcat_exp_accnt_id "
                "WHERE (costcat_id=:costcat_id);" );
 
   q.bindValue(":costcat_id", _costcatid);
@@ -278,6 +285,7 @@ void costCategory::sSave()
   q.bindValue(":costcat_wip_accnt_id", _wip->id());
   q.bindValue(":costcat_purchprice_accnt_id", _purchasePrice->id());
   q.bindValue(":costcat_shipasset_accnt_id", _shippingAsset->id());
+  q.bindValue(":costcat_exp_accnt_id", _expense->id());
   if (_toLiabilityClearing->isValid())
     q.bindValue(":costcat_toliability_accnt_id", _toLiabilityClearing->id());
   q.exec();
@@ -307,6 +315,7 @@ void costCategory::populate()
     }
 
     _asset->setId(q.value("costcat_asset_accnt_id").toInt());
+    _expense->setId(q.value("costcat_exp_accnt_id").toInt());
     _inventoryCost->setId(q.value("costcat_invcost_accnt_id").toInt());
     _liability->setId(q.value("costcat_liability_accnt_id").toInt());
     _freight->setId(q.value("costcat_freight_accnt_id").toInt());
