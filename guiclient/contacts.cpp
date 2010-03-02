@@ -112,7 +112,7 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
   }
   if (chk.first() && !chk.value("inUse").toBool()) {
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    if (!_privileges->check("MaintainContacts"))
+    if (!_privileges->check("DeleteContacts"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
