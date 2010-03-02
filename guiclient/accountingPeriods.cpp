@@ -36,7 +36,7 @@ accountingPeriods::accountingPeriods(QWidget* parent, const char* name, Qt::WFla
   _period->addColumn(tr("Name"),            -1, Qt::AlignLeft,   true, "period_name");
   _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "period_start");
   _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "period_end");
-  _period->addColumn(tr("Number"),   _ynColumn, Qt::AlignRight,  true, "period_number");
+  _period->addColumn(tr("Number"),   _ynColumn, Qt::AlignRight,  false, "period_number");
   _period->addColumn(tr("Qtr"),  _statusColumn, Qt::AlignCenter, true, "qtr");
   _period->addColumn(tr("Year"),   _dateColumn, Qt::AlignCenter, true, "year");
   _period->addColumn(tr("Closed"), _ynColumn+3, Qt::AlignCenter, true, "closed");
