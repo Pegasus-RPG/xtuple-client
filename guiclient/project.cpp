@@ -36,8 +36,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignRight, true, "prjtask_number" );
   _prjtask->addColumn( tr("Name"),				_itemColumn,	Qt::AlignLeft,  true, "prjtask_name"  );
   _prjtask->addColumn( tr("Description"),		-1,				Qt::AlignLeft,  true, "prjtask_descrip" ); 
-  _prjtask->addColumn( tr("Hours Balance"),		_itemColumn,	Qt::AlignRight, true, "totalhrbal" );
-  _prjtask->addColumn( tr("Expense Balance"),	_itemColumn, 	Qt::AlignRight, true, "totalexpbal" );
+  _prjtask->addColumn( tr("Hours Balance"),		_itemColumn,	Qt::AlignRight, true, "prjtaskhrbal" );
+  _prjtask->addColumn( tr("Expense Balance"),	_itemColumn, 	Qt::AlignRight, true, "prjtaskexpbal" );
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -386,6 +386,8 @@ void project::sFillTaskList()
   }
   
   q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, "
+  			 " COALESCE(prjtask_hours_budget - prjtask_hours_actual, 0.0) as prjtaskhrbal, "
+			 " COALESCE(prjtask_exp_budget - prjtask_exp_actual, 0.0) as prjtaskexpbal, "
              "firstLine(prjtask_descrip) AS prjtask_descrip, totalhrbal, totalexpbal "
 			 " FROM (SELECT COALESCE(SUM(prjtask_hours_budget), 0.0) AS totalhrbud, "
              " COALESCE(SUM(prjtask_hours_actual), 0.0) AS totalhract, "
