@@ -1161,6 +1161,8 @@ void initErrorLookupHash()
 			-1, TR("Cannot release this Purchase Order because it "
 			       "does not have any unreleased Purchase Order Items."),	0, "" },
 
+  { "releaseTransferOrder", -1, TR("Cannot release this Transfer Order because "
+                                   "it does not have any line items."), 0, "" },
   { "releaseUnusedBillingHeader",
 			-1, TR("Cannot release this Billing Header because it "
 			       "has already been posted."),	0, "" },
