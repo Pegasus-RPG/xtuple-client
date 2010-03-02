@@ -48,11 +48,14 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     _contacts->addColumn(tr("Last Name"),    100, Qt::AlignLeft, true, "cntct_last_name");
     _contacts->addColumn(tr("Account #"),     80, Qt::AlignLeft, true, "crmacct_number");
     _contacts->addColumn(tr("Account Name"), 160, Qt::AlignLeft, true, "crmacct_name");
+	_contacts->addColumn(tr("Title"),		  50, Qt::AlignLeft, true, "cntct_title");
     _contacts->addColumn(tr("Phone"),	     100, Qt::AlignLeft, true, "cntct_phone");
     _contacts->addColumn(tr("Alternate"),    100, Qt::AlignLeft, true, "cntct_phone2");
     _contacts->addColumn(tr("Fax"),	     100, Qt::AlignLeft, true, "cntct_fax");
     _contacts->addColumn(tr("E-Mail"),	     100, Qt::AlignLeft, true, "cntct_email");
     _contacts->addColumn(tr("Web Address"),  100, Qt::AlignLeft, true, "cntct_webaddr");
+
+	_contacts->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     if (_privileges->check("MaintainContacts"))
     {
@@ -133,30 +136,38 @@ void contacts::sNew()
 
 void contacts::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("cntct_id", _contacts->id());
+  QList<XTreeWidgetItem*> list = _contacts->selectedItems();
+  for (int i = 0; i < list.size(); i++)
+  {
+	ParameterList params;
+    params.append("mode", "edit");
+	params.append("cntct_id", ((XTreeWidgetItem*)(list[i]))->id());
 
-  contact newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    contact newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  sFillList();
 }
 
 void contacts::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("cntct_id", _contacts->id());
+  QList<XTreeWidgetItem*> list = _contacts->selectedItems();
+  for (int i = 0; i < list.size(); i++)
+  {
+	  ParameterList params;
+	  params.append("mode", "view");
+	  params.append("cntct_id", ((XTreeWidgetItem*)(list[i]))->id());
 
-  contact newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+	  contact newdlg(this, "", TRUE);
+	  newdlg.set(params);
+	  newdlg.exec();
+  }
 }
 
 void contacts::sDelete()
 {
+
   if ( QMessageBox::warning(this, tr("Delete Contact?"),
                             tr("<p>Are you sure that you want to completely "
 			       "delete the selected contact?"),
@@ -164,25 +175,30 @@ void contacts::sDelete()
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare("SELECT deleteContact(:cntct_id) AS result;");
-    q.bindValue(":cntct_id", _contacts->id());
-    q.exec();
-    if (q.first())
+
+    QList<XTreeWidgetItem*> list = _contacts->selectedItems();
+    for (int i = 0; i < list.size(); i++)
     {
-      int result = q.value("result").toInt();
-      if (result < 0)
+	  q.bindValue(":cntct_id", ((XTreeWidgetItem*)(list[i]))->id());
+      q.exec();
+
+      if (q.first())
       {
-        systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
+        int result = q.value("result").toInt();
+        if (result < 0)
+        {
+          systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
+          return;
+        }
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
-
-      sFillList();
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+	}
   }
+  sFillList();
 }
 
 void contacts::setParams(ParameterList &params)
