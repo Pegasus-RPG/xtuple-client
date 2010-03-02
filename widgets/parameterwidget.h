@@ -36,7 +36,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
-    Q_INVOKABLE void appendValue(ParameterList &);
+                void appendValue(ParameterList &);
     Q_INVOKABLE void applyDefaultFilterSet();
     Q_INVOKABLE ParameterList parameters();
 
@@ -85,5 +85,9 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     bool containsUsedType(QString);
 
 };
+
+Q_DECLARE_METATYPE(ParameterWidget*);
+
+void setupParameterWidget(QScriptEngine *engine);
 
 #endif

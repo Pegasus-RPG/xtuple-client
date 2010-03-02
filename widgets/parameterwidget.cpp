@@ -11,6 +11,7 @@
 #include <parameter.h>
 #include <xsqlquery.h>
 
+#include <QtScript>
 #include <QMessageBox>
 
 #include "parameterwidget.h"
@@ -22,6 +23,16 @@
 #include "filterManager.h"
 #include "contactcluster.h"
 #include "filtersave.h"
+
+/* TODO: - add Flag to the set of types to handle parameters that are either
+           passed or not (this is different from boolean parameters, that can
+           be either true or false).
+         - add XComboBoxCode to the set of types to handle parameters that
+           require the code value from an xcombobox instead of the id.
+         - store the text value of the enum in the filter definition, not the
+           integer. otherwise the db contents will prevent reorganizing the
+           order of the symbolic values of the type enumeration.
+ */
 
 ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
     QWidget(pParent)
@@ -379,116 +390,92 @@ void ParameterWidget::changeFilterObject(int index)
 
   QPair<QString, ParameterWidgetTypes> tempPair;
 
-  DLineEdit *dLineEdit= new DLineEdit(_filterGroup);
-  UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
-  CRMAcctCluster *crmacctCluster = new CRMAcctCluster(_filterGroup);
-  QLineEdit *lineEdit = new QLineEdit(_filterGroup);
-  XComboBox *xBox = new XComboBox(_filterGroup);
-  ContactCluster *contactCluster = new ContactCluster(_filterGroup);
 
   if (widget && layout && button)
     delete widget;
   else
     return;
 
+  QWidget *newWidget = 0;
   switch (type)
   {
   case Date:
-    delete usernameCluster;
-    delete crmacctCluster;
-    delete lineEdit;
-    delete xBox;
-    delete contactCluster;
-    dLineEdit->setObjectName("widget" + row);
-
-    layout->insertWidget(0, dLineEdit);
-
-    connect(button, SIGNAL(clicked()), dLineEdit, SLOT( deleteLater() ) );
-    connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue(QDate) ) );
+    {
+      DLineEdit *dLineEdit= new DLineEdit(_filterGroup);
+      newWidget = dLineEdit;
+      connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue(QDate) ) );
+    }
     break;
   case User:
-    delete dLineEdit;
-    delete crmacctCluster;
-    delete lineEdit;
-    delete xBox;
-    delete contactCluster;
-    usernameCluster->setObjectName("widget" + row);
-    usernameCluster->setNameVisible(false);
-    usernameCluster->setDescriptionVisible(false);
-    usernameCluster->setLabel("");
+    {
+      UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
+      newWidget = usernameCluster;
+      usernameCluster->setNameVisible(false);
+      usernameCluster->setDescriptionVisible(false);
+      usernameCluster->setLabel("");
 
-    layout->insertWidget(0, usernameCluster);
-
-    connect(button, SIGNAL(clicked()), usernameCluster, SLOT( deleteLater() ) );
-    connect(usernameCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+      connect(button, SIGNAL(clicked()), usernameCluster, SLOT( deleteLater() ) );
+      connect(usernameCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
     break;
   case Crmacct:
-    delete dLineEdit;
-    delete usernameCluster;
-    delete lineEdit;
-    delete xBox;
-    delete contactCluster;
-    crmacctCluster->setObjectName("widget" + row);
-    crmacctCluster->setNameVisible(false);
-    crmacctCluster->setDescriptionVisible(false);
-    crmacctCluster->setLabel("");
+    {
+      CRMAcctCluster *crmacctCluster = new CRMAcctCluster(_filterGroup);
+      newWidget = crmacctCluster;
+      crmacctCluster->setNameVisible(false);
+      crmacctCluster->setDescriptionVisible(false);
+      crmacctCluster->setLabel("");
 
-    layout->insertWidget(0, crmacctCluster);
-
-    connect(button, SIGNAL(clicked()), crmacctCluster, SLOT( deleteLater() ) );
-    connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+      connect(button, SIGNAL(clicked()), crmacctCluster, SLOT( deleteLater() ) );
+      connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
     break;
   case Contact:
-    delete dLineEdit;
-    delete usernameCluster;
-    delete lineEdit;
-    delete xBox;
-    delete crmacctCluster;
-    contactCluster->setObjectName("widget" + row);
-    contactCluster->setDescriptionVisible(false);
-    contactCluster->setLabel("");
+    {
+      ContactCluster *contactCluster = new ContactCluster(_filterGroup);
+      newWidget = contactCluster;
+      contactCluster->setDescriptionVisible(false);
+      contactCluster->setLabel("");
 
-    layout->insertWidget(0, contactCluster);
-
-    connect(button, SIGNAL(clicked()), contactCluster, SLOT( deleteLater() ) );
-    connect(contactCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+      connect(button, SIGNAL(clicked()), contactCluster, SLOT( deleteLater() ) );
+      connect(contactCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
     break;
   case XComBox:
-    delete dLineEdit;
-    delete usernameCluster;
-    delete lineEdit;
-    delete crmacctCluster;
-    delete contactCluster;
-
-    xBox->setObjectName("widget" + row);
-    xBox->setType(_comboTypes[mybox->currentText()]);
-    if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
     {
-      qry.prepare( _comboQuery[mybox->currentText()] );
+      XComboBox *xBox = new XComboBox(_filterGroup);
+      newWidget = xBox;
 
-      qry.exec();
-      xBox->populate(qry);
+      xBox->setType(_comboTypes[mybox->currentText()]);
+      if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
+      {
+        qry.prepare( _comboQuery[mybox->currentText()] );
+
+        qry.exec();
+        xBox->populate(qry);
+      }
+      connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
+      connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
-    layout->insertWidget(0, xBox);
-    connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
-    connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     break;
 
   default:
-    delete dLineEdit;
-    delete usernameCluster;
-    delete crmacctCluster;
-    delete xBox;
-    delete contactCluster;
-    lineEdit->setObjectName("widget" + row);
+    {
+      QLineEdit *lineEdit = new QLineEdit(_filterGroup);
+      newWidget = lineEdit;
 
-    layout->insertWidget(0, lineEdit);
-
-    connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
-    connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
+      connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
+      connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
+    }
     break;
   }
 
+  if (newWidget)
+  {
+    connect(button, SIGNAL(clicked()), newWidget, SLOT( deleteLater() ) );
+    newWidget->setObjectName("widget" + row);
+    layout->insertWidget(0, newWidget);
+  }
 }
 
 void ParameterWidget::clearFilters()
@@ -531,11 +518,11 @@ void ParameterWidget::clearFilters()
 
 ParameterList ParameterWidget::parameters()
 {
-	ParameterList params;
+  ParameterList params;
 
-	appendValue(params);
+  appendValue(params);
 
-	return params;
+  return params;
 }
 
 void ParameterWidget::repopulateComboboxes()
@@ -920,5 +907,45 @@ bool ParameterWidget::containsUsedType(QString value)
   return false;
 }
 
+// script exposure ///////////////////////////////////////////////////////////
 
+void ParameterWidgetfromScriptValue(const QScriptValue &obj, ParameterWidget* &item)
+{
+  item = qobject_cast<ParameterWidget*>(obj.toQObject());
+}
 
+QScriptValue ParameterWidgettoScriptValue(QScriptEngine *engine, ParameterWidget* const &item)
+{
+  return engine->newQObject(item);
+}
+
+QScriptValue constructParameterWidget(QScriptContext *context,
+                                      QScriptEngine  *engine)
+{
+  ParameterWidget *obj = 0;
+  if (context->argumentCount() == 1 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new ParameterWidget(qscriptvalue_cast<QWidget*>(context->argument(0)));
+  else if (context->argumentCount() >= 2 &&
+           qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new ParameterWidget(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                              context->argument(1).toString());
+
+  return engine->toScriptValue(obj);
+}
+
+void setupParameterWidget(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, ParameterWidgettoScriptValue, ParameterWidgetfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructParameterWidget);
+
+  widget.setProperty("Crmacct", QScriptValue(engine, ParameterWidget::Crmacct), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("User", QScriptValue(engine, ParameterWidget::User), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Text", QScriptValue(engine, ParameterWidget::Text), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Date", QScriptValue(engine, ParameterWidget::Date), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("XComBox", QScriptValue(engine, ParameterWidget::XComBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Contact", QScriptValue(engine, ParameterWidget::Contact), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
