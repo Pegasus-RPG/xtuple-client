@@ -49,7 +49,7 @@ dspPoPriceVariancesByVendor::dspPoPriceVariancesByVendor(QWidget* parent, const 
   _porecv->addColumn(tr("Qty."),               _qtyColumn,      Qt::AlignRight,  true,  "porecv_qty"  );
   _porecv->addColumn(tr("Purch. Cost"),        _priceColumn,    Qt::AlignRight,  true,  "porecv_purchcost"  );
   _porecv->addColumn(tr("Vouchered Cost"),     _priceColumn,    Qt::AlignRight,  true,  "vouchercost"  );
-  _porecv->addColumn(tr("Std. Cost at Rcpt."), _priceColumn,    Qt::AlignRight,  true,  "porecv_recvcost"  );
+  _porecv->addColumn(tr("Receipt Cost."),      _priceColumn,    Qt::AlignRight,  true,  "porecv_recvcost"  );
   _porecv->addColumn(tr("Currency"),           _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
 
   if (omfgThis->singleCurrency())
