@@ -68,6 +68,9 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 			   "happen if the application is configured to "
 			   "check the LinkShield score but you have not "
 			   "subscribed to this service)."));
+  _msgHash.insert( 100, tr("Received unexpected approval code %1. This "
+                           "transaction has been treated as approved by "
+                           "YourPay."));
 }
 
 int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
@@ -573,9 +576,15 @@ int YourPayProcessor::handleResponse(const QString &presponse, const int pccardi
   }
 
   int returnValue = 0;
-  if (r_approved == "APPROVED")
+  if (r_approved == "APPROVED" || r_approved == "SUBMITTED")
   {
     _errorMsg = errorMsg(0).arg(r_ref);
+    if (r_approved == "SUBMITTED")
+    {
+      _errorMsg = errorMsg(100).arg(r_approved);
+      returnValue = 100;
+    }
+
     if (ptype == "A")
       status = "A";	// Authorized
     else if (ptype == "V")
