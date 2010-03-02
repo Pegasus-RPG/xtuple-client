@@ -37,9 +37,12 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="XLineEdit" name="_shipment">
-          <property name="enabled">
-           <bool>false</bool>
+         <widget class="XLabel" name="_shipment">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
           </property>
          </widget>
         </item>
