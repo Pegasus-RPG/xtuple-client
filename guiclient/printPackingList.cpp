@@ -189,6 +189,9 @@ void printPackingList::sPrint()
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
+    if (_metrics->boolean("EnableReturnAuth"))
+      params.append("EnableReturnAuth");
+
     if (_shipment->id() > 0)
     {
       params.append("cosmisc_id", _shipment->id());

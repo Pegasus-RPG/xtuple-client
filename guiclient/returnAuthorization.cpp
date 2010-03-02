@@ -421,7 +421,6 @@ bool returnAuthorization::sSave(bool partial)
              "       rahead_taxzone_id=:rahead_taxzone_id,rahead_rsncode_id=:rahead_rsncode_id,"
              "       rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
              "       rahead_creditmethod=:rahead_creditmethod,rahead_orig_cohead_id=:rahead_orig_cohead_id,"
-             "       rahead_new_cohead_id=:rahead_new_cohead_id, "
              "       rahead_incdt_id=:rahead_incdt_id,rahead_prj_id=:rahead_prj_id,"
              "       rahead_billtoname=:rahead_billtoname, rahead_billtoaddress1=:rahead_billtoaddress1,"
              "       rahead_billtoaddress2=:rahead_billtoaddress2, rahead_billtoaddress3=:rahead_billtoaddress3,"
