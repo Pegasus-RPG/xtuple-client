@@ -26,6 +26,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void sHandleNumber();
     virtual void sSave();
     virtual void populate();
 

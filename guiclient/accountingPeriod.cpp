@@ -61,7 +61,10 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
              "FROM period "
              "WHERE (period_closed); ");
       if (q.first())
+      {
         _startDate->setEnabled(false);
+        _year->setEnabled(false);
+      }
       
       q.exec("SELECT (LAST(period_end) + 1) AS start_date "
              "FROM (SELECT period_end "
@@ -78,6 +81,8 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
           pdate = pdate.addDays(1);
           pmonth = pdate.month();
         }
+        sHandleNumber();
+        connect(_year, SIGNAL(newID(int)), this, SLOT(sHandleNumber()));
       }
     }
     else if (param.toString() == "edit")
@@ -100,6 +105,22 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void accountingPeriod::sHandleNumber()
+{
+  q.prepare("SELECT COALESCE(MAX(period_number),0) + 1 AS number "
+            "FROM period "
+            "WHERE (period_yearperiod_id=:yearperiod_id);");
+  q.bindValue(":yearperiod_id", _year->id());
+  q.exec();
+  if (q.first())
+    _number->setValue(q.value("number").toInt());
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void accountingPeriod::sSave()
@@ -340,12 +361,13 @@ void accountingPeriod::populate()
   
   q.prepare( "SELECT period_start, period_end, period_closed, period_freeze,"
              "       period_name, period_yearperiod_id, period_quarter, "
+             "       period_number, "
              "       (COUNT(trialbal_id) > 0) AS hasTrialBal "
              "FROM period "
              "  LEFT OUTER JOIN trialbal ON (period_id = trialbal_period_id) "
              "WHERE (period_id=:period_id) "
              "GROUP BY period_start, period_end, period_closed, period_freeze,"
-             "         period_name, period_yearperiod_id, period_quarter;" );
+             "         period_number, period_name, period_yearperiod_id, period_quarter;" );
   q.bindValue(":period_id", _periodid);
   q.exec();
   if (q.first())
@@ -370,6 +392,7 @@ void accountingPeriod::populate()
     _frozen->setChecked(q.value("period_freeze").toBool());
     _name->setText(q.value("period_name").toString());
     _year->setId(q.value("period_yearperiod_id").toInt());
+    _number->setValue(q.value("period_number").toInt());
     _quarter->setValue(q.value("period_quarter").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)

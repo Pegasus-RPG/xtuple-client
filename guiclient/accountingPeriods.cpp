@@ -36,6 +36,7 @@ accountingPeriods::accountingPeriods(QWidget* parent, const char* name, Qt::WFla
   _period->addColumn(tr("Name"),            -1, Qt::AlignLeft,   true, "period_name");
   _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "period_start");
   _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "period_end");
+  _period->addColumn(tr("Number"),   _ynColumn, Qt::AlignRight,  true, "period_number");
   _period->addColumn(tr("Qtr"),  _statusColumn, Qt::AlignCenter, true, "qtr");
   _period->addColumn(tr("Year"),   _dateColumn, Qt::AlignCenter, true, "year");
   _period->addColumn(tr("Closed"), _ynColumn+3, Qt::AlignCenter, true, "closed");
@@ -330,7 +331,7 @@ void accountingPeriods::sFillList()
                      "            WHEN ( (period_closed) AND (period_freeze) ) THEN 2"
                      "            ELSE 0"
                      "       END,"
-                     "       period_name,"
+                     "       period_number, period_name,"
                      "       period_start, period_end,"
                      "       COALESCE(to_char(period_quarter,'9'),'?') AS qtr,"
                      "       COALESCE(to_char(EXTRACT(year FROM yearperiod_end),'9999'),'?') AS year,"
