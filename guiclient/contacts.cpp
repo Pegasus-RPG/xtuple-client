@@ -48,7 +48,7 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     _contacts->addColumn(tr("Last Name"),    100, Qt::AlignLeft, true, "cntct_last_name");
     _contacts->addColumn(tr("Account #"),     80, Qt::AlignLeft, true, "crmacct_number");
     _contacts->addColumn(tr("Account Name"), 160, Qt::AlignLeft, true, "crmacct_name");
-	_contacts->addColumn(tr("Title"),		  50, Qt::AlignLeft, true, "cntct_title");
+    _contacts->addColumn(tr("Title"),         50, Qt::AlignLeft, true, "cntct_title");
     _contacts->addColumn(tr("Phone"),	     100, Qt::AlignLeft, true, "cntct_phone");
     _contacts->addColumn(tr("Alternate"),    100, Qt::AlignLeft, true, "cntct_phone2");
     _contacts->addColumn(tr("Fax"),	     100, Qt::AlignLeft, true, "cntct_fax");
