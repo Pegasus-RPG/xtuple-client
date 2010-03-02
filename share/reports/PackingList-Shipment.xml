@@ -219,6 +219,7 @@ WHERE ((image_name='logo'));</sql>
   <name>so_ra_relation</name>
   <sql>--added in 2.3 to show RA link to S/O if the SO
 --was created as the result of a replacement RA
+&lt;? if exists("EnableReturnAuth") ?>
 select 
 'RA #' AS ratext,
 rahead_number
@@ -227,7 +228,12 @@ rahead, cohead, shiphead
 where 
 rahead_new_cohead_id = cohead_id
 and cohead_id = shiphead_order_id
-and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
+and shiphead_id = &lt;? value("shiphead_id") ?>;
+&lt;? else ?>
+select 
+'' AS ratext,
+'' AS rahead_number
+&lt;? endif ?></sql>
  </querysource>
  <rpthead>
   <height>463</height>
