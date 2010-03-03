@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>600</height>
+    <width>800</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,21 +45,27 @@ to be bound by its terms.</comment>
                <layout class="QGridLayout">
                 <item row="0" column="0" colspan="2">
                  <widget class="QRadioButton" name="_allAccounts">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="text">
                    <string>All Accounts</string>
                   </property>
                   <property name="checked">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QRadioButton" name="_selectedAccount">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="text">
                    <string>Selected Account:</string>
                   </property>
                   <property name="checked">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -74,46 +80,27 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="2" column="0" colspan="2">
-                 <layout class="QHBoxLayout">
-                  <item>
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>16</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
+                 <layout class="QGridLayout" name="gridLayout">
+                  <item row="0" column="0">
                    <widget class="XCheckBox" name="_showRunningTotal">
                     <property name="text">
                      <string>Show Running Total</string>
                     </property>
                    </widget>
                   </item>
+                  <item row="1" column="0">
+                   <widget class="XLabel" name="xlabel">
+                    <property name="text">
+                     <string>Document#</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="XLineEdit" name="_docNumber"/>
+                  </item>
                  </layout>
                 </item>
                </layout>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </item>
@@ -284,6 +271,12 @@ to be bound by its terms.</comment>
              <property name="text">
               <string>&amp;Query</string>
              </property>
+             <property name="autoDefault">
+              <bool>true</bool>
+             </property>
+             <property name="default">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -419,6 +412,12 @@ to be bound by its terms.</comment>
    <header>xlabel.h</header>
   </customwidget>
   <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
@@ -429,7 +428,6 @@ to be bound by its terms.</comment>
   <tabstop>_allAccounts</tabstop>
   <tabstop>_selectedAccount</tabstop>
   <tabstop>_account</tabstop>
-  <tabstop>_showRunningTotal</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_allSources</tabstop>
   <tabstop>_selectedSource</tabstop>
@@ -448,8 +446,8 @@ to be bound by its terms.</comment>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>687</x>
-     <y>28</y>
+     <x>775</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -464,12 +462,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>553</x>
-     <y>119</y>
+     <x>540</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
-     <x>602</x>
-     <y>120</y>
+     <x>601</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -480,12 +478,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>60</y>
+     <x>71</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
-     <x>357</x>
-     <y>96</y>
+     <x>406</x>
+     <y>84</y>
     </hint>
    </hints>
   </connection>
@@ -500,8 +498,8 @@ to be bound by its terms.</comment>
      <y>64</y>
     </hint>
     <hint type="destinationlabel">
-     <x>108</x>
-     <y>83</y>
+     <x>145</x>
+     <y>117</y>
     </hint>
    </hints>
   </connection>
@@ -512,12 +510,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>156</x>
-     <y>88</y>
+     <x>163</x>
+     <y>117</y>
     </hint>
     <hint type="destinationlabel">
-     <x>422</x>
-     <y>153</y>
+     <x>766</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -528,12 +526,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
-     <y>85</y>
+     <x>163</x>
+     <y>117</y>
     </hint>
     <hint type="destinationlabel">
-     <x>511</x>
-     <y>153</y>
+     <x>777</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>

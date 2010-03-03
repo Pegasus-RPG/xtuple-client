@@ -105,6 +105,9 @@ SELECT gltrans_id,
 &lt;? if exists("accnt_id") ?>
    AND (gltrans_accnt_id=&lt;? value("accnt_id") ?>)
 &lt;? endif ?>
+&lt;? if exists("docnum") ?>
+   AND (gltrans_docnumber = case when &lt;? value("docnum") ?> = '' then gltrans_docnumber else &lt;? value("docnum") ?> end )
+&lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (gltrans_source=&lt;? value("source") ?>)
 &lt;? endif ?>

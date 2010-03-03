@@ -156,7 +156,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
     return false;
   }
 
-  _dates->appendValue(params);
+  //_dates->appendValue(params); -- Commented by U-Haul
 
   if (_selectedAccount->isChecked())
   {
@@ -225,6 +225,14 @@ bool dspGLTransactions::setParams(ParameterList &params)
   if (_selectedSource->isChecked())
     params.append("source", _source->currentText());
 
+  if (_docNumber->text() != "")
+  {
+    params.append("docnum", _docNumber->text().trimmed());
+    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  }
+  _dates->appendValue(params);
+
   return true;
 }
 
@@ -289,6 +297,11 @@ void dspGLTransactions::sFillList()
                    "                         AND <? value(\"endDate\") ?>)"
                    "<? if exists(\"accnt_id\") ?>"
                    " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
+                   "<? endif ?>"
+                   "<? if exists(\"docnum\") ?>"
+                   " AND (gltrans_docnumber = case when <? value(\"docnum\") ?> = '' then "
+				                               " gltrans_docnumber else "
+											   "<? value(\"docnum\") ?> end ) "
                    "<? endif ?>"
                    "<? if exists(\"source\") ?>"
                    " AND (gltrans_source=<? value(\"source\") ?>)"
