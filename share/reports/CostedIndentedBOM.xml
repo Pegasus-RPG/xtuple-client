@@ -21,7 +21,7 @@
          text('Using Standard Costs')
        &lt;? endif ?>
        AS lbl_usecosts,
-       (select sum(extendedcost) from 
+       (select formatCost(sum(extendedcost)) from 
 (select CASE WHEN(bomdata_bomwork_parent_id=-1) THEN bomdata_stdextendedcost
             ELSE 0
        END AS extendedcost,
@@ -1159,7 +1159,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Acutal Cost:</string>
+   <string>Actual Cost:</string>
   </label>
   <label>
    <rect>
