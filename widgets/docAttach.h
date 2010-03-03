@@ -11,11 +11,7 @@
 #ifndef DOCATTACH_H
 #define DOCATTACH_H
 
-#include <parameter.h>
-#include <xsqlquery.h>
-
 #include "documents.h"
-#include "widgets.h"
 #include "ui_docAttach.h"
 
 class docAttach : public QDialog, public Ui::docAttach
@@ -26,10 +22,9 @@ public:
     docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~docAttach();
 
-    //virtual void populate();
-
 public slots:
     virtual void set( const ParameterList & pParams );
+    virtual void sHandleButtons();
     virtual void sSave();
 
 protected slots:
@@ -38,10 +33,9 @@ protected slots:
 private:
     int _sourceid;
     int _source;
-    QString _targettype;
     int _targetid;
+    QString _targettype;
     QString _purpose;
-
 };
 
 #endif // docAttach_H

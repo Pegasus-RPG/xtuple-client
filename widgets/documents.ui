@@ -80,12 +80,12 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="_attachDoc">
+         <widget class="QPushButton" name="_editDoc">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
-           <string>&amp;Attach</string>
+           <string>&amp;Edit</string>
           </property>
          </widget>
         </item>
@@ -100,12 +100,12 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="_editDoc">
+         <widget class="QPushButton" name="_attachDoc">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
-           <string>&amp;Edit</string>
+           <string>&amp;Attach</string>
           </property>
          </widget>
         </item>
