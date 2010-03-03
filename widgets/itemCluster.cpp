@@ -792,7 +792,7 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   _descrip2 = new QLabel(this, "_descrip2");
   _descrip2->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _grid->addWidget(_descrip2, 3, 1, 1, -1);
-  //setLayout(mainLayout);
+  setDescriptionVisible(true);
 
 //  Make some internal connections
   ItemLineEdit* itemNumber = static_cast<ItemLineEdit* >(_number);
@@ -827,6 +827,12 @@ void ItemCluster::addNumberWidget(ItemLineEdit* pNumberWidget)
     connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
     connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
     connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
+}
+
+void ItemCluster::setDescriptionVisible(const bool p)
+{
+  _description->setVisible(p);
+  _descrip2->setVisible(p);
 }
 
 void ItemCluster::setReadOnly(const bool pReadOnly)

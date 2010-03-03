@@ -258,6 +258,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
 
   public slots:
     QItemDelegate *itemDelegate() { return static_cast<ItemLineEdit*>(_number)->itemDelegate(); }
+    void setDescriptionVisible(const bool p);
     void setId(const int pId);
     void setItemNumber(QString);
     void setItemsiteid(int);
