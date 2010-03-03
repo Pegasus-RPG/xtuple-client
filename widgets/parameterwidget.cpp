@@ -49,6 +49,9 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   _filterSignalMapper = new QSignalMapper(this);
   _saveButton->setDisabled(true);
 
+	_filterGroup->setVisible(false);
+	_filterButton->setChecked(false);
+
   connect(_addFilterRow, SIGNAL(clicked()), this, SLOT( addParam() ) );
   connect(_filterButton, SIGNAL(clicked()), this, SLOT( setFiltersVisabiltyPreference() ) );
   connect(_filterSignalMapper, SIGNAL(mapped(int)), this, SLOT( removeParam(int) ));
@@ -60,6 +63,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 
 void ParameterWidget::showEvent(QShowEvent * event)
 {
+	
   if(_initialized)
     return;
 
@@ -83,6 +87,7 @@ void ParameterWidget::showEvent(QShowEvent * event)
   }
   _initialized = true;
   QWidget::showEvent(event);
+	
 }
 
 void ParameterWidget::appendValue(ParameterList &pParams)
