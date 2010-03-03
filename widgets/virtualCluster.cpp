@@ -22,7 +22,7 @@
 
 #include "virtualCluster.h"
 
-#define DEBUG false
+#define DEBUG true
 
 void VirtualCluster::init()
 {
@@ -614,7 +614,7 @@ void VirtualClusterLineEdit::setId(const int pId)
   if (DEBUG)
     qDebug("VCLE %s::setId(%d)", qPrintable(objectName()), pId);
 
-    if (pId == -1)
+    if (pId == -1 || pId == 0)
 	clear();
     else
     {

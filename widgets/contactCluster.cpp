@@ -282,6 +282,7 @@ void ContactCluster::populate()
     _fax->clear();
     _email->clear();
     _webaddr->clear();
+    _addr->clear();
     setName(0, "");
     setName(1, "");
     setName(2, "");
