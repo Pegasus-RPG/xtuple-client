@@ -205,7 +205,6 @@ void ItemLineEditDelegate::setModelData(QWidget *editor,
   if (!index.isValid())
     return;
 
-//  XSqlTableModel *sqlModel = qobject_cast<XSqlTableModel *>(model);
   if (model) {
     ItemLineEdit *widget = qobject_cast<ItemLineEdit *>(editor);
     if (widget)
@@ -213,7 +212,7 @@ void ItemLineEditDelegate::setModelData(QWidget *editor,
   }
 }
 ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
 {
   setTitles(tr("Item"), tr("Items"));
   /*
@@ -1043,12 +1042,10 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   setWindowTitle( tr( "Search for Item" ) );
 
-  _searchDescrip->setText(tr("Search through Description 1"));
-
-  _searchDescrip2 = new XCheckBox(tr("Search through Description 2"));
-  _searchDescrip2->setChecked( TRUE );
-  _searchDescrip2->setObjectName("_searchDescrip2");
-  selectorsLyt->addWidget( _searchDescrip2 );
+  _searchName->show();
+  _searchName->setText(tr("Search through Description 1"));
+  _searchDescrip->show();
+  _searchDescrip->setText(tr("Search through Description 2"));
 
   _searchUpc = new XCheckBox(tr("Search through Bar Code"));
   _searchUpc->setChecked( TRUE );
@@ -1061,7 +1058,7 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   // signals and slots connections
   connect( _showInactive, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
-  connect( _searchDescrip2, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
+  connect( _searchName, SIGNAL(clicked() ), this, SLOT( sFillList() ) );
   connect( _searchUpc, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
 
   _listTab->setColumnCount(0);
@@ -1143,10 +1140,10 @@ void itemSearch::sFillList()
     if (_searchNumber->isChecked())
       subClauses << "(item_number ~* :searchString)";
 
-    if (_searchDescrip->isChecked())
+    if (_searchName->isChecked())
       subClauses << "(item_descrip1 ~* :searchString)";
 
-    if (_searchDescrip2->isChecked())
+    if (_searchDescrip->isChecked())
       subClauses << "(item_descrip2 ~* :searchString)";
 
     if (_searchUpc->isChecked())
@@ -1161,8 +1158,8 @@ void itemSearch::sFillList()
   else
   {
     if ( (!_searchNumber->isChecked()) &&
+         (!_searchName->isChecked()) &&
          (!_searchDescrip->isChecked()) &&
-         (!_searchDescrip2->isChecked()) &&
          (!_searchUpc->isChecked()) )
     {
       _listTab->clear();
@@ -1193,10 +1190,10 @@ void itemSearch::sFillList()
     if (_searchNumber->isChecked())
       subClauses << "(item_number ~* :searchString)";
 
-    if (_searchDescrip->isChecked())
+    if (_searchName->isChecked())
       subClauses << "(item_descrip1 ~* :searchString)";
 
-    if (_searchDescrip2->isChecked())
+    if (_searchDescrip->isChecked())
       subClauses << "(item_descrip2 ~* :searchString)";
 
     if (_searchUpc->isChecked())
