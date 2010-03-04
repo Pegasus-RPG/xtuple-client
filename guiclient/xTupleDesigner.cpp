@@ -324,7 +324,7 @@ void xTupleDesigner::setSource(QString psrc)
 {
   _source->close();
   // TODO: memory leak?
-  _source = new QBuffer(new QByteArray(psrc.toAscii()), this);
+  _source = new QBuffer(new QByteArray(psrc.toUtf8()), this);
   _source->open(QIODevice::ReadOnly | QIODevice::Text);
   _formwindow->setContents(_source);
   _source->reset();

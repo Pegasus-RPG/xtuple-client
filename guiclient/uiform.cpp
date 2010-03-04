@@ -323,13 +323,11 @@ void uiform::sEdit()
   if (_source.isEmpty())
     designer->setSource(new QFile(":newForm.ui"));
   else
-    designer->setSource(new QBuffer(new QByteArray(_source.toAscii()), this));
+    designer->setSource(new QBuffer(new QByteArray(_source.toUtf8()), this));
 
   connect(designer, SIGNAL(formEnabledChanged(bool)),_enabled,SLOT(setChecked(bool)));
   connect(designer, SIGNAL(formIdChanged(int)),      this,    SLOT(setFormId(int)));
-  //connect(designer, SIGNAL(nameChanged(QString)),    _name,   SLOT(setText(QString)));
   connect(designer, SIGNAL(notesChanged(QString)),   _notes,  SLOT(setText(QString)));
-  //connect(designer, SIGNAL(orderChanged(int)),       _grade,  SLOT(setValue(int)));
   connect(designer, SIGNAL(sourceChanged(QString)),  this,    SLOT(setSource(QString)));
 
   omfgThis->handleNewWindow(designer);

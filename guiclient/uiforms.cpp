@@ -144,7 +144,8 @@ void uiforms::sTest()
   wnd->setObjectName(q.value("uiform_name").toString());
 
   XUiLoader loader;
-  QByteArray ba = q.value("uiform_source").toByteArray();
+  QByteArray ba = q.value("uiform_source").toString().toUtf8();
+  qDebug("about to load a uiFile with %s", ba.constData());
   QBuffer uiFile(&ba);
   if(!uiFile.open(QIODevice::ReadOnly))
   {
@@ -153,11 +154,17 @@ void uiforms::sTest()
     return;
   }
   QWidget *ui = loader.load(&uiFile);
-  wnd->setWindowTitle(ui->windowTitle());
+  if (ui)
+  {
+    wnd->setWindowTitle(ui->windowTitle());
+    wnd->setCentralWidget(ui);
+    omfgThis->handleNewWindow(wnd);
+  }
+  else
+    QMessageBox::critical(this, tr("Could not load file"),
+                          tr("<p>Could not interpret the UI Form data "
+                             "as a UI definition."));
   uiFile.close();
-  wnd->setCentralWidget(ui);
-
-  omfgThis->handleNewWindow(wnd);
 }
 
 void uiforms::sHandleButtons()
