@@ -29,6 +29,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   _inactiveBomItems->setChecked(_metrics->boolean("AllowInactiveBomItems"));
   _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
   _changeLog->setChecked(_metrics->boolean("ItemChangeLog"));
+  _allowDelete->setChecked(_metrics->boolean("AllowBOMItemDelete"));
 
   QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
   if (issueMethod == "S")
@@ -129,6 +130,7 @@ void configurePD::sSave()
   _metrics->set("AllowInactiveBomItems", _inactiveBomItems->isChecked());
   _metrics->set("DefaultSoldItemsExclusive", _exclusive->isChecked());
   _metrics->set("ItemChangeLog", _changeLog->isChecked());
+  _metrics->set("AllowBOMItemDelete", _allowDelete->isChecked());
   
   if (_issueMethod->currentIndex() == 0)
     _metrics->set("DefaultWomatlIssueMethod", QString("S"));

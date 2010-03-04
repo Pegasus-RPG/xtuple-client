@@ -297,9 +297,12 @@ void BOM::sPopulateMenu(QMenu *menuThis)
     menuThis->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);
     menuThis->insertItem(tr("Replace"), this, SLOT(sReplace()), 0);
 
-    menuThis->insertSeparator();
+    if (_metrics->boolean("AllowBOMItemDelete"))
+    {
+      menuThis->insertSeparator();
 
-    menuThis->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+      menuThis->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+    }
     
     menuThis->insertSeparator();
     
