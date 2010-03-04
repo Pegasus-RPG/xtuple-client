@@ -12,10 +12,12 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QValidator>
 #include <QVariant>
 
 #include <metasql.h>
 
+#include "xdoublevalidator.h"
 #include "priceList.h"
 #include "taxDetail.h"
 
@@ -445,7 +447,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 
     q.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat,"
-               "       item_listprice, "
+               "       item_listprice, item_fractional, "
                "       stdcost(item_id) AS f_unitcost,"
 	           "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "  FROM item"
@@ -466,6 +468,16 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
       _priceinvuomratio = q.value("invpricerat").toDouble();
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());
+      if (q.value("item_fractional").toBool())
+	  {
+        _ordered->setValidator(new XDoubleValidator(this));
+        _billed->setValidator(new XDoubleValidator(this));
+	  }
+      else
+	  {
+        _ordered->setValidator(new QIntValidator(this));
+        _billed->setValidator(new QIntValidator(this));
+	  }
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
