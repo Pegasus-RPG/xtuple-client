@@ -127,6 +127,7 @@ void AddressCluster::init()
     setActiveVisible(false);
     setInfoVisible(false); // TODO - remove this and implement Info button
     silentSetId(-1);
+    _list->show();
     _mode = Edit;
 }
 
