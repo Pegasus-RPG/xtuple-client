@@ -50,7 +50,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_list,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_list,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-  connect(_more,        SIGNAL(toggeled(bool)), this, SLOT(sHandleMore(bool)));
+  connect(_more,        SIGNAL(toggled(bool)), this, SLOT(sHandleMore(bool)));
   connect(_usePattern,  SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
   connect(_selected,  SIGNAL(toggled(bool)), _usr, SLOT(setEnabled(bool)));
 
