@@ -10,7 +10,9 @@
 
 #include <QVariant>
 #include <QDialog>
+#include <QMessageBox>
 #include <QString>
+#include <QUrl>
 
 #include "documents.h"
 #include "docAttach.h"
@@ -106,13 +108,12 @@ void docAttach::sHandleButtons()
   }
   else if (_docType->currentIndex() == 5)
   {
-    connect(_file, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    //more
+    _save->setEnabled(true);
   }
   else if (_docType->currentIndex() == 6)
   {
-   // something else here for image
-    return;
+    connect(_img, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+    _save->setEnabled(_img->isValid());
   }
   else if (_docType->currentIndex() == 7)
   {
@@ -151,6 +152,10 @@ void docAttach::sHandleButtons()
   }
   else if (_docType->currentIndex() == 14)
   {
+    _save->setEnabled(true);
+  }
+  else if (_docType->currentIndex() == 15)
+  {
     connect(_wo, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_wo->isValid());
   }
@@ -161,9 +166,20 @@ void docAttach::sHandleButtons()
 }
 
 void docAttach::sSave()
-{
-
+{  
   XSqlQuery newDocass;
+  QString title;
+  QUrl url;
+
+  //set the purpose
+  if (_docAttachPurpose->currentIndex() == 0)
+    _purpose = "S";
+  else if (_docAttachPurpose->currentIndex() == 1)
+    _purpose = "A";
+  else if (_docAttachPurpose->currentIndex() == 2)
+    _purpose = "C";
+  else if (_docAttachPurpose->currentIndex() == 3)
+    _purpose = "D";
 
   //if then series, type derived from the stack index. e.g.
   if (_docType->currentIndex() == 1)
@@ -188,13 +204,15 @@ void docAttach::sSave()
   }
   else if (_docType->currentIndex() == 5)
   {
-    // Somthing else here for file
-    return;
+     _targettype = "URL";
+     title = _filetitle->text();
+     url = QUrl(_file->text());
+     url.setScheme("file");
   }
   else if (_docType->currentIndex() == 6)
   {
-   // something else here for image
-    return;
+     _targettype = "IMG";
+     _targetid = _img->id();
   }
   else if (_docType->currentIndex() == 7)
   {
@@ -233,32 +251,55 @@ void docAttach::sSave()
   }
   else if (_docType->currentIndex() == 14)
   {
+     _targettype = "URL";
+     title = _urltitle->text();
+     url = QUrl(_url->text());
+     url.setScheme("http");
+  }
+  else if (_docType->currentIndex() == 15)
+  {
     _targettype = "W";
     _targetid = _wo->id();
   }
 
-  //set the purpose
-  if (_docAttachPurpose->currentIndex() == 0)
-    _purpose = "S";
-  else if (_docAttachPurpose->currentIndex() == 1)
-    _purpose = "A";
-  else if (_docAttachPurpose->currentIndex() == 2)
-    _purpose = "C";
-  else if (_docAttachPurpose->currentIndex() == 3)
-    _purpose = "D";
+  if (_targettype == "IMG")
+  {
+     // For now images are handled differently because of legacy structures...
+    newDocass.prepare( "INSERT INTO imageass "
+                       "( imageass_source, imageass_source_id, imageass_image_id, imageass_purpose ) "
+                       "VALUES "
+                       "( :docass_source_type, :docass_source_id, :docass_target_id, :docass_purpose );" );
+  }
+  if (_targettype == "URL")
+  {
+    if(!url.isValid())
+    {
+      QMessageBox::warning( this, tr("Must Specify valid path"),
+                            tr("You must specify a path before you may save.") );
+      return;
+    }
 
-    // insert into docass
+    // For now urls are handled differently because of legacy structures...
+    newDocass.prepare( "INSERT INTO url "
+                       "( url_source, url_source_id, url_title, url_url ) "
+                       "VALUES "
+                       "( :docass_source_type, :docass_source_id, :title, :url );" );
+    newDocass.bindValue(":title", title);
+    newDocass.bindValue(":url", url.toString());
+  }
+  else
+  {
+    newDocass.prepare( "INSERT INTO docass "
+                       "( docass_source_type, docass_source_id, docass_target_type, docass_target_id, docass_purpose ) "
+                       "VALUES "
+                       "( :docass_source_type, :docass_source_id, :docass_target_type, :docass_target_id, :docass_purpose );" );
+    newDocass.bindValue(":docass_target_type", _targettype);
+  }
 
-  newDocass.prepare( "INSERT INTO docass "
-                     "( docass_source_type, docass_source_id, docass_target_type, docass_target_id, docass_purpose ) "
-                     "VALUES "
-                     "( :docass_source_type, :docass_source_id, :docass_target_type, :docass_target_id, :docass_purpose );" );
-
-  newDocass.bindValue(":docass_source_type", Documents::_documentMap[_source].ident);   //from documents widget
-  newDocass.bindValue(":docass_source_id", _sourceid);                                  //from documents widget
-  newDocass.bindValue(":docass_target_id", _targetid);                                  //from docAttach widget
-  newDocass.bindValue(":docass_target_type", _targettype);                              //from docAttach widget
-  newDocass.bindValue(":docass_purpose", _purpose);                                     //from docAttach widget
+  newDocass.bindValue(":docass_source_type", Documents::_documentMap[_source].ident);
+  newDocass.bindValue(":docass_source_id", _sourceid);
+  newDocass.bindValue(":docass_target_id", _targetid);
+  newDocass.bindValue(":docass_purpose", _purpose);
 
   newDocass.exec();
 

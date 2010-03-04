@@ -164,7 +164,6 @@ SOURCES    += widgets.cpp \
               documents.cpp \
               imageview.cpp \
               imageAssignment.cpp \
-              file.cpp \
               alarms.cpp alarmMaint.cpp \
               cmheadcluster.cpp \
               invoiceCluster.cpp \
@@ -232,7 +231,6 @@ HEADERS    += widgets.h \
               documents.h \
               imageview.h \
               imageAssignment.h \
-              file.h \
               alarms.h alarmMaint.h \
               cmheadcluster.h \
               queryitem.h \
@@ -255,7 +253,6 @@ FORMS += accountSearch.ui \
          customerselector.ui \
          docAttach.ui \
          documents.ui \
-         file.ui \
          filterManager.ui \
          filterSave.ui \
          imageAssignment.ui \

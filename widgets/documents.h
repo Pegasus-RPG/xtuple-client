@@ -19,6 +19,10 @@
 
 #include "ui_documents.h"
 
+#define cNew                  1
+#define cEdit                 2
+#define cView                 3
+
 class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 {
   Q_OBJECT
@@ -72,8 +76,8 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void setType(enum DocumentSources);
     void setId(int);
     void setReadOnly(bool);
+    void sNewDoc(QString type, QString ui);
     void sNewImage();
-    void sNewFile();
     void sNewToDo();
     void sNewIncdt();
     void sNewOpp();
@@ -82,6 +86,7 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void sAttachDoc();
     void sViewDoc();
     void sEditDoc();
+    void sOpenDoc(QString mode = "edit");
     void sDetachDoc();
     
     void refresh();
