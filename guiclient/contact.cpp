@@ -66,7 +66,6 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _contact->setInitialsVisible(false);
   _contact->setActiveVisible(false);
   _contact->setOwnerVisible(false);
-  _contact->addressWidget()->setInfoVisible(true);
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 }
