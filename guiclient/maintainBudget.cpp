@@ -163,6 +163,15 @@ void maintainBudget::sSave()
     return;
   }
 
+  // Delete the Budget Items and regenerate from table
+  q.prepare("SELECT deleteBudgetItems(:budghead_id) AS result;");
+  q.bindValue(":budghead_id", _budgheadid);
+  if(!q.exec())
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   q.prepare("SELECT setBudget(:budghead_id, :period_id, :accnt_id, :amount) AS result;");
 
   for(int r = 0; r < _table->numRows(); r++)
@@ -261,7 +270,10 @@ void maintainBudget::sAccountsRemove()
 {
   int idx = _accounts->currentItem();
   if(idx != -1)
+  {
     _accounts->removeItem(idx);
+	sGenerateTable();
+  }
 }
 
 void maintainBudget::sAccountsMoveUp()
