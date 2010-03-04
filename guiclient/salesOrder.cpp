@@ -670,6 +670,30 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
+  if (_opportunity->isValid())
+  {
+	q.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id " 
+			   "FROM crmacct JOIN ophead ON (crmacct_id = ophead_crmacct_id) "
+			   "WHERE (ophead_id = :ophead_id);" );
+	q.bindValue(":ophead_id", _opportunity->id());
+	q.exec();
+	if (q.first())
+	{
+	  if (q.value("crmacct_cust_id").toInt() == 0 || q.value("crmacct_prospect_id").toInt() == 0)
+	  {
+        QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+                              tr("Only opportunities from Customers or Prospects can be related.") );
+        _opportunity->setFocus();
+        return FALSE;
+	  }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return FALSE;
+    }
+  }
+
   if (ISORDER(_mode))
   {
     if (_usesPos && !partial)
