@@ -270,7 +270,7 @@ void docAttach::sSave()
                        "VALUES "
                        "( :docass_source_type, :docass_source_id, :docass_target_id, :docass_purpose );" );
   }
-  if (_targettype == "URL")
+  else if (_targettype == "URL")
   {
     if(!url.isValid())
     {

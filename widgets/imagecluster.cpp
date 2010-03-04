@@ -50,7 +50,7 @@ void ImageCluster::sRefresh()
     qDebug("%s::sRefresh()", qPrintable(objectName()));
 
   VirtualCluster::sRefresh();
-  if (_description->text().isEmpty())
+  if (id() == -1)
   {
     if (DEBUG)
       qDebug("ImageCluster::sRefresh() without a picture");
@@ -59,13 +59,20 @@ void ImageCluster::sRefresh()
   }
   else
   {
-    if (DEBUG)
-      qDebug("ImageCluster::sRefresh() has picture %s, %d",
-             qPrintable(_description->text().right(128)),
-             _description->text().length());
-    QImage tmpImage;
-    tmpImage.loadFromData(QUUDecode(_description->text()));
-    _image->setPixmap(QPixmap::fromImage(tmpImage));
+    XSqlQuery data;
+    data.prepare("SELECT image_data FROM image WHERE image_id=:image_id");
+    data.bindValue(":image_id", id());
+    data.exec();
+    if (data.first())
+    {
+      if (DEBUG)
+        qDebug("ImageCluster::sRefresh() has picture %s, %d",
+               qPrintable(_description->text().right(128)),
+               data.value("image_data").toString().length());
+      QImage tmpImage;
+      tmpImage.loadFromData(QUUDecode(data.value("image_data").toString()));
+      _image->setPixmap(QPixmap::fromImage(tmpImage));
+    }
   }
 
   if (DEBUG)
@@ -82,10 +89,9 @@ void ImageCluster::setNumberVisible(const bool p)
 }
 
 ImageClusterLineEdit::ImageClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "image", "image_id", "image_name", "image_descrip", "image_data", 0, pName)
+    VirtualClusterLineEdit(pParent, "image", "image_id", "image_name", "image_descrip", 0, 0, pName)
 {
   setTitles(tr("Image"), tr("Images"));
-  _numClause = QString(" AND (UPPER(image_name)=UPPER(:number)) ");
 }
 
 VirtualInfo *ImageClusterLineEdit::infoFactory()
