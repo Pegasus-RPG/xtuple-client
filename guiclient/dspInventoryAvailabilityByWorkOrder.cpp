@@ -159,32 +159,49 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 
       pMenu->insertSeparator();
       
-      if (selected->text(9) == "P")
-      {
-        menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-        if (!_privileges->check("MaintainPurchaseRequests"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+	  q.prepare( "SELECT itemsite_posupply as result "
+				 "FROM itemsite "
+				 "WHERE (itemsite_id=:womatl_id);" );
+	  q.bindValue(":womatl_id", _womatl->id());
+	  q.exec();
+	  if (q.first())
+	  {
+		  if (q.value("result").toBool())
+		  {
+			menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
+			if (!_privileges->check("MaintainPurchaseRequests"))
+			  pMenu->setItemEnabled(menuItem, FALSE);
 
-        menuItem = pMenu->insertItem("Create P/O...", this, SLOT(sCreatePO()), 0);
-        if (!_privileges->check("MaintainPurchaseOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+			menuItem = pMenu->insertItem("Create P/O...", this, SLOT(sCreatePO()), 0);
+			if (!_privileges->check("MaintainPurchaseOrders"))
+			  pMenu->setItemEnabled(menuItem, FALSE);
 
-        pMenu->insertSeparator();
-      }
-      else if (selected->text(9) == "M")
-      {
-        if(_womatl->altId() != -1)
-        {
-          menuItem = pMenu->insertItem("Create W/O...", this, SLOT(sCreateWO()), 0);
-          if (!_privileges->check("MaintainWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
-        }
-        menuItem = pMenu->insertItem(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()), 0);
-        if (!_privileges->check("PostMiscProduction"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+			pMenu->insertSeparator();
+		  }
+	  }
+	  q.prepare( "SELECT itemsite_wosupply as result "
+				 "FROM itemsite "
+				 "WHERE (itemsite_id=:womatl_id);" );
+	  q.bindValue(":womatl_id", _womatl->id());
+	  q.exec();
+	  if (q.first())
+	  {
+		  if (q.value("result").toBool())
+		  {
+			if(_womatl->altId() != -1)
+			{
+			  menuItem = pMenu->insertItem("Create W/O...", this, SLOT(sCreateWO()), 0);
+			  if (!_privileges->check("MaintainWorkOrders"))
+				pMenu->setItemEnabled(menuItem, FALSE);
+			}
+			menuItem = pMenu->insertItem(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()), 0);
+			if (!_privileges->check("PostMiscProduction"))
+			  pMenu->setItemEnabled(menuItem, FALSE);
 
-        pMenu->insertSeparator();
-      }
+			pMenu->insertSeparator();
+		  }
+	  }
+//      }
 
       menuItem = pMenu->insertItem("View Substitute Availability...", this, SLOT(sViewSubstituteAvailability()), 0);
 
