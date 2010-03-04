@@ -655,6 +655,8 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     if(_x_preferences)
     {
       savedString = _x_preferences->value(_settingsName + "/columnsShown");
+      if(!savedString.contains("on"))
+        savedString = "";
       savedParts = savedString.split("|", QString::SkipEmptyParts);
       for(int i = 0; i < savedParts.size(); i++)
       {
