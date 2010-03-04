@@ -423,7 +423,8 @@ void Documents::refresh()
               " END AS target_type_qtdisplayrole "
               "FROM docinfo "
               "WHERE ((source_type=:source) "
-              " AND (source_id=:sourceid)); ");
+              " AND (source_id=:sourceid)) "
+              "ORDER by target_type_qtdisplayrole, target_number; ");
   query.prepare(sql);
   query.bindValue(":inventory", tr("Inventory Description"));
   query.bindValue(":product", tr("Product Description"));
