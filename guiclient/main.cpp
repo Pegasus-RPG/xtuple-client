@@ -101,6 +101,7 @@
 #include <dbtools.h>
 #include <parameter.h>
 #include <widgets.h>
+#include "xtupleplugin.h"
 
 #include "login2.h"
 

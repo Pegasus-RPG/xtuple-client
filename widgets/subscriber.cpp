@@ -69,6 +69,8 @@ QString subscriber::whichSelection()
             return "contact";
             break;
     }
+
+    return "unknown";
 }
 
 void subscriber::set(ParameterList& params)

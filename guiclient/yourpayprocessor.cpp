@@ -9,7 +9,7 @@
  */
 
 
-
+#include <QFileInfo>
 #include <QSqlError>
 
 #include <currcluster.h>

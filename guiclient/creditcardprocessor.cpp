@@ -9,6 +9,7 @@
  */
 
 #include <QApplication>
+#include <QFile>
 #include <QMessageBox>
 #include <QProcess>
 #include <QSqlError>
@@ -16,6 +17,7 @@
 #include <QSslSocket>
 #include <QSslCertificate>
 #include <QSslConfiguration>
+#include <QUrl>
 #include <QBuffer>
 
 #include <currcluster.h>

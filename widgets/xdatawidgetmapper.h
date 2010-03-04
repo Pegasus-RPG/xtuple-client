@@ -14,6 +14,9 @@
 
 #include <QSqlTableModel>
 #include <QDataWidgetMapper>
+#include <QPointer>
+#include <QWidget>
+
 #include "widgets.h"
 
 class XTUPLEWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper

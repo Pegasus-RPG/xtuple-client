@@ -12,6 +12,7 @@
 #define virtCluster_h
 
 #include "widgets.h"
+#include "guiclientinterface.h"
 #include "parameter.h"
 #include "xlineedit.h"
 #include "xtreewidget.h"

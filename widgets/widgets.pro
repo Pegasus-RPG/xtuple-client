@@ -181,6 +181,8 @@ SOURCES    += widgets.cpp \
               filterSave.cpp
 
 HEADERS    += widgets.h \
+              xtupleplugin.h \
+              guiclientinterface.h \
               addresscluster.h contactcluster.h \
               contactwidget.h crmacctcluster.h \
               xlabel.h xlineedit.h xcheckbox.h xcombobox.h \

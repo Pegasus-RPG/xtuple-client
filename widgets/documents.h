@@ -16,6 +16,7 @@
 #include <xsqlquery.h>
 
 #include "widgets.h"
+#include "guiclientinterface.h"
 
 #include "ui_documents.h"
 

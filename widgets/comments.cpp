@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QList>
 #include <QTextBrowser>
+#include <QDateTime>
 #include <QDesktopServices>
 #include <QDebug>
 #include <QScrollBar>

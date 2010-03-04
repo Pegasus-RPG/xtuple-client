@@ -10,6 +10,8 @@
 
 #include "widgets.h"
 
+#include "xtupleplugin.h"
+
 #include "plugins/addressclusterplugin.h"
 #include "plugins/alarmsplugin.h"
 #include "plugins/aropenclusterplugin.h"

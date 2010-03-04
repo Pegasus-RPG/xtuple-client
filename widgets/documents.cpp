@@ -10,6 +10,7 @@
 
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QDebug>
 #include <QDialog>
 #include <QUrl>
 #include <QMenu>
