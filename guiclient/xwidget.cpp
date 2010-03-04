@@ -153,6 +153,10 @@ void XWidget::showEvent(QShowEvent *event)
     }
 
     loadScriptEngine();
+
+    QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
+    for (int i = 0; i < allxcb.size(); ++i)
+      allxcb.at(i)->init();
   }
   QWidget::showEvent(event);
 }

@@ -44,6 +44,23 @@ void XCheckBox::setData()
   _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), isChecked());
 }
 
+void XCheckBox::init()
+{
+  if(_initialized)
+    return;
+  QString pname;
+  if(window())
+    pname = window()->objectName() + "/";
+  _settingsName = pname + objectName();
+
+  if(_x_preferences)
+  {
+    if (!_forgetful)
+      setCheckState((Qt::CheckState)(_x_preferences->value(_settingsName + "/checked").toInt()));
+  }
+  _initialized = true;
+}
+
 void XCheckBox::setForgetful(bool p)
 {
   if (_x_preferences && !p)
@@ -66,19 +83,7 @@ void XCheckBox::setForgetful(bool p)
 
 void XCheckBox::showEvent(QShowEvent * event)
 {
-  if(_initialized)
-    return;
-  QString pname;
-  if(window())
-    pname = window()->objectName() + "/";
-  _settingsName = pname + objectName();
-
-  if(_x_preferences)
-  {
-    if (!_forgetful)
-      setCheckState((Qt::CheckState)(_x_preferences->value(_settingsName + "/checked").toInt()));
-  }
-  _initialized = true;
+  init();
   QCheckBox::showEvent(event);
 }
 

@@ -152,6 +152,10 @@ void XDialog::showEvent(QShowEvent *event)
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
     loadScriptEngine();
+
+    QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
+    for (int i = 0; i < allxcb.size(); ++i)
+      allxcb.at(i)->init();
   }
   QDialog::showEvent(event);
 }

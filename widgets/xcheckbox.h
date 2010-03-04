@@ -43,6 +43,7 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
     virtual void setFieldName(QString p)                  { _fieldName = p; };
     virtual void setForgetful(bool p);
     virtual void setData();
+    virtual void init();
 
   protected:
     virtual void showEvent(QShowEvent *);
