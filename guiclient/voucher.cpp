@@ -242,7 +242,7 @@ bool voucher::sSave()
     _invoiceNum->setFocus();
     return false;
   }
-  else
+  else if (_invoiceNum->text().trimmed().length() > 0)
   {
     q.prepare( "SELECT vohead_id "
                "FROM vohead, pohead "

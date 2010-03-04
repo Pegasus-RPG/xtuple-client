@@ -187,19 +187,20 @@ void miscVoucher::sSave()
     _invoiceNum->setFocus();
     return;
   }
-
-  q.prepare( "SELECT vohead_id "
-             "FROM vohead "
-             "WHERE ( (vohead_invcnumber=:vohead_invcnumber)"
-             " AND (vohead_vend_id=:vend_id)"
-             " AND (vohead_id<>:vohead_id) );" );
-  q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
-  q.bindValue(":vend_id", _vendor->id());
-  q.bindValue(":vohead_id", _voheadid);
-  q.exec();
-  if (q.first())
+  else if (_invoiceNum->text().trimmed().length() > 0)
   {
-      if (QMessageBox::question( this, windowTitle(),
+    q.prepare( "SELECT vohead_id "
+               "FROM vohead "
+               "WHERE ( (vohead_invcnumber=:vohead_invcnumber)"
+               " AND (vohead_vend_id=:vend_id)"
+               " AND (vohead_id<>:vohead_id) );" );
+    q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
+    q.bindValue(":vend_id", _vendor->id());
+    q.bindValue(":vohead_id", _voheadid);
+    q.exec();
+    if (q.first())
+    {
+	  if (QMessageBox::question( this, windowTitle(),
                              tr( "A Voucher for this Vendor has already been entered with the same Vendor Invoice Number. "
                                  "Are you sure you want to use this number again?" ),
                               QMessageBox::Yes,
@@ -208,6 +209,7 @@ void miscVoucher::sSave()
         _invoiceNum->setFocus();
         return;
       }
+	}
   }
 
   q.prepare( "UPDATE vohead "
