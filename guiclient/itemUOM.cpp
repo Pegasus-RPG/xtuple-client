@@ -234,6 +234,8 @@ void itemUOM::sFillList()
     else
       _available->addItem(item);
   }
+  _add->setEnabled(true);
+  _remove->setEnabled(true);
 }
 
 void itemUOM::sAdd()

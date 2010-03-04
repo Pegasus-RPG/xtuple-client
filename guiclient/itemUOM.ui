@@ -230,6 +230,9 @@ to be bound by its terms.</comment>
           <property name="text" >
            <string>Add ></string>
           </property>
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          </widget>
         </item>
         <item>
@@ -249,6 +252,9 @@ to be bound by its terms.</comment>
          <widget class="QPushButton" name="_remove" >
           <property name="text" >
            <string>&lt; Remove</string>
+          </property>
+          <property name="enabled" >
+           <bool>false</bool>
           </property>
          </widget>
         </item>
