@@ -307,6 +307,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(true);
       _item->setFocus();
       _orderId= -1;
+	  _itemsrc= -1;
 
       _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
 
@@ -358,6 +359,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(true);
       _item->setFocus();
       _orderId = -1;
+	  _itemsrc= -1;
       _warranty->hide();
       _tabs->removePage(_tabs->page(6));
 
@@ -390,6 +392,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _listPrices->setEnabled(TRUE);
       _comments->setType(Comments::SalesOrderItem);
       _qtyOrdered->setFocus();
+	  _itemsrc= 0;
 
       connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice, SIGNAL(lostFocus()), this, SLOT(sCalculateDiscountPrcnt()));
@@ -729,13 +732,14 @@ void salesOrderItem::clear()
   _updateItemsite = false;
   _baseUnitPrice->clear();
   _itemcharView->setEnabled(TRUE);
+  _itemsrc = -1;
 }
 
 void salesOrderItem::sSave()
 {
   _save->setFocus();
 
-  int itemsrcid = -1;
+  int itemsrcid = _itemsrc;
   bool _createPO = false;
   bool _createPR = false;
   q.prepare("SELECT itemsrc_id, item_id, itemsrc_item_id, itemsite_createsopo, itemsite_createsopr "
@@ -760,29 +764,32 @@ void salesOrderItem::sSave()
         return;
       }
 
-      XSqlQuery itemsrcdefault;
-      itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
-                             "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) ");
-      itemsrcdefault.bindValue(":item_id", _item->id());
-      itemsrcdefault.exec();
-      if (itemsrcdefault.first())
-      {
-        itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
-      }
-      else if (itemsrcdefault.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, itemsrcdefault.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-      else
-      {
-        ParameterList itemSourceParams;
-        itemSourceParams.append("item_id", _item->id());
-        itemSourceParams.append("qty", _qtyOrdered->toDouble());
-        itemSourceList newdlg(omfgThis, "", TRUE);
-        newdlg.set(itemSourceParams);
-        itemsrcid = newdlg.exec();
-      }
+	  if (itemsrcid==-1)
+	  {
+        XSqlQuery itemsrcdefault;
+        itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
+                               "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) ");
+        itemsrcdefault.bindValue(":item_id", _item->id());
+        itemsrcdefault.exec();
+        if (itemsrcdefault.first())
+        {
+          itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
+        }
+        else if (itemsrcdefault.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, itemsrcdefault.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+        else 
+        {
+		  ParameterList itemSourceParams;
+		  itemSourceParams.append("item_id", _item->id());
+		  itemSourceParams.append("qty", _qtyOrdered->toDouble());
+		  itemSourceList newdlg(omfgThis, "", TRUE);
+		  newdlg.set(itemSourceParams);
+		  itemsrcid = newdlg.exec();
+        }
+	  }
     }
   }
   else if (q.lastError().type() != QSqlError::NoError)
