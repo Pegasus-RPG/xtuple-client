@@ -10,6 +10,7 @@
 
 #include "shipTo.h"
 
+#include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
@@ -105,10 +106,10 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       }
       if (cust.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+	    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+	    return UndefinedError;
       }
-
+      _save->setEnabled(false);
       _shipToNumber->setFocus();
     }
     else if (param.toString() == "edit")
@@ -156,12 +157,6 @@ void shipTo::sSave()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  if (! q.exec("BEGIN"))
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
   int saveResult = _address->save(AddressCluster::CHECK);
   if (-2 == saveResult)
   {
@@ -190,23 +185,6 @@ void shipTo::sSave()
 
   if (_mode == cNew)
   {
-    if (_shipToNumber->text().length() == 0)
-    {
-      q.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
-                 "  FROM shipto "
-                 " WHERE ((shipto_cust_id=:cust_id)"
-                 "   AND  (shipto_num~'^[0-9]*$') )" );
-      q.bindValue(":cust_id", _custid);
-      q.exec();
-      if (q.first())
-        _shipToNumber->setText(q.value("n_shipto_num"));
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-
     q.exec("SELECT NEXTVAL('shipto_shipto_id_seq') AS shipto_id;");
     if (q.first())
       _shiptoid = q.value("shipto_id").toInt();
@@ -233,6 +211,13 @@ void shipTo::sSave()
 	       "  :shipto_addr_id );" );
   }
   else if (_mode == cEdit)
+  {
+    if (! q.exec("BEGIN"))
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    _inTransaction = true;
     q.prepare( "UPDATE shiptoinfo "
                "SET shipto_active=:shipto_active, shipto_default=:shipto_default,"
                "    shipto_name=:shipto_name, shipto_cntct_id=:shipto_cntct_id,"
@@ -240,8 +225,9 @@ void shipTo::sSave()
                "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
                "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
                "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id, shipto_shipchrg_id=:shipto_shipchrg_id,"
-	       "    shipto_addr_id=:shipto_addr_id "
+	           "    shipto_addr_id=:shipto_addr_id "
                "WHERE (shipto_id=:shipto_id);" );
+  }
 
   q.bindValue(":shipto_id", _shiptoid);
   q.bindValue(":shipto_active", QVariant(_active->isChecked()));
@@ -276,6 +262,7 @@ void shipTo::sSave()
   }
 
   q.exec("COMMIT;");
+  _inTransaction = false;
 
   if (_mode == cNew)
     emit newId(_shiptoid);
@@ -351,7 +338,59 @@ void shipTo::populate()
 
 void shipTo::sPopulateNumber()
 {
-  if (_shipToNumber->text().length() > 0)
+  if (_shipToNumber->text().length() == 0)
+  {
+    q.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
+               "  FROM shipto "
+               " WHERE ((shipto_cust_id=:cust_id)"
+               "   AND  (shipto_num~'^[0-9]*$') )" );
+    q.bindValue(":cust_id", _custid);
+    q.exec();
+    if (q.first())
+      _shipToNumber->setText(q.value("n_shipto_num"));
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    if (_mode == cNew)
+    {
+      if (! q.exec("BEGIN"))
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+	  _inTransaction = true;
+      q.exec("SELECT NEXTVAL('shipto_shipto_id_seq') AS shipto_id;");
+      if (q.first())
+        _shiptoid = q.value("shipto_id").toInt();
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+
+      q.prepare( "INSERT INTO shiptoinfo "
+                 "( shipto_id, shipto_cust_id, shipto_active, shipto_num, shipto_commission ) "
+                 "VALUES "
+                 "( :shipto_id, :shipto_cust_id, :shipto_active, :shipto_num, :shipto_commission );" );
+
+      q.bindValue(":shipto_id", _shiptoid);
+      q.bindValue(":shipto_active", QVariant(_active->isChecked()));
+      q.bindValue(":shipto_cust_id", _custid);
+      q.bindValue(":shipto_num", _shipToNumber->text().trimmed());
+      q.bindValue(":shipto_commission", (_commission->toDouble() / 100));
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+	  _save->setEnabled(true);
+	  _mode = cEdit;
+	}
+  }
+  else
   {
     q.prepare( "SELECT shipto_id "
                "FROM shipto "
@@ -395,3 +434,13 @@ void shipTo::sPopulateCommission(int pSalesrepid)
     }
   }
 }
+
+void shipTo::closeEvent(QCloseEvent *pEvent)
+{
+  if(_inTransaction)
+  {
+    q.exec("ROLLBACK;");
+    _inTransaction = false;
+  }
+}
+

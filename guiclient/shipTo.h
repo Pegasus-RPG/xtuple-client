@@ -33,6 +33,7 @@ public slots:
     virtual void populate();
     virtual void sPopulateNumber();
     virtual void sPopulateCommission( int pSalesrepid );
+    virtual void closeEvent( QCloseEvent * pEvent );
 
 signals:
             void newId(int);
@@ -45,6 +46,7 @@ private:
     int _mode;
     int _custid;
     int _shiptoid;
+    bool _inTransaction;
 
 };
 
