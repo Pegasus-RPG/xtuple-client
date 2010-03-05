@@ -60,9 +60,9 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   {
     connect(_cntct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_cntct, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-	
-	connect(_cntct, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_cntct, SIGNAL(itemSelected(int)), _delete, SLOT(animateClick()));
+
+    connect(_cntct, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_cntct, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   }
   else if (_viewpriv)
     connect(_cntct, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
