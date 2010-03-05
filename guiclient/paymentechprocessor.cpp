@@ -198,7 +198,7 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   {
     prequest += "FR";
     prequest += "1";
-    prequest += QString::number(amount).leftJustified(4, ' ', true);
+    prequest += QString::number(pcvv).leftJustified(4, ' ', true);
   }
 
   // version records -- should always include
