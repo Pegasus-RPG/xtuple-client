@@ -11,6 +11,7 @@
 #ifndef parameterwidget_h
 #define parameterwidget_h
 
+#include <QDate>
 #include <QSignalMapper>
 #include <QMap>
 #include <QPair>
