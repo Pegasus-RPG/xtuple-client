@@ -1150,5 +1150,7 @@ void opportunity::sHandleCrmacct(int pCrmacctid)
     _salesTab->setEnabled(false);
   else
     _salesTab->setEnabled(true);
+
+  sHandleSalesPrivs();
 }
 
