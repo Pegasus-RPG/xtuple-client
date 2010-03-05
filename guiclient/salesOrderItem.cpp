@@ -1703,7 +1703,12 @@ void salesOrderItem::sDeterminePrice(bool force)
 
       // User expected an update, so let them know and reset
       QMessageBox::critical(this, tr("Customer Cannot Buy at Quantity"),
-                            tr("<p>There is no valid price for this item." ) );
+                            tr("<p>This item is marked as exclusive and "
+                                  "no qualifying price schedule was found. "
+                                  "You may click on the price list button "
+                                  "(...) next to the Unit Price to determine "
+                                  "if there is a minimum quantity the selected "
+                                  "Customer may purchase." ) );
       _originalQtyOrd = 0.0;
 
       _customerPrice->clear();

@@ -519,12 +519,11 @@ void invoiceItem::sDeterminePrice()
       if (itemprice.value("price").toDouble() == -9999.0)
       {
         QMessageBox::critical( this, tr("Customer Cannot Buy at Quantity"),
-			       tr("<p>Although the selected Customer may "
-				  "purchase the selected Item at some quantity "
-				  "levels, the entered Quantity Ordered is too "
-				  "low. You may click on the price list button "
+                               tr("<p>This item is marked as exclusive and "
+                                  "no qualifying price schedule was found. "
+                                  "You may click on the price list button "
 				  "(...) next to the Unit Price to determine "
-				  "the minimum quantity the selected "
+                                  "if there is a minimum quantity the selected "
 				  "Customer may purchase." ) );
         _custPrice->clear();
         _price->clear();
