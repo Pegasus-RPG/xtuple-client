@@ -204,7 +204,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   {
     _poitemid = param.toInt();
 
-    q.prepare( "SELECT pohead_number "
+    q.prepare( "SELECT pohead_number, pohead_id "
                "FROM pohead, poitem "
                "WHERE ( (pohead_id=poitem_pohead_id) "
                " AND (poitem_id=:poitem_id) );" );
@@ -213,9 +213,11 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     if (q.first())
     {
       _poNumber->setText(q.value("pohead_number").toString());
+	  _poheadid = q.value("pohead_id").toInt();
     }
 
     populate();
+	sCalculateTax();
   }
   // connect here and not in the .ui to avoid timing issues at initialization
   connect(_unitPrice, SIGNAL(valueChanged()), this, SLOT(sPopulateExtPrice()));
