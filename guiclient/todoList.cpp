@@ -32,8 +32,10 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+	QSqlDatabase db = QSqlDatabase::database();
+
   _parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-  _parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User);
+  _parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User, db.userName());
   _parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
   _parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
   _parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);

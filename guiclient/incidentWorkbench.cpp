@@ -23,6 +23,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+	
+	QSqlDatabase db = QSqlDatabase::database();
 
   QString qryStatus = QString("SELECT status_seq, "
                               " CASE WHEN status_code = 'N' THEN '%1' "
@@ -42,7 +44,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
 
   parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
   parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User);
-  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text, db.userName());
   parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
   parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
   parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
