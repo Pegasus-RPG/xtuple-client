@@ -11,8 +11,23 @@
 #include "itemcluster.h"
 #include <QtScript>
 
+Q_DECLARE_METATYPE(ItemLineEdit*)
+
+QScriptValue ItemLineEditToScriptValue(QScriptEngine *engine, ItemLineEdit* const &in)
+{
+  return engine->newQObject(in);
+}
+
+void ItemLineEditFromScriptValue(const QScriptValue &object, ItemLineEdit* &out)
+{
+  out = qobject_cast<ItemLineEdit*>(object.toQObject());
+}
+
+
 void setupItemLineEdit(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, ItemLineEditToScriptValue, ItemLineEditFromScriptValue);
+
   QScriptValue widget = engine->newObject();
 
   widget.setProperty("cUndefined",	    QScriptValue(engine, ItemLineEdit::cUndefined),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);

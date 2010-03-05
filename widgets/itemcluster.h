@@ -140,24 +140,24 @@ friend class ItemLineEditDelegate;
       cKitComponents       = cSold | (cAllItemTypes_Mask ^ cKit)
     };
 
-    inline unsigned int type() const                   { return _type;                        }
-    inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 
-    inline void setDefaultType(unsigned int pType)     { _defaultType = pType; } 
-    inline void setQuery(const QString &pSql) { _sql = pSql; _useQuery = TRUE; }
-    inline void setValidationQuery(const QString &pSql) { _validationSql = pSql; _useValidationQuery = TRUE; }
-    inline int queryUsed() const              { return _useQuery;              }
-    inline int validationQueryUsed() const    { return _useValidationQuery;    }
+    Q_INVOKABLE inline unsigned int type() const                   { return _type;                        }
+    Q_INVOKABLE inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 
+    Q_INVOKABLE inline void setDefaultType(unsigned int pType)     { _defaultType = pType; } 
+    Q_INVOKABLE inline void setQuery(const QString &pSql) { _sql = pSql; _useQuery = TRUE; }
+    Q_INVOKABLE inline void setValidationQuery(const QString &pSql) { _validationSql = pSql; _useValidationQuery = TRUE; }
+    Q_INVOKABLE inline int queryUsed() const              { return _useQuery;              }
+    Q_INVOKABLE inline int validationQueryUsed() const    { return _useValidationQuery;    }
 
-    void addExtraClause(const QString &);
-    inline QStringList getExtraClauseList() const { return _extraClauses; }
-    inline void clearExtraClauseList() { _extraClauses.clear(); }
+    Q_INVOKABLE void addExtraClause(const QString &);
+    Q_INVOKABLE inline QStringList getExtraClauseList() const { return _extraClauses; }
+    Q_INVOKABLE inline void clearExtraClauseList() { _extraClauses.clear(); }
 
     Q_INVOKABLE ItemLineEditDelegate* itemDelegate() { return _delegate;}
-    QString itemNumber();
-    QString uom();
-    QString upc();
-    QString itemType();
-    bool    isConfigured();
+    Q_INVOKABLE QString itemNumber();
+    Q_INVOKABLE QString uom();
+    Q_INVOKABLE QString upc();
+    Q_INVOKABLE QString itemType();
+    Q_INVOKABLE bool    isConfigured();
 
   public slots:
     void sHandleCompleter();
@@ -254,7 +254,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     Q_INVOKABLE inline void addExtraClause(const QString & pClause) { static_cast<ItemLineEdit*>(_number)->addExtraClause(pClause);     }
     Q_INVOKABLE inline QStringList getExtraClauseList() const       { return static_cast<ItemLineEdit*>(_number)->getExtraClauseList(); }
     Q_INVOKABLE inline void clearExtraClauseList()                  { static_cast<ItemLineEdit*>(_number)->clearExtraClauseList();      }
-    ItemLineEdit *itemLineEdit() { return static_cast<ItemLineEdit*>(_number); }
+    Q_INVOKABLE ItemLineEdit *itemLineEdit() { return static_cast<ItemLineEdit*>(_number); }
 
   public slots:
     QItemDelegate *itemDelegate() { return static_cast<ItemLineEdit*>(_number)->itemDelegate(); }
