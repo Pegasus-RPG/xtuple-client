@@ -149,6 +149,7 @@ void ParameterWidget::applyDefaultFilterSet()
     else
     {
       addParam();
+			applySaved(0, 0);
     }
 
   }
@@ -240,7 +241,6 @@ void ParameterWidget::addParam()
 
 void ParameterWidget::applySaved(int pId, int filter_id)
 {
-  qDebug() << "in applySaved, pid is: " << pId;
   QGridLayout *container;
   QLayoutItem *child;
   QLayoutItem *child2;
@@ -253,6 +253,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   int xid;
 
   QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
+	QPair<QString, ParameterWidgetTypes> tempPair;
 
   clearFilters();
 
@@ -358,13 +359,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         xBox->setId(2);
 
         xid = tempFilterList[1].toInt();
-        qDebug() << "xid is: " << xid;
         xBox->setId(xid);
-        while (j.hasNext()) {
-          j.next();
-          QPair<QString, QVariant> tempPair = j.value();
-          qDebug() << j.key() << ": " << tempPair.second << endl;
-        }
         break;
       default:
         QLineEdit *lineEdit;
@@ -373,9 +368,84 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         storeFilterValue(-1, lineEdit);
         break;
       }
-    }//end of if
+			//end of if
+    }
     windowIdx++;
   }//end of for
+
+	if (filterRows.size() == 1)
+	{
+			//apply filter defaults					
+			QMapIterator<QString, QVariant> k(_defaultTypes);
+			
+			while(k.hasNext())
+			{
+				k.next();
+				int windowIdx = _filtersLayout->rowCount();
+				this->addParam();
+
+				QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
+				XComboBox *mybox = (XComboBox*)test->widget();
+
+				int idx = mybox->findText(k.key());
+
+				mybox->setCurrentIndex(idx);
+				
+				QString row;
+				row = row.setNum(windowIdx);
+
+				container = _filtersLayout->findChild<QGridLayout *>("topLayout" + row);
+				child = container->itemAtPosition(0, 0)->layout()->itemAt(0);
+				layout2 = (QHBoxLayout *)child->layout();
+				child2 = layout2->itemAt(0);
+				found = child2->widget();
+
+				tempPair = _types[k.key()];
+				int widgetType = tempPair.second;
+				
+				switch (widgetType)
+				{
+					case Date:
+						DLineEdit *dLineEdit;
+						dLineEdit = (DLineEdit*)found;
+						dLineEdit->setDate(QDate::fromString(k.value().toString(), "yyyy-MM-dd"), true);
+						break;
+					case User:
+						UsernameCluster *usernameCluster;
+						usernameCluster = (UsernameCluster*)found;
+						usernameCluster->setUsername(k.value().toString());
+						break;
+					case Crmacct:
+						CRMAcctCluster *crmacctCluster;
+						crmacctCluster = (CRMAcctCluster*)found;
+						crmacctCluster->setId(k.value().toInt());
+						break;
+					case Contact:
+						ContactCluster *contactCluster;
+						contactCluster = (ContactCluster*)found;
+						contactCluster->setId(k.value().toInt());
+						break;
+					case XComBox:
+						XComboBox *xBox;
+						xBox = (XComboBox*)found;
+
+						//fix for setid not emitting id signal if id found for filter is first in list
+						//set to any other valid id first to fix it
+						xBox->setId(2);
+
+						xid = k.value().toInt();
+						xBox->setId(xid);
+						break;
+					default:
+						QLineEdit *lineEdit;
+						lineEdit = (QLineEdit*)found;
+						lineEdit->setText(k.value().toString());
+						storeFilterValue(-1, lineEdit);
+						break;
+				}			
+				windowIdx++;
+			}//end of while _defaultTypes
+	}
 
   setSelectedFilter(filter_id);
   emit updated();
@@ -675,7 +745,7 @@ void ParameterWidget::setSavedFilters(int defaultId)
     qry.prepare(query);
 
     qry.bindValue(":screen", classname);
-    qry.bindValue(":none", tr("None"));
+    qry.bindValue(":none", tr("Default"));
     qry.exec();
     if (defaultId)
       _filterList->populate(qry, defaultId);
@@ -690,24 +760,36 @@ void ParameterWidget::setSavedFiltersIndex(QString filterSetName)
   _filterList->setText(filterSetName);
 }
 
-void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type)
+void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault)
 {
   _types[pName] = qMakePair(pParam, type);
+	if (pDefault != 0)
+	{
+		_defaultTypes[pName] = pDefault;
+	}
 }
 
-void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType)
+void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
 {
   _comboTypes[pName] = xType;
   _types[pName] = qMakePair(pParam, XComBox);
+	if (pDefault != 0)
+	{
+		_defaultTypes[pName] = pDefault;
+	}
 }
 
-void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry)
+void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault)
 {
   _comboTypes[pName] = XComboBox::Adhoc;
   _comboQuery[pName] = pQry;
   _types[pName] = qMakePair(pParam, XComBox);
-
+	if (pDefault != 0)
+	{
+		_defaultTypes[pName] = pDefault;
+	}
 }
+
 void ParameterWidget::sManageFilters()
 {
   ParameterList params;
@@ -729,7 +811,7 @@ void ParameterWidget::toggleSave()
     _saveButton->setDisabled(true);
   }
 }
-void ParameterWidget::storeFilterValue(QDate date)
+void ParameterWidget::storeFilterValue(QDate pDate)
 {
   QObject *filter = (QObject *)sender();
   QLayoutItem *test;
@@ -763,7 +845,7 @@ void ParameterWidget::storeFilterValue(QDate date)
   QString currText = mybox->currentText();
   QPair<QString, ParameterWidgetTypes> tempPair = _types[currText];
 
-  _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(date));
+  _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(pDate));
   //if (!mybox->currentText().isEmpty())
   //{
   //_usedTypes->removeAll(mybox->currentText());

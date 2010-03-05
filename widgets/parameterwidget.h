@@ -37,7 +37,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
-                void appendValue(ParameterList &);
+    void appendValue(ParameterList &);
     Q_INVOKABLE void applyDefaultFilterSet();
     Q_INVOKABLE ParameterList parameters();
 
@@ -51,9 +51,9 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void save();
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
-    void setType(QString, QString, enum ParameterWidgetTypes = Text);
-    void setXComboBoxType(QString, QString, enum XComboBox::XComboBoxTypes);
-    void setXComboBoxType(QString, QString, QString);
+    void setType(QString, QString, enum ParameterWidgetTypes = Text, QVariant pDefault = 0);
+    void setXComboBoxType(QString, QString, enum XComboBox::XComboBoxTypes, QVariant pDefault = 0);
+    void setXComboBoxType(QString, QString, QString, QVariant pDefault = 0);
     void sManageFilters();
     void storeFilterValue(QDate);
     void storeFilterValue(int pId = -1, QObject* filter = 0);
@@ -74,9 +74,10 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
     QMap<int, QString > _usedTypes;
     QString _settingsName;
-    QMap<int, QPair<QString, QVariant> > _filterValues;
+    QMap<int, QPair<QString, QVariant > > _filterValues;
     QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
     QMap<QString, QString > _comboQuery;
+		QMap<QString, QVariant > _defaultTypes;
     bool _initialized;
     bool _shared;
 
