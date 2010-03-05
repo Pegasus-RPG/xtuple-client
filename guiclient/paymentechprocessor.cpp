@@ -401,7 +401,7 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   QString respdate;
 
   XSqlQuery ccq;
-  ccq.prepare("SELECT ccpay_status, ccpay_approved, ccpay_r_code, ccpay_yp_r_tdate FROM ccpay WHERE (ccpay_id=:ccpayid);");
+  ccq.prepare("SELECT ccpay_status, ccpay_r_approved, ccpay_r_code, ccpay_yp_r_tdate FROM ccpay WHERE (ccpay_id=:ccpayid);");
   ccq.bindValue(":ccpayid", pccpayid);
   ccq.exec();
   if(!ccq.first())
@@ -410,7 +410,7 @@ int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   }
 
   if(ccq.value("ccpay_status").toString() == "C"
-  && ccq.value("ccpay_approved").toString() != "SUBMITTED")
+  && ccq.value("ccpay_r_approved").toString() != "SUBMITTED")
   {
     return -60; // we can not void a processed charge.
   }
