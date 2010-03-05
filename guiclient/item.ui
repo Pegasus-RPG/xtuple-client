@@ -1579,7 +1579,9 @@ to be bound by its terms.</comment>
   <tabstop>_fractional</tabstop>
   <tabstop>_configured</tabstop>
   <tabstop>_freightClass</tabstop>
+  <tabstop>_upcCode</tabstop>
   <tabstop>_sold</tabstop>
+  <tabstop>_prodcat</tabstop>
   <tabstop>_warranty</tabstop>
   <tabstop>_listprice</tabstop>
   <tabstop>_priceUOM</tabstop>
