@@ -69,7 +69,9 @@ void uninvoicedShipments::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
-
+  if (_showUnselected->isChecked())
+    params.append("showUnselected");
+	
   orReport report("UninvoicedShipments", params);
   if (report.isValid())
     report.print();

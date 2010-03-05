@@ -26,8 +26,14 @@
   <sql>SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,
        item_number, item_descrip1, item_descrip2,
        uom_name,
-       formatQty(SUM(coship_qty)) AS f_shipped,
-       formatQty(COALESCE(SUM(cobill_qty), 0)) AS f_selected
+       shipped, formatQty(shipped) AS f_shipped,
+       selected, formatQty(selected) AS f_selected
+FROM (
+SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,
+       item_number, item_descrip1, item_descrip2,
+       uom_name,
+       COALESCE(SUM(coship_qty), 0) AS shipped,
+       COALESCE(SUM(cobill_qty), 0) AS selected
 FROM cohead, itemsite, item, uom,
      warehous, coship, cosmisc,
      coitem LEFT OUTER JOIN
@@ -48,7 +54,12 @@ WHERE ( (coship_coitem_id=coitem_id)
 &lt;? endif ?>
  )
 GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
-         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name;</sql>
+         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name
+) AS data
+&lt;? if exists("showUnselected") ?>
+ WHERE (selected = 0)
+&lt;? endif ?>
+;</sql>
  </querysource>
  <rpthead>
   <height>236</height>
