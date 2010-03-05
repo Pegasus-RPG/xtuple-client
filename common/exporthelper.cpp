@@ -68,12 +68,13 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
       filename = fileinfo.absoluteFilePath();
     }
 
-    QTemporaryFile exportfile(filename);
-    exportfile.setAutoRemove(false);
-    if (! exportfile.open())
-      errmsg = tr("Could not open %1 (%2).").arg(filename,exportfile.error());
+    QTemporaryFile *exportfile = new QTemporaryFile(filename);
+    exportfile->setAutoRemove(false);
+    if (! exportfile->open())
+      errmsg = tr("Could not open %1 (%2).").arg(filename,exportfile->error());
     else
     {
+      QString tmpfilename = QFileInfo(*exportfile).absoluteFilePath();
       QDomDocument xmldoc("xtupleimport");
       QDomElement rootelem = xmldoc.createElement("xtupleimport");
       xmldoc.appendChild(rootelem);
@@ -144,25 +145,27 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
       if (itemq.lastError().type() != QSqlError::NoError)
         errmsg = itemq.lastError().text();
 
-      exportfile.write(xmldoc.toString());
-      exportfile.close();
+      exportfile->write(xmldoc.toString());
+      exportfile->close();
+      delete exportfile;
+      exportfile = 0;
 
       if (xsltmapid < 0)
       {
         // rm pre-existing files with the desired name then rename the tmp file
         QFile newFile(filename);
         returnVal = (! newFile.exists() || newFile.remove()) &&
-                    exportfile.rename(filename);
+                    QFile::rename(tmpfilename, filename);
         if (! returnVal)
-          errmsg = tr("Could not rename temporary file to %1 (%2).")
-                    .arg(filename).arg(exportfile.error());
+          errmsg = tr("Could not rename temporary file %1 to %2.")
+                    .arg(tmpfilename, filename);
       }
       else
       {
-        returnVal = XSLTConvert(QFileInfo(exportfile).absoluteFilePath(),
+        returnVal = XSLTConvert(tmpfilename,
                                 filename, xsltmapid, errmsg);
         if (returnVal)
-          exportfile.remove();
+          QFile::remove(tmpfilename);
       }
     }
   }
