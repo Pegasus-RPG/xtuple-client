@@ -45,6 +45,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+private:
+    bool _ready;
+
 };
 
 #endif // DSPRUNNINGAVAILABILITY_H

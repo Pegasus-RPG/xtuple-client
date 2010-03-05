@@ -37,6 +37,8 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char* name
 {
   setupUi(this);
 
+  _ready = false;
+
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_availability,SIGNAL(resorted()), this, SLOT(sHandleResort()));
   connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillList()));
@@ -89,6 +91,9 @@ enum SetResponse dspRunningAvailability::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setReadOnly(TRUE);
     _showPlanned->setFocus();
+    _showPlanned->init();
+    _ready = true;
+    sFillList();
   }
 
   return NoError;
@@ -108,7 +113,6 @@ void dspRunningAvailability::setParams(ParameterList & params)
   params.append("firmWoReq",	tr("Planned W/O Req. (firmed)"));
   params.append("plannedWoReq",	tr("Planned W/O Req."));
   params.append("pr",		tr("Purchase Request"));
-
 
   if (_showPlanned->isChecked())
     params.append("showPlanned");
@@ -311,7 +315,7 @@ void dspRunningAvailability::sViewPo()
 
 void dspRunningAvailability::sFillList()
 {
-  if (_item->isValid())
+  if (_item->isValid() && _ready)
   {
     q.prepare( "SELECT itemsite_qtyonhand,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
