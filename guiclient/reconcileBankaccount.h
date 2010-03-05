@@ -41,6 +41,7 @@ protected slots:
 
 private:
     int _bankrecid;
+	int _bankaccntid;
     bool _datesAreOK;
 
 };

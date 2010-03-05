@@ -61,6 +61,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _diffBal->setPrecision(omfgThis->moneyVal());
     
     _bankrecid = -1;	// do this before _bankaccnt->populate()
+    _bankaccntid = -1;	// do this before _bankaccnt->populate()
     _datesAreOK = false;
     
     _bankaccnt->populate("SELECT bankaccnt_id,"
@@ -162,7 +163,7 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
   }
 
   q.bindValue(":bankrecid", _bankrecid);
-  q.bindValue(":bankaccntid", _bankaccnt->id());
+  q.bindValue(":bankaccntid", _bankaccntid);
   q.bindValue(":startDate", _startDate->date());
   q.bindValue(":endDate", _endDate->date());
   q.bindValue(":openbal", _openBal->localValue());
@@ -716,6 +717,47 @@ void reconcileBankaccount::sChecksToggleCleared()
 
 void reconcileBankaccount::sBankaccntChanged()
 {
+  if(_bankrecid != -1)
+  {
+    q.prepare("SELECT count(*) AS num"
+	          "  FROM bankrecitem"
+	          " WHERE (bankrecitem_bankrec_id=:bankrecid); ");
+    q.bindValue(":bankrecid", _bankrecid);
+    q.exec();
+    if (q.first() && q.value("num").toInt() > 0)
+    {
+      if (QMessageBox::question(this, tr("Save Bank Reconciliation?"),
+				                      tr("<p>Do you want to save this Bank Reconciliation?"),
+				                QMessageBox::No,
+				                QMessageBox::Yes | QMessageBox::Default) == QMessageBox::Yes)
+      {
+	    sSave(false);
+      }
+      else
+	  {
+        q.prepare( "SELECT deleteBankReconciliation(:bankrecid) AS result;" );
+        q.bindValue(":bankrecid", _bankrecid);
+        q.exec();
+        if (q.first())
+        {
+	      int result = q.value("result").toInt();
+	      if (result < 0)
+	      {
+	        systemError(this, storedProcErrorLookup("deleteBankReconciliation", result),
+		                __FILE__, __LINE__);
+	        return;
+	      }
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+        {
+	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      return;
+        }
+      }
+	}
+  }
+
+  _bankaccntid = _bankaccnt->id();
   XSqlQuery accntq;
   accntq.prepare("SELECT bankaccnt_curr_id "
             "FROM bankaccnt WHERE bankaccnt_id = :accntId;");
