@@ -184,7 +184,7 @@ to be bound by its terms.</comment>
                 </spacer>
                </item>
                <item>
-                <widget class="VendorInfo" name="_vendor"/>
+                <widget class="VendorCluster" name="_vendor"/>
                </item>
                <item>
                 <spacer>
