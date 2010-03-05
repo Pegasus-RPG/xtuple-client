@@ -1015,6 +1015,7 @@ void purchaseOrderItem::sDeterminePrice()
                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
     {
       _orderQtyCache = _ordered->toDouble();
+	  sPopulateExtPrice();
       return;
     }
   }
