@@ -14,6 +14,7 @@
 //#include <QStatusBar>
 #include <QMessageBox>
 #include <parameter.h>
+#include <QSqlError>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -121,5 +122,10 @@ void dspEarnedCommissions::sFillList()
     params.append("includeMisc");
   params.append("orderBySalesRepInvcdate");
   q = mql.toQuery(params);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   _commission->populate(q);
 }
