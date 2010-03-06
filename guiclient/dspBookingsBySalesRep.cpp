@@ -102,5 +102,10 @@ void dspBookingsBySalesRep::sFillList()
   if (! setParams(params))
     return;
   q = mql.toQuery(params);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   _soitem->populate(q);
 }
