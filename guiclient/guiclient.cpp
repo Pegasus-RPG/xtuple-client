@@ -345,41 +345,6 @@ class xTupleCustInfoAction : public CustInfoAction
     }
 };
 
-class xTupleCRMAcctInfoAction : public CRMAcctInfoAction
-{
-  public:
-    void crmacctInformation(QWidget* parent, int pid)
-    {
-      ParameterList params;
-      params.append("crmacct_id", pid);
-      if (_privileges->check("MaintainCRMAccounts"))
-        params.append("mode", "edit");
-      else if (_privileges->check("ViewCRMAccounts"))
-        params.append("mode", "view");
-      else
-        return;
-
-      QWidget *w = parent;
-      while (w && !w->isWindow())
-        w = w->parentWidget();
-      if (w && w->isWindow())
-      {
-/*
-        params.append("modal");
-        crmaccount * newdlg = new crmaccount(w);
-        newdlg->set(params);
-        omfgThis->handleNewWindow(newdlg);
-      }
-      else
-      {
-*/
-        crmaccount* newdlg = new crmaccount(w);
-        newdlg->set(params);
-        omfgThis->handleNewWindow(newdlg);
-      }
-    }
-};
-
 GUIClient *omfgThis;
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
@@ -532,8 +497,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;
-
-  CRMAcctLineEdit::_crmacctInfoAction = new xTupleCRMAcctInfoAction();
 
   _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
