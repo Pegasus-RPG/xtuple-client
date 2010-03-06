@@ -279,7 +279,7 @@ void Action::init( QWidget *, const char *pName, const QString &/*pDisplayName*/
 class xTupleGuiClientInterface : public GuiClientInterface
 {
   public:
-  QWidget* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
+  QWidget* openWindow(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
   {
     ScriptToolbox toolbox(0);
 		QWidget* w = toolbox.openWindow(pname, parent, modality, flags);
@@ -290,26 +290,26 @@ class xTupleGuiClientInterface : public GuiClientInterface
       {
         XDialog* xdlg = (XDialog*)w;
         xdlg->set(pparams);
-				w = (QWidget*)xdlg;
-        //QDialog* qdlg = (QDialog*)xdlg;
-        //return qdlg;
+        w = (QWidget*)xdlg;
         return w;
       }
       else if (w->inherits("XMainWindow"))
       {
         XMainWindow* xwind = (XMainWindow*)w;
         xwind->set(pparams);
-				w = (QWidget*)xwind;
+        w = (QWidget*)xwind;
+        w->show();
         return w;
       }
       else if (w->inherits("XWidget"))
       {
         XWidget* xwind = (XWidget*)w;
         xwind->set(pparams);
-				w = (QWidget*)xwind;
+        w = (QWidget*)xwind;
+        w->show();
         return w;
       }
-   } 
+    }
     return 0;
   }
 };
@@ -1518,7 +1518,17 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
 void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 {
   if(!w->isModal())
-    w->setWindowModality(m);
+  {
+    if (w->parentWidget())
+    {
+      if (w->parentWidget()->window()->isModal())
+        w->setWindowModality(Qt::ApplicationModal);
+      else
+        w->setWindowModality(m);
+    }
+    else
+      w->setWindowModality(m);
+  }
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 

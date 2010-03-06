@@ -1520,7 +1520,7 @@ void purchaseOrder::sViewWo()
     params.append("mode", "view");
     params.append("wo_id", (fetchwo.value("wo_id").toInt()));
 
-    workOrder *newdlg = new workOrder();
+    workOrder *newdlg = new workOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -1541,7 +1541,7 @@ void purchaseOrder::sEditWo()
     params.append("mode", "edit");
     params.append("wo_id", (fetchwo.value("wo_id").toInt()));
 
-    workOrder *newdlg = new workOrder();
+    workOrder *newdlg = new workOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

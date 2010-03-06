@@ -1046,7 +1046,7 @@ void workOrder::sInventoryAvailabilityByWorkOrder()
   params.append("wo_id", _woIndentedList->id());
   params.append("run");
 
-  dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder();
+  dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1232,7 +1232,7 @@ void workOrder::sDspRunningAvailability()
     params.append("itemsite_id", q.value("wo_itemsite_id"));
     params.append("run");
 
-    dspRunningAvailability *newdlg = new dspRunningAvailability();
+    dspRunningAvailability *newdlg = new dspRunningAvailability(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -1560,7 +1560,7 @@ void workOrder::sViewMatlAvailability()
     params.append("byDate", q.value("womatl_duedate"));
     params.append("run");
 
-    dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+    dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -1585,7 +1585,7 @@ void workOrder::sViewMatlSubstituteAvailability()
     params.append("byDate", q.value("womatl_duedate"));
     params.append("run");
 
-    dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();
+    dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

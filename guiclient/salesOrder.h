@@ -26,9 +26,9 @@ public:
 
   Q_INVOKABLE virtual bool save( bool partial );
   Q_INVOKABLE virtual void setViewMode();
-  Q_INVOKABLE static void newSalesOrder( int pCustid );
-  Q_INVOKABLE static void editSalesOrder( int pId, bool enableSaveAndAdd );
-  Q_INVOKABLE static void viewSalesOrder( int pId );
+  Q_INVOKABLE static void newSalesOrder( int pCustid, QWidget* parent = 0 );
+  Q_INVOKABLE static void editSalesOrder( int pId, bool enableSaveAndAdd, QWidget* parent = 0 );
+  Q_INVOKABLE static void viewSalesOrder( int pId, QWidget* parent = 0 );
 
 public slots:
   virtual SetResponse set(const ParameterList & pParams );

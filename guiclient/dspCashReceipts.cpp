@@ -249,7 +249,7 @@ void dspCashReceipts::sNewCashrcpt()
   if (_customerSelector->isSelectedCust())
     params.append("cust_id", _customerSelector->custId());
 
-  cashReceipt *newdlg = new cashReceipt();
+  cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -260,7 +260,7 @@ void dspCashReceipts::sEditCashrcpt()
   params.append("mode", "edit");
   params.append("cashrcpt_id", _arapply->currentItem()->id("source"));
 
-  cashReceipt *newdlg = new cashReceipt();
+  cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -271,7 +271,7 @@ void dspCashReceipts::sViewCashrcpt()
   params.append("mode", "view");
   params.append("cashrcpt_id", _arapply->currentItem()->id("source"));
 
-  cashReceipt *newdlg = new cashReceipt();
+  cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

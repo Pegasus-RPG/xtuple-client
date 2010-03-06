@@ -140,7 +140,7 @@ void returnAuthorizationWorkbench::sNew()
   if (_customerSelector->isSelectedCust())
     params.append("cust_id", _customerSelector->custId());
 
-  returnAuthorization *newdlg = new returnAuthorization();
+  returnAuthorization *newdlg = new returnAuthorization(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -154,7 +154,7 @@ void returnAuthorizationWorkbench::sEdit()
   params.append("mode", "edit");
   params.append("rahead_id", _ra->id());
 
-  returnAuthorization *newdlg = new returnAuthorization();
+  returnAuthorization *newdlg = new returnAuthorization(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -168,7 +168,7 @@ void returnAuthorizationWorkbench::sView()
   params.append("mode", "view");
   params.append("rahead_id", _ra->id());
 
-  returnAuthorization *newdlg = new returnAuthorization();
+  returnAuthorization *newdlg = new returnAuthorization(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -195,7 +195,7 @@ void returnAuthorizationWorkbench::sEditDue()
   params.append("mode", "edit");
   params.append("rahead_id", _radue->id());
 
-  returnAuthorization *newdlg = new returnAuthorization();
+  returnAuthorization *newdlg = new returnAuthorization(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -209,7 +209,7 @@ void returnAuthorizationWorkbench::sViewDue()
   params.append("mode", "view");
   params.append("rahead_id", _radue->id());
 
-  returnAuthorization *newdlg = new returnAuthorization();
+  returnAuthorization *newdlg = new returnAuthorization(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

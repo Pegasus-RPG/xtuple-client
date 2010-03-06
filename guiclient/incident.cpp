@@ -724,7 +724,7 @@ void incident::sReturn()
     params.append("incdt_id", _incdtid);
   }
 
-  returnAuthorization * newdlg = new returnAuthorization();
+  returnAuthorization * newdlg = new returnAuthorization(this);
   if(newdlg->set(params) == NoError)
     omfgThis->handleNewWindow(newdlg);
   else

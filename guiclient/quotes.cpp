@@ -335,7 +335,7 @@ void quotes::sNew()
   if (_cust->isValid())
     params.append("cust_id", _cust->id());
       
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -351,7 +351,7 @@ void quotes::sEdit()
       params.append("mode", "editQuote");
       params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
     
-      salesOrder *newdlg = new salesOrder();
+      salesOrder *newdlg = new salesOrder(this);
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
       break;
@@ -370,7 +370,7 @@ void quotes::sView()
       params.append("mode", "viewQuote");
       params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       
-      salesOrder *newdlg = new salesOrder();
+      salesOrder *newdlg = new salesOrder(this);
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
       break;

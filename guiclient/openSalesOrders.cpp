@@ -123,19 +123,19 @@ void openSalesOrders::sPrint()
 
 void openSalesOrders::sNew()
 {
-  salesOrder::newSalesOrder(_cust->id());
+  salesOrder::newSalesOrder(_cust->id(), this);
 }
 
 void openSalesOrders::sEdit()
 {
   if (checkSitePrivs())
-    salesOrder::editSalesOrder(_so->id(), false);
+    salesOrder::editSalesOrder(_so->id(), false, this);
 }
 
 void openSalesOrders::sView()
 {
   if (checkSitePrivs())
-    salesOrder::viewSalesOrder(_so->id());
+    salesOrder::viewSalesOrder(_so->id(), this);
 }
 
 void openSalesOrders::sCopy()
@@ -469,7 +469,7 @@ void openSalesOrders::sDspShipmentStatus()
   params.append("sohead_id", _so->id());
   params.append("run");
 
-  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -479,7 +479,7 @@ void openSalesOrders::sShipment()
   ParameterList params;
   params.append("sohead_id", _so->id());
 
-  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

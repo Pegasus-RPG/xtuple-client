@@ -3430,7 +3430,7 @@ void salesOrder::keyPressEvent( QKeyEvent * e )
   e->ignore();
 }
 
-void salesOrder::newSalesOrder(int pCustid)
+void salesOrder::newSalesOrder(int pCustid, QWidget* parent)
 {
   // Check for an Item window in new mode already.
   if(pCustid == -1)
@@ -3458,12 +3458,12 @@ void salesOrder::newSalesOrder(int pCustid)
   if(pCustid != -1)
     params.append("cust_id", pCustid);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd )
+void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd, QWidget* parent )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
   QString n = QString("salesOrder edit %1").arg(pId);
@@ -3490,12 +3490,12 @@ void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd )
   if(enableSaveAndAdd)
     params.append("enableSaveAndAdd");
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void salesOrder::viewSalesOrder( int pId )
+void salesOrder::viewSalesOrder( int pId, QWidget* parent )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
   QString n = QString("salesOrder view %1").arg(pId);
@@ -3520,7 +3520,7 @@ void salesOrder::viewSalesOrder( int pId )
   params.append("mode", "view");
   params.append("sohead_id", pId);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

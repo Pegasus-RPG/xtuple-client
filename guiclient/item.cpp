@@ -1534,7 +1534,7 @@ void item::sEditBOM()
     params.append("mode", "edit");
   params.append("item_id", _itemid);
 
-  BOM *newdlg = new BOM();
+  BOM *newdlg = new BOM(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1544,7 +1544,7 @@ void item::sWorkbench()
   ParameterList params;
   params.append("item_id", _itemid);
 
-  itemAvailabilityWorkbench *newdlg = new itemAvailabilityWorkbench();
+  itemAvailabilityWorkbench *newdlg = new itemAvailabilityWorkbench(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

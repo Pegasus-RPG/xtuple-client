@@ -713,7 +713,7 @@ void todoList::sEditCustomer()
     params.append("cust_id", cust.value("cust_id").toInt());
     params.append("mode","edit");
 
-    customer *newdlg = new customer();
+    customer *newdlg = new customer(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -732,7 +732,7 @@ void todoList::sViewCustomer()
     params.append("cust_id", cust.value("cust_id").toInt());
     params.append("mode","view");
 
-    customer *newdlg = new customer();
+    customer *newdlg = new customer(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

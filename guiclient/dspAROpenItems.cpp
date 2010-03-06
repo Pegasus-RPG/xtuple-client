@@ -458,7 +458,7 @@ void dspAROpenItems::sDspShipmentStatus()
     params.append("sohead_id", _aropen->currentItem()->id("ordernumber"));
     params.append("run");
 
-    dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+    dspSalesOrderStatus *newdlg = new dspSalesOrderStatus(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -475,7 +475,7 @@ void dspAROpenItems::sEdit()
     {
       params.append("invchead_id", _aropen->currentItem()->id("docnumber"));
       params.append("mode", "edit");
-      invoice* newdlg = new invoice();
+      invoice* newdlg = new invoice(this);
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
       return;
@@ -489,7 +489,7 @@ void dspAROpenItems::sEdit()
     {
       params.append("cmhead_id", _aropen->currentItem()->id("docnumber"));
       params.append("mode", "edit");
-      creditMemo* newdlg = new creditMemo();
+      creditMemo* newdlg = new creditMemo(this);
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
       return;
@@ -549,7 +549,7 @@ void dspAROpenItems::sViewCreditMemo()
   ParameterList params;
   params.append("cmhead_id", _aropen->currentItem()->id("docnumber"));
   params.append("mode", "view");
-  creditMemo* newdlg = new creditMemo();
+  creditMemo* newdlg = new creditMemo(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -608,7 +608,7 @@ void dspAROpenItems::sNewCashrcpt()
       params.append("cust_id", _customerSelector->custId());
   }
 
-  cashReceipt *newdlg = new cashReceipt();
+  cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -620,7 +620,7 @@ void dspAROpenItems::sNewCreditMemo()
   if (_customerSelector->isSelectedCust())
     params.append("cust_id", _customerSelector->custId());
 
-  creditMemo *newdlg = new creditMemo();
+  creditMemo *newdlg = new creditMemo(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -629,7 +629,7 @@ void dspAROpenItems::sViewInvoice()
 {
   ParameterList params;
   params.append("invoiceNumber", _aropen->currentItem()->text("docnumber"));
-  dspInvoiceInformation* newdlg = new dspInvoiceInformation();
+  dspInvoiceInformation* newdlg = new dspInvoiceInformation(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -650,7 +650,7 @@ void dspAROpenItems::sEditInvoiceDetails()
   ParameterList params;
   params.append("invchead_id", _aropen->currentItem()->id("docnumber"));
   params.append("mode", "edit");
-  invoice* newdlg = new invoice();
+  invoice* newdlg = new invoice(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -660,7 +660,7 @@ void dspAROpenItems::sViewInvoiceDetails()
   ParameterList params;
   params.append("invchead_id", _aropen->currentItem()->id("docnumber"));
   params.append("mode", "view");
-  invoice* newdlg = new invoice();
+  invoice* newdlg = new invoice(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1065,7 +1065,7 @@ void dspAROpenItems::sShipment()
     ParameterList params;
     params.append("sohead_id", _aropen->currentItem()->id("ordernumber"));
 
-    dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+    dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
