@@ -1499,10 +1499,6 @@ void transferOrder::clear()
   _dstWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   _status->setCurrentIndex(0);
   _agent->setCurrentIndex(-1);
-  _srcAddr->setId(-1);
-  _dstAddr->setId(-1);
-  _srcContact->clear();
-  _dstContact->clear();
   _taxzoneidCache = -1;
   _taxzone->setId(-1);
   _whstaxzoneid        = -1;
