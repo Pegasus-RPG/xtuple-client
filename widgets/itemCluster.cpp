@@ -215,11 +215,10 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
 {
   setTitles(tr("Item"), tr("Items"));
-  /*
   setUiName("item");
-  setEditPriv("MaintainItems");
-  setViewPriv("ViewItems");
- */
+  setEditPriv("MaintainItemMasters");
+  setViewPriv("ViewItemMasters");
+
   setAcceptDrops(TRUE);
   
   _type = cUndefined;
@@ -235,14 +234,13 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
 
   connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
 
-  // Remove info and separator since not implemented here for now
+  // Remove info since not implemented here for now, and add alias
   if (_x_preferences)
   {
     if (!_x_preferences->boolean("ClusterButtons"))
     {
+      menu()->insertAction(menu()->actions().at(2),_aliasAct);
       menu()->removeAction(_infoAct);
-      menu()->removeAction(menu()->actions().at(2));
-      menu()->addAction(_aliasAct);
     }
   }
 }

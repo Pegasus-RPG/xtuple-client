@@ -316,7 +316,7 @@ void Documents::sOpenDoc(QString mode)
     return;
   }
 
-  QWidget* w;
+  QWidget* w = 0;
   if (parentWidget()->window())
   {
     if (parentWidget()->window()->isModal())

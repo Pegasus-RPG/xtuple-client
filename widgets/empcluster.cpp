@@ -27,6 +27,7 @@ EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
   setTitles(tr("Employee"), tr("Employees"));
   setUiName("employee");
   setEditPriv("MaintainEmployees");
+  setNewPriv("MaintainEmployees");
   setViewPriv("ViewEmployees");
 }
 

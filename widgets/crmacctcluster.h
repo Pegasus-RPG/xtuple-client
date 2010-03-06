@@ -34,13 +34,10 @@ class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public VirtualClusterLineEdit
 			      Prospect,	Taxauth,	Vend,
 			      CustAndProspect };
 
-	static CRMAcctInfoAction *_crmacctInfoAction;
-
 	virtual void		setSubtype(const CRMAcctSubtype);
 	virtual CRMAcctSubtype	subtype()	const;
 
     protected slots:
-	virtual void	sInfo();
 	VirtualList*	listFactory();
 	VirtualSearch*	searchFactory();
 

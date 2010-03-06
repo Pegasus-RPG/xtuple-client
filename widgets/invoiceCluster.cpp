@@ -19,6 +19,9 @@ InvoiceCluster::InvoiceCluster(QWidget* pParent, const char* pName) :
 InvoiceClusterLineEdit::InvoiceClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "invchead", "invchead_id", "invchead_invcnumber", "invchead_billto_name", 0, 0, pName)
 {
-    setTitles(tr("Invoice"), tr("Invoices"));
-    setExtraClause("(checkInvoiceSitePrivs(invchead_id))");
+  setTitles(tr("Invoice"), tr("Invoices"));
+  setUiName("invoice");
+  setEditPriv("EditAROpenItems");
+  setViewPriv("ViewAROpenItems");
+  setExtraClause("(checkInvoiceSitePrivs(invchead_id))");
 }

@@ -19,5 +19,8 @@ IncidentCluster::IncidentCluster(QWidget* pParent, const char* pName) :
 IncidentClusterLineEdit::IncidentClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "incdt", "incdt_id", "incdt_number::text", "incdt_assigned_username", "incdt_summary", 0, pName)
 {
-    setTitles(tr("Incident"), tr("Incidents"));
+  setTitles(tr("Incident"), tr("Incidents"));
+  setEditPriv("MaintainIncidents");
+  setNewPriv("AddIncidents");
+  setViewPriv("ViewIncidents");
 }

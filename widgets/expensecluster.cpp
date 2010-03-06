@@ -24,5 +24,6 @@ ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *pName) :
   setTitles(tr("Expense Category"), tr("Expense Categories"));
   setUiName("expenseCategory");
   setEditPriv("MaintainExpenseCategories");
+  setNewPriv("MaintainExpenseCategories");
   setViewPriv("ViewExpenseCategories");
 }

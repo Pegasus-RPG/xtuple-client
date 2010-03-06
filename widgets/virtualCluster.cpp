@@ -416,6 +416,12 @@ void VirtualClusterLineEdit::setEditPriv(const QString& priv)
   sUpdateMenu();
 }
 
+void VirtualClusterLineEdit::setNewPriv(const QString& priv)
+{
+  _newPriv = priv;
+  sUpdateMenu();
+}
+
 void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 {
   _viewPriv = priv;
@@ -435,10 +441,11 @@ void VirtualClusterLineEdit::sUpdateMenu()
   _listAct->setEnabled(isEnabled());
   _searchAct->setEnabled(isEnabled());
   _aliasAct->setEnabled(isEnabled());
+  _infoAct->setEnabled(_id != -1);
   _openAct->setEnabled((_x_privileges->check(_editPriv) ||
                         _x_privileges->check(_viewPriv)) &&
                        _id != -1);
-  _newAct->setEnabled(_x_privileges->check(_editPriv) &&
+  _newAct->setEnabled(_x_privileges->check(_newPriv) &&
                       isEnabled());
 
   if (canOpen())
@@ -446,7 +453,8 @@ void VirtualClusterLineEdit::sUpdateMenu()
     if (!menu()->actions().contains(_openAct))
       menu()->addAction(_openAct);
 
-    if (!menu()->actions().contains(_newAct))
+    if (!menu()->actions().contains(_newAct) &&
+        !_newPriv.isEmpty())
       menu()->addAction(_newAct);
   }
   else
@@ -785,10 +793,7 @@ void VirtualClusterLineEdit::sInfo()
 {
   VirtualInfo* newdlg = infoFactory();
   if (newdlg)
-  {
-    int id = newdlg->exec();
-    setId(id);
-  }
+    newdlg->exec();
   else
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
@@ -807,14 +812,25 @@ void VirtualClusterLineEdit::sOpen()
       params.append("mode", "view");
     params.append(_idColName, id());
 
-    QDialog* newdlg = (QDialog*)_guiClientInterface->openWindow(_uiName, params, parentWidget(),Qt::WindowModal, Qt::Dialog );
-
-    int id = newdlg->exec();
-    if (id != QDialog::Rejected)
+    QWidget* w = 0;
+    if (parentWidget()->window())
     {
-      silentSetId(id);
-      emit valid(_id != -1);
-  }
+      if (parentWidget()->window()->isModal())
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+      else
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
+    }
+
+    if (w->inherits("QDialog"))
+    {
+      QDialog* newdlg = qobject_cast<QDialog*>(w);
+      int id = newdlg->exec();
+      if (id != QDialog::Rejected)
+      {
+        silentSetId(id);
+        emit valid(_id != -1);
+      }
+    }
   }
 }
 
@@ -822,18 +838,31 @@ void VirtualClusterLineEdit::sNew()
 {
   if (canOpen())
   {
-    if (!_x_privileges->check(_editPriv))
+    if (!_x_privileges->check(_newPriv))
       return;
 
     ParameterList params;
     params.append("mode", "new");
 
-    QDialog* newdlg = (QDialog*)_guiClientInterface->openWindow(_uiName, params, parentWidget(),Qt::WindowModal);
+    QWidget* w = 0;
+    if (parentWidget()->window())
+    {
+      if (parentWidget()->window()->isModal())
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+      else
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
+    }
 
-    int id = newdlg->exec();
-    if (id != QDialog::Rejected)
-      setId(id);
-    return;
+    if (w->inherits("QDialog"))
+    {
+      QDialog* newdlg = qobject_cast<QDialog*>(w);
+      int id = newdlg->exec();
+      if (id != QDialog::Rejected)
+      {
+        silentSetId(id);
+        emit valid(_id != -1);
+      }
+    }
   }
 }
 

@@ -44,7 +44,11 @@ CRMAcctLineEdit::CRMAcctSubtype CRMAcctCluster::subtype() const
 CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "crmacct", "crmacct_id", "crmacct_number", "crmacct_name", 0, 0, pName, "crmacct_active")
 {
-    setTitles(tr("CRM Account"), tr("CRM Accounts"));
+  setTitles(tr("CRM Account"), tr("CRM Accounts"));
+  setUiName("crmaccount");
+  setEditPriv("MaintainCRMAccounts");
+  setViewPriv("ViewCRMAccounts");
+
     setSubtype(Crmacct);
 
     _query = "SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
@@ -68,14 +72,6 @@ VirtualSearch* CRMAcctLineEdit::searchFactory()
 }
 
 ///////////////////////////////////////////////////////////////////////
-
-CRMAcctInfoAction* CRMAcctLineEdit::_crmacctInfoAction = 0;
-
-void CRMAcctLineEdit::sInfo()
-{
-  if (_crmacctInfoAction)
-    _crmacctInfoAction->crmacctInformation(this, id());
-}
 
 void CRMAcctLineEdit::setSubtype(const CRMAcctSubtype subtype)
 {

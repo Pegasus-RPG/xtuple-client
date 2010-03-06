@@ -184,6 +184,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
         virtual void setUiName(const QString& name);
         virtual void setEditPriv(const QString& priv);
+        virtual void setNewPriv(const QString& priv);
         virtual void setViewPriv(const QString& priv);
 
     protected slots:
@@ -242,6 +243,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _activeColName;
         QString _uiName;
         QString _editPriv;
+        QString _newPriv;
         QString _viewPriv;
         bool _hasDescription;
         bool _hasName;

@@ -92,6 +92,9 @@ ImageClusterLineEdit::ImageClusterLineEdit(QWidget* pParent, const char* pName) 
     VirtualClusterLineEdit(pParent, "image", "image_id", "image_name", "image_descrip", 0, 0, pName)
 {
   setTitles(tr("Image"), tr("Images"));
+  setUiName("image");
+  setEditPriv("MaintainImages");
+  setNewPriv("MaintainImages");
 }
 
 VirtualInfo *ImageClusterLineEdit::infoFactory()

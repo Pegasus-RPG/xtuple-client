@@ -24,6 +24,7 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
     setTitles(tr("Contact"), tr("Contacts"));
     setUiName("contact");
     setEditPriv("MaintainContacts");
+    setNewPriv("MaintainContacts");
     setViewPriv("ViewContacts");
 
     _query = "SELECT cntct_id AS id, cntct_name AS number, cntct_title AS description, "

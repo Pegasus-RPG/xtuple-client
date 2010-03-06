@@ -59,6 +59,9 @@ RaLineEdit::RaLineEdit(QWidget *pParent, const char *pName) :
 			 0, pName)
 {
   setTitles(tr("Return Authorization"), tr("Return Authorizations"));
+  setUiName("returnAuthorization");
+  setEditPriv("MaintainReturns");
+  setViewPriv("ViewReturns");
 
   setValidator(new QIntValidator(0, 9999999, this));
   connect(this, SIGNAL(textChanged(const QString &)), this, SIGNAL(numberChanged(const QString &)));

@@ -33,6 +33,7 @@ ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
   setTitles(tr("Project"), tr("Projects"));
   setUiName("project");
   setEditPriv("MaintainProjects");
+  setNewPriv("MaintainProjects");
   setViewPriv("ViewProjects");
 
   _type = Undefined;
