@@ -807,7 +807,7 @@ void VirtualClusterLineEdit::sOpen()
       params.append("mode", "view");
     params.append(_idColName, id());
 
-    QDialog* newdlg = (QDialog*)_guiClientInterface->openDialog(_uiName, params, parentWidget(),Qt::WindowModal, Qt::Dialog );
+    QDialog* newdlg = (QDialog*)_guiClientInterface->openWindow(_uiName, params, parentWidget(),Qt::WindowModal, Qt::Dialog );
 
     int id = newdlg->exec();
     if (id != QDialog::Rejected)
@@ -828,7 +828,7 @@ void VirtualClusterLineEdit::sNew()
     ParameterList params;
     params.append("mode", "new");
 
-    QDialog* newdlg = (QDialog*)_guiClientInterface->openDialog(_uiName, params, parentWidget(),Qt::WindowModal);
+    QDialog* newdlg = (QDialog*)_guiClientInterface->openWindow(_uiName, params, parentWidget(),Qt::WindowModal);
 
     int id = newdlg->exec();
     if (id != QDialog::Rejected)

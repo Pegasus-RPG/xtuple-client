@@ -159,7 +159,7 @@ void Documents::sNewDoc(QString type, QString ui)
   ParameterList params;
   params.append("mode", "new");
   int target_id;
-  QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog(ui, params, parentWidget(),Qt::WindowModal, Qt::Dialog));
+  QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openWindow(ui, params, parentWidget(),Qt::WindowModal, Qt::Dialog));
   target_id = newdlg->exec();
   if (target_id != QDialog::Rejected)
     sInsertDocass(type, target_id);
@@ -218,7 +218,6 @@ void Documents::sEditDoc()
 
 void Documents::sOpenDoc(QString mode)
 {
-  bool isDialog = true;
   QString ui;
   QString docType = _doc->currentItem()->rawValue("target_type").toString();
   int targetid = _doc->currentItem()->id("target_number");
@@ -270,42 +269,35 @@ void Documents::sOpenDoc(QString mode)
   {
     params.append("crmacct_id", targetid);
     ui = "crmaccount";
-    isDialog = false;
   }
   else if (docType == "T")
   {
     params.append("cntct_id", targetid);
-    ui = "contact";
   }
   else if (docType == "V")
   {
     params.append("vend_id", targetid);
     ui = "vendor";
-    isDialog = false;
   }
   else if (docType == "I")
   {
     params.append("item_id", targetid);
     ui = "item";
-    isDialog = false;
   }
   else if (docType == "S")
   {
     params.append("sohead_id", targetid);
     ui = "salesOrder";
-    isDialog = false;
   }
   else if (docType == "P")
   {
     params.append("pohead_id", targetid);
     ui = "purchaseOrder";
-    isDialog = false;
   }
   else if (docType == "W")
   {
     params.append("wo_id", targetid);
     ui = "workOrder";
-    isDialog = false;
   }
   else if (docType == "EMP")
   {
@@ -316,7 +308,6 @@ void Documents::sOpenDoc(QString mode)
   {
     params.append("cust_id", targetid);
     ui = "customer";
-    isDialog = false;
   }
   else
   {
@@ -325,15 +316,19 @@ void Documents::sOpenDoc(QString mode)
     return;
   }
 
-  if (isDialog)
+  QWidget* w;
+  if (parentWidget()->window())
   {
-    QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openDialog(ui, params, parentWidget(),Qt::WindowModal));
-    newdlg->exec();
+    if (parentWidget()->window()->isModal())
+      w = _guiClientInterface->openWindow(ui, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+    else
+      w = _guiClientInterface->openWindow(ui, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
   }
-  else
+
+  if (w->inherits("QDialog"))
   {
-    QWidget* w = _guiClientInterface->openDialog(ui, params, parentWidget(),Qt::WindowModal, Qt::Dialog);
-    w->show();
+    QDialog* newdlg = qobject_cast<QDialog*>(w);
+    newdlg->exec();
   }
 
   refresh();

@@ -19,7 +19,7 @@ class XTUPLEWIDGETS_EXPORT GuiClientInterface
 {
   public:
     virtual ~GuiClientInterface() {}
-    virtual QWidget* openDialog(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
+    virtual QWidget* openWindow(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
 };
 
 #endif
