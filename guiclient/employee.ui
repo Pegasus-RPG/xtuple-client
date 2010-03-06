@@ -13,105 +13,72 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>384</height>
+    <width>760</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Employee</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
-    <layout class="QGridLayout">
-     <property name="spacing">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="verticalSpacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
-      <layout class="QHBoxLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="_codeLit">
-         <property name="text">
-          <string>Employee:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>_code</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLineEdit" name="_code">
-         <property name="fieldName">
-          <string>code</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="_numberLit">
-         <property name="text">
-          <string>Employee Number:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLineEdit" name="_number">
-         <property name="fieldName">
-          <string>number</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XCheckBox" name="_active">
-         <property name="text">
-          <string>Active</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-         <property name="fieldName">
-          <string>active</string>
-         </property>
-         <property name="forgetful">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="_close">
+          <widget class="QLabel" name="_codeLit">
            <property name="text">
-            <string>Cancel</string>
+            <string>Employee:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy">
+            <cstring>_code</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_save">
-           <property name="text">
-            <string>Save</string>
+          <widget class="XLineEdit" name="_code">
+           <property name="fieldName">
+            <string>code</string>
            </property>
-           <property name="default">
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="_numberLit">
+           <property name="text">
+            <string>Employee Number:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XLineEdit" name="_number">
+           <property name="fieldName">
+            <string>number</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XCheckBox" name="_active">
+           <property name="text">
+            <string>Active</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="fieldName">
+            <string>active</string>
+           </property>
+           <property name="forgetful">
             <bool>true</bool>
            </property>
           </widget>
@@ -119,21 +86,71 @@ to be bound by its terms.</comment>
          <item>
           <spacer>
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>20</width>
-             <height>0</height>
+             <width>13</width>
+             <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
         </layout>
        </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </item>
-     <item row="1" column="0">
+     <item row="0" column="1">
+      <layout class="QVBoxLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_save">
+         <property name="text">
+          <string>Save</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" colspan="2">
       <widget class="QTabWidget" name="_tabWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -283,7 +300,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>&amp;Detail</string>
         </attribute>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
           <widget class="QGroupBox" name="_memberGroup">
            <property name="title">
@@ -380,108 +397,96 @@ to be bound by its terms.</comment>
            <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout">
+           <layout class="QGridLayout" name="gridLayout_6">
             <item row="0" column="0">
-             <layout class="QVBoxLayout">
-              <property name="topMargin">
-               <number>5</number>
-              </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
-               <widget class="QLabel" name="_deptLit">
-                <property name="text">
-                 <string>Dept.:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <item row="0" column="0">
+                 <layout class="QVBoxLayout">
+                  <property name="topMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="_deptLit">
+                    <property name="text">
+                     <string>Dept.:</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="0" column="1">
+                 <widget class="DeptCluster" name="_dept">
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <property name="infoVisible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="fieldName">
+                   <string>department</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="shiftLit">
+                  <property name="text">
+                   <string>Shift:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="ShiftCluster" name="_shift">
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <property name="infoVisible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="fieldName">
+                   <string>shift</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
-                  <height>40</height>
+                  <height>13</height>
                  </size>
                 </property>
                </spacer>
               </item>
              </layout>
-            </item>
-            <item row="0" column="1">
-             <widget class="DeptCluster" name="_dept">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="infoVisible">
-               <bool>false</bool>
-              </property>
-              <property name="fieldName">
-               <string>department</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <layout class="QVBoxLayout">
-              <property name="topMargin">
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="shiftLit">
-                <property name="text">
-                 <string>Shift:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>21</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="1">
-             <widget class="ShiftCluster" name="_shift">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="infoVisible">
-               <bool>false</bool>
-              </property>
-              <property name="fieldName">
-               <string>shift</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -790,12 +795,6 @@ to be bound by its terms.</comment>
          <string>Notes</string>
         </attribute>
         <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="XTextEdit" name="_notes">
            <property name="fieldName">
@@ -810,12 +809,6 @@ to be bound by its terms.</comment>
          <string>Comments</string>
         </attribute>
         <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="Comments" name="_comments">
            <property name="type">
@@ -830,12 +823,6 @@ to be bound by its terms.</comment>
          <string>Characteristics</string>
         </attribute>
         <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="XTreeWidget" name="_charass">
            <property name="enabled">
@@ -894,12 +881,6 @@ to be bound by its terms.</comment>
          <string>Groups</string>
         </attribute>
         <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="margin">
-          <number>9</number>
-         </property>
          <item>
           <widget class="XTreeWidget" name="_groups"/>
          </item>
