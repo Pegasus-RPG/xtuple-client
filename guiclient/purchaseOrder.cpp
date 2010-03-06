@@ -1304,6 +1304,27 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
+  if (_mode != cNew)
+  {
+    if (_poitem->topLevelItemCount() == 0 &&
+        QMessageBox::question(this, tr("Delete Purchase Order?"),
+			      tr("<p>This Purchase Order does not have any line items.  "
+				  "Are you sure you want to delete this Purchase Order?"),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    {
+      pEvent->ignore();
+      return;
+    }
+
+    q.prepare( "DELETE FROM pohead "
+               "WHERE (pohead_id=:pohead_id);" );
+    q.bindValue(":pohead_id", _poheadid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
   // TODO: if sQeSave == false then find a way to return control to the user
   if (_qeitem->isDirty())
   {

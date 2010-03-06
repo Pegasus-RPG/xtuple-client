@@ -1425,6 +1425,7 @@ void transferOrder::sCalculateTotal()
 bool transferOrder::deleteForCancel()
 {
   XSqlQuery query;
+  bool deleteTo = false;
 
   if (cNew == _mode && _toitem->topLevelItemCount() > 0)
   {
@@ -1434,9 +1435,23 @@ bool transferOrder::deleteForCancel()
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return false;
+	else
+	  deleteTo = true;
   }
 
-  if (_mode == cNew)
+  if (cNew != _mode && _toitem->topLevelItemCount() == 0)
+  {
+    if (QMessageBox::question(this, tr("Delete Transfer Order?"),
+			                  tr("<p>This Transfer Order does not have any line items.  "
+				                 "Are you sure you want to delete this Transfer Order?"),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return false;
+	else
+	  deleteTo = true;
+  }
+
+  if (deleteTo)
   {
     query.prepare("SELECT deleteTO(:tohead_id) AS result;");
     query.bindValue(":tohead_id", _toheadid);
@@ -1452,7 +1467,7 @@ bool transferOrder::deleteForCancel()
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
   }
 
-  if(cView != _mode)
+  if(cNew == _mode)
     sReleaseTohead();
 
   return true;
@@ -1552,7 +1567,7 @@ void transferOrder::closeEvent(QCloseEvent *pEvent)
 
   disconnect(_orderNumber,    SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
 
-  if (cNew == _mode && _saved)
+  if (cView != _mode)
     omfgThis->sTransferOrdersUpdated(-1);
 
   XWidget::closeEvent(pEvent);
