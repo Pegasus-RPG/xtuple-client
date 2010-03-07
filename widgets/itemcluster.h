@@ -161,6 +161,7 @@ friend class ItemLineEditDelegate;
 
   public slots:
     void sHandleCompleter();
+    void sInfo();
     void sList();
     void sSearch();
     void sSearch(ParameterList params);
@@ -189,6 +190,7 @@ friend class ItemLineEditDelegate;
   protected slots:
     itemList* listFactory();
     itemSearch* searchFactory();
+    void sUpdateMenu();
 
   private:
     void constructor();

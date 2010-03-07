@@ -234,14 +234,11 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
 
   connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
 
-  // Remove info since not implemented here for now, and add alias
+  // Add alias
   if (_x_preferences)
   {
     if (!_x_preferences->boolean("ClusterButtons"))
-    {
       menu()->insertAction(menu()->actions().at(2),_aliasAct);
-      menu()->removeAction(_infoAct);
-    }
   }
 }
 
@@ -463,6 +460,14 @@ void ItemLineEdit::setItemsiteid(int pItemsiteid)
   }
 }
 
+void ItemLineEdit::sInfo()
+{
+  ParameterList params;
+  params.append("item_id", id());
+
+  _guiClientInterface->openWindow("itemAvailabilityWorkbench", params, parentWidget()->window() , Qt::NonModal, Qt::Window);
+}
+
 void ItemLineEdit::sHandleCompleter()
 {
   if (!hasFocus())
@@ -526,6 +531,14 @@ void ItemLineEdit::sHandleCompleter()
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
   _parsed = false;
+}
+
+void ItemLineEdit::sUpdateMenu()
+{
+  VirtualClusterLineEdit::sUpdateMenu();
+  if (_x_privileges)
+    _infoAct->setEnabled(_x_privileges->check("ViewItemAvailabilityWorkbench") &&
+                         _id != -1);
 }
 
 void ItemLineEdit::sList()
