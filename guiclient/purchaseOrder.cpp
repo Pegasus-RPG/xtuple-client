@@ -63,7 +63,6 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendAddr,     SIGNAL(changed()),     _vendaddrCode, SLOT(clear()));
   connect(_warehouse,	 SIGNAL(newID(int)),    this, SLOT(sHandleShipTo()));
   connect(_vendor,         SIGNAL(newCrmacctId(int)), _vendAddr, SLOT(setSearchAcct(int)));
-  connect(_vendor,         SIGNAL(newCrmacctId(int)), _shiptoAddr, SLOT(setSearchAcct(int)));
 
 #ifndef Q_WS_MAC
   _vendaddrList->setMaximumWidth(25);

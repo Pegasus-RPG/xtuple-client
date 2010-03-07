@@ -59,13 +59,18 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
       _mode = cNew;
       _number->setFocus();
 
-      q.prepare("SELECT vend_taxauth_id"
-                "  FROM vendinfo"
-                " WHERE (vend_id=:vend_id);");
+      q.prepare("SELECT vend_taxauth_id, crmacct_id "
+                "FROM vendinfo "
+                "  JOIN crmacct ON (crmacct_vend_id=vend_id) "
+                "WHERE (vend_id=:vend_id);");
       q.bindValue(":vend_id", _vendid);
       q.exec();
       if(q.first())
+      {
         _taxauth->setId(q.value("vend_taxauth_id").toInt());
+        _address->setSearchAcct(q.value("crmacct_id").toInt());
+        _contact->setSearchAcct(q.value("crmacct_id").toInt());
+      }
       else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -214,8 +219,9 @@ void vendorAddress::sCheck()
 
 void vendorAddress::populate()
 {
-  q.prepare( "SELECT * "
+  q.prepare( "SELECT vendaddrinfo.*, crmacct_id "
              "FROM vendaddrinfo "
+             " JOIN crmacct ON (vendaddr_vend_id=crmacct_vend_id) "
              "WHERE (vendaddr_id=:vendaddr_id);" );
   q.bindValue(":vendaddr_id", _vendaddrid);
   q.exec();
@@ -228,5 +234,7 @@ void vendorAddress::populate()
     _address->setId(q.value("vendaddr_addr_id").toInt());
     _taxauth->setId(q.value("vendaddr_taxauth_id").toInt());
     _notes->setText(q.value("vendaddr_comments").toString());
+    _address->setSearchAcct(q.value("crmacct_id").toInt());
+    _contact->setSearchAcct(q.value("crmacct_id").toInt());
   }
 }
