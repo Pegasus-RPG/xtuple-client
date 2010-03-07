@@ -504,6 +504,7 @@ void ItemLineEdit::sHandleCompleter()
     int numberCol = numQ.record().indexOf("item_number");
     int descripCol = numQ.record().indexOf("itemdescrip");
     model->setQuery(numQ);
+    _completer->setCompletionPrefix(stripped);
     for (int i = 0; i < model->columnCount(); i++)
     {
       if ( (i == numberCol) ||
@@ -518,9 +519,6 @@ void ItemLineEdit::sHandleCompleter()
   }
   else
     model->setQuery(QSqlQuery());
-
-
-  _completer->setCompletionPrefix(stripped);
 
   if (width > 350)
     width = 350;

@@ -498,24 +498,35 @@ void VirtualClusterLineEdit::sHandleCompleter()
     int nameCol = numQ.record().indexOf("name");
     int descripCol = numQ.record().indexOf("description");
     model->setQuery(numQ);
+    _completer->setCompletionPrefix(stripped);
+
     for (int i = 0; i < model->columnCount(); i++)
     {
-      if ( (i == numberCol) ||
-           (_hasName && i == nameCol ) ||
-           (_hasDescription && i == descripCol) )
+      qDebug("testing %d", i);
+      if ( (i != numberCol) &&
+           (!_hasName || i != nameCol ) &&
+           (!_hasDescription || i != descripCol) )
       {
-        view->resizeColumnToContents(i);
-        width += view->columnWidth(i);
-      }
-      else
+        qDebug("hiding %d", i);
         view->hideColumn(i);
+      }
+    }
+
+    view->resizeColumnToContents(numberCol);
+    width += view->columnWidth(numberCol);
+    if (_hasName)
+    {
+      view->resizeColumnToContents(nameCol);
+      width += view->columnWidth(nameCol);
+    }
+    if (_hasDescription)
+    {
+      view->resizeColumnToContents(descripCol);
+      width += view->columnWidth(descripCol);
     }
   }
   else
     model->setQuery(QSqlQuery());
-
-
-  _completer->setCompletionPrefix(stripped);
 
   if (width > 350)
     width = 350;
