@@ -87,6 +87,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
         _shipform->setId(cust.value("cust_shipform_id").toInt());
         _taxzone->setId(cust.value("cust_taxzone_id").toInt());
         _contact->setSearchAcct(cust.value("crmacct_id").toInt());
+        _address->setSearchAcct(cust.value("crmacct_id").toInt());
 
 	//  Handle the free-form Ship Via
         _shipVia->setId(-1);
@@ -269,6 +270,7 @@ void shipTo::populate()
     _name->setText(q.value("shipto_name"));
     _contact->setId(q.value("shipto_cntct_id").toInt());
     _contact->setSearchAcct(q.value("crmacct_id").toInt());
+    _address->setSearchAcct(q.value("crmacct_id").toInt());
     _comments->setText(q.value("shipto_comments").toString());
     _shippingComments->setText(q.value("shipto_shipcomments").toString());
     _taxzone->setId(q.value("shipto_taxzone_id").toInt());

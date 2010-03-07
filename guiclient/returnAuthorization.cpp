@@ -73,6 +73,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_postReceipts, SIGNAL(clicked()), this, SLOT(sPostReceipts()));
   connect(_raitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_authNumber, SIGNAL(textEdited(QString)), this, SLOT(sCheckNumber()));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
 
   _commission->setValidator(omfgThis->percentVal());
   _newso->setReadOnly(true);

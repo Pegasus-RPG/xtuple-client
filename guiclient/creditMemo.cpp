@@ -43,6 +43,8 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxzone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
 
 #ifndef Q_WS_MAC
   _invoiceList->setMaximumWidth(25);

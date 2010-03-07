@@ -693,6 +693,7 @@ void vendor::populate()
     _comments->setId(_vendid);
 
     _crmacctid = q.value("crmacct_id").toInt();
+    _address->setSearchAcct(_crmacctid);
 
     emit newId(_vendid);
   }

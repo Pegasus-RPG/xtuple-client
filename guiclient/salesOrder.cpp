@@ -119,7 +119,9 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
   connect(_orderDate, SIGNAL(newDate(QDate)), this, SLOT(sOrderDateChanged()));
   connect(_shipDate, SIGNAL(newDate(QDate)), this, SLOT(sShipDateChanged()));
-  
+  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+
   _saved = false;
 
   setFreeFormShipto(false);

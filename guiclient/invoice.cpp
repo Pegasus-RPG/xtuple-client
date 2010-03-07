@@ -64,6 +64,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sTaxZoneChanged()));
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
 
   setFreeFormShipto(false);
 

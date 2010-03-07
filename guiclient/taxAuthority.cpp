@@ -32,6 +32,7 @@ taxAuthority::taxAuthority(QWidget* parent, const char* name, bool modal, Qt::WF
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_crmacct, SIGNAL(newId(int)), _address,  SLOT(setSearchAcct(int)));
 
   _crmacct->setId(-1);
   _NumberGen = -1;
