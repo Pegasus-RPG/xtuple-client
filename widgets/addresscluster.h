@@ -48,8 +48,7 @@ class XTUPLEWIDGETS_EXPORT AddressList : public VirtualList
 	QPushButton*	_close;
 	QPushButton*	_select;
 	XTreeWidget*	_list;
-
-    private:
+        QCheckBox*      _searchAcct;
 };
 
 class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
@@ -66,12 +65,15 @@ class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
 
     protected:
 	AddressCluster*	_parent;
+        XCheckBox*      _searchCrmacct;
 	XCheckBox*	_searchStreet;
 	XCheckBox*	_searchCity;
 	XCheckBox*	_searchState;
 	XCheckBox*	_searchCountry;
 	XCheckBox*	_searchPostalCode;
 	XCheckBox*	_searchInactive;
+        QCheckBox*      _searchAcct;
+
 };
 
 class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
@@ -117,6 +119,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
         Q_INVOKABLE virtual QString number()       const { return _number->text(); };
 	Q_INVOKABLE virtual QString postalCode()  const { return _postalcode->text(); }
 	Q_INVOKABLE virtual QString state()   const { return _state->currentText(); }
+        Q_INVOKABLE virtual int searchAcctId() { return _searchAcctId; }
 	
 	// Return data map values
 	virtual QString  fieldNameAddrChange()  const { return _fieldNameAddrChange; };
@@ -154,6 +157,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	sList();
 	virtual void	sSearch();
 	virtual void	setId(const int);
+        virtual void	setSearchAcct(const int crmAcctId) { _searchAcctId = crmAcctId; }
         virtual int	save(enum SaveFlags);
         virtual void    check();
 	virtual void    populateStateComboBox();
@@ -201,6 +205,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	silentSetId(const int);
 	int		_id;
 	QString		_notes;
+        int             _searchAcctId;
 	bool		_selected;
 	QString		_titlePlural;
 	QString		_titleSingular;

@@ -25,7 +25,8 @@ void AddressCluster::init()
 {
     _titleSingular = tr("Address");
     _titlePlural   = tr("Addresses");
-    _query = "SELECT * FROM addr ";
+    _query = "SELECT * FROM address ";
+    _searchAcctId = -1;
 
     // handle differences between VirtualCluster and AddressCluster
     _grid->removeWidget(_label);
@@ -120,6 +121,17 @@ void AddressCluster::init()
     connect(_country,SIGNAL(editTextChanged(const QString&)),this, SLOT(setCountry(const QString&)));
     connect(_country,                    SIGNAL(newID(int)), this, SIGNAL(changed()));
     connect(_country,                    SIGNAL(newID(int)), this, SLOT(populateStateComboBox()));
+
+    connect(_addr1, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_addr2, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_addr3, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_city, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_postalcode, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_addr1, SIGNAL(requestSearch()), this, SLOT(sSearch()));
+    connect(_addr2, SIGNAL(requestSearch()), this, SLOT(sSearch()));
+    connect(_addr3, SIGNAL(requestSearch()), this, SLOT(sSearch()));
+    connect(_city,  SIGNAL(requestSearch()), this, SLOT(sSearch()));
+    connect(_postalcode,  SIGNAL(requestSearch()), this, SLOT(sSearch()));
 
     setFocusProxy(_addr1);
     setFocusPolicy(Qt::StrongFocus);
@@ -631,6 +643,7 @@ AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
 
     _listTab->setColumnCount(0);
 
+    _listTab->addColumn(tr("CRM Account"), -1, Qt::AlignLeft, true, "crmacct_name");
     _listTab->addColumn(tr("Line 1"),      -1, Qt::AlignLeft, true, "addr_line1");
     _listTab->addColumn(tr("Line 2"),      75, Qt::AlignLeft, true, "addr_line2");
     _listTab->addColumn(tr("Line 3"),      75, Qt::AlignLeft, true, "addr_line3");
@@ -641,12 +654,34 @@ AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
 
     resize(700, size().height());
 
+    _searchAcct = new QCheckBox();
+    _searchAcct->setMaximumWidth(480);
+    XSqlQuery crmacct;
+    crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
+                    "FROM crmacct "
+                    "WHERE (crmacct_id = :crmacct_id);");
+    crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
+    crmacct.exec();
+    if (crmacct.first())
+    {
+      _searchAcct->setChecked(true);
+      _dialogLyt->addWidget(_searchAcct);
+      _searchAcct->setText(tr("Only addresses for %1").arg(crmacct.value("account").toString()));
+      connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+    }
+
     sFillList();
 }
 
 void AddressList::sFillList()
 {
     _listTab->clear();
+
+    QString crmacctClause;
+    if (_searchAcct->isChecked())
+      _parent->_extraClause = QString("WHERE (crmacct_id=%1) ").arg(_parent->_searchAcctId);
+    else
+      _parent->_extraClause = QString();
     XSqlQuery query;
     query.prepare(_parent->_query +
                   _parent->_extraClause +
@@ -726,13 +761,15 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _listTab->setColumnCount(0);
 
+    _searchCrmacct    = new XCheckBox(tr("Search CRM Account"));
     _searchStreet     = new XCheckBox(tr("Search Street Address"));
     _searchCity       = new XCheckBox(tr("Search City"));
     _searchState      = new XCheckBox(tr("Search State"));
     _searchCountry    = new XCheckBox(tr("Search Country"));
     _searchPostalCode = new XCheckBox(tr("Search Postal Code"));
     _searchInactive   = new XCheckBox(tr("Show Inactive Addresses"));
-    
+
+    _searchCrmacct->setObjectName("_searchCrmacct");
     _searchStreet->setObjectName("_searchStreet");
     _searchCity->setObjectName("_searchCity");
     _searchState->setObjectName("_searchState");
@@ -747,6 +784,7 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     selectorsLyt->addWidget(_searchPostalCode, 4, 0);
     selectorsLyt->addWidget(_searchInactive,   0, 1);
 
+    connect(_searchCrmacct,    SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchStreet,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchCity,       SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchState,      SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -754,6 +792,7 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     connect(_searchPostalCode, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchInactive,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
+    _listTab->addColumn(tr("CRM Account"), -1, Qt::AlignLeft, true, "crmacct_name");
     _listTab->addColumn(tr("Line 1"),      -1, Qt::AlignLeft, true, "addr_line1");
     _listTab->addColumn(tr("Line 2"),      75, Qt::AlignLeft, true, "addr_line2");
     _listTab->addColumn(tr("Line 3"),      75, Qt::AlignLeft, true, "addr_line3");
@@ -769,6 +808,22 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     setWindowTitle(_parent->_titlePlural);
     _titleLit->setText(_parent->_titlePlural);
     _id = _parent->_id;
+
+    _searchAcct = new QCheckBox();
+    _searchAcct->setMaximumWidth(480);
+    XSqlQuery crmacct;
+    crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
+                    "FROM crmacct "
+                    "WHERE (crmacct_id = :crmacct_id);");
+    crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
+    crmacct.exec();
+    if (crmacct.first())
+    {
+      _searchAcct->setChecked(true);
+      _dialogLyt->addWidget(_searchAcct);
+      _searchAcct->setText(tr("Only addresses for %1").arg(crmacct.value("account").toString()));
+      connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+    }
 }
 
 void AddressSearch::sFillList()
@@ -777,22 +832,23 @@ void AddressSearch::sFillList()
     if (_search->text().isEmpty() ||
         (!_searchStreet->isChecked() && !_searchCity->isChecked() &&
          !_searchState->isChecked()  && !_searchCountry->isChecked() &&
-         !_searchPostalCode->isChecked() ))
+         !_searchPostalCode->isChecked()  && !_searchCrmacct->isChecked()))
       return;
 
     QString sql = _parent->_query +
                   "<? if exists(\"extraClause\") ?> "
-                  "  <? value(\"extraClause\") ?> "
+                  "  <? literal(\"extraClause\") ?> "
                   "<? else ?>"
-                  "  WHERE "
+                  "  WHERE true "
                   "<? endif ?> "
                   "<? if exists(\"searchInactive\") ?> "
-                  "   true "
-                  "<? else ?>"
-                  "   addr_active "
+                  "   AND addr_active "
                   "<? endif ?>"
                   "<? if reExists(\"search[CPS]\") ?> "
                   "  AND ("
+                  "<? if exists(\"searchCrmaact\") ?> "
+                  "   crmacct_name || '\n' ||  "
+                  "<? endif ?>"
                   "  <? if exists(\"searchStreet\") ?> "
                   "    addr_line1 || '\n' || addr_line2 || '\n' || addr_line3 || '\n' "
                   "  <? else ?>"
@@ -811,9 +867,17 @@ void AddressSearch::sFillList()
                   "     || addr_postalcode || '\n' "
                   "  <? endif ?>"
                   "  ~* <? value(\"searchText\") ?> )"
+                  "<? else ?>"
+                  "<? if exists(\"searchCrmaact\") ?> "
+                  "   crmacct_name ~* <? value(\"searchText\") ?> "
+                  "<? endif ?>"
                   "<? endif ?>"
                   "ORDER BY addr_country, addr_state, addr_postalcode;";
     ParameterList params;
+    if (_searchAcct->isChecked())
+      _parent->_extraClause = QString(" WHERE crmacct_id=%1").arg(_parent->_searchAcctId);
+    else
+      _parent->_extraClause = QString();
     if (_searchStreet->isChecked())
       params.append("searchStreet");
     if (_searchCity->isChecked())

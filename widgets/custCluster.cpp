@@ -38,6 +38,7 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *name) :
   setAcceptDrops(TRUE);
 
   _id       = -1;
+  _crmacctId = -1;
   _valid    = FALSE;
   _parsed   = TRUE;
   _dragging = FALSE;
@@ -112,10 +113,12 @@ void CLineEdit::setSilentId(int pId)
                  "         addr_line1, addr_line2, addr_line3,"
                  "         addr_city,  addr_state, addr_postalcode,"
                  "         addr_country, cust_creditstatus, "
-                 "         cntct_addr_id, cust_cntct_id "
+                 "         cntct_addr_id, cust_cntct_id, "
+                 "         crmacct_id "
                  "  FROM custinfo LEFT OUTER JOIN "
                  "       cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN "
                  "       addr  ON (cntct_addr_id=addr_id) "
+                 "       JOIN crmacct ON (crmacct_cust_id=cust_id) "
                  "  WHERE ( (cust_id=<? value(\"id\") ?>) "
                  "  <? if exists(\"active\") ?>"
                  "   AND (cust_active)"
@@ -137,10 +140,12 @@ void CLineEdit::setSilentId(int pId)
                  "         addr_line1, addr_line2, addr_line3,"
                  "         addr_city,  addr_state, addr_postalcode,"
                  "         addr_country, '' AS cust_creditstatus, "
-                 "         cntct_addr_id, prospect_cntct_id AS cust_cntct_id "
+                 "         cntct_addr_id, prospect_cntct_id AS cust_cntct_id, "
+                 "         crmacct_id "
                  "  FROM prospect LEFT OUTER JOIN "
                  "       cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN "
                  "       addr  ON (cntct_addr_id=addr_id) "
+                 "       JOIN crmacct ON (crmacct_prospect_id=prospect_id) "
                  "  WHERE ( (prospect_id=<? value(\"id\") ?>) "
                  "  <? if exists(\"active\") ?>"
                  "   AND (prospect_active)"
@@ -194,7 +199,7 @@ void CLineEdit::setSilentId(int pId)
     if (cust.first())
     {
       _id = pId;
-
+      _crmacctId = cust.value("crmacct_id").toInt();
       setText(cust.value("cust_number").toString());
 
       emit custNumberChanged(cust.value("cust_number").toString());
@@ -252,6 +257,7 @@ void CLineEdit::setId(int pId)
 
 //  Emit the item information signals
   emit newId(_id);
+  emit newCrmacctId(_crmacctId);
   emit valid(_valid);
 }
 
@@ -541,6 +547,7 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   connect(_info, SIGNAL(clicked()), this, SLOT(sInfo()));
 
   connect(_customerNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
+  connect(_customerNumber, SIGNAL(newCrmacctId(int)), this, SIGNAL(newCrmacctId(int)));
   connect(_customerNumber, SIGNAL(custNameChanged(const QString &)), this, SIGNAL(nameChanged(const QString &)));
   connect(_customerNumber, SIGNAL(custAddr1Changed(const QString &)), this, SIGNAL(address1Changed(const QString &)));
   connect(_customerNumber, SIGNAL(custAddr2Changed(const QString &)), this, SIGNAL(address2Changed(const QString &)));
@@ -806,6 +813,7 @@ CustCluster::CustCluster(QWidget *parent, const char *name) :
 
 //  Make some internal connections
   connect(_custInfo, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
+  connect(_custInfo, SIGNAL(newCrmacctId(int)), this, SIGNAL(newCrmacctId(int)));
   connect(_custInfo, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
   connect(_custInfo, SIGNAL(nameChanged(const QString &)), _name, SLOT(setText(const QString &)));
   connect(_custInfo, SIGNAL(address1Changed(const QString &)), _address1, SLOT(setText(const QString &)));

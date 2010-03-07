@@ -54,8 +54,10 @@ void VendorLineEdit::setId(int pId)
   {
     QString sql( "SELECT vend_number, vend_name,"
                  "       vend_address1, vend_address2, vend_address3,"
-                 "       vend_city, vend_state, vend_zip, vend_country "
+                 "       vend_city, vend_state, vend_zip, vend_country, "
+                 "       crmacct_id "
                  "FROM vend "
+                 " JOIN crmacct ON (crmacct_vend_id=vend_id) "
                  "WHERE ( (vend_id=:vend_id)" );
 
     if (_type == __activeVendors)
@@ -83,6 +85,7 @@ void VendorLineEdit::setId(int pId)
       emit zipCodeChanged(vend.value("vend_zip").toString());
       emit countryChanged(vend.value("vend_country").toString());
       emit newId(_id);
+      emit newCrmacctId(vend.value("crmacct_id").toInt());
       emit valid(TRUE);
     }
   }
@@ -102,6 +105,7 @@ void VendorLineEdit::setId(int pId)
     emit zipCodeChanged("");
     emit countryChanged("");
     emit newId(-1);
+    emit newCrmacctId(-1);
     emit valid(FALSE);
   }
   
@@ -282,6 +286,7 @@ VendorInfo::VendorInfo(QWidget *parent, const char *name) :
   connect(_list, SIGNAL(clicked()), _vendorNumber, SLOT(sEllipses()));
 
   connect(_vendorNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
+  connect(_vendorNumber, SIGNAL(newCrmacctId(int)), this, SIGNAL(newCrmacctId(int)));
   connect(_vendorNumber, SIGNAL(nameChanged(const QString &)), this, SIGNAL(nameChanged(const QString &)));
   connect(_vendorNumber, SIGNAL(address1Changed(const QString &)), this, SIGNAL(address1Changed(const QString &)));
   connect(_vendorNumber, SIGNAL(address2Changed(const QString &)), this, SIGNAL(address2Changed(const QString &)));
@@ -372,6 +377,7 @@ VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
 
   connect(_vendorNumber, SIGNAL(nameChanged(const QString &)), _vendorName, SLOT(setText(const QString &)));
   connect(_vendorNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
+  connect(_vendorNumber, SIGNAL(newCrmacctId(int)), this, SIGNAL(newCrmacctId(int)));
   connect(_vendorNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
 
   connect(_list, SIGNAL(clicked()), _vendorNumber, SLOT(sEllipses()));

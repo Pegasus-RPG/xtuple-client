@@ -211,6 +211,8 @@ void ContactWidget::init()
     connect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
     connect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
 
+    connect(_crmAcct, SIGNAL(newId(int)), this, SLOT(setSearchAcct(int)));
+
     setFocusPolicy(Qt::StrongFocus);
     setFocusProxy(_honorific);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -824,6 +826,7 @@ void ContactWidget::layout()
 void ContactWidget::setSearchAcct(const int p)
 {
   _searchAcctId = p;
+  addressWidget()->setSearchAcct(p);
 }
 
 void ContactWidget::check()

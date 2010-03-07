@@ -44,6 +44,7 @@ friend class VendorCluster;
   signals:
     void valid(bool);
     void newId(int);
+    void newCrmacctId(int);
     void nameChanged(const QString &);
     void address1Changed(const QString &);
     void address2Changed(const QString &);
@@ -96,6 +97,7 @@ class XTUPLEWIDGETS_EXPORT VendorInfo : public QWidget
 
   signals:
     void newId(int);
+    void newCrmacctId(int);
     void nameChanged(const QString &);
     void address1Changed(const QString &);
     void address2Changed(const QString &);
@@ -143,6 +145,7 @@ class XTUPLEWIDGETS_EXPORT VendorCluster : public QWidget
 
   signals:
     void newId(int);
+    void newCrmacctId(int);
     void valid(bool);
 
   private:

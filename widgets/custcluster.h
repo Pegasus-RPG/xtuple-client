@@ -65,6 +65,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
 
   signals:
     void newId(int);
+    void newCrmacctId(int);
     void custNumberChanged(const QString &);
     void custNameChanged(const QString &);
     void custAddr1Changed(const QString &);
@@ -90,6 +91,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
     bool		_autoFocus;
     bool		_dragging;
     CLineEditTypes	_type;
+    int                 _crmacctId;
 
     QString _all_extraclause;
     QString _customer_extraclause;
@@ -163,6 +165,7 @@ class XTUPLEWIDGETS_EXPORT CustInfo : public QWidget
 
   signals:
     void newId(int);
+    void newCrmacctId(int);
     void numberChanged(const QString &);
     void nameChanged(const QString &);
     void address1Changed(const QString &);
@@ -223,6 +226,7 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public QWidget
     
   signals:
     void newId(int);
+    void newCrmacctId(int);
     void valid(bool);
 
   public slots:
