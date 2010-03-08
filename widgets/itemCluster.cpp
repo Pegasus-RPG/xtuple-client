@@ -212,7 +212,7 @@ void ItemLineEditDelegate::setModelData(QWidget *editor,
   }
 }
 ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
+    VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
 {
   setTitles(tr("Item"), tr("Items"));
   setUiName("item");
