@@ -83,7 +83,11 @@ void printStatementsByCustomerType::sPrint()
 
   ParameterList custp;
   _customerTypes->appendValue(custp);
-  custp.append("graceDays", _graceDays->value());
+  if (_graceDays->value() > 0)
+    custp.append("graceDays", _graceDays->value());
+
+  if (_dueonly->isChecked())
+	  custp.append("graceDays", _graceDays->value());
 
   XSqlQuery custq = custm.toQuery(custp);
   if (custq.first())
