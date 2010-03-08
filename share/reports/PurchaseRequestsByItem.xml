@@ -38,8 +38,10 @@
             WHEN (pr_order_type='M') THEN 'Manual'
             ELSE 'Other'
        END as f_type,
+       pr_createdate as f_createdate,
        formatDate(pr_duedate) as f_duedate,
-       formatQty(pr_qtyreq) as f_qtyreq
+       formatQty(pr_qtyreq) as f_qtyreq,
+        pr_releasenote as f_notes
   FROM pr, itemsite 
  WHERE ((pr_itemsite_id=itemsite_id)
    AND (itemsite_item_id=&lt;? value("item_id") ?>)
@@ -297,6 +299,22 @@ ORDER BY pr_duedate;</sql>
    <yend>215</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>198</y>
+    <width>80</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create Date</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -391,6 +409,22 @@ ORDER BY pr_duedate;</sql>
    <vcenter/>
    <string>Due Date</string>
   </label>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create Date</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -398,7 +432,7 @@ ORDER BY pr_duedate;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>15</height>
+   <height>39</height>
    <field>
     <rect>
      <x>655</x>
@@ -492,6 +526,61 @@ ORDER BY pr_duedate;</sql>
     <data>
      <query>detail</query>
      <column>pr_status</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>11</x>
+     <y>18</y>
+     <width>38</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>6</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>Notes</string>
+   </label>
+   <text>
+    <rect>
+     <x>52</x>
+     <y>18</y>
+     <width>683</width>
+     <height>15</height>
+    </rect>
+    <bottompad>14</bottompad>
+    <font>
+     <face>Helvetica</face>
+     <size>6</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_notes</column>
+    </data>
+   </text>
+   <field>
+    <rect>
+     <x>445</x>
+     <y>0</y>
+     <width>110</width>
+     <height>16</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_createdate</column>
     </data>
    </field>
   </detail>

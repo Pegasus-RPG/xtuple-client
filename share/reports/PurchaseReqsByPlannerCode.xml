@@ -46,8 +46,10 @@
             WHEN (pr_order_type='M') THEN 'Manual'
             ELSE 'Other'
        END AS f_type,
+       formatdatetime(pr_createdate) AS f_createdate,
        formatDate(pr_duedate) AS f_duedate,
-       formatQty(pr_qtyreq) AS f_qtyreq
+       formatQty(pr_qtyreq) AS f_qtyreq,
+       pr_releasenote as f_notes
   FROM pr, itemsite, item
  WHERE ((pr_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
@@ -162,7 +164,7 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>580</x>
+    <x>575</x>
     <y>150</y>
     <width>80</width>
     <height>15</height>
@@ -213,7 +215,7 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>419</x>
+    <x>414</x>
     <y>150</y>
     <width>50</width>
     <height>15</height>
@@ -261,7 +263,7 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>480</x>
+    <x>470</x>
     <y>150</y>
     <width>100</width>
     <height>15</height>
@@ -342,17 +344,33 @@ ORDER BY pr_duedate;</sql>
     <column>plancode</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>575</x>
+    <y>132</y>
+    <width>80</width>
+    <height>18</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create Date</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
   <height>5</height>
  </pghead>
  <pghead>
-  <height>28</height>
+  <height>34</height>
   <label>
    <rect>
-    <x>480</x>
-    <y>5</y>
+    <x>470</x>
+    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -368,7 +386,7 @@ ORDER BY pr_duedate;</sql>
   <label>
    <rect>
     <x>20</x>
-    <y>5</y>
+    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -383,9 +401,9 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>419</x>
-    <y>5</y>
-    <width>80</width>
+    <x>414</x>
+    <y>15</y>
+    <width>53</width>
     <height>15</height>
    </rect>
    <font>
@@ -400,7 +418,7 @@ ORDER BY pr_duedate;</sql>
   <label>
    <rect>
     <x>220</x>
-    <y>5</y>
+    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -415,8 +433,8 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>580</x>
-    <y>5</y>
+    <x>575</x>
+    <y>15</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -432,7 +450,7 @@ ORDER BY pr_duedate;</sql>
   <label>
    <rect>
     <x>665</x>
-    <y>5</y>
+    <y>15</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -448,7 +466,7 @@ ORDER BY pr_duedate;</sql>
   <label>
    <rect>
     <x>120</x>
-    <y>5</y>
+    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -463,11 +481,27 @@ ORDER BY pr_duedate;</sql>
   </label>
   <line>
    <xstart>5</xstart>
-   <ystart>20</ystart>
+   <ystart>30</ystart>
    <xend>745</xend>
-   <yend>20</yend>
+   <yend>30</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>572</x>
+    <y>1</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create Date</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -475,7 +509,7 @@ ORDER BY pr_duedate;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>18</height>
+   <height>38</height>
    <field>
     <rect>
      <x>665</x>
@@ -497,9 +531,9 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>220</x>
+     <x>215</x>
      <y>0</y>
-     <width>200</width>
+     <width>204</width>
      <height>15</height>
     </rect>
     <font>
@@ -516,7 +550,7 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>120</x>
+     <x>115</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -535,9 +569,9 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>419</x>
+     <x>418</x>
      <y>0</y>
-     <width>50</width>
+     <width>46</width>
      <height>15</height>
     </rect>
     <font>
@@ -554,9 +588,9 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>20</x>
+     <x>18</x>
      <y>0</y>
-     <width>100</width>
+     <width>92</width>
      <height>15</height>
     </rect>
     <font>
@@ -573,8 +607,82 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>580</x>
+     <x>554</x>
      <y>0</y>
+     <width>113</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_createdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>468</x>
+     <y>0</y>
+     <width>85</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_type</column>
+    </data>
+   </field>
+   <text>
+    <rect>
+     <x>57</x>
+     <y>16</y>
+     <width>500</width>
+     <height>15</height>
+    </rect>
+    <bottompad>14</bottompad>
+    <font>
+     <face>Helvetica</face>
+     <size>6</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_notes</column>
+    </data>
+   </text>
+   <label>
+    <rect>
+     <x>16</x>
+     <y>16</y>
+     <width>38</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>6</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <string>Notes</string>
+   </label>
+   <field>
+    <rect>
+     <x>573</x>
+     <y>15</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -588,25 +696,6 @@ ORDER BY pr_duedate;</sql>
     <data>
      <query>detail</query>
      <column>f_duedate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>480</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_type</column>
     </data>
    </field>
   </detail>
