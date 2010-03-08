@@ -391,7 +391,6 @@ void packingListBatch::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _pack->clear();
   _pack->populate(q, true);
 }
 
