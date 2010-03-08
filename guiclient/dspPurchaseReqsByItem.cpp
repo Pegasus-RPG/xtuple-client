@@ -37,9 +37,10 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, 
   _pr->addColumn(tr("Sub #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_subnumber");
   _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
   _pr->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft,   true,  "parent"   );
+  _pr->addColumn(tr("Create Date"),        -1,    Qt::AlignLeft,  true,  "pr_createdate"  );
   _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
   _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
-  _pr->addColumn(tr("Notes"),        -1,            Qt::AlignRight,  true,  "pr_releasenote"  );
+  _pr->addColumn(tr("Notes"),        -1,    Qt::AlignLeft,  true,  "pr_releasenote"  );
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
 
