@@ -270,17 +270,19 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
 void cashReceipt::sApplyToBalance()
 {
-  if(_mode == cNew)
-    if(!save(true))
-      return;
-	  
+  if(!save(true))
+    return;
+
   XSqlQuery applyToBal;
   applyToBal.prepare( "UPDATE cashrcpt "
-             "SET cashrcpt_cust_id=:cust_id, cashrcpt_curr_id=:curr_id "
+             "SET cashrcpt_cust_id=:cust_id, "
+             "    cashrcpt_curr_id=:curr_id, "
+             "    cashrcpt_docdate=:docdate "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
   applyToBal.bindValue(":cust_id", _cust->id());
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
 
   applyToBal.prepare("SELECT applyCashReceiptToBalance(:cashrcpt_id, "
@@ -341,9 +343,20 @@ void cashReceipt::sApply()
 
 void cashReceipt::sApplyLineBalance()
 {
-  if(_mode == cNew)
-    if(!save(true))
-      return;
+  if(!save(true))
+    return;
+
+  XSqlQuery applyToBal;
+  applyToBal.prepare( "UPDATE cashrcpt "
+                      "SET cashrcpt_cust_id=:cust_id, "
+                      "    cashrcpt_curr_id=:curr_id, "
+                      "    cashrcpt_docdate=:docdate "
+                      "WHERE (cashrcpt_id=:cashrcpt_id);" );
+  applyToBal.bindValue(":cust_id", _cust->id());
+  applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
+  applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":docdate", _docDate->date());
+  applyToBal.exec();
 	  
   QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
