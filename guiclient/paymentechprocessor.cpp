@@ -260,10 +260,12 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
 
   int refid = 0;
   returnValue = authorize(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, "", refid);
+  /* don't return here because the caller is going to need all of the parameter data
   if(returnValue < 0)
   {
     return returnValue;
   }
+  */
 
   double amount  = pamount;
   int    currid  = pcurrid;
