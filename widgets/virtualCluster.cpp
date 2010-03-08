@@ -502,12 +502,10 @@ void VirtualClusterLineEdit::sHandleCompleter()
 
     for (int i = 0; i < model->columnCount(); i++)
     {
-      qDebug("testing %d", i);
       if ( (i != numberCol) &&
            (!_hasName || i != nameCol ) &&
            (!_hasDescription || i != descripCol) )
       {
-        qDebug("hiding %d", i);
         view->hideColumn(i);
       }
     }
