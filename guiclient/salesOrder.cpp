@@ -4460,10 +4460,22 @@ void salesOrder::sRecalculatePrice()
       sql ="UPDATE coitem SET coitem_price=itemprice(item_id, "
            "cohead_cust_id, <? value(\"shipto_id\") ?>, coitem_qtyord, "
            "coitem_qty_uom_id, coitem_price_uom_id, "
-           "cohead_curr_id,cohead_orderdate, <? value(\"asOf\") ?> ), "
+           "cohead_curr_id,cohead_orderdate, "
+           "<? if exists(\"UseSchedDate\") ?>"
+           " coitem_scheddate "
+           "<? else ?> "
+           "<? value(\"asOf\") ?>"
+           "<? endif ?> "
+           "), "
            "coitem_custprice=itemprice(item_id, cohead_cust_id, "
            "<? value(\"shipto_id\") ?>,coitem_qtyord, coitem_qty_uom_id, "
-           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, <? value(\"asOf\") ?> ) "
+           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, "
+           "<? if exists(\"UseSchedDate\") ?>"
+           " coitem_scheddate "
+           "<? else ?> "
+           "<? value(\"asOf\") ?>"
+           "<? endif ?> "
+           ") "
            "FROM cohead, item, itemsite "
            "WHERE ( (coitem_status NOT IN ('C','X')) "
            "AND (NOT coitem_firm) "
@@ -4479,10 +4491,22 @@ void salesOrder::sRecalculatePrice()
       sql = "UPDATE quitem SET quitem_price=itemprice(item_id, "
             "quhead_cust_id, <? value(\"shipto_id\") ?>, quitem_qtyord, "
             "quitem_qty_uom_id, quitem_price_uom_id, "
-            "quhead_curr_id,quhead_quotedate, <? value(\"asOf\") ?> ), "
+            "quhead_curr_id,quhead_quotedate, "
+           "<? if exists(\"UseSchedDate\") ?>"
+           " quitem_scheddate "
+           "<? else ?> "
+           "<? value(\"asOf\") ?>"
+           "<? endif ?> "
+            "), "
             "quitem_custprice=itemprice(item_id, quhead_cust_id, "
             "<? value(\"shipto_id\") ?>,quitem_qtyord, quitem_qty_uom_id, "
-            "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, <? value(\"asOf\") ?> ) "
+            "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, "
+           "<? if exists(\"UseSchedDate\") ?>"
+           " quitem_scheddate "
+           "<? else ?> "
+           "<? value(\"asOf\") ?>"
+           "<? endif ?> "
+            ") "
             "FROM quhead, item, itemsite "
             "WHERE ( (itemsite_id=quitem_itemsite_id) "
             "<? if exists(\"ignoreDiscounts\") ?>"
@@ -4496,6 +4520,8 @@ void salesOrder::sRecalculatePrice()
     params.append("shipto_id", _shiptoid);
     if (_metrics->boolean("IgnoreCustDisc"))
       params.append("ignoreDiscounts", true);
+    if (_metrics->value("soPriceEffective") == "ScheduleDate")
+      params.append("UseSchedDate", true);
     MetaSQLQuery mql(sql);
     if (_metrics->value("soPriceEffective") == "OrderDate") {
       if (!_orderDate->isValid()) {
@@ -4550,7 +4576,8 @@ void salesOrder::sShipDateChanged()
   if (_shipDate->date() == _shipDateCache ||
       !_shipDate->isValid())
     return;
-  else  if (!_soitem->topLevelItemCount()) {
+  else  if (!_soitem->topLevelItemCount())
+  {
     _shipDateCache = _shipDate->date();
     return;
   }
@@ -4565,9 +4592,72 @@ void salesOrder::sShipDateChanged()
   if (QMessageBox::question(this, tr("Update all schedule dates?"),
                             tr("Changing this date will update the Schedule Date on all editable line items. "
                                "Is this what you want to do?"),
-                            QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape)
-    == QMessageBox::Yes) {
-    if (ISORDER(_mode)) {
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+  {
+    // Validate first
+    if (ISORDER(_mode))
+    {
+      sql = "SELECT DISTINCT valid FROM ( "
+            "  SELECT customerCanPurchase(itemsite_item_id, cohead_cust_id, "
+            "                             cohead_shipto_id, <? value(\"newDate\") ?>) AS valid "
+            "  FROM cohead "
+            "   JOIN coitem ON (cohead_id=coitem_cohead_id) "
+            "   JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
+            "   WHERE ( (cohead_id=<? value(\"cohead_id\") ?>) "
+            "   AND (coitem_status NOT IN ('C','X')) )"
+            ") data "
+            "ORDER BY valid; ";
+    }
+    else
+    {
+      sql = "SELECT DISTINCT valid FROM ( "
+            "  SELECT customerCanPurchase(itemsite_item_id, quhead_cust_id, "
+            "                             quhead_shipto_id, <? value(\"newDate\") ?>) AS valid "
+            "  FROM quhead "
+            "   JOIN quitem ON (quhead_id=quitem_quhead_id) "
+            "   JOIN itemsite ON (quitem_itemsite_id=itemsite_id) "
+            "   WHERE (quhead_id=<? value(\"cohead_id\") ?>) "
+            ") data "
+            "ORDER BY valid; ";
+    }
+
+    MetaSQLQuery vmql(sql);
+    upd = vmql.toQuery(params);
+    if (upd.first())
+    {
+      if (upd.size() == 2) // Both valid and invalid records
+      {
+        if (QMessageBox::warning(this, tr("Can not reschedule all Items"),
+                                 tr("Some exclusive items may not be rescheduled because there is no "
+                                    "valid price schedule for the date entered.  Proceed rescheduling "
+                                    "only qualifying items?"),
+                                 QMessageBox::Yes | QMessageBox::Default,
+                                 QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
+        {
+          _shipDate->setDate(_shipDateCache);
+          return;
+        }
+      }
+      else if (!upd.value("valid").toBool()) // No valid items
+      {
+        QMessageBox::warning(this, tr("Can not reschedule Items"),
+                           tr("No Items can be rescheduled because there are no "
+                              "valid price schedules for the date entered."));
+        _shipDate->setDate(_shipDateCache);
+        return;
+      }
+    }
+    else if (upd.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      _shipDate->setDate(_shipDateCache);
+      return;
+    }
+
+    // Now execute
+    if (ISORDER(_mode))
+    {
       sql = "UPDATE coitem SET coitem_scheddate = <? value(\"newDate\") ?> "
             "FROM cohead,item,itemsite "
             "WHERE ( (coitem_status NOT IN ('C','X'))"
@@ -4575,26 +4665,32 @@ void salesOrder::sShipDateChanged()
             "  AND (itemsite_id=coitem_itemsite_id) "
             "  AND (itemsite_item_id=item_id) "
             "  AND (cohead_id=<? value(\"cohead_id\") ?>) "
-            "  AND (coitem_cohead_id=cohead_id) );";
+            "  AND (coitem_cohead_id=cohead_id) "
+            "  AND (customerCanPurchase(itemsite_item_id, cohead_cust_id, cohead_shipto_id, <? value(\"newDate\") ?>) ) );";
     }
-    else {
+    else
+    {
       sql = "UPDATE quitem SET quitem_scheddate = <? value(\"newDate\") ?> "
             "FROM quhead,item,itemsite "
             "WHERE ( (itemsite_id=quitem_itemsite_id) "
             "  AND (itemsite_item_id=item_id) "
             "  AND (quhead_id=<? value(\"cohead_id\") ?>) "
-            "  AND (quitem_quhead_id=quhead_id) );";
+            "  AND (quitem_quhead_id=quhead_id) "
+            "  AND (customerCanPurchase(itemsite_item_id, quhead_cust_id, quhead_shipto_id, <? value(\"newDate\") ?>) ) );";
     }
 
     MetaSQLQuery mql(sql);
     upd = mql.toQuery(params);
-    if (upd.lastError().type() != QSqlError::NoError) {
+    if (upd.lastError().type() != QSqlError::NoError)
+    {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      _shipDate->setDate(_shipDateCache);
       return;
     }
   }
-  else {
-    _shipDate->date() = _shipDateCache;
+  else
+  {
+    _shipDate->setDate(_shipDateCache);
     return;
   }
 
