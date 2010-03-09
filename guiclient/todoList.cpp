@@ -34,28 +34,21 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
 	QSqlDatabase db = QSqlDatabase::database();
 
-  _parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-  _parameterWidget->setType("Assigned", "assigned_username", ParameterWidget::User, db.userName());
-  _parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
-  _parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
-  _parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
-  _parameterWidget->setType("Start Date Before", "startStartDate", ParameterWidget::Date);
-  _parameterWidget->setType("Start Date After", "startEndDate", ParameterWidget::Date);
-	_parameterWidget->setType("Due Date Before", "dueStartDate", ParameterWidget::Date);
-  _parameterWidget->setType("Due Date After", "dueEndDate", ParameterWidget::Date);
+  _parameterWidget->setType(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
+  _parameterWidget->setType(tr("Assigned"), "assigned_username", ParameterWidget::User, db.userName());
+  _parameterWidget->setType(tr("Owner"), "owner_username", ParameterWidget::User);
+  _parameterWidget->setType(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->setType(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->setType(tr("Start Date Before"), "startStartDate", ParameterWidget::Date);
+  _parameterWidget->setType(tr("Start Date After"), "startEndDate", ParameterWidget::Date);
+	_parameterWidget->setType(tr("Due Date Before"), "dueStartDate", ParameterWidget::Date);
+  _parameterWidget->setType(tr("Due Date After"), "dueEndDate", ParameterWidget::Date);
   _parameterWidget->applyDefaultFilterSet();
 
   _crmAccount->hide();
-  //_dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  //_dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  //_startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  //_startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-
-  //_usrGroup->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  
   q.exec("SELECT current_user;");
-  //if (q.first())
-    //_usr->setUsername(q.value("current_user").toString());
-  //original - else if (q.lastError().type() != QSqlError::NoError)
+
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -69,8 +62,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_completed,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
-  //connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  //connect(_startDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+
   connect(_todolist,    SIGNAL(toggled(bool)),  this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
@@ -80,20 +72,10 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
 	    this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
-  //connect(_all,		SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  //connect(_all,		SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
-  //connect(_selected,	SIGNAL(clicked()),	this,	SLOT(sFillList()));
-  //connect(_selected,	SIGNAL(clicked()),	this,	SLOT(handlePrivs()));
-  //connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
-  //connect(_usr,		SIGNAL(newId(int)),	this,	SLOT(handlePrivs()));
-  //connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(sFillList()));
-  //connect(_pattern,	SIGNAL(editingFinished()),	this,	SLOT(handlePrivs()));
+
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-  //connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  //connect(_startdateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  //connect(_assignedTo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  //connect(_ownedBy, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  
 
   _todoList->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
@@ -494,27 +476,6 @@ void todoList::setParams(ParameterList &params)
   if (_projects->isChecked())
     params.append("projects");
 
-
-  //if (_assignedTo->isChecked())
-   // params.append("assignedTo");
- // else
-    //params.append("ownedBy");
-  
-  //if (_selected->isChecked())
-   // params.append("username", _usr->username());
-  //else if (_usePattern->isChecked())
-   // params.append("usr_pattern", _pattern->text());
-
-  //if (_duedateGroup->isChecked())
-  //{
-   // params.append("dueStartDate", _dueDates->startDate());
-   // params.append("dueEndDate",   _dueDates->endDate());
-  //}
-  //if (_startdateGroup->isChecked())
-  //{
-   // params.append("startStartDate", _startDates->startDate());
-   // params.append("startEndDate",   _startDates->endDate());
-  //}
   params.append("todo", tr("To-do"));
   params.append("incident", tr("Incident"));
   params.append("task", tr("Task"));

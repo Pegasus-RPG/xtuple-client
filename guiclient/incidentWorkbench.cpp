@@ -42,18 +42,18 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
       .arg(tr("Resolved"))
       .arg(tr("Closed"));
 
-  parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
-  parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User, db.userName());
-  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
-  parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
-  parameterWidget->setType("CRM Account", "crmAccountId", ParameterWidget::Crmacct);
-  parameterWidget->setType("Contact","cntct_id", ParameterWidget::Contact);
-  parameterWidget->setXComboBoxType("Severity", "severity_id", XComboBox::IncidentSeverity);
-  parameterWidget->setXComboBoxType("Category", "category_id", XComboBox::IncidentCategory);
-  parameterWidget->setXComboBoxType("Status is", "status_equal", qryStatus);
-  parameterWidget->setXComboBoxType("Hide Status above", "status_above", qryStatus, 4);
+  parameterWidget->setType(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget->setType(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
+  parameterWidget->setType(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  parameterWidget->setType(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget->setType(tr("End Date"), "endDate", ParameterWidget::Date);
+  parameterWidget->setType(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
+  parameterWidget->setType(tr("Contact"),"cntct_id", ParameterWidget::Contact);
+  parameterWidget->setXComboBoxType(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
+  parameterWidget->setXComboBoxType(tr("Category"), "category_id", XComboBox::IncidentCategory);
+  parameterWidget->setXComboBoxType(tr("Status is"), "status_equal", qryStatus);
+  parameterWidget->setXComboBoxType(tr("Hide Status above"), "status_above", qryStatus, 4);
 
   _closeAct = new QAction(tr("Close"), this);
   _closeAct->setShortcut(QKeySequence::Close);
