@@ -64,7 +64,8 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   _transType->append(cTransIssues,    tr("Issues")                 );
   _transType->append(cTransShipments, tr("Shipments")              );
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
-  _transType->append(cTransTransfers, tr("Transfers")              );
+  if (_metrics->value("Application") != "PostBooks")
+    _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
 }
