@@ -12,10 +12,13 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QtScript>
 
 #include <metasql.h>
 
 #include "queryitem.h"
+
+#define DEBUG false
 
 QuerySet::QuerySet(QWidget *parent, Qt::WindowFlags fl)
   : QWidget(parent, fl)
@@ -224,4 +227,48 @@ bool QuerySet::sSave(bool done)
   }
 
   return true;
+}
+
+// script exposure ////////////////////////////////////////////////////////////
+
+void QuerySetfromScriptValue(const QScriptValue &obj, QuerySet* &item)
+{
+  item = qobject_cast<QuerySet*>(obj.toQObject());
+}
+
+QScriptValue QuerySettoScriptValue(QScriptEngine *engine, QuerySet* const &item)
+{
+  return engine->newQObject(item);
+}
+
+QScriptValue constructQuerySet(QScriptContext *context,
+                               QScriptEngine  *engine)
+{
+  QuerySet *obj = 0;
+  if (context->argumentCount() == 1 &&
+      (context->argument(0).toInt32() == 0 ||
+       qscriptvalue_cast<QWidget*>(context->argument(0))))
+  {
+    if (DEBUG) qDebug("constructQuerySet got a QWidget*");
+    obj = new QuerySet(qscriptvalue_cast<QWidget*>(context->argument(0)));
+  }
+  else if (context->argumentCount() >= 2 &&
+           (context->argument(0).toInt32() == 0 ||
+            qscriptvalue_cast<QWidget*>(context->argument(0))))
+  {
+    if (DEBUG) qDebug("constructQuerySet got a QWidget* and an int");
+    obj = new QuerySet(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                       (Qt::WindowFlags)(context->argument(1).toInt32()));
+  }
+
+  return engine->toScriptValue(obj);
+}
+
+void setupQuerySet(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, QuerySettoScriptValue, QuerySetfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructQuerySet);
+
+  engine->globalObject().setProperty("QuerySet", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

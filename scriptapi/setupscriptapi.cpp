@@ -76,6 +76,7 @@
 #include "qtoolbarproto.h"
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
+#include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
 #include "qwidgetproto.h"
@@ -178,6 +179,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQToolBarProto(engine);
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);
+  setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
   setupQWidgetProto(engine);

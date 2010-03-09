@@ -91,18 +91,20 @@ void exportData::sDeleteQuerySet()
                             QMessageBox::No) == QMessageBox::Yes)
   {
     XSqlQuery delq;
-    delq.exec("BEGIN;");
-    delq.prepare("DELETE FROM qryitem WHERE (qryitem_qryhead_id=:id);");
+    delq.prepare("SELECT deleteQryhead(:id) AS result;");
     delq.bindValue(":id", _qrySetList->id());
     if (delq.exec())
     {
-      delq.prepare("DELETE FROM qryhead WHERE (qryhead_id=:id);");
-      delq.bindValue(":id", _qrySetList->id());
-      delq.exec();
+      int result = delq.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteQryhead", result),
+                    __FILE__, __LINE__);
+        return;
+      }
     }
     if (delq.lastError().type() != QSqlError::NoError)
     {
-      XSqlQuery rollback("ROLLBACK;");
       systemError(this, delq.lastError().text(), __FILE__, __LINE__);
       return;
     }

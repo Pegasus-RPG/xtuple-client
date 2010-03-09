@@ -55,4 +55,8 @@ class QuerySet : public QWidget, public Ui::QuerySet
 
 };
 
+Q_DECLARE_METATYPE(QuerySet*);
+
+void setupQuerySet(QScriptEngine *engine);
+
 #endif // QUERYSET_H
