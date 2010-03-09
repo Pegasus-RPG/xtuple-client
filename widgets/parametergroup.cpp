@@ -301,7 +301,7 @@ void ParameterGroup::appendValue(ParameterList &pParams)
       pParams.append("username", _items->itemText(_items->currentItem()));
     }
   }
-  else if (_usePattern->isChecked())
+  else if (_usePattern->isChecked() && !_pattern->text().isEmpty())
   {
     if (_type == ClassCode)
       pParams.append("classcode_pattern", _pattern->text());
@@ -394,7 +394,7 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
 
     pQuery.bindValue(name, _items->id());
   }
-  else if (_usePattern->isChecked())
+  else if (_usePattern->isChecked() && !_pattern->text().isEmpty())
   {
     QString name;
 
