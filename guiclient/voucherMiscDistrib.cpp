@@ -151,14 +151,6 @@ void voucherMiscDistrib::sSave()
     return;
   }
 
-  if (_amount->isZero())
-  {
-    QMessageBox::warning( this, tr("Enter Amount"),
-                          tr("You must enter an amount for this Miscellaneous Distribution.") );
-    _amount->setFocus();
-    return;
-  }
-
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
