@@ -848,6 +848,13 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item>
+            <widget class="QCheckBox" name="_disallowBlankWIP">
+             <property name="text">
+              <string>Disallow Blank WIP Locations</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>

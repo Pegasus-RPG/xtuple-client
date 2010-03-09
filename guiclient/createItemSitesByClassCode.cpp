@@ -103,6 +103,21 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
     _warehouse->setNull();
   }
 
+    //If not lot serial control, remove options
+  if (!_metrics->boolean("LotSerialControl"))
+  {
+    _controlMethod->removeItem(3);
+    _controlMethod->removeItem(2);
+    _autoNumberGroup->hide();
+    _tab->removeTab(_tab->indexOf(_expireTab));
+  }
+  
+  //If routings disabled, hide options
+  if (!_metrics->boolean("Routings"))
+  {
+    _disallowBlankWIP->hide();
+  }
+
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
   
@@ -208,7 +223,7 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_posupply, itemsite_wosupply,"
                "  itemsite_createpr, itemsite_createwo,"
                "  itemsite_sold, itemsite_soldranking,"
-               "  itemsite_stocked,"
+               "  itemsite_stocked, itemsite__disallowblankwip,"
                "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
                "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
                "  itemsite_location_comments, itemsite_notes,"
@@ -243,7 +258,7 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_posupply, :itemsite_wosupply,"
                "       :itemsite_createpr, :itemsite_createwo,"
                "       :itemsite_sold, :itemsite_soldranking,"
-               "       :itemsite_stocked,"
+			   "       :itemsite_stocked, :itemsite__disallowblankwip"
                "       :itemsite_controlmethod, :itemsite_perishable, TRUE,"
                "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'K') "
                "                 THEN FALSE "
@@ -298,6 +313,7 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
   q.bindValue(":itemsite_stocked",       QVariant(_stocked->isChecked()));
   q.bindValue(":itemsite_loccntrl",      QVariant(_locationControl->isChecked()));
+  q.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked())));
   q.bindValue(":itemsite_perishable",    QVariant(_perishable->isChecked()));
   q.bindValue(":itemsite_soldranking", _soldRanking->value());
   q.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
