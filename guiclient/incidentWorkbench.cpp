@@ -43,8 +43,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
       .arg(tr("Closed"));
 
   parameterWidget->setType("Owner", "owner_username", ParameterWidget::User);
-  parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User);
-  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text, db.userName());
+  parameterWidget->setType("Assigned User", "assigned_username", ParameterWidget::User, db.userName());
+  parameterWidget->setType("Assigned Pattern", "assigned_usr_pattern", ParameterWidget::Text);
   parameterWidget->setType("Owner Pattern", "owner_usr_pattern", ParameterWidget::Text);
   parameterWidget->setType("Start Date", "startDate", ParameterWidget::Date);
   parameterWidget->setType("End Date", "endDate", ParameterWidget::Date);
@@ -53,18 +53,21 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   parameterWidget->setXComboBoxType("Severity", "severity_id", XComboBox::IncidentSeverity);
   parameterWidget->setXComboBoxType("Category", "category_id", XComboBox::IncidentCategory);
   parameterWidget->setXComboBoxType("Status is", "status_equal", qryStatus);
-  parameterWidget->setXComboBoxType("Hide Status above", "status_above", qryStatus);
+  parameterWidget->setXComboBoxType("Hide Status above", "status_above", qryStatus, 4);
 
   _closeAct = new QAction(tr("Close"), this);
   _closeAct->setShortcut(QKeySequence::Close);
+  _close->addAction(_closeAct);
   
   _queryAct = new QAction(tr("Query"), this);
 
   _printAct = new QAction(tr("Print"), this);
   _printAct->setShortcut(QKeySequence::Print);
+  _print->addAction(_printAct);
 
   _newAct = new QAction(tr("New"), this);
   _newAct->setShortcut(QKeySequence::New);
+  _new->addAction(_newAct);
 
   parameterWidget->applyDefaultFilterSet();
 
