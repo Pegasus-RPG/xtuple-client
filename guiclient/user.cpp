@@ -45,6 +45,11 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_addSite, SIGNAL(clicked()), this, SLOT(sAddSite()));
   connect(_revokeSite, SIGNAL(clicked()), this, SLOT(sRevokeSite()));
 
+  if(omfgThis->useCloud())
+    _company->setText(omfgThis->company());
+  else
+    _company->setText("");
+
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
 
@@ -113,7 +118,10 @@ enum SetResponse user::set(const ParameterList &pParams)
       else
       {
         _username->setEnabled(false);
-        _username->setText(_cUsername);
+        if(omfgThis->useCloud() && _cUsername.endsWith("_" + omfgThis->company()))
+          _username->setText(_cUsername.left(_cUsername.length() - (omfgThis->company().length()+1)));
+        else
+          _username->setText(_cUsername);
         _active->setFocus();
         sCheck();
       }
@@ -169,6 +177,8 @@ void user::sSave()
 bool user::save()
 {
   QString username = _username->text().trimmed().lower();
+  if(omfgThis->useCloud())
+    username = username + "_" + omfgThis->company();
   if (username.length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot save User"),
@@ -491,6 +501,8 @@ void user::sRevokeGroup()
 void user::sCheck()
 {
   _cUsername = _username->text().trimmed();
+  if(omfgThis->useCloud())
+    _cUsername = _cUsername + "_" + omfgThis->company();
   if (_cUsername.length() > 0)
   {
     q.prepare( "SELECT * "
@@ -519,7 +531,10 @@ void user::populate()
   q.exec();
   if (q.first())
   {
-    _username->setText(q.value("usr_username"));
+    if(omfgThis->useCloud() && q.value("usr_username").toString().endsWith("_"+omfgThis->company()))
+      _username->setText(q.value("usr_username").toString().left(q.value("usr_username").toString().length() - (omfgThis->company().length()+1)));
+    else
+      _username->setText(q.value("usr_username"));
     _active->setChecked(q.value("usr_active").toBool());
     _properName->setText(q.value("usr_propername"));
     _initials->setText(q.value("usr_initials"));
@@ -669,7 +684,11 @@ void user::populateSite()
   }
   else 
   {
-    params.append("username", _username->text().trimmed().lower());
+    
+    if(omfgThis->useCloud())
+      params.append("username", _username->text().trimmed().lower() + "_" + omfgThis->company());
+    else
+      params.append("username", _username->text().trimmed().lower());
 
     sql = "SELECT warehous_id, warehous_code "
           " FROM whsinfo "

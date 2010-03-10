@@ -356,6 +356,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _databaseURL = pDatabaseURL;
   _username = pUsername;
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
+  _useCloud = false;
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();

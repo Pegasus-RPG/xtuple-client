@@ -223,6 +223,12 @@ class GUIClient : public QMainWindow
     QString _key;
     Q_INVOKABLE QString key() { return _key; }
 
+    QString _company;
+    Q_INVOKABLE QString company() { return _company; }
+
+    bool _useCloud;
+    Q_INVOKABLE bool useCloud() { return _useCloud; }
+
     QString _singleWindow;
 
     Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);

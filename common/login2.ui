@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>455</width>
-    <height>338</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2488,6 +2488,13 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
+        <widget class="QRadioButton" name="_cloudOption">
+         <property name="text">
+          <string>Log in to registered xTuple cloud</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QRadioButton" name="_otherOption">
          <property name="text">
           <string>Log in to server I specify</string>
@@ -2620,6 +2627,19 @@ to be bound by its terms.</comment>
              <number>0</number>
             </property>
             <item>
+             <widget class="QLabel" name="_companyLit">
+              <property name="text">
+               <string>Compan&amp;y:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>_company</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="_usernameLit">
               <property name="text">
                <string>&amp;Username:</string>
@@ -2655,6 +2675,9 @@ to be bound by its terms.</comment>
             <property name="margin">
              <number>0</number>
             </property>
+            <item>
+             <widget class="QLineEdit" name="_company"/>
+            </item>
             <item>
              <widget class="QLineEdit" name="_username">
               <property name="sizePolicy">
@@ -2835,12 +2858,15 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>_otherOption</tabstop>
+  <tabstop>_cloudOption</tabstop>
   <tabstop>_demoOption</tabstop>
+  <tabstop>_company</tabstop>
   <tabstop>_username</tabstop>
   <tabstop>_password</tabstop>
-  <tabstop>_options</tabstop>
   <tabstop>_login</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_options</tabstop>
+  <tabstop>_recent</tabstop>
  </tabstops>
  <resources>
   <include location="xTupleCommon.qrc"/>
@@ -2889,8 +2915,8 @@ to be bound by its terms.</comment>
      <y>269</y>
     </hint>
     <hint type="destinationlabel">
-     <x>236</x>
-     <y>308</y>
+     <x>301</x>
+     <y>321</y>
     </hint>
    </hints>
   </connection>
@@ -2905,8 +2931,8 @@ to be bound by its terms.</comment>
      <y>265</y>
     </hint>
     <hint type="destinationlabel">
-     <x>296</x>
-     <y>307</y>
+     <x>371</x>
+     <y>321</y>
     </hint>
    </hints>
   </connection>
@@ -2921,8 +2947,8 @@ to be bound by its terms.</comment>
      <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>397</x>
-     <y>260</y>
+     <x>443</x>
+     <y>251</y>
     </hint>
    </hints>
   </connection>
@@ -2937,8 +2963,40 @@ to be bound by its terms.</comment>
      <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>315</x>
-     <y>289</y>
+     <x>371</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cloudOption</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_company</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cloudOption</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_companyLit</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>56</x>
+     <y>247</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>56</x>
+     <y>296</y>
     </hint>
    </hints>
   </connection>

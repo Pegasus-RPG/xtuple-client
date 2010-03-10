@@ -38,6 +38,9 @@ to be bound by its terms.</comment>
      </item>
      <item row="0" column="1" colspan="2">
       <layout class="QHBoxLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <widget class="XLineEdit" name="_username">
          <property name="maximumSize">
@@ -47,6 +50,29 @@ to be bound by its terms.</comment>
           </size>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="_company">
+         <property name="text">
+          <string>_company</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QCheckBox" name="_active">
