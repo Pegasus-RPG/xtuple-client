@@ -127,7 +127,7 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   // TODO: this needs to be changed to support non-us
   prequest += "840"; // CurrencyCode: U.S. Dollars
 
-  prequest += "1"; // TransactionType: 1 - single trans over mail/phone card holder not present
+  prequest += "7"; // TransactionType: 1 - single trans over mail/phone card holder not present, 7 - e-commerce
 
   prequest += "    "; // EncryptionFlag, PaymentIndicator: both optional not using
 
