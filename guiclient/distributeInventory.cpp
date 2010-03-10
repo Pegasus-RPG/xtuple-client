@@ -104,7 +104,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                      "       itemsite_loccntrl, itemsite_controlmethod,"
                      "       itemsite_perishable, itemsite_warrpurc, "
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-					 "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id "
+                     "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id "
                      "FROM itemlocdist, itemsite "
                      "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                      " AND (itemlocdist_series=:itemlocdist_series) ) "
@@ -134,7 +134,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                            "UPDATE itemlocdist "
                            "SET itemlocdist_source_type='O' "
                            "WHERE (itemlocdist_series=:itemlocdist_series);"
-              
+
                            "DELETE FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);" );
             query.bindValue(":lotserial", pPresetLotnum);
@@ -150,45 +150,45 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             query.exec();
           }
         }
-		
-		if(itemlocSeries == -1)
-		{
-		  // Check to see if Lot/Serial distributions should be created using
-		  // "from" side of transaction.  Transactions are related by itemlocdist_source_id.
-		  // InterWarehouseTransfer uses this technique.
-		  if (itemloc.value("itemlocdist_source_id").toInt() > -1)
-		  {
-  		    XSqlQuery fromlots;
+
+        if(itemlocSeries == -1)
+        {
+          // Check to see if Lot/Serial distributions should be created using
+          // "from" side of transaction.  Transactions are related by itemlocdist_source_id.
+          // InterWarehouseTransfer uses this technique.
+          if (itemloc.value("itemlocdist_source_id").toInt() > -1)
+          {
+            XSqlQuery fromlots;
             fromlots.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
             if(fromlots.first())
             {
               itemlocSeries = fromlots.value("_itemloc_series").toInt();
-		      fromlots.prepare("SELECT  createlotserial(s.itemlocdist_itemsite_id, ls_number, "
-			                   "        :itemlocdist_series, 'I', NULL, :itemlocdist_id, (d.itemlocdist_qty * -1.0), "
-							   "        startOfTime(), NULL) "
-							   "FROM itemlocdist s JOIN itemlocdist o ON (o.itemlocdist_id=s.itemlocdist_source_id) "
-							   "                   JOIN itemlocdist d ON (d.itemlocdist_itemlocdist_id=o.itemlocdist_id) "
-							   "                   JOIN itemloc ON (itemloc_id=d.itemlocdist_source_id) "
-							   "                   JOIN ls ON (ls_id=itemloc_ls_id) "
-							   "WHERE (s.itemlocdist_id=:itemlocdist_id);"
+              fromlots.prepare("SELECT  createlotserial(s.itemlocdist_itemsite_id, ls_number, "
+                               "        :itemlocdist_series, 'I', NULL, :itemlocdist_id, (d.itemlocdist_qty * -1.0), "
+                               "        itemloc_expiration, itemloc_warrpurc) "
+                               "FROM itemlocdist s JOIN itemlocdist o ON (o.itemlocdist_id=s.itemlocdist_source_id) "
+                               "                   JOIN itemlocdist d ON (d.itemlocdist_itemlocdist_id=o.itemlocdist_id) "
+                               "                   JOIN itemloc ON (itemloc_id=d.itemlocdist_source_id) "
+                               "                   JOIN ls ON (ls_id=itemloc_ls_id) "
+                               "WHERE (s.itemlocdist_id=:itemlocdist_id);"
 
                                "UPDATE itemlocdist "
                                "SET itemlocdist_source_type='O' "
                                "WHERE (itemlocdist_series=:itemlocdist_series);"
-              
+
                                "DELETE FROM itemlocdist "
                                "WHERE (itemlocdist_id=:itemlocdist_id);" );
-			  fromlots.bindValue(":itemlocdist_series", itemlocSeries);
+              fromlots.bindValue(":itemlocdist_series", itemlocSeries);
               fromlots.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
-			  fromlots.exec();
+              fromlots.exec();
               if (fromlots.lastError().type() != QSqlError::NoError)
               {
                 systemError(0, fromlots.lastError().databaseText(), __FILE__, __LINE__);
                 return XDialog::Rejected;
               }
-			}
-		  }
-	    }
+            }
+          }
+        }
 
         if(itemlocSeries == -1)
         { 
