@@ -538,7 +538,7 @@ bool cashReceipt::save(bool partial)
     return FALSE;
   }
 
-  if (_received->id() != _bankaccnt_curr_id &&
+  if (_received->currencyEnabled() && _received->id() != _bankaccnt_curr_id &&
       QMessageBox::question(this, tr("Cash Receipt Transaction Not In Bank Currency"),
                           tr("<p>This transaction is specified in %1 while the "
                              "Bank Account is specified in %2. Do you wish to "
@@ -553,6 +553,7 @@ bool cashReceipt::save(bool partial)
     _received->setFocus();
     return FALSE;
   }
+  _received->setCurrencyDisabled(true);
 
   QString fundsType = _fundsType->itemData(_fundsType->currentIndex()).toString();
   if (!partial)
@@ -827,6 +828,7 @@ void cashReceipt::populate()
     _docNumber->setText(q.value("cashrcpt_docnumber").toString());
     _docDate->setDate(q.value("cashrcpt_docdate").toDate(), true);
     _bankaccnt->setId(q.value("cashrcpt_bankaccnt_id").toInt());
+    _received->setCurrencyDisabled(true);
     _distDate->setDate(q.value("cashrcpt_distdate").toDate(), true);
     _applDate->setDate(q.value("applydate").toDate(), true);
     _notes->setText(q.value("cashrcpt_notes").toString());
