@@ -76,9 +76,6 @@ void applyARDiscount::populate()
 		      "aropen_docdate,(terms_code|| '-' || terms_descrip) AS f_terms, "
 		      "(aropen_docdate + terms_discdays) AS discdate,terms_discprcnt,applied, "
 		      "aropen_amount,aropen_curr_id, "
-              "noNeg(aropen_amount * "
-              "CASE WHEN (CURRENT_DATE <= (aropen_docdate + terms_discdays)) THEN terms_discprcnt "
-              "ELSE 0.0 END - applied) AS amount, "
               "((aropen_docdate + terms_discdays) < CURRENT_DATE) AS past "
               "FROM aropen LEFT OUTER JOIN terms ON (aropen_terms_id=terms_id),custinfo, "
               "     (SELECT COALESCE(SUM(arapply_applied),0) AS applied "
@@ -118,10 +115,6 @@ void applyARDiscount::populate()
 
     _owed->setLocalValue(q.value("aropen_amount").toDouble());
     _applieddiscounts->setLocalValue(q.value("applied").toDouble());
-
-    _amount->set(q.value("amount").toDouble(),
-		 q.value("aropen_curr_id").toInt(), 
-		 q.value("aropen_docdate").toDate(), false);
   }
 
   else if (q.lastError().type() != QSqlError::NoError)

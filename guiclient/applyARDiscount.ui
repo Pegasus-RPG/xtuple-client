@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>324</height>
+    <width>443</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -189,7 +189,7 @@ to be bound by its terms.</comment>
         <string>Discount Amount:</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
         <cstring>_amount</cstring>

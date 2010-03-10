@@ -191,12 +191,7 @@ void cashReceiptItem::populate()
       _openAmount->set(query.value("f_amount").toDouble(),
 		       _openAmount->id(),
 		       query.value("aropen_docdate").toDate(), false);
-	  if(_openAmount->localValue() <= _amttoapply)
-		_amountToApply->setLocalValue(_openAmount->localValue());
-	  else
-		_amountToApply->setLocalValue(_amttoapply);
     } 
-//  ToDo
   }
   else if (_mode == cEdit)
   {
@@ -241,14 +236,5 @@ void cashReceiptItem::sDiscount()
   newdlg.set(params);
 
   if(newdlg.exec() != XDialog::Rejected)
-  {
     _discountAmount->setLocalValue(newdlg._amount->localValue());
-
-	if(_amttoapply <= (_openAmount->localValue() - _discountAmount->localValue()))
-	  _amountToApply->setLocalValue(_amttoapply);
-	else
-      _amountToApply->setLocalValue(_openAmount->localValue() - _discountAmount->localValue());
-
-	_amountToApply->setFocus();
-  }
 }
