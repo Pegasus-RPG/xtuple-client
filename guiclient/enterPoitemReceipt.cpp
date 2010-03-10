@@ -222,9 +222,6 @@ void enterPoitemReceipt::populate()
       _item->setItemsiteid(itemsiteid);
     _item->setEnabled(false);
 
-    if (_mode == cNew)
-      _toReceive->setDouble(q.value("qtytoreceive").toDouble());
-
     if (q.value("inventoryitem").toBool() && itemsiteid <= 0)
     {
       MetaSQLQuery ism = mqlLoad("itemReceipt", "sourceItemSite");
