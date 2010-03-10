@@ -46,7 +46,7 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_revokeSite, SIGNAL(clicked()), this, SLOT(sRevokeSite()));
 
   if(omfgThis->useCloud())
-    _company->setText(omfgThis->company());
+    _company->setText("_" + omfgThis->company());
   else
     _company->setText("");
 
