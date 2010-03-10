@@ -237,7 +237,7 @@ void printChecks::sPrint()
     ORPrintRender render;
     render.setupPrinter(&entireCheckRunPrerendered, &printer);
 
-    QPrintDialog pd(&printer);
+    QPrintDialog pd(&printer, this);
     pd.setMinMax(1, entireCheckRunPrerendered.pages());
     if(pd.exec() != XDialog::Accepted)
       return;

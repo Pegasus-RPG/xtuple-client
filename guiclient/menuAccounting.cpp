@@ -644,7 +644,14 @@ void menuAccounting::sPrintCheck()
 
 void menuAccounting::sPrintCheckRun()
 {
+#if defined Q_WS_MAC
+  printChecks *newdlg = new printChecks(parent, "", false);
+  newdlg->show();
+  newdlg->raise();
+  newdlg->activateWindow();
+#else
   printChecks(parent, "", TRUE).exec();
+#endif
 }
 
 void menuAccounting::sVoidCheckRun()
