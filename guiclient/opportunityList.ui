@@ -157,7 +157,7 @@ to be bound by its terms.</comment>
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QRadioButton" name="_all">
+         <widget class="QRadioButton" name="_allUsers">
           <property name="text">
            <string>All Users</string>
           </property>

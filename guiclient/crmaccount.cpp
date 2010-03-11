@@ -37,12 +37,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListTab->layout()->addWidget(_todoList);
-  //_todoList->findChild<QWidget*>("_contextGroup")->hide();
-  //_todoList->findChild<QWidget*>("_usrGroup")->hide();
   _todoList->findChild<QWidget*>("_close")->hide();
-  //_todoList->findChild<QWidget*>("_startdateGroup")->hide();
-  //_todoList->findChild<QWidget*>("_duedateGroup")->hide();
-  //_todoList->findChild<QRadioButton*>("_all")->setChecked(true);
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
   _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
   
@@ -58,11 +53,11 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
   _oplist->findChild<QWidget*>("_close")->hide();
-//  _oplist->findChild<QWidget*>("_usrGroup")->hide();
+  _oplist->findChild<QWidget*>("_usrGroup")->hide();
   _oplist->findChild<QWidget*>("_dates")->hide();
   _oplist->findChild<QWidget*>("_more")->hide();
   _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
-  _oplist->findChild<QRadioButton*>("_all")->setChecked(true);
+  _oplist->findChild<QRadioButton*>("_allUsers")->setChecked(true);
   _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
   _oplist->sHandleMore(false);
     
