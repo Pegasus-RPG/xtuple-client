@@ -17,17 +17,10 @@
 #include <openreports.h>
 #include "user.h"
 
-/*
- *  Constructs a users as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 users::users(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -38,8 +31,6 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-//  statusBar()->hide();
-  
   _usr->addColumn(tr("Username"),    80, Qt::AlignLeft,   true,  "usr_username"   );
   _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft,   true,  "usr_propername"   );
   _usr->addColumn(tr("Status"),      50, Qt::AlignCenter, true,  "status" );
@@ -55,18 +46,11 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 users::~users()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void users::languageChange()
 {
   retranslateUi(this);
