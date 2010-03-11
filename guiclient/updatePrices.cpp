@@ -57,6 +57,7 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WF
   _avail->addColumn(tr("Description"),   -1,          Qt::AlignLeft,  true,  "ipshead_descrip");
   _avail->addColumn(tr("Effective"),     -1,          Qt::AlignLeft,  true,  "ipshead_effective");
   _avail->addColumn(tr("Expires"),       -1,          Qt::AlignLeft,  true,  "ipshead_expires");
+  _avail->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _sel->addColumn(tr("Schedule"),        -1,          Qt::AlignLeft,  true,  "ipshead_name");
   _sel->addColumn(tr("Description"),     -1,          Qt::AlignLeft,  true,  "ipshead_descrip");
@@ -172,12 +173,16 @@ void updatePrices::populate()
 
 void updatePrices::sAdd()
 {
-  MetaSQLQuery mql = mqlLoad("updateprices", "add");
-  ParameterList params;
-  params.append("ipshead_id", _avail->id());
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  QList<XTreeWidgetItem*> selected = _avail->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    MetaSQLQuery mql = mqlLoad("updateprices", "add");
+    ParameterList params;
+    params.append("ipshead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q = mql.toQuery(params);
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
   populate();
 }
 
