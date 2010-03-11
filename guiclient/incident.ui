@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>812</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -376,7 +376,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
@@ -719,16 +719,6 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Subscribers</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="subscribers" name="_subscribers"/>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="_documentsTab">
       <attribute name="title">
        <string>Documents</string>
@@ -823,11 +813,6 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>subscribers</class>
-   <extends>QWidget</extends>
-   <header>subscribers.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

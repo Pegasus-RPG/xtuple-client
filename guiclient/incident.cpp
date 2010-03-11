@@ -118,7 +118,6 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _incdtid=q.value("incdt_id").toInt();
         _number->setText(q.value("number").toString());
         _comments->setId(_incdtid);
-		_subscribers->setId(_incdtid);
         _documents->setId(_incdtid);
         _alarms->setId(_incdtid);
         _recurring->setParent(_incdtid, "INCDT");
@@ -524,7 +523,6 @@ void incident::populate()
     _notes->setText(q.value("incdt_descrip").toString());
 
     _comments->setId(_incdtid);
-	_subscribers->setId(_incdtid);
     _documents->setId(_incdtid);
     _alarms->setId(_incdtid);
         

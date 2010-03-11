@@ -112,7 +112,6 @@ HEADERS += \
            plugins/xtreeviewplugin.h \
            plugins/xspinboxplugin.h \
            plugins/xtableviewplugin.h \
-		   plugins/subscribersplugin.h \
 
 SOURCES    += widgets.cpp \
               addressCluster.cpp contactCluster.cpp \
@@ -177,7 +176,6 @@ SOURCES    += widgets.cpp \
               docAttach.cpp \
               parameterwidget.cpp \
               filterManager.cpp \
-              subscribers.cpp subscriber.cpp \
               filterSave.cpp
 
 HEADERS    += widgets.h \
@@ -246,7 +244,6 @@ HEADERS    += widgets.h \
               docAttach.h \
               parameterwidget.h \
               filterManager.h \
-              subscriber.h subscribers.h \
               filtersave.h \
 
 FORMS += accountSearch.ui \
@@ -265,7 +262,6 @@ FORMS += accountSearch.ui \
          recurrencewidget.ui \
          vendorgroup.ui \
          womatlcluster.ui \
-         subscriber.ui subscribers.ui \
 
 
 RESOURCES += widgets.qrc
