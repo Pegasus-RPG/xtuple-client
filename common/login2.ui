@@ -2922,12 +2922,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>144</x>
-     <y>265</y>
+     <x>155</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>253</x>
-     <y>294</y>
+     <x>269</x>
+     <y>330</y>
     </hint>
    </hints>
   </connection>
@@ -2938,12 +2938,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>219</x>
-     <y>269</y>
+     <x>230</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>301</x>
-     <y>321</y>
+     <x>269</x>
+     <y>348</y>
     </hint>
    </hints>
   </connection>
@@ -2954,12 +2954,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>283</x>
-     <y>265</y>
+     <x>294</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>371</x>
-     <y>321</y>
+     <x>355</x>
+     <y>348</y>
     </hint>
    </hints>
   </connection>
@@ -2970,8 +2970,8 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>262</y>
+     <x>142</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
      <x>443</x>
@@ -2986,12 +2986,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
-     <y>262</y>
+     <x>196</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>371</x>
-     <y>305</y>
+     <x>355</x>
+     <y>330</y>
     </hint>
    </hints>
   </connection>
@@ -3002,12 +3002,12 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>98</x>
-     <y>249</y>
+     <x>110</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>115</x>
-     <y>295</y>
+     <x>188</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
@@ -3018,12 +3018,28 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>56</x>
-     <y>247</y>
+     <x>68</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>56</x>
-     <y>296</y>
+     <x>68</x>
+     <y>335</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_otherOption</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_recent</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>308</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>286</y>
     </hint>
    </hints>
   </connection>
