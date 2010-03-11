@@ -142,6 +142,7 @@ void updatePrices::sUpdate()
 
   QMessageBox::information( this, tr("Success"),
                             tr("Update Completed.") );
+  _updateBy->clear();
 }
 
 void updatePrices::populate()
