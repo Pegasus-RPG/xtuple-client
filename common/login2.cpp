@@ -21,6 +21,8 @@
 #include <QSplashScreen>
 #include <QStringList>
 #include <QCheckBox>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "xtsettings.h"
 #include "dbtools.h"
@@ -44,6 +46,7 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_login, SIGNAL(clicked()), this, SLOT(sLogin()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
+  connect(_cloudLink, SIGNAL(linkActivated(QString)), this, SLOT(cloudLink(QString)));
 
   _splash = 0;
 
@@ -521,3 +524,7 @@ void login2::clearRecentOptions()
     updateRecentOptionsActions();
 }
 
+void login2::cloudLink(const QString & /*link*/)
+{
+  QDesktopServices::openUrl(QUrl("http://www.xtuple.com/cloud"));
+}

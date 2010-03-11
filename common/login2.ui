@@ -14,17 +14,17 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>455</width>
-    <height>367</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Log In</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <layout class="QVBoxLayout">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -2483,21 +2483,41 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QRadioButton" name="_demoOption">
          <property name="text">
-          <string>Log in to registered xTuple demo account</string>
+          <string>Log in to single-user demo with my xTuple web user</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="_cloudOption">
-         <property name="text">
-          <string>Log in to registered xTuple cloud</string>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
          </property>
-        </widget>
+         <item>
+          <widget class="QRadioButton" name="_cloudOption">
+           <property name="text">
+            <string>Log in to my company's</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="_cloudLink">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&lt;a href=&quot;cloud&quot;&gt;xTuple cloud database&lt;/a&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QRadioButton" name="_otherOption">
          <property name="text">
-          <string>Log in to server I specify</string>
+          <string>Log in to a server I specify</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -2676,7 +2696,14 @@ to be bound by its terms.</comment>
              <number>0</number>
             </property>
             <item>
-             <widget class="QLineEdit" name="_company"/>
+             <widget class="QLineEdit" name="_company">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLineEdit" name="_username">
@@ -2825,7 +2852,7 @@ to be bound by its terms.</comment>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>20</height>
+              <height>0</height>
              </size>
             </property>
            </spacer>

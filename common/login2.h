@@ -51,6 +51,7 @@ class login2 : public QDialog, public Ui::login2
     virtual void updateRecentOptionsActions();
     virtual void selectRecentOptions();
     virtual void clearRecentOptions();
+    virtual void cloudLink(const QString &);
 
   protected slots:
     virtual void languageChange();
