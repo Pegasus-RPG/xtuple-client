@@ -42,6 +42,8 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_showCurrent,        SIGNAL(clicked()),     this, SLOT(populate()));
   connect(_value,              SIGNAL(clicked()),     this, SLOT(sHandleCharPrice()));
   connect(_percent,            SIGNAL(clicked()),     this, SLOT(sHandleCharPrice()));
+  connect(_avail,              SIGNAL(itemSelected(int)), _add,    SLOT(animateClick()));
+  connect(_sel,                SIGNAL(itemSelected(int)), _remove, SLOT(animateClick()));
 
   _updateBy->setValidator(new XDoubleValidator(-100, 9999, decimalPlaces("curr"), _updateBy));
 
