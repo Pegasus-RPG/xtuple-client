@@ -12,19 +12,29 @@
 #ifndef __EXPORTHELPER_H__
 #define __EXPORTHELPER_H__
 
+#include <QDomNode>
 #include <QFile>
 #include <QObject>
 #include <QString>
 
 #include <parameter.h>
 
+class QScriptEngine;
+
 class ExportHelper : public QObject
 {
   Q_OBJECT
 
   public:
-    Q_INVOKABLE static bool exportXML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg, const int xsltmapid = -1);
-    Q_INVOKABLE static bool XSLTConvert(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
+    static bool exportHTML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg);
+    static bool exportXML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg, const int xsltmapid = -1);
+    static QString generateHTML(const int qryheadid, ParameterList &params, QString &errmsg);
+    static QString generateHTML(QString qtext, ParameterList &params, QString &errmsg);
+    static QString generateXML(const int qryheadid, ParameterList &params, QString &errmsg);
+    static QString generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg);
+    static bool XSLTConvert(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
 };
+
+void setupExportHelper(QScriptEngine *engine);
 
 #endif

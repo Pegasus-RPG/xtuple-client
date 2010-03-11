@@ -82,6 +82,11 @@ void exportData::languageChange()
   retranslateUi(this);
 }
 
+ParameterEdit *exportData::getParameterEdit() const
+{
+  return _paramedit;
+}
+
 void exportData::sDeleteQuerySet()
 {
   if (QMessageBox::question(this, tr("Delete Query Set?"),

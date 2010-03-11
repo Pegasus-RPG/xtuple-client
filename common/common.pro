@@ -40,6 +40,6 @@ HEADERS = calendarcontrol.h \
           xtsettings.h
 FORMS = login2.ui login2Options.ui
 
-QT +=  sql xml
+QT +=  script sql xml
 
 RESOURCES += xTupleCommon.qrc

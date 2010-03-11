@@ -17,6 +17,7 @@
 #include "crmacctlineeditsetup.h"
 #include "currdisplaysetup.h"
 #include "documentssetup.h"
+#include "exporthelper.h"
 #include "glclustersetup.h"
 #include "include.h"
 #include "itemlineeditsetup.h"
@@ -118,6 +119,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupContactWidget(engine);
   setupCurrDisplay(engine);
   setupDocuments(engine);
+  setupExportHelper(engine);
   setupGLCluster(engine);
   setupInclude(engine);
   setupItemLineEdit(engine);

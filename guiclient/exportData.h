@@ -30,6 +30,7 @@ class exportData : public XWidget, public Ui::exportData
     ~exportData();
 
     static bool userHasPriv(const int priv);
+    Q_INVOKABLE ParameterEdit *getParameterEdit() const;
 
   public slots:
 
