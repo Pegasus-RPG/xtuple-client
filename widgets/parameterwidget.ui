@@ -7,13 +7,10 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>111</height>
+    <height>264</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="_headerLayout">
      <item>
@@ -63,7 +60,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string/>
+      <string>Filter</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="verticalSpacing">
@@ -73,57 +70,18 @@
        <number>3</number>
       </property>
       <item row="0" column="0">
-       <layout class="QGridLayout" name="_filtersLayout">
-        <property name="verticalSpacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="_filterByLit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Filter By</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="_valueLit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Value</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <spacer name="_colHeaderSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
        <layout class="QHBoxLayout" name="_footerLayout">
         <item>
-         <widget class="QPushButton" name="_addFilterRow">
+         <widget class="QPushButton" name="_saveButton">
           <property name="text">
-           <string>Add</string>
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_manageButton">
+          <property name="text">
+           <string>Manage</string>
           </property>
          </widget>
         </item>
@@ -141,19 +99,25 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="_saveButton">
+         <widget class="QPushButton" name="_addFilterRow">
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Save</string>
+           <string>+</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="_manageButton">
-          <property name="text">
-           <string>Manage</string>
-          </property>
-         </widget>
-        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="_filtersLayout">
+        <property name="verticalSpacing">
+         <number>0</number>
+        </property>
        </layout>
       </item>
      </layout>
