@@ -74,6 +74,12 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
     _passwd->setEnabled(false);
     _verify->setEnabled(false);
   }
+
+  if(omfgThis->useCloud())
+  {
+    _enhancedAuth->setChecked(true);
+    _enhancedAuth->setEnabled(false);
+  }
   
   if (!_metrics->boolean("MultiWhs"))
     _tab->removeTab(_tab->indexOf(_siteTab));
@@ -211,7 +217,10 @@ bool user::save()
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
-    passwd = passwd + "xTuple" + username;
+    if(omfgThis->useCloud())
+      passwd = passwd + "cloudkey" + username;
+    else
+      passwd = passwd + "xTuple" + username;
     passwd = QMd5(passwd);
   }
 

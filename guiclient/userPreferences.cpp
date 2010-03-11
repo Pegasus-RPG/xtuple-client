@@ -368,7 +368,10 @@ bool userPreferences::save()
     {
       if (q.value("usrpref_value").toString()=="t")
       {
-        passwd = passwd + "xTuple" + _username->text();
+        if(omfgThis->useCloud())
+          passwd = passwd + "cloudkey" + _username->text();
+        else
+          passwd = passwd + "xTuple" + _username->text();
         passwd = QMd5(passwd);
       }
     }
