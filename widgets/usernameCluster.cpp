@@ -22,6 +22,7 @@
 UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", "usr_propername", 0, 0, pName)
 {
+  setTitles(tr("User Name"), tr("User Names"));
   setType(UsersAll);
   if (_x_preferences)
   {
