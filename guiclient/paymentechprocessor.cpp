@@ -299,7 +299,7 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
   pparams.append("tax",         ccq.value("ccpay_r_tax").toString());
   pparams.append("ref",         ccq.value("ccpay_r_ref").toString());
   pparams.append("message",     ccq.value("ccpay_r_message").toString());
-  pparams.append("tdate",       ccq.value("ccpay_r_date").toString());
+  pparams.append("tdate",       ccq.value("ccpay_yp_r_tdate").toString());
   pparams.append("auth", QVariant(false, 1));
   pparams.append("amount",   amount);
   return returnValue;
@@ -350,7 +350,7 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
   pparams.append("tax",         ccq.value("ccpay_r_tax").toString());
   pparams.append("ref",         ccq.value("ccpay_r_ref").toString());
   pparams.append("message",     ccq.value("ccpay_r_message").toString());
-  pparams.append("tdate",       ccq.value("ccpay_r_date").toString());
+  pparams.append("tdate",       ccq.value("ccpay_yp_r_tdate").toString());
   pparams.append("auth", QVariant(false, 1));
   pparams.append("amount",   amount);
 
