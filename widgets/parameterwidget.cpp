@@ -192,6 +192,9 @@ void ParameterWidget::addParam()
 
   toolButton->setObjectName("button" + currRow);
   toolButton->setText(tr("-"));
+ #ifdef Q_WS_MAC
+  toolButton->setMinimumWidth(25);
+ #endif
 
   //grab the items provided by other widgets to populate xcombobox with
   QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > i(_types);

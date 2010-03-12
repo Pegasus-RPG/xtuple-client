@@ -6,11 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>264</height>
+    <width>325</width>
+    <height>100</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="_headerLayout">
      <item>
@@ -99,13 +102,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="_addFilterRow">
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
+         <widget class="QToolButton" name="_addFilterRow">
           <property name="text">
            <string>+</string>
           </property>
