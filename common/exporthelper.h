@@ -28,11 +28,14 @@ class ExportHelper : public QObject
   public:
     static bool exportHTML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg);
     static bool exportXML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg, const int xsltmapid = -1);
+    static QString generateDelimited(const int qryheadid, ParameterList &params, QString &errmsg);
+    static QString generateDelimited(QString qtext, ParameterList &params, QString &errmsg);
     static QString generateHTML(const int qryheadid, ParameterList &params, QString &errmsg);
     static QString generateHTML(QString qtext, ParameterList &params, QString &errmsg);
-    static QString generateXML(const int qryheadid, ParameterList &params, QString &errmsg);
-    static QString generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg);
-    static bool XSLTConvert(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
+    static QString generateXML(const int qryheadid, ParameterList &params, QString &errmsg, int xsltmapid = -1);
+    static QString generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg, int xsltmapid = -1);
+    static bool    XSLTConvertFile(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
+    static QString XSLTConvertString(QString input, int xsltmapid, QString &errmsg);
 };
 
 void setupExportHelper(QScriptEngine *engine);

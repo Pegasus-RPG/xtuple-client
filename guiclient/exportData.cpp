@@ -48,7 +48,7 @@ exportData::exportData(QWidget *parent, const char *name, Qt::WFlags fl)
   _exportList->addColumn(tr("Name"),             -1, Qt::AlignLeft, true, "xsltmap_name");
   _exportList->addColumn(tr("Document Type"),    -1, Qt::AlignLeft, true, "xsltmap_doctype");
   _exportList->addColumn(tr("System Identifier"),-1, Qt::AlignLeft, false,"xsltmap_system");
-  _exportList->addColumn(tr("Export XSLT FIle"), -1, Qt::AlignLeft, false,"xsltmap_export");
+  _exportList->addColumn(tr("Export XSLT File"), -1, Qt::AlignLeft, false,"xsltmap_export");
 
   _qrySetList->addColumn(tr("Name"),        -1, Qt::AlignLeft, true, "qryhead_name");
   _qrySetList->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "qryhead_descrip");
@@ -154,7 +154,10 @@ void exportData::sExport()
                                          filename,          errmsg,
                                          (_otherXML->isChecked() ?
                                                     _exportList->id() : -1));
-  if (! success)
+  if (success)
+    QMessageBox::information(this, tr("Processing Complete"),
+                             tr("The export to %1 is complete").arg(filename));
+  else
     QMessageBox::critical(this, tr("Processing Error"), errmsg);
 }
 

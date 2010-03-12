@@ -26,10 +26,13 @@
 #include "mqlutil.h"
 #include "xsqlquery.h"
 
-#define DEBUG true
+#define DEBUG false
 
 bool ExportHelper::exportHTML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::exportHTML(%d, %d params, %s, errmsg) entered",
+           qryheadid, params.size(), qPrintable(filename));
   bool returnVal = false;
 
   XSqlQuery setq;
@@ -98,6 +101,9 @@ bool ExportHelper::exportHTML(const int qryheadid, ParameterList &params, QStrin
   */
 bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString &filename, QString &errmsg, const int xsltmapid)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::exportXML(%d, %d params, %s, errmsg, %d) entered",
+           qryheadid, params.size(), qPrintable(filename), xsltmapid);
   bool returnVal = false;
 
   XSqlQuery setq;
@@ -112,35 +118,13 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
       filename = fileinfo.absoluteFilePath();
     }
 
-    QTemporaryFile *exportfile = new QTemporaryFile(filename);
-    exportfile->setAutoRemove(false);
-    if (! exportfile->open())
-      errmsg = tr("Could not open %1 (%2).").arg(filename,exportfile->error());
+    QFile exportfile(filename);
+    if (! exportfile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text))
+      errmsg = tr("Could not open %1 (%2).").arg(filename,exportfile.error());
     else
     {
-      QString  tmpfilename = QFileInfo(*exportfile).absoluteFilePath();
-      exportfile->write(generateXML(qryheadid, params, errmsg));
-      exportfile->close();
-      delete exportfile;
-      exportfile = 0;
-
-      if (xsltmapid < 0)
-      {
-        // rm pre-existing files with the desired name then rename the tmp file
-        QFile newFile(filename);
-        returnVal = (! newFile.exists() || newFile.remove()) &&
-                    QFile::rename(tmpfilename, filename);
-        if (! returnVal)
-          errmsg = tr("Could not rename temporary file %1 to %2.")
-                    .arg(tmpfilename, filename);
-      }
-      else
-      {
-        returnVal = XSLTConvert(tmpfilename,
-                                filename, xsltmapid, errmsg);
-        if (returnVal)
-          QFile::remove(tmpfilename);
-      }
+      exportfile.write(generateXML(qryheadid, params, errmsg, xsltmapid));
+      exportfile.close();
     }
   }
   else if (setq.lastError().type() != QSqlError::NoError)
@@ -153,11 +137,132 @@ bool ExportHelper::exportXML(const int qryheadid, ParameterList &params, QString
     qDebug("ExportHelper::exportXML returning %d, filename %s, and errmsg %s",
            returnVal, qPrintable(filename), qPrintable(errmsg));
 
+  returnVal = errmsg.isEmpty();
   return returnVal;
+}
+
+QString ExportHelper::generateDelimited(const int qryheadid, ParameterList &params, QString &errmsg)
+{
+  if (DEBUG)
+    qDebug("ExportHelper::exportDelimited(%d, %d params, errmsgd) entered",
+           qryheadid, params.size());
+
+  QStringList result;
+
+  XSqlQuery itemq;
+  itemq.prepare("SELECT *"
+                "  FROM qryitem"
+                " WHERE qryitem_qryhead_id=:id"
+                " ORDER BY qryitem_order;");
+  itemq.bindValue(":id", qryheadid);
+  itemq.exec();
+  while (itemq.next())
+  {
+    QString qtext;
+    if (itemq.value("qryitem_src").toString() == "REL")
+    {
+      QString schemaName = itemq.value("qryitem_group").toString();
+      qtext = "SELECT * FROM " +
+              (schemaName.isEmpty() ? QString("") : schemaName + QString(".")) +
+              itemq.value("qryitem_detail").toString();
+    }
+    else if (itemq.value("qryitem_src").toString() == "MQL")
+    {
+      QString tmpmsg;
+      bool valid;
+      qtext = MQLUtil::mqlLoad(itemq.value("qryitem_group").toString(),
+                               itemq.value("qryitem_detail").toString(),
+                               tmpmsg, &valid);
+      if (! valid)
+        errmsg = tmpmsg;
+    }
+    else if (itemq.value("qryitem_src").toString() == "CUSTOM")
+      qtext = itemq.value("qryitem_detail").toString();
+
+    if (! qtext.isEmpty())
+    {
+      QString oneresult = generateDelimited(qtext, params, errmsg);
+      if (! oneresult.isEmpty())
+        result.append(oneresult);
+    }
+  }
+  if (itemq.lastError().type() != QSqlError::NoError)
+    errmsg = itemq.lastError().text();
+
+  return result.join("\n");
+}
+
+QString ExportHelper::generateDelimited(QString qtext, ParameterList &params, QString &errmsg)
+{
+  if (DEBUG)
+    qDebug("ExportHelper::generateDelimited(%s..., %d params, errmsg) entered",
+           qPrintable(qtext.left(80)), params.size());
+  if (qtext.isEmpty())
+    return QString::null;
+
+  if (DEBUG)
+  {
+    QStringList plist;
+    for (int i = 0; i < params.size(); i++)
+      plist.append("\t" + params.name(i) + ":\t" + params.value(i).toString());
+    qDebug("generateDelimited parameters:\n%s", qPrintable(plist.join("\n")));
+  }
+
+  bool valid;
+  QString delim = params.value("delim", &valid).toString();
+  if (! valid)
+    delim = ",";
+  if (DEBUG)
+    qDebug("generateDelimited(qtest, params, errmsg) delim = %s, valid = %d",
+           qPrintable(delim), valid);
+
+  QVariant includeheaderVar = params.value("includeHeaderLine", &valid);
+  bool includeheader = (valid ? includeheaderVar.toBool() : false);
+  if (DEBUG)
+    qDebug("generateDelimited(qtest, params, errmsg) includeheader = %d, valid = %d",
+           includeheader, valid);
+
+  QStringList line;
+  MetaSQLQuery mql(qtext);
+  XSqlQuery qry = mql.toQuery(params);
+  if (qry.first())
+  {
+    QStringList field;
+    int cols = qry.record().count();
+    if (includeheader)
+    {
+      for (int p = 0; p < cols; p++)
+        field.append(qry.record().fieldName(p));
+      line.append(field.join(delim));
+    }
+
+    QString tmp;
+    do {
+      field.clear();
+      for (int p = 0; p < cols; p++)
+      {
+        tmp = qry.value(p).toString();
+        if (tmp.contains(delim))
+        {
+          tmp.replace("\"", "\"\"");
+          tmp = "\"" + tmp + "\"";
+        }
+        field.append(tmp);
+      }
+      line.append(field.join(delim));
+    } while (qry.next());
+  }
+  if (qry.lastError().type() != QSqlError::NoError)
+    errmsg = qry.lastError().text();
+
+  return line.join("\n");
 }
 
 QString ExportHelper::generateHTML(const int qryheadid, ParameterList &params, QString &errmsg)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::generateHTML(%d, %d params, errmsg) entered",
+           qryheadid, params.size());
   QTextDocument doc(0);
   QTextCursor   cursor(&doc);
 
@@ -199,6 +304,9 @@ QString ExportHelper::generateHTML(const int qryheadid, ParameterList &params, Q
 
 QString ExportHelper::generateHTML(QString qtext, ParameterList &params, QString &errmsg)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::generateHTML(%s..., %d params, errmsg) entered",
+           qPrintable(qtext.left(80)), params.size());
   if (qtext.isEmpty())
     return QString::null;
 
@@ -218,8 +326,12 @@ QString ExportHelper::generateHTML(QString qtext, ParameterList &params, QString
   if (qry.first())
   {
     int cols = qry.record().count();
+    int expected = qry.size();
+    if (includeheader)
+      expected++;
+
     // presize the table
-    cursor.insertTable((qry.size() < 0 ? 1 : qry.size()), cols, tablefmt);
+    cursor.insertTable((expected < 0 ? 1 : expected), cols, tablefmt);
     if (includeheader)
     {
       tablefmt.setHeaderRowCount(1);
@@ -244,8 +356,19 @@ QString ExportHelper::generateHTML(QString qtext, ParameterList &params, QString
   return doc.toHtml();
 }
 
-QString ExportHelper::generateXML(const int qryheadid, ParameterList &params, QString &errmsg)
+QString ExportHelper::generateXML(const int qryheadid, ParameterList &params, QString &errmsg, int xsltmapid)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::generateXML(%d, %d params, errmsg, %d) entered",
+           qryheadid, params.size(), xsltmapid);
+  if (DEBUG)
+  {
+    QStringList plist;
+    for (int i = 0; i < params.size(); i++)
+      plist.append("\t" + params.name(i) + ":\t" + params.value(i).toString());
+    qDebug("generateXML parameters:\n%s", qPrintable(plist.join("\n")));
+  }
+
   QDomDocument xmldoc("xtupleimport");
   QDomElement rootelem = xmldoc.createElement("xtupleimport");
   xmldoc.appendChild(rootelem);
@@ -301,10 +424,6 @@ QString ExportHelper::generateXML(const int qryheadid, ParameterList &params, QS
             else
               fieldElem.appendChild(xmldoc.createTextNode(qry.record().value(i).toString()));
             tableElem.appendChild(fieldElem);
-            if (DEBUG)
-              qDebug("exportXML added %s %s",
-                     qPrintable(tableElem.nodeName()),
-                     qPrintable(tableElem.nodeValue()));
           }
           rootelem.appendChild(tableElem);
         } while (qry.next());
@@ -316,11 +435,26 @@ QString ExportHelper::generateXML(const int qryheadid, ParameterList &params, QS
   if (itemq.lastError().type() != QSqlError::NoError)
     errmsg = itemq.lastError().text();
 
-  return xmldoc.toString();
+  if (xsltmapid < 0)
+    return xmldoc.toString();
+  else
+    return XSLTConvertString(xmldoc.toString(), xsltmapid, errmsg);
 }
 
-QString ExportHelper::generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg)
+QString ExportHelper::generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg, int xsltmapid)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::generateXML(%s..., %s, %d params, errmsg, %d) entered",
+           qPrintable(qtext.left(80)), qPrintable(tableElemName),
+           params.size(), xsltmapid);
+  if (DEBUG)
+  {
+    QStringList plist;
+    for (int i = 0; i < params.size(); i++)
+      plist.append("\t" + params.name(i) + ":\t" + params.value(i).toString());
+    qDebug("generateXML parameters:\n%s", qPrintable(plist.join("\n")));
+  }
+
   QDomDocument xmldoc("xtupleimport");
   QDomElement rootelem = xmldoc.createElement("xtupleimport");
   xmldoc.appendChild(rootelem);
@@ -344,10 +478,6 @@ QString ExportHelper::generateXML(QString qtext, QString tableElemName, Paramete
           else
             fieldElem.appendChild(xmldoc.createTextNode(qry.record().value(i).toString()));
           tableElem.appendChild(fieldElem);
-          if (DEBUG)
-            qDebug("exportXML added %s %s",
-                   qPrintable(tableElem.nodeName()),
-                   qPrintable(tableElem.nodeValue()));
         }
         rootelem.appendChild(tableElem);
       } while (qry.next());
@@ -356,11 +486,17 @@ QString ExportHelper::generateXML(QString qtext, QString tableElemName, Paramete
       errmsg = qry.lastError().text();
   }
 
-  return xmldoc.toString();
+  if (xsltmapid < 0)
+    return xmldoc.toString();
+  else
+    return XSLTConvertString(xmldoc.toString(), xsltmapid, errmsg);
 }
 
-bool ExportHelper::XSLTConvert(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg)
+bool ExportHelper::XSLTConvertFile(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg)
 {
+  if (DEBUG)
+    qDebug("ExportHelper::XSLTConvertFile(%s, %s, %d, errmsg) entered",
+           qPrintable(inputfilename), qPrintable(outputfilename), xsltmapid);
   bool returnVal = false;
 
   XSqlQuery xsltq;
@@ -435,6 +571,97 @@ bool ExportHelper::XSLTConvert(QString inputfilename, QString outputfilename, in
   return returnVal;
 }
 
+QString ExportHelper::XSLTConvertString(QString input, int xsltmapid, QString &errmsg)
+{
+  if (DEBUG)
+    qDebug("ExportHelper::XSLTConvertString(%s..., %d, errmsg) entered",
+           qPrintable(input.left(200)), xsltmapid);
+  QString returnVal;
+
+  XSqlQuery xsltq;
+  xsltq.prepare("SELECT xsltmap_export, fetchMetricText(:xsltdir) AS dir,"
+                "       fetchMetricText(:xsltproc) AS proc"
+                "  FROM xsltmap"
+                " WHERE xsltmap_id=:id;");
+
+#if defined Q_WS_MACX
+  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirMac");
+  xsltq.bindValue(":xsltproc", "XSLTProcessorMac");
+#elif defined Q_WS_WIN
+  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirWindows");
+  xsltq.bindValue(":xsltproc", "XSLTProcessorWindows");
+#elif defined Q_WS_X11
+  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirLinux");
+  xsltq.bindValue(":xsltproc", "XSLTProcessorLinux");
+#endif
+
+  xsltq.bindValue(":id", xsltmapid);
+  xsltq.exec();
+  if (xsltq.first())
+  {
+    QTemporaryFile inputfile;
+    inputfile.open();
+    inputfile.write(input);
+    inputfile.close();
+    if (DEBUG)
+      qDebug("ExportHelper::XSLTConvertString name of temp file: %s",
+             qPrintable(inputfile.fileName()));
+
+    QStringList args = xsltq.value("proc").toString().split(" ", QString::SkipEmptyParts);
+    QString xsltfile = xsltq.value("xsltmap_export").toString();
+    QString defaultXSLTDir = xsltq.value("dir").toString();
+    QString command = args[0];
+    args.removeFirst();
+    args.replaceInStrings("%f", inputfile.fileName());
+    if (QFile::exists(xsltfile))
+      args.replaceInStrings("%x", xsltfile);
+    else if (QFile::exists(defaultXSLTDir + QDir::separator() + xsltfile))
+      args.replaceInStrings("%x", defaultXSLTDir + QDir::separator() + xsltfile);
+    else
+    {
+      errmsg = tr("Cannot find the XSLT file as either %1 or %2")
+                  .arg(xsltfile, defaultXSLTDir + QDir::separator() + xsltfile);
+      return false;
+    }
+
+    QProcess xslt;
+    xslt.start(command, args);
+    QString commandline = command + " " + args.join(" ");
+    if (DEBUG)
+      qDebug("ExportHelper::XSLTConvertString about to run: %s",
+             qPrintable(commandline));
+    errmsg = "";
+    if (! xslt.waitForStarted())
+      errmsg = tr("Error starting XSLT Processing: %1\n%2")
+                        .arg(commandline)
+                        .arg(QString(xslt.readAllStandardError()));
+    if (! xslt.waitForFinished())
+      errmsg = tr("The XSLT Processor encountered an error: %1\n%2")
+                        .arg(commandline)
+                        .arg(QString(xslt.readAllStandardError()));
+    if (xslt.exitStatus() !=  QProcess::NormalExit)
+      errmsg = tr("The XSLT Processor did not exit normally: %1\n%2")
+                        .arg(commandline)
+                        .arg(QString(xslt.readAllStandardError()));
+    if (xslt.exitCode() != 0)
+      errmsg = tr("The XSLT Processor returned an error code: %1\nreturned %2\n%3")
+                        .arg(commandline)
+                        .arg(xslt.exitCode())
+                        .arg(QString(xslt.readAllStandardError()));
+
+    returnVal = QString(xslt.readAllStandardOutput()); // TODO: encoding issues?
+  }
+  else  if (xsltq.lastError().type() != QSqlError::NoError)
+    errmsg = xsltq.lastError().text();
+  else
+    errmsg = tr("Could not find XSLT mapping with internal id %1.")
+               .arg(xsltmapid);
+
+  if (! errmsg.isEmpty())
+    qWarning("%s", qPrintable(errmsg));
+  return returnVal;
+}
+
 // scripting exposure //////////////////////////////////////////////////////////
 
 Q_DECLARE_METATYPE(ParameterList)
@@ -503,6 +730,35 @@ static QScriptValue exportXML(QScriptContext *context,
   return QScriptValue(result);
 }
 
+static QScriptValue generateDelimited(QScriptContext *context,
+                                      QScriptEngine  * /*engine*/)
+{
+  QString result = QString::null;
+  QString errmsg = QString::null;
+
+  if (context->argumentCount() < 2)
+    context->throwError(QScriptContext::UnknownError,
+                        "not enough args passed to generateHTML");
+
+  if (context->argument(0).isNumber())
+  {
+    int        qryheadid = context->argument(0).toInt32();
+    ParameterList params = qscriptvalue_cast<ParameterList>(context->argument(1));
+
+    result = ExportHelper::generateDelimited(qryheadid, params, errmsg);
+  }
+  else
+  {
+    QString         qtext = context->argument(0).toString();
+    ParameterList  params = qscriptvalue_cast<ParameterList>(context->argument(1));
+    result = ExportHelper::generateDelimited(qtext, params, errmsg);
+  }
+
+  // TODO: how to we pass back errmsg output parameter?
+
+  return QScriptValue(result);
+}
+
 static QScriptValue generateHTML(QScriptContext *context,
                                  QScriptEngine  * /*engine*/)
 {
@@ -539,19 +795,33 @@ static QScriptValue generateXML(QScriptContext *context,
   QString errmsg = QString::null;
 
     
-  if (context->argumentCount() >= 2 && context->argument(0).isNumber())
+  if (context->argument(0).isNumber() && context->argumentCount() == 3)
   {
     int        qryheadid = context->argument(0).toInt32();
     ParameterList params = qscriptvalue_cast<ParameterList>(context->argument(1));
 
     result = ExportHelper::generateXML(qryheadid, params, errmsg);
   }
+  else if (context->argument(0).isNumber() && context->argumentCount() == 4)
+  {
+    int        qryheadid = context->argument(0).toInt32();
+    ParameterList params = qscriptvalue_cast<ParameterList>(context->argument(1));
+    int        xsltmapid = context->argument(3).toInt32();
+
+    result = ExportHelper::generateXML(qryheadid, params, errmsg, xsltmapid);
+  }
   else if (context->argumentCount() >= 3)
   {
     QString         qtext = context->argument(0).toString();
     QString tableElemName = context->argument(1).toString();
     ParameterList  params = qscriptvalue_cast<ParameterList>(context->argument(2));
-    result = ExportHelper::generateXML(qtext, tableElemName, params, errmsg);
+    if (context->argumentCount() >= 5)
+    {
+      int xsltmapid = context->argument(4).toInt32();
+      result = ExportHelper::generateXML(qtext, tableElemName, params, errmsg, xsltmapid);
+    }
+    else
+      result = ExportHelper::generateXML(qtext, tableElemName, params, errmsg);
   }
   else
     context->throwError(QScriptContext::UnknownError,
@@ -562,15 +832,30 @@ static QScriptValue generateXML(QScriptContext *context,
   return QScriptValue(result);
 }
 
-static QScriptValue XSLTConvert(QScriptContext *context,
-                                QScriptEngine  * /*engine*/)
+static QScriptValue XSLTConvertFile(QScriptContext *context,
+                                    QScriptEngine  * /*engine*/)
 {
   QString inputfilename  = context->argument(0).toString();
   QString outputfilename = context->argument(1).toString();
   int     xsltmapid      = context->argument(2).toInt32();
   QString errmsg         = context->argument(3).toString();
 
-  bool result = ExportHelper::XSLTConvert(inputfilename, outputfilename, xsltmapid, errmsg);
+  bool result = ExportHelper::XSLTConvertFile(inputfilename, outputfilename,
+                                              xsltmapid,     errmsg);
+
+  // TODO: how to we pass back errmsg output parameter?
+
+  return QScriptValue(result);
+}
+
+static QScriptValue XSLTConvertString(QScriptContext *context,
+                                      QScriptEngine  * /*engine*/)
+{
+  QString input     = context->argument(0).toString();
+  int     xsltmapid = context->argument(1).toInt32();
+  QString errmsg;
+
+  QString result = ExportHelper::XSLTConvertString(input, xsltmapid, errmsg);
 
   // TODO: how to we pass back errmsg output parameter?
 
@@ -582,9 +867,11 @@ void setupExportHelper(QScriptEngine *engine)
   QScriptValue obj = engine->newObject();
   obj.setProperty("exportHTML", engine->newFunction(exportHTML),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
   obj.setProperty("exportXML", engine->newFunction(exportXML),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  obj.setProperty("generateDelimited", engine->newFunction(generateDelimited),QScriptValue::ReadOnly | QScriptValue::Undeletable);
   obj.setProperty("generateHTML", engine->newFunction(generateHTML),QScriptValue::ReadOnly | QScriptValue::Undeletable);
   obj.setProperty("generateXML", engine->newFunction(generateXML),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  obj.setProperty("XSLTConvert", engine->newFunction(XSLTConvert),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  obj.setProperty("XSLTConvertFile", engine->newFunction(XSLTConvertFile), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  obj.setProperty("XSLTConvertString", engine->newFunction(XSLTConvertString), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ExportHelper", obj, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
