@@ -67,6 +67,13 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="_new">
+         <property name="text">
+          <string>&amp;New</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="_query">
          <property name="text">
           <string>Query</string>
@@ -139,13 +146,6 @@ to be bound by its terms.</comment>
       </item>
       <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QPushButton" name="_new">
-          <property name="text">
-           <string>&amp;New</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
