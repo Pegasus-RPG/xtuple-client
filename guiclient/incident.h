@@ -45,13 +45,14 @@ public slots:
     virtual void sNewTodoItem();
     virtual void sPopulateTodoMenu(QMenu*);
     virtual void sSave();
+	virtual void sPrint();
     virtual void sViewTodoItem();
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
 
 signals:
-            void populated();
+    virtual void populated();
 
 protected slots:
     virtual void languageChange();

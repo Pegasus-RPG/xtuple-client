@@ -19,6 +19,7 @@
 #include "returnAuthorization.h"
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
+#include <openreports.h>
 
 incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -41,6 +42,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_newTodoItem,   SIGNAL(clicked()),        this,       SLOT(sNewTodoItem()));
   //connect(_return,      SIGNAL(clicked()),        this, SLOT(sReturn()));
   connect(_save,          SIGNAL(clicked()),        this,       SLOT(sSave()));
+  connect(_print,         SIGNAL(clicked()),        this,       SLOT(sPrint()));
   connect(_todoList,      SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
   connect(_todoList,      SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,         SLOT(sPopulateTodoMenu(QMenu*)));
   connect(_todoList,      SIGNAL(valid(bool)),      this, SLOT(sHandleTodoPrivs()));
@@ -121,6 +123,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _documents->setId(_incdtid);
         _alarms->setId(_incdtid);
         _recurring->setParent(_incdtid, "INCDT");
+        _print->hide();
       }
       else
       {
@@ -739,6 +742,23 @@ void incident::sViewAR()
   arOpenItem newdlg(this, 0, true);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void incident::sPrint()
+{
+  if (_incdtid != -1)
+  {
+    ParameterList params;
+    params.append("incdt_id", _incdtid);
+    params.append("print");
+
+    orReport report("Incident", params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+//  ToDo
 }
 
 void incident::sAssigned()
