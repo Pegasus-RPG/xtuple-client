@@ -491,8 +491,7 @@ void creditMemo::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery query;
-    query.prepare( "SELECT shipto_num, shipto_name,"
-		   "       shipto_addr_id, shipto_taxzone_id "
+    query.prepare( "SELECT * "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
     query.bindValue(":shipto_id", pShiptoid);
@@ -503,6 +502,8 @@ void creditMemo::populateShipto(int pShiptoid)
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
+      _salesRep->setId(query.value("shipto_salesrep_id").toInt());
+      _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
     }
     else if (query.lastError().type() != QSqlError::NoError)
     {
