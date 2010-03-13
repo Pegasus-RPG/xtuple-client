@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>805</width>
     <height>600</height>
    </rect>
   </property>
@@ -485,13 +485,21 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_shipToNumber</tabstop>
+  <tabstop>_name</tabstop>
+  <tabstop>_active</tabstop>
+  <tabstop>_default</tabstop>
   <tabstop>_address</tabstop>
+  <tabstop>_contact</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_shipZone</tabstop>
   <tabstop>_taxzone</tabstop>
-  <tabstop>_comments</tabstop>
+  <tabstop>_shipVia</tabstop>
+  <tabstop>_shipform</tabstop>
+  <tabstop>_shipchrg</tabstop>
   <tabstop>_commentsTab</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_shippingComments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
