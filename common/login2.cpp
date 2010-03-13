@@ -66,6 +66,8 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   else if(xtsettingsValue("/xTuple/_cloudOption", false).toBool())
     _cloudOption->setChecked(true);
   _company->setText(xtsettingsValue("/xTuple/cloud_company", "").toString());
+
+  adjustSize();
 }
 
 login2::~login2()
