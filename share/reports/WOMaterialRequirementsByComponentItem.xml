@@ -55,6 +55,25 @@ WHERE ((womatl_wo_id=wo_id)
  )
 ORDER BY wo_startdate;</sql>
  </querysource>
+ <querysource>
+  <name>total</name>
+  <sql>SELECT formatQty(SUM(womatl_qtyreq)) AS required,
+       formatQty(SUM(womatl_qtyiss)) AS issued,
+       formatQty(SUM(noNeg(womatl_qtyreq - womatl_qtyiss))) AS balance
+    FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item, uom
+WHERE ((womatl_wo_id=wo_id)
+       AND (womatl_uom_id=uom_id)
+       AND (wo_status &lt;> 'C')
+       AND (wo_itemsite_id=parentsite.itemsite_id)
+       AND (womatl_itemsite_id=componentsite.itemsite_id)
+       AND (parentsite.itemsite_item_id=item_id)
+       AND (componentsite.itemsite_item_id=&lt;? value("item_id") ?>)
+&lt;? if exists("warehous_id") ?>
+       AND (componentsite.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+&lt;? endif ?>
+ )
+;</sql>
+ </querysource>
  <rpthead>
   <height>236</height>
   <field>
@@ -261,7 +280,7 @@ ORDER BY wo_startdate;</sql>
   <label>
    <rect>
     <x>95</x>
-    <y>200</y>
+    <y>198</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -876,9 +895,9 @@ ORDER BY wo_startdate;</sql>
   <height>16</height>
   <field>
    <rect>
-    <x>530</x>
-    <y>0</y>
-    <width>135</width>
+    <x>595</x>
+    <y>1</y>
+    <width>70</width>
     <height>15</height>
    </rect>
    <font>
@@ -889,27 +908,63 @@ ORDER BY wo_startdate;</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>detail</query>
+    <query>total</query>
     <column>balance</column>
    </data>
-   <format>qty</format>
-   <tracktotal/>
   </field>
   <label>
    <rect>
-    <x>95</x>
-    <y>0</y>
+    <x>315</x>
+    <y>1</y>
     <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Total Required:</string>
+   <string>Totals:</string>
   </label>
+  <field>
+   <rect>
+    <x>520</x>
+    <y>1</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>total</query>
+    <column>issued</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>445</x>
+    <y>1</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>total</query>
+    <column>required</column>
+   </data>
+  </field>
  </rptfoot>
 </report>
