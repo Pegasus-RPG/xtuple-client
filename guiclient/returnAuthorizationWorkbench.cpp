@@ -558,8 +558,8 @@ void returnAuthorizationWorkbench::sFillListReview()
 	ra.prepare(sql);
 	ra.bindValue(":cust_id", _customerSelector->custId());
 	ra.bindValue(":custtype_id", _customerSelector->custTypeId());
-    ra.bindValue(":custgrp_id", _customerSelector->custGroupId());
-	ra.bindValue(":custtype_code", _customerSelector->typePattern());
+	ra.bindValue(":custtype_pattern", _customerSelector->typePattern());
+        ra.bindValue(":custgrp_id", _customerSelector->custGroupId());
 	ra.bindValue(":undefined",tr("Undefined"));
 	ra.bindValue(":credit",tr("Credit"));
 	ra.bindValue(":return",tr("Return"));
