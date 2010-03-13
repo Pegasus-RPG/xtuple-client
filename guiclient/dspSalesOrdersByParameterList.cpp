@@ -28,8 +28,7 @@ dspSalesOrdersByParameterList::dspSalesOrdersByParameterList(QWidget* parent, co
   setupUi(this);
 
   connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_parameter, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date:"));
