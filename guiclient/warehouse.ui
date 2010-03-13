@@ -23,10 +23,7 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" name="gridLayout_9">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
-     <property name="margin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
+     <property name="verticalSpacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
@@ -819,9 +816,6 @@ to be bound by its terms.</comment>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
              <widget class="ContactCluster" name="_contact">
-              <property name="label">
-               <string/>
-              </property>
               <property name="minimalLayout">
                <bool>true</bool>
               </property>

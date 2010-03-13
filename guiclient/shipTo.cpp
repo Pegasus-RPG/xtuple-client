@@ -26,6 +26,8 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateNumber()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_salesRep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission(int)));
+  connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _contact, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
   _shipZone->populate( "SELECT shipzone_id, shipzone_name "
                        "FROM shipzone "
@@ -352,8 +354,8 @@ void shipTo::sPopulateNumber()
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
-	  _save->setEnabled(true);
-	}
+      _save->setEnabled(true);
+    }
   }
   else
   {

@@ -28,6 +28,9 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_standard, SIGNAL(toggled(bool)), this, SLOT(sHandleWhsType()));
   connect(_transit,  SIGNAL(toggled(bool)), this, SLOT(sHandleWhsType()));
 
+  connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _contact, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
+
   _whsezone->addColumn(tr("Name"),        _itemColumn, Qt::AlignCenter, true,  "whsezone_name" );
   _whsezone->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "whsezone_descrip"   );
   

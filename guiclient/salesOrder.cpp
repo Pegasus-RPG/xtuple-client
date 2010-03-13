@@ -122,6 +122,12 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
 
+  connect(_billToAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
+
+  connect(_shipToAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _shipToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
+
   _saved = false;
 
   QAction* _saveAct = new QAction(this);

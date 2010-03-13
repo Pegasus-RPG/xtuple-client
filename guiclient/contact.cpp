@@ -103,6 +103,34 @@ enum SetResponse contact::set(const ParameterList &pParams)
     _crmAccount->setId(param.toInt());
   }
 
+  param = pParams.value("addr_line1", &valid);
+  if (valid)
+    _contact->addressWidget()->setLine1(param.toString());
+
+  param = pParams.value("addr_line2", &valid);
+  if (valid)
+    _contact->addressWidget()->setLine2(param.toString());
+
+  param = pParams.value("addr_line3", &valid);
+  if (valid)
+    _contact->addressWidget()->setLine3(param.toString());
+
+  param = pParams.value("addr_city", &valid);
+  if (valid)
+    _contact->addressWidget()->setCity(param.toString());
+
+  param = pParams.value("addr_state", &valid);
+  if (valid)
+    _contact->addressWidget()->setState(param.toString());
+
+  param = pParams.value("addr_postalcode", &valid);
+  if (valid)
+    _contact->addressWidget()->setPostalCode(param.toString());
+
+  param = pParams.value("addr_country", &valid);
+  if (valid)
+    _contact->addressWidget()->setCountry(param.toString());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {

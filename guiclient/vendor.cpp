@@ -48,6 +48,12 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
+  connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _contact2, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
+
+  connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+          _contact1, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
+
   _defaultCurr->setLabel(_defaultCurrLit);
 
   QRegExp tmpregex = QRegExp(_metrics->value("EFTAccountRegex"));
