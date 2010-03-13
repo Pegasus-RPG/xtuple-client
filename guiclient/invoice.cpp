@@ -275,7 +275,9 @@ void invoice::sPopulateCustomerInfo(int pCustid)
   {
     XSqlQuery cust;
     cust.prepare( "SELECT cust_salesrep_id, cust_commprcnt * 100 AS commission,"
-                  "       cust_creditstatus, cust_terms_id, COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
+                  "       cust_creditstatus, cust_terms_id, "
+                  "       COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
+                  "       COALESCE(cust_shipchrg_id, -1) AS cust_shipchrg_id,"
                   "       cust_ffshipto, cust_ffbillto, "
                   "       COALESCE(shipto_id, -1) AS shiptoid, "
                   "       cust_curr_id "
@@ -291,6 +293,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
 	_custtaxzoneid = cust.value("cust_taxzone_id").toInt();
 	_taxzone->setId(cust.value("cust_taxzone_id").toInt());
 	_custCurrency->setId(cust.value("cust_curr_id").toInt());
+        _shipChrgs->setId(cust.value("cust_shipchrg_id").toInt());
 
 	bool ffBillTo = cust.value("cust_ffbillto").toBool();
 	_billToName->setEnabled(ffBillTo);
@@ -366,8 +369,9 @@ void invoice::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, shipto_shipvia,"
-                    "       shipto_salesrep_id, COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
+                    "       cntct_phone, shipto_shipvia, shipto_salesrep_id, "
+                    "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
+                    "       COALESCE(shipto_shipchrg_id, -1) AS shipto_shipchrg_id,"
 		    "       shipto_commission * 100 AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
 		    "     cntct ON (shipto_cntct_id=cntct_id)"
@@ -384,6 +388,7 @@ void invoice::populateShipto(int pShiptoid)
       _commission->setDouble(shipto.value("commission").toDouble());
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _taxzone->setId(shipto.value("shipto_taxzone_id").toInt());
+      _shipChrgs->setId(shipto.value("shipto_shipchrg_id").toInt());
     }
     else if (shipto.lastError().type() != QSqlError::NoError)
     {
