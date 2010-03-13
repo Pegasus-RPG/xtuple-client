@@ -175,7 +175,11 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void  	setFieldNameState(QString p)        { _fieldNameState = p ; };
 	virtual void  	setFieldNameCountry(QString p)      { _fieldNameCountry = p ; };
 
+    private slots:
+        void emitAddressChanged();
+
     signals:
+        void addressChanged(QString, QString, QString, QString, QString, QString, QString);
 	void newId(int);
 	void changed();
 

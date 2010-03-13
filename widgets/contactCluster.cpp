@@ -35,6 +35,14 @@ ContactClusterLineEdit::ContactClusterLineEdit(QWidget* pParent, const char* pNa
              "WHERE (true) ";
 }
 
+void ContactClusterLineEdit::setNewAddr(QString line1, QString line2, QString line3,
+                                        QString city, QString state, QString postalcode,
+                                        QString country)
+{
+  _newAddr.clear();
+  _newAddr << line1 << line2 << line3 << city << state << postalcode << country;
+}
+
 void ContactClusterLineEdit::setSearchAcct(int crmAcctId)
 {
   _searchAcctId = crmAcctId;
@@ -75,6 +83,16 @@ void ContactClusterLineEdit::sNew()
     params.append("mode", "new");
     if (_searchAcctId != -1)
       params.append("crmacct_id", _searchAcctId);
+    if (_newAddr.count())
+    {
+      params.append("addr_line1", _newAddr.at(0));
+      params.append("addr_line2", _newAddr.at(1));
+      params.append("addr_line3", _newAddr.at(2));
+      params.append("addr_city", _newAddr.at(3));
+      params.append("addr_state", _newAddr.at(4));
+      params.append("addr_postalcode", _newAddr.at(5));
+      params.append("addr_country", _newAddr.at(6));
+    }
 
     QDialog* newdlg = (QDialog*)_guiClientInterface->openWindow(_uiName, params, parentWidget(),Qt::WindowModal);
 
@@ -267,6 +285,15 @@ void ContactCluster::setMinimalLayout(bool isMinimal)
     _grid->addLayout(_addrLayout, 3, 2, 4, 1);
   }
   _minLayout = isMinimal;
+}
+
+void ContactCluster::setNewAddr(QString line1, QString line2, QString line3,
+                                QString city, QString state, QString postalcode,
+                                QString country)
+{
+  static_cast<ContactClusterLineEdit *>(_number)->setNewAddr(line1, line2, line3,
+                                                             city, state, postalcode,
+                                                             country);
 }
 
 void ContactCluster::setSearchAcct(int crmAcctId)

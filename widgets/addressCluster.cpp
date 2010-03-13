@@ -133,6 +133,12 @@ void AddressCluster::init()
     connect(_city,  SIGNAL(requestSearch()), this, SLOT(sSearch()));
     connect(_postalcode,  SIGNAL(requestSearch()), this, SLOT(sSearch()));
 
+    connect(_addr1,     SIGNAL(textChanged(QString)), this, SLOT(emitAddressChanged()));
+    connect(_addr2,     SIGNAL(textChanged(QString)), this, SLOT(emitAddressChanged()));
+    connect(_addr3,     SIGNAL(textChanged(QString)), this, SLOT(emitAddressChanged()));
+    connect(_city,      SIGNAL(textChanged(QString)), this, SLOT(emitAddressChanged()));
+    connect(_postalcode,SIGNAL(textChanged(QString)), this, SLOT(emitAddressChanged()));
+
     setFocusProxy(_addr1);
     setFocusPolicy(Qt::StrongFocus);
     setLabel("");
@@ -336,6 +342,10 @@ void AddressCluster::setState(const QString &p)
     qDebug("%s::setState(%s) entered",
            (objectName().isEmpty() ? "AddressCluster":qPrintable(objectName())),
            qPrintable(p));
+
+  if (p == _state->currentText())
+    return;
+
   if (p.isEmpty())
     _state->setId(-1);
   else if (_state->findText(p, Qt::MatchExactly) >= 0)
@@ -345,6 +355,7 @@ void AddressCluster::setState(const QString &p)
     _state->setEditable(true);
     _state->setEditText(p);
   }
+  emitAddressChanged();
 }
 
 void AddressCluster::setCountry(const QString& p)
@@ -353,6 +364,8 @@ void AddressCluster::setCountry(const QString& p)
     qDebug("%s::setCountry(%s) entered",
            (objectName().isEmpty() ? "AddressCluster":qPrintable(objectName())),
            qPrintable(p));
+  if (p == _country->currentText())
+    return;
 
   int matchid = _country->id(_country->findText(p, Qt::MatchExactly));
 
@@ -382,6 +395,7 @@ void AddressCluster::setCountry(const QString& p)
     _country->setEditText(p);
     _country->blockSignals(blocked);
   }
+  emitAddressChanged();
 }
 
 void AddressCluster::clear()
@@ -407,7 +421,7 @@ void AddressCluster::clear()
   _addr2->clear();
   _addr3->clear();
   _city->clear();
-  _state->clear();
+  _state->setText(QString());
   _postalcode->clear();
   _active->setChecked(c_active);
   _selected = false;
@@ -536,6 +550,18 @@ void AddressCluster::check()
       return;
     }
   }
+}
+
+void AddressCluster::emitAddressChanged()
+{
+  emit addressChanged(
+      _addr1->text(),
+      _addr2->text(),
+      _addr3->text(),
+      _city->text(),
+      _state->currentText(),
+      _postalcode->text(),
+      _country->currentText());
 }
 
 void AddressCluster::sEllipses()

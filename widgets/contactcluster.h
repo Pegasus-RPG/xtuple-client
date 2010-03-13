@@ -29,6 +29,9 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
       Q_INVOKABLE int searchAcctId() { return _searchAcctId; }
 
     public slots:
+      void setNewAddr(QString line1, QString line2, QString line3,
+                      QString city, QString state, QString postalcode,
+                      QString country);
       void setSearchAcct(int crmAcctId);
       void sList();
       void sNew();
@@ -40,6 +43,7 @@ class XTUPLEWIDGETS_EXPORT ContactClusterLineEdit : public VirtualClusterLineEdi
       void silentSetId(const int);
 
     private:
+      QStringList _newAddr;
       int _searchAcctId;
 };
 
@@ -80,6 +84,9 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       void setDescriptionVisible(const bool p);
       void setMinimalLayout(bool);
       void setNameVisible(const bool) { }
+      void setNewAddr(QString line1, QString line2, QString line3,
+                      QString city, QString state, QString postalcode,
+                      QString country);
       void setSearchAcct(int crmAcctId);
 
     private slots:
@@ -96,7 +103,6 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       bool _minLayout;
       int _crmAcctId;
       int _searchAcctId;
-      AddressCluster* _address;
       QVBoxLayout* _addrLayout;
       QLabel* _titleLit;
       QLabel* _phoneLit;
