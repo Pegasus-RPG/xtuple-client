@@ -194,6 +194,8 @@ void ParameterWidget::addParam()
   toolButton->setText(tr("-"));
  #ifdef Q_WS_MAC
   toolButton->setMinimumWidth(25);
+ #else
+  toolButton->setMinimumWidth(21);
  #endif
 
   //grab the items provided by other widgets to populate xcombobox with
