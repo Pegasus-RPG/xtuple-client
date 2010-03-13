@@ -32,10 +32,12 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _qty->setValidator(omfgThis->qtyVal());
   _beforeQty->setPrecision(omfgThis->transQtyVal());
   _afterQty->setPrecision(omfgThis->transQtyVal());
+
+  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setFocus();
 }
 
 returnWoMaterialItem::~returnWoMaterialItem()

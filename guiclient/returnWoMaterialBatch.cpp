@@ -27,11 +27,13 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _captive = FALSE;
+  _transDate->setDate(omfgThis->dbDate(), true);
   q.bindValue(":date",  _transDate->date());
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setFocus();
 }
 
 returnWoMaterialBatch::~returnWoMaterialBatch()
