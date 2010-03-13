@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>812</width>
-    <height>677</height>
+    <width>813</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -386,7 +386,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
