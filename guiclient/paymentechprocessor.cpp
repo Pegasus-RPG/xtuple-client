@@ -477,7 +477,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   r_reason = r_response;
 
-  r_message = "Received return code " + r_response;
+  r_message = r_response;
 
   r_date = presponse.mid(29, 6).trimmed();
   r_code = presponse.mid(35, 6).trimmed();
