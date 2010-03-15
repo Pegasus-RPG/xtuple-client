@@ -70,6 +70,7 @@ enum SetResponse userCostingElement::set(const ParameterList &pParams)
       _name->setEnabled(FALSE);
       _active->setEnabled(FALSE);
       _acceptPO->setEnabled(FALSE);
+      _expense->setEnabled((FALSE));
       _close->setText(tr("&Close"));
       _save->hide();
       _close->setFocus();
@@ -112,10 +113,10 @@ void userCostingElement::sSave()
 
     q.prepare( "INSERT INTO costelem "
                "( costelem_id, costelem_type, costelem_active,"
-               "  costelem_sys, costelem_po, costelem_cost_item_id ) "
+               "  costelem_sys, costelem_po, costelem_cost_item_id, costelem_exp_accnt_id ) "
                "VALUES "
                "( :costelem_id, :costelem_type, :costelem_active,"
-               "  FALSE, :costelem_po, :costelem_cost_item_id );" );
+               "  FALSE, :costelem_po, :costelem_cost_item_id, :costelem_exp_accnt_id );" );
   }
   else if (_mode == cEdit)
   {
@@ -138,7 +139,8 @@ void userCostingElement::sSave()
     q.prepare( "UPDATE costelem "
                "SET costelem_type=:costelem_type,"
                "    costelem_active=:costelem_active, costelem_po=:costelem_po,"
-               "    costelem_cost_item_id=:costelem_cost_item_id "
+               "    costelem_cost_item_id=:costelem_cost_item_id,"
+               "    costelem_exp_accnt_id=:costelem_exp_accnt_id "
                "WHERE (costelem_id=:costelem_id);" );
   }
 
@@ -146,6 +148,7 @@ void userCostingElement::sSave()
   q.bindValue(":costelem_type", _name->text().trimmed());
   q.bindValue(":costelem_active", QVariant(_active->isChecked()));
   q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
+  q.bindValue(":costelem_exp_accnt_id",_expense->id());
 
   if (_useCostItem->isChecked())
     q.bindValue(":costelem_cost_item_id", _item->id());
@@ -160,7 +163,7 @@ void userCostingElement::sSave()
 void userCostingElement::populate()
 {
   q.prepare( "SELECT costelem_type, costelem_active,"
-             "       costelem_po, costelem_cost_item_id "
+             "       costelem_po, costelem_cost_item_id, costelem_exp_accnt_id "
              "FROM costelem "
              "WHERE (costelem_id=:costelem_id);" );
   q.bindValue(":costelem_id", _costelemid);
@@ -168,6 +171,7 @@ void userCostingElement::populate()
   if (q.first())
   {
     _name->setText(q.value("costelem_type").toString());
+    _expense->setId(q.value("costelem_exp_accnt_id").toInt());
     _active->setChecked(q.value("costelem_active").toBool());
 
     if (q.value("costelem_po").toBool())
