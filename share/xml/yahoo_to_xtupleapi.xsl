@@ -152,7 +152,7 @@
       <!-- allow_free_form_shipto -->
       <!-- allow_free_form_billto -->
       <!-- preferred_selling_whs -->
-      <default_tax_authority><xsl:value-of select="$customer_default_tax_authority"/></default_tax_authority>
+      <!--<default_tax_authority><xsl:value-of select="$customer_default_tax_authority"/></default_tax_authority> -->
       <!-- default_terms -->
       <!-- balance_method -->
       <!-- default_discount -->
