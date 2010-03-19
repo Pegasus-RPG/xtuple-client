@@ -1185,10 +1185,13 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
   if (item)
   {
     _menu->clear();
-    emit populateMenu(_menu, (QTreeWidgetItem*)item);
-    emit populateMenu(_menu, (QTreeWidgetItem*)item, logicalColumn);
-    emit populateMenu(_menu, item);
-    emit populateMenu(_menu, item, logicalColumn);
+    if (item->data(0, Qt::UserRole).toString() != "totalrole")
+    {
+      emit populateMenu(_menu, (QTreeWidgetItem*)item);
+      emit populateMenu(_menu, (QTreeWidgetItem*)item, logicalColumn);
+      emit populateMenu(_menu, item);
+      emit populateMenu(_menu, item, logicalColumn);
+    }
 
     bool disableExport = FALSE;
     if(_x_preferences)
