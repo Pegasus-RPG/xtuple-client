@@ -500,68 +500,15 @@ bool ExportHelper::XSLTConvertFile(QString inputfilename, QString outputfilename
   bool returnVal = false;
 
   XSqlQuery xsltq;
-  xsltq.prepare("SELECT xsltmap_export, fetchMetricText(:xsltdir) AS dir,"
-                "       fetchMetricText(:xsltproc) AS proc"
+  xsltq.prepare("SELECT xsltmap_export"
                 "  FROM xsltmap"
                 " WHERE xsltmap_id=:id;");
-
-#if defined Q_WS_MACX
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirMac");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorMac");
-#elif defined Q_WS_WIN
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirWindows");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorWindows");
-#elif defined Q_WS_X11
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirLinux");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorLinux");
-#endif
 
   xsltq.bindValue(":id", xsltmapid);
   xsltq.exec();
   if (xsltq.first())
-  {
-    QStringList args = xsltq.value("proc").toString().split(" ", QString::SkipEmptyParts);
-    QString xsltfile = xsltq.value("xsltmap_export").toString();
-    QString defaultXSLTDir = xsltq.value("dir").toString();
-    QString command = args[0];
-    args.removeFirst();
-    args.replaceInStrings("%f", inputfilename);
-    if (QFile::exists(xsltfile))
-      args.replaceInStrings("%x", xsltfile);
-    else if (QFile::exists(defaultXSLTDir + QDir::separator() + xsltfile))
-      args.replaceInStrings("%x", defaultXSLTDir + QDir::separator() + xsltfile);
-    else
-    {
-      errmsg = tr("Cannot find the XSLT file as either %1 or %2")
-                  .arg(xsltfile, defaultXSLTDir + QDir::separator() + xsltfile);
-      return false;
-    }
-
-    QProcess xslt;
-    xslt.setStandardOutputFile(outputfilename);
-    xslt.start(command, args);
-    QString commandline = command + " " + args.join(" ");
-    errmsg = "";
-    if (! xslt.waitForStarted())
-      errmsg = tr("Error starting XSLT Processing: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (! xslt.waitForFinished())
-      errmsg = tr("The XSLT Processor encountered an error: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (xslt.exitStatus() !=  QProcess::NormalExit)
-      errmsg = tr("The XSLT Processor did not exit normally: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (xslt.exitCode() != 0)
-      errmsg = tr("The XSLT Processor returned an error code: %1\nreturned %2\n%3")
-                        .arg(commandline)
-                        .arg(xslt.exitCode())
-                        .arg(QString(xslt.readAllStandardError()));
-
-    returnVal = errmsg.isEmpty();
-  }
+    return XSLTConvertFile(inputfilename, outputfilename,
+                           xsltq.value("xsltmap_export").toString(), errmsg);
   else  if (xsltq.lastError().type() != QSqlError::NoError)
     errmsg = xsltq.lastError().text();
   else
@@ -569,6 +516,88 @@ bool ExportHelper::XSLTConvertFile(QString inputfilename, QString outputfilename
                .arg(xsltmapid);
 
   return returnVal;
+}
+
+bool ExportHelper::XSLTConvertFile(QString inputfilename, QString outputfilename, QString xsltfilename, QString &errmsg)
+{
+  QString xsltdir;
+  QString xsltcmd;
+
+  XSqlQuery q;
+  q.prepare("SELECT fetchMetricText(:xsltdir) AS dir,"
+            "       fetchMetricText(:xsltcmd) AS cmd;");
+#if defined Q_WS_MACX
+  q.bindValue(":xsltdir", "XSLTDefaultDirMac");
+  q.bindValue(":xsltcmd", "XSLTProcessorMac");
+#elif defined Q_WS_WIN
+  q.bindValue(":xsltdir", "XSLTDefaultDirWindows");
+  q.bindValue(":xsltcmd", "XSLTProcessorWindows");
+#elif defined Q_WS_X11
+  q.bindValue(":xsltdir", "XSLTDefaultDirLinux");
+  q.bindValue(":xsltcmd", "XSLTProcessorLinux");
+#endif
+  q.exec();
+  if (q.first())
+  {
+    xsltdir = q.value("dir").toString();
+    xsltcmd = q.value("cmd").toString();
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    errmsg = q.lastError().text();
+    return false;
+  }
+  else
+  {
+    errmsg = tr("Could not find the XSLT directory and command metrics.");
+    return false;
+  }
+
+  QStringList args = xsltcmd.split(" ", QString::SkipEmptyParts);
+  QString command = args[0];
+  args.removeFirst();
+  args.replaceInStrings("%f", inputfilename);
+
+  if (QFile::exists(xsltfilename))
+    args.replaceInStrings("%x", xsltfilename);
+  else if (QFile::exists(xsltdir + QDir::separator() + xsltfilename))
+    args.replaceInStrings("%x", xsltdir + QDir::separator() + xsltfilename);
+  else
+  {
+    errmsg = tr("Cannot find the XSLT file as either %1 or %2")
+                .arg(xsltfilename, xsltdir + QDir::separator() + xsltfilename);
+    return false;
+  }
+
+  QProcess xslt;
+  xslt.setStandardOutputFile(outputfilename);
+  xslt.start(command, args);
+  QString commandline = command + " " + args.join(" ");
+  errmsg = "";
+  /* TODO: make the file-processing asynchronous
+     this will keep the UI snappy and handle spurious errors
+     like the occasional waitForFinished failure if the processing
+     runs faster than expected.
+   */
+  if (! xslt.waitForStarted())
+    errmsg = tr("Error starting XSLT Processing: %1\n%2")
+                      .arg(commandline)
+                      .arg(QString(xslt.readAllStandardError()));
+  if (! xslt.waitForFinished())
+    errmsg = tr("The XSLT Processor encountered an error: %1\n%2")
+                      .arg(commandline)
+                      .arg(QString(xslt.readAllStandardError()));
+  if (xslt.exitStatus() !=  QProcess::NormalExit)
+    errmsg = tr("The XSLT Processor did not exit normally: %1\n%2")
+                      .arg(commandline)
+                      .arg(QString(xslt.readAllStandardError()));
+  if (xslt.exitCode() != 0)
+    errmsg = tr("The XSLT Processor returned an error code: %1\nreturned %2\n%3")
+                      .arg(commandline)
+                      .arg(xslt.exitCode())
+                      .arg(QString(xslt.readAllStandardError()));
+
+  return errmsg.isEmpty();
 }
 
 QString ExportHelper::XSLTConvertString(QString input, int xsltmapid, QString &errmsg)
@@ -579,77 +608,66 @@ QString ExportHelper::XSLTConvertString(QString input, int xsltmapid, QString &e
   QString returnVal;
 
   XSqlQuery xsltq;
-  xsltq.prepare("SELECT xsltmap_export, fetchMetricText(:xsltdir) AS dir,"
-                "       fetchMetricText(:xsltproc) AS proc"
+  xsltq.prepare("SELECT xsltmap_name, xsltmap_export"
                 "  FROM xsltmap"
                 " WHERE xsltmap_id=:id;");
-
-#if defined Q_WS_MACX
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirMac");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorMac");
-#elif defined Q_WS_WIN
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirWindows");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorWindows");
-#elif defined Q_WS_X11
-  xsltq.bindValue(":xsltdir",  "XSLTDefaultDirLinux");
-  xsltq.bindValue(":xsltproc", "XSLTProcessorLinux");
-#endif
 
   xsltq.bindValue(":id", xsltmapid);
   xsltq.exec();
   if (xsltq.first())
   {
-    QTemporaryFile inputfile;
-    inputfile.open();
-    inputfile.write(input);
-    inputfile.close();
-    if (DEBUG)
-      qDebug("ExportHelper::XSLTConvertString name of temp file: %s",
-             qPrintable(inputfile.fileName()));
-
-    QStringList args = xsltq.value("proc").toString().split(" ", QString::SkipEmptyParts);
-    QString xsltfile = xsltq.value("xsltmap_export").toString();
-    QString defaultXSLTDir = xsltq.value("dir").toString();
-    QString command = args[0];
-    args.removeFirst();
-    args.replaceInStrings("%f", inputfile.fileName());
-    if (QFile::exists(xsltfile))
-      args.replaceInStrings("%x", xsltfile);
-    else if (QFile::exists(defaultXSLTDir + QDir::separator() + xsltfile))
-      args.replaceInStrings("%x", defaultXSLTDir + QDir::separator() + xsltfile);
+    /* tempfile handling is messy because windows doesn't handle them as you
+       might expect.
+       TODO: find a simpler way
+     */
+    QString xsltmap = xsltq.value("xsltmap_name").toString();
+    QTemporaryFile *inputfile = new QTemporaryFile(QDir::tempPath()
+                                                   + QDir::separator()
+                                                   + xsltmap
+                                                   + "Input.XXXXXX.xml");
+    inputfile->setAutoRemove(false);
+    if (! inputfile->open())
+      errmsg = tr("Could not open temporary input file (%1).")
+                  .arg(inputfile->error());
     else
     {
-      errmsg = tr("Cannot find the XSLT file as either %1 or %2")
-                  .arg(xsltfile, defaultXSLTDir + QDir::separator() + xsltfile);
-      return false;
+      QString inputfileName = inputfile->fileName();
+      inputfile->write(input);
+      inputfile->close();
+      delete inputfile;
+      inputfile = 0;
+
+      QTemporaryFile *outputfile = new QTemporaryFile(QDir::tempPath()
+                                                      + QDir::separator()
+                                                      + xsltmap
+                                                      + "Output.XXXXXX.xml");
+      outputfile->setAutoRemove(false);
+      if (! outputfile->open())
+        errmsg = tr("Could not open temporary output file (%1).")
+                  .arg(outputfile->error());
+      else
+      {
+        QString outputfileName = outputfile->fileName();
+
+        if (DEBUG)
+          qDebug("ExportHelper::XSLTConvertString writing from %s to %s",
+                 qPrintable(inputfileName), qPrintable(outputfileName));
+
+        if (XSLTConvertFile(inputfileName, outputfileName,
+                            xsltq.value("xsltmap_export").toString(), errmsg))
+          returnVal = outputfile->readAll();
+
+        outputfile->close();
+        delete outputfile;
+        outputfile = 0;
+
+        if (errmsg.isEmpty())
+        {
+          QFile::remove(outputfileName);
+          QFile::remove(inputfileName);
+        }
+      }
     }
-
-    QProcess xslt;
-    xslt.start(command, args);
-    QString commandline = command + " " + args.join(" ");
-    if (DEBUG)
-      qDebug("ExportHelper::XSLTConvertString about to run: %s",
-             qPrintable(commandline));
-    errmsg = "";
-    if (! xslt.waitForStarted())
-      errmsg = tr("Error starting XSLT Processing: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (! xslt.waitForFinished())
-      errmsg = tr("The XSLT Processor encountered an error: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (xslt.exitStatus() !=  QProcess::NormalExit)
-      errmsg = tr("The XSLT Processor did not exit normally: %1\n%2")
-                        .arg(commandline)
-                        .arg(QString(xslt.readAllStandardError()));
-    if (xslt.exitCode() != 0)
-      errmsg = tr("The XSLT Processor returned an error code: %1\nreturned %2\n%3")
-                        .arg(commandline)
-                        .arg(xslt.exitCode())
-                        .arg(QString(xslt.readAllStandardError()));
-
-    returnVal = QString(xslt.readAllStandardOutput()); // TODO: encoding issues?
   }
   else  if (xsltq.lastError().type() != QSqlError::NoError)
     errmsg = xsltq.lastError().text();
@@ -837,11 +855,19 @@ static QScriptValue XSLTConvertFile(QScriptContext *context,
 {
   QString inputfilename  = context->argument(0).toString();
   QString outputfilename = context->argument(1).toString();
-  int     xsltmapid      = context->argument(2).toInt32();
-  QString errmsg         = context->argument(3).toString();
+  QString errmsg;
 
-  bool result = ExportHelper::XSLTConvertFile(inputfilename, outputfilename,
-                                              xsltmapid,     errmsg);
+  bool result = false;
+
+  if (context->argument(2).isNumber())
+    result = ExportHelper::XSLTConvertFile(inputfilename, outputfilename,
+                                           context->argument(2).toInt32(),
+                                           errmsg);
+  else
+    result = ExportHelper::XSLTConvertFile(inputfilename, outputfilename,
+                                           context->argument(2).toString(),
+                                           errmsg);
+
 
   // TODO: how to we pass back errmsg output parameter?
 

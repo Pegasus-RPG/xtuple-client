@@ -34,6 +34,7 @@ class ExportHelper : public QObject
     static QString generateHTML(QString qtext, ParameterList &params, QString &errmsg);
     static QString generateXML(const int qryheadid, ParameterList &params, QString &errmsg, int xsltmapid = -1);
     static QString generateXML(QString qtext, QString tableElemName, ParameterList &params, QString &errmsg, int xsltmapid = -1);
+    static bool    XSLTConvertFile(QString inputfilename, QString outputfilename, QString xsltfilename, QString &errmsg);
     static bool    XSLTConvertFile(QString inputfilename, QString outputfilename, int xsltmapid, QString &errmsg);
     static QString XSLTConvertString(QString input, int xsltmapid, QString &errmsg);
 };

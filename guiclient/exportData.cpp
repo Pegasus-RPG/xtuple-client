@@ -129,6 +129,9 @@ void exportData::sEditQuerySet()
 
 void exportData::sExport()
 {
+  if (DEBUG)
+    qDebug("exportData::sExport() entered with exportFileDir '%s'",
+           qPrintable(exportFileDir));
   if (exportFileDir.isEmpty())
   {
 #if defined Q_WS_MACX
@@ -141,12 +144,15 @@ void exportData::sExport()
   }
 
   QString filename = QFileDialog::getSaveFileName(0, tr("Export Output File"),
-                                              exportFileDir +
-                                              QDir::separator() +
-                                              _qrySetList->currentItem()->rawValue("qryhead_name").toString()
-                                              + ".xml", "(*.xml *.txt)");
-  exportFileDir = QFileInfo(filename).dir().absolutePath();
-  
+              exportFileDir + QDir::separator()
+              + _qrySetList->currentItem()->rawValue("qryhead_name").toString()
+              + ".xml",
+              "XML files (*.xml *.txt)");
+  if (filename.isEmpty())
+    return;
+  QString tmpfilename = QFileInfo(filename).dir().absolutePath();
+
+  exportFileDir = tmpfilename;
   QString errmsg;
 
   ParameterList params = _paramedit->getParameterList();

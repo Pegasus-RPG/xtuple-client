@@ -13,6 +13,7 @@ UI_DIR      = tmp
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
           exporthelper.cpp \
+          importhelper.cpp \
           format.cpp \
           graphicstextbuttonitem.cpp \
           login2.cpp \
@@ -27,6 +28,7 @@ SOURCES = calendarcontrol.cpp \
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
           exporthelper.h \
+          importhelper.h \
           format.h \
           graphicstextbuttonitem.h \
           login2.h \
