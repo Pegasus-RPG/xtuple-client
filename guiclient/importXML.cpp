@@ -11,11 +11,7 @@
 #include "importXML.h"
 
 #include <QDirIterator>
-#include <QFile>
 #include <QMessageBox>
-#include <QProcess>
-#include <QSqlError>
-#include <QTemporaryFile>
 #include <QVariant>
 
 #include "configureIE.h"
