@@ -26,7 +26,7 @@
 
 #include "exporthelper.h"
 
-#define DEBUG false
+#define DEBUG true
 
 bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
 {
@@ -38,9 +38,9 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   QString xmlsuccesstreatment;
 
   XSqlQuery q;
-  q.prepare("SELECT fetchMetricText(:xmldir)  AS xmldir,"
-            "       fetchMetricText('XMLSuccessDir') AS successdir,"
-            "       fetchMetricText('XMLSuccessSuffix') AS successsuffix,"
+  q.prepare("SELECT fetchMetricText(:xmldir)               AS xmldir,"
+            "       fetchMetricText('XMLSuccessDir')       AS successdir,"
+            "       fetchMetricText('XMLSuccessSuffix')    AS successsuffix,"
             "       fetchMetricText('XMLSuccessTreatment') AS successtreatment,"
             "       fetchMetricText(:xsltdir) AS xsltdir,"
             "       fetchMetricText(:xsltcmd) AS xsltcmd;");
@@ -85,19 +85,24 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   if (!openDomDocument(pFileName, doc, errmsg))
     return false;
 
-  QString tmpfileName; // only set if we translate the file with XSLT
-  if (DEBUG)
-      qDebug("importXML::importOne(%s) doctype = %s",
-             qPrintable(pFileName), qPrintable(doc.doctype().name()));
-  if (doc.doctype().name() != "xtupleimport")
+  QString doctype = doc.doctype().name();
+  if (DEBUG) qDebug("initial doctype = %s", qPrintable(doctype));
+  if (doctype.isEmpty())
+  {
+    doctype = doc.documentElement().tagName();
+    if (DEBUG) qDebug("changed doctype to %s", qPrintable(doctype));
+  }
+
+  QString tmpfileName;
+  if (doctype != "xtupleimport")
   {
     QString xsltfile;
     XSqlQuery q;
     q.prepare("SELECT xsltmap_import FROM xsltmap "
               "WHERE ((xsltmap_doctype=:doctype OR xsltmap_doctype='')"
               "   AND (xsltmap_system=:system   OR xsltmap_system=''));");
-    q.bindValue(":doctype", doc.doctype().name());
-    q.bindValue(":system", doc.doctype().systemId());
+    q.bindValue(":doctype", doctype);
+    q.bindValue(":system",  doc.doctype().systemId());
     q.exec();
     if (q.first())
       xsltfile = q.value("xsltmap_import").toString();
@@ -111,12 +116,11 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
       errmsg = tr("<p>Could not find a map for doctype '%1' and system id '%2'"
                   ". Write an XSLT stylesheet to convert this to valid xtuple "
                   "import XML and add it to the Map of XSLT Import Filters.")
-                    .arg(doc.doctype().name(), doc.doctype().systemId());
+                    .arg(doctype, doc.doctype().systemId());
       return false;
     }
 
-    tmpfileName = xmldir + QDir::separator() +
-                  doc.doctype().name() + "TOxtupleimport";
+    tmpfileName = xmldir + QDir::separator() + doctype + "TOxtupleimport";
 
     if (! ExportHelper::XSLTConvertFile(pFileName, tmpfileName,
                                         q.value("xsltmap_import").toString(),
@@ -215,12 +219,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
       if (columnElem.attribute("value") == "[NULL]")
         columnValueList.append("NULL");
       else if (! columnElem.attribute("value").isEmpty())
-      {
-        QString val = columnElem.attribute("value");
-        if (val.contains(apos))
-          val.replace(apos, "''");
-        columnValueList.append("'" + val + "'");
-      }
+        columnValueList.append("'" + columnElem.attribute("value").replace(apos, "''") + "'");
       else if (columnElem.text().trimmed().startsWith("SELECT"))
         columnValueList.append("(" + columnElem.text() + ")");
       else if (columnElem.text().trimmed() == "[NULL]")
@@ -228,12 +227,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
       else if (columnElem.attribute("quote") == "false")
         columnValueList.append(columnElem.text());
       else
-      {
-        QString val = columnElem.text();
-        if (val.contains(apos))
-          val.replace(apos, "''");
-        columnValueList.append("'" + val + "'");
-      }
+        columnValueList.append("'" + columnElem.text().replace(apos, "''") + "'");
     }
 
     QString sql;
@@ -289,8 +283,8 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
       else
       {
         rollback.exec();
-        errmsg = tr("Error importing %1 %2: %3")
-                    .arg(pFileName, tmpfileName, q.lastError().databaseText());
+        errmsg = tr("Error importing %1: %2")
+                    .arg(pFileName, q.lastError().databaseText());
         return false;
       }
     }
@@ -305,6 +299,9 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     errmsg = q.lastError().databaseText();
     return false;
   }
+
+  if (! tmpfileName.isEmpty())
+    QFile::remove(tmpfileName);
 
   QFile file(pFileName);
   if (xmlsuccesstreatment == "Delete")
