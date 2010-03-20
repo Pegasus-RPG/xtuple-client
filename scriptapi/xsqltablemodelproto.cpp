@@ -9,6 +9,7 @@
  */
 
 #include "xsqltablemodelproto.h"
+#include "parameterlistsetup.h"
 
 #include <QMimeData>
 
@@ -16,7 +17,6 @@ void setupXSqlTableModelProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new XSqlTableModelProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<XSqlTableModel*>(), proto);
-  //engine->setDefaultPrototype(qMetaTypeId<XSqlTableModel>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructXSqlTableModel,
                                                  proto);
@@ -477,4 +477,103 @@ QString XSqlTableModelProto::toString() const
                       .arg(item->query().lastQuery().left(80));
   return QString();
 }
+
+int XSqlTableModelProto::nodeCount()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->nodeCount();
+  return 0;
+}
+
+void XSqlTableModelProto::appendChild(XSqlTableNode *child)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->appendChild(child);
+}
+
+void XSqlTableModelProto::clearChildren()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->clearChildren();
+}
+
+void XSqlTableModelProto::removeChild(int index)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->removeChild(index);
+}
+
+XSqlTableNode* XSqlTableModelProto::appendChild(const QString &tableName, ParameterList &relations)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->appendChild(tableName, relations);
+  return 0;
+}
+
+QList<XSqlTableNode *> XSqlTableModelProto::children()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->children();
+  return QList<XSqlTableNode *>();
+}
+
+XSqlTableNode* XSqlTableModelProto::child(int index)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->child(index);
+  return 0;
+}
+
+XSqlTableNode* XSqlTableModelProto::child(const QString &tableName)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->child(tableName);
+  return 0;
+}
+
+void XSqlTableModelProto::set(ParameterList params)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->set(params);
+}
+
+ParameterList XSqlTableModelProto::parameters()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->parameters();
+  return ParameterList();
+}
+
+void XSqlTableModelProto::loadAll()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->loadAll();
+}
+
+void XSqlTableModelProto::load(int row)
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    item->load(row);
+}
+
+bool XSqlTableModelProto::save()
+{
+  XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
+  if (item)
+    return item->save();
+  return false;
+}
+
 

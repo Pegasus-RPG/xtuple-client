@@ -241,6 +241,16 @@ void Screen::insert()
   _mapper->clear();
 }
 
+void Screen::loadAll()
+{
+  _model->loadAll();
+  if (_model->rowCount())
+  {
+    _mapper->toFirst();
+    tryLock();
+  }
+}
+
 void Screen::newMappedWidget(QWidget *widget)
 {
   widget->setEnabled(_mode != View);

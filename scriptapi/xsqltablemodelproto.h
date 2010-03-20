@@ -30,7 +30,6 @@
 class QMimeData;
 
 Q_DECLARE_METATYPE(XSqlTableModel*)
-//Q_DECLARE_METATYPE(XSqlTableModel)
 
 void setupXSqlTableModelProto(QScriptEngine *engine);
 QScriptValue constructXSqlTableModel(QScriptContext *context, QScriptEngine *engine);
@@ -98,6 +97,23 @@ class XSqlTableModelProto : public QObject, public QScriptable
     Q_INVOKABLE int             supportedDropActions()         const;
     Q_INVOKABLE QString         tableName()                    const;
     Q_INVOKABLE QString         toString()                     const;
+
+    Q_INVOKABLE int             nodeCount();
+    Q_INVOKABLE void            appendChild(XSqlTableNode *child);
+    Q_INVOKABLE void            clearChildren();
+    Q_INVOKABLE void            removeChild(int index);
+    Q_INVOKABLE XSqlTableNode*  appendChild(const QString &tableName, ParameterList &relations);
+
+    Q_INVOKABLE QList<XSqlTableNode *>  children();
+    Q_INVOKABLE XSqlTableNode*          child(int index);
+    Q_INVOKABLE XSqlTableNode*          child(const QString &tableName);
+
+    Q_INVOKABLE void set(ParameterList params);
+    Q_INVOKABLE ParameterList parameters();
+
+    Q_INVOKABLE void            load(int row);
+    Q_INVOKABLE void            loadAll();
+    Q_INVOKABLE bool            save();
 };
 
 #endif

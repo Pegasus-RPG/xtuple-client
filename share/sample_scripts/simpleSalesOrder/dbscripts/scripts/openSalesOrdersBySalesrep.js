@@ -90,7 +90,8 @@ function orderOpen(mode,number)
 
     wparams.mode = mode;
     if (mode) // Edit or View
-      wparams.filter = "order_number='" + number + "'";
+      wparams.order_number = number;
+  //    wparams.filter = "order_number='" + number + "'";
 
     var tmp = toolbox.lastWindow().set(wparams);
   }

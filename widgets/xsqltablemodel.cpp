@@ -8,13 +8,126 @@
  * to be bound by its terms.
  */
 
+#include <QDate>
 #include <QSqlDriver>
 #include <QSqlField>
 #include <QSqlIndex>
 #include <QSqlRelation>
 
 #include "format.h"
+#include "xsqlquery.h"
 #include "xsqltablemodel.h"
+
+XSqlTableNode::XSqlTableNode(const QString tableName, ParameterList relations, XSqlTableNode *parent)
+    : QObject(parent)
+{
+  _tableName = tableName;
+  _relations = relations;
+  _parent = parent;
+}
+
+XSqlTableNode::~XSqlTableNode()
+{
+  qDeleteAll(_children);
+}
+
+
+int XSqlTableNode::index() const
+{
+  if (_parent)
+    return _parent->children().indexOf(const_cast<XSqlTableNode*>(this));
+
+  return 0;
+}
+
+XSqlTableNode* XSqlTableNode::appendChild(const QString &tableName, ParameterList &relations)
+{
+  XSqlTableNode* child = new XSqlTableNode(tableName, relations, this);
+  appendChild(child);
+  return child;
+}
+
+XSqlTableNode* XSqlTableNode::child(const QString &tableName)
+{
+  for (int i = 0; i < _children.count(); i++)
+  {
+    if (_children.at(i)->tableName() == tableName)
+      return _children.at(i);
+  }
+
+  return 0;
+}
+
+XSqlTableModel* XSqlTableNode::model(XSqlTableModel* parent, int row)
+{
+  QPair<XSqlTableModel*, int> key;
+  key.first = parent;
+  key.second = row;
+  return _modelMap.value(key);
+}
+
+/*! Clears the model map of the current node and recursively clears all child nodes */
+void XSqlTableNode::clear()
+{
+  for (int n = 0; n < _children.count(); n++)
+  {
+    _children.at(n)->clear();
+    _modelMap.clear();
+  }
+}
+
+void XSqlTableNode::load(QPair<XSqlTableModel*, int> key)
+{
+  XSqlTableModel* pmodel = key.first;
+  int row = key.second;
+
+  // Loop through each node and create a model parent model/row passed
+  for (int n = 0; n < _children.count(); n++)
+  {
+    XSqlTableNode* node = _children.at(n);
+
+    XSqlTableModel* cmodel = new XSqlTableModel();
+    cmodel->setTable(_tableName);
+    ParameterList cparams = XSqlTableModel::buildParams(pmodel, row, _relations);
+    cmodel->setFilter(XSqlTableModel::buildFilter(cparams));
+    cmodel->select();
+    node->modelMap().insert(key, cmodel);
+
+    // Cascade recursively
+    QPair<XSqlTableModel*, int> ckey;
+    ckey.first = cmodel;
+    for (int r = 0; r < cmodel->rowCount(); r++)
+    {
+      key.second = r;
+      node->load(ckey);
+    }
+  }
+}
+
+/* Saves the current model to the database*/
+bool XSqlTableNode::save()
+{
+  // Submit all models on this node
+  QMapIterator<QPair<XSqlTableModel*, int>, XSqlTableModel* > i(_modelMap);
+  while (i.hasNext())
+  {
+    i.next();
+    if (!i.value()->submitAll());
+      return false;
+  }
+
+  // Save child nodes
+  for (int n = 0; n < _children.count(); n++)
+  {
+    if (!_children.at(n)->save())
+      return false;
+  }
+
+  return true;
+}
+
+////////////////////////////////////////
+
 
 XSqlTableModel::XSqlTableModel(QObject *parent) : 
   QSqlRelationalTableModel(parent)
@@ -25,16 +138,24 @@ XSqlTableModel::XSqlTableModel(QObject *parent) :
 
 XSqlTableModel::~XSqlTableModel()
 {
+    qDeleteAll(_children);
 }
 
 bool XSqlTableModel::select()
 {
+  qDebug("selecting ");
   bool result;
   result = QSqlRelationalTableModel::select();
   applyColumnRoles();
   if (result && rowCount())
     emit dataChanged(index(0,0),index(rowCount()-1,columnCount()-1));
   return result;
+}
+
+void XSqlTableModel::clear()
+{
+  clearChildren();
+  QSqlRelationalTableModel::clear();
 }
 
 void XSqlTableModel::applyColumnRole(int column, int role, QVariant value)
@@ -286,4 +407,160 @@ QVariant XSqlTableModel::formatValue(const QVariant &value, const QVariant &form
   if (format.toInt() == Percent)
     fval = fval * 100;
   return QVariant(QLocale().toString(fval, 'f', scale));
+}
+
+/* tree stuff */
+XSqlTableNode* XSqlTableModel::appendChild(const QString &tableName, ParameterList &relations)
+{
+  XSqlTableNode* child = new XSqlTableNode(tableName, relations);
+  appendChild(child);
+  return child;
+}
+
+XSqlTableNode* XSqlTableModel::child(const QString &tableName)
+{
+  for (int i = 0; i < _children.count(); i++)
+  {
+    if (_children.at(i)->tableName() == tableName)
+      return _children.at(i);
+  }
+
+  return 0;
+}
+
+QString XSqlTableModel::buildFilter(ParameterList &params)
+{
+  QStringList clauses;
+  for (int i = 0; i < params.count(); i++)
+  {
+    QString clause = QString(" (%1=%2) ").arg(params.at(i).name(), "%1");
+    QVariant::Type type = params.at(i).value().type();
+    switch (type)
+    {
+    case QVariant::Bool:
+      if (params.at(i).value().toBool())
+        clauses.append(QString(" (%1) ").arg(params.at(i).name()));
+      else
+        clauses.append(QString(" (NOT %1) ").arg(params.at(i).name()));
+      break;
+    case QVariant::Date:
+      clauses.append(clause.arg(params.at(i).value().toDate().toString(Qt::ISODate)));
+      break;
+    case QVariant::Int:
+    case QVariant::Double:
+      clauses.append(clause.arg(params.at(i).value().toDouble()));
+      break;
+    default:
+      clauses.append(clause.arg(params.at(i).value().toString().prepend("'").append("'")));
+    }
+  }
+  return clauses.join(" AND ");
+}
+
+ParameterList XSqlTableModel::buildParams(XSqlTableModel* parent, int row, ParameterList relations)
+{
+  ParameterList params;
+  // Name = local column, Value parent column
+  // Get the value of the parent for the specified row
+  for (int i = 0; i < relations.count(); i++)
+  {
+    if (parent->query().seek(row))
+    {
+      QSqlRecord record = parent->record(row);
+      QString name = relations.at(i).name();
+      QVariant value = record.value(relations.at(i).value().toString());
+      params.append(name, value);
+    }
+  }
+  return params;
+}
+
+void XSqlTableModel::clearChildren()
+{
+  for (int i = 0; i < _children.count(); i++)
+    _children.at(i)->clear();
+}
+
+void XSqlTableModel::loadAll()
+{
+  qDebug("filter: " + buildFilter(_params));
+  setFilter(buildFilter(_params));
+  if (!query().isActive())
+    select();
+
+  // Reset all nodes
+  for (int n = 0; n < _children.count(); n++)
+  {
+    qDebug("clearing node %d", n);
+    XSqlTableNode* node = _children.at(n);
+    QList<XSqlTableModel* > mlist;
+    node->clear();
+  }
+  // Loop through and reload models for each row
+  for (int r = 0; r < rowCount(); r++)
+  {
+    qDebug("Loading row %d", r);
+    load(r);
+  }
+}
+
+void XSqlTableModel::load(int row)
+{
+  // Loop through each node to create models
+  for (int n = 0; n < _children.count(); n++)
+  {
+    qDebug("loading child node %d", n);
+    XSqlTableNode* node = _children.at(n);
+    QPair<XSqlTableModel*, int> key;
+    key.first = this;
+    key.second = row;
+
+    // Generate child model for the row passed
+    XSqlTableModel* model = new XSqlTableModel(this);
+    qDebug("Setting table " + node->tableName());
+    model->setTable(node->tableName());
+    ParameterList params = buildParams(this, row, node->relations());
+    qDebug("Filter is " + buildFilter(params));
+    model->setFilter(buildFilter(params));
+    model->select();
+    node->modelMap().insert(key, model);
+
+    // Cascade recursively
+    key.first = model;
+    for (int r = 0; r < model->rowCount(); r++)
+    {
+      key.second = r;
+      node->load(key);
+    }
+  }
+}
+
+/*!
+    Saves the current model and all of it's child node models to the database where
+    a\ transact wraps all submissions in a database transaction.
+*/
+bool XSqlTableModel::save()
+{
+  XSqlQuery trans;
+  trans.exec("BEGIN");
+
+  if (submitAll())
+  {
+    for ( int i = 0; i < _children.count(); i++ )
+    {
+      if (!_children.at(i)->save())
+      {
+        trans.exec("ROLLBACK");
+        return false;
+      }
+    }
+  }
+  else
+  {
+    trans.exec("ROLLBACK");
+    return false;
+  }
+
+  trans.exec("COMMIT");
+  return true;
 }

@@ -45,11 +45,11 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 		Modes mode();
 
                 Q_INVOKABLE bool submit();
-                Q_INVOKABLE bool locked()                { return _locked;};
-                Q_INVOKABLE bool lockRecords()           { return _lock;};
+                Q_INVOKABLE bool locked()                { return _locked;}
+                Q_INVOKABLE bool lockRecords()           { return _lock;}
                 Q_INVOKABLE Disposition check();
-                Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;};
-                Q_INVOKABLE XSqlTableModel    *model()   { return _model;};
+                Q_INVOKABLE XDataWidgetMapper *mapper()  { return _mapper;}
+                Q_INVOKABLE XSqlTableModel    *model()   { return _model;}
                 
                 void showEvent ( QShowEvent * event );
        	
@@ -58,14 +58,15 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
                 bool isDirty();
                 bool tryLock();
                 int  currentIndex();
-                int  primaryKeyColumns()    const { return _keyColumns;       };
-                QString filter()            const { return _model->filter();  };
-	        QString schemaName()        const { return _schemaName;       };
-	        QString sortColumn()        const { return _sortColumn;       };
-		QString tableName()         const { return _tableName;        };
+                int  primaryKeyColumns()    const { return _keyColumns;       }
+                QString filter()            const { return _model->filter();  }
+                QString schemaName()        const { return _schemaName;       }
+                QString sortColumn()        const { return _sortColumn;       }
+                QString tableName()         const { return _tableName;        }
                 void clear();
                 void deleteCurrent();
                 void insert();
+                void loadAll();
                 void newMappedWidget(QWidget *widget);
                 void removeCurrent();
                 void removeRows(int row, int count);
@@ -78,11 +79,11 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 		void search(QString criteria);
 		void select();
                 void setCurrentIndex(int index);
-		void setFilter(QString filter)          { _model->setFilter(filter);      };
+                void setFilter(QString filter)          { _model->setFilter(filter);      }
                 void setLockRecords(bool lock);
                 void setModel(XSqlTableModel *model);
 		void setMode(Modes p);
-                void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
+                void setPrimaryKeyColumns(int count)    { _keyColumns = count;           }
 		void setSchemaName(QString schema);
 		void setSortColumn(QString p);
 		void setTableName(QString table);

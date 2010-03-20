@@ -240,7 +240,8 @@ function itemPrice()
 function populate()
 {
   _populating = true;
-  _sale.select();
+  _sale.model().loadAll();
+  //_sale.select();
 
   populateItems();
 
@@ -455,6 +456,8 @@ function save()
 
 function set(input)
 {
+  var params = new Object;
+
   if ("mode" in input)
   {
     _sale.setMode(input.mode);
@@ -474,11 +477,18 @@ function set(input)
     _number.enabled 	= false;
   }
 
+  if ("order_number" in input) // Use to populate an existing record
+    params.order_number = input.order_number;
+
+/*
   if ("filter" in input) // Use to populate an existing record
   {
     _sale.setFilter(input.filter);
     populate();
   }
+*/
+  _sale.model().set(params);
+  populate();
 
   return 0;
 }
