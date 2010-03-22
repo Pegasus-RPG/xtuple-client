@@ -79,6 +79,7 @@
 #include "distributeInventory.h"
 #include "splashconst.h"
 #include "scripttoolbox.h"
+#include "menubutton.h"
 
 #include "setupscriptapi.h"
 
@@ -492,9 +493,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _timeoutHandler->setIdleMinutes(_preferences->value("IdleTimeout").toInt());
   _reportHandler = 0;
 
-  //ContactCluster::_guiClientInterface = new xTupleGuiClientInterface();
   VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
-	Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;

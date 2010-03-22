@@ -11,9 +11,13 @@
 #include "xlabel.h"
 
 #include <QLocale>
+#include <QMessageBox>
+#include <QSqlError>
 #include <QValidator>
 
 #include "format.h"
+#include <quuencode.h>
+#include "xsqlquery.h"
 
 #define DEBUG false
 
@@ -49,6 +53,33 @@ void XLabel::setPrecision(QIntValidator * /*pVal*/)
 void XLabel::setDouble(const double pDouble, const int pPrec)
 {
   QLabel::setText(formatNumber(pDouble, (pPrec < 0) ? _precision : pPrec));
+}
+
+void XLabel::setImage(QString image)
+{
+  if (_image == image)
+    return;
+
+  _image = image;
+  XSqlQuery qry;
+  qry.prepare("SELECT image_data "
+              "FROM image "
+              "WHERE (image_name=:image);");
+  qry.bindValue(":image", _image);
+  qry.exec();
+  if (qry.first())
+  {
+    QImage img;
+    img.loadFromData(QUUDecode(qry.value("image_data").toString()));
+    setPixmap(QPixmap::fromImage(img));
+    return;
+  }
+  else if (qry.lastError().type() != QSqlError::NoError)
+    QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          qry.lastError().databaseText());
+  setPixmap(QPixmap());
 }
 
 void XLabel::setText(const QVariant &pVariant)

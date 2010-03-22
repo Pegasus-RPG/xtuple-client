@@ -23,13 +23,15 @@ class QVariant;
 class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
 {
   Q_OBJECT
+  Q_PROPERTY(QString image        READ image       WRITE setImage)
   Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)
   Q_PROPERTY(int     precision    READ precision   WRITE setPrecision)
   
   public:
     XLabel(QWidget *, const char * = 0);
 
-    virtual QString fieldName()   const { return _fieldName; };
+    virtual QString fieldName()   const { return _fieldName; }
+    virtual QString image()       const { return _image; }
     virtual void    setPrecision(int);
     int precision() const { return _precision; }
     Q_INVOKABLE virtual void    setPrecision(QDoubleValidator *);
@@ -39,13 +41,15 @@ class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDouble(const double, const int = -1);
-    virtual void setFieldName(QString p)    { _fieldName = p; };
+    virtual void setFieldName(QString p)    { _fieldName = p; }
+    virtual void setImage(QString image);
     virtual void setText(const QString &);
     virtual void setText(const char *);
     virtual void setText(const QVariant &);
     virtual void setTextColor(const QString &);
 
   private:
+    QString _image;
     QString _fieldName;
     int     _precision;
 };

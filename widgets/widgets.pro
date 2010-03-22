@@ -65,6 +65,7 @@ HEADERS += \
            plugins/itemlineeditplugin.h \
            plugins/lotserialclusterplugin.h \
            plugins/lotserialseqclusterplugin.h \
+           plugins/menubuttonplugin.h \
            plugins/orderclusterplugin.h \
            plugins/opportunityclusterplugin.h \
            plugins/parametergroupplugin.h \
@@ -176,7 +177,8 @@ SOURCES    += widgets.cpp \
               docAttach.cpp \
               parameterwidget.cpp \
               filterManager.cpp \
-              filterSave.cpp
+              filterSave.cpp \
+              menubutton.cpp \
 
 HEADERS    += widgets.h \
               xtupleplugin.h \
@@ -245,6 +247,7 @@ HEADERS    += widgets.h \
               parameterwidget.h \
               filterManager.h \
               filtersave.h \
+              menubutton.h \
 
 FORMS += accountSearch.ui \
          alarmMaint.ui \
@@ -256,6 +259,7 @@ FORMS += accountSearch.ui \
          filterSave.ui \
          imageAssignment.ui \
          imageview.ui \
+         menubutton.ui \
          parameterwidget.ui \
          queryitem.ui \
          queryset.ui \
