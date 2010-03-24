@@ -628,9 +628,7 @@ void ParameterWidget::changeFilterObject(int index)
                  qPrintable(objectName()), qPrintable(item->text()),
                  qPrintable(item->data(Qt::UserRole).toString()), i);
         tab->setItem(i, 0, item);
-#ifdef Q_WS_MAC
-        tab->setRowHeight(i, tab->rowHeight(i) - 16); // TODO: a better way?
-#endif
+        tab->setRowHeight(i, (tab->fontMetrics().height() * 110) / 100); // TODO: a better way?
       }
       // keep the filter vertically small
       tab->setMaximumHeight(qMin(6, tab->rowCount()) * tab->rowHeight(0));
