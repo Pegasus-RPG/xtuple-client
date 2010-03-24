@@ -13,6 +13,11 @@
 
 #include <QtScript>
 #include <QMessageBox>
+#include <QTableWidget>
+
+#ifdef Q_WS_MAC
+#include <QFont>
+#endif
 
 #include "parameterwidget.h"
 #include "widgets.h"
@@ -24,6 +29,8 @@
 #include "contactcluster.h"
 #include "filtersave.h"
 
+#define DEBUG false
+
 /* TODO: - add Flag to the set of types to handle parameters that are either
            passed or not (this is different from boolean parameters, that can
            be either true or false).
@@ -32,6 +39,10 @@
          - store the text value of the enum in the filter definition, not the
            integer. otherwise the db contents will prevent reorganizing the
            order of the symbolic values of the type enumeration.
+         - rename methods to align better with qt naming conventions
+         - fix indentation - ts=8 sw=2 tabexpand=true
+         - find a solution to the problem that multiselect's use of
+           qtablewidget violates the one-unit-high rule
  */
 
 ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
@@ -110,8 +121,6 @@ void ParameterWidget::appendValue(ParameterList &pParams)
 void ParameterWidget::applyDefaultFilterSet()
 {
   XSqlQuery qry;
-  const QMetaObject *metaobject;
-  QString classname;
   QString filter_name;
   int filter_id;
 
@@ -132,8 +141,10 @@ void ParameterWidget::applyDefaultFilterSet()
 
   if (this->parent())
   {
-    metaobject = this->parent()->metaObject();
-    classname = metaobject->className();
+    QString classname(parent()->objectName());
+    if (classname.isEmpty())
+      classname = parent()->metaObject()->className();
+
     qry.prepare(query);
     qry.bindValue(":screen", classname);
 
@@ -244,13 +255,9 @@ void ParameterWidget::addParam()
   _addFilterRow->setDisabled(true);
 }
 
-void ParameterWidget::applySaved(int pId, int filter_id)
+void ParameterWidget::applySaved(int /*pId*/, int filter_id)
 {
-  QGridLayout *container;
-  QLayoutItem *child;
-  QLayoutItem *child2;
-  QHBoxLayout *layout2;
-  QWidget *found;
+  QWidget *found = 0;
   QDate tempdate;
   XSqlQuery qry;
   QString query;
@@ -265,9 +272,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   if (!parent())
     return;
 
-  //if (pId == 0)
-  //addParam();
-
   if (_filterList->id() == -1)
   {
     setSelectedFilter(-1);
@@ -278,10 +282,10 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   if (filter_id == 0 && _filterList->id() != -1)
     filter_id = _filterList->id(_filterList->currentIndex());
 
-  const QMetaObject *metaobject = this->parent()->metaObject();
-  QString classname(metaobject->className());
+  QString classname(parent()->objectName());
+  if (classname.isEmpty())
+    classname = parent()->metaObject()->className();
 
-  //look up filter from database
   query = " SELECT filter_value, "
           "  CASE WHEN (filter_username IS NULL) THEN true "
           "  ELSE false END AS shared "
@@ -321,14 +325,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
       mybox->setCurrentIndex(idx);
 
-      QString row;
-      row = row.setNum(windowIdx);
-
-      container = _filtersLayout->findChild<QGridLayout *>("topLayout" + row);
-      child = container->itemAtPosition(0, 0)->layout()->itemAt(0);
-      layout2 = (QHBoxLayout *)child->layout();
-      child2 = layout2->itemAt(0);
-      found = child2->widget();
+      found = getFilterWidget(windowIdx);
 
       int widgetType = tempFilterList[2].toInt();
 
@@ -366,11 +363,39 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         xid = tempFilterList[1].toInt();
         xBox->setId(xid);
         break;
+      case Multiselect:
+        {
+          QTableWidget *tab      = qobject_cast<QTableWidget*>(found);
+          QStringList   savedval = tempFilterList[1].split(",");
+          bool oldblk = tab->blockSignals(true);
+          /* the obvious, loop calling tab->selectRow(), gives one selected row,
+             so try this to get multiple selections:
+               make only the desired values selectable,
+               select everything, and
+               connect to a slot that can clean up after us.
+             yuck.
+           */
+          for (int j = 0; j < tab->rowCount(); j++)
+          {
+            if (! savedval.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
+              tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
+          }
+          QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
+                                           tab->columnCount() - 1);
+          tab->setRangeSelected(range, true);
+          connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
+
+          tab->blockSignals(oldblk);
+          storeFilterValue(-1, tab);
+        }
+        break;
       default:
+        {
         QLineEdit *lineEdit;
         lineEdit = (QLineEdit*)found;
         lineEdit->setText(tempFilterList[1]);
         storeFilterValue(-1, lineEdit);
+        }
         break;
       }
 			//end of if
@@ -378,6 +403,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     windowIdx++;
   }//end of for
 
+  // TODO: the switch below is like the switch above. can we remove duplication?
 	if (filterRows.size() == 1)
 	{
 			//apply filter defaults					
@@ -396,14 +422,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
 				mybox->setCurrentIndex(idx);
 				
-				QString row;
-				row = row.setNum(windowIdx);
-
-				container = _filtersLayout->findChild<QGridLayout *>("topLayout" + row);
-				child = container->itemAtPosition(0, 0)->layout()->itemAt(0);
-				layout2 = (QHBoxLayout *)child->layout();
-				child2 = layout2->itemAt(0);
-				found = child2->widget();
+				found = getFilterWidget(windowIdx);
 
 				tempPair = _types[k.key()];
 				int widgetType = tempPair.second;
@@ -441,6 +460,26 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 						xid = k.value().toInt();
 						xBox->setId(xid);
 						break;
+          case Multiselect:
+            {
+              QTableWidget *tab;
+              tab = (QTableWidget *)found;
+              QVariantList vlist = k.value().toList();
+              bool oldblk = tab->blockSignals(true);
+              /* see the comment in the 'case Multiselect:' above */
+              for (int j = 0; j < tab->rowCount(); j++)
+              {
+                if (! vlist.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
+                  tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
+              }
+              QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
+                                               tab->columnCount() - 1);
+              tab->setRangeSelected(range, true);
+              connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
+
+              tab->blockSignals(oldblk);
+            }
+            break;
 					default:
 						QLineEdit *lineEdit;
 						lineEdit = (QLineEdit*)found;
@@ -454,6 +493,25 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
   setSelectedFilter(filter_id);
   emit updated();
+}
+
+void ParameterWidget::resetMultiselect(QTableWidgetItem *item)
+{
+  QTableWidget *tab = qobject_cast<QTableWidget*>(sender());
+  if (! tab)
+    return;
+
+  if (DEBUG)
+    qDebug("%s::resetMultiselect(%p) entered for %p",
+           qPrintable(objectName()), item, tab);
+
+  disconnect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
+
+  for (int j = 0; j < tab->rowCount(); j++)
+    tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() | Qt::ItemIsSelectable);
+
+  tab->selectRow(tab->row(item));
+  storeFilterValue(-1, tab); // why is this necessary?
 }
 
 void ParameterWidget::changeFilterObject(int index)
@@ -483,7 +541,7 @@ void ParameterWidget::changeFilterObject(int index)
     {
       DLineEdit *dLineEdit= new DLineEdit(_filterGroup);
       newWidget = dLineEdit;
-      connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue(QDate) ) );
+      connect(dLineEdit, SIGNAL(newDate(QDate)), this, SLOT( storeFilterValue() ) );
     }
     break;
   case User:
@@ -529,13 +587,56 @@ void ParameterWidget::changeFilterObject(int index)
       xBox->setType(_comboTypes[mybox->currentText()]);
       if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
       {
-        qry.prepare( _comboQuery[mybox->currentText()] );
+        qry.prepare( _query[mybox->currentText()] );
 
         qry.exec();
         xBox->populate(qry);
       }
       connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
       connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+
+  case Multiselect:
+    {
+      QTableWidget *tab = new QTableWidget(_filterGroup);
+#ifdef Q_WS_MAC
+      QFont f = tab->font();
+      f.setPointSize(f.pointSize() - 2);
+      tab->setFont(f);
+#endif
+      newWidget = tab;
+      tab->setShowGrid(false);
+      tab->setSelectionBehavior(QAbstractItemView::SelectRows);
+      tab->setSelectionMode(QAbstractItemView::ExtendedSelection);
+      tab->horizontalHeader()->setVisible(false);
+      tab->horizontalHeader()->setStretchLastSection(true);
+      tab->verticalHeader()->setVisible(false);
+      tab->setColumnCount(1);
+
+      XSqlQuery msq;
+      msq.prepare(_query[mybox->currentText()]);
+      msq.exec();
+      for (int i = 0; msq.next(); i++)
+      {
+        if (i >= tab->rowCount())
+          tab->insertRow(tab->rowCount());
+        QTableWidgetItem *item = new QTableWidgetItem(msq.value(1).toString());
+        item->setData(Qt::UserRole, msq.value(0));
+        if (DEBUG)
+          qDebug("%s::changeFilterObject() Multiselect added %s (%s) at %d",
+                 qPrintable(objectName()), qPrintable(item->text()),
+                 qPrintable(item->data(Qt::UserRole).toString()), i);
+        tab->setItem(i, 0, item);
+#ifdef Q_WS_MAC
+        tab->setRowHeight(i, tab->rowHeight(i) - 16); // TODO: a better way?
+#endif
+      }
+      // keep the filter vertically small
+      tab->setMaximumHeight(qMin(6, tab->rowCount()) * tab->rowHeight(0));
+      tab->show();
+
+      connect(tab, SIGNAL(itemSelectionChanged()), this, SLOT(storeFilterValue()));
     }
     break;
 
@@ -688,15 +789,19 @@ void ParameterWidget::save()
     XComboBox* mybox = (XComboBox*)test->widget();
     QStringList split = mybox->itemData(mybox->currentIndex()).toString().split(":");
 
-    if ( tempVar.canConvert<QString>() )
+    if ( tempVar.canConvert(QVariant::String) )
     {
       variantString = tempVar.toString();
       filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
     }
+    else if (tempVar.canConvert(QVariant::StringList))
+      filter += tempPair.first + ":" + tempVar.toStringList().join(",")
+                               + ":" + split[1] + "|";
   }
 
-  const QMetaObject *metaobject = this->parent()->metaObject();
-  QString classname(metaobject->className());
+  QString classname(parent()->objectName());
+  if (classname.isEmpty())
+    classname = parent()->metaObject()->className();
 
   ParameterList params;
   params.append("filter", filter);
@@ -736,8 +841,9 @@ void ParameterWidget::setSavedFilters(int defaultId)
 
   if(this->parent())
   {
-    const QMetaObject *metaobject = this->parent()->metaObject();
-    QString classname(metaobject->className());
+    QString classname(parent()->objectName());
+    if (classname.isEmpty())
+      classname = parent()->metaObject()->className();
 
     query = " SELECT 0 AS filter_id, :none AS filter_name, 1 AS seq "
             " UNION "
@@ -765,13 +871,23 @@ void ParameterWidget::setSavedFiltersIndex(QString filterSetName)
   _filterList->setText(filterSetName);
 }
 
-void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault)
+void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
 {
   _types[pName] = qMakePair(pParam, type);
-	if (pDefault != 0)
-	{
-		_defaultTypes[pName] = pDefault;
-	}
+  if (pDefault != 0)
+    _defaultTypes[pName] = pDefault;
+
+  if (type == Multiselect)
+  {
+    if (extraInfo.type() == QVariant::String)
+      _query[pName] = extraInfo.toString();
+    else
+      qWarning("%s::setType(%s, %s, %d, %s, %s) called for Multiselect but "
+               "was not given a query to use",
+               qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
+               type, qPrintable(pDefault.toString()),
+               qPrintable(extraInfo.toString()));
+  }
 }
 
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
@@ -787,7 +903,7 @@ void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox:
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault)
 {
   _comboTypes[pName] = XComboBox::Adhoc;
-  _comboQuery[pName] = pQry;
+  _query[pName] = pQry;
   _types[pName] = qMakePair(pParam, XComBox);
 	if (pDefault != 0)
 	{
@@ -798,7 +914,10 @@ void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQ
 void ParameterWidget::sManageFilters()
 {
   ParameterList params;
-  params.append("screen", parent()->metaObject()->className());
+  QString classname(parent()->objectName());
+  if (classname.isEmpty())
+    classname = parent()->metaObject()->className();
+  params.append("screen", classname);
 
   filterManager *newdlg = new filterManager(this, "");
   newdlg->set(params);
@@ -816,135 +935,125 @@ void ParameterWidget::toggleSave()
     _saveButton->setDisabled(true);
   }
 }
-void ParameterWidget::storeFilterValue(QDate pDate)
+
+// get the row number of a particular filter widget
+// this has to change if we change the way things get laid out
+int ParameterWidget::getFilterIndex(const QWidget *filterwidget)
 {
-  QObject *filter = (QObject *)sender();
-  QLayoutItem *test;
-  QLayoutItem *test2;
-  QLayoutItem *child;
-  QLayoutItem *child2;
-  QGridLayout *layout;
-  QHBoxLayout *layout2;
-  QWidget *found;
-  XComboBox *mybox;
-  int foundRow = 0;
+  int index = -1;
 
   for (int i = 1; i < _filtersLayout->rowCount(); i++)
   {
-    test = _filtersLayout->itemAtPosition(i, 1);
-    if (test)
+    QLayoutItem *rowLI   = _filtersLayout->itemAtPosition(i, 1);
+    if (rowLI)
     {
-      layout = (QGridLayout *)test->layout();
-      child =layout->itemAtPosition(0, 0);
-      layout2 = (QHBoxLayout *)child->layout()->itemAt(0);
-      child2 = layout2->itemAt(0);
-      found = child2->widget();
-
-      if (found == filter )
-        foundRow = i;
-    }
-  }
-
-  test2 = _filtersLayout->itemAtPosition(foundRow, 0)->layout()->itemAt(0);
-  mybox = (XComboBox*)test2->widget();
-  QString currText = mybox->currentText();
-  QPair<QString, ParameterWidgetTypes> tempPair = _types[currText];
-
-  _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(pDate));
-  //if (!mybox->currentText().isEmpty())
-  //{
-  //_usedTypes->removeAll(mybox->currentText());
-  
-  if (!_usedTypes.isEmpty())
-    _usedTypes.remove(foundRow);
-
-  _usedTypes[foundRow] = mybox->currentText();
-  _addFilterRow->setDisabled(false);
-  repopulateComboboxes();
-
-  emit updated();
-}
-
-//stores the value of a filter object into the filtervalues map
-void ParameterWidget::storeFilterValue(int pId, QObject* filter)
-{
-  if (!filter)
-  {
-    filter = (QObject *)sender();
-  }
-
-  QLayoutItem *test;
-  QLayoutItem *test2;
-  QLayoutItem *child;
-  QLayoutItem *child2;
-  QGridLayout *layout;
-  QHBoxLayout *layout2;
-  QWidget *found;
-  XComboBox *mybox;
-  int foundRow = 0;
-
-  for (int i = 1; i < _filtersLayout->rowCount(); i++)
-  {
-
-    test = _filtersLayout->itemAtPosition(i, 1);
-    if (test)
-    {
-      layout = (QGridLayout *)test->layout();
-      child = layout->itemAtPosition(0, 0);
-      layout2 = (QHBoxLayout *)child->layout()->itemAt(0);
-      child2 = layout2->itemAt(0);
-
-      found = child2->widget();
-
-      if (found == filter )
+      QGridLayout *rowgrid = qobject_cast<QGridLayout *>(rowLI->layout());
+      if (rowgrid)
       {
-        foundRow = i;
+        QLayoutItem *childLI = rowgrid->itemAtPosition(0, 0);
+        QHBoxLayout *filterlyt = qobject_cast<QHBoxLayout *>(childLI->layout()->itemAt(0)->layout());
+        if (filterlyt && filterlyt->itemAt(0)->widget() == filterwidget)
+        {
+          index = i;
+          break;
+        }
       }
     }
   }
 
+  return index;
+}
 
-  test2 = _filtersLayout->itemAtPosition(foundRow, 0)->layout()->itemAt(0);
-  mybox = (XComboBox*)test2->widget();
-  QString _currText = mybox->currentText();
-  QPair<QString, ParameterWidgetTypes> tempPair = _types[_currText];
+// get the filter widget at a particular row
+// this has to change if we change the way things get laid out
+QWidget *ParameterWidget::getFilterWidget(const int index)
+{
+  QWidget *filterwidget = 0;
 
-  const QMetaObject *metaobject = filter->metaObject();
-  QString classname(metaobject->className());
+  QGridLayout *rowgrid = _filtersLayout->findChild<QGridLayout *>("topLayout"
+                                                      + QString::number(index));
+  QLayoutItem *childLI = rowgrid->itemAtPosition(0, 0)->layout()->itemAt(0);
+  QHBoxLayout *datalyt = (QHBoxLayout *)childLI->layout();
+  QLayoutItem *filterLI = datalyt->itemAt(0);
+  if (filterLI)
+    filterwidget = filterLI->widget();
 
-  if (pId == -1)
+  return filterwidget;
+}
+
+// stores the value of a filter object into the filtervalues map
+void ParameterWidget::storeFilterValue(int pId, QObject* filter)
+{
+  if (!filter)
+    filter = (QObject *)sender();
+
+  if (DEBUG)
+    qDebug("%s::storeFilterValue(%d, %p)",
+           qPrintable(objectName()), pId, filter);
+
+  if (! filter)
   {
-    if (classname == "QLineEdit")
-    {
-      QLineEdit *lineEdit = (QLineEdit *)filter;
-      _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(lineEdit->text()));
-      emit updated();
-    }
-  }
-  else
-  {
-    if (classname == "UsernameCluster")
-    {
-      UsernameCluster *usernameCluster = (UsernameCluster *)filter;
-      QString username = usernameCluster->username();
-      _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(username));
-      emit updated();
-    }
-    else
-    {
-      _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(pId));
-      emit updated();
-    }
+    qWarning("%s::storeFilterValue(%d, %p) could not find filter",
+           qPrintable(objectName()), pId, filter);
+    return;
   }
 
+  int foundRow = getFilterIndex(qobject_cast<QWidget*>(filter));
+  if (foundRow < 0)
+  {
+    qWarning("%s::storeFilterValue(%d, %p) could not find filter index",
+           qPrintable(objectName()), pId, filter);
+    return;
+  }
+
+  QLayoutItem *selectorLI = _filtersLayout->itemAtPosition(foundRow, 0)->layout()->itemAt(0);
+  XComboBox *selector = qobject_cast<XComboBox*>(selectorLI->widget());
+  QString currText = selector->currentText();
+  QPair<QString, ParameterWidgetTypes> tempPair = _types[currText];
+
+  QString classname(filter->metaObject()->className());
+
+  // check usernamecluster before pid because we key off text value for users
+  if (classname == "UsernameCluster")
+  {
+    UsernameCluster *usernameCluster = (UsernameCluster *)filter;
+    QString username = usernameCluster->username();
+    _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(username));
+    emit updated();
+  }
+  else if (pId != -1)
+  {
+    _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(pId));
+    emit updated();
+  }
+  else if (classname == "QLineEdit")
+  {
+    QLineEdit *lineEdit = (QLineEdit *)filter;
+    _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(lineEdit->text()));
+    emit updated();
+  }
+  else if (classname == "DLineEdit")
+  {
+    DLineEdit *dateedit = qobject_cast<DLineEdit *>(filter);
+    _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(dateedit->date()));
+    emit updated();
+  }
+  else if (classname == "QTableWidget")
+  {
+    QList<QTableWidgetItem*> selected = (qobject_cast<QTableWidget*>(filter))->selectedItems();
+    QVariantList value;
+    for (int i = 0; i < selected.size(); i++)
+      value.append(selected.at(i)->data(Qt::UserRole));
+    _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(value));
+    emit updated();
+  }
 
   if (!_usedTypes.isEmpty())
     _usedTypes.remove(foundRow);
-  _usedTypes[foundRow] = mybox->currentText();
+  _usedTypes[foundRow] = selector->currentText();
 
   _addFilterRow->setDisabled(false);
   repopulateComboboxes();
-
 }
 
 QString ParameterWidget::getParameterTypeKey(QString pValue)
@@ -968,8 +1077,10 @@ QString ParameterWidget::getParameterTypeKey(QString pValue)
 void ParameterWidget::setSelectedFilter(int filter_id)
 {
   XSqlQuery qry;
-  const QMetaObject *metaobject = this->parent()->metaObject();
-  QString classname(metaobject->className());
+
+  QString classname(parent()->objectName());
+  if (classname.isEmpty())
+    classname = parent()->metaObject()->className();
 
   QString query = "UPDATE filter SET filter_selected=false "
                   "WHERE filter_screen=:screen AND filter_username=current_user";
@@ -1038,6 +1149,7 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Date", QScriptValue(engine, ParameterWidget::Date), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("XComBox", QScriptValue(engine, ParameterWidget::XComBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Contact", QScriptValue(engine, ParameterWidget::Contact), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Multiselect", QScriptValue(engine, ParameterWidget::Multiselect), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

@@ -52,6 +52,11 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   parameterWidget->setType(tr("Contact"),"cntct_id", ParameterWidget::Contact);
   parameterWidget->setXComboBoxType(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
   parameterWidget->setXComboBoxType(tr("Category"), "category_id", XComboBox::IncidentCategory);
+  parameterWidget->setType(tr("Categories"), "categorylist",
+                           ParameterWidget::Multiselect, "",
+                           "SELECT incdtcat_id, incdtcat_name"
+                           "  FROM incdtcat"
+                           " ORDER BY incdtcat_name;");
   parameterWidget->setXComboBoxType(tr("Status is"), "status_equal", qryStatus);
   parameterWidget->setXComboBoxType(tr("Hide Status above"), "status_above", qryStatus, 4);
 
