@@ -59,6 +59,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void storeFilterValue(int pId = -1, QObject* filter = 0);
     void setFiltersVisabiltyPreference();
     void toggleSave();
+		void setFiltersDefault();
 
 
   signals:
@@ -73,7 +74,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QSignalMapper *_filterSignalMapper;
     QMap<QString, QPair<QString, ParameterWidgetTypes> > _types;
     QMap<int, QString > _usedTypes;
-    QString _settingsName;
+    QString _settingsName, _settingsName2;
     QMap<int, QPair<QString, QVariant > > _filterValues;
     QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
     QMap<QString, QString > _query;
@@ -86,11 +87,17 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QWidget *getFilterWidget(const int index);
     QString  getParameterTypeKey(QString);
     void setSelectedFilter(int filter_id);
-    void repopulateComboboxes();
+    
     bool containsUsedType(QString);
+
+
+	private slots:
+		void repopulateComboboxes();
+		void addUsedType();
 
   protected slots:
     void     resetMultiselect(QTableWidgetItem* item);
+
 
 };
 

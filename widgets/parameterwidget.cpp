@@ -69,6 +69,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_saveButton, SIGNAL(clicked()), this, SLOT( save() ) );
   connect(_manageButton, SIGNAL(clicked()), this, SLOT( sManageFilters() ) );
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( applySaved(int) ) );
+  connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( setFiltersDefault() ) );
   connect(this, SIGNAL(updated()), this, SLOT( toggleSave() ) );
 }
 
@@ -123,6 +124,9 @@ void ParameterWidget::applyDefaultFilterSet()
   XSqlQuery qry;
   QString filter_name;
   int filter_id;
+	QString pname;
+
+ 
 
   //hides parameterwidget when it's embedded within another widget with a parent
   if (this->parent() && this->parent()->parent())
@@ -133,11 +137,20 @@ void ParameterWidget::applyDefaultFilterSet()
     return;
   }
 
-  QString query = "SELECT filter_id, filter_name "
+	if(window())
+    pname = window()->objectName() + "/";
+	_settingsName2 = pname + this->objectName();
+
+	if(_x_preferences)
+  {
+		_settingsName2 += "/filter_default";
+		filter_id = _x_preferences->value(_settingsName2).toInt();
+	}
+
+  QString query = "SELECT filter_name "
                   "FROM filter "
-                  "WHERE filter_screen=:screen "
-                  " AND filter_username=current_user "
-                  " AND filter_selected=TRUE";
+                  "WHERE filter_id=:id ";
+                  
 
   if (this->parent())
   {
@@ -146,13 +159,11 @@ void ParameterWidget::applyDefaultFilterSet()
       classname = parent()->metaObject()->className();
 
     qry.prepare(query);
-    qry.bindValue(":screen", classname);
-
+		qry.bindValue(":id", filter_id);
     qry.exec();
 
     if (qry.first())
     {
-      filter_id = qry.value("filter_id").toInt();
       filter_name = qry.value("filter_name").toString();
       setSavedFiltersIndex(filter_name);
       applySaved(0, filter_id);
@@ -241,28 +252,35 @@ void ParameterWidget::addParam()
   _filtersLayout->addLayout(gridLayout, nextRow, 1, 1, 1);
   _filtersLayout->addLayout(xcomboLayout, nextRow, 0, 1, 1);
 
+
   // Hook up connections
   connect(toolButton, SIGNAL(clicked()), _filterSignalMapper, SLOT(map()));
   connect(toolButton, SIGNAL(clicked()), gridLayout, SLOT( deleteLater() ) );
   connect(toolButton, SIGNAL(clicked()), xcomboBox, SLOT( deleteLater() ) );
   connect(toolButton, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
   connect(toolButton, SIGNAL(clicked()), toolButton, SLOT( deleteLater() ) );
+  connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( addUsedType() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
+	connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
   connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
 
   _filterSignalMapper->setMapping(toolButton, nextRow);
 
   _addFilterRow->setDisabled(true);
+
 }
 
-void ParameterWidget::applySaved(int /*pId*/, int filter_id)
+void ParameterWidget::applySaved(int pId, int filter_id)
 {
   QWidget *found = 0;
   QDate tempdate;
   XSqlQuery qry;
   QString query;
   QString filterValue;
-  int xid;
+	QDate today = QDate::currentDate();
+  int xid, init_filter_id;
+
+	init_filter_id = filter_id;
 
   QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
 	QPair<QString, ParameterWidgetTypes> tempPair;
@@ -274,7 +292,6 @@ void ParameterWidget::applySaved(int /*pId*/, int filter_id)
 
   if (_filterList->id() == -1)
   {
-    setSelectedFilter(-1);
     emit updated();
     return;
   }
@@ -303,10 +320,17 @@ void ParameterWidget::applySaved(int /*pId*/, int filter_id)
     _shared = qry.value("shared").toBool();
   }
 
+	
   QStringList filterRows = filterValue.split("|");
   QString tempFilter = QString();
 
   int windowIdx = _filtersLayout->rowCount();
+
+	if (filterRows.size() == 1  && pId == 0 && filter_id != 0)
+	{
+		emit updated();
+		return;
+	}
 
   for (int i = 0; i < filterRows.size(); ++i)
   {
@@ -335,7 +359,7 @@ void ParameterWidget::applySaved(int /*pId*/, int filter_id)
       case Date:
         DLineEdit *dLineEdit;
         dLineEdit = (DLineEdit*)found;
-        dLineEdit->setDate(QDate::fromString(tempFilterList[1], "yyyy-MM-dd"), true);
+        dLineEdit->setDate(today.addDays(tempFilterList[1].toInt()), true);
         break;
       case User:
         UsernameCluster *usernameCluster;
@@ -404,7 +428,7 @@ void ParameterWidget::applySaved(int /*pId*/, int filter_id)
   }//end of for
 
   // TODO: the switch below is like the switch above. can we remove duplication?
-	if (filterRows.size() == 1)
+	if (filterRows.size() == 1  && pId == 0)
 	{
 			//apply filter defaults					
 			QMapIterator<QString, QVariant> k(_defaultTypes);
@@ -491,7 +515,6 @@ void ParameterWidget::applySaved(int /*pId*/, int filter_id)
 			}//end of while _defaultTypes
 	}
 
-  setSelectedFilter(filter_id);
   emit updated();
 }
 
@@ -583,6 +606,8 @@ void ParameterWidget::changeFilterObject(int index)
     {
       XComboBox *xBox = new XComboBox(_filterGroup);
       newWidget = xBox;
+			xBox->setNullStr("--- Please Select ---");
+			xBox->setAllowNull(true);
 
       xBox->setType(_comboTypes[mybox->currentText()]);
       if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
@@ -592,6 +617,7 @@ void ParameterWidget::changeFilterObject(int index)
         qry.exec();
         xBox->populate(qry);
       }
+			//xBox->setAllowNull(true);
       connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
       connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
@@ -655,6 +681,7 @@ void ParameterWidget::changeFilterObject(int index)
     newWidget->setObjectName("widget" + row);
     layout->insertWidget(0, newWidget);
   }
+	_saveButton->setDisabled(true);
 }
 
 void ParameterWidget::clearFilters()
@@ -733,10 +760,25 @@ void ParameterWidget::repopulateComboboxes()
 
     idx = xlist.at(i)->findText(current);
     xlist.at(i)->setCurrentIndex(idx);
-    connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );   
+		connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( addUsedType() ) );
+    connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
+		connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
   }
 }
 
+void ParameterWidget::addUsedType()
+{
+	XComboBox *mybox = (XComboBox *)sender();
+	QVariant filterVar(mybox->itemData(mybox->currentIndex()));
+  QString filterType = filterVar.toString();
+  QStringList split = filterType.split(":");
+	int row = split[0].toInt();
+
+	if (!_usedTypes.isEmpty())
+    _usedTypes.remove(row);
+
+  _usedTypes[row] = mybox->currentText();
+}
 
 void ParameterWidget::removeParam(int pRow)
 {
@@ -768,11 +810,13 @@ void ParameterWidget::removeParam(int pRow)
 
 void ParameterWidget::save()
 {
-  QString filter;
+  QString filter = "";
   QString variantString;
   QString username;
   QString query;
   QVariant tempVar;
+	QDate variantDate;
+	QDate today = QDate::currentDate();
   int filter_id;
 
   QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
@@ -789,7 +833,17 @@ void ParameterWidget::save()
 
     if ( tempVar.canConvert(QVariant::String) )
     {
-      variantString = tempVar.toString();
+			if ( tempVar.canConvert<QDate>() )
+				variantDate = tempVar.toDate();
+
+			if (variantDate.isValid())
+			{
+				variantString = QString().setNum(today.daysTo(variantDate));
+			}
+			else
+			{
+				variantString = tempVar.toString();
+			}
       filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
     }
     else if (tempVar.canConvert(QVariant::StringList))
@@ -831,6 +885,24 @@ void ParameterWidget::setFiltersVisabiltyPreference()
   {
     _x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());
   }
+}
+void ParameterWidget::setFiltersDefault()
+{
+	QString pname;
+	int filter_id;
+
+  if(parent())
+    pname = parent()->metaObject()->className();
+		pname += "/";
+  _settingsName2 = pname + this->objectName();
+
+	filter_id = _filterList->id(_filterList->currentIndex());
+
+	if (!_settingsName2.isEmpty() && _x_preferences)
+  {
+    _x_preferences->set(_settingsName2 + "/filter_default", filter_id);
+  }
+
 }
 void ParameterWidget::setSavedFilters(int defaultId)
 {
@@ -928,10 +1000,6 @@ void ParameterWidget::toggleSave()
   {
     _saveButton->setDisabled(false);
   }
-  else
-  {
-    _saveButton->setDisabled(true);
-  }
 }
 
 // get the row number of a particular filter widget
@@ -1018,6 +1086,10 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
     QString username = usernameCluster->username();
     _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(username));
     emit updated();
+		if (classname == "XComboBox")
+		{
+			_saveButton->setDisabled(true);
+		}
   }
   else if (pId != -1)
   {
