@@ -125,24 +125,31 @@ void customers::sReassignCustomerType()
 
 void customers::sDelete()
 {
-  q.prepare("SELECT deleteCustomer(:cust_id) AS result;");
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-  if (q.first())
+  if ( QMessageBox::warning(this, tr("Delete Customer?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected Customer?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    int returnVal = q.value("result").toInt();
-    if (returnVal < 0)
+    q.prepare("SELECT deleteCustomer(:cust_id) AS result;");
+    q.bindValue(":cust_id", _cust->id());
+    q.exec();
+    if (q.first())
     {
-      QMessageBox::critical(this, tr("Cannot Delete Customer"),
-			    storedProcErrorLookup("deleteCustomer", returnVal));
+      int returnVal = q.value("result").toInt();
+      if (returnVal < 0)
+      {
+        QMessageBox::critical(this, tr("Cannot Delete Customer"),
+                              storedProcErrorLookup("deleteCustomer", returnVal));
+        return;
+      }
+      omfgThis->sCustomersUpdated(-1, TRUE);
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sCustomersUpdated(-1, TRUE);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 }
 

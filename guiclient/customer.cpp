@@ -938,6 +938,13 @@ void customer::sViewShipto()
 
 void customer::sDeleteShipto()
 {
+  QString question = tr("Are you sure that you want to delete this Ship To?");
+  if (QMessageBox::question(this, tr("Delete Ship To?"),
+                              question,
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
   q.prepare("SELECT deleteShipTo(:shipto_id) AS result;");
   q.bindValue(":shipto_id", _shipto->id());
   q.exec();
