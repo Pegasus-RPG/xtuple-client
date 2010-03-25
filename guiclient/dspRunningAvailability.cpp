@@ -37,7 +37,7 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char* name
 {
   setupUi(this);
 
-  _ready = false;
+  _ready = true;
 
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_availability,SIGNAL(resorted()), this, SLOT(sHandleResort()));
@@ -88,6 +88,7 @@ enum SetResponse dspRunningAvailability::set(const ParameterList &pParams)
   param = pParams.value("itemsite_id", &valid);
   if (valid)
   {
+    _ready = false;
     _item->setItemsiteid(param.toInt());
     _item->setReadOnly(TRUE);
     _showPlanned->setFocus();
