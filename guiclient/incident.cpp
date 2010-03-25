@@ -564,7 +564,7 @@ void incident::sNewTodoItem()
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillTodoList();
 }
 
@@ -576,7 +576,7 @@ void incident::sEditTodoItem()
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillTodoList();
 }
 
