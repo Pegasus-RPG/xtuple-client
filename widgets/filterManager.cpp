@@ -32,6 +32,7 @@ filterManager::filterManager(QWidget* parent, const char* name)
 
   connect(_filterSet, SIGNAL(valid(bool)), this, SLOT( handleButtons(bool) ));
   connect(_share, SIGNAL(clicked()), this, SLOT( shareFilter() ));
+  connect(_unshare, SIGNAL(clicked()), this, SLOT( unshareFilter() ));
   connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
   connect(this, SIGNAL(filterDeleted()), parent, SLOT(setSavedFilters()) );
 }
@@ -71,7 +72,25 @@ void filterManager::populate()
     }
   }
 }
+void filterManager::unshareFilter()
+{
+	XSqlQuery qry;
+	if ( QMessageBox::question( this, tr("Unshare Filter"),
+                                tr("<p>This will un-share the selected filter and assign it to you.\n"
+                                   " Are you sure this is what you want to do?"),
+                                QMessageBox::No | QMessageBox::Default,
+                                QMessageBox::Yes) == QMessageBox::No )
+      return;
+	else
+	{
+		qry.prepare("UPDATE filter SET filter_username=current_user WHERE (filter_id=:filter_id);");
+		qry.bindValue(":filter_id", _filterSet->id());
+		qry.exec();
+	}
 
+	populate();
+
+}
 void filterManager::shareFilter()
 {
   XSqlQuery qry;
@@ -138,4 +157,6 @@ void filterManager::handleButtons(bool valid)
   _share->setEnabled(valid &&
                      !_filterSet->currentItem()->rawValue("shared").toBool());
   _delete->setEnabled(valid);
+
+	_unshare->setEnabled(valid && _filterSet->currentItem()->rawValue("shared").toBool());
 }

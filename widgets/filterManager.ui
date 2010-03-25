@@ -52,6 +52,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="_unshare">
+       <property name="text">
+        <string>Do Not Share</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="_delete">
        <property name="minimumSize">
         <size>

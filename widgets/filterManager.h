@@ -26,6 +26,7 @@ public:
 	
 public slots:
     void shareFilter();
+    void unshareFilter();
     void deleteFilter();
 
 private slots:
