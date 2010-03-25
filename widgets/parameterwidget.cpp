@@ -649,6 +649,7 @@ void ParameterWidget::changeFilterObject(int index)
           tab->insertRow(tab->rowCount());
         QTableWidgetItem *item = new QTableWidgetItem(msq.value(1).toString());
         item->setData(Qt::UserRole, msq.value(0));
+        item->setFlags(item->flags() & (~ Qt::ItemIsEditable));
         if (DEBUG)
           qDebug("%s::changeFilterObject() Multiselect added %s (%s) at %d",
                  qPrintable(objectName()), qPrintable(item->text()),
