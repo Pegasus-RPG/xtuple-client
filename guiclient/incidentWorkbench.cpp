@@ -61,7 +61,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
                            ParameterWidget::Multiselect, 0,
                            qryStatus);
   //parameterWidget->setXComboBoxType(tr("Status is"), "status_equal", qryStatus);
-  parameterWidget->setXComboBoxType(tr("Hide Status above"), "status_above", qryStatus, 4);
+  parameterWidget->setXComboBoxType(tr("Status Above"), "status_above", qryStatus, 4);
 
   _closeAct = new QAction(tr("Close"), this);
   _closeAct->setShortcut(QKeySequence::Close);
