@@ -485,7 +485,8 @@ void ItemLineEdit::sHandleCompleter()
 
   if (_useQuery)
   {
-    numQ.prepare(QString("SELECT * FROM (%1) data WHERE (item_number ~* :number) LIMIT 10").arg(_sql));
+    numQ.prepare(QString("SELECT * FROM (%1) data WHERE (item_number ~* :number) LIMIT 10")
+                 .arg(QString(_sql)).remove(";"));
     numQ.bindValue(":number", "^" + stripped);
   }
   else
