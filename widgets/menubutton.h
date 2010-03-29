@@ -11,8 +11,8 @@
 #ifndef __MENUBUTTON_H__
 #define __MENUBUTTON_H__
 
-#include <QLabel>
-#include <QPushButton>
+#include <QWidget>
+#include <QActionEvent>
 
 #include "widgets.h"
 #include "guiclientinterface.h"
@@ -27,9 +27,7 @@ class XTUPLEWIDGETS_EXPORT MenuButton : public QWidget, public Ui::MenuButton
   Q_OBJECT
   Q_PROPERTY(QString image            READ image         WRITE setImage)
   Q_PROPERTY(QString label            READ label         WRITE setLabel)
-  Q_PROPERTY(QString ui               READ ui            WRITE setUi)
-  Q_PROPERTY(QString editPrivilege    READ editPriv      WRITE setEditPriv)
-  Q_PROPERTY(QString viewPrivilege    READ viewPriv      WRITE setViewPriv)
+  Q_PROPERTY(QString actionName       READ actionName    WRITE setAction)
 
   public:
     MenuButton(QWidget * = 0);
@@ -37,25 +35,22 @@ class XTUPLEWIDGETS_EXPORT MenuButton : public QWidget, public Ui::MenuButton
 
     static GuiClientInterface *_guiClientInterface;
 
-    QString image()     const { return _image; }
+    QString image();
     QString label();
-    QString ui()        const { return _ui; }
-    QString editPriv()  const { return _editPriv; }
-    QString viewPriv()  const { return _viewPriv; }
+    QString actionName();
 
   public slots:
     void setImage(QString image);
     void setLabel(QString text);
-    void setUi(QString ui)         { _ui = ui; }
-    void setEditPriv(QString priv);
-    void setViewPriv(QString priv);
-    void openWindow();
+    void setAction(QAction *action);
+    void setAction(QString name);
     
+  protected:
+    void actionEvent(QActionEvent *);
+
   private:
+    QAction *_action;
     QString _image;
-    QString _ui;
-    QString _editPriv;
-    QString _viewPriv;
 };
 
 Q_DECLARE_METATYPE(MenuButton*)

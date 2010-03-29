@@ -27,14 +27,28 @@ MenuButton::MenuButton(QWidget *pParent) :
 {
   setupUi(this);
 
+  _action = 0;
+  setEnabled(false);
+
   _button->setIconSize(QSize(64,64));
   _button->setIcon(QIcon(QPixmap(":/widgets/images/folder_zoom_64.png")));
-
-  connect(_button, SIGNAL(clicked()), this, SLOT(openWindow()));
 }
 
 MenuButton::~MenuButton()
 {
+}
+
+QString MenuButton::actionName()
+{
+  if (_action)
+    return _action->objectName();
+
+  return QString();
+}
+
+QString MenuButton::image()
+{
+  return _image;
 }
 
 QString MenuButton::label()
@@ -47,34 +61,46 @@ void MenuButton::setLabel(QString text)
   _label->setText(text);
 }
 
-void MenuButton::setEditPriv(QString priv)
+void MenuButton::actionEvent(QActionEvent *event)
 {
-  if (_editPriv == priv)
-    return;
-
-  _editPriv = priv;
-  if (_x_privileges)
-  {
-     setEnabled((_x_privileges->check(_editPriv) ||
-                _x_privileges->check(_viewPriv)) ||
-                (_editPriv.isEmpty() &&
-                _viewPriv.isEmpty()));
-  }
+    QAction *action = event->action();
+    switch (event->type())
+    {
+    case QEvent::ActionChanged:
+        if (action == _action)
+            setAction(action); // update button state
+        break;
+    case QEvent::ActionRemoved:
+        if (_action == action)
+            _action = 0;
+        action->disconnect(this);
+        break;
+    default:
+        ;
+    }
+    QWidget::actionEvent(event);
 }
 
-void MenuButton::setViewPriv(QString priv)
+void MenuButton::setAction(QString name)
 {
-  if (_viewPriv == priv)
+  if (actionName() == name)
     return;
 
-  _viewPriv = priv;
-  if (_x_privileges)
-  {
-     setEnabled((_x_privileges->check(_editPriv) ||
-                _x_privileges->check(_viewPriv)) ||
-                (_editPriv.isEmpty() &&
-                _viewPriv.isEmpty()));
-  }
+  setAction(_guiClientInterface->findAction(name));
+}
+
+void MenuButton::setAction(QAction *action)
+{
+  _button->disconnect();
+  if (!action)
+    return;
+
+  if (_action)
+    removeAction(_action);
+  _action = action;
+  addAction(_action);
+  connect(_button, SIGNAL(clicked()), _action, SLOT(trigger()));
+  setEnabled(_action->isEnabled());
 }
 
 void MenuButton::setImage(QString image)
@@ -102,43 +128,6 @@ void MenuButton::setImage(QString image)
                           .arg(__LINE__),
                           qry.lastError().databaseText());
   _button->setIcon(QIcon(QPixmap(":/widgets/images/folder_zoom_64.png")));
-}
-
-void MenuButton::openWindow()
-{
-  if (_ui.isEmpty() ||
-      !_x_privileges)
-    return;
-
-  ParameterList params;
-  if (!_editPriv.isEmpty() ||
-      !_viewPriv.isEmpty())
-  {
-    if (_x_privileges->check(_editPriv))
-      params.append("mode", "edit");
-    else if (_x_privileges->check(_viewPriv))
-      params.append("mode", "view");
-    else
-      return;
-  }
-
-  QWidget* w = 0;
-  if (parentWidget()->window())
-  {
-    if (parentWidget()->window()->isModal())
-      w = _guiClientInterface->openWindow(_ui, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
-    else
-      w = _guiClientInterface->openWindow(_ui, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
-
-    if (w)
-    {
-      if (w->inherits("QDialog"))
-      {
-        QDialog* newdlg = qobject_cast<QDialog*>(w);
-        newdlg->exec();
-      }
-    }
-  }
 }
 
 // scripting exposure /////////////////////////////////////////////////////////
