@@ -47,10 +47,12 @@ class XTUPLEWIDGETS_EXPORT MenuButton : public QWidget, public Ui::MenuButton
     
   protected:
     void actionEvent(QActionEvent *);
+    void showEvent(QShowEvent *);
 
   private:
     QAction *_action;
     QString _image;
+    bool _shown;
 };
 
 Q_DECLARE_METATYPE(MenuButton*)

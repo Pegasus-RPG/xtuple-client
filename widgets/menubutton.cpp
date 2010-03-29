@@ -28,6 +28,7 @@ MenuButton::MenuButton(QWidget *pParent) :
   setupUi(this);
 
   _action = 0;
+  _shown = false;
   setEnabled(false);
 
   _button->setIconSize(QSize(64,64));
@@ -36,6 +37,26 @@ MenuButton::MenuButton(QWidget *pParent) :
 
 MenuButton::~MenuButton()
 {
+}
+
+void MenuButton::actionEvent(QActionEvent *event)
+{
+    QAction *action = event->action();
+    switch (event->type())
+    {
+    case QEvent::ActionChanged:
+        if (action == _action)
+            setAction(action); // update button state
+        break;
+    case QEvent::ActionRemoved:
+        if (_action == action)
+            _action = 0;
+        action->disconnect(this);
+        break;
+    default:
+        ;
+    }
+    QWidget::actionEvent(event);
 }
 
 QString MenuButton::actionName()
@@ -61,34 +82,6 @@ void MenuButton::setLabel(QString text)
   _label->setText(text);
 }
 
-void MenuButton::actionEvent(QActionEvent *event)
-{
-    QAction *action = event->action();
-    switch (event->type())
-    {
-    case QEvent::ActionChanged:
-        if (action == _action)
-            setAction(action); // update button state
-        break;
-    case QEvent::ActionRemoved:
-        if (_action == action)
-            _action = 0;
-        action->disconnect(this);
-        break;
-    default:
-        ;
-    }
-    QWidget::actionEvent(event);
-}
-
-void MenuButton::setAction(QString name)
-{
-  if (actionName() == name)
-    return;
-
-  setAction(_guiClientInterface->findAction(name));
-}
-
 void MenuButton::setAction(QAction *action)
 {
   _button->disconnect();
@@ -103,31 +96,51 @@ void MenuButton::setAction(QAction *action)
   setEnabled(_action->isEnabled());
 }
 
-void MenuButton::setImage(QString image)
+void MenuButton::setAction(QString name)
 {
-  if (_image == image)
+  if (actionName() == name)
     return;
 
+  setAction(_guiClientInterface->findAction(name));
+}
+
+void MenuButton::setImage(QString image)
+{
   _image = image;
-  XSqlQuery qry;
-  qry.prepare("SELECT image_data "
-              "FROM image "
-              "WHERE (image_name=:image);");
-  qry.bindValue(":image", _image);
-  qry.exec();
-  if (qry.first())
+
+  if (_shown)
   {
-    QImage img;
-    img.loadFromData(QUUDecode(qry.value("image_data").toString()));
-    _button->setIcon(QIcon(QPixmap::fromImage(img)));
-    return;
+    XSqlQuery qry;
+    qry.prepare("SELECT image_data "
+                "FROM image "
+                "WHERE (image_name=:image);");
+    qry.bindValue(":image", _image);
+    qry.exec();
+    if (qry.first())
+    {
+      QImage img;
+      img.loadFromData(QUUDecode(qry.value("image_data").toString()));
+      _button->setIcon(QIcon(QPixmap::fromImage(img)));
+      return;
+    }
+    else if (qry.lastError().type() != QSqlError::NoError)
+      QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
+                            .arg(__FILE__)
+                            .arg(__LINE__),
+                            qry.lastError().databaseText());
+    _button->setIcon(QIcon(QPixmap(":/widgets/images/folder_zoom_64.png")));
   }
-  else if (qry.lastError().type() != QSqlError::NoError)
-    QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__),
-                          qry.lastError().databaseText());
-  _button->setIcon(QIcon(QPixmap(":/widgets/images/folder_zoom_64.png")));
+}
+
+void MenuButton::showEvent(QShowEvent *e)
+{
+  if (!_shown)
+  {
+    _shown = true;
+    if (!_image.isEmpty())
+      setImage(_image);
+  }
+  QWidget::showEvent(e);
 }
 
 // scripting exposure /////////////////////////////////////////////////////////
