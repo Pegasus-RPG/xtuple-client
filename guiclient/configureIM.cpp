@@ -170,6 +170,9 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
     
   this->setWindowTitle("Inventory Configuration");
 
+  // Requires Consolidated shipping package
+  _shipByGroup->hide();
+
   adjustSize();
 }
 
