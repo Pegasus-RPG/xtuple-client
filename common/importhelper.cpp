@@ -26,7 +26,7 @@
 
 #include "exporthelper.h"
 
-#define DEBUG true
+#define DEBUG false
 
 bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
 {
@@ -157,7 +157,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  QRegExp apos("\\\\?'");
+  QRegExp apos("\\\\*'");
 
   for (QDomElement viewElem = doc.documentElement().firstChildElement();
        ! viewElem.isNull();
@@ -215,19 +215,26 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
          ! columnElem.isNull();
          columnElem = columnElem.nextSiblingElement())
     {
+      QString value = columnElem.attribute("value").isEmpty() ?
+                              columnElem.text() : columnElem.attribute("value");
+      if (DEBUG)
+        qDebug("%s before transformation: /%s/",
+               qPrintable(columnElem.tagName()), qPrintable(value));
+
       columnNameList.append(columnElem.tagName());
-      if (columnElem.attribute("value") == "[NULL]")
+
+      if (value.trimmed() == "[NULL]")
         columnValueList.append("NULL");
-      else if (! columnElem.attribute("value").isEmpty())
-        columnValueList.append("'" + columnElem.attribute("value").replace(apos, "''") + "'");
-      else if (columnElem.text().trimmed().startsWith("SELECT"))
-        columnValueList.append("(" + columnElem.text() + ")");
-      else if (columnElem.text().trimmed() == "[NULL]")
-        columnValueList.append("NULL");
+      else if (value.trimmed().startsWith("SELECT"))
+        columnValueList.append("(" + value.trimmed() + ")");
       else if (columnElem.attribute("quote") == "false")
-        columnValueList.append(columnElem.text());
+        columnValueList.append(value);
       else
-        columnValueList.append("'" + columnElem.text().replace(apos, "''") + "'");
+        columnValueList.append("'" + value.replace(apos, "''") + "'");
+
+      if (DEBUG)
+        qDebug("%s after transformation: /%s/",
+               qPrintable(columnElem.tagName()), qPrintable(value));
     }
 
     QString sql;
