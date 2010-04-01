@@ -49,7 +49,8 @@ ORDER BY aropen_docdate;
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name, cust_address1, cust_address2, cust_address3,
-       (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS citystatezip
+       (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS citystatezip,
+       formatDate(&lt;? value("asofdate") ?>, current_date) AS asofdate
 FROM cust
 WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
  </querysource>
@@ -475,6 +476,41 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <yend>55</yend>
    <weight>0</weight>
   </line>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>50</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>As Of Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>105</x>
+    <y>50</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>asofdate</column>
+   </data>
+  </field>
  </pghead>
  <section>
   <name>detail</name>
@@ -643,7 +679,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
     <query>detail</query>
     <column>balance</column>
    </data>
-   <tracktotal builtin="true" >extprice</tracktotal>
+   <format builtin="true" >extprice</format>
+   <tracktotal/>
   </field>
   <line>
    <xstart>190</xstart>

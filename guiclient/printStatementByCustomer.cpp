@@ -19,7 +19,7 @@ printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* 
 {
   setupUi(this);
 
-
+  _asOf->setDate(omfgThis->dbDate(), true);
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -70,36 +70,47 @@ void printStatementByCustomer::sPrint()
     _cust->setFocus();
     return;
   }
-
-  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+  q.prepare("SELECT * FROM araging (:asofDate, true) "
+            "WHERE (araging_cust_id = :cust_id);"); 
   q.bindValue(":cust_id", _cust->id());
+  q.bindValue(":asofDate", _asOf->date());
   q.exec();
-  if (q.first())
+  if(q.first())
   {
-    ParameterList params;
-    params.append("cust_id", _cust->id());
-
-    orReport report(q.value("_reportname").toString(), params);
-    if (report.isValid())
-      report.print();
-    else
+    q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+    q.bindValue(":cust_id", _cust->id());
+    q.exec();
+    if (q.first())
     {
-      report.reportError(this);
-      reject();
-    }
+      ParameterList params;
+      params.append("cust_id", _cust->id());
+      params.append("asofdate", _asOf->date());
 
-    if (_captive)
-      accept();
-    else
-    {
-      _close->setText(tr("&Close"));
-      _cust->setId(-1);
-      _cust->setFocus();
+      orReport report(q.value("_reportname").toString(), params);
+      if (report.isValid())
+        report.print();
+      else
+      {
+        report.reportError(this);
+        reject();
+      }
+
+      if (_captive)
+        accept();
+      else
+      {
+        _close->setText(tr("&Close"));
+        _cust->setId(-1);
+        _cust->setFocus();
+      }
     }
-  }
-  else
-    systemError(this, tr("A System Error occurred at %1::%2.")
+    else
+      systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)
                       .arg(__LINE__) );
+  }
+  else
+    QMessageBox::warning( this, tr("No Statement to Print"),
+                          tr("No statement is available for the specified "   
+                                        "Customer and Asof Date.") );
 }
-

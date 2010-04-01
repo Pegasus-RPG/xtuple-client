@@ -23,6 +23,7 @@ printStatementsByCustomerType::printStatementsByCustomerType(QWidget* parent, co
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
+  _asOf->setDate(omfgThis->dbDate(), true);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
@@ -62,7 +63,11 @@ void printStatementsByCustomerType::sPrint()
 {
   MetaSQLQuery custm("SELECT cust_id, (cust_number || '-' || cust_name) AS customer,"
                      "       findCustomerForm(cust_id, 'S') AS reportname "
-                     "FROM custinfo, custtype, aropen "
+                     "FROM "
+					 "<? if exists(\"asofDate\") ?>"
+                     "(SELECT araging_cust_id FROM araging(<? value (\"asofDate\") ?>, true))AS data, "
+                     "<? endif ?> "
+					 "custinfo, custtype, aropen "
                      "WHERE ( (cust_custtype_id=custtype_id)"
                      " AND (aropen_cust_id=cust_id)"
                      " AND (aropen_open)"
@@ -73,6 +78,9 @@ void printStatementsByCustomerType::sPrint()
                      " AND (custtype_id=<? value (\"custtype_id\") ?>)"
                      "<? elseif exists(\"custtype_pattern\") ?>"
                      " AND (custtype_code ~ <? value (\"custtype_pattern\") ?>)"
+                     "<? endif ?>"
+                     "<? if exists(\"asofDate\") ?>"
+                     " AND (cust_id = araging_cust_id)"
                      "<? endif ?>"
                      ") "
                      "GROUP BY cust_id, cust_number, cust_name "
@@ -88,6 +96,8 @@ void printStatementsByCustomerType::sPrint()
 
   if (_dueonly->isChecked())
 	  custp.append("graceDays", _graceDays->value());
+
+  custp.append("asofDate", _asOf->date());
 
   XSqlQuery custq = custm.toQuery(custp);
   if (custq.first())
@@ -112,6 +122,7 @@ void printStatementsByCustomerType::sPrint()
 
       ParameterList params;
       params.append("cust_id", custq.value("cust_id").toInt());
+      params.append("asofdate", _asOf->date());
 
       if (DEBUG) qDebug("instantiating report");
       orReport report(custq.value("reportname").toString(), params);
@@ -140,8 +151,8 @@ void printStatementsByCustomerType::sPrint()
   else
     QMessageBox::information( this, tr("No Statement to Print"),
                               tr("<p>There are no Customers whose accounts are "
-                                 "past due for which Statements should be "
-                                 "printed.") );
+                                 "past due within the specified AsOf date for "
+                                 "which Statements should be printed.") );
 
   if (_captive)
     accept();
