@@ -579,7 +579,7 @@ void dspCountTagEditList::sFillList()
                "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after < 0)) THEN -1"
                "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after = 0)) THEN 0"
                "            ELSE ((1 - (invcnt_qoh_after / itemsite_qtyonhand)) * -1)"
-               "       END  * 100 AS varianceprcnt,"
+               "       END AS varianceprcnt,"
                "       (stdcost(item_id) * (invcnt_qoh_after - itemsite_qtyonhand)) AS variancecost,"
                "       item_number AS orderby,"
                "       0 AS xtindentrole "
