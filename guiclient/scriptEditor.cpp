@@ -11,6 +11,7 @@
 #include "scriptEditor.h"
 
 #include <QMessageBox>
+#include <QSettings>
 #include <QSqlError>
 #include <QVariant>
 #include <QFileDialog>

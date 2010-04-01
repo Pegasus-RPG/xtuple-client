@@ -10,6 +10,7 @@
 
 #include "sysLocale.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>

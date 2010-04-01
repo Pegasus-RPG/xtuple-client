@@ -10,6 +10,8 @@
 
 #include "distributeToLocation.h"
 
+#include <math.h>
+
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>

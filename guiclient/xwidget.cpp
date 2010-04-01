@@ -11,12 +11,13 @@
 #include "xwidget.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
-#include <QWorkspace>
 #include <QCloseEvent>
-#include <QShowEvent>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QScriptEngineDebugger>
+#include <QShowEvent>
+#include <QWorkspace>
+#include <QtScript>
 
 #include "xtsettings.h"
 #include "guiclient.h"

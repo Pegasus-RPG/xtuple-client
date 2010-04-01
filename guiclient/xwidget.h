@@ -11,7 +11,6 @@
 #define __XWIDGET_H__
 
 #include <QWidget>
-#include <QtScript>
 
 #include <parameter.h>
 #include <guiclient.h>

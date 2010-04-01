@@ -14,6 +14,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 #include <QSqlError>
 #include <QTextStream>
 #include <QVariant>

@@ -11,7 +11,6 @@
 #define __XDIALOG_H__
 
 #include <QDialog>
-#include <QtScript>
 
 #include <parameter.h>
 #include <guiclient.h>

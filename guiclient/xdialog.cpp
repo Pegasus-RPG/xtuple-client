@@ -12,10 +12,10 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QWorkspace>
 #include <QCloseEvent>
 #include <QShowEvent>
 #include <QDebug>
+#include <QtScript>
 #include <QScriptEngineDebugger>
 
 #include "xtsettings.h"
