@@ -347,6 +347,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newSrc->setEnabled(false);
       _newItemSite->setEnabled(false);
       _newUOM->setEnabled(false);
+      _upcCode->setEnabled(false);
 
       connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
 
