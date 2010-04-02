@@ -61,6 +61,25 @@ void enterPoitemReceipt::languageChange()
 
 bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
 {
+  //Validate - Drop Ship receipts may not be corrected
+  q.prepare("SELECT (count(*) > 0) AS result "
+            "FROM recv JOIN pohead ON ((recv_order_type='PO') AND (recv_order_number=pohead_number)) "
+            "WHERE ((recv_id=:recvid) "
+            "  AND  (COALESCE(pohead_dropship, false))); ");
+  q.bindValue(":recvid", pRecvid);
+  q.exec();
+  if (q.first())
+  {
+    if (q.value("result").toBool())
+    {
+      XMessageBox::message( pParent, QMessageBox::Warning, tr("Cannot Correct"),
+                            tr(  "<p>Receipt is a Drop Shipment.  The received quantity may not be changed.  "
+                                 "You must use Purchase Order Return to make corrections." ),
+                            QString::null, QString::null, false );
+      return XDialog::Rejected;
+    }
+  }
+  
   //Validate - Split receipts may not be corrected
   q.prepare("SELECT (count(*) > 0) AS result "
             "FROM recv "
