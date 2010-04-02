@@ -142,6 +142,7 @@ enum SetResponse project::set(const ParameterList &pParams)
       _assigned->setEnabled(FALSE);
       _due->setEnabled(FALSE);
       _completed->setEnabled(FALSE);
+      _recurring->setEnabled(FALSE);
     }
   }
     
