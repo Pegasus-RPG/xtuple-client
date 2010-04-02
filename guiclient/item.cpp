@@ -1926,7 +1926,8 @@ bool item::checkSitePrivs(int itemsiteid)
 
 void item::sNewClassCode()
 {
-  _inventoryUOM->setFocus();
+  // Don't understand the purpose of this
+  //_inventoryUOM->setFocus();
 }
 
 void item::sHandleButtons()
