@@ -13,15 +13,15 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>907</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Receivables Workbench</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="margin">
       <number>12</number>
@@ -258,27 +258,36 @@ to be bound by its terms.</comment>
             <number>12</number>
            </property>
            <item>
-            <widget class="QRadioButton" name="_debits">
-             <property name="text">
-              <string>Debits</string>
+            <widget class="QGroupBox" name="_docTypeGroup">
+             <property name="title">
+              <string/>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_credits">
-             <property name="text">
-              <string>Credits</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_both">
-             <property name="text">
-              <string>Both</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="_debits">
+                <property name="text">
+                 <string>Debits</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_credits">
+                <property name="text">
+                 <string>Credits</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_both">
+                <property name="text">
+                 <string>Both</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
