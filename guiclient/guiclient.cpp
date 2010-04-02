@@ -167,6 +167,12 @@ static void __menuEvaluate(QAction * act)
   }
 }
 
+static QScriptValue setWidget(QScriptContext *context, QScriptEngine * /*engine*/)
+{
+  omfgThis->setCentralWidget(qscriptvalue_cast<QWidget*>(context->argument(0)));
+  return QScriptValue();
+}
+
 static QScriptValue settingsValue(QScriptContext *context, QScriptEngine * /*engine*/)
 {
   if (context->argumentCount() == 2)
@@ -1702,6 +1708,9 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   distribInvObj.setProperty("SeriesAdjust", distribInvObj,
                             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   engine->globalObject().setProperty("DistributeInventory", distribInvObj);
+
+  QScriptValue setwidgetval = engine->newFunction(setWidget,1);
+  mainwindowval.setProperty("setWidget", setwidgetval);
 
   mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
                             QScriptValue::ReadOnly | QScriptValue::Undeletable);
