@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
@@ -8,228 +8,178 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>shippingInformation</class>
- <widget class="QDialog" name="shippingInformation" >
-  <property name="geometry" >
+ <widget class="QDialog" name="shippingInformation">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>725</width>
-    <height>538</height>
+    <height>559</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Shipping Information</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <layout class="QGridLayout" >
-       <property name="horizontalSpacing" >
+      <layout class="QGridLayout">
+       <property name="spacing">
         <number>2</number>
        </property>
-       <property name="verticalSpacing" >
-        <number>2</number>
-       </property>
-       <item row="4" column="0" >
-        <widget class="QLabel" name="_shipmentLit" >
-         <property name="text" >
+       <item row="4" column="0">
+        <widget class="QLabel" name="_shipmentLit">
+         <property name="text">
           <string>Shipment #:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>_shipment</cstring>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="SoLineEdit" name="_salesOrder" >
-           <property name="maximumSize" >
-            <size>
-             <width>100</width>
-             <height>32767</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_salesOrderList" >
-           <property name="text" >
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="4" column="1" >
-        <widget class="ShipmentCluster" name="_shipment" >
-         <property name="enabled" >
+       <item row="4" column="1">
+        <widget class="ShipmentCluster" name="_shipment">
+         <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="focusPolicy" >
+         <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="_orderDateLit" >
-         <property name="text" >
+       <item row="3" column="0">
+        <widget class="QLabel" name="_orderDateLit">
+         <property name="text">
           <string>Order Date:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" >
-        <widget class="DLineEdit" name="_orderDate" />
+       <item row="3" column="1">
+        <widget class="DLineEdit" name="_orderDate"/>
        </item>
-       <item rowspan="2" row="1" column="0" colspan="3" >
-        <widget class="ToCluster" name="_to" />
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_salesOrderNumLit" >
-         <property name="text" >
-          <string>Sales Order #:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" >
-        <widget class="QLabel" name="_custNameLit" >
-         <property name="text" >
+       <item row="0" column="2">
+        <widget class="QLabel" name="_custNameLit">
+         <property name="text">
           <string>Cust. Name:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="0" column="4" >
-        <widget class="QLabel" name="_custName" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <item row="0" column="3">
+        <widget class="QLabel" name="_custName">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
        </item>
-       <item row="1" column="3" >
-        <widget class="QLabel" name="_custPhoneLit" >
-         <property name="text" >
+       <item row="1" column="2">
+        <widget class="QLabel" name="_custPhoneLit">
+         <property name="text">
           <string>Cust. Phone:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="1" column="4" >
-        <widget class="QLabel" name="_custPhone" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <item row="1" column="3">
+        <widget class="QLabel" name="_custPhone">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
        </item>
-       <item row="2" column="3" >
-        <widget class="QLabel" name="_poNumberLit" >
-         <property name="text" >
+       <item row="2" column="2">
+        <widget class="QLabel" name="_poNumberLit">
+         <property name="text">
           <string>P/O Number:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="2" column="4" >
-        <widget class="QLabel" name="_poNumber" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <item row="2" column="3">
+        <widget class="QLabel" name="_poNumber">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
        </item>
-       <item row="3" column="3" >
-        <widget class="QLabel" name="_shipToNameLit" >
-         <property name="text" >
+       <item row="3" column="2">
+        <widget class="QLabel" name="_shipToNameLit">
+         <property name="text">
           <string>Ship To Name:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="3" column="4" >
-        <widget class="QLabel" name="_shipToName" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <item row="3" column="3">
+        <widget class="QLabel" name="_shipToName">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
+       </item>
+       <item row="0" column="0" rowspan="3" colspan="2">
+        <widget class="OrderCluster" name="_order"/>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>5</number>
        </property>
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
+        <widget class="QPushButton" name="_close">
+         <property name="text">
           <string>&amp;Cancel</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="_save" >
-         <property name="text" >
+        <widget class="QPushButton" name="_save">
+         <property name="text">
           <string>&amp;Save</string>
          </property>
-         <property name="default" >
+         <property name="default">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>20</height>
@@ -242,51 +192,42 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
+     <layout class="QVBoxLayout">
+      <property name="spacing">
        <number>0</number>
       </property>
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin">
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_lineItemsLit" >
-        <property name="text" >
+       <widget class="QLabel" name="_lineItemsLit">
+        <property name="text">
          <string>Line Items:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="XTreeWidget" name="_item" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <widget class="XTreeWidget" name="_item">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="minimumSize" >
+        <property name="minimumSize">
          <size>
           <width>0</width>
           <height>100</height>
@@ -298,139 +239,51 @@ to be bound by its terms.</comment>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="_totalWeightsLit" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text" >
-        <string>Total Weights:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XLabel" name="_totalNetWeight" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLabel" name="_totalTareWeight" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLabel" name="_totalGrossWeight" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>21</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="_notesLit" >
-       <property name="text" >
+      <widget class="QLabel" name="_notesLit">
+       <property name="text">
         <string>Notes:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="_notes" />
+      <widget class="QTextEdit" name="_notes"/>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>7</number>
      </property>
      <item>
-      <layout class="QGridLayout" >
-       <property name="horizontalSpacing" >
+      <layout class="QGridLayout">
+       <property name="spacing">
         <number>5</number>
        </property>
-       <property name="verticalSpacing" >
-        <number>5</number>
-       </property>
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+       <item row="0" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
+          <layout class="QHBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="DLineEdit" name="_shipDate" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <widget class="DLineEdit" name="_shipDate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>100</width>
                <height>32767</height>
@@ -440,13 +293,13 @@ to be bound by its terms.</comment>
            </item>
            <item>
             <spacer>
-             <property name="orientation" >
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
                <height>20</height>
@@ -457,74 +310,71 @@ to be bound by its terms.</comment>
           </layout>
          </item>
          <item>
-          <widget class="XComboBox" name="_shipVia" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <widget class="XComboBox" name="_shipVia">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="type" >
-            <enum>XComboBox::ShipVias</enum>
-           </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_freightLit" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="_freightLit">
+         <property name="text">
           <string>Freight:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+       <item row="0" column="0">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_shipdateLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_shipdateLit">
+           <property name="text">
             <string>Ship Date:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_shipViaLit" >
-           <property name="text" >
+          <widget class="QLabel" name="_shipViaLit">
+           <property name="text">
             <string>Ship Via:</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="1" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+       <item row="1" column="1">
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="CurrCluster" name="_freight" />
+          <widget class="CurrCluster" name="_freight"/>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -537,42 +387,42 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>5</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_shippingChargesLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_shippingChargesLit">
+             <property name="text">
               <string>Shipping Chgs.:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="buddy" >
+             <property name="buddy">
               <cstring>_shipVia</cstring>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_shippingFormLit" >
-             <property name="text" >
+            <widget class="QLabel" name="_shippingFormLit">
+             <property name="text">
               <string>Shipping Form:</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="buddy" >
+             <property name="buddy">
               <cstring>_shipVia</cstring>
              </property>
             </widget>
@@ -580,33 +430,27 @@ to be bound by its terms.</comment>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="XComboBox" name="_shippingCharges" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <widget class="XComboBox" name="_shippingCharges">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::ShippingCharges</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="XComboBox" name="_shippingForm" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <widget class="XComboBox" name="_shippingForm">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::ShippingForms</enum>
              </property>
             </widget>
            </item>
@@ -616,13 +460,13 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>20</height>
@@ -636,7 +480,7 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -645,24 +489,24 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>OrderCluster</class>
+   <extends>QWidget</extends>
+   <header>ordercluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ShipmentCluster</class>
    <extends>QWidget</extends>
    <header>shipmentcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SoLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>socluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ToCluster</class>
-   <extends>QWidget</extends>
-   <header>tocluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -674,16 +518,9 @@ to be bound by its terms.</comment>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
-  <customwidget>
-   <class>XLabel</class>
-   <extends>QLabel</extends>
-   <header>xlabel.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_salesOrder</tabstop>
-  <tabstop>_salesOrderList</tabstop>
-  <tabstop>_to</tabstop>
+  <tabstop>_order</tabstop>
   <tabstop>_orderDate</tabstop>
   <tabstop>_shipment</tabstop>
   <tabstop>_item</tabstop>
@@ -704,11 +541,11 @@ to be bound by its terms.</comment>
    <receiver>shippingInformation</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

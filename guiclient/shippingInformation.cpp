@@ -18,7 +18,6 @@
 
 #include "issueToShipping.h"
 #include "salesOrderItem.h"
-#include "salesOrderList.h"
 #include "storedProcErrorLookup.h"
 #include "transferOrderItem.h"
 
@@ -28,16 +27,10 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   setupUi(this);
   connect(_item,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
 					  this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_salesOrder,	SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_salesOrder,	SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
+  connect(_order, SIGNAL(newId(int, QString)), this, SLOT(sFillList()));
   connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
 
   _captive = FALSE;
-
-#ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
-#endif
 
   _shippingForm->setCurrentIndex(-1);
 
@@ -48,9 +41,6 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight,  true,  "tareweight"  );
   _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight,  true,  "grossweight"  );
 
-  _totalNetWeight->setPrecision(omfgThis->weightVal());
-  _totalTareWeight->setPrecision(omfgThis->weightVal());
-  _totalGrossWeight->setPrecision(omfgThis->weightVal());
 }
 
 shippingInformation::~shippingInformation()
@@ -88,10 +78,8 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
     {
       _captive = TRUE;
 
-      if (q.value("shiphead_order_type").toString() == "SO")
-	_salesOrder->setId(q.value("shiphead_order_id").toInt());
-      else
-	_to->setId(q.value("shiphead_order_id").toInt());
+      _order->setId(q.value("shiphead_order_id").toInt(),
+                    q.value("shiphead_order_type").toString());
 
       _close->setText("&Cancel");
 
@@ -132,17 +120,18 @@ void shippingInformation::sSave()
   }
   else
     q.prepare( "INSERT INTO shiphead "
-               "( shiphead_order_id, shiphead_freight,"
+               "( shiphead_order_id, shiphead_order_type, shiphead_freight,"
 	       "  shiphead_freight_curr_id, shiphead_notes,"
                "  shiphead_shipdate, shiphead_shipvia, shiphead_number,"
                "  shiphead_shipchrg_id, shiphead_shipform_id, shiphead_shipped ) "
                "VALUES "
-               "( :shiphead_order_id, :shiphead_freight,"
+               "( :shiphead_order_id, :shiphead_order_type, :shiphead_freight,"
 	       "  :shiphead_freight_curr_id, :shiphead_notes,"
                "  :shiphead_shipdate, :shiphead_shipvia, fetchShipmentNumber(),"
                "  :shiphead_shipchrg_id, :shiphead_shipform_id, FALSE );" );
 
-  q.bindValue(":shiphead_order_id",		_salesOrder->id());
+  q.bindValue(":shiphead_order_id",		_order->id());
+  q.bindValue(":shiphead_order_type",           _order->type());
   q.bindValue(":shiphead_freight",		_freight->localValue());
   q.bindValue(":shiphead_freight_curr_id",	_freight->id());
   q.bindValue(":shiphead_notes", _notes->toPlainText());
@@ -160,27 +149,7 @@ void shippingInformation::sSave()
   if (_captive)
     accept();
   else
-  {
-    _salesOrder->setId(-1);
-    _to->setId(-1);
-  }
-}
-
-void shippingInformation::sSalesOrderList()
-{
-  ParameterList params;
-  params.append("sohead_id", _salesOrder->id());
-  params.append("soType", cSoOpen);
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int soheadid;
-  soheadid = newdlg.exec();
-  if (soheadid == XDialog::Rejected)
-    _salesOrder->setId(-1);
-  else
-    _salesOrder->setId(soheadid);
+    _order->setId(-1, QString::null);
 }
 
 void shippingInformation::sPopulateMenu(QMenu *menuThis)
@@ -193,9 +162,9 @@ void shippingInformation::sPopulateMenu(QMenu *menuThis)
 void shippingInformation::sIssueStock()
 {
   ParameterList params;
-  if (_salesOrder->isValid())
+  if (_order->isValid() && _order->type() == "SO")
     params.append("sohead_id", _item->altId());
-  else if (_to->isValid())
+  else if (_order->isValid() && _order->type() == "TO")
     params.append("tohead_id", _item->altId());
 
   issueToShipping *newdlg = new issueToShipping();
@@ -207,11 +176,7 @@ void shippingInformation::sReturnAllLineStock()
 {
   q.prepare("SELECT returnItemShipments(:ordertype, :lineitemid,"
 	    "                           0, CURRENT_TIMESTAMP) AS result;");
-  if (_salesOrder->isValid())
-    q.bindValue(":ordertype", "SO");
-  else if (_to->isValid())
-    q.bindValue(":ordertype", "TO");
-
+  q.bindValue(":ordertype", _order->type());
   q.bindValue(":lineitemid", _item->id());
   q.exec();
   if (q.first())
@@ -236,7 +201,7 @@ void shippingInformation::sViewLine()
 {
   ParameterList params;
   params.append("mode", "view");
-  if (_salesOrder->isValid())
+  if (_order->isValid() && _order->type() == "SO")
   {
     params.append("soitem_id", _item->id());
 
@@ -244,7 +209,7 @@ void shippingInformation::sViewLine()
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (_to->isValid())
+  else if (_order->isValid() && _order->type() == "TO")
   {
     params.append("toitem_id", _item->id());
 
@@ -256,9 +221,6 @@ void shippingInformation::sViewLine()
 
 void shippingInformation::sFillList()
 {
-//  Clear any old data
-  _item->clear();
-
   QString shs( "SELECT shiphead_notes, shiphead_shipvia,"
                "       shiphead_shipchrg_id, shiphead_shipform_id,"
                "       shiphead_freight, shiphead_freight_curr_id,"
@@ -271,19 +233,14 @@ void shippingInformation::sFillList()
 	       "  AND  (shiphead_order_type=<? value(\"ordertype\") ?>)"
                "  AND  (shiphead_order_id=<? value(\"orderid\") ?>) );" ) ;
   ParameterList shp;
-  if (_salesOrder->isValid())
+  if (_order->isValid())
   {
-    shp.append("ordertype", "SO");
-    shp.append("orderid",   _salesOrder->id());
-  }
-  else if (_to->isValid())
-  {
-    shp.append("ordertype", "TO");
-    shp.append("orderid",   _to->id());
+    shp.append("ordertype", _order->type());
+    shp.append("orderid",   _order->id());
   }
   else
   {
-    _salesOrder->setId(-1);
+    _order->setId(-1, "");
     _orderDate->setNull();
     _poNumber->clear();
     _custName->clear();
@@ -292,9 +249,6 @@ void shippingInformation::sFillList()
     _shipVia->setNull();
 
     _freight->reset();
-    _totalNetWeight->clear();
-    _totalTareWeight->clear();
-    _totalGrossWeight->clear();
     return;
   }
 
@@ -323,7 +277,7 @@ void shippingInformation::sFillList()
     return;
   }
 
-  if (_salesOrder->isValid())
+  if (_order->isValid() && _order->type() == "SO")
   {
     q.prepare( "SELECT cohead_orderdate AS orderdate,"
 	       "       cohead_holdtype AS holdtype,"
@@ -336,9 +290,9 @@ void shippingInformation::sFillList()
                "FROM cohead, cust "
                "WHERE ((cohead_cust_id=cust_id)"
                " AND (cohead_id=:cohead_id));" );
-    q.bindValue(":cohead_id", _salesOrder->id());
+    q.bindValue(":cohead_id", _order->id());
   }
-  else if (_to->isValid())
+  else if (_order->isValid() && _order->type() == "TO")
   {
     q.prepare( "SELECT tohead_orderdate AS orderdate,"
 	       "       'N' AS holdtype,"
@@ -350,7 +304,7 @@ void shippingInformation::sFillList()
 	       "       tohead_shipform_id AS shipform_id "
 	       "FROM tohead "
 	       "WHERE (tohead_id=:tohead_id);" );
-    q.bindValue(":tohead_id", _to->id());
+    q.bindValue(":tohead_id", _order->id());
   }
   q.exec();
   if (q.first())
@@ -371,9 +325,8 @@ void shippingInformation::sFillList()
     if (! msg.isEmpty())
     {
       QMessageBox::warning(this, tr("Order on Hold"), msg);
-      _salesOrder->setId(-1);
-      _salesOrder->setFocus();
-      _to->setId(-1);
+      _order->setId(-1, "");
+      _order->setFocus();
       return;
     }
 
@@ -393,63 +346,51 @@ void shippingInformation::sFillList()
     return;
   }
 
-  QString sql( "SELECT itemid, headid,"
-               "       linenumber, item_number,"
-               "       netweight, tareweight, (netweight + tareweight) AS grossweight,"
-               "       qtyatshipping,"
-               "       'weight' AS netweight_xtnumericrole,"
-               "       'weight' AS tareweight_xtnumericrole,"
-               "       'weight' AS grossweight_xtnumericrole,"
-               "       'qty' AS qtyatshipping_xtnumericrole "
-               "FROM ( " );
-  if (_salesOrder->isValid())
-  {
-    sql +=     "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
-               "       coitem_linenumber AS linenumber, item_number,"
-               "      (item_prodweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS netweight,"
-               "      (item_packweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS tareweight,"
-               "      qtyAtShipping('SO', coitem_id) AS qtyatshipping "
-               "FROM coitem, itemsite, item "
-               "WHERE ((coitem_itemsite_id=itemsite_id)"
-               "  AND  (itemsite_item_id=item_id)"
-               "  AND  (coitem_cohead_id=:cohead_id) ) ";
-  }
-  else if (_to->isValid())
-  {
-    sql +=     "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
-               "       toitem_linenumber AS linenumber, item_number,"
-               "      (item_prodweight * qtyAtShipping('TO', toitem_id))) AS netweight,"
-               "      (item_packweight * qtyAtShipping('TO', toitem_id))) AS tareweight,"
-               "      qtyAtShipping('TO', toitem_id) AS qtyatshipping,"
-               "FROM toitem, item "
-               "WHERE ((toitem_item_id=item_id)"
-               "  AND  (toitem_tohead_id=:tohead_id) ) ";
-  }
-  
-  sql += "  ) AS data "
-         "ORDER BY linenumber;";
+  ParameterList params;
+  params.append("order_id", _order->id());
+  params.append(_order->type());
+
+  MetaSQLQuery mql("SELECT itemid, headid,"
+                   "       linenumber, item_number,"
+                   "       netweight, tareweight, (netweight + tareweight) AS grossweight,"
+                   "       qtyatshipping,"
+                   "       'weight' AS netweight_xtnumericrole,"
+                   "       'weight' AS tareweight_xtnumericrole,"
+                   "       'weight' AS grossweight_xtnumericrole,"
+                   "       0        AS netweight_xttotalrole,"
+                   "       0        AS tareweight_xttotalrole,"
+                   "       0        AS grossweight_xttotalrole,"
+                   "       'qty' AS qtyatshipping_xtnumericrole "
+                   "FROM ( "
+                   "<? if exists('SO') ?>"
+                   "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
+                   "       coitem_linenumber AS linenumber, item_number,"
+                   "      (item_prodweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS netweight,"
+                   "      (item_packweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS tareweight,"
+                   "      qtyAtShipping('SO', coitem_id) AS qtyatshipping "
+                   "FROM coitem, itemsite, item "
+                   "WHERE ((coitem_itemsite_id=itemsite_id)"
+                   "  AND  (itemsite_item_id=item_id)"
+                   "  AND  (coitem_cohead_id=<? value('order_id') ?>) ) "
+                   "<? elseif exists('TO') ?>"
+                   "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
+                   "       toitem_linenumber AS linenumber, item_number,"
+                   "      (item_prodweight * qtyAtShipping('TO', toitem_id)) AS netweight,"
+                   "      (item_packweight * qtyAtShipping('TO', toitem_id)) AS tareweight,"
+                   "      qtyAtShipping('TO', toitem_id) AS qtyatshipping "
+                   "FROM toitem, item "
+                   "WHERE ((toitem_item_id=item_id)"
+                   "  AND  (toitem_tohead_id=<? value('order_id') ?>) ) "
+                   "<? endif ?>"
+                   "  ) AS data "
+                   "ORDER BY linenumber;");
          
-  q.prepare(sql);
-  q.bindValue(":cohead_id", _salesOrder->id());
-  q.bindValue(":tohead_id", _to->id());
-  q.exec();
-  _item->populate(q, true);
+  XSqlQuery qry = mql.toQuery(params);
+  _item->populate(qry, true);
 
-  double        totalNetWeight   = 0;
-  double        totalTareWeight  = 0;
-
-  while (q.next())
-  {
-    totalNetWeight   += q.value("netweight").toDouble();
-    totalTareWeight  += q.value("tareweight").toDouble();
-  }
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  _totalNetWeight->setDouble(totalNetWeight);
-  _totalTareWeight->setDouble(totalTareWeight);
-  _totalGrossWeight->setDouble(totalNetWeight + totalTareWeight);
 }

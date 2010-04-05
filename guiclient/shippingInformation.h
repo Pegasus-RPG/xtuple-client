@@ -27,7 +27,6 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
-    virtual void sSalesOrderList();
     virtual void sPopulateMenu(QMenu * menuThis );
     virtual void sIssueStock();
     virtual void sReturnAllLineStock();
