@@ -26,7 +26,7 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
     setupUi(this);
 
     connect(_print,	     SIGNAL(clicked()),   this, SLOT(sPrint()));
-    connect(_reprint,	   SIGNAL(clicked()),   this, SLOT(sHandleReprint()));
+    connect(_reprint,	   SIGNAL(toggled(bool)),   this, SLOT(sHandleReprint()));
     connect(_shipment,	 SIGNAL(newId(int)),  this, SLOT(sHandleShipment()));
     connect(_order,      SIGNAL(valid(bool)), this, SLOT(sPopulate()));
 
