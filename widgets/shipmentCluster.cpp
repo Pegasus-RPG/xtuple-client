@@ -42,10 +42,10 @@ void ShipmentCluster::limitToOrder(const int head_id)
     switch (static_cast<ShipmentClusterLineEdit*>(_number)->status())
     {
       case ShipmentClusterLineEdit::Shipped:
-        setExtraClause(QString(" AND (shiphead_shipped = TRUE) "));
+        setExtraClause(QString(" (shiphead_shipped = TRUE) "));
         break;
       case ShipmentClusterLineEdit::Unshipped:
-        setExtraClause(QString(" AND (shiphead_shipped = FALSE) "));
+        setExtraClause(QString(" (shiphead_shipped = FALSE) "));
         break;
       case ShipmentClusterLineEdit::AllStatus:
       default:
