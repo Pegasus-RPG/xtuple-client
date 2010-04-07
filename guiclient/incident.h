@@ -52,7 +52,7 @@ public slots:
     virtual void sAssigned();
 
 signals:
-    virtual void populated();
+    void populated();
 
 protected slots:
     virtual void languageChange();

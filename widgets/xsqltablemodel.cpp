@@ -112,7 +112,7 @@ bool XSqlTableNode::save()
   while (i.hasNext())
   {
     i.next();
-    if (!i.value()->submitAll());
+    if (!i.value()->submitAll())
       return false;
   }
 
@@ -483,7 +483,7 @@ void XSqlTableModel::clearChildren()
 
 void XSqlTableModel::loadAll()
 {
-  qDebug("filter: " + buildFilter(_params));
+  qDebug("filter: %s", qPrintable(buildFilter(_params)));
   setFilter(buildFilter(_params));
   if (!query().isActive())
     select();
@@ -517,10 +517,10 @@ void XSqlTableModel::load(int row)
 
     // Generate child model for the row passed
     XSqlTableModel* model = new XSqlTableModel(this);
-    qDebug("Setting table " + node->tableName());
+    qDebug("Setting table %s", qPrintable(node->tableName()));
     model->setTable(node->tableName());
     ParameterList params = buildParams(this, row, node->relations());
-    qDebug("Filter is " + buildFilter(params));
+    qDebug("Filter is %s", qPrintable(buildFilter(params)));
     model->setFilter(buildFilter(params));
     model->select();
     node->modelMap().insert(key, model);

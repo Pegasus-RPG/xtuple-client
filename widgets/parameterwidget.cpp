@@ -123,7 +123,7 @@ void ParameterWidget::applyDefaultFilterSet()
 {
   XSqlQuery qry;
   QString filter_name;
-  int filter_id;
+  int filter_id = -1;
 	QString pname;
 
  
