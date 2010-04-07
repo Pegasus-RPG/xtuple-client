@@ -2,7 +2,7 @@
 <report>
  <title>Statement</title>
  <name>Statement</name>
- <description></description>
+ <description>"As of" date included</description>
  <size>Letter</size>
  <portrait/>
  <topmargin>100</topmargin>
@@ -11,98 +11,33 @@
  <leftmargin>100</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT CASE WHEN (aropen_doctype='I') THEN 'Invc.'
-            WHEN (aropen_doctype='D') THEN 'D/M'
-            WHEN (aropen_doctype='C') THEN 'C/M'
-            WHEN (aropen_doctype='R') THEN 'C/D'
+  <sql>SELECT CASE WHEN (araging_doctype = 'I') THEN 'Invc.'
+            WHEN (araging_doctype = 'D') THEN 'D/M'
+            WHEN (araging_doctype = 'C') THEN 'C/M'
+            WHEN (araging_doctype = 'R') THEN 'C/D'
             ELSE 'Misc.'
        END AS doctype,
-       aropen_docnumber, formatDate(aropen_docdate) AS f_docdate,
-       CASE WHEN (aropen_doctype='I') THEN formatDate(aropen_duedate)
+       araging_docnumber AS f_docnumber,
+       formatDate(CAST(araging_docdate AS DATE)) AS f_docdate,
+       CASE WHEN (araging_doctype = 'I') THEN formatDate(araging_duedate)
             ELSE ''
        END AS f_duedate,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_amount,aropen_docdate))
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount * -1),aropen_docdate))
-            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_amount,aropen_docdate))
-       END AS f_amount,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_paid,aropen_docdate))
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_paid * -1),aropen_docdate))
-            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_paid,aropen_docdate))
-       END AS f_applied,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate))
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid) * -1,aropen_docdate))
-            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate))
-       END AS f_balance,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate)
-            WHEN (aropen_doctype IN ('C', 'R')) THEN currtocurr(aropen_curr_id,cust_curr_id,((aropen_amount - aropen_paid) * -1),aropen_docdate)
-            ELSE currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate)
-       END AS balance
-FROM aropen, cust
-WHERE ( (aropen_cust_id=cust_id)
- AND (aropen_cust_id=&lt;? value("cust_id") ?>)
- AND (aropen_open)
- AND ((aropen_amount - aropen_paid) > 0) )
-ORDER BY aropen_docdate;
-
-</sql>
+       formatMoney(araging_aropen_amount) AS f_amount,
+       formatMoney(araging_aropen_amount - araging_total_val) AS f_applied,
+       formatMoney(araging_total_val) AS f_balance
+FROM araging(&lt;? value("asofdate") ?>, true)
+WHERE ((araging_cust_id = &lt;? value("cust_id") ?>)
+   AND (abs(araging_aropen_amount) > 0)
+      )
+ORDER BY araging_duedate;</sql>
  </querysource>
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name, cust_address1, cust_address2, cust_address3,
        (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS citystatezip,
-       formatDate(&lt;? value("asofdate") ?>, current_date) AS asofdate
+       formatDate(COALESCE(&lt;? value("asofdate") ?>, current_date)) AS asofdate
 FROM cust
-WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
- </querysource>
- <querysource>
-  <name>Current</name>
-  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen, cust
- WHERE ((aropen_cust_id=cust_id)
-   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
-   AND (aropen_open)
-   AND ((aropen_amount - aropen_paid) > 0)
-   AND (aropen_duedate >= CURRENT_DATE) )</sql>
- </querysource>
- <querysource>
-  <name>Past91Plus</name>
-  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen, cust
- WHERE ((aropen_cust_id=cust_id)
-   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
-   AND (aropen_open)
-   AND ((aropen_amount - aropen_paid) > 0)
-   AND (aropen_duedate &lt;= (CURRENT_DATE - 91)) )</sql>
- </querysource>
- <querysource>
-  <name>Past1to30</name>
-  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen, cust
- WHERE ((aropen_cust_id=cust_id)
-   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
-   AND (aropen_open)
-   AND ((aropen_amount - aropen_paid) > 0)
-   AND (aropen_duedate between (CURRENT_DATE - 30) AND (CURRENT_DATE - 1)) )</sql>
- </querysource>
- <querysource>
-  <name>Past31to60</name>
-  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen, cust
- WHERE ((aropen_cust_id=cust_id)
-   ANd (aropen_cust_id=&lt;? value("cust_id") ?>)
-   AND (aropen_open)
-   AND ((aropen_amount - aropen_paid) > 0)
-   AND (aropen_duedate between (CURRENT_DATE - 60) AND (CURRENT_DATE - 31)) )</sql>
- </querysource>
- <querysource>
-  <name>Past61to90</name>
-  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen, cust
- WHERE ((aropen_cust_id=cust_id)
-   ANd (aropen_cust_id=&lt;? value("cust_id") ?>)
-   AND (aropen_open)
-   AND ((aropen_amount - aropen_paid) > 0)
-   AND (aropen_duedate between (CURRENT_DATE - 90) AND (CURRENT_DATE - 61)) )</sql>
+WHERE (cust_id = &lt;? value("cust_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>Currency</name>
@@ -110,6 +45,18 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
   FROM cust
  WHERE (cust_id=&lt;? value("cust_id") ?>)
 </sql>
+ </querysource>
+ <querysource>
+  <name>foot</name>
+  <sql>SELECT formatMoney(SUM(araging_cur_val)) AS f_current,
+       formatMoney(SUM(araging_thirty_val)) AS f_thirty,
+       formatMoney(SUM(araging_sixty_val)) AS f_sixty,
+       formatMoney(SUM(araging_ninety_val)) AS f_ninety,
+       formatMoney(SUM(araging_plus_val)) AS f_plus,
+       formatMoney(SUM(araging_total_val)) AS f_total
+FROM araging(&lt;? value("asofdate") ?>, true)
+WHERE ((abs(araging_aropen_amount) > 0)
+   AND (araging_cust_id = &lt;? value("cust_id") ?>));</sql>
  </querysource>
  <pghead>
   <height>277</height>
@@ -577,7 +524,7 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>aropen_docnumber</column>
+     <column>f_docnumber</column>
     </data>
    </field>
    <field>
@@ -661,27 +608,6 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
  <pgfoot>
   <lastpage/>
   <height>111</height>
-  <field>
-   <rect>
-    <x>560</x>
-    <y>15</y>
-    <width>67</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>balance</column>
-   </data>
-   <format builtin="true" >extprice</format>
-   <tracktotal/>
-  </field>
   <line>
    <xstart>190</xstart>
    <ystart>5</ystart>
@@ -773,8 +699,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Past31to60</query>
-    <column>f_amount</column>
+    <query>foot</query>
+    <column>f_sixty</column>
    </data>
   </field>
   <field>
@@ -792,8 +718,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Past91Plus</query>
-    <column>f_amount</column>
+    <query>foot</query>
+    <column>f_plus</column>
    </data>
   </field>
   <field>
@@ -811,8 +737,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Past1to30</query>
-    <column>f_amount</column>
+    <query>foot</query>
+    <column>f_thirty</column>
    </data>
   </field>
   <line>
@@ -837,8 +763,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Current</query>
-    <column>f_amount</column>
+    <query>foot</query>
+    <column>f_current</column>
    </data>
   </field>
   <line>
@@ -934,8 +860,8 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Past61to90</query>
-    <column>f_amount</column>
+    <query>foot</query>
+    <column>f_ninety</column>
    </data>
   </field>
   <line>
@@ -971,5 +897,24 @@ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
    <yend>5</yend>
    <weight>0</weight>
   </line>
+  <field>
+   <rect>
+    <x>544</x>
+    <y>15</y>
+    <width>85</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>foot</query>
+    <column>f_total</column>
+   </data>
+  </field>
  </pgfoot>
 </report>
