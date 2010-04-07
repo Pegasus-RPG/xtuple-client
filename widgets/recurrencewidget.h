@@ -14,11 +14,22 @@
 #include "widgets.h"
 #include "ui_recurrencewidget.h"
 
+class QScriptEngine;
+
+void setupRecurrenceWidget(QScriptEngine *engine);
+
 class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 {
   Q_OBJECT
+
+  Q_ENUMS(RecurrencePeriod)
+  Q_ENUMS(RecurrenceChangePolicy)
+
   Q_PROPERTY(bool maxVisible       READ maxVisible       WRITE setMaxVisible)
+  Q_PROPERTY(bool endTimeVisible   READ endTimeVisible   WRITE setEndTimeVisible)
+  Q_PROPERTY(bool endDateVisible   READ endDateVisible   WRITE setEndDateVisible)
   Q_PROPERTY(bool startDateVisible READ startDateVisible WRITE setStartDateVisible)
+  Q_PROPERTY(bool startTimeVisible READ startTimeVisible WRITE setStartTimeVisible)
 
   public:
     // Never must = XComboBox::id() when ! XComboBox::isValid()
@@ -32,6 +43,10 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     ~RecurrenceWidget();
 
     Q_INVOKABLE virtual QDate            endDate()          const;
+    Q_INVOKABLE virtual QDateTime        endDateTime()      const;
+    Q_INVOKABLE virtual QTime            endTime()          const;
+    Q_INVOKABLE virtual bool             endDateVisible()   const;
+    Q_INVOKABLE virtual bool             endTimeVisible()   const;
     Q_INVOKABLE virtual int              frequency()        const;
     Q_INVOKABLE virtual RecurrenceChangePolicy getChangePolicy();
     Q_INVOKABLE virtual bool             isRecurring()      const;
@@ -43,14 +58,21 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     Q_INVOKABLE virtual RecurrencePeriod period()           const;
     Q_INVOKABLE virtual QString          periodCode()       const;
     Q_INVOKABLE virtual QDate            startDate()        const;
+    Q_INVOKABLE virtual QDateTime        startDateTime()    const;
     /*useprop*/ virtual bool             startDateVisible() const;
+    Q_INVOKABLE virtual QTime            startTime()        const;
+    Q_INVOKABLE virtual bool             startTimeVisible() const;
     Q_INVOKABLE virtual RecurrencePeriod stringToPeriod(QString p) const;
 
   public slots:
     virtual void clear();
-    virtual bool save(bool intxn, RecurrenceChangePolicy cp, QString &msg);
+    virtual bool save(bool intxn, RecurrenceChangePolicy cp, QString *msg = 0);
     virtual void set(bool recurring = false, int frequency = 1, QString period = QString("W"), QDate startDate = QDate::currentDate(), QDate endDate = QDate(), int max = 10);
+    virtual void set(bool recurring, int frequency, QString period, QDateTime startDateTime, QDateTime endDateTime, int max);
     virtual void setEndDate(QDate p);
+    virtual void setEndDateTime(QDateTime p);
+    virtual void setEndDateVisible(bool p);
+    virtual void setEndTimeVisible(bool p);
     virtual void setFrequency(int p);
     virtual void setMax(int p);
     virtual void setMaxVisible(bool p);
@@ -59,7 +81,9 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     virtual void setPeriod(QString p);
     virtual void setRecurring(bool p);
     virtual void setStartDate(QDate p);
+    virtual void setStartDateTime(QDateTime p);
     virtual void setStartDateVisible(bool p);
+    virtual void setStartTimeVisible(bool p);
 
   protected slots:
     virtual void languageChange();
@@ -69,17 +93,19 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
    int              _id;
    int              _parentId;
    QString          _parentType;
-   QDate            _prevEndDate;
+   QDateTime        _prevEndDateTime;
    int              _prevFrequency;
    int              _prevMax;
    int              _prevParentId;
    QString          _prevParentType;
    RecurrencePeriod _prevPeriod;
    bool             _prevRecurring;
-   QDate            _prevStartDate;
+   QDateTime        _prevStartDateTime;
 
   private:
 
 };
+
+Q_DECLARE_METATYPE(RecurrenceWidget*)
 
 #endif // RECURRENCEWIDGET_H

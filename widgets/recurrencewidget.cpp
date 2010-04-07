@@ -10,8 +10,10 @@
 
 #include "recurrencewidget.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QtScript>
 
 #include "xsqlquery.h"
 
@@ -25,12 +27,21 @@
   \brief The RecurrenceWidget gives the user a single interface for telling
          the system how often certain %events occur.
 
+  In general recurrences are stored in the recur table, but the
+  RecurrenceWidget provides methods for setting and getting information
+  about the recurrence without using the recur table. As of xTuple ERP
+  3.5.0Alpha, incident, project, and todoItem use the recur table;
+  createRecurringInvoices does not.
+
+  The recurrence is set using two basic values, the frequency and the period.
+  The period is essentially the unit of measure of time (hour, day, month).
+  The frequency is the number of periods between recurrences. A
+  recurrence with the period set to W (= week) and frequency of 3 will repeat
+  once every three weeks.
+
  */
-/* TODO: expand to allow selecting Minutes and Hours. In this case we'll need
-         to allow time entry as well as dates. If we can find a nice way to
-         allow time entry here then we could use the same UI to address the
-         issue about backdating inventory transactions to a specific date-time
-         instead of just a particular date.
+
+/* TODO: expand to allow selecting Minutes and Hours.
          
          The widget will need properties to set minimum/maximum periods
          (e.g. it doesn't make sense for invoicing to recur hourly).
@@ -67,13 +78,18 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
   _dates->setStartCaption(tr("From:"));
   _dates->setEndCaption(tr("Until:"));
   _dates->setStartNull(tr("Today"), QDate::currentDate(), true);
-  _dates->setStartVisible(false);
+  setStartDateVisible(false);
+  setEndTimeVisible(false);
+  setStartTimeVisible(false);
 
   setMaxVisible(false);
 
   XSqlQuery eotq("SELECT endOfTime() AS eot;");
   if (eotq.first())
-    _dates->setEndNull(tr("Forever"), eotq.value("eot").toDate(), true);
+  {
+    _eot = eotq.value("eot").toDate();
+    _dates->setEndNull(tr("Forever"), _eot, true);
+  }
   else
   {
     qWarning("RecurrenceWidget could not get endOfTime()");
@@ -91,9 +107,11 @@ void RecurrenceWidget::languageChange()
 {
 }
 
+/** \brief Set the RecurrenceWidget to its default state.
+  */
 void RecurrenceWidget::clear()
 {
-  set();
+  set(false, 1, "W", QDateTime::currentDateTime(), QDateTime(), 10);
   _id             = -1;
 
   _prevParentId   = -1;
@@ -102,24 +120,66 @@ void RecurrenceWidget::clear()
   _parentType     = "";
 }
 
+/** \brief Convert a string representation of the period to a RecurrencePeriod.
+
+     This is used to convert between the values stored in the recur table
+     and the enumerated values used internally by the RecurrenceWidget.
+     It also accepts human-readable values, such as "Minutes" and "Hours".
+
+     \param p The recur_period or human-readable period name to convert.
+              This is case-sensitive. Currently accepted values are
+              m or Minutes, H or Hours, D or Days, W or Weeks, M or Months,
+              Y or Years, C or Custom. If current translation includes
+              the period names, the translations are also accepted.
+
+     \return The RecurrencePeriod that matches the input or Never
+             if no match was found.
+  */
 RecurrenceWidget::RecurrencePeriod RecurrenceWidget::stringToPeriod(QString p) const
 {
-  if (p == "m"      || p == tr("Minutes"))  return Minutely;
-  else if (p == "H" || p == tr("Hours")  )  return Hourly;
-  else if (p == "D" || p == tr("Days")   )  return Daily;
-  else if (p == "W" || p == tr("Weeks")  )  return Weekly;
-  else if (p == "M" || p == tr("Months") )  return Monthly;
-  else if (p == "Y" || p == tr("Years")  )  return Yearly;
-  else if (p == "C" || p == tr("Custom") )  return Custom;
+  if (p == "m"      || p == "Minutes" || p == tr("Minutes"))  return Minutely;
+  else if (p == "H" || p == "Hours"   || p == tr("Hours")  )  return Hourly;
+  else if (p == "D" || p == "Days"    || p == tr("Days")   )  return Daily;
+  else if (p == "W" || p == "Weeks"   || p == tr("Weeks")  )  return Weekly;
+  else if (p == "M" || p == "Months"  || p == tr("Months") )  return Monthly;
+  else if (p == "Y" || p == "Years"   || p == tr("Years")  )  return Yearly;
+  else if (p == "C" || p == "Custom"  || p == tr("Custom") )  return Custom;
   else return Never;
-
 }
 
+/** \brief Return the date the recurrence is set to end.  */
 QDate RecurrenceWidget::endDate() const
 {
   return _dates->endDate();
 }
 
+/** \brief Return the date and time the recurrence is set to end. */
+QDateTime RecurrenceWidget::endDateTime() const
+{
+  return QDateTime(_dates->endDate(), _endTime->time());
+}
+
+/** \brief Return the time of day the recurrence is set to end. */
+QTime RecurrenceWidget::endTime() const
+{
+  return _endTime->time();
+}
+
+/** \brief Return whether the end date field is visible. */
+bool RecurrenceWidget::endDateVisible() const
+{
+  return _dates->endVisible();
+}
+
+/** \brief Return whether the end time field is visible. */
+bool RecurrenceWidget::endTimeVisible() const
+{
+  return _endTime->isVisible();
+}
+
+/** \brief Return the frequency (number of periods) the recurrence is set
+           to run.
+ */
 int RecurrenceWidget::frequency() const
 {
   return _frequency->value();
@@ -194,14 +254,14 @@ bool RecurrenceWidget::maxVisible() const
 
 bool RecurrenceWidget::modified() const
 {
-  bool returnVal = (isRecurring()!= _prevRecurring ||
-                    period()     != _prevPeriod    ||
-                    frequency()  != _prevFrequency ||
-                    startDate()  != _prevStartDate ||
-                    endDate()    != _prevEndDate   ||
-                    max()        != _prevMax       ||
-                    _parentId    != _prevParentId  ||
-                    _parentType  != _prevParentType);
+  bool returnVal = (isRecurring()   != _prevRecurring    ||
+                    period()        != _prevPeriod       ||
+                    frequency()     != _prevFrequency    ||
+                    startDateTime() != _prevStartDateTime||
+                    endDateTime()   != _prevEndDateTime  ||
+                    max()           != _prevMax          ||
+                    _parentId       != _prevParentId     ||
+                    _parentType     != _prevParentType);
 
   return returnVal;
 }
@@ -226,11 +286,14 @@ QString RecurrenceWidget::periodCode() const
   return _period->code();
 }
 
-bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString &message)
+bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString *message)
 {
+  if (! message)
+    message = new QString();
+
   if (DEBUG)
-    qDebug("%s::save(%d, %d, msg) entered with id %d type %s",
-           qPrintable(objectName()), externaltxn, cp, _parentId,
+    qDebug("%s::save(%d, %d, %p) entered with id %d type %s",
+           qPrintable(objectName()), externaltxn, cp, message, _parentId,
            qPrintable(_parentType));
 
   if (! modified())
@@ -238,10 +301,12 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
 
   if (_parentId < 0 || _parentType.isEmpty())
   {
-    message = tr("Could not save Recurrence information. The "
-                 "parent object/event has not been set.");
+    *message = tr("Could not save Recurrence information. The "
+                  "parent object/event has not been set.");
     if (! externaltxn)
-      QMessageBox::warning(this, tr("Missing Data"), message);
+      QMessageBox::warning(this, tr("Missing Data"), *message);
+    else
+      qWarning("%s", qPrintable(*message));
     return false;
   }
 
@@ -253,7 +318,8 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
   }
   else if (externaltxn && cp == NoPolicy)
   {
-    message = tr("You must choose how open events are to be handled");
+    *message = tr("You must choose how open events are to be handled");
+    qWarning("%s", qPrintable(*message));
     return false;
   }
 
@@ -294,24 +360,28 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
           }
           else if (result < 0)
           {
-            message = storedProcErrorLookup("splitRecurrence", result);
+            *message = storedProcErrorLookup("splitRecurrence", result);
             if (! externaltxn)
             {
               rollbackq.exec();
-              QMessageBox::warning(this, tr("Processing Error"), message);
+              QMessageBox::warning(this, tr("Processing Error"), *message);
             }
+            else
+              qWarning("%s", qPrintable(*message));
             return false;
           }
         }
         // one check for potentially 2 queries
         if (futureq.lastError().type() != QSqlError::NoError)
         {
-          message = futureq.lastError().text();
+          *message = futureq.lastError().text();
           if (! externaltxn)
           {
             rollbackq.exec();
-            QMessageBox::warning(this, tr("Database Error"), message);
+            QMessageBox::warning(this, tr("Database Error"), *message);
           }
+          else
+            qWarning("%s", qPrintable(*message));
           return false;
         }
       }
@@ -347,21 +417,21 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
     recurq.bindValue(":recur_parent_type", _parentType);
     recurq.bindValue(":recur_period",      periodCode());
     recurq.bindValue(":recur_freq",        frequency());
-    recurq.bindValue(":recur_start",       startDate());
-    recurq.bindValue(":recur_end",         endDate());
+    recurq.bindValue(":recur_start",       startDateTime());
+    recurq.bindValue(":recur_end",         endDateTime());
     recurq.bindValue(":recur_max",         max());
     recurq.exec();
     if (recurq.first())
     {
       _id = recurq.value("recur_id").toInt();
-      _prevParentId   = _parentId;
-      _prevParentType = _parentType;
-      _prevEndDate    = endDate();
-      _prevFrequency  = frequency();
-      _prevMax        = max();
-      _prevPeriod     = period();
-      _prevRecurring  = isRecurring();
-      _prevStartDate  = startDate();
+      _prevParentId      = _parentId;
+      _prevParentType    = _parentType;
+      _prevEndDateTime   = endDateTime();
+      _prevFrequency     = frequency();
+      _prevMax           = max();
+      _prevPeriod        = period();
+      _prevRecurring     = isRecurring();
+      _prevStartDateTime = startDateTime();
     }
   }
   else // ! isRecurring()
@@ -376,12 +446,14 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
 
   if (recurq.lastError().type() != QSqlError::NoError)
   {
-    message = recurq.lastError().text();
+    *message = recurq.lastError().text();
     if (! externaltxn)
     {
       rollbackq.exec();
-      QMessageBox::warning(this, tr("Database Error"), message);
+      QMessageBox::warning(this, tr("Database Error"), *message);
     }
+    else
+      qWarning("%s", qPrintable(*message));
     return false;
   }
 
@@ -415,22 +487,26 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
     // error handling for either 1 or 2 queries so no elseif
     if (procresult < 0)
     {
-      message = storedProcErrorLookup(procname, procresult);
+      *message = storedProcErrorLookup(procname, procresult);
       if (! externaltxn)
       {
         rollbackq.exec();
-        QMessageBox::critical(this, tr("Processing Error"), message);
+        QMessageBox::critical(this, tr("Processing Error"), *message);
       }
+      else
+        qWarning("%s", qPrintable(*message));
       return false;
     }
     else if (cfq.lastError().type() != QSqlError::NoError)
     {
-      message = cfq.lastError().text();
+      *message = cfq.lastError().text();
       if (! externaltxn)
       {
         rollbackq.exec();
-        QMessageBox::critical(this, tr("Database Error"), message);
+        QMessageBox::critical(this, tr("Database Error"), *message);
       }
+      else
+        qWarning("%s", qPrintable(*message));
       return false;
     }
   }
@@ -440,24 +516,66 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
 
 void RecurrenceWidget::set(bool recurring, int frequency, QString period, QDate startDate, QDate endDate, int max)
 {
+  if (DEBUG)
+    qDebug() << objectName() << "::set(" << recurring << ", "
+             << frequency    << ", "     << period    << ", "
+             << startDate    << ", "     << endDate   << ", "
+             << max          << ") entered";
+  // run from the beginning of the start date to the end of the end date
+  QDateTime startDateTime(startDate);
+  QDateTime endDateTime(endDate.addDays(1));
+  endDateTime = endDateTime.addMSecs(-1);
+
+  set(recurring, frequency, period, startDateTime, endDateTime, max);
+}
+
+void RecurrenceWidget::set(bool recurring, int frequency, QString period, QDateTime start, QDateTime end, int max)
+{
+  if (DEBUG)
+    qDebug() << objectName() << "::set(" << recurring << ", "
+             << frequency    << ", "     << period    << ", "
+             << start        << ", "     << end       << ", "
+             << max          << ") entered";
   setRecurring(recurring);
   setPeriod(period);
   setFrequency(frequency);
-  setStartDate(startDate);
-  setEndDate(endDate);
+  setStartDateTime(start);
+  setEndDateTime(end);
   setMax(max);
 
-  _prevEndDate    = endDate;
-  _prevFrequency  = frequency;
-  _prevPeriod     = stringToPeriod(period);
-  _prevRecurring  = recurring;
-  _prevStartDate  = startDate;
-  _prevMax        = max;
+  _prevEndDateTime   = end;
+  _prevFrequency     = frequency;
+  _prevPeriod        = stringToPeriod(period);
+  _prevRecurring     = recurring;
+  _prevStartDateTime = start;
+  _prevMax           = max;
 }
 
 void RecurrenceWidget::setEndDate(QDate p)
 {
   _dates->setEndDate(p.isValid() ? p : _eot);
+  _endTime->setTime(QTime(23, 59, 59, 999));
+}
+
+void RecurrenceWidget::setEndDateTime(QDateTime p)
+{
+  if (p.isValid())
+  {
+    _dates->setEndDate(p.date());
+    _endTime->setTime(p.time());
+  }
+  else
+    setEndDate(_eot);
+}
+
+void RecurrenceWidget::setEndDateVisible(bool p)
+{
+  _dates->setEndVisible(p);
+}
+
+void RecurrenceWidget::setEndTimeVisible(bool p)
+{
+  _endTime->setVisible(p);
 }
 
 void RecurrenceWidget::setFrequency(int p)
@@ -528,6 +646,18 @@ void RecurrenceWidget::setRecurring(bool p)
 void RecurrenceWidget::setStartDate(QDate p)
 {
   _dates->setStartDate(p.isValid() ? p : QDate::currentDate());
+  _startTime->setTime(QTime(0, 0));
+}
+
+void RecurrenceWidget::setStartDateTime(QDateTime p)
+{
+  if (p.isValid())
+  {
+    _dates->setStartDate(p.date());
+    _startTime->setTime(p.time());
+  }
+  else
+    setStartDate(QDate::currentDate());
 }
 
 void RecurrenceWidget::setStartDateVisible(bool p)
@@ -535,12 +665,79 @@ void RecurrenceWidget::setStartDateVisible(bool p)
   _dates->setStartVisible(p);
 }
 
+void RecurrenceWidget::setStartTimeVisible(bool p)
+{
+  _startTime->setVisible(p);
+}
+
 QDate RecurrenceWidget::startDate() const
 {
   return _dates->startDate();
 }
 
+QDateTime RecurrenceWidget::startDateTime() const
+{
+  return QDateTime(_dates->startDate(), _startTime->time());
+}
+
 bool RecurrenceWidget::startDateVisible() const
 {
   return _dates->startVisible();
+}
+
+QTime RecurrenceWidget::startTime() const
+{
+  return _startTime->time();
+}
+
+bool RecurrenceWidget::startTimeVisible() const
+{
+  return _startTime->isVisible();
+}
+
+// scripting exposure /////////////////////////////////////////////////////////
+
+QScriptValue RecurrenceWidgettoScriptValue(QScriptEngine *engine, RecurrenceWidget* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void RecurrenceWidgetfromScriptValue(const QScriptValue &obj, RecurrenceWidget* &item)
+{
+  item = qobject_cast<RecurrenceWidget*>(obj.toQObject());
+}
+
+QScriptValue constructRecurrenceWidget(QScriptContext *context,
+                                       QScriptEngine  *engine)
+{
+  QWidget *parent = (qscriptvalue_cast<QWidget*>(context->argument(0)));
+  const char *objname = "_recurrenceWidget";
+  if (context->argumentCount() > 1)
+    objname = context->argument(1).toString().toAscii().data();
+  return engine->toScriptValue(new RecurrenceWidget(parent, objname));
+}
+
+void setupRecurrenceWidget(QScriptEngine *engine)
+{
+  QScriptValue::PropertyFlags stdflags = QScriptValue::ReadOnly |
+                                         QScriptValue::Undeletable;
+
+  qScriptRegisterMetaType(engine, RecurrenceWidgettoScriptValue,
+                          RecurrenceWidgetfromScriptValue);
+
+  QScriptValue constructor = engine->newFunction(constructRecurrenceWidget);
+  engine->globalObject().setProperty("RecurrenceWidget", constructor, stdflags);
+
+  constructor.setProperty("Never",   QScriptValue(engine, RecurrenceWidget::Never), stdflags);
+  constructor.setProperty("Minutely",QScriptValue(engine, RecurrenceWidget::Minutely), stdflags);
+  constructor.setProperty("Hourly",  QScriptValue(engine, RecurrenceWidget::Hourly), stdflags);
+  constructor.setProperty("Daily",   QScriptValue(engine, RecurrenceWidget::Daily), stdflags);
+  constructor.setProperty("Weekly",  QScriptValue(engine, RecurrenceWidget::Weekly), stdflags);
+  constructor.setProperty("Monthly", QScriptValue(engine, RecurrenceWidget::Monthly), stdflags);
+  constructor.setProperty("Yearly",  QScriptValue(engine, RecurrenceWidget::Yearly), stdflags);
+  constructor.setProperty("Custom",  QScriptValue(engine, RecurrenceWidget::Custom), stdflags);
+
+  constructor.setProperty("NoPolicy",     QScriptValue(engine, RecurrenceWidget::NoPolicy), stdflags);
+  constructor.setProperty("IgnoreFuture", QScriptValue(engine, RecurrenceWidget::IgnoreFuture), stdflags);
+  constructor.setProperty("ChangeFuture", QScriptValue(engine, RecurrenceWidget::ChangeFuture), stdflags);
 }

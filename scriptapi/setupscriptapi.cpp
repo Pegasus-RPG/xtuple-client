@@ -82,6 +82,7 @@
 #include "qvalidatorproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
+#include "recurrencewidget.h"
 #include "revisionlineeditsetup.h"
 #include "screensetup.h"
 #include "setupscriptapi.h"
@@ -186,6 +187,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQValidatorProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
+  setupRecurrenceWidget(engine);
   setupRevisionLineEdit(engine);
   setupScreen(engine);
   setupShipmentClusterLineEdit(engine);

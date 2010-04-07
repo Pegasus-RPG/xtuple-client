@@ -282,7 +282,7 @@ void project::sSave()
   }
 
   QString errmsg;
-  if (! _recurring->save(true, cp, errmsg))
+  if (! _recurring->save(true, cp, &errmsg))
   {
     qDebug("recurring->save failed");
     rollbackq.exec();

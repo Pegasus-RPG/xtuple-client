@@ -420,7 +420,7 @@ bool incident::save(bool partial)
   }
 
   QString errmsg;
-  if (! _recurring->save(true, cp, errmsg))
+  if (! _recurring->save(true, cp, &errmsg))
   {
     rollback.exec();
     systemError(this, errmsg, __FILE__, __LINE__);

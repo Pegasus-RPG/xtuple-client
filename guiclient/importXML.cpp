@@ -93,25 +93,6 @@ importXML::importXML(QWidget* parent, const char * name, Qt::WindowFlags fl)
   if (_defaultXMLDir.isEmpty())
     _defaultXMLDir = ".";
 
-  _defaultXSLTDir = _metrics->value(
-#if defined Q_WS_MACX
-                                      "XSLTDefaultDirMac"
-#elif defined Q_WS_WIN
-                                      "XSLTDefaultDirWindows"
-#elif defined Q_WS_X11
-                                      "XSLTDefaultDirLinux"
-#endif
-      );
-  _externalCmd = _metrics->value(
-#if defined Q_WS_MACX
-                                      "XSLTProcessorMac"
-#elif defined Q_WS_WIN
-                                      "XSLTProcessorWindows"
-#elif defined Q_WS_X11
-                                      "XSLTProcessorLinux"
-#endif
-      );
-
   sFillList();
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }

@@ -248,7 +248,7 @@ void todoItem::sSave()
   }
 
   QString errmsg;
-  if (! _recurring->save(true, cp, errmsg))
+  if (! _recurring->save(true, cp, &errmsg))
   {
     rollbackq.exec();
     systemError(this, errmsg, __FILE__, __LINE__);

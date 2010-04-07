@@ -43,11 +43,7 @@ class importXML : public XWidget, public Ui::importXML
 
   private:
     QString	_defaultXMLDir;
-    QString	_defaultXSLTDir;
-    QString	_externalCmd;
-    QStringList	_filters;
     bool	importOne(const QString &);
-    bool	openDomDocument(const QString &, QDomDocument &);
 };
 
 #endif
