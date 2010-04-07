@@ -36,6 +36,8 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   QString xmlsuccessdir;
   QString xmlsuccesssuffix;
   QString xmlsuccesstreatment;
+  QStringList errors;
+  QStringList warnings;
 
   XSqlQuery q;
   q.prepare("SELECT fetchMetricText(:xmldir)               AS xmldir,"
@@ -169,8 +171,8 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     bool ignoreErr = (viewElem.attribute("ignore", "false").isEmpty() ||
                       viewElem.attribute("ignore", "false") == "true");
 
-    bool silent = (viewElem.attribute("silent", "false").isEmpty() ||
-                   viewElem.attribute("silent", "false") == "true");
+    bool silent = (viewElem.attribute("silent", "true").isEmpty() ||
+                   viewElem.attribute("silent", "true") == "true");
 
     QString mode = viewElem.attribute("mode", "insert");
     QStringList keyList;
@@ -276,16 +278,10 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     {
       if (ignoreErr)
       {
-        QString warning = q.lastError().databaseText();
-        q.exec("ROLLBACK TO SAVEPOINT " + savepointName + ";");
         if (! silent)
-        {
-          QMessageBox::warning(0, tr("Ignoring Error"),
-                               tr("Ignoring database error while importing %1"
-                                  ":\n%2")
-                              .arg(viewElem.tagName())
-                              .arg(warning));
-        }                  
+          warnings.append(QString("Ignored error while importing %1:\n%2")
+                              .arg(viewElem.tagName(), q.lastError().text()));
+        q.exec("ROLLBACK TO SAVEPOINT " + savepointName + ";");
       }
       else
       {
@@ -362,6 +358,9 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
       return false;
     }
   }
+
+  if (warnings.size() > 0)
+    QMessageBox::warning(0, tr("XML Import Warnings"), warnings.join("\n"));
 
   // else if (xmlsuccesstreatment == "None") {}
 
