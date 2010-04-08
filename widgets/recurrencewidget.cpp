@@ -573,6 +573,11 @@ void RecurrenceWidget::setEndDateVisible(bool p)
   _dates->setEndVisible(p);
 }
 
+void RecurrenceWidget::setEndTime(QTime p)
+{
+  _endTime->setTime(p);
+}
+
 void RecurrenceWidget::setEndTimeVisible(bool p)
 {
   _endTime->setVisible(p);
@@ -612,8 +617,8 @@ bool RecurrenceWidget::setParent(int pid, QString ptype)
     set(true,
         recurq.value("recur_freq").toInt(),
         recurq.value("recur_period").toString(),
-        recurq.value("recur_start").toDate(),
-        recurq.value("recur_end").toDate(),
+        recurq.value("recur_start").toDateTime(),
+        recurq.value("recur_end").toDateTime(),
         recurq.value("recur_max").toInt());
     _id             = recurq.value("recur_id").toInt();
     _prevParentId   = _parentId;
@@ -663,6 +668,11 @@ void RecurrenceWidget::setStartDateTime(QDateTime p)
 void RecurrenceWidget::setStartDateVisible(bool p)
 {
   _dates->setStartVisible(p);
+}
+
+void RecurrenceWidget::setStartTime(QTime p)
+{
+  _startTime->setTime(p);
 }
 
 void RecurrenceWidget::setStartTimeVisible(bool p)

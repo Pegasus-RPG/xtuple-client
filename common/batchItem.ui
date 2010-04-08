@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>405</height>
+    <width>620</width>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,9 +23,6 @@ to be bound by its terms.</comment>
   <layout class="QHBoxLayout" name="horizontalLayout_5">
    <item>
     <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::FieldsStayAtSizeHint</enum>
-     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="_submittedByLit">
        <property name="text">
@@ -237,33 +234,20 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="9" column="0">
-      <widget class="QCheckBox" name="_reschedule">
-       <property name="text">
-        <string>Reschedule every:</string>
+     <item row="9" column="0" colspan="2">
+      <widget class="RecurrenceWidget" name="_recur">
+       <property name="maxVisible">
+        <bool>true</bool>
        </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="XComboBox" name="_interval">
-       <property name="enabled">
-        <bool>false</bool>
+       <property name="endTimeVisible">
+        <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string>Day</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Week</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Month</string>
-        </property>
-       </item>
+       <property name="startDateVisible">
+        <bool>true</bool>
+       </property>
+       <property name="startTimeVisible">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -325,9 +309,9 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
+   <class>RecurrenceWidget</class>
+   <extends>QWidget</extends>
+   <header>recurrencewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -340,8 +324,6 @@ to be bound by its terms.</comment>
   <tabstop>_startedTime</tabstop>
   <tabstop>_completedDate</tabstop>
   <tabstop>_completedTime</tabstop>
-  <tabstop>_reschedule</tabstop>
-  <tabstop>_interval</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -354,8 +336,8 @@ to be bound by its terms.</comment>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>32</y>
+     <x>607</x>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -364,18 +346,18 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_reschedule</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_interval</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>_scheduledDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_recur</receiver>
+   <slot>setStartDate(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>45</x>
-     <y>299</y>
+     <x>180</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
-     <x>178</x>
-     <y>300</y>
+     <x>168</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>

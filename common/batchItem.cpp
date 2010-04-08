@@ -80,54 +80,34 @@ int batchItem::view(int pBatchid, QWidget *pParent, QSqlDatabase pDb)
   newdlg._scheduledDate->setEnabled(false);
   newdlg._scheduledTime->setEnabled(false);
   newdlg._email->setEnabled(false);
-  newdlg._reschedule->setEnabled(false);
-  newdlg._interval->setEnabled(false);
+  newdlg._recur->setEnabled(false);
 
   return newdlg.exec();
 }
 
 void batchItem::sSave()
 {
-  QString interval;
-
-  if (_reschedule->isChecked())
-  {
-    switch (_interval->currentIndex())
-    {
-      case 0:
-        interval = "D";
-        break;
-
-      case 1:
-        interval = "W";
-        break;
-
-      case 2:
-        interval = "M";
-        break;
-    }
-  }
-
-  if (interval.length() == 0)
-    interval = "N";
-
   if (_mode == cReschedule)
   {
+    XSqlQuery beginq("BEGIN;");
+    XSqlQuery rollbackq;
+    rollbackq.prepare("ROLLBACK;");
+
     XSqlQuery schedq(_db);
     schedq.prepare("SELECT xtbatch.rescheduleBatchItem(:batchid,"
                    "                           CAST(:date AS DATE) +"
                    "                           CAST(:time AS TIME),"
-                   "                           :interval) AS result;");
+                   "                           'N') AS result;");
     schedq.bindValue(":batchid",  _batchid);
     schedq.bindValue(":date",     _scheduledDate->date());
     schedq.bindValue(":time",     _scheduledTime->time());
-    schedq.bindValue(":interval", interval); 
     schedq.exec();
     if (schedq.first())
     {
       int result = schedq.value("result").toInt();
       if (result < 0)
       {
+        rollbackq.exec();
         QMessageBox::critical(this,
                               tr("Error Rescheduling Batch Item at %1::%2")
                                 .arg(__FILE__, __LINE__),
@@ -138,12 +118,33 @@ void batchItem::sSave()
     }
     else if (schedq.lastError().type() != QSqlError::NoError)
     {
+      rollbackq.exec();
       QMessageBox::critical(this,
                             tr("Error Rescheduling Batch Item at %1::%2")
                               .arg(__FILE__, __LINE__),
                               schedq.lastError().databaseText());
       return;
     }
+
+    if (_recur->isRecurring())
+    {
+      XSqlQuery recurq;
+      recurq.prepare("UPDATE xtbatch.batch"
+                     "   SET batch_recurring_batch_id=:parentid"
+                     " WHERE (batch_id=:id);");
+      recurq.bindValue(":parentid", _recur->parentId());
+      recurq.bindValue(":id",       _batchid);
+    }
+
+    QString errmsg;
+    if (! _recur->save(true, RecurrenceWidget::ChangeFuture, &errmsg))
+    {
+      rollbackq.exec();
+      QMessageBox::critical(this, "Error Saving Recurrence", errmsg);
+      return;
+    }
+
+    XSqlQuery commitq("COMMIT;");
   }
   done(_batchid);
 }
@@ -152,7 +153,7 @@ void batchItem::populate()
 {
   XSqlQuery batch(_db);
   batch.prepare( "SELECT batch_action, batch_parameter,"
-                 "       batch_user, batch_email, batch_reschedinterval,"
+                 "       batch_user, batch_email,"
                  "       date(batch_submitted) AS submitted_date,"
                  "       CAST(batch_submitted AS TIME) AS submitted_time,"
                  "       date(batch_scheduled) AS scheduled_date,"
@@ -160,7 +161,8 @@ void batchItem::populate()
                  "       date(batch_started) AS started_date,"
                  "       CAST(batch_started AS TIME) AS started_time,"
                  "       date(batch_completed) AS completed_date,"
-                 "       CAST(batch_completed AS TIME) AS completed_time "
+                 "       CAST(batch_completed AS TIME) AS completed_time,"
+                 "       batch_recurring_batch_id "
                  "FROM xtbatch.batch "
                  "WHERE (batch_id=:batch_id);" );
   batch.bindValue(":batch_id", _batchid);
@@ -172,19 +174,6 @@ void batchItem::populate()
     _action->setText(batch.value("batch_action").toString());
     _parameter->setText(batch.value("batch_parameter").toString());
 
-    QString interval = batch.value("batch_reschedinterval").toString();
-    if (interval != "N")
-    {
-      _reschedule->setChecked(TRUE);
-
-      if (interval == "D")
-        _interval->setCurrentIndex(0);
-      else if (interval == "W")
-        _interval->setCurrentIndex(1);
-      else if (interval == "M")
-        _interval->setCurrentIndex(2);
-    }
-
     _submittedDate->setDate(batch.value("submitted_date").toDate());
     _submittedTime->setTime(batch.value("submitted_time").toTime());
     _scheduledDate->setDate(batch.value("scheduled_date").toDate());
@@ -193,5 +182,9 @@ void batchItem::populate()
     _startedTime->setTime(batch.value("started_time").toTime());
     _completedDate->setDate(batch.value("completed_date").toDate());
     _completedTime->setTime(batch.value("completed_time").toTime());
+
+    if (! batch.value("batch_recurring_batch_id").isNull())
+      _recur->setParent(batch.value("batch_recurring_batch_id").toInt(),
+                        "BATCH");
   }
 }

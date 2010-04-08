@@ -72,6 +72,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     virtual void setEndDate(QDate p);
     virtual void setEndDateTime(QDateTime p);
     virtual void setEndDateVisible(bool p);
+    virtual void setEndTime(QTime p);
     virtual void setEndTimeVisible(bool p);
     virtual void setFrequency(int p);
     virtual void setMax(int p);
@@ -83,6 +84,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     virtual void setStartDate(QDate p);
     virtual void setStartDateTime(QDateTime p);
     virtual void setStartDateVisible(bool p);
+    virtual void setStartTime(QTime p);
     virtual void setStartTimeVisible(bool p);
 
   protected slots:
