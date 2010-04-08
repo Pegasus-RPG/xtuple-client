@@ -1327,5 +1327,37 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_cashrcptmisc</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>31</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cashrcptmisc</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_delete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>31</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
