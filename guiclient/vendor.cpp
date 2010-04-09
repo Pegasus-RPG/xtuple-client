@@ -217,7 +217,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       _contact1->setEnabled(FALSE);
       _contact2->setEnabled(FALSE);
       _address->setEnabled(FALSE);
-      _notes->setReadOnly(FALSE);
+      _notes->setReadOnly(TRUE);
       _poComments->setReadOnly(TRUE);
       _poItems->setEnabled(FALSE);
       _restrictToItemSource->setEnabled(FALSE);
