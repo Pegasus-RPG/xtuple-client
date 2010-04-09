@@ -156,6 +156,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _multOrderQty->setEnabled(FALSE);
       _leadTime->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
+      _upcCode->setEnabled(FALSE);
       _add->setEnabled(FALSE);
       _delete->setEnabled(FALSE);
       _close->setText(tr("&Close"));
