@@ -157,6 +157,13 @@ int shipTo::id() const
 
 void shipTo::sSave()
 {
+  if (_name->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Ship To"),
+                            tr("You must enter a valid Name.") );
+      return;
+  }
+  
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
