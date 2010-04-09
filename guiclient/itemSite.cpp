@@ -290,9 +290,10 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_orderGroup->setEnabled(FALSE);
 	_orderGroupFirst->setEnabled(FALSE);
 	_mpsTimeFence->setEnabled(FALSE);
-  _planningType->setEnabled(false);
-  _createPlannedTransfers->setEnabled(false);
-    _woCostGroup->setEnabled(false);
+        _planningType->setEnabled(FALSE);
+        _createPlannedTransfers->setEnabled(FALSE);
+        _woCostGroup->setEnabled(FALSE);
+        _costing->setEnabled(FALSE);
 	_close->setText(tr("&Close"));
 	_save->hide();
 	_comments->setReadOnly(TRUE);
