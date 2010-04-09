@@ -35,91 +35,104 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
 
   QWidget *hideme = 0;
 
-  _po = new dspPOsByVendor(this, "dspPOsByVendor", Qt::Widget);
-  _poTab->layout()->addWidget(_po);
-  hideme = _po->findChild<QWidget*>("_close");
-  hideme->hide();
-  hideme = _po->findChild<QWidget*>("_vendGroup");
-  hideme->hide();
-  QRadioButton *radiobutton = _po->findChild<QRadioButton*>("_selectedVendor");
-  radiobutton->setChecked(true);
-  VendorInfo *povend = _po->findChild<VendorInfo*>("_vend");
-  _po->show();
-
-  _receipts = new dspPoItemReceivingsByVendor(this, "dspPoItemReceivingsByVendor", Qt::Widget);
-  _receiptsTab->layout()->addWidget(_receipts);
-  hideme = _receipts->findChild<QWidget*>("_close");
-  hideme->hide();
-  VendorCluster *rcptvend = _receipts->findChild<VendorCluster*>("_vendor");
-  rcptvend->hide();
-
-  _payables = new selectPayments(this, "selectPayments", Qt::Widget);
-  _payablesTab->layout()->addWidget(_payables);
-  hideme = _payables->findChild<QWidget*>("_close");
-  hideme->hide();
-  VendorGroup *payvend = _payables->findChild<VendorGroup*>("_vendorgroup");
-  payvend->setState(VendorGroup::Selected);
-  payvend->hide();
-
-  _credits = new unappliedAPCreditMemos(this, "unappliedAPCreditMemos", Qt::Widget);
-  _cmTab->layout()->addWidget(_credits);
-  hideme = _credits->findChild<QWidget*>("_close");
-  hideme->hide();
-  VendorGroup *cmvend = _credits->findChild<VendorGroup*>("_vendorgroup");
-  cmvend->setState(VendorGroup::Selected);
-  cmvend->hide();
-  
-  /*  With the addition of A/P History and checks, this appears redundant now
-  _applications = new dspAPApplications(this, "dspAPApplications", Qt::Widget);
-  _applicationsTab->layout()->addWidget(_applications);
-  hideme = _applications->findChild<QWidget*>("_close");
-  hideme->hide();
-  if (! _applications->findChild<QCheckBox*>("_showChecks")->isChecked() &&
-      ! _applications->findChild<QCheckBox*>("_showChecks")->isChecked())
+  if (_privileges->check("ViewPurchaseOrders"))
   {
-    _applications->findChild<QCheckBox*>("_showChecks")->setChecked(true);
-    _applications->findChild<QCheckBox*>("_showChecks")->setChecked(true);
+    _po = new dspPOsByVendor(this, "dspPOsByVendor", Qt::Widget);
+    _poTab->layout()->addWidget(_po);
+    hideme = _po->findChild<QWidget*>("_close");
+    hideme->hide();
+    hideme = _po->findChild<QWidget*>("_vendGroup");
+    hideme->hide();
+    QRadioButton *radiobutton = _po->findChild<QRadioButton*>("_selectedVendor");
+    radiobutton->setChecked(true);
+    VendorInfo *povend = _po->findChild<VendorInfo*>("_vend");
+    _po->show();
+    connect(povend,      SIGNAL(newId(int)), _po,           SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), povend,        SLOT(setId(int)));
   }
-  VendorGroup *apvend = _applications->findChild<VendorGroup*>("_vendorgroup");
-  apvend->setState(VendorGroup::Selected);
-  apvend->hide();
-  */
-    
-  _checks = new dspCheckRegister(this, "dspCheckRegister", Qt::Widget);
-  _checksTab->layout()->addWidget(_checks);
-  _checks->findChild<QWidget*>("_close")->hide();
-  _checks->findChild<QGroupBox*>("_recipGroup")->setChecked(true);
-  _checks->findChild<QGroupBox*>("_recipGroup")->hide();
-  _checks->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _checks->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  VendorCluster *checkvend = _checks->findChild<VendorCluster*>("_vend");
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_poTab), false);
+
+  if (_privileges->check("ViewPurchaseOrders"))
+  {
+    _receipts = new dspPoItemReceivingsByVendor(this, "dspPoItemReceivingsByVendor", Qt::Widget);
+    _receiptsTab->layout()->addWidget(_receipts);
+    hideme = _receipts->findChild<QWidget*>("_close");
+    hideme->hide();
+    VendorCluster *rcptvend = _receipts->findChild<VendorCluster*>("_vendor");
+    rcptvend->hide();
+    connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), rcptvend,      SLOT(setId(int)));
+  }
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_receiptsTab), false);
+
+  if (_privileges->check("MaintainPayments"))
+  {
+    _payables = new selectPayments(this, "selectPayments", Qt::Widget);
+    _payablesTab->layout()->addWidget(_payables);
+    hideme = _payables->findChild<QWidget*>("_close");
+    hideme->hide();
+    VendorGroup *payvend = _payables->findChild<VendorGroup*>("_vendorgroup");
+    payvend->setState(VendorGroup::Selected);
+    payvend->hide();
+    connect(payvend, SIGNAL(newVendId(int)), _payables,     SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), payvend,       SLOT(setVendId(int)));
+  }
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_payablesTab), false);
+
+  if (_privileges->check("MaintainAPMemos") ||
+      _privileges->check("ViewAPMemos"))
+  {
+    _credits = new unappliedAPCreditMemos(this, "unappliedAPCreditMemos", Qt::Widget);
+    _cmTab->layout()->addWidget(_credits);
+    hideme = _credits->findChild<QWidget*>("_close");
+    hideme->hide();
+    VendorGroup *cmvend = _credits->findChild<VendorGroup*>("_vendorgroup");
+    cmvend->setState(VendorGroup::Selected);
+    cmvend->hide();
+    connect(cmvend,  SIGNAL(newVendId(int)), _credits,      SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), cmvend,        SLOT(setVendId(int)));
+  }
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_cmTab), false);
+
+  if (_privileges->check("MaintainPayments"))
+  {
+    _checks = new dspCheckRegister(this, "dspCheckRegister", Qt::Widget);
+    _checksTab->layout()->addWidget(_checks);
+    _checks->findChild<QWidget*>("_close")->hide();
+    _checks->findChild<QGroupBox*>("_recipGroup")->setChecked(true);
+    _checks->findChild<QGroupBox*>("_recipGroup")->hide();
+    _checks->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+    _checks->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+    VendorCluster *checkvend = _checks->findChild<VendorCluster*>("_vend");
+    connect(checkvend,   SIGNAL(newId(int)), _checks,       SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), checkvend,     SLOT(setId(int)));
+  }
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_checksTab), false);
   
-  _history = new dspVendorAPHistory(this, "dspVendorAPHistory", Qt::Widget);
-  _historyTab->layout()->addWidget(_history);
-  _history->findChild<QWidget*>("_close")->hide();
-  _history->findChild<QWidget*>("_vendGroup")->hide();
-  _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  VendorCluster *histvend = _history->findChild<VendorCluster*>("_vend");
-  
+  if (_privileges->check("ViewAPOpenItems"))
+  {
+    _history = new dspVendorAPHistory(this, "dspVendorAPHistory", Qt::Widget);
+    _historyTab->layout()->addWidget(_history);
+    _history->findChild<QWidget*>("_close")->hide();
+    _history->findChild<QWidget*>("_vendGroup")->hide();
+    _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+    _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+    VendorCluster *histvend = _history->findChild<VendorCluster*>("_vend");
+    connect(histvend,    SIGNAL(newId(int)), _history,      SLOT(sFillList()));
+    connect(_vend,       SIGNAL(newId(int)), histvend,      SLOT(setId(int)));
+  }
+  else
+    _tabWidget->setTabEnabled(_tabWidget->indexOf(_historyTab), false);
+
   connect(_crmacct,     SIGNAL(clicked()), this,          SLOT(sCRMAccount()));
   connect(_edit,        SIGNAL(clicked()), this,          SLOT(sVendor()));
   connect(_print,       SIGNAL(clicked()), this,          SLOT(sPrint()));
-  //connect(_vend,       SIGNAL(newId(int)), apvend,        SLOT(setVendId(int)));
-  connect(_vend,       SIGNAL(newId(int)), cmvend,        SLOT(setVendId(int)));
-  connect(_vend,       SIGNAL(newId(int)), payvend,       SLOT(setVendId(int)));
-  connect(_vend,       SIGNAL(newId(int)), povend,        SLOT(setId(int)));
-  connect(_vend,       SIGNAL(newId(int)), rcptvend,      SLOT(setId(int)));
-  connect(_vend,       SIGNAL(newId(int)), histvend,      SLOT(setId(int)));
-  connect(_vend,       SIGNAL(newId(int)), checkvend,     SLOT(setId(int)));
   connect(_vend,       SIGNAL(newId(int)), this,          SLOT(sPopulate()));
-  //connect(apvend,  SIGNAL(newVendId(int)), _applications, SLOT(sFillList()));
-  connect(cmvend,  SIGNAL(newVendId(int)), _credits,      SLOT(sFillList()));
-  connect(payvend, SIGNAL(newVendId(int)), _payables,     SLOT(sFillList()));
-  connect(povend,      SIGNAL(newId(int)), _po,           SLOT(sFillList()));
-  connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
-  connect(histvend,    SIGNAL(newId(int)), _history,      SLOT(sFillList()));
-  connect(checkvend,   SIGNAL(newId(int)), _checks,       SLOT(sFillList()));
   connect(_contact1Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_contact2Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
