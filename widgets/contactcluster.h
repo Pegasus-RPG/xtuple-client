@@ -77,7 +77,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       Q_INVOKABLE QString title() const { return _description->text(); }
       Q_INVOKABLE QString phone() const { return _phone->text(); }
       Q_INVOKABLE QString fax() const { return _fax->text(); }
-      Q_INVOKABLE QString emailAddress() const { return ""; }
+      Q_INVOKABLE QString emailAddress() const { return _email->text(); }
 
     public slots:
       void openUrl(QString url);
