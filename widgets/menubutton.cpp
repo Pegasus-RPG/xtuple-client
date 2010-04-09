@@ -101,7 +101,8 @@ void MenuButton::setAction(QString name)
   if (actionName() == name)
     return;
 
-  setAction(_guiClientInterface->findAction(name));
+  if (_guiClientInterface)
+    setAction(_guiClientInterface->findAction(name));
 }
 
 void MenuButton::setImage(QString image)
