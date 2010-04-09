@@ -185,6 +185,6 @@ void batchItem::populate()
 
     if (! batch.value("batch_recurring_batch_id").isNull())
       _recur->setParent(batch.value("batch_recurring_batch_id").toInt(),
-                        "BATCH");
+                        batch.value("batch_action").toString());
   }
 }

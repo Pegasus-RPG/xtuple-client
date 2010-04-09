@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>476</height>
+    <width>488</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -240,12 +240,6 @@ to be bound by its terms.</comment>
         <bool>true</bool>
        </property>
        <property name="endTimeVisible">
-        <bool>true</bool>
-       </property>
-       <property name="startDateVisible">
-        <bool>true</bool>
-       </property>
-       <property name="startTimeVisible">
         <bool>true</bool>
        </property>
       </widget>
