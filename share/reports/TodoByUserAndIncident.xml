@@ -67,6 +67,16 @@ WHERE ((true)
   &lt;? endif ?>
 ;</sql>
  </querysource>
+ <querysource>
+  <name>dates</name>
+  <sql>SELECT
+  formatDate(&lt;? value("start_date_start") ?>,'Earliest') AS f_startDateStart,
+  formatDate(&lt;? value("start_date_end") ?>  ,'Latest')   AS f_endDateStart,
+  formatDate(&lt;? value("due_date_start") ?>  ,'Earliest') AS f_startDateDue,
+  formatDate(&lt;? value("due_date_end") ?>    ,'Latest')   AS f_endDateDue
+;
+</sql>
+ </querysource>
  <rpthead>
   <height>132</height>
   <field>
@@ -84,8 +94,8 @@ WHERE ((true)
    <left/>
    <vcenter/>
    <data>
-    <query>Parameter Query</query>
-    <column>start_date_start</column>
+    <query>dates</query>
+    <column>f_startDateStart</column>
    </data>
   </field>
   <label>
@@ -167,8 +177,8 @@ WHERE ((true)
    <left/>
    <vcenter/>
    <data>
-    <query>Parameter Query</query>
-    <column>due_date_end</column>
+    <query>dates</query>
+    <column>f_endDateDue</column>
    </data>
   </field>
   <line>
@@ -193,8 +203,8 @@ WHERE ((true)
    <left/>
    <vcenter/>
    <data>
-    <query>Parameter Query</query>
-    <column>start_date_end</column>
+    <query>dates</query>
+    <column>f_endDateStart</column>
    </data>
   </field>
   <field>
@@ -212,8 +222,8 @@ WHERE ((true)
    <left/>
    <vcenter/>
    <data>
-    <query>Parameter Query</query>
-    <column>due_date_start</column>
+    <query>dates</query>
+    <column>f_startDateDue</column>
    </data>
   </field>
   <label>
