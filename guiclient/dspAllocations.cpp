@@ -118,7 +118,7 @@ void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewCustomerOrder()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
 
-    pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditCustomerOrder()), 0);
+    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditCustomerOrder()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainSalesOrders"));
   }
   else if (QString(pSelected->text(0)) == "T/O")
@@ -126,7 +126,7 @@ void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
 
-    pMenu->insertItem(tr("Edit Transfer Order..."), this, SLOT(sEditTransferOrder()), 0);
+    menuItem = pMenu->insertItem(tr("Edit Transfer Order..."), this, SLOT(sEditTransferOrder()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainTransferOrders"));
   }
 }
