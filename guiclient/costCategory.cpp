@@ -155,7 +155,7 @@ void costCategory::sSave()
       tr("<p>You must select an Inventory Cost Variance Account before saving."),
       _inventoryCost
     },
-    { _metrics->boolean("MultiWhs") && _transformClearing->id() < 0,
+    { _metrics->boolean("MultiWhs") && _metrics->boolean("Transforms") && _transformClearing->id() < 0,
       tr("<p>You must select a Transform Clearing Account before saving."),
       _transformClearing
     },
