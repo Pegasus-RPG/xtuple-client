@@ -31,7 +31,7 @@ MenuButton::MenuButton(QWidget *pParent) :
   _shown = false;
   setEnabled(false);
 
-  _button->setIconSize(QSize(64,64));
+  _button->setIconSize(QSize(48,48));
   _button->setIcon(QIcon(QPixmap(":/widgets/images/folder_zoom_64.png")));
 }
 
