@@ -209,6 +209,13 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal);
     Q_INVOKABLE QMenuBar *menuBar();
 
+    // Used by scripting
+    Q_INVOKABLE void addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidget );
+    Q_INVOKABLE  void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
+    Q_INVOKABLE void setCentralWidget(QWidget * widget);
+    Q_INVOKABLE QVariant saveState(int version = 0);
+    Q_INVOKABLE bool restoreState( const QVariant & state, int version = 0 );
+
     XSqlQuery        _q;
     XSqlQuery        __item;
     int              __itemListSerial;

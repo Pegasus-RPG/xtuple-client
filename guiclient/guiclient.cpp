@@ -546,6 +546,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   }
 
   collectMetrics();
+
+  setDocumentMode(true);
 }
 
 GUIClient::~GUIClient()
@@ -745,7 +747,7 @@ void GUIClient::showEvent(QShowEvent *event)
       while(sq.next())
       {
         found_one = true;
-        QString script = sq.value("script_source").toString();
+        QString script = scriptHandleIncludes(sq.value("script_source").toString());
         if(!engine)
         {
           engine = new QScriptEngine(this);
@@ -1577,6 +1579,67 @@ QMenuBar *GUIClient::menuBar()
 #else
   return QMainWindow::menuBar();
 #endif
+}
+
+/*!
+    Adds the given \a dockwidget to the specified \a area.
+*/
+void GUIClient::addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidget )
+{
+  QMainWindow::addDockWidget( area, dockwidget);
+}
+
+/*!
+    Moves \a second dock widget on top of \a first dock widget, creating a tabbed
+    docked area in the main window.
+*/
+void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
+{
+  QMainWindow::tabifyDockWidget( first, second );
+}
+
+/*!
+    Sets the given \a widget to be the main window's central widget.
+
+    Note: GUIClient takes ownership of the \a widget pointer and
+    deletes it at the appropriate time.
+*/
+void GUIClient::setCentralWidget(QWidget * widget)
+{
+  QMainWindow::setCentralWidget(widget);
+}
+
+/*!
+    Saves the current state of this mainwindow's toolbars and
+    dockwidgets. The \a version number is stored as part of the data.
+
+    The \link QObject::objectName objectName\endlink property is used
+    to identify each QToolBar and QDockWidget.  You should make sure
+    that this property is unique for each QToolBar and QDockWidget you
+    add to this mainwindow.
+
+    To restore the saved state, pass the return value and \a version
+    number to restoreState().
+
+    \sa restoreState()
+*/
+QVariant GUIClient::saveState(int version)
+{
+  return QVariant(QMainWindow::saveState(version));
+}
+
+/*!
+    Restores the \a state of this mainwindow's toolbars and
+    dockwidgets. The \a version number is compared with that stored
+    in \a state. If they do not match, the mainwindow's state is left
+    unchanged, and this function returns \c false; otherwise, the state
+    is restored, and this function returns \c true.
+
+    \sa saveState()
+*/
+bool GUIClient::restoreState( const QVariant & state, int version )
+{
+  return QMainWindow::restoreState( state.toByteArray(), version);
 }
 
 void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
