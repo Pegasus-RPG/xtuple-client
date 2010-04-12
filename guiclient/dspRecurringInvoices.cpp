@@ -37,9 +37,9 @@ dspRecurringInvoices::dspRecurringInvoices(QWidget* parent, const char* name, Qt
   _invchead->addColumn(tr("Customer"),     -1,              Qt::AlignLeft,   true,  "cust_name" );
   _invchead->addColumn(tr("Ship-to"),      100,             Qt::AlignLeft,   false, "invchead_shipto_name" );
   _invchead->addColumn(tr("Invc. Date"),   _dateColumn,     Qt::AlignCenter, true,  "invchead_invcdate" );
-  _invchead->addColumn(tr("Interval"),     100,             Qt::AlignRight,  true,  "invchead_recurring_interval" );
-  _invchead->addColumn(tr("Type"),         _orderColumn,    Qt::AlignCenter, true,  "recurring_type" );
-  _invchead->addColumn(tr("Until"),        _dateColumn,     Qt::AlignCenter, true,  "invchead_recurring_until" );
+  _invchead->addColumn(tr("Interval"),     100,             Qt::AlignRight,  true,  "recur_freq" );
+  _invchead->addColumn(tr("Type"),         _orderColumn,    Qt::AlignCenter, true,  "recur_period" );
+  _invchead->addColumn(tr("Until"),        _dateColumn,     Qt::AlignCenter, true,  "recur_end" );
   _invchead->addColumn(tr("Amount"),       _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 

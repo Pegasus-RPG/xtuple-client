@@ -104,6 +104,9 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _paymentLit->hide();
   _payment->hide(); // Issue 9895:  if no objections over time, we should ultimately remove this. 
+
+  _recurring->setParent(-1, "I");
+  _recurring->setMax(_metrics->value("RecurringInvoiceBuffer").toInt());
 }
 
 invoice::~invoice()
@@ -132,7 +135,10 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       q.exec("SELECT NEXTVAL('invchead_invchead_id_seq') AS invchead_id;");
       if (q.first())
+      {
         _invcheadid = q.value("invchead_id").toInt();
+        _recurring->setParent(_invcheadid, "I");
+      }
       else if (q.lastError().type() != QSqlError::NoError)
       {
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -477,7 +483,7 @@ void invoice::sSave()
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
-  
+
   // finally save the invchead
   if (!save())
     return;
@@ -490,6 +496,15 @@ void invoice::sSave()
 
 bool invoice::save()
 {
+  RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return false;
+
+  XSqlQuery rollbackq;
+  rollbackq.prepare("ROLLBACK;");
+
+  XSqlQuery begin("BEGIN;");
+
   q.prepare( "UPDATE invchead "
 	     "SET invchead_cust_id=:invchead_cust_id,"
 	     "    invchead_invcdate=:invchead_invcdate,"
@@ -517,10 +532,7 @@ bool invoice::save()
 	     "    invchead_payment=:invchead_payment,"
 	     "    invchead_curr_id=:invchead_curr_id,"
 	     "    invchead_shipvia=:invchead_shipvia, invchead_fob=:invchead_fob, invchead_notes=:invchead_notes,"
-         "    invchead_recurring=:invchead_recurring,"
-         "    invchead_recurring_interval=:invchead_recurring_interval,"
-         "    invchead_recurring_type=:invchead_recurring_type,"
-         "    invchead_recurring_until=:invchead_recurring_until,"
+             "    invchead_recurring_invchead_id=:invchead_recurring_invchead_id,"
 	     "    invchead_prj_id=:invchead_prj_id, "
          "    invchead_shipchrg_id=:invchead_shipchrg_id, "
 		 "    invchead_taxzone_id=:invchead_taxzone_id "
@@ -568,14 +580,8 @@ bool invoice::save()
   q.bindValue(":invchead_notes",	_notes->toPlainText());
   q.bindValue(":invchead_prj_id",	_project->id());
   q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
-  q.bindValue(":invchead_recurring",    QVariant(_recurring->isRecurring()));
-  if(_recurring->isRecurring()) // if ! recurring then let the following be NULL
-  {
-    q.bindValue(":invchead_recurring_interval", _recurring->frequency());
-    q.bindValue(":invchead_recurring_type",     _recurring->periodCode());
-    if (_recurring->endDate().isValid())
-      q.bindValue(":invchead_recurring_until",  _recurring->endDate());
-  }
+  if(_recurring->isRecurring())
+    q.bindValue(":invchead_recurring_invchead_id", _recurring->parentId());
 
   if (_orderNumber->text().length())
     q.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
@@ -583,9 +589,20 @@ bool invoice::save()
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
+    rollbackq.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+
+  QString errmsg;
+  if (! _recurring->save(true, cp, &errmsg))
+  {
+    rollbackq.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return false;
+  }
+
+  XSqlQuery commitq("COMMIT;");
 
   return true;
 }
@@ -695,11 +712,8 @@ void invoice::populate()
     _freightCache=q.value("invchead_freight").toDouble();
     _freight->setLocalValue(q.value("invchead_freight").toDouble());
 
-    _recurring->set(q.value("invchead_recurring").toBool(),
-                    q.value("invchead_recurring_interval").toInt(),
-                    q.value("invchead_recurring_type").toString(),
-                    QDate(),
-                    q.value("invchead_recurring_until").toDate());
+    _recurring->setParent(q.value("invchead_recurring_invchead_id").toInt(),
+                          "I");
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);

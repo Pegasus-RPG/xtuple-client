@@ -73,7 +73,7 @@ void purgeInvoices::sPurge()
                      "FROM invchead "
                      "WHERE ( (invchead_invcdate <= :cutOffDate) "
                      "  AND   (invchead_posted) "
-                     "  AND   (NOT invchead_recurring) "
+                     "  AND   (invchead_recurring_invchead_id!=invchead_id) "
                      "  AND   (checkInvoiceSitePrivs(invchead_id)) );");
     invoices.bindValue(":cutOffDate", _cutOffDate->date());
     invoices.exec();
@@ -116,4 +116,3 @@ void purgeInvoices::sPurge()
     accept();
   }
 }
-

@@ -41,7 +41,7 @@ void createRecurringInvoices::languageChange()
 
 void createRecurringInvoices::sUpdate()
 {
-  q.exec("SELECT createRecurringInvoices() AS result;");
+  q.exec("SELECT createRecurringItems(NULL, 'I') AS result;");
   if (q.first())
   {
     int result = q.value("result").toInt();

@@ -87,7 +87,7 @@ to be bound by its terms.</comment>
        <item row="0" column="0" colspan="2">
         <layout class="QHBoxLayout">
          <item>
-          <layout class="QGridLayout">
+          <layout class="QGridLayout" name="gridLayout_1">
            <item row="0" column="0">
             <widget class="QLabel" name="_invoiceNumberLit">
              <property name="text">
@@ -616,9 +616,9 @@ to be bound by its terms.</comment>
        <item row="2" column="0" colspan="2">
         <layout class="QVBoxLayout">
          <item>
-          <layout class="QGridLayout">
+          <layout class="QGridLayout" name="gridLayout_7">
            <item row="0" column="0">
-            <layout class="QGridLayout">
+            <layout class="QGridLayout" name="gridLayout_8">
              <property name="topMargin">
               <number>4</number>
              </property>
@@ -814,7 +814,7 @@ to be bound by its terms.</comment>
       <attribute name="title">
        <string>Line Items</string>
       </attribute>
-      <layout class="QGridLayout">
+      <layout class="QGridLayout" name="gridLayout_9">
        <item row="0" column="0">
         <widget class="XTreeWidget" name="_invcitem"/>
        </item>
@@ -894,7 +894,7 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item row="1" column="0">
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout_10">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -1305,7 +1305,7 @@ to be bound by its terms.</comment>
       <attribute name="title">
        <string>Advanced</string>
       </attribute>
-      <layout class="QGridLayout">
+      <layout class="QGridLayout" name="gridLayout_11">
        <item row="0" column="1">
         <spacer>
          <property name="orientation">
@@ -1333,7 +1333,11 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item row="0" column="0" rowspan="2">
-        <widget class="RecurrenceWidget" name="_recurring"/>
+        <widget class="RecurrenceWidget" name="_recurring">
+         <property name="maxVisible">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
