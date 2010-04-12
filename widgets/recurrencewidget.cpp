@@ -22,9 +22,9 @@
 #define DEBUG true
 
 /**
-  \class
+  \class RecurrenceWidget
   
-  \brief The RecurrenceWidget gives the user a single interface for telling
+  \brief The RecurrenceWidget gives the %user a single interface for telling
          the system how often certain %events occur.
 
   In general recurrences are stored in the recur table, but the
@@ -38,6 +38,163 @@
   The frequency is the number of periods between recurrences. A
   recurrence with the period set to W (= week) and frequency of 3 will repeat
   once every three weeks.
+
+  To add a new recurring event or item, you need to change data in the
+  database, stored procedures, triggers, and application code.
+  We'll use Invoice in the examples here, with 'I' as the internal code value.
+
+  Add a column to the parent table to track the recurrence parent/child
+  relationship. The column name must follow this pattern:
+    \c [tablename]_recurring_[tablename]_id
+  e.g.
+    \c invchead_recurring_invchead_id
+
+  Add a RecurrenceWidget to the .ui for window that will maintain data of this
+  type (e.g. invoice) and modify the code as described below.
+
+  You'll have to initialize the widget in the window's constructor:
+  \code
+  _recur->setParent(-1, 'I');
+  \endcode
+
+  When creating a new record, update the widget again when the window requests
+  a new id for the object from the sequence. This usually happens in either the
+  %set() or %save() or %sSave() method, depending on the class.
+  For invoice this is handled in the cNew case in invoice::set():
+  \code
+  _recur->setParent(_invcheadid, 'I');
+  \endcode
+
+  Do the same thing when reading an existing record for editing or viewing:
+  \code
+  _recur->setParent(q.value("invchead_recurring_invchead_id").toInt(), "I");
+  \endcode
+
+  Ask the %user how to handle recurrences before saving the data. Make sure to
+  ask before starting any transactions and to return without further processing
+  if the %user chooses to cancel:
+  \code
+  RecurrenceWidget::ChangePolicy cp = _recur->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return;
+  \endcode
+
+  As part of setting up for the insert or update of the main record,
+  make sure to set the recurrence parentage:
+  \code
+  if (_recur->isRecurring())
+    q.bindValue(":invchead_recurring_invchead_id", _recur->parentId());
+  \endcode
+
+  Finally, after the insert/update, save the recurrence and check for errors:
+  \code
+  QString errmsg;
+  if (! _recur->save(true, cp, &errmsg))
+  {
+    rollbackq.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return false;
+  }
+  \endcode
+
+  Don't forget to commit if you explicitly started a transaction.
+
+  To allow the stored procedures that maintain the recurrence relationships
+  to work properly, there must be a function that copies an existing record,
+  based on its id, and gives the copy a different timestamp or date,
+  like one of these:
+  <OL>
+    <LI>copy[tablename](INTEGER, TIMESTAMP WITH TIME ZONE)</LI>
+    <LI>copy[tablename](INTEGER, TIMESTAMP WITHOUT TIME ZONE)</LI>
+    <LI>copy[tablename](INTEGER, DATE)</LI>
+  </OL>
+  The copy function can take additional arguments as well, but they will be
+  ignored by the recurrence maintenance functions. The data type of each
+  argument must be listed in
+  the recurtype table's recurtype_copyargs column (see below) so the appropriate
+  casting can be done for the date or timestamp and an appropriate number
+  of NULL arguments can be passed.
+  The copy function should copy the
+  [tablename]_recurring_[tablename]_id column.
+  
+  There can be a function to delete records of this type as well. If there is
+  one, it must accept a single integer id of the record to delete. If there
+  isn't a delete function, set the recurtype_delfunc to NULL and
+  existing records will be deleted when necessary
+  by building an SQL DELETE statement.
+  
+  Add a row to the recurtype table to
+  describe how the recurrence stored procedures interact with the
+  events/items of this type ('I' == Invoice).
+  \code
+  INSERT INTO recurtype (recurtype_type, recurtype_table, recurtype_donecheck,
+                         recurtype_schedcol, recurtype_limit,
+                         recurtype_copyfunc, recurtype_copyargs, recurtype_delfunc
+   ) VALUES ('I', 'invchead', 'invchead_posted',
+             'invchead_invcdate', NULL,
+             'copyinvoice', '{integer,date}', 'deleteinvoice');
+  \endcode
+
+  The DELETE trigger on the table should clean up the recurrence information:
+  \code
+  CREATE OR REPLACE FUNCTION _invcheadBeforeTrigger() RETURNS "trigger" AS $$
+  DECLARE
+    _recurid     INTEGER;
+    _newparentid INTEGER;
+
+  BEGIN
+    IF (TG_OP = 'DELETE') THEN
+      -- after other stuff not having to do with recurrence
+
+      SELECT recur_id INTO _recurid
+        FROM recur
+       WHERE ((recur_parent_id=OLD.invchead_id)
+          AND (recur_parent_type='I'));
+      IF (_recurid IS NOT NULL) THEN
+        SELECT invchead_id INTO _newparentid
+          FROM invchead
+         WHERE ((invchead_recurring_invchead_id=OLD.invchead_id)
+            AND (invchead_id!=OLD.invchead_id))
+         ORDER BY invchead_invcdate
+         LIMIT 1;
+
+        IF (_newparentid IS NULL) THEN
+          DELETE FROM recur WHERE recur_id=_recurid;
+        ELSE
+          UPDATE recur SET recur_parent_id=_newparentid
+           WHERE recur_id=_recurid;
+          UPDATE invchead SET invchead_recurring_invchead_id=_newparentid
+           WHERE invchead_recurring_invchead_id=OLD.invchead_id
+             AND invchead_id!=OLD.invchead_id;
+        END IF;
+      END IF;
+
+      RETURN OLD;
+    END IF;
+
+    RETURN NEW;
+  END;
+  $$ LANGUAGE 'plpgsql';
+  \endcode
+
+  \todo Simplify this so the developer of a new recurring item/event doesn't
+        have to work so hard. There should be a way to (1) have the recurrence
+        widget update the [tablename]_recurring_[tablename]_id column
+        when saving the recurrence (this would save a couple of lines)
+        and (2) there should be a way to simplify or eliminate the code
+        in the DELETE triggers. Some of this stuff really belongs in an
+        AFTER trigger instead of a before trigger.
+
+  \see _invcheadBeforeTrigger
+  \see copyInvoice
+  \see createRecurringItems
+  \see deleteInvoice
+  \see deleteOpenRecurringItems
+  \see invoice
+  \see openRecurringItems
+  \see recur
+  \see recurtype
+  \see splitRecurrence
 
  */
 
