@@ -121,6 +121,10 @@ void printStatementsByCustomerType::sPrint()
                .arg(custq.value("customer").toString()) );
 
       ParameterList params;
+      params.append("invoice", tr("Invoice"));
+      params.append("debit", tr("Debit Memo"));
+      params.append("credit", tr("Credit Memo"));
+      params.append("deposit", tr("Deposit"));
       params.append("cust_id", custq.value("cust_id").toInt());
       params.append("asofdate", _asOf->date());
 

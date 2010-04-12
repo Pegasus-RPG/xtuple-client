@@ -83,6 +83,10 @@ void printStatementByCustomer::sPrint()
     if (q.first())
     {
       ParameterList params;
+      params.append("invoice", tr("Invoice"));
+      params.append("debit", tr("Debit Memo"));
+      params.append("credit", tr("Credit Memo"));
+      params.append("deposit", tr("Deposit"));
       params.append("cust_id", _cust->id());
       params.append("asofdate", _asOf->date());
 
