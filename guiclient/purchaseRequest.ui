@@ -234,7 +234,7 @@ to be bound by its terms.</comment>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>20</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -278,8 +278,8 @@ to be bound by its terms.</comment>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>188</width>
-             <height>17</height>
+             <width>20</width>
+             <height>0</height>
             </size>
            </property>
           </spacer>
