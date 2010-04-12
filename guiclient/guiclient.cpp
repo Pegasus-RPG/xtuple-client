@@ -1503,7 +1503,11 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
         // Remove the parent because this is not a behavior we want unless
         // window is modal.  Does, however, completely eliminate ability
         // to set a parent on non-modal window with this implementation
+        // Get the focusWidget and then reset it as the setParent changes it.
+        QWidget * fw = w->focusWidget();
         w->setParent(0);
+        if(fw)
+          fw->setFocus();
       }
     }
     else
