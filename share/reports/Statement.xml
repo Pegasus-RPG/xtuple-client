@@ -11,15 +11,15 @@
  <leftmargin>100</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT CASE WHEN (araging_doctype = 'I') THEN 'Invc.'
-            WHEN (araging_doctype = 'D') THEN 'D/M'
-            WHEN (araging_doctype = 'C') THEN 'C/M'
-            WHEN (araging_doctype = 'R') THEN 'C/D'
+  <sql>SELECT CASE WHEN (araging_doctype = 'I') THEN &lt;? value("invoice") ?>
+            WHEN (araging_doctype = 'D') THEN &lt;? value("debit") ?>
+            WHEN (araging_doctype = 'C') THEN &lt;? value("credit") ?>
+            WHEN (araging_doctype = 'R') THEN &lt;? value("deposit") ?>
             ELSE 'Misc.'
        END AS doctype,
        araging_docnumber AS f_docnumber,
        formatDate(CAST(araging_docdate AS DATE)) AS f_docdate,
-       CASE WHEN (araging_doctype = 'I') THEN formatDate(araging_duedate)
+       CASE WHEN (araging_doctype IN ('I','D')) THEN formatDate(araging_duedate)
             ELSE ''
        END AS f_duedate,
        formatMoney(araging_aropen_amount) AS f_amount,
@@ -104,9 +104,9 @@ WHERE ((abs(araging_aropen_amount) > 0)
   </label>
   <label>
    <rect>
-    <x>10</x>
+    <x>14.2513</x>
     <y>250</y>
-    <width>100</width>
+    <width>86.4477</width>
     <height>17</height>
    </rect>
    <font>
@@ -202,17 +202,17 @@ WHERE ((abs(araging_aropen_amount) > 0)
    <weight>0</weight>
   </line>
   <line>
-   <xstart>105</xstart>
-   <ystart>245</ystart>
-   <xend>105</xend>
-   <yend>270</yend>
+   <xstart>123.972</xstart>
+   <ystart>244.219</ystart>
+   <xend>123.972</xend>
+   <yend>269.461</yend>
    <weight>0</weight>
   </line>
   <label>
    <rect>
-    <x>112</x>
+    <x>130</x>
     <y>250</y>
-    <width>95</width>
+    <width>80</width>
     <height>17</height>
    </rect>
    <font>
@@ -280,9 +280,9 @@ WHERE ((abs(araging_aropen_amount) > 0)
   </label>
   <line>
    <xstart>10</xstart>
-   <ystart>245</ystart>
+   <ystart>244.541</ystart>
    <xend>640</xend>
-   <yend>245</yend>
+   <yend>244.541</yend>
    <weight>0</weight>
   </line>
   <field>
@@ -306,9 +306,9 @@ WHERE ((abs(araging_aropen_amount) > 0)
   </field>
   <line>
    <xstart>210</xstart>
-   <ystart>245</ystart>
+   <ystart>245.459</ystart>
    <xend>210</xend>
-   <yend>270</yend>
+   <yend>270.459</yend>
    <weight>0</weight>
   </line>
   <field>
@@ -474,7 +474,7 @@ WHERE ((abs(araging_aropen_amount) > 0)
     <rect>
      <x>20</x>
      <y>0</y>
-     <width>80</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -482,7 +482,7 @@ WHERE ((abs(araging_aropen_amount) > 0)
      <size>12</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -510,9 +510,9 @@ WHERE ((abs(araging_aropen_amount) > 0)
    </field>
    <field>
     <rect>
-     <x>110</x>
+     <x>130</x>
      <y>0</y>
-     <width>95</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
