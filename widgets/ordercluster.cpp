@@ -599,9 +599,11 @@ void OrderLineEdit::setId(const int pId, const QString &pType)
   else
   {
     OrderTypes oldTypes = _allowedTypes;
-    setAllowedType(pType);
+    if(!pType.isNull())
+      setAllowedType(pType);
     silentSetId(pId);
-    setAllowedTypes(oldTypes);
+    if(!pType.isNull())
+      setAllowedTypes(oldTypes);
     emit newId(pId, pType);
     emit valid(_valid);
   }
