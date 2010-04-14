@@ -235,7 +235,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QCheckBox" name="_dropShip">
                 <property name="text">
-                 <string>Drop ship items by default</string>
+                 <string>Drop ship Items by default</string>
                 </property>
                </widget>
               </item>
