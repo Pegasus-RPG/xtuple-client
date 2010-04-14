@@ -180,7 +180,7 @@ to be bound by its terms.</comment>
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="title">
-        <string>Site can Purchase this item</string>
+        <string>Site can purchase this Item</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
