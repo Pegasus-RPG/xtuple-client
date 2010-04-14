@@ -199,14 +199,7 @@ void ContactWidget::init()
     connect(_email,     SIGNAL(doubleClicked()), this, SLOT(sLaunchEmail()));
     connect(_webaddr,   SIGNAL(doubleClicked()), this, SLOT(sLaunchWebaddr()));
     
-    connect(_first, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
-    connect(_middle, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
-    connect(_last, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
-    connect(_suffix, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
-    connect(_first, SIGNAL(requestList()),	this, SLOT(sList()));
-    connect(_middle, SIGNAL(requestList()),	this, SLOT(sList()));
-    connect(_last, SIGNAL(requestList()),	this, SLOT(sList()));
-    connect(_suffix, SIGNAL(requestList()),	this, SLOT(sList()));
+    setListVisible(true);
     
     connect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
     connect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
@@ -416,6 +409,31 @@ void ContactWidget::silentSetId(const int pId)
 
   _changed=false;
   // _parsed = TRUE;
+}
+
+void ContactWidget::setListVisible(bool p)
+{
+  _first->disconnect();
+  _middle->disconnect();
+  _last->disconnect();
+  _suffix->disconnect();
+  _first->disconnect();
+  _middle->disconnect();
+  _last->disconnect();
+  _suffix->disconnect();
+
+  _list->setVisible(p);
+  if (p)
+  {
+    connect(_first, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_middle, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_last, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_suffix, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_first, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_middle, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_last, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_suffix, SIGNAL(requestList()),	this, SLOT(sList()));
+  }
 }
 
 void ContactWidget::setNumber(QString p)
@@ -944,7 +962,8 @@ void ContactWidget::sList()
     params.append("searchAcctId", _searchAcctId);
     newdlg->set(params);
     int id = newdlg->exec();
-    setId(id);
+    if (id > 0)
+      setId(id);
   }
   else
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -963,7 +982,8 @@ void ContactWidget::sSearch()
         params.append("searchAcctId", _searchAcctId);
         newdlg->set(params);
 	int id = newdlg->exec();
-	setId(id);
+        if (id > 0)
+	  setId(id);
     }
     else
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")

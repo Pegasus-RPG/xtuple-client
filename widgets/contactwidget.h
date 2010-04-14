@@ -219,6 +219,7 @@ public:
   virtual QString  fieldNameCountry() 	    const { return _fieldNameCountry; }
 
 public slots:
+         virtual void setListVisible(bool p);
          virtual void setNumber(QString p);
   inline virtual void clearExtraClause()	        { }
          virtual void findDuplicates();
