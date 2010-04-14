@@ -1038,6 +1038,7 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
     _listTab->addColumn(tr("CRM Account"), 100, Qt::AlignLeft, true, "crmacct_name");
 
     resize(500, size().height());
+    setWindowTitle(tr("Contact List"));
 }
 
 void ContactList::set(ParameterList &pParams)
