@@ -803,6 +803,7 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
 
   _descrip2 = new QLabel(this, "_descrip2");
   _descrip2->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+  _descrip2->setMaximumWidth(300);
   _grid->addWidget(_descrip2, 3, 1, 1, -1);
   setDescriptionVisible(true);
 
