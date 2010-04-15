@@ -11,37 +11,37 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;warehouse_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;byDays&quot;) ?>
-         (text('Look ahead ') || text(&lt;? value(&quot;byDays&quot;) ?>) || text(' days'))
-       &lt;? elseif exists(&quot;byDate&quot;) ?>
-         (text('Cutoff date ') || formatDate(&lt;? value(&quot;byDate&quot;) ?>))
-       &lt;? elseif exists(&quot;byDates&quot;) ?>
-         (text('Dates from ') || formatDate(&lt;? value(&quot;startDate&quot;) ?>) || text(' to ') || formatDate(&lt;? value(&quot;endDate&quot;) ?>))
+       &lt;? if exists("byDays") ?>
+         (text('Look ahead ') || text(&lt;? value("byDays") ?>) || text(' days'))
+       &lt;? elseif exists("byDate") ?>
+         (text('Cutoff date ') || formatDate(&lt;? value("byDate") ?>))
+       &lt;? elseif exists("byDates") ?>
+         (text('Dates from ') || formatDate(&lt;? value("startDate") ?>) || text(' to ') || formatDate(&lt;? value("endDate") ?>))
        &lt;? else ?>
          text('Item Site Lead Time')
        &lt;? endif ?>
        AS ltcriteria,
-&lt;? if exists(&quot;vend_id&quot;) ?>
+&lt;? if exists("vend_id") ?>
        text('Vendor:') AS vend_label,
        vend_name AS vend_value
   FROM vend
- WHERE (vend_id=&lt;? value(&quot;vend_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
+ WHERE (vend_id=&lt;? value("vend_id") ?>)
+&lt;? elseif exists("vendtype_id") ?>
        text('Vendor Type:') AS vend_label,
        vendtype_code AS vend_value
   FROM vendtype
- WHERE (vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
+ WHERE (vendtype_id=&lt;? value("vendtype_id") ?>)
+&lt;? elseif exists("vendtype_pattern") ?>
        text('Vendor Type:') AS vend_label,
-       text(&lt;? value(&quot;vendtype_pattern&quot;) ?>) AS vend_value
+       text(&lt;? value("vendtype_pattern") ?>) AS vend_value
 &lt;? else ?>
        text('Vendor:') AS vend_label,
        text('All Vendors') AS vend_value
@@ -72,15 +72,15 @@
                CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END AS outlevel,
                itemsite_qtyonhand AS qtyonhand,
                vend_number,
-&lt;? if exists(&quot;byDays&quot;) ?>
-               qtyAllocated(itemsite_id, &lt;? value(&quot;byDays&quot;) ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value(&quot;byDays&quot;) ?>) AS ordered
-&lt;? elseif exists(&quot;byDate&quot;) ?>
-               qtyAllocated(itemsite_id, (&lt;? value(&quot;byDate&quot;) ?> - CURRENT_DATE)) AS allocated,
-               qtyOrdered(itemsite_id, (&lt;? value(&quot;byDate&quot;) ?> - CURRENT_DATE)) AS ordered
-&lt;? elseif exists(&quot;byDates&quot;) ?>
-               qtyAllocated(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>) AS ordered
+&lt;? if exists("byDays") ?>
+               qtyAllocated(itemsite_id, &lt;? value("byDays") ?>) AS allocated,
+               qtyOrdered(itemsite_id, &lt;? value("byDays") ?>) AS ordered
+&lt;? elseif exists("byDate") ?>
+               qtyAllocated(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS allocated,
+               qtyOrdered(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS ordered
+&lt;? elseif exists("byDates") ?>
+               qtyAllocated(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS allocated,
+               qtyOrdered(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS ordered
 &lt;? else ?>
                qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,
                qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered
@@ -91,25 +91,25 @@
            AND (itemsrc_item_id=item_id)
            AND (itemsite_warehous_id=warehous_id)
            AND (itemsrc_vend_id=vend_id)
-&lt;? if exists(&quot;vend_id&quot;) ?>
-           AND (vend_id=&lt;? value(&quot;vend_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
-           AND (vend_vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
-           AND (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ &lt;? value(&quot;vendtype_pattern&quot;) ?>)))
+&lt;? if exists("vend_id") ?>
+           AND (vend_id=&lt;? value("vend_id") ?>)
+&lt;? elseif exists("vendtype_id") ?>
+           AND (vend_vendtype_id=&lt;? value("vendtype_id") ?>)
+&lt;? elseif exists("vendtype_pattern") ?>
+           AND (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ &lt;? value("vendtype_pattern") ?>)))
 &lt;? endif ?>
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-           AND (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? if exists("warehous_id") ?>
+           AND (warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
            )
        ) AS data
-&lt;? if exists(&quot;showReorder&quot;) ?>
+&lt;? if exists("showReorder") ?>
  WHERE ( ((qtyonhand - allocated + ordered) &lt;= reorderlevel)
-  &lt;? if exists(&quot;ignoreReorderAtZero&quot;) ?>
+  &lt;? if exists("ignoreReorderAtZero") ?>
    AND (NOT ( ((qtyonhand - allocated + ordered) = 0) AND (reorderlevel = 0)))
   &lt;? endif ?>
   )
-&lt;? elseif exists(&quot;showShortages&quot;) ?>
+&lt;? elseif exists("showShortages") ?>
  WHERE ((qtyonhand - allocated + ordered) &lt; 0)
 &lt;? endif ?>
 ORDER BY vend_number, item_number, warehous_code DESC;</sql>
