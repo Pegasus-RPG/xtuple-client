@@ -773,7 +773,8 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
   if  (_item->itemType() != "M" && _item->itemType() != "B" &&
        _item->itemType() != "F" && _item->itemType() != "K" &&
        _item->itemType() != "P" && _item->itemType() != "O" &&
-       _item->itemType() != "L" && _item->itemType() != "J")
+       _item->itemType() != "L" && _item->itemType() != "J" &&
+       _item->itemType() != "T")
   {
     QMessageBox::critical(this, tr("Item of wrong type"),
                           tr("This item is not of the proper type (%1) to have "
