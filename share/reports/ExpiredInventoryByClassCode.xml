@@ -35,9 +35,9 @@
        'Warranty'
        &lt;? endif ?> AS expiretype,
        &lt;? if exists("showValue") ?>
-           &lt;? if exists("useActualCosts") ?>
+           &lt;? if exists("useActualCost") ?>
              text('Show Inventory Value with Actual Costs')
-           &lt;? elseif exists("useStandardCosts") ?>
+           &lt;? elseif exists("useStandardCost") ?>
              text('Show Inventory Value with Standard Costs')
            &lt;? else ?>
              text('Show Inventory Value with Posted Costs')
@@ -88,9 +88,9 @@
 &lt;? elseif exists("warranty") ?>
                 itemloc_warrpurc AS itemloc_expiration,
 &lt;? endif ?>
-                &lt;? if exists("useActualCosts") ?>
+                &lt;? if exists("useActualCost") ?>
                   actcost(itemsite_item_id)
-                &lt;? elseif exists("useStandardCosts") ?>
+                &lt;? elseif exists("useStandardCost") ?>
                   stdcost(itemsite_item_id)
                 &lt;? else ?>
                   (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)
