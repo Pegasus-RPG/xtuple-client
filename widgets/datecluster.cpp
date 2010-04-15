@@ -531,6 +531,16 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   setFocusProxy(&_lineedit);
 }
 
+/*!
+  Sets the date on the cluster to \a p where \a b flags whether to emit the newDate signal.
+  Specifically designed to work in a scripted environment where java script dates are passed
+  as a QVariant.
+*/
+void DLineEdit::setDate(const QVariant &p, bool b)
+{
+  _lineedit.setDate(p.toDate(), b);
+}
+
 void DLineEdit::setEnabled(const bool p)
 {
   QWidget::setEnabled(p);
@@ -597,6 +607,24 @@ DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
   //setTabOrder(_startDate, _endDate);
   //setTabOrder(_endDate, _startDate);
   setFocusProxy(_startDate);
+}
+
+/*!
+  Sets the start date on the cluster to \a pDate.  Specifically designed to work
+  in a scripted environment where java script dates are passed as a QVariant.
+*/
+void DateCluster::setStartDate(const QVariant &pDate)
+{
+  _startDate->setDate(pDate.toDate());
+}
+
+/*!
+  Sets the end date on the cluster to \a pDate.  Specifically designed to work
+  in a scripted environment where java script dates are passed as a QVariant.
+*/
+void DateCluster::setEndDate(const QVariant &pDate)
+{
+  _endDate->setDate(pDate.toDate());
 }
 
 void DateCluster::setStartNull(const QString &pString, const QDate &pDate, bool pSetNull)
