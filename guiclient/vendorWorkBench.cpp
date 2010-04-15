@@ -311,9 +311,8 @@ void vendorWorkBench::sPopulate()
     return;
   }
 
-  MetaSQLQuery balm("SELECT (apopen_amount-apopen_paid) / apopen_curr_rate * "
-                    "  CASE WHEN (apopen_doctype IN ('D','V')) THEN 1 "
-                    "  ELSE -1 END AS balance "
+  MetaSQLQuery balm("SELECT COALESCE(SUM((apopen_amount-apopen_paid) / apopen_curr_rate * "
+                    "  CASE WHEN (apopen_doctype IN ('D','V')) THEN 1 ELSE -1 END), 0.0) AS balance "
                     "FROM apopen "
                     "WHERE ((apopen_open)"
                     "   AND (apopen_vend_id=<? value(\"vend_id\") ?>));");
