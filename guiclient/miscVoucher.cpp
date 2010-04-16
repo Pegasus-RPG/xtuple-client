@@ -59,6 +59,10 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("vend_id", &valid);
+  if (valid)
+    _vendor->setId(param.toInt());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {

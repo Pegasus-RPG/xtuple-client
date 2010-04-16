@@ -121,6 +121,8 @@ void openVouchers::sNewMisc()
 {
   ParameterList params;
   params.append("mode", "new");
+  if (_vendorgroup->isSelectedVend())
+    params.append("vend_id", _vendorgroup->vendId());
 
   miscVoucher *newdlg = new miscVoucher();
   newdlg->set(params);
