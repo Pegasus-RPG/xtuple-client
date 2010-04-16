@@ -67,6 +67,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
     {
       setWindowTitle(caption() + tr(" - Enter Misc. Credit Memo"));
       _docType->setCurrentIndex(0);
+      _status->setEnabled(false);
     }
     else if (param.toString() == "debitMemo")
     {
