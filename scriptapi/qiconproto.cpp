@@ -9,8 +9,12 @@
  */
 
 #include "qiconproto.h"
+#include "xsqlquery.h"
+
+#include <quuencode.h>
 
 #include <QIcon>
+#include <QImage>
 
 void setupQIconProto(QScriptEngine *engine)
 {
@@ -45,5 +49,28 @@ bool QIconProto::isNull() const
   if (item)
     return item->isNull();
   return true;
+}
+
+/*!
+  Adds image \a name from the xTuple databes to the icon.
+*/
+void QIconProto::addDbImage(const QString& name)
+{
+  QIcon *item = qscriptvalue_cast<QIcon*>(thisObject());
+  if (item)
+  {
+    QImage img;
+    XSqlQuery image;
+    image.prepare( "SELECT image_data "
+                   "FROM image "
+                   "WHERE (image_name=:name);" );
+    image.bindValue(":name", name);
+    image.exec();
+    if (image.first())
+    {
+      img.loadFromData(QUUDecode(image.value("image_data").toString()));
+      item->addPixmap(QPixmap::fromImage(img));
+    }
+  }
 }
 

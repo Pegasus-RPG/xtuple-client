@@ -29,6 +29,7 @@ class QIconProto : public QObject, public QScriptable
     QIconProto(QObject *parent);
 
     Q_INVOKABLE bool isNull() const;
+    Q_INVOKABLE void addDbImage(const QString&);
     // TODO: add in all the other functions this class supports
 };
 
