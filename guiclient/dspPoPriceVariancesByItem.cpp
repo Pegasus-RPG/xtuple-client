@@ -110,7 +110,7 @@ void dspPoPriceVariancesByItem::sFillList()
                "       firstLine(porecv_vend_item_descrip) AS venditemdescrip,"
                "       porecv_qty, porecv_purchcost, porecv_recvcost,"
                "       currToCurr(vohead_curr_id, porecv_curr_id, SUM(vodist_amount) / vodist_qty, vohead_docdate) AS vouchercost,"
-               "       currConcat(vohead_curr_id) AS currAbbr,"
+               "       currConcat(COALESCE(vohead_curr_id, porecv_curr_id)) AS currAbbr,"
                "       'qty' AS porecv_qty_xtnumericrole,"
                "       'purchprice' AS porecv_purchcost_xtnumericrole,"
                "       'purchprice' AS vouchercost_xtnumericrole,"
