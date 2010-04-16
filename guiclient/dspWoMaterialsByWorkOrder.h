@@ -25,7 +25,7 @@ public:
     dspWoMaterialsByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoMaterialsByWorkOrder();
 
-    virtual bool checkParameters();
+    virtual void setParams(ParameterList&);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
@@ -36,6 +36,9 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+
+private:
+    bool _manufacturing;
 
 };
 

@@ -11,9 +11,12 @@
 #include "dspWoMaterialsByItem.h"
 
 #include <QVariant>
-//#include <QStatusBar>
+#include <QSqlError>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+#include "mqlutil.h"
 #include "inputManager.h"
 
 /*
@@ -38,9 +41,19 @@ dspWoMaterialsByItem::dspWoMaterialsByItem(QWidget* parent, const char* name, Qt
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
+  _manufacturing = false;
+  if (_metrics->value("Application") == "Standard")
+  {
+    XSqlQuery xtmfg;
+    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    if (xtmfg.first())
+      _manufacturing = true;
+  }
+
   _womatl->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft,   true,  "wonumber"   );
   _womatl->addColumn(tr("Parent Item #"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _womatl->addColumn(tr("Oper. #"),       _dateColumn,  Qt::AlignCenter, true,  "wooperseq" );
+  if (_manufacturing)
+    _womatl->addColumn(tr("Oper. #"),       _dateColumn,  Qt::AlignCenter, true,  "wooperseq" );
   _womatl->addColumn(tr("Iss. Meth."),    _dateColumn,  Qt::AlignCenter, true,  "issuemethod" );
   _womatl->addColumn(tr("Iss. UOM"),      _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
   _womatl->addColumn(tr("Fxd. Qty."),     _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyfxd"  );
@@ -70,12 +83,26 @@ void dspWoMaterialsByItem::languageChange()
   retranslateUi(this);
 }
 
-void dspWoMaterialsByItem::sPrint()
+void dspWoMaterialsByItem::setParams(ParameterList & params)
 {
-  ParameterList params;
-
   params.append("item_id", _item->id());
   _warehouse->appendValue(params);
+  params.append("push", tr("Push"));
+  params.append("pull", tr("Pull"));
+  params.append("mixed", tr("Mixed"));
+  params.append("error", tr("Error"));
+  if (_manufacturing)
+      params.append("Manufacturing");
+}
+
+void dspWoMaterialsByItem::sPrint()
+{
+  if (!_item->isValid())
+    return;
+    
+  ParameterList params;
+  setParams(params);
+  params.append("includeFormatted");
 
   orReport report("WOMaterialRequirementsByComponentItem", params);
   if (report.isValid())
@@ -86,62 +113,19 @@ void dspWoMaterialsByItem::sPrint()
 
 void dspWoMaterialsByItem::sFillList()
 {
-  if (!checkParameters())
+  if (!_item->isValid())
     return;
+    
+  MetaSQLQuery mql = mqlLoad("workOrderMaterial", "detail");
+  ParameterList params;
+  setParams(params);
 
-  _womatl->clear();
-
-  QString sql( "SELECT womatl.*,"
-               "       formatWONumber(wo_id) AS wonumber,"
-               "       item_number,"
-               "       formatwooperseq(womatl_wooper_id) AS wooperseq, "
-               "       CASE WHEN (womatl_issuemethod = 'S') THEN :push"
-               "            WHEN (womatl_issuemethod = 'L') THEN :pull"
-               "            WHEN (womatl_issuemethod = 'M') THEN :mixed"
-               "            ELSE :error"
-               "       END AS issuemethod,"
-               "       uom_name,"
-               "       noNeg(womatl_qtyreq - womatl_qtyiss) AS balance,"
-               "       CASE WHEN (womatl_duedate <= CURRENT_DATE) THEN 'error' END AS womatl_duedate_qtforegroundrole,"
-               "       'qty' AS womatl_qtyfxd_xtnumericrole,"
-               "       'qtyper' AS womatl_qtyper_xtnumericrole,"
-               "       'percent' AS womatl_scrap_xtnumericrole,"
-               "       'qty' AS womatl_qtyreq_xtnumericrole,"
-               "       'qty' AS womatl_qtyiss_xtnumericrole,"
-               "       'qty' AS womatl_qtywipscrap_xtnumericrole,"
-               "       'qty' AS balance_xtnumericrole,"
-               "       0 AS womatl_qtyreq_xttotalrole,"
-               "       0 AS womatl_qtyiss_xttotalrole,"
-               "       0 AS womatl_qtywipscrap_xttotalrole,"
-               "       0 AS balance_xttotalrole "
-               "FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item, uom "
-               "WHERE ((womatl_wo_id=wo_id)"
-               " AND (womatl_uom_id=uom_id)"
-               " AND (wo_status <> 'C')"
-               " AND (wo_itemsite_id=parentsite.itemsite_id)"
-               " AND (womatl_itemsite_id=componentsite.itemsite_id)"
-               " AND (parentsite.itemsite_item_id=item_id)"
-               " AND (componentsite.itemsite_item_id=:item_id)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (componentsite.itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY wo_startdate, item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.bindValue(":push", tr("Push"));
-  q.bindValue(":pull", tr("Pull"));
-  q.bindValue(":mixed", tr("Mixed"));
-  q.bindValue(":error", tr("Error"));
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  q = mql.toQuery(params);
   _womatl->populate(q);
-}
-
-bool dspWoMaterialsByItem::checkParameters()
-{
-  return TRUE;
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 

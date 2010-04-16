@@ -23,30 +23,10 @@
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_id=&lt;? value("wo_id") ?>) );</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT womatl_id, item_number,
-       item_descrip1, item_descrip2,
-       CASE WHEN (womatl_issuemethod = 'S') THEN 'Push'
-            WHEN (womatl_issuemethod = 'L') THEN 'Pull'
-            WHEN (womatl_issuemethod = 'M') THEN 'Mixed'
-            ELSE 'Error'
-       END AS issuemethod,
-       uom_name,
-       formatQty(womatl_qtyfxd) AS qtyfxd,
-       formatQtyper(womatl_qtyper) AS qtyper,
-       formatScrap(womatl_scrap) AS scrappercent,
-       formatQty(womatl_qtyreq) AS required,
-       formatQty(womatl_qtyiss) AS issued,
-       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balance,
-       formatDate(womatl_duedate) AS duedate
-FROM wo, womatl, itemsite, item, uom
-WHERE ((womatl_wo_id=wo_id)
- AND (womatl_uom_id=uom_id)
- AND (womatl_itemsite_id=itemsite_id)
- AND (itemsite_item_id=item_id)
- AND (wo_id=&lt;? value("wo_id") ?>) )
-ORDER BY item_number;</sql>
+  <mqlgroup>workOrderMaterial</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>236</height>
@@ -628,7 +608,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>required</column>
+     <column>f_qtyreq</column>
     </data>
    </field>
    <field>
@@ -666,7 +646,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>scrappercent</column>
+     <column>f_scrap</column>
     </data>
    </field>
    <field>
@@ -685,7 +665,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>issued</column>
+     <column>f_qtyiss</column>
     </data>
    </field>
    <line>
@@ -730,7 +710,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>duedate</column>
+     <column>f_duedate</column>
     </data>
    </field>
    <field>
@@ -749,7 +729,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>balance</column>
+     <column>f_balance</column>
     </data>
    </field>
    <field>
@@ -787,7 +767,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>f_qtyper</column>
     </data>
    </field>
    <field>
@@ -806,7 +786,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyfxd</column>
+     <column>f_qtyfxd</column>
     </data>
    </field>
   </detail>

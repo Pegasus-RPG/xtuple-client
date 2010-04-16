@@ -24,36 +24,10 @@
  WHERE (item_id=&lt;? value("item_id") ?>);
 </sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT formatWONumber(wo_id) AS wonumber,
-               item_number, item_descrip1, item_descrip2,
-               CASE WHEN (womatl_issuemethod='S') THEN 'Push'
-                         WHEN (womatl_issuemethod='L') THEN 'Pull'
-                         WHEN (womatl_issuemethod='M') THEN 'Mixed'
-                         ELSE 'Error'
-                END AS issuemethod,
-                uom_name,
-                formatQty(womatl_qtyfxd) AS qtyfxd,
-                formatQty(womatl_qtyper) AS qtyper,
-                formatScrap(womatl_scrap) AS scrappercent,
-                formatQty(womatl_qtyreq) AS required,
-                formatQty(womatl_qtyiss) AS issued,
-                formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balance,
-                formatDate(womatl_duedate) AS duedate
-    FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item, uom
-WHERE ((womatl_wo_id=wo_id)
-       AND (womatl_uom_id=uom_id)
-       AND (wo_status &lt;> 'C')
-       AND (wo_itemsite_id=parentsite.itemsite_id)
-       AND (womatl_itemsite_id=componentsite.itemsite_id)
-       AND (parentsite.itemsite_item_id=item_id)
-       AND (componentsite.itemsite_item_id=&lt;? value("item_id") ?>)
-&lt;? if exists("warehous_id") ?>
-       AND (componentsite.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
- )
-ORDER BY wo_startdate;</sql>
+  <mqlgroup>workOrderMaterial</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>total</name>
@@ -642,7 +616,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>balance</column>
+     <column>f_balance</column>
     </data>
    </field>
    <field>
@@ -680,7 +654,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>issued</column>
+     <column>f_qtyiss</column>
     </data>
    </field>
    <field>
@@ -699,7 +673,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>duedate</column>
+     <column>f_duedate</column>
     </data>
    </field>
    <field>
@@ -737,7 +711,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>scrappercent</column>
+     <column>f_scrap</column>
     </data>
    </field>
    <field>
@@ -775,7 +749,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>required</column>
+     <column>f_qtyreq</column>
     </data>
    </field>
    <field>
@@ -794,7 +768,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>f_qtyper</column>
     </data>
    </field>
    <field>
@@ -813,7 +787,7 @@ WHERE ((womatl_wo_id=wo_id)
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyfxd</column>
+     <column>f_qtyfxd</column>
     </data>
    </field>
   </detail>

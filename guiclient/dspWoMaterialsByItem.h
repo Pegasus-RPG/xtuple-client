@@ -24,7 +24,7 @@ public:
     dspWoMaterialsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoMaterialsByItem();
 
-    virtual bool checkParameters();
+    virtual void setParams(ParameterList&);
 
 public slots:
     virtual void sPrint();
@@ -32,6 +32,9 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+
+private:
+    bool _manufacturing;
 
 };
 
