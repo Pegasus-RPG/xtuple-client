@@ -676,9 +676,7 @@ void GUIClient::initMenuBar()
     _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     systemMenu = new menuSystem(this);
-  
-    restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
-  
+
     toolbars = qFindChildren<QToolBar *>(this);
     for (int i = 0; i < toolbars.size(); ++i)
     {
@@ -789,6 +787,11 @@ void GUIClient::showEvent(QShowEvent *event)
       }
     // END script code
   }
+
+  // Put toolbars and dock widgets back in previous positions
+  restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
+
+
   QMainWindow::showEvent(event);
 }
 
@@ -1605,39 +1608,6 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
-}
-
-/*!
-    Saves the current state of this mainwindow's toolbars and
-    dockwidgets. The \a version number is stored as part of the data.
-
-    The \link QObject::objectName objectName\endlink property is used
-    to identify each QToolBar and QDockWidget.  You should make sure
-    that this property is unique for each QToolBar and QDockWidget you
-    add to this mainwindow.
-
-    To restore the saved state, pass the return value and \a version
-    number to restoreState().
-
-    \sa restoreState()
-*/
-QVariant GUIClient::saveState(int version)
-{
-  return QVariant(QMainWindow::saveState(version));
-}
-
-/*!
-    Restores the \a state of this mainwindow's toolbars and
-    dockwidgets. The \a version number is compared with that stored
-    in \a state. If they do not match, the mainwindow's state is left
-    unchanged, and this function returns \c false; otherwise, the state
-    is restored, and this function returns \c true.
-
-    \sa saveState()
-*/
-bool GUIClient::restoreState( const QVariant & state, int version )
-{
-  return QMainWindow::restoreState( state.toByteArray(), version);
 }
 
 void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
