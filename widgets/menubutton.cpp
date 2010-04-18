@@ -108,7 +108,18 @@ void MenuButton::setAction(QString name)
     return;
 
   if (_guiClientInterface)
-    setAction(_guiClientInterface->findAction(name));
+  {
+    QAction *action = _guiClientInterface->findAction(name);
+    if (!action)
+    {
+      // Create one so property can be saved.  Maybe gui client
+      // action name provided will be valid in another instance.
+      action = new QAction(this);
+      action->setObjectName(name);
+      action->setEnabled(false);
+    }
+    setAction(action);
+  }
 }
 
 void MenuButton::setImage(QString image)
