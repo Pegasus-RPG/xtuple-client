@@ -44,7 +44,7 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,   true,  "type"   );
-  _orders->addColumn(tr("Order #"),     _itemColumn,  Qt::AlignLeft,   true,  "ordernumber"   );
+  _orders->addColumn(tr("Order #"),     -1,           Qt::AlignLeft,   true,  "ordernumber"   );
   _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter, true,  "status" );
   _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
   
