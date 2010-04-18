@@ -421,7 +421,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Budget
     { "menu", tr("Bu&dget"), (char*)budgetMenu, mainMenu,	"true",	NULL, NULL, true, NULL },
     { "gl.maintainBudget",	tr("&New Budget..."),	SLOT(sMaintainBudget()), budgetMenu,	"MaintainBudgets",	NULL, NULL, true, NULL },
-    { "gl.maintainBudget",	tr("&List Budgets..."),	SLOT(sBudgets()),	 budgetMenu,	"MaintainBudgets ViewBudgets",	NULL, NULL, true, NULL },
+    { "gl.maintainBudgets",	tr("&List Budgets..."),	SLOT(sBudgets()),	 budgetMenu,	"MaintainBudgets ViewBudgets",	NULL, NULL, true, NULL },
 
     // Accounting | Tax
     { "menu", tr("&Tax"), (char*)taxMenu, mainMenu,	"true",	NULL, NULL, true, NULL },
