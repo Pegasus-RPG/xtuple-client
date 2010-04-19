@@ -51,6 +51,8 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "planord_firm");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
+  if (!_metrics->boolean("MultiWhs"))
+    _transfer->hide();
 }
 
 dspPlannedOrdersByPlannerCode::~dspPlannedOrdersByPlannerCode()
@@ -65,6 +67,16 @@ void dspPlannedOrdersByPlannerCode::languageChange()
 
 bool dspPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
 {
+  QStringList typeList;
+  if (_purchase->isChecked())
+    typeList.append("P");
+  if (_manufacture->isChecked())
+    typeList.append("W");
+  if (_transfer->isChecked())
+    typeList.append("T");
+  if (!typeList.count())
+    return false;
+  pParams.append("type_list", typeList);
   _warehouse->appendValue(pParams);
   _plannerCode->appendValue(pParams);
 
