@@ -442,6 +442,17 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   setWindowTitle();
 
+  // load plugins before building the menus
+  // TODO? add a step later to add to the menus from the plugins?
+  QDir pluginsDir(QApplication::applicationDirPath());
+  while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
+    ;
+  if (pluginsDir.cd("plugins"))
+  {
+    foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+      new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+  }
+
 //  Populate the menu bar
 #ifdef Q_WS_MACX
 //  qt_mac_set_native_menubar(false);

@@ -6,11 +6,10 @@ TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
                ../common \
+               ../$${CSVIMP_DIR}/csvimpcommon \
                ../widgets ../widgets/tmp/lib .
 
-DEPENDPATH  += ../scriptapi \
-               ../common \
-               ../widgets ../widgets/tmp/lib
+DEPENDPATH  += $${INCLUDEPATH}
 
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \

@@ -17,6 +17,7 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QPluginLoader>
 #include <QWorkspace>
 
 #include "xtsettings.h"
@@ -25,6 +26,7 @@
 #include <parameter.h>
 #include <openreports.h>
 #include <../common/batchManager.h>
+#include <csvimpplugininterface.h>
 
 #include "version.h"
 
@@ -87,6 +89,25 @@
 
 extern QString __path;
 
+bool menuSystem::loadCSVPlugin()
+{
+  if (_csvimpInterface)
+    return true;
+
+  foreach (QPluginLoader *loader, parent->findChildren<QPluginLoader*>())
+  {
+    QObject *plugin = loader->instance();
+    if (plugin)
+    {
+      _csvimpInterface = qobject_cast<CSVImpPluginInterface*>(plugin);
+      if (_csvimpInterface)
+        return true;
+    }
+  }
+
+  return false;
+}
+
 menuSystem::menuSystem(GUIClient *Pparent) :
  QObject(Pparent)
 {
@@ -103,8 +124,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   errorLogListener::initialize();
 
   cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
-  _lastActive = 0;
-  geometryMenu = 0;
+  _csvimpInterface = 0;
+  _lastActive      = 0;
+  geometryMenu     = 0;
 
   systemMenu		= new QMenu(parent);
   configModulesMenu	= new QMenu(parent);
@@ -226,6 +248,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL+#superuser",           NULL, NULL, true },
     { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
     { "sys.importXML",     tr("&Import XML"),      SLOT(sImportXML()),  sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
+    { "sys.importCSV",     tr("Import &CSV"),      SLOT(sImportCSV()),  sysUtilsMenu,  "ImportXML",       NULL, NULL, loadCSVPlugin() },
     { "sys.exportData",    tr("&Export Data"),     SLOT(sExportData()), sysUtilsMenu,  "ExportXML",       NULL, NULL, true },
 
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
@@ -742,6 +765,20 @@ void menuSystem::sFixSerial()
 void menuSystem::sExportData()
 {
   omfgThis->handleNewWindow(new exportData());
+}
+
+void menuSystem::sImportCSV()
+{
+  QWidget *csvtoolwind = _csvimpInterface->getCSVToolWindow(omfgThis, 0);
+#if defined Q_WS_MACX
+  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirMac"));
+#elif defined Q_WS_WIN
+  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirWindows"));
+#elif defined Q_WS_X11
+  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirLinux"));
+#endif
+
+  omfgThis->handleNewWindow(csvtoolwind);
 }
 
 void menuSystem::sImportXML()
