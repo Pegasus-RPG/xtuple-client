@@ -12,6 +12,34 @@ OLDDIR=
 NEWDIR=
 TMPDIR="${TMPDIR:-/tmp}/${PROG}_`date +%Y_%m_%d`"
 RUNEXTRACT=true	#undocumented feature
+XSLT=xsltproc
+
+XSLTFILE=$TMPDIR/rptdiff.xslt
+cat > $XSLTFILE <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
+  <xsl:output indent="yes" method="text" />
+
+  <xsl:template match="text()"/>
+
+  <xsl:template match="report/name">
+====================================================================
+REPORT: <xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="report/querysource">
+QUERY: <xsl:value-of select="name"/><xsl:text>
+</xsl:text>
+    <xsl:value-of select="sql"     />
+    <xsl:if test="mqlgroup">== MetaSQL statement </xsl:if>
+    <xsl:value-of select="mqlgroup"/>
+    <xsl:if test="mqlname">-</xsl:if>
+    <xsl:value-of select="mqlname" />
+--------------------------------------------------------------------
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
 
 usage () {
   echo "$PROG -h"
@@ -115,34 +143,14 @@ for DIR in $OLDDIR $NEWDIR ; do
     OUTPUTFILE=$DESTDIR/`basename $INPUTFILE`
     echo processing $INPUTFILE > /dev/stderr
 
-    while ! Xalan "${INPUTFILE}" - > "${OUTPUTFILE}" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
-  <xsl:output indent="yes" method="text" />
-
-  <xsl:template match="text()"/>
-
-  <xsl:template match="report/name">
-====================================================================
-REPORT: <xsl:value-of select="."/>
-  </xsl:template>
-
-  <xsl:template match="report/querysource/name">
-QUERY: <xsl:value-of select="."/><xsl:text>
-</xsl:text>
-  </xsl:template>
-
-  <xsl:template match="report/querysource/sql">
-<xsl:value-of select="."/>
---------------------------------------------------------------------
-  </xsl:template>
-
-</xsl:stylesheet>
-EOF
-    do
-      sleep 5
-      echo retrying $INPUTFILE
-    done
+    if [ "$XSLT" = Xalan ] ; then
+      "$XSLT" "$INPUTFILE" "$XSLTFILE" > "$OUTPUTFILE"
+    elif [ "$XSLT" = xsltproc ] ; then
+      "$XSLT" "$XSLTFILE" "$INPUTFILE" > "$OUTPUTFILE"
+    else
+      Cannot find XSLT Processor "$XSLT"
+      exit 2
+    fi
 
   done
 done
