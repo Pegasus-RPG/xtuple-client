@@ -15,6 +15,7 @@
 #include <QTreeWidgetItem>
 #include <QVariant>
 #include <QVector>
+#include <QTimer>
 
 #include "widgets.h"
 
@@ -162,6 +163,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetI
 Q_DECLARE_METATYPE(XTreeWidgetItem*)
 //Q_DECLARE_METATYPE(XTreeWidgetItem)
 
+class XTreeWidgetPopulateParams;
+
 class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 {
   Q_OBJECT
@@ -287,6 +290,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void sItemEntered(QTreeWidgetItem *item, int column);
     void sItemExpanded(QTreeWidgetItem *item);
     void sItemPressed(QTreeWidgetItem *item, int column);
+    void populateWorker();
 
   protected:
     QPoint dragStartPosition;
@@ -315,6 +319,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     int         _scol;
     Qt::SortOrder _sord;
     static void loadLocale();
+    bool      _working;
+    QList<XTreeWidgetPopulateParams> _workingParams;
+    bool _deleted;
+    QTimer _workingTimer;
 
   private slots:
     void sSelectionChanged();
@@ -329,6 +337,16 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void sToggleForgetfulnessOrder();
     void popupMenuActionTriggered(QAction*);
 };
+
+class XTreeWidgetPopulateParams
+{
+  public:
+    XSqlQuery _workingQuery;
+    int       _workingIndex;
+    bool      _workingUseAlt;
+    XTreeWidget::PopulateStyle _workingPopstyle;
+};
+
 
 #endif
 

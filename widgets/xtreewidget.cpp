@@ -36,6 +36,7 @@
 #include <QTextTableCell>
 #include <QTextTableFormat>
 #include <QtScript>
+#include <QMessageBox>
 
 #include "xtsettings.h"
 #include "xsqlquery.h"
@@ -105,6 +106,10 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _savedId = false; // was -1;
   _scol = -1;
   _sord = Qt::AscendingOrder;
+  _working = false;
+  _deleted = false;
+  _workingTimer.setInterval(1);
+  _workingTimer.setSingleShot(true);
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -122,6 +127,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), SLOT(sCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
   connect(this, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(sItemChanged(QTreeWidgetItem*, int)));
   connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)), SLOT(sItemClicked(QTreeWidgetItem*, int)));
+  connect(&_workingTimer, SIGNAL(timeout()), this, SLOT(populateWorker()));
 
   emit valid(FALSE);
   setColumnCount(0);
@@ -137,6 +143,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 
 XTreeWidget::~XTreeWidget()
 {
+  _deleted = true;
   if(_x_preferences)
   {
     xtsettingsSetValue(_settingsName + "/isForgetful", _forgetful);
@@ -204,6 +211,38 @@ void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId, PopulateStyle popst
 
 void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, PopulateStyle popstyle)
 {
+  XTreeWidgetPopulateParams args;
+  args._workingQuery = pQuery;
+  args._workingIndex = pIndex;
+  args._workingUseAlt = pUseAltId;
+  args._workingPopstyle = popstyle;
+  if(popstyle == Replace)
+    _workingParams.clear();
+  _workingParams.append(args);
+
+  if(!_working)
+    _workingTimer.start();
+}
+
+void XTreeWidget::populateWorker()
+{
+  if(_working)
+  {
+    QMessageBox::critical(this, tr("Populate on XTreeWidget Multiple Times"), tr("The Populate function on XTreeWidget was called multiple times. This should not happen and could cause problems. Additional calls will be ignored while original query is still being processed.") );
+    return;
+  }
+  if(_workingParams.isEmpty())
+  {
+    qDebug("populateWorker called when no arguments where given.");
+    return;
+  }
+  _working = true;
+  XTreeWidgetPopulateParams args = _workingParams.takeFirst();
+  XSqlQuery pQuery = args._workingQuery;
+  int pIndex = args._workingIndex;
+  bool pUseAltId = args._workingUseAlt;
+  PopulateStyle popstyle = args._workingPopstyle;
+
   qApp->setOverrideCursor(Qt::waitCursor);
 
   if (pIndex < 0)
@@ -319,9 +358,20 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
           setIndentation(0);
 
         int defaultScale = decimalPlaces("");
-
+        int cnt = 0;
 	do
 	{
+          ++cnt;
+          if(cnt % 100 == 0)
+          {
+            qApp->processEvents();
+            if(_deleted)
+            {
+              qApp->restoreOverrideCursor();
+              return;
+            }
+          }
+
           int id = pQuery.value(0).toInt();
           int altId = (pUseAltId) ? pQuery.value(1).toInt() : -1;
           int indent = 0;
@@ -596,7 +646,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
   else
     emit valid(FALSE);
 
+  _working = false;
   qApp->restoreOverrideCursor();
+
+  if(!_workingParams.isEmpty())
+    _workingTimer.start();
 
   emit populated();
 }
