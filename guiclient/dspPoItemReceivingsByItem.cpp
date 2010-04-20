@@ -50,6 +50,7 @@ dspPoItemReceivingsByItem::dspPoItemReceivingsByItem(QWidget* parent, const char
   {
     _porecv->addColumn(tr("Purch. Cost"), _priceColumn,  Qt::AlignRight,true,"purchcost");
     _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight,true,"recvcost");
+    _porecv->addColumn(tr("Inv. Value"),  _priceColumn,  Qt::AlignRight,true,"value");
   }
 
   sHandleVariance(_showVariances->isChecked());
@@ -120,11 +121,13 @@ void dspPoItemReceivingsByItem::sHandleVariance(bool pShowVariances)
   {
     _porecv->showColumn(8);
     _porecv->showColumn(9);
+    _porecv->showColumn(10);
   }
   else
   {
     _porecv->hideColumn(8);
     _porecv->hideColumn(9);
+    _porecv->hideColumn(10);
   }
 }
 

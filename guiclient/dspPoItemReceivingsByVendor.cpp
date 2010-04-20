@@ -48,8 +48,8 @@ dspPoItemReceivingsByVendor::dspPoItemReceivingsByVendor(QWidget* parent, const 
   if (_privileges->check("ViewCosts"))
   {
     _porecv->addColumn(tr("Purch. Cost"),_priceColumn, Qt::AlignRight,true, "purchcost");
-    _porecv->addColumn(tr("Recv. Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
-    _porecv->addColumn(tr("Value"),      _priceColumn, Qt::AlignRight,true, "value");
+    _porecv->addColumn(tr("Invcd. Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
+    _porecv->addColumn(tr("Inv. Value"),  _priceColumn, Qt::AlignRight,true, "value");
   }
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
