@@ -87,22 +87,10 @@ void dspPoPriceVariancesByItem::languageChange()
 
 void dspPoPriceVariancesByItem::sPrint()
 {
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Enter Valid Dates"),
-                          tr( "Please enter a valid Start and End Date." ) );
-    _dates->setFocus();
-    return;
-  }
-
   ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-
-  params.append("item_id", _item->id());
-
-  if (_selectedPurchasingAgent->isChecked())
-    params.append("agentUsername", _agent->currentText());
+  params.append("includeFormatted");
+  if (! setParams(params))
+    return;
 
   orReport report("PurchasePriceVariancesByItem", params);
   if (report.isValid())

@@ -13,53 +13,27 @@
   <name>head</name>
   <sql>SELECT item_number, item_descrip1,
        item_descrip2, uom_name,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+       formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
+       formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
+       &lt;? if exists("warehous_id") ?>
+         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;agentUsername&quot;) ?>
-       TEXT(&lt;? value(&quot;agentUsername&quot; ?>)
+       &lt;? if exists("agentUsername") ?>
+       TEXT(&lt;? value("agentUsername" ?>)
        &lt;? else ?>
        TEXT('All Agents')
        &lt;? endif ?>
        AS agentUsername
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
+ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT porecv_id, porecv_ponumber, vend_name,
-       formatDate(porecv_date) as f_date,
-       firstLine(porecv_vend_item_number) as f_itemnum,
-       firstLine(porecv_vend_item_descrip) as f_itemdescrip,
-       formatQty(porecv_qty) as f_qty,
-       formatPrice(porecv_purchcost) as f_purchcost,
-       formatPurchPrice(SUM(vodist_amount) / vodist_qty) AS f_vouchcost,
-       formatPrice(porecv_recvcost) as f_recvcost 
-  FROM vend, itemsite, porecv
-       LEFT OUTER JOIN
-       ( vodist JOIN vohead
-         ON (vodist_vohead_id=vohead_id and vohead_posted)
-       ) ON ( (vodist_poitem_id=porecv_poitem_id) AND (vodist_vohead_id=porecv_vohead_id) )
- WHERE ( (porecv_vend_id=vend_id)
-   AND (porecv_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-   AND (date(porecv_date) BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-&lt;? endif ?>
-&lt;? if exists(&quot;agentUsername&quot;) ?>
-   AND (porecv_agent_username=&lt;? value(&quot;agentUsername&quot;) ?>)
-&lt;? endif ?>
- )
-GROUP BY porecv_id, porecv_ponumber, vend_name, porecv_date, porecv_vend_item_number,
-         porecv_vend_item_descrip, porecv_qty, porecv_purchcost, porecv_recvcost,
-         vodist_qty
-ORDER BY porecv_date DESC;</sql>
+  <mqlgroup>poPriceVariances</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>236</height>
@@ -246,7 +220,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Purchase Cost</string>
+   <string>Received</string>
   </label>
   <field>
    <rect>
@@ -335,7 +309,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Date</string>
+   <string>Dist. Date</string>
   </label>
   <label>
    <rect>
@@ -351,7 +325,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Vouchered Cost</string>
+   <string>Variance</string>
   </label>
   <label>
    <rect>
@@ -418,7 +392,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Std. Cost at Rcpt.</string>
+   <string>%</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -478,6 +452,22 @@ ORDER BY porecv_date DESC;</sql>
    <vcenter/>
    <string>End Date:</string>
   </label>
+  <label>
+   <rect>
+    <x>568</x>
+    <y>215</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Vouchered</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -499,7 +489,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Std. Cost at Rcpt.</string>
+   <string>%</string>
   </label>
   <label>
    <rect>
@@ -547,7 +537,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Vouchered Cost</string>
+   <string>Variance</string>
   </label>
   <label>
    <rect>
@@ -563,7 +553,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Purchase Cost</string>
+   <string>Received</string>
   </label>
   <label>
    <rect>
@@ -595,7 +585,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Date</string>
+   <string>Dist Date</string>
   </label>
   <label>
    <rect>
@@ -636,6 +626,22 @@ ORDER BY porecv_date DESC;</sql>
    <yend>35</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>568</x>
+    <y>19.5</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Vouchered</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -679,7 +685,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_recvcost</column>
+     <column>f_varprcnt</column>
     </data>
    </field>
    <field>
@@ -698,7 +704,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_vouchcost</column>
+     <column>f_variance</column>
     </data>
    </field>
    <field>
@@ -743,7 +749,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_purchcost</column>
+     <column>f_porecv_value</column>
     </data>
    </field>
    <field>
@@ -781,7 +787,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_itemnum</column>
+     <column>itemnumber</column>
     </data>
    </field>
    <field>
@@ -800,7 +806,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_itemdescrip</column>
+     <column>itemdescrip</column>
     </data>
    </field>
    <field>
@@ -820,6 +826,25 @@ ORDER BY porecv_date DESC;</sql>
     <data>
      <query>detail</query>
      <column>f_qty</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>575</x>
+     <y>15</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_voucher_value</column>
     </data>
    </field>
   </detail>

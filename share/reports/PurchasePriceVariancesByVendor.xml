@@ -326,7 +326,7 @@
   </line>
   <label>
    <rect>
-    <x>68.454</x>
+    <x>68.5</x>
     <y>200</y>
     <width>112</width>
     <height>15</height>
@@ -338,23 +338,7 @@
    </font>
    <left/>
    <vcenter/>
-   <string>Vendor Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>68.454</x>
-    <y>215</y>
-    <width>112</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Vendor Name</string>
+   <string>Vendor</string>
   </label>
   <label>
    <rect>
@@ -591,8 +575,8 @@
    </field>
    <field>
     <rect>
-     <x>6.49207</x>
-     <y>5.68434e-14</y>
+     <x>6.49</x>
+     <y>-1.88608e-20</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -656,7 +640,7 @@
    <field>
     <rect>
      <x>575</x>
-     <y>14.9</y>
+     <y>15</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -731,27 +715,8 @@
    </field>
    <field>
     <rect>
-     <x>69.2</x>
-     <y>-0.442</y>
-     <width>143</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>vend_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>69.9</x>
-     <y>14.5</y>
+     <y>0</y>
      <width>143</width>
      <height>15</height>
     </rect>
