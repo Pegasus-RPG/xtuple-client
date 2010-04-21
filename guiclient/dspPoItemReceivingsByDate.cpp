@@ -42,9 +42,9 @@ dspPoItemReceivingsByDate::dspPoItemReceivingsByDate(QWidget* parent, const char
   _porecv->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight, true, "qty");
   if (_privileges->check("ViewCosts"))
   {
-    _porecv->addColumn(tr("Purch. Cost"), _priceColumn, Qt::AlignRight,true,"purchcost");
-    _porecv->addColumn(tr("Invcd. Cost"), _priceColumn, Qt::AlignRight,true,"recvcost");
-    _porecv->addColumn(tr("Inv. Value"),  _priceColumn, Qt::AlignRight,true,"value");
+    _porecv->addColumn(tr("Purch. Cost"),_priceColumn, Qt::AlignRight,true, "purchcost");
+    _porecv->addColumn(tr("Vouchered Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
+    _porecv->addColumn(tr("Receipt Value"),  _priceColumn, Qt::AlignRight,true, "value");
   }
 
   _showVariances->setEnabled(_privileges->check("ViewCosts"));

@@ -11,10 +11,13 @@
 #include "dspPoPriceVariancesByItem.h"
 
 #include <QVariant>
-//#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+
 #include <parameter.h>
 #include <openreports.h>
+
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspPoPriceVariancesByItem as a child of 'parent', with the
@@ -44,19 +47,25 @@ dspPoPriceVariancesByItem::dspPoPriceVariancesByItem(QWidget* parent, const char
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
   
-  _porecv->addColumn(tr("P/O #"),                _orderColumn,    Qt::AlignRight,  true,  "porecv_ponumber"  );
-  _porecv->addColumn(tr("Vendor"),               _orderColumn,    Qt::AlignLeft,   true,  "vend_name"   );
-  _porecv->addColumn(tr("Date"),                 _dateColumn,     Qt::AlignCenter, true,  "receivedate" );
-  _porecv->addColumn(tr("Vend. Item #"),         _itemColumn,     Qt::AlignLeft,   true,  "venditemnumber"   );
-  _porecv->addColumn(tr("Vendor Description"),   -1,              Qt::AlignLeft,   true,  "venditemdescrip"   );
-  _porecv->addColumn(tr("Qty."),                 _qtyColumn,      Qt::AlignRight,  true,  "porecv_qty"  );
-  _porecv->addColumn(tr("Purchase Cost"),        _priceColumn,    Qt::AlignRight,  true,  "porecv_purchcost"  );
-  _porecv->addColumn(tr("Vouchered Cost"),       _priceColumn,    Qt::AlignRight,  true,  "vouchercost"  );
-  _porecv->addColumn(tr("Receipt Cost"),         _priceColumn,    Qt::AlignRight,  true,  "porecv_recvcost"  );
-  _porecv->addColumn(tr("Currency"),             _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
+  _porecv->addColumn(tr("P/O #"),              _orderColumn,    Qt::AlignRight,  true,  "porecv_ponumber"  );
+  _porecv->addColumn(tr("Dist. Date"),         _dateColumn,     Qt::AlignCenter, true,  "distdate" );
+  _porecv->addColumn(tr("Recv. Date"),         _dateColumn,     Qt::AlignCenter, false, "receivedate" );
+  _porecv->addColumn(tr("Vendor Number"),      _itemColumn,     Qt::AlignLeft,   true,  "vend_number"   );
+  _porecv->addColumn(tr("Vendor Name"),        -1,              Qt::AlignLeft,   true,  "vend_name"   );
+  _porecv->addColumn(tr("Qty."),               _qtyColumn,      Qt::AlignRight,  true,  "porecv_qty"  );
+  _porecv->addColumn(tr("Purch. Cost"),        _priceColumn,    Qt::AlignRight,  false, "porecv_purchcost"  );
+  if (!omfgThis->singleCurrency())
+    _porecv->addColumn(tr("Purch. Curr."),       _priceColumn,    Qt::AlignRight,  false, "poCurrAbbr"  );
+  _porecv->addColumn(tr("Rcpt. Cost"),         _priceColumn,    Qt::AlignRight,  false, "porecv_recvcost"  );
+  _porecv->addColumn(tr("Received"),           _moneyColumn,    Qt::AlignRight,  true,  "porecv_value"  );
+  _porecv->addColumn(tr("Vouch. Cost"),        _priceColumn,    Qt::AlignRight,  false, "vouchercost"  );
+  _porecv->addColumn(tr("Vouchered"),          _moneyColumn,    Qt::AlignRight,  true,  "voucher_value"  );
+  _porecv->addColumn(tr("Variance"),           _moneyColumn,    Qt::AlignRight,  true,  "variance"  );
+  if (!omfgThis->singleCurrency())
+    _porecv->addColumn(tr("Currency"),         _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
+  _porecv->addColumn(tr("%"),                  _prcntColumn,    Qt::AlignRight,  true,  "varprcnt"  );
 
-  if (omfgThis->singleCurrency())
-      _porecv->hideColumn(9);
+  _currencyGroup->setHidden(omfgThis->singleCurrency());
 }
 
 /*
@@ -102,46 +111,49 @@ void dspPoPriceVariancesByItem::sPrint()
     report.reportError(this);
 }
 
-void dspPoPriceVariancesByItem::sFillList()
+bool dspPoPriceVariancesByItem::setParams(ParameterList &pParams)
 {
-  QString sql( "SELECT porecv_id, porecv_ponumber, vend_name,"
-               "       DATE(porecv_date) AS receivedate,"
-               "       firstLine(porecv_vend_item_number) AS venditemnumber,"
-               "       firstLine(porecv_vend_item_descrip) AS venditemdescrip,"
-               "       porecv_qty, porecv_purchcost, porecv_recvcost,"
-               "       currToCurr(vohead_curr_id, porecv_curr_id, SUM(vodist_amount) / vodist_qty, vohead_docdate) AS vouchercost,"
-               "       currConcat(COALESCE(vohead_curr_id, porecv_curr_id)) AS currAbbr,"
-               "       'qty' AS porecv_qty_xtnumericrole,"
-               "       'purchprice' AS porecv_purchcost_xtnumericrole,"
-               "       'purchprice' AS vouchercost_xtnumericrole,"
-               "       'purchprice' AS porecv_recvcost_xtnumericrole "
-               "FROM vend, itemsite, porecv" 
-               "     LEFT OUTER JOIN"
-               "     ( vodist JOIN vohead"
-               "       ON (vodist_vohead_id=vohead_id and vohead_posted)"
-               "     ) ON ( (vodist_poitem_id=porecv_poitem_id) AND (vodist_vohead_id=porecv_vohead_id) ) "
-               "WHERE ( (porecv_vend_id=vend_id)"
-               " AND (porecv_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=:item_id)"
-               " AND (DATE(porecv_date) BETWEEN :startDate AND :endDate)" );
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr( "Please enter a valid Start and End Date." ) );
+    _dates->setFocus();
+    return false;
+  }
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+  if (_notZero->isChecked())
+    pParams.append("notZero");
+
+  pParams.append("item_id", _item->id());
+  _warehouse->appendValue(pParams);
+  _dates->appendValue(pParams);
 
   if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (porecv_agent_username=:username)";
+    pParams.append("agentUsername", _agent->currentText());
 
-  sql += ") "
-         "GROUP BY porecv_id, porecv_ponumber, vend_name, porecv_date, porecv_vend_item_number,"
-         "         porecv_vend_item_descrip, porecv_qty, porecv_purchcost, porecv_recvcost,"
-         "         vodist_qty, vohead_curr_id, porecv_curr_id, vohead_docdate "
-         "ORDER BY porecv_date DESC;";
+  if (_baseCurr->isChecked())
+    pParams.append("baseCurr");
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
+  pParams.append("nonInv",   tr("NonInv - "));
+  pParams.append("na",       tr("N/A"));
+
+  return true;
+}
+
+void dspPoPriceVariancesByItem::sFillList()
+{
+  ParameterList params;
+  if (! setParams(params))
+  {
+    _porecv->clear();
+    return;
+  }
+  MetaSQLQuery mql = mqlLoad("poPriceVariances", "detail");
+  q = mql.toQuery(params);
   _porecv->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

@@ -11,58 +11,25 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT vend_name,
-       vend_number,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+  <sql>SELECT formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
+       formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
+       &lt;? if exists("warehous_id") ?>
+         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;agentUsername&quot;) ?>
-       TEXT(&lt;? value(&quot;agentUsername&quot; ?>)
+       &lt;? if exists("agentUsername") ?>
+       TEXT(&lt;? value("agentUsername" ?>)
        &lt;? else ?>
        TEXT('All Agents')
        &lt;? endif ?>
-       AS agentUsername
-  FROM vend
- WHERE (vend_id=&lt;? value(&quot;vend_id&quot;) ?>);</sql>
+       AS agentUsername;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT porecv_id, porecv_ponumber,
-       formatDate(porecv_date) as f_date,
-       COALESCE(item_number, ('NonInv - ' || porecv_vend_item_number)) as f_itemnum,
-       COALESCE(item_descrip1, porecv_vend_item_descrip) as f_itemdescrip,
-       formatQty(porecv_qty) as f_qty,
-       formatPrice(porecv_purchcost) as f_purchcost,
-       formatPurchPrice(SUM(vodist_amount) / vodist_qty) AS f_vouchcost,
-       formatPrice(porecv_recvcost) as f_recvcost 
-  FROM vend,
-       porecv LEFT OUTER JOIN
-       ( itemsite JOIN item
-         ON (itemsite_item_id=item_id)
-       ) ON (porecv_itemsite_id=itemsite_id)
-       LEFT OUTER JOIN
-       ( vodist JOIN vohead
-         ON (vodist_vohead_id=vohead_id and vohead_posted)
-       ) ON ( (vodist_poitem_id=porecv_poitem_id) AND (vodist_vohead_id=porecv_vohead_id) )
- WHERE ( (porecv_vend_id=vend_id)
-   AND (vend_id=&lt;? value(&quot;vend_id&quot;) ?>)
-   AND (date(porecv_date) BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-&lt;? endif ?>
-&lt;? if exists(&quot;agentUsername&quot;) ?>
-   AND (porecv_agent_username=&lt;? value(&quot;agentUsername&quot;) ?>)
-&lt;? endif ?>
- )
-GROUP BY porecv_id, porecv_ponumber, porecv_date, item_number, porecv_vend_item_number,
-         item_descrip1, porecv_vend_item_descrip, porecv_qty, porecv_purchcost, porecv_recvcost,
-         vodist_qty
-ORDER BY porecv_date DESC;</sql>
+  <mqlgroup>poPriceVariances</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>236</height>
@@ -85,7 +52,7 @@ ORDER BY porecv_date DESC;</sql>
   <field>
    <rect>
     <x>550</x>
-    <y>65</y>
+    <y>64.8725</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -138,8 +105,8 @@ ORDER BY porecv_date DESC;</sql>
   </field>
   <label>
    <rect>
-    <x>655</x>
-    <y>200</y>
+    <x>568</x>
+    <y>215</y>
     <width>95</width>
     <height>15</height>
    </rect>
@@ -150,12 +117,12 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Vouchered Cost</string>
+   <string>Vouchered</string>
   </label>
   <field>
    <rect>
-    <x>95</x>
-    <y>135</y>
+    <x>94.254</x>
+    <y>64.8725</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -171,29 +138,10 @@ ORDER BY porecv_date DESC;</sql>
     <column>warehouse</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>65</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>vend_number</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>5</x>
-    <y>135</y>
+    <x>4.25396</x>
+    <y>64.8725</y>
     <width>85</width>
     <height>20</height>
    </rect>
@@ -252,7 +200,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Std. Cost at Rcpt.</string>
+   <string>%</string>
   </label>
   <label>
    <rect>
@@ -270,25 +218,6 @@ ORDER BY porecv_date DESC;</sql>
    <vcenter/>
    <string>Vendor Description</string>
   </label>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>85</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>vend_name</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>575</x>
@@ -303,12 +232,12 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Purchase Cost</string>
+   <string>Received</string>
   </label>
   <field>
    <rect>
-    <x>95</x>
-    <y>155</y>
+    <x>95.746</x>
+    <y>84.8725</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -326,22 +255,6 @@ ORDER BY porecv_date DESC;</sql>
   </field>
   <label>
    <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>60</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Vendor:</string>
-  </label>
-  <label>
-   <rect>
     <x>215</x>
     <y>200</y>
     <width>80</width>
@@ -354,7 +267,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Date</string>
+   <string>Dist. Date</string>
   </label>
   <label>
    <rect>
@@ -375,7 +288,7 @@ ORDER BY porecv_date DESC;</sql>
   <label>
    <rect>
     <x>443</x>
-    <y>65</y>
+    <y>64.8725</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -390,8 +303,8 @@ ORDER BY porecv_date DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>155</y>
+    <x>4.25396</x>
+    <y>84.8725</y>
     <width>85</width>
     <height>20</height>
    </rect>
@@ -411,6 +324,54 @@ ORDER BY porecv_date DESC;</sql>
    <yend>230</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>68.454</x>
+    <y>200</y>
+    <width>112</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Vendor Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>68.454</x>
+    <y>215</y>
+    <width>112</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Vendor Name</string>
+  </label>
+  <label>
+   <rect>
+    <x>656</x>
+    <y>200</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Variance</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -448,7 +409,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Std. Cost at Rcpt.</string>
+   <string>%</string>
   </label>
   <label>
    <rect>
@@ -480,7 +441,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Purchase Cost</string>
+   <string>Received</string>
   </label>
   <label>
    <rect>
@@ -496,12 +457,12 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Date</string>
+   <string>Dist. Date</string>
   </label>
   <label>
    <rect>
-    <x>655</x>
-    <y>5</y>
+    <x>568</x>
+    <y>19.9</y>
     <width>95</width>
     <height>15</height>
    </rect>
@@ -512,7 +473,7 @@ ORDER BY porecv_date DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Vouchered Cost</string>
+   <string>Vouchered</string>
   </label>
   <label>
    <rect>
@@ -553,6 +514,54 @@ ORDER BY porecv_date DESC;</sql>
    <yend>35</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>62.4769</x>
+    <y>4.2543</y>
+    <width>112</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Vendor Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>651.846</x>
+    <y>5.00033</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Variance</string>
+  </label>
+  <label>
+   <rect>
+    <x>62.4769</x>
+    <y>18.2543</y>
+    <width>112</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Vendor Name</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -577,13 +586,13 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_recvcost</column>
+     <column>f_varprcnt</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>5</x>
-     <y>0</y>
+     <x>6.49207</x>
+     <y>5.68434e-14</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -641,13 +650,13 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_itemdescrip</column>
+     <column>itemdescrip</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>665</x>
-     <y>0</y>
+     <x>575</x>
+     <y>14.9</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -660,7 +669,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_vouchcost</column>
+     <column>f_voucher_value</column>
     </data>
    </field>
    <field>
@@ -698,7 +707,7 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_itemnum</column>
+     <column>itemnumber</column>
     </data>
    </field>
    <field>
@@ -717,7 +726,64 @@ ORDER BY porecv_date DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_purchcost</column>
+     <column>f_porecv_value</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>69.2</x>
+     <y>-0.442</y>
+     <width>143</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>vend_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>69.9</x>
+     <y>14.5</y>
+     <width>143</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>vend_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>665</x>
+     <y>-0.442</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_variance</column>
     </data>
    </field>
   </detail>

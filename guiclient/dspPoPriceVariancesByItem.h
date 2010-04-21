@@ -23,6 +23,7 @@ class dspPoPriceVariancesByItem : public XWidget, public Ui::dspPoPriceVariances
 public:
     dspPoPriceVariancesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoPriceVariancesByItem();
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual void sPrint();

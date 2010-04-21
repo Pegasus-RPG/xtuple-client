@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>826</width>
     <height>600</height>
    </rect>
   </property>
@@ -32,19 +32,20 @@ to be bound by its terms.</comment>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="VendorCluster" name="_vendor"/>
+           <widget class="VendorGroup" name="_vendorGroup"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="XCheckBox" name="_notZero">
+            <property name="text">
+             <string>Only show variances not equal to zero</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item row="0" column="1">
         <widget class="QGroupBox" name="_agentGroup">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="title">
           <string/>
          </property>
@@ -99,27 +100,70 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="WarehouseGroup" name="_warehouse">
-         <property name="title">
-          <string/>
-         </property>
-         <property name="fixedSize">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QGroupBox" name="_dateGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="DateCluster" name="_dates"/>
-          </item>
-         </layout>
-        </widget>
+       <item row="1" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="WarehouseGroup" name="_warehouse">
+           <property name="title">
+            <string>Site</string>
+           </property>
+           <property name="fixedSize">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="_dateGroup">
+           <property name="title">
+            <string>Voucher Distribution</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="DateCluster" name="_dates"/>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="_currencyGroup">
+           <property name="title">
+            <string>Currency</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QRadioButton" name="_baseCurr">
+              <property name="text">
+               <string>Base</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_voCurr">
+              <property name="text">
+               <string>Voucher</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -130,7 +174,7 @@ to be bound by its terms.</comment>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>0</width>
+         <width>13</width>
          <height>20</height>
         </size>
        </property>
@@ -152,9 +196,6 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <widget class="QPushButton" name="_query">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="text">
             <string>&amp;Query</string>
            </property>
@@ -262,14 +303,19 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>VendorCluster</class>
+   <class>VendorGroup</class>
    <extends>QWidget</extends>
-   <header>vendorcluster.h</header>
+   <header>vendorgroup.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -284,7 +330,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_vendor</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_allPurchasingAgents</tabstop>
@@ -317,22 +362,6 @@ to be bound by its terms.</comment>
    <signal>clicked()</signal>
    <receiver>dspPoPriceVariancesByVendor</receiver>
    <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_query</receiver>
-   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>
