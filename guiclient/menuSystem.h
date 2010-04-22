@@ -19,7 +19,6 @@ class QPixmap;
 class QToolBar;
 class GUIClient;
 class Action;
-class CSVImpPluginInterface;
 
 class menuSystem : public QObject
 {
@@ -99,8 +98,8 @@ class menuSystem : public QObject
     void sFixACL();
     void sFixSerial();
     void sExportData();
-    void sImportCSV();
-    void sImportXML();
+    void sImportData();
+    void sCSVAtlases();
 
     void sPrintAlignment();
 
@@ -147,7 +146,6 @@ class menuSystem : public QObject
     Action *_rememberSize;
 
     QWidget *_lastActive;
-    CSVImpPluginInterface *_csvimpInterface;
 
     void	addActionsToMenu(actionProperties [], unsigned int);
     bool        loadCSVPlugin();

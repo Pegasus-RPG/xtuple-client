@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "importXML.h"
+#include "importData.h"
 
 #include <QDirIterator>
 #include <QMessageBox>
@@ -18,14 +18,16 @@
 #include "importhelper.h"
 #include "storedProcErrorLookup.h"
 
-#define DEBUG false
+#define DEBUG true
 
-bool importXML::userHasPriv()
+enum ImportFileType { Unknown = -1, Csv, Xml };
+
+bool importData::userHasPriv()
 {
   return _privileges->check("ImportXML");
 }
 
-void importXML::setVisible(bool visible)
+void importData::setVisible(bool visible)
 {
   if (! visible)
     XWidget::setVisible(false);
@@ -43,18 +45,17 @@ void importXML::setVisible(bool visible)
     if (! configureIE::userHasPriv())
     {
       systemError(this,
-                  tr("The application is not set up to perform XML Import. "
-                     "Have an administrator configure XML Import before "
+                  tr("The application is not set up to import data. "
+                     "Have an administrator configure Data Import before "
                      "trying to import data."),
                   __FILE__, __LINE__);
       deleteLater();
     }
     else if (QMessageBox::question(this, tr("Setup required"),
-                              tr("<p>You must set up the application to "
-                                 "import XML data before trying to import "
-                                 "data. Would you like to do this now?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::Yes &&
+                              tr("<p>You must first set up the application to "
+                                 "import data. Would you like to do this now?"),
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::Yes) == QMessageBox::Yes &&
              configureIE(this, "", true).exec() == XDialog::Accepted)
       XWidget::setVisible(true);
     else
@@ -64,7 +65,7 @@ void importXML::setVisible(bool visible)
     XWidget::setVisible(true);
 }
 
-importXML::importXML(QWidget* parent, const char * name, Qt::WindowFlags fl)
+importData::importData(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -78,10 +79,11 @@ importXML::importXML(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_importSelected, SIGNAL(clicked()), this, SLOT(sImportSelected()));
   connect(_resetList,      SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _file->addColumn(tr("File Name"),     -1, Qt::AlignLeft   );
-  _file->addColumn(tr("Status"), _ynColumn, Qt::AlignCenter );
+  _file->addColumn(tr("Type"),          -1, Qt::AlignLeft,  false, "type");
+  _file->addColumn(tr("File Name"),     -1, Qt::AlignLeft,  true,  "filename");
+  _file->addColumn(tr("Status"), _ynColumn, Qt::AlignCenter,true,  "status");
 
-  _defaultXMLDir = _metrics->value(
+  _defaultDir = _metrics->value(
 #if defined Q_WS_MACX
                                       "XMLDefaultDirMac"
 #elif defined Q_WS_WIN
@@ -90,68 +92,93 @@ importXML::importXML(QWidget* parent, const char * name, Qt::WindowFlags fl)
                                       "XMLDefaultDirLinux"
 #endif
       );
-  if (_defaultXMLDir.isEmpty())
-    _defaultXMLDir = ".";
+  if (_defaultDir.isEmpty())
+    _defaultDir = ".";
 
   sFillList();
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
 
-importXML::~importXML()
+importData::~importData()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-void importXML::languageChange()
+void importData::languageChange()
 {
   retranslateUi(this);
 }
 
-void importXML::sFillList()
+void importData::sFillList()
 {
   _file->clear();
-  if (! _defaultXMLDir.isEmpty())
+  if (! _defaultDir.isEmpty())
   {
     QStringList filters;
     filters << "*.xml" << "*.XML";
-    QDirIterator iterator(_defaultXMLDir, filters);
+    if (ImportHelper::getCSVImpPlugin(omfgThis))
+      filters << "*.csv" << "*.CSV";
+
+    QDirIterator iterator(_defaultDir, filters);
     XTreeWidgetItem *last = 0;
     for (int i = 0; iterator.hasNext(); i++)
-      last = new XTreeWidgetItem(_file, last, i, QVariant(iterator.next()));
+    {
+      QString filename = iterator.next();
+      ImportFileType type = Unknown;
+      QString suffix = QFileInfo(filename).suffix().toUpper();
+      if (suffix == "XML")
+        type = Xml;
+      else if (suffix == "CSV")
+        type = Csv;
+      last = new XTreeWidgetItem(_file, last, i, QVariant(suffix), QVariant(filename));
+    }
   }
 }
 
-void importXML::sAdd()
+void importData::sAdd()
 {
-  QFileDialog newdlg(this, tr("Select File(s) to Import"), _defaultXMLDir);
+  QFileDialog newdlg(this, tr("Select File(s) to Import"), _defaultDir);
   newdlg.setFileMode(QFileDialog::ExistingFiles);
   QStringList filters;
-  filters << tr("XML files (*.xml *.XML)") << tr("Any Files (*)");
-  newdlg.setFilters(filters);
+  if (ImportHelper::getCSVImpPlugin(omfgThis))
+    filters << tr("Data files (*.xml *.csv)")
+            << tr("CSV files (*.csv)");
+  filters << tr("XML files (*.xml)")
+          << tr("Any Files (*)");
+  newdlg.setNameFilters(filters);
   if (newdlg.exec())
   {
     QStringList files = newdlg.selectedFiles();
     XTreeWidgetItem *last = 0;
     for (int i = 0; i < files.size(); i++)
-      last = new XTreeWidgetItem(_file, last, i, QVariant(files[i]));
+    {
+      ImportFileType type = Unknown;
+      QString suffix = QFileInfo(files[i]).suffix().toUpper();
+      if (suffix == "XML")
+        type = Xml;
+      else if (suffix == "CSV")
+        type = Csv;
+
+      last = new XTreeWidgetItem(_file, last, i, type, QVariant(suffix), QVariant(files[i]));
+    }
   }
 }
 
-void importXML::sClearStatus()
+void importData::sClearStatus()
 {
   QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = selected.size() - 1; i >= 0; i--)
-    selected[i]->setData(1, Qt::DisplayRole, tr(""));
+    selected[i]->setText(_file->column("status"), "");
 }
 
-void importXML::sDelete()
+void importData::sDelete()
 {
   QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = selected.size() - 1; i >= 0; i--)
     _file->takeTopLevelItem(_file->indexOfTopLevelItem(selected[i]));
 }
 
-void importXML::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
+void importData::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
 {
   int menuItem;
 
@@ -160,57 +187,76 @@ void importXML::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
   menuItem = pMenu->insertItem(tr("Delete From List"), this, SLOT(sDelete()), 0);
 }
 
-void importXML::sImportAll()
+void importData::sImportAll()
 {
   bool oldAutoUpdate = _autoUpdate->isChecked();
   sHandleAutoUpdate(false);
   for (int i = 0; i < _file->topLevelItemCount(); i++)
   {
-    QTreeWidgetItem* pItem = _file->topLevelItem(i);
-    if (pItem->data(1, Qt::DisplayRole).toString().isEmpty())
+    XTreeWidgetItem* pItem = _file->topLevelItem(i);
+    if (pItem->text("status").isEmpty())
     {
-      if (importOne(pItem->data(0, Qt::DisplayRole).toString()))
-        pItem->setData(1, Qt::DisplayRole, tr("Done"));
+      if (importOne(pItem->text("filename"), pItem->altId()))
+        pItem->setText(_file->column("status"), tr("Done"));
       else
-        pItem->setData(1, Qt::DisplayRole, tr("Error"));
+        pItem->setText(_file->column("status"), tr("Error"));
     }
   }
   if (oldAutoUpdate)
     sHandleAutoUpdate(true);
 }
 
-void importXML::sImportSelected()
+void importData::sImportSelected()
 {
   bool oldAutoUpdate = _autoUpdate->isChecked();
   sHandleAutoUpdate(false);
   QList<XTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    if (selected[i]->data(1, Qt::DisplayRole).toString().isEmpty())
+    if (selected[i]->text("status").isEmpty())
     {
-      if (importOne(selected[i]->data(0, Qt::DisplayRole).toString()))
-        selected[i]->setData(1, Qt::DisplayRole, tr("Done"));
+      if (importOne(selected[i]->text("filename"), selected[i]->altId()))
+        selected[i]->setText(_file->column("status"), tr("Done"));
       else
-        selected[i]->setData(1, Qt::DisplayRole, tr("Error"));
+        selected[i]->setText(_file->column("status"), tr("Error"));
     }
   }
   if (oldAutoUpdate)
     sHandleAutoUpdate(true);
 }
 
-bool importXML::importOne(const QString &pFileName)
+bool importData::importOne(const QString &pFileName, int pType)
 {
+  if (DEBUG)
+    qDebug("importData::importOne(%s, %d)", qPrintable(pFileName), pType);
+
   QString errmsg;
-  if (! ImportHelper::importXML(pFileName, errmsg))
+  if (pType == Xml || QFileInfo(pFileName).suffix().toUpper() == "XML")
   {
-    systemError(this, errmsg);
+    if (! ImportHelper::importXML(pFileName, errmsg))
+    {
+      systemError(this, errmsg);
+      return false;
+    }
+  }
+  else if (pType == Csv || QFileInfo(pFileName).suffix().toUpper() == "CSV")
+  {
+    if (! ImportHelper::importCSV(pFileName, errmsg))
+    {
+      systemError(this, errmsg);
+      return false;
+    }
+  }
+  else
+  {
+    systemError(this, tr("Don't know how to import %1").arg(pFileName));
     return false;
   }
 
   return true;
 }
 
-void importXML::sHandleAutoUpdate(const bool pAutoUpdate)
+void importData::sHandleAutoUpdate(const bool pAutoUpdate)
 {
   if (pAutoUpdate)
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));

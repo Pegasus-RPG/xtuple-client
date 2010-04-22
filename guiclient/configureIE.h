@@ -28,9 +28,12 @@ public:
 
 public slots:
     virtual int  exec();
+    virtual void sDeleteAtlasMap();
     virtual void sDeleteMap();
+    virtual void sEditAtlasMap();
     virtual void sEditMap();
     virtual void sFillList();
+    virtual void sNewAtlasMap();
     virtual void sNewMap();
     virtual void sPopulate();
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);

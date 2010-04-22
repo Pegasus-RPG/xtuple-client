@@ -10,11 +10,13 @@
 
 #include "importhelper.h"
 
+#include <QApplication>
 #include <QDate>
 #include <QDateTime>
 #include <QDirIterator>
 #include <QFile>
 #include <QMessageBox>
+#include <QPluginLoader>
 #include <QProcess>
 #include <QScriptEngine>
 #include <QScriptValue>
@@ -26,7 +28,116 @@
 
 #include "exporthelper.h"
 
-#define DEBUG false
+#define MAXCSVFIRSTLINE 2048
+#define DEBUG true
+
+CSVImpPluginInterface *ImportHelper::_csvimpplugin = 0;
+
+CSVImpPluginInterface *ImportHelper::getCSVImpPlugin(QObject *parent)
+{
+  if (! _csvimpplugin)
+  {
+    if (! parent)
+      parent = QApplication::instance();
+
+    foreach (QPluginLoader *loader, parent->findChildren<QPluginLoader*>())
+    {
+      QObject *plugin = loader->instance();
+      if (plugin)
+      {
+        _csvimpplugin = qobject_cast<CSVImpPluginInterface*>(plugin);
+        if (_csvimpplugin)
+        {
+          XSqlQuery defq;
+          defq.prepare("SELECT fetchMetricText(:datadir) AS datadir,"
+                       "       fetchMetricText(:atlasdir) AS atlasdir;");
+#if defined Q_WS_MACX
+          defq.bindValue(":datadir",  "XMLDefaultDirMac");
+          defq.bindValue(":atlasdir", "CSVAtlasDefaultDirMac");
+#elif defined Q_WS_WIN
+          defq.bindValue(":datadir",  "XMLDefaultDirWindows");
+          defq.bindValue(":atlasdir", "CSVAtlasDefaultDirWindows");
+#elif defined Q_WS_X11
+          defq.bindValue(":datadir",  "XMLDefaultDirLinux");
+          defq.bindValue(":atlasdir", "CSVAtlasDefaultDirLinux");
+#endif
+          defq.exec();
+          if (defq.first())
+          {
+            _csvimpplugin->setCSVDir(defq.value("datadir").toString());
+            _csvimpplugin->setAtlasDir(defq.value("atlasdir").toString());
+          }
+          else if (defq.lastError().type() != QSqlError::NoError)
+            qWarning("%s", qPrintable(defq.lastError().text()));
+
+          break; // out of foreach
+        }
+      }
+    }
+  }
+
+  return _csvimpplugin;
+}
+
+bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
+{
+  errmsg = QString::null;
+
+  QFile file(pFileName);
+  if (! file.open(QIODevice::ReadOnly))
+  {
+    errmsg = tr("Could not open %1: %2").arg(pFileName, file.errorString());
+    return false;
+  }
+
+  QString firstline(file.readLine(MAXCSVFIRSTLINE));
+  file.close();
+  if (firstline.isEmpty())
+  {
+    errmsg = tr("Could not read the first line from %1").arg(pFileName);
+    return false;
+  }
+
+  XSqlQuery mapq;
+  mapq.prepare("SELECT atlasmap_name, atlasmap_atlas,"
+               "       atlasmap_map, atlasmap_headerline,"
+               "       CASE WHEN (:filename  ~ atlasmap_filter) THEN 0"
+               "            WHEN (:firstline ~ atlasmap_filter) THEN 1"
+               "       END AS seq"
+               "  FROM atlasmap"
+               " WHERE ((:filename ~ atlasmap_filter AND atlasmap_filtertype='filename')"
+               "     OR (:firstline ~ atlasmap_filter AND atlasmap_filtertype='firstline'))"
+               " ORDER BY seq LIMIT 1;");
+  mapq.bindValue(":filename",  pFileName);
+  mapq.bindValue(":firstline", firstline);
+  mapq.exec();
+  if (mapq.first())
+  {
+    QString atlasfile = mapq.value("atlasmap_atlas").toString();
+    QString map       = mapq.value("atlasmap_map").toString();
+
+    CSVImpPluginInterface *csvplugin = getCSVImpPlugin();
+    if (csvplugin)
+    {
+      if (! csvplugin->openCSV(pFileName))
+        errmsg = tr("Could not open CSV File %1").arg(pFileName);
+      else if (! csvplugin->openAtlas(atlasfile))
+        errmsg = tr("Could not open Atlas %1").arg(atlasfile);
+      else if (! csvplugin->setAtlasMap(map))
+        errmsg = tr("Could not set Map to %1").arg(map);
+      else if (! csvplugin->setFirstLineHeader(mapq.value("atlasmap_headerline").toBool()))
+        errmsg = tr("Could not set first line status");
+      else if (! csvplugin->importCSV())
+        errmsg = tr("Could not import the CSV data from %1").arg(pFileName);
+    }
+  }
+  else if (mapq.lastError().type() != QSqlError::NoError)
+    errmsg = mapq.lastError().text();
+  else
+    errmsg = tr("Could not find a Map or Atlas for %1").arg(pFileName);
+
+  return errmsg.isEmpty();
+}
 
 bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
 {

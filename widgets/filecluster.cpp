@@ -33,6 +33,7 @@ FileCluster::FileCluster(QWidget* pParent, const char* pName) :
   hbox->addWidget(_file);
   hbox->addWidget(_list);
 
+  connect(_file, SIGNAL(editingFinished()),           this, SIGNAL(editingFinished()));
   connect(_file, SIGNAL(requestList()),               this, SLOT(sEllipses()));
   connect(_file, SIGNAL(requestSearch()),             this, SLOT(sEllipses()));
   connect(_file, SIGNAL(textChanged(const QString&)), this, SIGNAL(textChanged(const QString&)));
@@ -54,7 +55,10 @@ void FileCluster::sEllipses()
     newdlg.setFilters(filters);
   }
   if (newdlg.exec())
+  {
     _file->setText(newdlg.selectedFiles().join(", "));
+    emit editingFinished();
+  }
 }
 
 FileLineEdit::FileLineEdit(QWidget *parent)

@@ -107,12 +107,12 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout">
+          <layout class="QHBoxLayout" name="_xsltMapLayout">
            <item>
             <widget class="XTreeWidget" name="_map"/>
            </item>
            <item>
-            <layout class="QVBoxLayout">
+            <layout class="QVBoxLayout" name="_xsltButtonLayout">
              <item>
               <widget class="QPushButton" name="_newMap">
                <property name="text">
@@ -141,7 +141,7 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
-              <spacer>
+              <spacer name="_xsltButtonSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -164,7 +164,7 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout">
             <item row="0" column="0" colspan="2">
-             <layout class="QHBoxLayout">
+             <layout class="QHBoxLayout" name="_xsltProcessorRadiobuttonsLayout">
               <item>
                <widget class="QRadioButton" name="_internal">
                 <property name="text">
@@ -188,7 +188,7 @@ to be bound by its terms.</comment>
              </layout>
             </item>
             <item row="1" column="0">
-             <spacer>
+             <spacer name="_xsltProcessorOptionsSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -204,7 +204,7 @@ to be bound by its terms.</comment>
              </spacer>
             </item>
             <item row="1" column="1">
-             <layout class="QGridLayout">
+             <layout class="QGridLayout" name="_xsltProcessorExternalOptionsLayout">
               <item row="4" column="0">
                <widget class="QLabel" name="_sub1Symbol">
                 <property name="text">
@@ -320,7 +320,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_importTab">
         <attribute name="title">
-         <string>XML Import</string>
+         <string>Import Settings</string>
         </attribute>
         <layout class="QVBoxLayout">
          <item>
@@ -384,82 +384,233 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="_importFileHandlingBox">
-           <property name="title">
-            <string>XML File Handling Options:</string>
+          <widget class="QTabWidget" name="_importTabs">
+           <property name="currentIndex">
+            <number>0</number>
            </property>
-           <layout class="QVBoxLayout">
-            <item>
-             <widget class="QRadioButton" name="_importDoNothing">
-              <property name="text">
-               <string>Do nothing after successful import</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout">
-              <item>
-               <widget class="QRadioButton" name="_importRenameFiles">
-                <property name="text">
-                 <string>Rename after successful import. Append:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="_importRenameSuffix">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout">
-              <item>
-               <widget class="QRadioButton" name="_importMoveFiles">
-                <property name="text">
-                 <string>Move after successful import to:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="FileCluster" name="_importMoveDir">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="fileMode">
-                 <enum>QFileDialog::DirectoryOnly</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_importDeleteFiles">
-              <property name="text">
-               <string>Delete after successful import</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QWidget" name="_xmlImportTab">
+            <attribute name="title">
+             <string>XML Import Options</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="_importFileHandlingBox">
+               <property name="title">
+                <string>XML File Handling Options</string>
+               </property>
+               <layout class="QVBoxLayout">
+                <item>
+                 <widget class="QRadioButton" name="_importDoNothing">
+                  <property name="text">
+                   <string>Do nothing after successful import</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="_xmlRenameSuccessLayout">
+                  <item>
+                   <widget class="QRadioButton" name="_importRenameFiles">
+                    <property name="text">
+                     <string>Rename after successful import. Append:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="_importRenameSuffix">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="_xmlImportSuccessLayout">
+                  <item>
+                   <widget class="QRadioButton" name="_importMoveFiles">
+                    <property name="text">
+                     <string>Move after successful import to:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="FileCluster" name="_importMoveDir">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="fileMode">
+                     <enum>QFileDialog::DirectoryOnly</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_importDeleteFiles">
+                  <property name="text">
+                   <string>Delete after successful import</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_csvImportTab">
+            <attribute name="title">
+             <string>CSV Import Options</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0" colspan="2">
+              <widget class="QGroupBox" name="_csvImportBox">
+               <property name="title">
+                <string>CSV Atlas Directories</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="2" column="1">
+                 <widget class="FileCluster" name="_atlasMacDir">
+                  <property name="fileMode">
+                   <enum>QFileDialog::DirectoryOnly</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="XLabel" name="_atlasMacDirLit">
+                  <property name="text">
+                   <string>Macintosh:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="XLabel" name="_atlasWIndowsDirLit">
+                  <property name="text">
+                   <string>Windows:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="XLabel" name="_atlasLinuxDirLit">
+                  <property name="text">
+                   <string>Linux:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="FileCluster" name="_atlasLinuxDir">
+                  <property name="fileMode">
+                   <enum>QFileDialog::DirectoryOnly</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="FileCluster" name="_atlasWindowsDir">
+                  <property name="fileMode">
+                   <enum>QFileDialog::DirectoryOnly</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="XLabel" name="_atlasMapLit">
+               <property name="text">
+                <string>Map of CSV file properties and CSV Atlas files:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="XTreeWidget" name="_atlasMap"/>
+             </item>
+             <item row="2" column="1">
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="_newAtlasMap">
+                 <property name="text">
+                  <string>New</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_editAtlasMap">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Edit</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_deleteAtlasMap">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Delete</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="_xmlImportOptionsSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -558,7 +709,7 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout">
+    <layout class="QVBoxLayout" name="_buttonsLayout">
      <item>
       <widget class="QPushButton" name="_cancel">
        <property name="text">
@@ -574,7 +725,7 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="_buttonsSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -595,6 +746,11 @@ to be bound by its terms.</comment>
    <class>FileCluster</class>
    <extends>QWidget</extends>
    <header>filecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -620,6 +776,11 @@ to be bound by its terms.</comment>
   <tabstop>_importDeleteFiles</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_cancel</tabstop>
+  <tabstop>_importTabs</tabstop>
+  <tabstop>_atlasMap</tabstop>
+  <tabstop>_newAtlasMap</tabstop>
+  <tabstop>_editAtlasMap</tabstop>
+  <tabstop>_deleteAtlasMap</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -646,12 +807,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>255</x>
-     <y>292</y>
+     <x>289</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
-     <x>495</x>
-     <y>292</y>
+     <x>511</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>
@@ -694,12 +855,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>195</x>
-     <y>336</y>
+     <x>229</x>
+     <y>371</y>
     </hint>
     <hint type="destinationlabel">
-     <x>656</x>
-     <y>342</y>
+     <x>633</x>
+     <y>377</y>
     </hint>
    </hints>
   </connection>
@@ -748,6 +909,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>551</x>
      <y>446</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_atlasMap</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_editAtlasMap</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>427</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>505</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_atlasMap</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_deleteAtlasMap</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>473</x>
+     <y>546</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>575</x>
+     <y>543</y>
     </hint>
    </hints>
   </connection>

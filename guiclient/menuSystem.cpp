@@ -25,8 +25,11 @@
 
 #include <parameter.h>
 #include <openreports.h>
-#include <../common/batchManager.h>
+
 #include <csvimpplugininterface.h>
+
+#include "batchManager.h"
+#include "importhelper.h"
 
 #include "version.h"
 
@@ -71,7 +74,7 @@
 #include "fixACL.h"
 #include "fixSerial.h"
 #include "exportData.h"
-#include "importXML.h"
+#include "importData.h"
 
 #include "configureIE.h"
 #include "configureIM.h"
@@ -91,21 +94,7 @@ extern QString __path;
 
 bool menuSystem::loadCSVPlugin()
 {
-  if (_csvimpInterface)
-    return true;
-
-  foreach (QPluginLoader *loader, parent->findChildren<QPluginLoader*>())
-  {
-    QObject *plugin = loader->instance();
-    if (plugin)
-    {
-      _csvimpInterface = qobject_cast<CSVImpPluginInterface*>(plugin);
-      if (_csvimpInterface)
-        return true;
-    }
-  }
-
-  return false;
+  return ImportHelper::getCSVImpPlugin(parent);
 }
 
 menuSystem::menuSystem(GUIClient *Pparent) :
@@ -124,7 +113,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   errorLogListener::initialize();
 
   cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
-  _csvimpInterface = 0;
   _lastActive      = 0;
   geometryMenu     = 0;
 
@@ -229,7 +217,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	"MaintainLocales",	NULL,	NULL,	true	},
     { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
-    { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, "ConfigureImportExport",	NULL, NULL, true },
+    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
+    { "sys.configureIE", tr("Configure Data Import and E&xport..."), SLOT(sConfigureIE()), masterInfoMenu, "ConfigureImportExport", NULL, NULL, true },
+    { "sys.CSVAtlases",  tr("Maintain CS&V Atlases..."),             SLOT(sCSVAtlases()),  masterInfoMenu, "ConfigureImportExport", NULL, NULL, loadCSVPlugin() },
 
   //  Design
     { "menu",           tr("&Design"),                (char*)designMenu,      systemMenu, "true",                        NULL, NULL, true },
@@ -247,8 +237,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL+#superuser",           NULL, NULL, true },
     { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
-    { "sys.importXML",     tr("&Import XML"),      SLOT(sImportXML()),  sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
-    { "sys.importCSV",     tr("Import &CSV"),      SLOT(sImportCSV()),  sysUtilsMenu,  "ImportXML",       NULL, NULL, loadCSVPlugin() },
+    { "sys.importData",    tr("&Import Data"),     SLOT(sImportData()), sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
     { "sys.exportData",    tr("&Export Data"),     SLOT(sExportData()), sysUtilsMenu,  "ExportXML",       NULL, NULL, true },
 
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
@@ -767,23 +756,15 @@ void menuSystem::sExportData()
   omfgThis->handleNewWindow(new exportData());
 }
 
-void menuSystem::sImportCSV()
+void menuSystem::sCSVAtlases()
 {
-  QWidget *csvtoolwind = _csvimpInterface->getCSVToolWindow(omfgThis, 0);
-#if defined Q_WS_MACX
-  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirMac"));
-#elif defined Q_WS_WIN
-  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirWindows"));
-#elif defined Q_WS_X11
-  _csvimpInterface->setCSVDir(_metrics->value("XMLDefaultDirLinux"));
-#endif
-
-  omfgThis->handleNewWindow(csvtoolwind);
+  omfgThis->handleNewWindow(ImportHelper::getCSVImpPlugin(parent)->getCSVToolWindow(omfgThis, 0));
+  omfgThis->handleNewWindow(ImportHelper::getCSVImpPlugin(parent)->getCSVAtlasWindow(omfgThis, 0));
 }
 
-void menuSystem::sImportXML()
+void menuSystem::sImportData()
 {
-  omfgThis->handleNewWindow(new importXML());
+  omfgThis->handleNewWindow(new importData());
 }
 
 void menuSystem::sCommunityHome()

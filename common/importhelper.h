@@ -18,6 +18,8 @@
 
 #include <parameter.h>
 
+#include <csvimpplugininterface.h>
+
 class QScriptEngine;
 
 class ImportHelper : public QObject
@@ -25,8 +27,13 @@ class ImportHelper : public QObject
   Q_OBJECT
 
   public:
+    static CSVImpPluginInterface *getCSVImpPlugin(QObject *parent = 0);
+    static bool importCSV(const QString &pFileName, QString &errmsg);
     static bool importXML(const QString &pFileName, QString &errmsg);
     static bool openDomDocument(const QString &pFileName, QDomDocument &pDoc, QString &errmsg);
+
+  protected:
+    static CSVImpPluginInterface *_csvimpplugin;
 };
 
 void setupImportHelper(QScriptEngine *engine);

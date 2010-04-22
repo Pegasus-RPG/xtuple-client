@@ -8,22 +8,22 @@
  * to be bound by its terms.
  */
 
-#ifndef IMPORTXML_H
-#define IMPORTXML_H
+#ifndef IMPORTDATA_H
+#define IMPORTDATA_H
 
 #include <QDomDocument>
 #include "xwidget.h"
 #include <QMenu>
 
-#include "ui_importXML.h"
+#include "ui_importData.h"
 
-class importXML : public XWidget, public Ui::importXML
+class importData : public XWidget, public Ui::importData
 {
   Q_OBJECT
   
   public:
-    importXML(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
-    ~importXML();
+    importData(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
+    ~importData();
 
     static bool userHasPriv();
 
@@ -42,8 +42,8 @@ class importXML : public XWidget, public Ui::importXML
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
 
   private:
-    QString	_defaultXMLDir;
-    bool	importOne(const QString &);
+    QString	_defaultDir;
+    bool	importOne(const QString &, const int pType = -1);
 };
 
 #endif

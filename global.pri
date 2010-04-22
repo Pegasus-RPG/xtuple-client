@@ -45,8 +45,8 @@ exists(../csvimp) {
     error("Could not set the CSVIMP_DIR qmake variable.")
 }
 
-INCLUDEPATH += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL ../$${OPENRPT_DIR}/MetaSQL/tmp
-DEPENDPATH  += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL ../$${OPENRPT_DIR}/MetaSQL/tmp
+INCLUDEPATH += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL ../$${OPENRPT_DIR}/MetaSQL/tmp ../$${CSVIMP_DIR}/csvimpcommon
+DEPENDPATH  += $${INCLUDEPATH}
 
 
 CONFIG += release thread

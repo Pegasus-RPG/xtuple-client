@@ -6,7 +6,6 @@ TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
                ../common \
-               ../$${CSVIMP_DIR}/csvimpcommon \
                ../widgets ../widgets/tmp/lib .
 
 DEPENDPATH  += $${INCLUDEPATH}
@@ -89,6 +88,7 @@ FORMS =   ../common/batchItem.ui                \
           assignClassCodeToPlannerCode.ui       \
           assignItemToPlannerCode.ui            \
           assignLotSerial.ui                    \
+          atlasMap.ui                           \
           bankAccount.ui                        \
           bankAccounts.ui                       \
           bankAdjustment.ui                     \
@@ -436,7 +436,7 @@ FORMS =   ../common/batchItem.ui                \
           imageList.ui                  \
           images.ui                     \
           implodeWo.ui                  \
-          importXML.ui                  \
+          importData.ui                 \
           incident.ui                   \
           incidentCategories.ui         \
           incidentCategory.ui           \
@@ -800,6 +800,7 @@ HEADERS = ../common/batchItem.h                 \
           assignClassCodeToPlannerCode.h        \
           assignItemToPlannerCode.h             \
           assignLotSerial.h                     \
+          atlasMap.h                            \
           authorizedotnetprocessor.h            \
           bankAccount.h                         \
           bankAccounts.h                        \
@@ -1155,7 +1156,7 @@ HEADERS = ../common/batchItem.h                 \
           imageList.h                   \
           images.h                      \
           implodeWo.h                   \
-          importXML.h                   \
+          importData.h                  \
           incident.h                    \
           incidentCategories.h          \
           incidentCategory.h            \
@@ -1549,6 +1550,7 @@ SOURCES = ../common/batchItem.cpp               \
           assignClassCodeToPlannerCode.cpp      \
           assignItemToPlannerCode.cpp           \
           assignLotSerial.cpp                   \
+          atlasMap.cpp                          \
           authorizedotnetprocessor.cpp          \
           bankAccount.cpp                       \
           bankAccounts.cpp                      \
@@ -1903,7 +1905,7 @@ SOURCES = ../common/batchItem.cpp               \
           imageList.cpp                 \
           images.cpp                    \
           implodeWo.cpp                 \
-          importXML.cpp                 \
+          importData.cpp                \
           incident.cpp                  \
           incidentCategories.cpp        \
           incidentCategory.cpp          \
@@ -2267,7 +2269,7 @@ SOURCES = ../common/batchItem.cpp               \
           zeroUncountedCountTagsByWarehouse.cpp \
 
 QT += xml sql script scripttools network
-QT += webkit
+QT += webkit xmlpatterns
 
 RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 

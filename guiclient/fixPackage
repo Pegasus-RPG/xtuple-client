@@ -76,6 +76,12 @@ for PLUGIN in sqldrivers/libqsqlpsql.dylib sqldrivers/libqsqlodbc.dylib \
   collectAndRenameLibs $APPROOT/Contents/plugins/$PLUGIN        || exit 2
 done
 
+if [ -f $APPROOT/../../csvimp/plugins/libcsvimpplugin.dylib ] ; then
+  cp $APPROOT/../../csvimp/plugins/libcsvimpplugin.dylib \
+                    $APPROOT/Contents/plugins/libcsvimpplugin.dylib    || exit 2
+  collectAndRenameLibs $APPROOT/Contents/plugins/libcsvimpplugin.dylib || exit 2
+fi
+
 cp -r $QTDIR/bin/Assistant_adp.app $APPROOT/Contents/Resources/Assistant_adp.app                || exit 3
 collectAndRenameLibs $APPROOT/Contents/Resources/Assistant_adp.app/Contents/MacOS/Assistant_adp || exit 3
 cd $APPROOT/Contents/Resources/Assistant_adp.app/Contents       || exit 3

@@ -79,6 +79,7 @@ class XTUPLEWIDGETS_EXPORT FileCluster : public QWidget
     virtual void setText(const QString &s)    { _file->setText(s); };
 
   signals:
+    void editingFinished();
     void textChanged(const QString&);
 
   protected:
