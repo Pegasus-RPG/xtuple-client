@@ -109,13 +109,20 @@ to be bound by its terms.</comment>
        <item row="2" column="1">
         <widget class="QGroupBox" name="_showGroup">
          <property name="title">
-          <string/>
+          <string>Show</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
+          <item row="0" column="1">
            <widget class="XCheckBox" name="_showVariances">
             <property name="text">
-             <string>Show Costs</string>
+             <string>Costs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="XCheckBox" name="_showUnvouchered">
+            <property name="text">
+             <string>Unvouchered</string>
             </property>
            </widget>
           </item>
@@ -278,6 +285,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

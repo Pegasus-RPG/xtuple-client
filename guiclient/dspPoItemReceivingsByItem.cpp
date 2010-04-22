@@ -49,8 +49,8 @@ dspPoItemReceivingsByItem::dspPoItemReceivingsByItem(QWidget* parent, const char
   if (_privileges->check("ViewCosts"))
   {
     _porecv->addColumn(tr("Purch. Cost"),_priceColumn, Qt::AlignRight,true, "purchcost");
-    _porecv->addColumn(tr("Vouchered Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
-    _porecv->addColumn(tr("Receipt Value"),  _priceColumn, Qt::AlignRight,true, "value");
+    _porecv->addColumn(tr("Recv. Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
+    _porecv->addColumn(tr("Value"),      _priceColumn, Qt::AlignRight,true, "value");
   }
 
   sHandleVariance(_showVariances->isChecked());
@@ -98,6 +98,9 @@ bool dspPoItemReceivingsByItem::setParams(ParameterList &pParams)
 
   if (_showVariances->isChecked())
     pParams.append("showVariances");
+
+  if (_showUnvouchered->isChecked())
+    pParams.append("showUnvouchered");
 
   return true;
 }
