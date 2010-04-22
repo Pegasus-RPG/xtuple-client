@@ -80,6 +80,7 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
 #include "recurrencewidget.h"
@@ -185,6 +186,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
   setupRecurrenceWidget(engine);

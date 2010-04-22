@@ -73,6 +73,7 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qurlproto.h \
     qvalidatorproto.h \
+    qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
     xnetworkaccessmanager.h \
@@ -158,6 +159,7 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
+    qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
     xnetworkaccessmanager.cpp \
@@ -192,4 +194,5 @@ SOURCES += setupscriptapi.cpp \
 QT += sql \
     xml \
     script \
-    network
+    network \
+    webkit
