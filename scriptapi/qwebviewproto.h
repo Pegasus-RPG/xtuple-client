@@ -21,6 +21,7 @@
 #include <QWebPage>
 #include <QUrl>
 #include <QString>
+#include <QWebView>
 
 class QAction;
 class QWebHistory;
