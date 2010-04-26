@@ -852,7 +852,7 @@ void employee::sVendor()
   {
     srq.prepare("SELECT vend_id "
                 "FROM vendinfo "
-                "WHERE (vend_number=:number);");
+                "WHERE (upper(vend_number)=upper(:number));");
     srq.bindValue(":number", _number->text());
   }
 
@@ -1046,7 +1046,7 @@ void employee::sHandleButtons()
   }
 
   XSqlQuery vendq;
-  vendq.prepare("SELECT vend_id FROM vendinfo WHERE vend_number=:number;");
+  vendq.prepare("SELECT vend_id FROM vendinfo WHERE upper(vend_number)=upper(:number);");
   vendq.bindValue(":number", _number->text());
   vendq.exec();
   if (vendq.first())
