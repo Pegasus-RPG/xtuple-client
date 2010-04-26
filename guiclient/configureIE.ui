@@ -390,13 +390,13 @@ to be bound by its terms.</comment>
            </property>
            <widget class="QWidget" name="_xmlImportTab">
             <attribute name="title">
-             <string>XML Import Options</string>
+             <string>General Import Options</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="0" column="0">
               <widget class="QGroupBox" name="_importFileHandlingBox">
                <property name="title">
-                <string>XML File Handling Options</string>
+                <string>File Handling Options</string>
                </property>
                <layout class="QVBoxLayout">
                 <item>
@@ -493,7 +493,7 @@ to be bound by its terms.</comment>
                <property name="title">
                 <string>CSV Atlas Directories</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout">
+               <layout class="QGridLayout" name="_atlasLayout">
                 <item row="2" column="1">
                  <widget class="FileCluster" name="_atlasMacDir">
                   <property name="fileMode">
@@ -512,7 +512,7 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="XLabel" name="_atlasWIndowsDirLit">
+                 <widget class="XLabel" name="_atlasWindowsDirLit">
                   <property name="text">
                    <string>Windows:</string>
                   </property>

@@ -28,6 +28,7 @@ class ImportHelper : public QObject
 
   public:
     static CSVImpPluginInterface *getCSVImpPlugin(QObject *parent = 0);
+    static bool handleFilePostImport(const QString &pFileName, bool success, QString &errmsg);
     static bool importCSV(const QString &pFileName, QString &errmsg);
     static bool importXML(const QString &pFileName, QString &errmsg);
     static bool openDomDocument(const QString &pFileName, QDomDocument &pDoc, QString &errmsg);

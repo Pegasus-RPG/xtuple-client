@@ -29,7 +29,7 @@
 #include "exporthelper.h"
 
 #define MAXCSVFIRSTLINE 2048
-#define DEBUG true
+#define DEBUG           false
 
 CSVImpPluginInterface *ImportHelper::_csvimpplugin = 0;
 
@@ -80,6 +80,107 @@ CSVImpPluginInterface *ImportHelper::getCSVImpPlugin(QObject *parent)
     qDebug("ImportHelper::getCSVImpPlugin(%p) returning %p",
            parent, _csvimpplugin);
   return _csvimpplugin;
+}
+
+bool ImportHelper::handleFilePostImport(const QString &pfilename, bool success, QString &errmsg)
+{
+  if (! success)
+    return true;   // do nothing for now; maybe move error files in the future
+
+  QString xmldir;
+  QString xmlsuccessdir;
+  QString xmlsuccesssuffix;
+  QString xmlsuccesstreatment;
+  XSqlQuery q;
+  q.prepare("SELECT fetchMetricText(:xmldir)               AS xmldir,"
+            "       fetchMetricText('XMLSuccessDir')       AS successdir,"
+            "       fetchMetricText('XMLSuccessSuffix')    AS successsuffix,"
+            "       fetchMetricText('XMLSuccessTreatment') AS successtreatment;");
+#if defined Q_WS_MACX
+  q.bindValue(":xmldir",  "XMLDefaultDirMac");
+#elif defined Q_WS_WIN
+  q.bindValue(":xmldir",  "XMLDefaultDirWindows");
+#elif defined Q_WS_X11
+  q.bindValue(":xmldir",  "XMLDefaultDirLinux");
+#endif
+  q.exec();
+  if (q.first())
+  {
+    xmldir              = q.value("xmldir").toString();
+    xmlsuccessdir       = q.value("successdir").toString();
+    xmlsuccesssuffix    = q.value("successsuffix").toString();
+    xmlsuccesstreatment = q.value("successtreatment").toString();
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    errmsg = q.lastError().text();
+    return false;
+  }
+  else
+  {
+    errmsg = tr("Could not find the metrics for handling import results.");
+    return false;
+  }
+
+  QFile file(pfilename);
+  if (xmlsuccesstreatment == "Delete")
+  {
+    if (! file.remove())
+    {
+      errmsg = tr("Could not remove %1 after successful processing (%2).")
+                        .arg(pfilename, file.error());
+      return false;
+    }
+  }
+  else if (xmlsuccesstreatment == "Rename")
+  {
+    if (xmlsuccesssuffix.isEmpty())
+      xmlsuccesssuffix = ".done";
+
+    QString newname = pfilename + xmlsuccesssuffix;
+    for (int i = 0; QFile::exists(newname) ; i++)
+      newname = pfilename + xmlsuccesssuffix + "." + QString::number(i);
+
+    if (! file.rename(newname))
+    {
+      errmsg = tr("Could not rename %1 to %2 after successful processing (%3).")
+                        .arg(pfilename, newname).arg(file.error());
+      return false;
+    }
+  }
+  else if (xmlsuccesstreatment == "Move")
+  {
+    if (xmldir.isEmpty())
+      xmldir = ".";
+
+    if (xmlsuccessdir.isEmpty())
+      xmlsuccessdir = "done";
+    if (QDir::isRelativePath(xmlsuccessdir))
+      xmlsuccessdir = xmldir + QDir::separator() + xmlsuccessdir;
+
+    QDir donedir(xmlsuccessdir);
+    if (! donedir.exists())
+      donedir.mkpath(xmlsuccessdir);
+
+    QString newname = xmlsuccessdir + QDir::separator() + QFileInfo(file).fileName(); 
+    if (QFile::exists(newname))
+      newname = newname + QDate::currentDate().toString(".yyyy.MM.dd");
+    if (QFile::exists(newname))
+      newname = newname + QDateTime::currentDateTime().toString(".hh.mm");
+    if (QFile::exists(newname))
+      newname = newname + QDateTime::currentDateTime().toString(".ss");
+
+    if (! file.rename(newname))
+    {
+      errmsg = tr("<p>Could not move %1 to %2 after successful processing (%3).")
+                        .arg(pfilename, newname).arg(file.error());
+      return false;
+    }
+  }
+
+  // else if (xmlsuccesstreatment == "None") {}
+
+  return true;
 }
 
 bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
@@ -141,6 +242,9 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
   else
     errmsg = tr("Could not find a Map or Atlas for %1").arg(pFileName);
 
+  if (! handleFilePostImport(pFileName, errmsg.isEmpty(), errmsg))
+    return false;
+
   return errmsg.isEmpty();
 }
 
@@ -149,17 +253,11 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   QString xmldir;
   QString xsltdir;
   QString xsltcmd;
-  QString xmlsuccessdir;
-  QString xmlsuccesssuffix;
-  QString xmlsuccesstreatment;
   QStringList errors;
   QStringList warnings;
 
   XSqlQuery q;
-  q.prepare("SELECT fetchMetricText(:xmldir)               AS xmldir,"
-            "       fetchMetricText('XMLSuccessDir')       AS successdir,"
-            "       fetchMetricText('XMLSuccessSuffix')    AS successsuffix,"
-            "       fetchMetricText('XMLSuccessTreatment') AS successtreatment,"
+  q.prepare("SELECT fetchMetricText(:xmldir)  AS xmldir,"
             "       fetchMetricText(:xsltdir) AS xsltdir,"
             "       fetchMetricText(:xsltcmd) AS xsltcmd;");
 #if defined Q_WS_MACX
@@ -181,9 +279,6 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     xmldir  = q.value("xmldir").toString();
     xsltdir = q.value("xsltdir").toString();
     xsltcmd = q.value("xsltcmd").toString();
-    xmlsuccessdir       = q.value("successdir").toString();
-    xmlsuccesssuffix    = q.value("successsuffix").toString();
-    xmlsuccesstreatment = q.value("successtreatment").toString();
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -422,63 +517,14 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
   if (! tmpfileName.isEmpty())
     QFile::remove(tmpfileName);
 
-  QFile file(pFileName);
-  if (xmlsuccesstreatment == "Delete")
-  {
-    if (! file.remove())
-    {
-      errmsg = tr("Could not remove %1 after successful processing (%2).")
-                        .arg(pFileName, file.error());
-      return false;
-    }
-  }
-  else if (xmlsuccesstreatment == "Rename")
-  {
-    if (xmlsuccesssuffix.isEmpty())
-      xmlsuccesssuffix = ".done";
-
-    QString newname = pFileName + xmlsuccesssuffix;
-    for (int i = 0; QFile::exists(newname) ; i++)
-      newname = pFileName + xmlsuccesssuffix + "." + QString::number(i);
-
-    if (! file.rename(newname))
-    {
-      errmsg = tr("Could not rename %1 to %2 after successful processing (%3).")
-                        .arg(pFileName, newname).arg(file.error());
-      return false;
-    }
-  }
-  else if (xmlsuccesstreatment == "Move")
-  {
-    if (xmlsuccessdir.isEmpty())
-      xmlsuccessdir = "done";
-    if (QDir::isRelativePath(xmlsuccessdir))
-      xmlsuccessdir = xmldir + QDir::separator() + xmlsuccessdir;
-
-    QDir donedir(xmlsuccessdir);
-    if (! donedir.exists())
-      donedir.mkpath(xmlsuccessdir);
-
-    QString newname = xmlsuccessdir + QDir::separator() + QFileInfo(file).fileName(); 
-    if (QFile::exists(newname))
-      newname = newname + QDate::currentDate().toString(".yyyy.MM.dd");
-    if (QFile::exists(newname))
-      newname = newname + QDateTime::currentDateTime().toString(".hh.mm");
-    if (QFile::exists(newname))
-      newname = newname + QDateTime::currentDateTime().toString(".ss");
-
-    if (! file.rename(newname))
-    {
-      errmsg = tr("<p>Could not move %1 to %2 after successful processing (%3).")
-                        .arg(pFileName, newname).arg(file.error());
-      return false;
-    }
-  }
-
   if (warnings.size() > 0)
     QMessageBox::warning(0, tr("XML Import Warnings"), warnings.join("\n"));
 
-  // else if (xmlsuccesstreatment == "None") {}
+  if (! handleFilePostImport(pFileName, true, errmsg))
+  {
+    QMessageBox::critical(0, tr("XML Import Post-processing Error"), errmsg);
+    return false;
+  }
 
   return true;
 }
