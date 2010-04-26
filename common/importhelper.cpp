@@ -76,6 +76,9 @@ CSVImpPluginInterface *ImportHelper::getCSVImpPlugin(QObject *parent)
     }
   }
 
+  if (DEBUG)
+    qDebug("ImportHelper::getCSVImpPlugin(%p) returning %p",
+           parent, _csvimpplugin);
   return _csvimpplugin;
 }
 
@@ -129,6 +132,8 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
         errmsg = tr("Could not set first line status");
       else if (! csvplugin->importCSV())
         errmsg = tr("Could not import the CSV data from %1").arg(pFileName);
+
+      errmsg += (errmsg.isEmpty() ? "" : "\n") + csvplugin->lastError();
     }
   }
   else if (mapq.lastError().type() != QSqlError::NoError)
