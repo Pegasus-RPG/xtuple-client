@@ -12,11 +12,22 @@
 
 #include <QToolBar>
 
+QScriptValue QToolBartoScriptValue(QScriptEngine *engine, QToolBar* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void QToolBarfromScriptValue(const QScriptValue &obj, QToolBar* &item)
+{
+  item = qobject_cast<QToolBar*>(obj.toQObject());
+}
+
 void setupQToolBarProto(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, QToolBartoScriptValue, QToolBarfromScriptValue);
+
   QScriptValue proto = engine->newQObject(new QToolBarProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QToolBar*>(), proto);
-  //engine->setDefaultPrototype(qMetaTypeId<QToolBar>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQToolBar,
                                                  proto);
