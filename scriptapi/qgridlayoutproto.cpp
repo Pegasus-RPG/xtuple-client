@@ -79,15 +79,15 @@ void QGridLayoutProto::addLayout(QLayout *layout, int row, int column, Qt::Align
     qDebug("QGridLayoutProto::addlayout(%p, %d, %d, %d)",
            layout, row, column, (int)a);
   QGridLayout *item = qscriptvalue_cast<QGridLayout*>(thisObject());
-  if (item)
+  if (item && layout)
     item->addLayout(layout, row, column, a);
 }
 
-void QGridLayoutProto::addLayout(QLayout *layout, int row, int column, int columnSpan, Qt::Alignment a)
+void QGridLayoutProto::addLayout(QLayout *layout, int row, int column, int rowSpan, int columnSpan, Qt::Alignment a)
 {
   QGridLayout *item = qscriptvalue_cast<QGridLayout*>(thisObject());
-  if (item)
-    item->addLayout(layout, row, column, columnSpan, a);
+  if (item && layout)
+    item->addLayout(layout, row, column, rowSpan, columnSpan, a);
 }
 
 void QGridLayoutProto::addWidget(QWidget *widget, int row, int column, Qt::Alignment a)

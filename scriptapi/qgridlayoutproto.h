@@ -33,7 +33,7 @@ class QGridLayoutProto : public QObject, public QScriptable
     Q_INVOKABLE bool  activate();
     Q_INVOKABLE void  addItem(QLayoutItem *item, int row, int column, int rowspan = 1, int columnSpan = 1, Qt::Alignment alignment = 0);
     Q_INVOKABLE void  addLayout(QLayout *layout, int row, int column, Qt::Alignment = 0);
-    Q_INVOKABLE void  addLayout(QLayout *layout, int row, int column, int columnSpan, Qt::Alignment = 0);
+    Q_INVOKABLE void  addLayout(QLayout *layout, int row, int column, int rowSpan, int columnSpan, Qt::Alignment = 0);
     Q_INVOKABLE void  addWidget(QWidget *widget, int row, int column, Qt::Alignment = 0);
     Q_INVOKABLE void  addWidget(QWidget *widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment = 0);
     Q_INVOKABLE QRect cellRect(int row, int column)     const;

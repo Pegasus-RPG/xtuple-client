@@ -59,7 +59,8 @@ class QBoxLayoutProto : public QObject, public QScriptable
     Q_INVOKABLE void removeWidget(QWidget *widget);
     Q_INVOKABLE void setAlignment(Qt::Alignment alignment);
     Q_INVOKABLE void setContentsMargins(int left, int top, int right, int bottom);
-    Q_INVOKABLE void setDirection(QBoxLayout::Direction direction);
+    //Q_INVOKABLE void setDirection(QBoxLayout::Direction direction);
+    Q_INVOKABLE void setDirection(int direction);
     Q_INVOKABLE void setEnabled(bool enable);
     Q_INVOKABLE void setMenuBar(QWidget *widget);
     Q_INVOKABLE void setStretch(int index, int stretch);

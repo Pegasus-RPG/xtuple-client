@@ -48,6 +48,7 @@ HEADERS += setupscriptapi.h \
     qdoublevalidatorproto.h \
     qeventproto.h \
     qfontproto.h \
+    qformlayoutproto.h \
     qgridlayoutproto.h \
     qiconproto.h \
     qitemdelegateproto.h \
@@ -134,6 +135,7 @@ SOURCES += setupscriptapi.cpp \
     qdoublevalidatorproto.cpp \
     qeventproto.cpp \
     qfontproto.cpp \
+    qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
     qiconproto.cpp \
     qitemdelegateproto.cpp \

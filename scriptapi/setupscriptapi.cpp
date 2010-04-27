@@ -54,6 +54,7 @@
 #include "qdoublevalidatorproto.h"
 #include "qeventproto.h"
 #include "qfontproto.h"
+#include "qformlayoutproto.h"
 #include "qgridlayoutproto.h"
 #include "qiconproto.h"
 #include "qitemdelegateproto.h"
@@ -159,6 +160,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDoubleValidatorProto(engine);
   setupQEventProto(engine);
   setupQFontProto(engine);
+  setupQFormLayoutProto(engine);
   setupQGridLayoutProto(engine);
   setupQIconProto(engine);
   setupQItemDelegateProto(engine);

@@ -61,11 +61,12 @@ QScriptValue constructQBoxLayout(QScriptContext *context,
     obj = new QBoxLayout((QBoxLayout::Direction)(context->argument(0).toInt32()),
                          qobject_cast<QWidget*>(context->argument(1).toQObject()));
   }
-  else if (DEBUG)
-    qDebug("constructBoxLayout(%d args) but can't call QBoxLayout()",
-           context->argumentCount());
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "Could not find an appropriate QBoxLayout constructor");
 
-  qDebug("constructBoxLayout returning %p", obj);
+  if (DEBUG)
+    qDebug("constructBoxLayout returning %p", obj);
   return engine->toScriptValue(obj);
 }
 
@@ -296,11 +297,11 @@ void QBoxLayoutProto::setContentsMargins(int left, int top, int right, int botto
     item->setContentsMargins(left, top, right, bottom);
 }
 
-void QBoxLayoutProto::setDirection(QBoxLayout::Direction direction)
+void QBoxLayoutProto::setDirection(int direction)
 {
   QBoxLayout *item = qscriptvalue_cast<QBoxLayout*>(thisObject());
   if (item)
-    item->setDirection(direction);
+    item->setDirection((QBoxLayout::Direction)direction);
 }
 
 void QBoxLayoutProto::setEnabled(bool enable)
