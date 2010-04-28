@@ -188,14 +188,14 @@ void dspTrialBalances::sFillList()
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  XSqlQuery r = mql.toQuery(params);
+  if (r.first())
   {
-    _trialbal->populate(q, true);
+    _trialbal->populate(r, true);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

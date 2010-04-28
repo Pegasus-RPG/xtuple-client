@@ -14,7 +14,6 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QVariant>
-//#include <QStatusBar>
 #include <openreports.h>
 #include <metasql.h>
 #include "addresses.h"
@@ -22,11 +21,6 @@
 
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a addresses as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -67,23 +61,15 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 addresses::~addresses()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void addresses::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
-
 
 void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
@@ -184,6 +170,6 @@ void addresses::sFillList()
   if (_activeOnly->isChecked())
     params.append("activeOnly");
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  _address->populate(q);
+  XSqlQuery r = mql.toQuery(params);
+  _address->populate(r);
 }

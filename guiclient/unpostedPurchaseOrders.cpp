@@ -348,13 +348,13 @@ void unpostedPurchaseOrders::sFillList()
 			   "         vend_name, pohead_status, pohead_printed "
                "ORDER BY pohead_number;" );
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery r = mql.toQuery(params);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _pohead->populate(q, true);
+  _pohead->populate(r, true);
 }
 
 bool unpostedPurchaseOrders::checkSitePrivs(int orderid)

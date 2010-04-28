@@ -99,7 +99,8 @@ void uiforms::sDelete()
 
 void uiforms::sFillList()
 {
-  q.exec(" SELECT uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled,"
+  XSqlQuery r;
+  r.exec(" SELECT uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled,"
          "        CASE WHEN nspname='public' THEN ''"
          "             ELSE nspname END AS nspname,"
          "        CASE WHEN (pkghead_id IS NULL) THEN 0"
@@ -115,10 +116,10 @@ void uiforms::sFillList()
          " WHERE ((uiform.tableoid=pg_class.oid)"
          "   AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY nspname, xtindentrole, uiform_name, uiform_order, uiform_id;" );
-  _uiform->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _uiform->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

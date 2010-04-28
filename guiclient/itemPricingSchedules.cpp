@@ -12,22 +12,14 @@
 
 #include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
 #include <QSqlError>
 #include <parameter.h>
 #include "itemPricingSchedule.h"
 
-/*
- *  Constructs a itemPricingSchedules as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -42,8 +34,6 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
 
-//  statusBar()->hide();
-  
   _ipshead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "ipshead_name"   );
   _ipshead->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "ipshead_descrip"   );
   _ipshead->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter, true,  "ipshead_effective" );
@@ -67,21 +57,14 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   _searchFor->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemPricingSchedules::~itemPricingSchedules()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemPricingSchedules::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void itemPricingSchedules::sNew()
@@ -234,15 +217,16 @@ void itemPricingSchedules::sFillList(int pIpsheadid)
 
   sql += "ORDER BY ipshead_name, ipshead_effective;";
 
-  q.prepare(sql);
-  q.bindValue(":always", tr("Always"));
-  q.bindValue(":never", tr("Never"));
-  q.exec();
+  XSqlQuery r;
+  r.prepare(sql);
+  r.bindValue(":always", tr("Always"));
+  r.bindValue(":never", tr("Never"));
+  r.exec();
 
   if (pIpsheadid == -1)
-    _ipshead->populate(q);
+    _ipshead->populate(r);
   else
-    _ipshead->populate(q, pIpsheadid);
+    _ipshead->populate(r, pIpsheadid);
 }
 
 void itemPricingSchedules::sSearch( const QString & pTarget)

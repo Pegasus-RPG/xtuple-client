@@ -1057,16 +1057,17 @@ void customer::sFillCharacteristicList()
   else
   {
     _widgetStack->setCurrentIndex(0);
-    q.prepare( "SELECT charass_id, char_name, charass_value "
+    XSqlQuery r;
+    r.prepare( "SELECT charass_id, char_name, charass_value "
                "FROM charass, char "
                "WHERE ( (charass_target_type='C')"
                " AND (charass_char_id=char_id)"
                " AND (charass_target_id=:cust_id) ) "
                "ORDER BY char_name;" );
-    q.bindValue(":custtype_id", _custtype->id());
-    q.bindValue(":cust_id", _custid);
-    q.exec();
-    _charass->populate(q);
+    r.bindValue(":custtype_id", _custtype->id());
+    r.bindValue(":cust_id", _custid);
+    r.exec();
+    _charass->populate(r);
     _charfilled=false;
   }
 }
@@ -1080,15 +1081,16 @@ void customer::sPopulateShiptoMenu(QMenu *menuThis)
 
 void customer::sFillShiptoList()
 {
-  q.prepare( "SELECT shipto_id, shipto_default,"
+  XSqlQuery r;
+  r.prepare( "SELECT shipto_id, shipto_default,"
              "       shipto_num, shipto_name, shipto_address1,"
              "       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) AS shipto_csz "
              "FROM shipto "
              "WHERE (shipto_cust_id=:cust_id) "
              "ORDER BY shipto_num;" );
-  q.bindValue(":cust_id", _custid);
-  q.exec();
-  _shipto->populate(q);
+  r.bindValue(":cust_id", _custid);
+  r.exec();
+  _shipto->populate(r);
 }
 
 void customer::sNewTaxreg()
@@ -1498,11 +1500,11 @@ void customer::sFillCcardList()
   params.append("discover",        tr("Discover"));
   params.append("other",           tr("Other"));
   params.append("key",             key);
-  q = mql.toQuery(params);
-  _cc->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery r = mql.toQuery(params);
+  _cc->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

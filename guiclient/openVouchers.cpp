@@ -376,12 +376,12 @@ void openVouchers::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
+  XSqlQuery r = mql.toQuery(params);
   _vohead->clear();
-  _vohead->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::NoError)
+  _vohead->populate(r, TRUE);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

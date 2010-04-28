@@ -226,8 +226,8 @@ void contacts::sFillList()
   MetaSQLQuery mql = mqlLoad("contacts", "detail");
   ParameterList params;
   setParams(params);
-  q = mql.toQuery(params);
-  _contacts->populate(q);
+  XSqlQuery r = mql.toQuery(params);
+  _contacts->populate(r);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

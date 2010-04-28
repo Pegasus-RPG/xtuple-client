@@ -379,11 +379,11 @@ void transferOrders::sFillList()
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql = mqlLoad("transferOrders", "detail");
-  q = mql.toQuery(params);
-  _to->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery r = mql.toQuery(params);
+  _to->populate(r, true);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _to->setDragString("toheadid=");

@@ -134,7 +134,8 @@ void salesAccounts::sDelete()
 
 void salesAccounts::sFillList()
 {
-  q.exec("SELECT salesaccnt_id,"
+  XSqlQuery r;
+  r.exec("SELECT salesaccnt_id,"
 	 "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
 	 "            ELSE (SELECT warehous_code FROM warehous WHERE (warehous_id=salesaccnt_warehous_id))"
 	 "       END AS warehouscode,"
@@ -154,10 +155,10 @@ void salesAccounts::sFillList()
 	 "       formatGLAccount(salesaccnt_cow_accnt_id) AS cowaccount "
 	 "FROM salesaccnt "
 	 "ORDER BY warehouscode, custtypecode, prodcatcode;" );
-  _salesaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _salesaccnt->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -325,11 +325,11 @@ void dspGLTransactions::sFillList()
   else
     _gltrans->hideColumn("running");
 
-  q = mql.toQuery(params);
-  _gltrans->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery r = mql.toQuery(params);
+  _gltrans->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

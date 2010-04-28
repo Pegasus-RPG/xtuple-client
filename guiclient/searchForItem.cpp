@@ -165,25 +165,26 @@ void searchForItem::sFillList()
   sql += " ) "
          "ORDER BY item_number;";
 
-  q.prepare(sql);
-  q.bindValue(":purchased", tr("Purchased"));
-  q.bindValue(":manufactured", tr("Manufactured"));
-  q.bindValue(":phantom", tr("Phantom"));
-  q.bindValue(":breeder", tr("Breeder"));
-  q.bindValue(":coProduct", tr("Co-Product"));
-  q.bindValue(":byProduct", tr("By-Product"));
-  q.bindValue(":reference", tr("Reference"));
-  q.bindValue(":costing", tr("Costing"));
-  q.bindValue(":tooling", tr("Tooling"));
-  q.bindValue(":outside", tr("Outside Process"));
-  q.bindValue(":planning", tr("Planning"));
-  q.bindValue(":kit", tr("Kit"));
-  q.bindValue(":error", tr("Error"));
-  q.bindValue(":useNumber", QVariant(_searchNumber->isChecked()));
-  q.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked()));
-  q.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked()));
-  q.bindValue(":searchString", _search->text().toUpper());
-  q.exec();
-  _item->populate(q,true);
+  XSqlQuery r;
+  r.prepare(sql);
+  r.bindValue(":purchased", tr("Purchased"));
+  r.bindValue(":manufactured", tr("Manufactured"));
+  r.bindValue(":phantom", tr("Phantom"));
+  r.bindValue(":breeder", tr("Breeder"));
+  r.bindValue(":coProduct", tr("Co-Product"));
+  r.bindValue(":byProduct", tr("By-Product"));
+  r.bindValue(":reference", tr("Reference"));
+  r.bindValue(":costing", tr("Costing"));
+  r.bindValue(":tooling", tr("Tooling"));
+  r.bindValue(":outside", tr("Outside Process"));
+  r.bindValue(":planning", tr("Planning"));
+  r.bindValue(":kit", tr("Kit"));
+  r.bindValue(":error", tr("Error"));
+  r.bindValue(":useNumber", QVariant(_searchNumber->isChecked()));
+  r.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked()));
+  r.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked()));
+  r.bindValue(":searchString", _search->text().toUpper());
+  r.exec();
+  _item->populate(r,true);
 }
 

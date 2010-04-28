@@ -136,11 +136,11 @@ void taxAssignments::sFillList()
 		      "FROM taxassignments(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>) "
 			  "ORDER BY taxassign_taxzone_id, taxassign_taxtype_id, dummy_seq, xtindentrole;");
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  _taxass->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery r = mql.toQuery(params);
+  _taxass->populate(r, true);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

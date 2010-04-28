@@ -216,12 +216,12 @@ void items::sFillList( int pItemid, bool pLocal )
   params.append("error", tr("Error"));
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
+  XSqlQuery r = mql.toQuery(params);
 
   if ((pItemid != -1) && (pLocal))
-    _item->populate(q, pItemid);
+    _item->populate(r, pItemid);
   else
-    _item->populate(q);
+    _item->populate(r);
 }
 
 void items::sFillList()

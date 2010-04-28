@@ -174,21 +174,22 @@ void customers::sPopulateMenu(QMenu *pMenu)
 
 void customers::sFillList(int pCustid, bool pLocal)
 {
-  q.prepare( "SELECT cust_id, cust_custtype_id,"
+  XSqlQuery r;
+  r.prepare( "SELECT cust_id, cust_custtype_id,"
              "       COALESCE(custtype_code, :error) AS custtype, cust_number,"
              "       cust_active, cust_name, cust_address1, cust_phone "
              "FROM cust LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
              "ORDER BY cust_number;" );
-  q.bindValue(":error", tr("Error"));
-  q.exec();
+  r.bindValue(":error", tr("Error"));
+  r.exec();
  
   if (pLocal)
-    _cust->populate(q, pCustid, TRUE);
+    _cust->populate(r, pCustid, TRUE);
   else
-    _cust->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::NoError)
+    _cust->populate(r, TRUE);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

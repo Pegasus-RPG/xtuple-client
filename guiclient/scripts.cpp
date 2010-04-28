@@ -97,8 +97,8 @@ void scripts::sDelete()
 
 void scripts::sFillList()
 {
-  
-  q.exec("SELECT script_id, script_name, script_order, script_enabled, script_notes,"
+  XSqlQuery r;
+  r.exec("SELECT script_id, script_name, script_order, script_enabled, script_notes,"
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname,"
          "       CASE WHEN (pkghead_id IS NULL) THEN 0"
@@ -115,10 +115,10 @@ void scripts::sFillList()
          "   AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY nspname, xtindentrole, script_name, script_order, script_id;" );
   
-  _script->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _script->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

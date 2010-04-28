@@ -127,12 +127,12 @@ void recallOrders::sFillList()
                 "<? endif ?>"
                 "ORDER BY shiphead_shipdate DESC, number;" ;
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
+  XSqlQuery r = mql.toQuery(params);
   _ship->clear();
-  _ship->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  _ship->populate(r, true);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

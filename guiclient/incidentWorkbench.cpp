@@ -179,12 +179,12 @@ void incidentWorkbench::sFillList()
   MetaSQLQuery mql = mqlLoad("incidents", "detail");
   ParameterList params;
   setParams(params);
-  q = mql.toQuery(params);
+  XSqlQuery r = mql.toQuery(params);
 
-  _incdt->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _incdt->populate(r);
+  if (r.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
