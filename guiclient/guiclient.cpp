@@ -318,6 +318,8 @@ class xTupleGuiClientInterface : public GuiClientInterface
   {
    return omfgThis->findChild<QAction*>(pname);
   }
+
+  const XSqlQuery* globalQ() const { return &omfgThis->_q; };
 };
 
 class xTupleCustInfoAction : public CustInfoAction
@@ -512,6 +514,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
+  XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;

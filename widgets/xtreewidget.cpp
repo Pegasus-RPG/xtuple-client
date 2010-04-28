@@ -74,6 +74,8 @@
 static QString yesStr = QObject::tr("Yes");
 static QString noStr  = QObject::tr("No");
 
+GuiClientInterface * XTreeWidget::_guiClientInterface = 0;
+
 static QTreeWidgetItem* searchChildren(XTreeWidgetItem *item, int pId);
 
 //cint() and round() regarding Issue #8897
@@ -108,6 +110,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _sord = Qt::AscendingOrder;
   _working = false;
   _deleted = false;
+  _linear = false;
   _workingTimer.setInterval(1);
   _workingTimer.setSingleShot(true);
 
@@ -211,6 +214,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId, PopulateStyle popst
 
 void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, PopulateStyle popstyle)
 {
+qDebug("populate called");
   XTreeWidgetPopulateParams args;
   args._workingQuery = pQuery;
   args._workingIndex = pIndex;
@@ -220,7 +224,15 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
     _workingParams.clear();
   _workingParams.append(args);
 
-  if(!_working)
+  if(_guiClientInterface->globalQ()->result() == pQuery.result())
+  {
+qDebug("entering linear mode");
+    _linear = true;
+    populateWorker();
+    _linear = false;
+qDebug("entering nonlinear mode");
+  }
+  else if(!_working)
     _workingTimer.start();
 }
 
@@ -362,7 +374,7 @@ void XTreeWidget::populateWorker()
 	do
 	{
           ++cnt;
-          if(cnt % 100 == 0)
+          if(!_linear && cnt % 100 == 0)
           {
             qApp->processEvents();
             if(_deleted)

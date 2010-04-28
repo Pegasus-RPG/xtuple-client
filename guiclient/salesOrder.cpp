@@ -2750,16 +2750,17 @@ void salesOrder::sFillItemList()
            "         poitem_linenumber, pr_number, pr_subnumber "
            "ORDER BY coitem_linenumber, coitem_subnumber;" ;
 
-    q.prepare(sql);
-    q.bindValue(":cohead_id", _soheadid);
-    q.bindValue(":cust_id", _cust->id());
-    q.exec();
-    _cust->setReadOnly(q.size() || !ISNEW(_mode));
+    XSqlQuery fl;
+    fl.prepare(sql);
+    fl.bindValue(":cohead_id", _soheadid);
+    fl.bindValue(":cust_id", _cust->id());
+    fl.exec();
+    _cust->setReadOnly(fl.size() || !ISNEW(_mode));
     _amountAtShipping->setLocalValue(0.0);
-    _soitem->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    _soitem->populate(fl, true);
+    if (fl.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, fl.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -2792,7 +2793,8 @@ void salesOrder::sFillItemList()
   }
   else if (ISQUOTE(_mode))
   {
-    q.prepare( "SELECT quitem_id,"
+    XSqlQuery fl;
+    fl.prepare( "SELECT quitem_id,"
                "       quitem_linenumber AS f_linenumber,"
                "       0 AS coitem_subnumber, item_type,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
@@ -2818,13 +2820,13 @@ void salesOrder::sFillItemList()
                "   AND   (quitem_price_uom_id=puom.uom_id)"
                "   AND   (quitem_quhead_id=:quhead_id) ) "
                "ORDER BY quitem_linenumber;" );
-    q.bindValue(":quhead_id", _soheadid);
-    q.exec();
-    _cust->setReadOnly(q.size() || !ISNEW(_mode));
-    _soitem->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    fl.bindValue(":quhead_id", _soheadid);
+    fl.exec();
+    _cust->setReadOnly(fl.size() || !ISNEW(_mode));
+    _soitem->populate(fl);
+    if (fl.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, fl.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -3783,11 +3785,11 @@ void salesOrder::sFillCcardList()
   params.append("other",           tr("Other"));
   params.append("key",             omfgThis->_key);
   params.append("activeonly",      true);
-  q = mql.toQuery(params);
-  _cc->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery cl = mql.toQuery(params);
+  _cc->populate(cl);
+  if (cl.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, cl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

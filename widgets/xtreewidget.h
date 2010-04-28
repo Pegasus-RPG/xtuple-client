@@ -18,6 +18,7 @@
 #include <QTimer>
 
 #include "widgets.h"
+#include "guiclientinterface.h"
 
 
 //  Table Column Widths
@@ -245,6 +246,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE inline QRect visualItemRect(const XTreeWidgetItem *item) const                 { return QTreeWidget::visualItemRect(item); }
     // end of scripting exposure
 
+    static GuiClientInterface *_guiClientInterface;
+
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString(), const int scale = 0);
     void clear();
@@ -323,6 +326,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QList<XTreeWidgetPopulateParams> _workingParams;
     bool _deleted;
     QTimer _workingTimer;
+    bool _linear;
 
   private slots:
     void sSelectionChanged();
