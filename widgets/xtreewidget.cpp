@@ -214,7 +214,6 @@ void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId, PopulateStyle popst
 
 void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, PopulateStyle popstyle)
 {
-qDebug("populate called");
   XTreeWidgetPopulateParams args;
   args._workingQuery = pQuery;
   args._workingIndex = pIndex;
@@ -226,11 +225,9 @@ qDebug("populate called");
 
   if(_guiClientInterface->globalQ()->result() == pQuery.result())
   {
-qDebug("entering linear mode");
     _linear = true;
     populateWorker();
     _linear = false;
-qDebug("entering nonlinear mode");
   }
   else if(!_working)
     _workingTimer.start();
