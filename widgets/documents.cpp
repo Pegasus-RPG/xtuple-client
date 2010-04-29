@@ -281,6 +281,7 @@ void Documents::sOpenDoc(QString mode)
   else if (docType == "T")
   {
     params.append("cntct_id", targetid);
+    ui = "contact";
   }
   else if (docType == "V")
   {
