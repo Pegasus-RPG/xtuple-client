@@ -24,6 +24,7 @@ public:
 
 public slots:
     virtual void set( const ParameterList & pParams );
+    virtual void sFileList();
     virtual void sHandleButtons();
     virtual void sSave();
 

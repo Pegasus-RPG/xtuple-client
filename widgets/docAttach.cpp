@@ -10,6 +10,7 @@
 
 #include <QVariant>
 #include <QDialog>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QString>
 #include <QUrl>
@@ -39,12 +40,21 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   // signals and slots connections
   connect(_docType, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleButtons()));
+  connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
 
   _sourceid = -1;
   _targetid = -1;
 
   _po->setAllowedTypes(OrderLineEdit::Purchase);
   _so->setAllowedTypes(OrderLineEdit::Sales);
+
+#ifndef Q_WS_MAC
+    _fileList->setMaximumWidth(25);
+#else
+    _fileList->setMinimumWidth(60);
+    _fileList->setMinimumHeight(32);
+#endif
+
   adjustSize();
 }
 
@@ -204,10 +214,18 @@ void docAttach::sSave()
   }
   else if (_docType->currentIndex() == 5)
   {
+    if(_file->text().trimmed().isEmpty())
+    {
+      QMessageBox::warning( this, tr("Must Specify file"),
+                            tr("You must specify a file before you may save.") );
+      return;
+    }
+
      _targettype = "URL";
      title = _filetitle->text();
      url = QUrl(_file->text());
-     url.setScheme("file");
+     if (url.scheme().isEmpty())
+       url.setScheme("file");
   }
   else if (_docType->currentIndex() == 6)
   {
@@ -251,10 +269,18 @@ void docAttach::sSave()
   }
   else if (_docType->currentIndex() == 14)
   {
+    if(_url->text().trimmed().isEmpty())
+    {
+      QMessageBox::warning( this, tr("Must Specify file"),
+                            tr("You must specify a file before you may save.") );
+      return;
+    }
+
      _targettype = "URL";
      title = _urltitle->text();
      url = QUrl(_url->text());
-     url.setScheme("http");
+     if (url.scheme().isEmpty())
+       url.setScheme("http");
   }
   else if (_docType->currentIndex() == 15)
   {
@@ -304,4 +330,9 @@ void docAttach::sSave()
   newDocass.exec();
 
   accept();
+}
+
+void docAttach::sFileList()
+{
+  _file->setText(QString("file:%1").arg(QFileDialog::getOpenFileName( this, tr("Select File"), QString::null)));
 }
