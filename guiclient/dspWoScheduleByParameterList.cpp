@@ -91,14 +91,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   if (valid)
   {
     _parameter->setType(ParameterGroup::ClassCode);
-    setWindowTitle(tr("W/O Schedule by Class Code"));
+    setWindowTitle(tr("Work Order Schedule by Class Code"));
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
   {
     _parameter->setType(ParameterGroup::PlannerCode);
-    setWindowTitle(tr("W/O Schedule by Planner Code"));
+    setWindowTitle(tr("Work Order Schedule by Planner Code"));
   }
 
   param = pParams.value("plancode_id", &valid);
@@ -109,14 +109,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   if (valid)
   {
     _parameter->setType(ParameterGroup::ItemGroup);
-    setWindowTitle(tr("W/O Schedule by Item Group"));
+    setWindowTitle(tr("Work Order Schedule by Item Group"));
   }
 
   param = pParams.value("wrkcnt", &valid);
   if (valid)
   {
     _parameter->setType(ParameterGroup::WorkCenter);
-    setWindowTitle(tr("W/O Schedule by Work Center"));
+    setWindowTitle(tr("Work Order Schedule by Work Center"));
   }
 
   param = pParams.value("warehous_id", &valid);
@@ -146,8 +146,18 @@ bool dspWoScheduleByParameterList::setParams(ParameterList &pParams)
   _parameter->appendValue(pParams);
   _dates->appendValue(pParams);
 
-  if (_showOnlyRI->isChecked())
-    pParams.append("showOnlyRI");
+  QStringList statusList;
+  if (_open->isChecked())
+    statusList.append("O");
+  if (_exploded->isChecked())
+    statusList.append("E");
+  if (_released->isChecked())
+    statusList.append("R");
+  if (_inprocess->isChecked())
+    statusList.append("I");
+  if (!statusList.count())
+    return false;
+  pParams.append("status_list", statusList);
 
   if (_showOnlyTopLevel->isChecked())
     pParams.append("showOnlyTopLevel");
@@ -535,12 +545,13 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
 
 void dspWoScheduleByParameterList::sFillList()
 {
+  XSqlQuery wosched;
   MetaSQLQuery mql = mqlLoad("workOrderSchedule", "parameterlist");
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  _wo->populate(q, true);
+  wosched = mql.toQuery(params);
+  _wo->populate(wosched, true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
