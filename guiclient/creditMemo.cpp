@@ -1065,6 +1065,7 @@ void creditMemo::sFreightChanged()
       return;
     _freightCache = _freight->localValue();
     sCalculateTax();
+    sCalculateTotal();
   }   
 }
 
