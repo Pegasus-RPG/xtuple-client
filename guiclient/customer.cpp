@@ -1224,6 +1224,11 @@ void customer::populate()
       _warnLate->setChecked(true);
       _graceDays->setValue(cust.value("cust_gracedays").toInt());
     }
+    else
+    {
+      _warnLate->setChecked(false);
+      _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+    }
 
     _notes->setText(cust.value("cust_comments").toString());
 
