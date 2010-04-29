@@ -24,6 +24,8 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
+  friend class RevisionCluster;
+
   Q_ENUMS(Modes)
   Q_ENUMS(RevisionTypes)
 

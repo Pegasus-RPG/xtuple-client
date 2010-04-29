@@ -34,6 +34,7 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
   connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
 }
+
 RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
 {
@@ -44,7 +45,16 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   _cachenum = "";
   _typeText = "";
   if (_x_metrics)
+  {
     _isRevControl=(_x_metrics->boolean("RevControl"));
+    if (!_isRevControl)
+    {
+      _menuLabel->hide();
+      disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+      _listAct->disconnect();
+      _searchAct->disconnect();
+    }
+  }
 }
 
 RevisionLineEdit::RevisionTypes RevisionCluster::type()
@@ -120,22 +130,33 @@ void RevisionCluster::setType(RevisionLineEdit::RevisionTypes ptype)
 
 void RevisionCluster::sModeChanged()
 {
+  bool canSearch = false;
+
   if  (_x_privileges)
   {
     if (_x_metrics->boolean("RevControl"))
     {
-          _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("ViewInactiveRevisions") || _x_privileges->check("MaintainRevisions"))) ||
-                                                          ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privileges->check("UseInactiveRevisions")) ||
-                                                              ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("MaintainRevisions") || _x_privileges->check("ViewInactiveRevisions"))));
-          (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privileges->check("MaintainRevisions")) ||
-                                                                    ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
-                                                                        (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));  
-        }
-        else
-    {
-      _list->hide();
-      (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
+      canSearch =  ((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("ViewInactiveRevisions") ||
+                                                                                                    _x_privileges->check("MaintainRevisions"))) ||
+                   ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privileges->check("UseInactiveRevisions")) ||
+                   ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("MaintainRevisions") ||
+                                                                                                        _x_privileges->check("ViewInactiveRevisions")));
+
+      (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privileges->check("MaintainRevisions")) ||
+                                                             ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
+                                                              (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
     }
+    else
+      (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
+  }
+
+  if (_x_preferences->boolean("ClusterButtons"))
+    _list->setVisible(canSearch);
+  else
+  {
+    static_cast<RevisionLineEdit*>(_number)->_listAct->setEnabled(canSearch);
+    static_cast<RevisionLineEdit*>(_number)->_searchAct->setEnabled(canSearch);
+    static_cast<RevisionLineEdit*>(_number)->sUpdateMenu();
   }
 }
 
