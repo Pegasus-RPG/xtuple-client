@@ -1220,7 +1220,7 @@ void salesOrderItem::sSave()
   }
   else if (_mode == cNewQuote)
   {
-    //  Grab the next coitem_id
+    //  Grab the next quitem_id
     q.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
     if (q.first())
       _soitemid = q.value("_quitem_id").toInt();
@@ -1244,7 +1244,8 @@ void salesOrderItem::sSave()
                "  quitem_unitcost, quitem_custprice, quitem_price,"
                "  quitem_price_uom_id, quitem_price_invuomratio,"
                "  quitem_custpn, quitem_memo, quitem_createorder, "
-               "  quitem_order_warehous_id, quitem_prcost, quitem_taxtype_id ) "
+               "  quitem_order_warehous_id, quitem_prcost, quitem_taxtype_id, "
+               "  quitem_dropship ) "
                "VALUES(:quitem_id, :quitem_quhead_id, :quitem_linenumber,"
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
                "       :item_id, :quitem_scheddate, :quitem_promdate, :quitem_qtyord,"
@@ -1252,7 +1253,8 @@ void salesOrderItem::sSave()
                "       stdCost(:item_id), :quitem_custprice, :quitem_price,"
                "       :price_uom_id, :price_invuomratio,"
                "       :quitem_custpn, :quitem_memo, :quitem_createorder, "
-               "       :quitem_order_warehous_id, :quitem_prcost, :quitem_taxtype_id);" );
+               "       :quitem_order_warehous_id, :quitem_prcost, :quitem_taxtype_id, "
+               "       :quitem_dropship);" );
     q.bindValue(":quitem_id", _soitemid);
     q.bindValue(":quitem_quhead_id", _soheadid);
     q.bindValue(":quitem_linenumber", _lineNumber->text().toInt());
@@ -1274,6 +1276,7 @@ void salesOrderItem::sSave()
     q.bindValue(":warehous_id", _warehouse->id());
     if (_taxtype->isValid())
       q.bindValue(":quitem_taxtype_id", _taxtype->id());
+    q.bindValue(":quitem_dropship", QVariant(_dropShip->isChecked()));
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1293,7 +1296,8 @@ void salesOrderItem::sSave()
                "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:price_invuomratio,"
                "    quitem_memo=:quitem_memo, quitem_createorder=:quitem_createorder,"
                "    quitem_order_warehous_id=:quitem_order_warehous_id,"
-               "    quitem_prcost=:quitem_prcost, quitem_taxtype_id=:quitem_taxtype_id "
+               "    quitem_prcost=:quitem_prcost, quitem_taxtype_id=:quitem_taxtype_id,"
+               "    quitem_dropship=:quitem_dropship "
                "WHERE (quitem_id=:quitem_id);" );
     q.bindValue(":quitem_scheddate", _scheduledDate->date());
     q.bindValue(":quitem_promdate", promiseDate);
@@ -1310,6 +1314,7 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_id", _soitemid);
     if (_taxtype->isValid())
       q.bindValue(":quitem_taxtype_id", _taxtype->id());
+    q.bindValue(":quitem_dropship", QVariant(_dropShip->isChecked()));
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1794,9 +1799,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
                "       itemsite_dropship,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
-               "LEFT OUTER JOIN itemsite ON ( itemsite_item_id = item_id ) "
+               "LEFT OUTER JOIN itemsite ON ((itemsite_item_id=item_id) AND (itemsite_warehous_id=:warehous_id)) "
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
+    q.bindValue(":warehous_id", _warehouse->id());
     q.bindValue(":taxzone", _taxzoneid);
     q.exec();
     if (q.first())
@@ -1810,8 +1816,12 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         _overridePoPrice->show();
         _overridePoPriceLit->show();
         if(_metrics->boolean("EnableDropShipments"))
+        {
           _dropShip->show();
-        if(_mode == cNew)
+          _dropShip->setChecked(q.value("itemsite_dropship").toBool());
+        }
+        
+        if(_mode == cNew || (ISQUOTE(_mode)))
         {
           _orderLit->hide();
           _order->hide();
@@ -1819,7 +1829,6 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
           _orderLine->hide();
           _orderStatus->hide();
           _orderStatusLit->hide();
-          _dropShip->setChecked(q.value("itemsite_dropship").toBool());
         }
         else
         {
@@ -2685,7 +2694,8 @@ void salesOrderItem::populate()
         "       quitem_promdate AS promdate,"
         "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
         "       0 AS coship_qty,"
-        "       quitem_taxtype_id AS coitem_taxtype_id, locale_qty_scale"
+        "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship,"
+        "       locale_qty_scale"
         "  FROM item, uom, quhead, locale "
         "    LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER), quitem "
         "    LEFT OUTER JOIN (itemsite "
@@ -2753,6 +2763,8 @@ void salesOrderItem::populate()
 
     _customerPN->setText(item.value("coitem_custpn").toString());
 
+    if (! item.value("quitem_dropship").isNull())
+      _dropShip->setChecked(item.value("quitem_dropship").toBool());
     _overridePoPrice->setLocalValue(item.value("coitem_prcost").toDouble());
 
     _warranty->setChecked(item.value("coitem_warranty").toBool());
