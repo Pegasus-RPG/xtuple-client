@@ -140,8 +140,8 @@ void priceList::sSelect()
     case 14:
     case 16:
       q.prepare( "SELECT currToLocal(:curr_id,"
-	         "         item_listprice - (item_listprice * ipsprodcat_discntprcnt),"
-		 "         :effective) AS price "
+                 "       noneg(item_listprice - (item_listprice * ipsprodcat_discntprcnt) - ipsprodcat_fixedamtdiscount),"
+                 "       :effective) AS price "
                  "  FROM ipsprodcat JOIN item ON (ipsprodcat_prodcat_id=item_prodcat_id AND item_id=:item_id) "
                  " WHERE (ipsprodcat_id=:ipsprodcat_id);" );
       q.bindValue(":item_id", _item->id());

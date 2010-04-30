@@ -176,6 +176,7 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
       _qtyBreakFreight->setEnabled(FALSE);
       _price->setEnabled(FALSE);
       _discount->setEnabled(FALSE);
+      _fixedAmtDiscount->setEnabled(FALSE);
       _priceFreight->setEnabled(FALSE);
       _typeGroup->setEnabled(FALSE);
       _typeFreightGroup->setEnabled(FALSE);
@@ -281,9 +282,11 @@ void itemPricingScheduleItem::sSave( bool pClose)
       //  ToDo
 
       q.prepare( "INSERT INTO ipsprodcat "
-                 "( ipsprodcat_id, ipsprodcat_ipshead_id, ipsprodcat_prodcat_id, ipsprodcat_qtybreak, ipsprodcat_discntprcnt ) "
+                 "( ipsprodcat_id, ipsprodcat_ipshead_id, ipsprodcat_prodcat_id, ipsprodcat_qtybreak,"
+                 "  ipsprodcat_discntprcnt, ipsprodcat_fixedamtdiscount )"
                  "VALUES "
-                 "( :ipsprodcat_id, :ipshead_id, :ipsprodcat_prodcat_id, :ipsprodcat_qtybreak, :ipsprodcat_discntprcnt );" );
+                 "( :ipsprodcat_id, :ipshead_id, :ipsprodcat_prodcat_id, :ipsprodcat_qtybreak,"
+                 "  :ipsprodcat_discntprcnt, :ipsprodcat_fixedamtdiscount );" );
     }
     else if(_freightSelected->isChecked())
     {
@@ -348,7 +351,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                  "WHERE (ipsitem_id=:ipsitem_id);" );
     else if(_prodcatSelected->isChecked())
       q.prepare( "UPDATE ipsprodcat "
-                 "SET ipsprodcat_qtybreak=:ipsprodcat_qtybreak, ipsprodcat_discntprcnt=:ipsprodcat_discntprcnt "
+                 "   SET ipsprodcat_qtybreak=:ipsprodcat_qtybreak,"
+                 "       ipsprodcat_discntprcnt=:ipsprodcat_discntprcnt,"
+                 "       ipsprodcat_fixedamtdiscount=:ipsprodcat_fixedamtdiscount "
                  "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
     else if(_freightSelected->isChecked())
       q.prepare( "UPDATE ipsfreight "
@@ -373,6 +378,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
   q.bindValue(":ipsfreight_qtybreak", _qtyBreakFreight->toDouble());
   q.bindValue(":ipsitem_price", _price->localValue());
   q.bindValue(":ipsprodcat_discntprcnt", (_discount->toDouble() / 100.0));
+  q.bindValue(":ipsprodcat_fixedamtdiscount", (_fixedAmtDiscount->localValue()));
   q.bindValue(":ipsfreight_price", _priceFreight->localValue());
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":price_uom_id", _priceUOM->id());
@@ -451,7 +457,9 @@ void itemPricingScheduleItem::populate()
   else if(_prodcatSelected->isChecked())
   {
     q.prepare( "SELECT ipsprodcat_prodcat_id,"
-               "       ipsprodcat_qtybreak, (ipsprodcat_discntprcnt * 100) AS discntprcnt "
+               "       ipsprodcat_qtybreak,"
+               "       (ipsprodcat_discntprcnt * 100) AS discntprcnt,"
+               "       ipsprodcat_fixedamtdiscount "
                "FROM ipsprodcat "
                "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
     q.bindValue(":ipsprodcat_id", _ipsprodcatid);
@@ -461,6 +469,7 @@ void itemPricingScheduleItem::populate()
       _prodcat->setId(q.value("ipsprodcat_prodcat_id").toInt());
       _qtyBreakCat->setDouble(q.value("ipsprodcat_qtybreak").toDouble());
       _discount->setDouble(q.value("discntprcnt").toDouble());
+      _fixedAmtDiscount->setLocalValue(q.value("ipsprodcat_fixedamtdiscount").toDouble());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {

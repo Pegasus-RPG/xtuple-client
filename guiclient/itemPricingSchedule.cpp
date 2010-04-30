@@ -48,6 +48,7 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,  true,  "qtybreak" );
   _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "priceuom");
   _ipsitem->addColumn(tr("Price/Discount"),  _priceColumn, Qt::AlignRight,  true,  "price" );
+  _ipsitem->addColumn(tr("Fixed Discount"),  _priceColumn, Qt::AlignRight,  true,  "fixedAmtDiscount" );
 
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);
@@ -328,6 +329,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
              "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
              "       qty.uom_name AS qtyuom, ipsitem_qtybreak AS qtybreak,"
              "       price.uom_name AS priceuom, ipsitem_price AS price,"
+			 "       0.00 AS fixedAmtDiscount,"
              "       'qty' AS qtybreak_xtnumericrole,"
              "       'salesprice' AS price_xtnumericrole "
              "  FROM ipsitem, item, uom AS qty, uom AS price "
@@ -340,6 +342,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
              "       prodcat_descrip AS descrip,"
              "       '' AS qtyuom, ipsprodcat_qtybreak AS qtybreak,"
              "       '' AS priceuom, ipsprodcat_discntprcnt AS price,"
+			 "       ipsprodcat_fixedamtdiscount AS fixedAmtDiscount,"
              "       'qty' AS qtybreak_xtnumericrole,"
              "       'percent' AS price_xtnumericrole "
              "  FROM ipsprodcat, prodcat"
@@ -354,6 +357,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
              "       CASE WHEN (ipsfreight_type='P') THEN uom_name END AS qtyuom,"
              "       CASE WHEN (ipsfreight_type='P') THEN ipsfreight_qtybreak END AS qtybreak,"
              "       uom_name AS priceuom, ipsfreight_price AS price,"
+			 "       0.00 AS fixedAmtDiscount,"
              "       'qty' AS qtybreak_xtnumericrole,"
              "       'curr' AS price_xtnumericrole "
              "  FROM ipsfreight LEFT OUTER JOIN uom ON (uom_item_weight)"
