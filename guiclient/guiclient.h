@@ -211,6 +211,9 @@ class GUIClient : public QMainWindow
 
     // Used by scripting
     Q_INVOKABLE void addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidget );
+    Q_INVOKABLE void addToolBar ( QToolBar * toolbar );
+    Q_INVOKABLE void addToolBar ( Qt::ToolBarArea area, QToolBar * toolbar );
+    Q_INVOKABLE void addToolBarBreak ( Qt::ToolBarArea area = Qt::TopToolBarArea );
     Q_INVOKABLE void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 

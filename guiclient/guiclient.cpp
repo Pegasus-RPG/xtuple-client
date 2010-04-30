@@ -1605,6 +1605,36 @@ void GUIClient::addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidge
 }
 
 /*!
+  This is an overloaded function.
+
+  Equivalent of calling addToolBar(Qt::TopToolBarArea, toolbar)
+*/
+void GUIClient::addToolBar ( QToolBar * toolbar )
+{
+  QMainWindow::addToolBar(Qt::TopToolBarArea, toolbar);
+}
+
+/*!
+  Adds the toolbar into the specified area in this main window. The toolbar is placed at the end
+  of the current tool bar block (i.e. line). If the main window already manages toolbar then it will
+  only move the toolbar to area.
+
+  See also \sa addToolBarBreak().
+*/
+void GUIClient::addToolBar ( Qt::ToolBarArea area, QToolBar * toolbar )
+{
+  QMainWindow::addToolBar(area, toolbar);
+}
+
+/*!
+  Adds a toolbar break to the given area after all the other objects that are present.
+*/
+void GUIClient::addToolBarBreak ( Qt::ToolBarArea area )
+{
+  QMainWindow::addToolBarBreak(area);
+}
+
+/*!
     Moves \a second dock widget on top of \a first dock widget, creating a tabbed
     docked area in the main window.
 */
