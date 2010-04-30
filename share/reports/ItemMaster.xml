@@ -24,6 +24,7 @@
             WHEN(item_type='R') THEN 'Reference'
             WHEN(item_type='T') THEN 'Tooling'
             WHEN(item_type='O') THEN 'Outside Process'
+            WHEN(item_type='K') THEN 'Kit'
             ELSE item_type
        END AS f_item_type,
        formatBoolYN(item_config) AS f_item_config,
