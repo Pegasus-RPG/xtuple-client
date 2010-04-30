@@ -384,6 +384,8 @@ void bankAccount::sSave()
     q.bindValue(":bankaccnt_type", "K");
   else if (_type->currentIndex() == 1)
     q.bindValue(":bankaccnt_type", "C");
+  else if (_type->currentIndex() == 2)
+    q.bindValue(":bankaccnt_type", "R");
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -446,6 +448,8 @@ void bankAccount::populate()
       _type->setCurrentIndex(0);
     else if (q.value("bankaccnt_type").toString() == "C")
       _type->setCurrentIndex(1);
+    else if (q.value("bankaccnt_type").toString() == "R")
+      _type->setCurrentIndex(2);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

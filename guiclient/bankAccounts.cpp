@@ -109,6 +109,7 @@ void bankAccounts::sFillList()
   q.prepare( "SELECT bankaccnt_id, bankaccnt_name, bankaccnt_descrip,"
              "       CASE WHEN (bankaccnt_type='K') THEN :checking"
              "            WHEN (bankaccnt_type='C') THEN :cash"
+             "            WHEN (bankaccnt_type='R') THEN :creditcard"
              "            ELSE '?'"
              "       END AS type,"
              "       bankaccnt_ap, bankaccnt_ar, "
@@ -117,6 +118,7 @@ void bankAccounts::sFillList()
              "ORDER BY bankaccnt_name;" );
   q.bindValue(":checking", tr("Checking"));
   q.bindValue(":cash", tr("Cash"));
+  q.bindValue(":creditcard", tr("Credit Card"));
   q.exec();
   _bankaccnt->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
