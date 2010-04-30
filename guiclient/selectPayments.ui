@@ -332,6 +332,13 @@ to be bound by its terms.</comment>
                </widget>
               </item>
               <item>
+               <widget class="QPushButton" name="_applyallcredits">
+                <property name="text">
+                 <string>Apply all Credits</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer>
                 <property name="orientation" >
                  <enum>Qt::Vertical</enum>

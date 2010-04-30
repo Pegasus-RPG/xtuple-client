@@ -9,6 +9,7 @@
  */
 
 #include "selectPayments.h"
+#include "mqlutil.h"
 
 #include <QSqlError>
 
@@ -38,6 +39,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
   connect(_selectDue, SIGNAL(clicked()), this, SLOT(sSelectDue()));
   connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
+  connect(_applyallcredits, SIGNAL(clicked()), this, SLOT(sApplyAllCredits()));
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_apopen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
@@ -396,6 +398,22 @@ void selectPayments::sClear()
 
   if(update)
     omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+}
+
+void selectPayments::sApplyAllCredits()
+{
+  MetaSQLQuery mql = mqlLoad("selectPayments", "applyallcredits");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  if (q.first())
+    sFillList();
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void selectPayments::sFillList()
