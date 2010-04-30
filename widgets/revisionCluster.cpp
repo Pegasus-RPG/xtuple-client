@@ -148,15 +148,15 @@ void RevisionCluster::sModeChanged()
     }
     else
       (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
-  }
 
-  if (_x_preferences->boolean("ClusterButtons"))
-    _list->setVisible(canSearch);
-  else
-  {
-    static_cast<RevisionLineEdit*>(_number)->_listAct->setEnabled(canSearch);
-    static_cast<RevisionLineEdit*>(_number)->_searchAct->setEnabled(canSearch);
-    static_cast<RevisionLineEdit*>(_number)->sUpdateMenu();
+    if (_x_preferences->boolean("ClusterButtons"))
+      _list->setVisible(canSearch);
+    else
+    {
+      static_cast<RevisionLineEdit*>(_number)->_listAct->setEnabled(canSearch);
+      static_cast<RevisionLineEdit*>(_number)->_searchAct->setEnabled(canSearch);
+      static_cast<RevisionLineEdit*>(_number)->sUpdateMenu();
+    }
   }
 }
 
