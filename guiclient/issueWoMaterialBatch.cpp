@@ -28,6 +28,7 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _hasPush = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 

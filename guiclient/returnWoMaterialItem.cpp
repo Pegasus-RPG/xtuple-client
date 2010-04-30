@@ -28,6 +28,7 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty()));
 
   _captive = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));

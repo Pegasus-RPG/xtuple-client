@@ -28,6 +28,7 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   connect(_wo,     SIGNAL(newId(int)), this, SLOT(populate()));
 
   _captive = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
   _qtyReceivedCache = 0.0;
 

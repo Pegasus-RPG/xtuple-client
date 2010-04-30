@@ -35,6 +35,7 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
 
     _captive = FALSE;
+    _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
     _transDate->setDate(omfgThis->dbDate(), true);
 
     omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));

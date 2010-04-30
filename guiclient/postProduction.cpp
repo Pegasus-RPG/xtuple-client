@@ -33,6 +33,7 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
   connect(_wo,   SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
 
   _captive = false;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 

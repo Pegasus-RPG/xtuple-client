@@ -34,6 +34,7 @@ scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name
   connect(_womatl, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
   _captive = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
   _fromWOTC = FALSE;
 
