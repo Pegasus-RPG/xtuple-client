@@ -61,3 +61,10 @@ void QToolBarProto::addAction( QAction * action )
     item->addAction(action);
 }
 
+void QToolBarProto::addWidget( QWidget * widget )
+{
+  QToolBar *item = qscriptvalue_cast<QToolBar*>(thisObject());
+  if (item)
+    item->addWidget(widget);
+}
+
