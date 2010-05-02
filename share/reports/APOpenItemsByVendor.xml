@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>A/P Open Items</title>
- <name>APOpenItems</name>
+ <title>Open Payables</title>
+ <name>APOpenItemsByVendor</name>
  <description></description>
  <size>Letter</size>
  <portrait/>
