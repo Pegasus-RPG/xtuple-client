@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Inventory History by Parameter List</title>
- <name>InventoryHistoryByParameterList</name>
+ <title>Inventory History</title>
+ <name>InventoryHistory</name>
  <description></description>
  <size>Letter</size>
  <portrait/>
@@ -39,6 +39,12 @@
             WHERE (plancode_id=&lt;? value("plancode_id") ?>) )
        &lt;? elseif exists("plancode_pattern") ?>
          text(&lt;? value("plancode_pattern") ?>)
+       &lt;? elseif exists("item_id") ?>
+         ( SELECT (item_number)
+             FROM item
+            WHERE (item_id=&lt;? value("item_id") ?>) )
+       &lt;? elseif exists("orderNumber") ?>
+         text(&lt;? value("orderNumber") ?>)
        &lt;? else ?>
          text('All')
        &lt;? endif ?>
@@ -49,6 +55,10 @@
          text('Class Code:')
        &lt;? elseif reExists("plancode.*") ?>
          text('Planner Code:')
+       &lt;? elseif exists("item_id") ?>
+         text('Item Number:')
+       &lt;? elseif exists("orderNumber") ?>
+         text('Order Number:')
        &lt;? else ?>
          text('Unknown Class:')
        &lt;? endif ?>
@@ -59,6 +69,10 @@
          text('Inventory History by Class Code')
        &lt;? elseif reExists("plancode.*") ?>
          text('Inventory History by Planner Code')
+       &lt;? elseif exists("item_id") ?>
+         text('Inventory History by Item')
+       &lt;? elseif exists("orderNumber") ?>
+         text('Inventory History by Order')
        &lt;? else ?>
          text('Inventory History')
        &lt;? endif ?>
@@ -75,17 +89,19 @@
        item_descrip1,
        item_descrip2,
        formatQty(invhist_invqty) AS transqty,
+       (invhist_value_after-invhist_value_before) AS transvalue,
+       formatMoney(invhist_value_after-invhist_value_before) AS f_transvalue,
        invhist_invuom,
        CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)
             ELSE invhist_ordnumber
        END AS ordernumber,
        formatQty(invhist_qoh_before) AS qohbefore,
        formatQty(invhist_qoh_after) AS qohafter,
-       CASE WHEN(invhist_costmethod='A') THEN text('Average')
-            WHEN(invhist_costmethod='S') THEN text('Standard')
-            WHEN(invhist_costmethod='J') THEN text('Job')
-            WHEN(invhist_costmethod='N') THEN text('None')
-            ELSE 'UNKNOWN'
+       CASE WHEN (invhist_costmethod='A') THEN &lt;? value("average") ?>
+            WHEN (invhist_costmethod='S') THEN &lt;? value("standard") ?>
+            WHEN (invhist_costmethod='J') THEN &lt;? value("job") ?>
+            WHEN (invhist_costmethod='N') THEN &lt;? value("none") ?>
+            ELSE &lt;? value("unknown") ?>
        END AS costmethod,
        formatMoney(invhist_value_before) AS valbefore,
        formatMoney(invhist_value_after) AS valafter,
@@ -137,8 +153,16 @@
    AND (invhist_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (itemsite_warehous_id=whs1.warehous_id)
-   AND (DATE(invhist_transdate) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+  AND  ((invhist_transdate > DATE &lt;? value("startDate") ?> - 1 AND
+	 invhist_transdate &lt; DATE &lt;? value("endDate") ?> + 1) )
    AND (transType(invhist_transtype, &lt;? value("transType") ?>))
+&lt;? if exists("orderType") ?>
+  AND  (invhist_ordtype=&lt;? value("orderType") ?>)
+&lt;? endif ?>
+&lt;? if exists("orderNumber") ?>
+  AND  (invhist_ordnumber ~ &lt;? value("orderNumber") ?>)
+  AND  (invhist_ordtype = 'SO')
+&lt;? endif ?>
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
@@ -175,6 +199,8 @@ SELECT invhist_id,
        item_descrip1,
        item_descrip2,
        formatQty(invhist_invqty) AS transqty,
+       0 AS transvalue,
+       formatMoney(invhist_value_after-invhist_value_before) AS f_transvalue,
        invhist_invuom,
        CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)
             ELSE invhist_ordnumber
@@ -241,8 +267,16 @@ SELECT invhist_id,
    AND (itemsite_item_id=item_id)
    AND (itemsite_warehous_id=whs1.warehous_id)
    AND (invdetail_invhist_id=invhist_id)
-   AND (DATE(invhist_transdate) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+   AND  ((invhist_transdate > DATE &lt;? value("startDate") ?> - 1 AND
+	 invhist_transdate &lt; DATE &lt;? value("endDate") ?> + 1) )
    AND (transType(invhist_transtype, &lt;? value("transType") ?>))
+&lt;? if exists("orderType") ?>
+  AND  (invhist_ordtype=&lt;? value("orderType") ?>)
+&lt;? endif ?>
+&lt;? if exists("orderNumber") ?>
+  AND  (invhist_ordnumber ~ &lt;? value("orderNumber") ?>)
+  AND  (invhist_ordtype = 'SO')
+&lt;? endif ?>
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
@@ -272,8 +306,58 @@ SELECT invhist_id,
 &lt;? endif ?>
 );</sql>
  </querysource>
+ <querysource>
+  <name>footer</name>
+  <sql>SELECT formatMoney(sum(invhist_value_after-invhist_value_before)) AS transvalue_total
+FROM itemsite, item, warehous AS whs1, invhist LEFT OUTER JOIN
+     warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id) 
+WHERE ( (invhist_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=item_id) 
+  AND  (itemsite_warehous_id=whs1.warehous_id)
+  AND  ((invhist_transdate > DATE &lt;? value("startDate") ?> - 1 AND
+	 invhist_transdate &lt; DATE &lt;? value("endDate") ?> + 1) )
+  AND  (transType(invhist_transtype, &lt;? value("transType") ?>))
+&lt;? if exists("orderType") ?>
+  AND  (invhist_ordtype=&lt;? value("orderType") ?>)
+&lt;? endif ?>
+&lt;? if exists("orderNumber") ?>
+  AND  (invhist_ordnumber ~ &lt;? value("orderNumber") ?>)
+  AND  (invhist_ordtype = 'SO')
+&lt;? endif ?>
+&lt;? if exists("warehous_id") ?>
+  AND  (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("item_id") ?>
+  AND  (itemsite_item_id=&lt;? value("item_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("classcode_id") ?>
+  AND  (item_classcode_id=&lt;? value("classcode_id") ?>)
+&lt;? elseif exists("itemgrp_id") ?>
+  AND (item_id IN (SELECT itemgrpitem_item_id
+		   FROM itemgrpitem
+		   WHERE (itemgrpitem_itemgrp_id=&lt;? value("itemgrp_id") ?>)))
+&lt;? elseif exists("plancode_id") ?>
+  AND  (itemsite_plancode_id=&lt;? value("plancode_id") ?>)
+&lt;? elseif exists("classcode_pattern") ?>
+  AND  (item_classcode_id IN (SELECT classcode_id
+			      FROM classcode
+			      WHERE (classcode_code ~ &lt;? value ("classcode_pattern") ?>)))
+&lt;? elseif exists("itemgrp_pattern") ?>
+  AND (item_id IN (SELECT itemgrpitem_item_id
+		   FROM itemgrpitem, itemgrp
+		   WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id)
+		     AND  (itemgrp_name ~ &lt;? value ("itemgrp_pattern") ?>))))
+&lt;? elseif exists("plancode_pattern") ?>
+  AND (itemsite_plancode_id IN (SELECT plancode_id
+				FROM plancode
+				WHERE (plancode_code ~ &lt;? value("plancode_pattern") ?>)))
+&lt;? elseif exists("itemgrp") ?>
+  AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))
+&lt;? endif ?>
+)</sql>
+ </querysource>
  <rpthead>
-  <height>251</height>
+  <height>242</height>
   <field>
    <rect>
     <x>585</x>
@@ -312,9 +396,9 @@ SELECT invhist_id,
   <label>
    <rect>
     <x>660</x>
-    <y>209</y>
+    <y>211</y>
     <width>72</width>
-    <height>15</height>
+    <height>12</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -328,7 +412,7 @@ SELECT invhist_id,
   <label>
    <rect>
     <x>660</x>
-    <y>225</y>
+    <y>222</y>
     <width>72</width>
     <height>12</height>
    </rect>
@@ -449,7 +533,7 @@ SELECT invhist_id,
   <label>
    <rect>
     <x>585</x>
-    <y>225</y>
+    <y>222</y>
     <width>72</width>
     <height>12</height>
    </rect>
@@ -480,9 +564,9 @@ SELECT invhist_id,
   </label>
   <line>
    <xstart>5</xstart>
-   <ystart>245</ystart>
+   <ystart>237</ystart>
    <xend>745</xend>
-   <yend>245</yend>
+   <yend>237</yend>
    <weight>2</weight>
   </line>
   <label>
@@ -503,7 +587,7 @@ SELECT invhist_id,
   </label>
   <label>
    <rect>
-    <x>5</x>
+    <x>5.68571</x>
     <y>211</y>
     <width>50</width>
     <height>12</height>
@@ -519,7 +603,7 @@ SELECT invhist_id,
   </label>
   <label>
    <rect>
-    <x>583</x>
+    <x>586</x>
     <y>211</y>
     <width>72</width>
     <height>12</height>
@@ -622,7 +706,7 @@ SELECT invhist_id,
   <label>
    <rect>
     <x>510</x>
-    <y>225</y>
+    <y>211</y>
     <width>72</width>
     <height>12</height>
    </rect>
@@ -681,12 +765,12 @@ SELECT invhist_id,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Trans-Qty</string>
+   <string>Qty</string>
   </label>
   <label>
    <rect>
     <x>60</x>
-    <y>228</y>
+    <y>222</y>
     <width>130</width>
     <height>12</height>
    </rect>
@@ -698,6 +782,22 @@ SELECT invhist_id,
    <left/>
    <vcenter/>
    <string>Username</string>
+  </label>
+  <label>
+   <rect>
+    <x>510</x>
+    <y>222</y>
+    <width>72</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Value</string>
   </label>
  </rpthead>
  <pghead>
@@ -756,7 +856,7 @@ SELECT invhist_id,
   </label>
   <label>
    <rect>
-    <x>590</x>
+    <x>586.32</x>
     <y>25</y>
     <width>72</width>
     <height>12</height>
@@ -788,8 +888,8 @@ SELECT invhist_id,
   </label>
   <label>
    <rect>
-    <x>515</x>
-    <y>25</y>
+    <x>510</x>
+    <y>12</y>
     <width>72</width>
     <height>12</height>
    </rect>
@@ -885,7 +985,7 @@ SELECT invhist_id,
   <label>
    <rect>
     <x>60</x>
-    <y>30</y>
+    <y>25</y>
     <width>130</width>
     <height>12</height>
    </rect>
@@ -967,7 +1067,23 @@ SELECT invhist_id,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Trans-Qty</string>
+   <string>Qty</string>
+  </label>
+  <label>
+   <rect>
+    <x>510</x>
+    <y>25</y>
+    <width>72</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Value</string>
   </label>
  </pghead>
  <section>
@@ -976,7 +1092,7 @@ SELECT invhist_id,
    <name>invhist_id</name>
    <column>invhist_id</column>
    <head>
-    <height>51</height>
+    <height>45</height>
     <field>
      <rect>
       <x>60</x>
@@ -993,7 +1109,7 @@ SELECT invhist_id,
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>transdate</column>
+      <column>f_transdate</column>
      </data>
     </field>
     <field>
@@ -1018,7 +1134,7 @@ SELECT invhist_id,
     <field>
      <rect>
       <x>200</x>
-      <y>30</y>
+      <y>25</y>
       <width>228</width>
       <height>12</height>
      </rect>
@@ -1132,7 +1248,7 @@ SELECT invhist_id,
     <field>
      <rect>
       <x>60</x>
-      <y>30</y>
+      <y>25</y>
       <width>132</width>
       <height>12</height>
      </rect>
@@ -1226,7 +1342,7 @@ SELECT invhist_id,
     </field>
     <field>
      <rect>
-      <x>508</x>
+      <x>510</x>
       <y>0</y>
       <width>72</width>
       <height>12</height>
@@ -1284,7 +1400,7 @@ SELECT invhist_id,
     <field>
      <rect>
       <x>510</x>
-      <y>25</y>
+      <y>12</y>
       <width>72</width>
       <height>12</height>
      </rect>
@@ -1300,9 +1416,28 @@ SELECT invhist_id,
       <column>costmethod</column>
      </data>
     </field>
+    <field>
+     <rect>
+      <x>510</x>
+      <y>25</y>
+      <width>72</width>
+      <height>12</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>f_transvalue</column>
+     </data>
+    </field>
    </head>
    <foot>
-    <height>11</height>
+    <height>9</height>
     <line>
      <xstart>5</xstart>
      <ystart>5</ystart>
@@ -1468,4 +1603,43 @@ SELECT invhist_id,
    </data>
   </field>
  </pgfoot>
+ <rptfoot>
+  <height>20</height>
+  <field>
+   <rect>
+    <x>510</x>
+    <y>5</y>
+    <width>72</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>footer</query>
+    <column>transvalue_total</column>
+   </data>
+   <format builtin="true" >money</format>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>5</y>
+    <width>130</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Total:</string>
+  </label>
+ </rptfoot>
 </report>

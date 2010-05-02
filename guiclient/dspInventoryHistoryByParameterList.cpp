@@ -47,7 +47,8 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
   _invhist->addColumn(tr("Order #"),             _itemColumn, Qt::AlignCenter,true, "orderlocation");
   _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
-  _invhist->addColumn(tr("Trans-Qty"),            _qtyColumn, Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("Qty"),                  _qtyColumn, Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("Value"),              _moneyColumn, Qt::AlignRight, true, "transvalue");
   _invhist->addColumn(tr("From Area"),          _orderColumn, Qt::AlignLeft,  true, "locfrom");
   _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, false, "qohbefore");
   _invhist->addColumn(tr("To Area"),            _orderColumn, Qt::AlignLeft,  true, "locto");
@@ -55,7 +56,7 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  false, "costmethod");
   _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, false, "invhist_value_before");
   _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, false, "invhist_value_after");
-  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
+  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,false, "invhist_user");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -63,11 +64,20 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _transType->append(cTransShipments, tr("Shipments")              );
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   
-  if (_metrics->value("Application") != "PostBooks")
-    _transType->append(cTransTransfers, tr("Transfers")              );
+  _orderType->append(0, tr("All Orders"),        "" );
+  _orderType->append(1, tr("Sales Orders"),      "SO" );
+  _orderType->append(2, tr("Purchase Orders"),   "PO" );
+  _orderType->append(3, tr("Work Orders"),       "WO");
+  
+  if (_metrics->boolean("MultiWhs"))
+  {
+    _transType->append(cTransTransfers, tr("Transfers") );
+    _orderType->append(4, tr("Transfer Orders"), "TO" );
+  }
   
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
+  _orderType->setCurrentIndex(0);
 }
 
 dspInventoryHistoryByParameterList::~dspInventoryHistoryByParameterList()
@@ -171,6 +181,21 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
       _transType->setCurrentIndex(6);
   }
 
+  param = pParams.value("ordertype", &valid);
+  if (valid)
+  {
+    QString transtype = param.toString();
+
+    if (transtype == "SO")
+      _transType->setCurrentIndex(1);
+    else if (transtype == "PO")
+      _transType->setCurrentIndex(2);
+    else if (transtype == "WO")
+      _transType->setCurrentIndex(3);
+    else if (transtype == "TO")
+      _transType->setCurrentIndex(4);
+  }
+
   if (pParams.inList("run"))
     sFillList();
 
@@ -197,10 +222,29 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
 
 void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
   _dates->appendValue(params);
   params.append("transType", _transType->id());
+
+  if (_orderType->currentIndex())
+    params.append("orderType", _orderType->code());
 
   if (_parameter->type() == ParameterGroup::ItemGroup)
     params.append("itemgrp");
@@ -208,43 +252,22 @@ void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
     params.append("plancode");
   else
     params.append("classcode");
+
+  params.append("average", tr("Average"));
+  params.append("standard", tr("Standard"));
+  params.append("job", tr("Job"));
+  params.append("none", tr("None"));
+  params.append("unknown", tr("Unknown"));
 }
 
 void dspInventoryHistoryByParameterList::sPrint()
 {
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
-                          tr("You must enter a valid Start Date and End Date for this report.") );
-    _dates->setFocus();
-    return;
-  }
-
   ParameterList params;
-  _warehouse->appendValue(params);
-  _parameter->appendValue(params);
-  _dates->appendValue(params);
-  params.append("transType", _transType->id());
+  setParams(params);
+  if (!params.count())
+    return;
 
-  if (_parameter->isAll())
-  {
-    switch(_parameter->type())
-    {
-    case ParameterGroup::ItemGroup:
-      params.append("itemgrp");
-      break;
-    case ParameterGroup::ClassCode:
-      params.append("classcode");
-      break;
-    case ParameterGroup::PlannerCode:
-      params.append("plancode");
-      break;
-    default:
-      break;
-    }
-  }
-
-  orReport report("InventoryHistoryByParameterList", params);
+  orReport report("InventoryHistory", params);
   if (report.isValid())
     report.print();
   else
@@ -380,24 +403,10 @@ void dspInventoryHistoryByParameterList::sFillList()
 {
   _invhist->clear();
 
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
   ParameterList params;
   setParams(params);
+  if (!params.count())
+    return;
   MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
   q = mql.toQuery(params);
 

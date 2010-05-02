@@ -44,30 +44,36 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   _salesOrderList->setMaximumWidth(25);
 #endif
 
-  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
-  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
-  _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
-  _invhist->addColumn(tr("Site."),                _whsColumn, Qt::AlignLeft,  true, "warehous_code");
-  _invhist->addColumn(tr("Item Number"),                  -1, Qt::AlignLeft,  true, "item_number");
-  _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
-  _invhist->addColumn(tr("Trans-Qty"),            _qtyColumn, Qt::AlignRight, true, "invhist_invqty" );
-  _invhist->addColumn(tr("Order #"),             _itemColumn, Qt::AlignCenter,true, "ordernumber");
-  _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, false, "invhist_qoh_before");
-  _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, false, "invhist_qoh_after");
-  _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  false, "invhist_costmethod");
-  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight,false, "invhist_value_before");
-  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight,false, "invhist_value_after");
-  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
+  _invhist->setRootIsDecorated(TRUE);
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft, true, "invhist_transdate");
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft, false, "invhist_created");
+  _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter,true, "invhist_transtype");
+  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter,true, "warehous_code");
+  _invhist->addColumn(tr("Order #/Detail"),                -1,Qt::AlignLeft,  true, "orderlocation");
+  _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter,true, "invhist_invuom");
+  _invhist->addColumn(tr("Qty"),                  _qtyColumn, Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("Value"),              _moneyColumn, Qt::AlignRight, true, "transvalue");
+  _invhist->addColumn(tr("From Area"),   _orderColumn,        Qt::AlignLeft,  true, "locfrom");
+  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,          Qt::AlignRight, false, "qohbefore");
+  _invhist->addColumn(tr("To Area"),     _orderColumn,        Qt::AlignLeft,  true, "locto");
+  _invhist->addColumn(tr("QOH After"),   _qtyColumn,          Qt::AlignRight, false, "qohafter");
+  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft,  false, "costmethod");
+  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight, false, "invhist_value_before");
+  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight, false, "invhist_value_after");
+  _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter,false, "invhist_user");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
   _transType->append(cTransIssues,    tr("Issues")                 );
   _transType->append(cTransShipments, tr("Shipments")              );
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
-  if (_metrics->value("Application") != "PostBooks")
+  if (_metrics->boolean("MultiWhs"))
     _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 }
 
 dspInventoryHistoryByOrderNumber::~dspInventoryHistoryByOrderNumber()
@@ -97,29 +103,50 @@ void dspInventoryHistoryByOrderNumber::sSalesOrderList()
 
 void dspInventoryHistoryByOrderNumber::setParams(ParameterList & params)
 {
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("orderNumber", _orderNumber->text());
-  params.append("transType", _transType->id());
-}
-
-void dspInventoryHistoryByOrderNumber::sPrint()
-{
-  if ( (!_dates->allValid()) || (_orderNumber->text().trimmed().length() == 0) )
+  if (_orderNumber->text().trimmed().length() == 0)
   {
-    QMessageBox::warning( this, tr("Invalid Data"),
-                          tr("You must enter an Order Number along with a valid Start Date and End Date for this report.") );
+    QMessageBox::critical( this, tr("Enter Order Search Pattern"),
+                           tr("You must enter a Order # pattern to search for." ) );
+    _orderNumber->setFocus();
+    return;
+  }
+
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("You must enter a Start Date.") );
     _dates->setFocus();
     return;
   }
 
-  ParameterList params;
-  params.append("orderNumber", _orderNumber->text().trimmed());
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("You must enter an End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+  params.append("orderNumber", _orderNumber->text());
   params.append("transType", _transType->id());
 
-  orReport report("InventoryHistoryByOrderNumber", params);
+  params.append("average", tr("Average"));
+  params.append("standard", tr("Standard"));
+  params.append("job", tr("Job"));
+  params.append("none", tr("None"));
+  params.append("unknown", tr("Unknown"));
+}
+
+void dspInventoryHistoryByOrderNumber::sPrint()
+{
+  ParameterList params;
+  setParams(params);
+  if (!params.count())
+    return;
+
+  orReport report("InventoryHistory", params);
   if (report.isValid())
     report.print();
   else
@@ -187,35 +214,13 @@ void dspInventoryHistoryByOrderNumber::sFillList()
 {
   _invhist->clear();
 
-  if (_orderNumber->text().trimmed().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Order Search Pattern"),
-                           tr("You must enter a Order # pattern to search for." ) );
-    _orderNumber->setFocus();
-    return;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter an End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
   if (_orderNumber->text().trimmed().length())
   {
     ParameterList params;
     setParams(params);
-    MetaSQLQuery mql = mqlLoad("inventoryHistoryByOrderNumber", "detail");
+    if (!params.count())
+      return;
+    MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
 
     q = mql.toQuery(params);
     _invhist->populate(q);
