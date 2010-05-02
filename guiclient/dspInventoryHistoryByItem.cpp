@@ -158,16 +158,16 @@ enum SetResponse dspInventoryHistoryByItem::set(const ParameterList &pParams)
   param = pParams.value("ordertype", &valid);
   if (valid)
   {
-    QString transtype = param.toString();
+    QString ordertype = param.toString();
 
-    if (transtype == "SO")
-      _transType->setCurrentIndex(1);
-    else if (transtype == "PO")
-      _transType->setCurrentIndex(2);
-    else if (transtype == "WO")
-      _transType->setCurrentIndex(3);
-    else if (transtype == "TO")
-      _transType->setCurrentIndex(4);
+    if (ordertype == "SO")
+      _orderType->setCurrentIndex(1);
+    else if (ordertype == "PO")
+      _orderType->setCurrentIndex(2);
+    else if (ordertype == "WO")
+      _orderType->setCurrentIndex(3);
+    else if (ordertype == "TO")
+      _orderType->setCurrentIndex(4);
   }
 
   if (pParams.inList("run"))

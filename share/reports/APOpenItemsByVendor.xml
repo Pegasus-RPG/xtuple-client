@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>A/P Open Items By Vendor</title>
- <name>APOpenItemsByVendor</name>
+ <title>A/P Open Items</title>
+ <name>APOpenItems</name>
  <description></description>
  <size>Letter</size>
  <portrait/>
@@ -11,55 +11,26 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT vend_name,
-       vend_number,
+  <sql>SELECT 
+&lt;? if exists("vend_id") ?>
+       (SELECT vend_name FROM vendinfo WHERE vend_id=&lt;? value("vend_id") ?>)
+&lt;? elseif exists("vendtype_id") ?>
+       (SELECT vendtype_code FROM vendtype WHERE vendtype_id=&lt;? value("vendtype_id") ?>)
+&lt;? elseif exists("vendtype_pattern") ?>
+       ('Vendor Type pattern = ' || &lt;? value("vendtype_pattern") ?>)
+&lt;? else ?>
+       'All Vendors'
+&lt;? endif ?>
+       AS selection,
        currConcat(baseCurrId()) AS baseCurr,
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
-       formatDate(&lt;? value("asofDate") ?>) AS asofDate
-  FROM vend
- WHERE (vend_id=&lt;? value("vend_id") ?>);</sql>
+       formatDate(&lt;? value("asofDate") ?>) AS asofDate;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT apopen_id, apopen_ponumber, apopen_docnumber,
-                    CASE WHEN (apopen_doctype='C') THEN &lt;? value("creditMemo") ?>
-                         WHEN (apopen_doctype='D') THEN &lt;? value("debitMemo") ?>
-                         WHEN (apopen_doctype='V') THEN &lt;? value("voucher") ?>
-                         ELSE &lt;? value("other") ?>
-                    END AS f_doctype,
-                    apopen_invcnumber AS invoicenumber,
-                    formatDate(apopen_docdate) AS f_docdate, 
-                    formatDate(apopen_duedate) AS f_duedate, 
-                    formatMoney(apopen_amount) AS f_amount,
-                    formatMoney(apopen_paid - COALESCE(SUM(apapply_target_paid),0)) AS f_paid,
-                    formatMoney((apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) * 
-                    CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
-                    END) AS f_balance,
-                    currConcat(apopen_curr_id) AS currAbbr,
-                    (apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) 
-                    / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
-                         END) AS base_balance,
-                    formatMoney((apopen_amount - apopen_paid + COALESCE(SUM(apapply_target_paid),0)) 
-                    / apopen_curr_rate * (CASE WHEN apopen_doctype IN ('D', 'V') THEN 1 ELSE -1 
-                         END)) AS f_base_balance,
-                  CASE WHEN (apopen_status='O') THEN TEXT('Open')
-                    ELSE CASE WHEN (apopen_status='H') THEN TEXT('On Hold')
-                      ELSE CASE WHEN (apopen_status='C') THEN TEXT('Close')
-                      END
-                    END
-                  END AS status
-             FROM apopen 
-               LEFT OUTER JOIN apapply ON (((apopen_id=apapply_target_apopen_id) 
-                                       OR (apopen_id=apapply_source_apopen_id)) 
-                                       AND (apapply_postdate > &lt;? value("asofDate") ?>)) 
-              WHERE ( (COALESCE(apopen_closedate,date &lt;? value("asofDate") ?> + integer '1')>&lt;? value("asofDate") ?>) 
-                AND   (apopen_docdate&lt;=&lt;? value("asofDate") ?>)
-                AND   (apopen_vend_id=&lt;? value("vend_id") ?>) 
-                AND   (apopen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) ) 
-              GROUP BY apopen_id, apopen_ponumber, apopen_docnumber,apopen_doctype, apopen_invcnumber, apopen_docdate, 
-                apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, apopen_curr_id, apopen_curr_rate, apopen_status 
-              ORDER BY apopen_docdate;</sql>
+  <mqlgroup>apOpenItems</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>166</height>
@@ -72,9 +43,9 @@
   </line>
   <label>
    <rect>
-    <x>135</x>
-    <y>145</y>
-    <width>80</width>
+    <x>250</x>
+    <y>143</y>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -88,10 +59,10 @@
   </label>
   <label>
    <rect>
-    <x>442</x>
-    <y>115</y>
+    <x>445</x>
+    <y>108</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -104,8 +75,8 @@
   </label>
   <label>
    <rect>
-    <x>510</x>
-    <y>145</y>
+    <x>530</x>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -121,9 +92,9 @@
   <field>
    <rect>
     <x>550</x>
-    <y>115</y>
+    <y>108</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -140,7 +111,7 @@
   <label>
    <rect>
     <x>270</x>
-    <y>5</y>
+    <y>8</y>
     <width>475</width>
     <height>40</height>
    </rect>
@@ -151,14 +122,14 @@
    </font>
    <right/>
    <vcenter/>
-   <string>A/P Open Items By Vendor</string>
+   <string>Open Payables</string>
   </label>
   <label>
    <rect>
-    <x>442</x>
-    <y>85</y>
+    <x>445</x>
+    <y>83</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -174,7 +145,7 @@
     <x>550</x>
     <y>65</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -190,10 +161,10 @@
   </field>
   <label>
    <rect>
-    <x>442</x>
+    <x>445</x>
     <y>65</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -206,8 +177,8 @@
   </label>
   <label>
    <rect>
-    <x>570</x>
-    <y>145</y>
+    <x>585</x>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -222,8 +193,8 @@
   </label>
   <label>
    <rect>
-    <x>285</x>
-    <y>145</y>
+    <x>390</x>
+    <y>143</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -238,8 +209,8 @@
   </label>
   <label>
    <rect>
-    <x>445</x>
-    <y>145</y>
+    <x>470</x>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -255,9 +226,9 @@
   <field>
    <rect>
     <x>550</x>
-    <y>85</y>
+    <y>83</y>
     <width>100</width>
-    <height>20</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -271,45 +242,10 @@
     <column>enddate</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>65</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>vend_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>60</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Vendor:</string>
-  </label>
   <label>
    <rect>
     <x>5</x>
-    <y>145</y>
+    <y>143</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -325,8 +261,8 @@
   <label>
    <rect>
     <x>75</x>
-    <y>145</y>
-    <width>80</width>
+    <y>143</y>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -336,31 +272,12 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Voucher #</string>
+   <string>Doc.#</string>
   </label>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>85</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>vend_name</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>205</x>
-    <y>145</y>
+    <x>305</x>
+    <y>143</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -375,8 +292,8 @@
   </label>
   <field>
    <rect>
-    <x>685</x>
-    <y>145</y>
+    <x>695</x>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -394,8 +311,8 @@
   </field>
   <label>
    <rect>
-    <x>625</x>
-    <y>145</y>
+    <x>645</x>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -410,9 +327,44 @@
   </label>
   <label>
    <rect>
-    <x>365</x>
-    <y>145</y>
-    <width>80</width>
+    <x>0</x>
+    <y>65</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Selection:</string>
+  </label>
+  <field>
+   <rect>
+    <x>110</x>
+    <y>65</y>
+    <width>250</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>selection</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>130</x>
+    <y>143</y>
+    <width>115</width>
     <height>15</height>
    </rect>
    <font>
@@ -422,7 +374,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Status</string>
+   <string>Vendor</string>
   </label>
  </rpthead>
  <pghead>
@@ -433,7 +385,7 @@
   <height>26</height>
   <label>
    <rect>
-    <x>495</x>
+    <x>530</x>
     <y>4</y>
     <width>50</width>
     <height>16</height>
@@ -449,8 +401,8 @@
   </label>
   <label>
    <rect>
-    <x>260</x>
-    <y>5</y>
+    <x>305</x>
+    <y>4</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -466,7 +418,7 @@
   <label>
    <rect>
     <x>5</x>
-    <y>5</y>
+    <y>4</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -481,9 +433,9 @@
   </label>
   <label>
    <rect>
-    <x>90</x>
-    <y>5</y>
-    <width>80</width>
+    <x>75</x>
+    <y>4</y>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -493,12 +445,12 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Voucher #</string>
+   <string>Doc.#</string>
   </label>
   <label>
    <rect>
-    <x>561</x>
-    <y>5</y>
+    <x>585</x>
+    <y>4</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -520,8 +472,8 @@
   </line>
   <label>
    <rect>
-    <x>432</x>
-    <y>5</y>
+    <x>470</x>
+    <y>4</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -536,8 +488,8 @@
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>5</y>
+    <x>390</x>
+    <y>4</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -552,9 +504,9 @@
   </label>
   <label>
    <rect>
-    <x>175</x>
-    <y>5</y>
-    <width>80</width>
+    <x>250</x>
+    <y>4</y>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -568,10 +520,10 @@
   </label>
   <label>
    <rect>
-    <x>621.378</x>
-    <y>7</y>
+    <x>645</x>
+    <y>4</y>
     <width>50</width>
-    <height>10</height>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -584,8 +536,8 @@
   </label>
   <field>
    <rect>
-    <x>685</x>
-    <y>5</y>
+    <x>695</x>
+    <y>4</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -601,6 +553,22 @@
     <column>baseCurr</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>130</x>
+    <y>4</y>
+    <width>115</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Vendor</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -611,8 +579,8 @@
    <height>16</height>
    <field>
     <rect>
-     <x>205</x>
-     <y>0</y>
+     <x>305</x>
+     <y>2</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -630,9 +598,9 @@
    </field>
    <field>
     <rect>
-     <x>135</x>
-     <y>0</y>
-     <width>80</width>
+     <x>250</x>
+     <y>2</y>
+     <width>50</width>
      <height>15</height>
     </rect>
     <font>
@@ -640,7 +608,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -649,8 +617,8 @@
    </field>
    <field>
     <rect>
-     <x>570</x>
-     <y>0</y>
+     <x>585</x>
+     <y>2</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -668,8 +636,8 @@
    </field>
    <field>
     <rect>
-     <x>510</x>
-     <y>0</y>
+     <x>530</x>
+     <y>2</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -688,8 +656,8 @@
    <field>
     <rect>
      <x>5</x>
-     <y>0</y>
-     <width>80</width>
+     <y>2</y>
+     <width>70</width>
      <height>15</height>
     </rect>
     <font>
@@ -697,7 +665,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -706,8 +674,8 @@
    </field>
    <field>
     <rect>
-     <x>285</x>
-     <y>0</y>
+     <x>390</x>
+     <y>2</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -725,8 +693,8 @@
    </field>
    <field>
     <rect>
-     <x>445</x>
-     <y>0</y>
+     <x>475</x>
+     <y>2</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -745,8 +713,8 @@
    <field>
     <rect>
      <x>75</x>
-     <y>0</y>
-     <width>80</width>
+     <y>2</y>
+     <width>50</width>
      <height>15</height>
     </rect>
     <font>
@@ -754,7 +722,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -763,8 +731,8 @@
    </field>
    <field>
     <rect>
-     <x>685</x>
-     <y>0</y>
+     <x>695</x>
+     <y>2</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -782,8 +750,8 @@
    </field>
    <field>
     <rect>
-     <x>625</x>
-     <y>0</y>
+     <x>640</x>
+     <y>2</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -801,9 +769,9 @@
    </field>
    <field>
     <rect>
-     <x>365</x>
-     <y>0</y>
-     <width>80</width>
+     <x>130</x>
+     <y>2</y>
+     <width>115</width>
      <height>15</height>
     </rect>
     <font>
@@ -811,11 +779,11 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>status</column>
+     <column>vend_name</column>
     </data>
    </field>
   </detail>
@@ -929,7 +897,8 @@
     <query>detail</query>
     <column>base_balance</column>
    </data>
-   <tracktotal builtin="true" >qty</tracktotal>
+   <format builtin="true" >qty</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>

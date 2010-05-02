@@ -1077,11 +1077,13 @@ void dspAROpenItems::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  _aropen->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+
+  XSqlQuery qry;
+  qry = mql.toQuery(params);
+  _aropen->populate(qry, true);
+  if (qry.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -280,7 +280,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.uninvoicedReceipts", tr("&Uninvoiced Receipts and Returns..."), SLOT(sDspUninvoicedReceipts()), apReportsMenu, "ViewUninvoicedReceipts MaintainUninvoicedReceipts", NULL, NULL, true , NULL },
     { "ap.voucheringEditList", tr("Vouchering &Edit List..."), SLOT(sVoucheringEditList()), apReportsMenu, "MaintainVouchers ViewVouchers", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, "true", NULL, NULL, true, NULL },
-    { "ap.dspOpenAPItemsByVendor", tr("Open &Items by Vendor..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, "ViewAPOpenItems", NULL, NULL, true , NULL },
+    { "ap.dspOpenAPItemsByVendor", tr("Open &Payables..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, "ViewAPOpenItems", NULL, NULL, true , NULL },
     { "ap.dspAPAging", tr("&Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, "ViewAPOpenItems", QPixmap(":/images/apAging.png"), toolBar, true , tr("Payables Aging") },
     { "separator", NULL, NULL, apReportsMenu, "true", NULL, NULL, true, NULL },
     { "ap.dspCheckRegister", tr("&Check Register..."), SLOT(sDspCheckRegister()), apReportsMenu, "MaintainPayments", NULL, NULL, true , NULL },

@@ -54,7 +54,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
-  <height>181</height>
+  <height>178</height>
   <label>
    <rect>
     <x>270</x>
@@ -69,7 +69,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
    </font>
    <left/>
    <vcenter/>
-   <string>Invoice Date</string>
+   <string>Doc. Date</string>
   </label>
   <label>
    <rect>
@@ -301,7 +301,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <field>
    <rect>
     <x>141.375</x>
-    <y>71.046</y>
+    <y>69.7785</y>
     <width>200</width>
     <height>15</height>
    </rect>
@@ -320,7 +320,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <field>
    <rect>
     <x>142</x>
-    <y>53.8</y>
+    <y>52.6662</y>
     <width>250</width>
     <height>15</height>
    </rect>
@@ -358,7 +358,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <field>
    <rect>
     <x>514.049</x>
-    <y>86.8907</y>
+    <y>88.4798</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -377,7 +377,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <label>
    <rect>
     <x>34.8028</x>
-    <y>53.9338</y>
+    <y>52.6662</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -393,7 +393,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <label>
    <rect>
     <x>35.1592</x>
-    <y>71.0142</y>
+    <y>69.7785</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -409,7 +409,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <label>
    <rect>
     <x>34.8631</x>
-    <y>88.4015</y>
+    <y>88.4798</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -425,7 +425,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   <label>
    <rect>
     <x>410.477</x>
-    <y>86.8907</y>
+    <y>88.4798</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -460,38 +460,6 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
    <right/>
    <vcenter/>
    <string>Currency</string>
-  </label>
-  <label>
-   <rect>
-    <x>65</x>
-    <y>30</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice (I) #</string>
-  </label>
-  <label>
-   <rect>
-    <x>65</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Debit Memo# (D) </string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -566,22 +534,6 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
   </label>
   <label>
    <rect>
-    <x>65</x>
-    <y>15</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Credit Memo# (C) </string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>30</y>
     <width>50</width>
@@ -626,7 +578,23 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
    </font>
    <left/>
    <vcenter/>
-   <string>Invoice Date</string>
+   <string>Doc. Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>85</x>
+    <y>30</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Document #</string>
   </label>
  </pghead>
  <section>
@@ -752,9 +720,9 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
    </field>
    <field>
     <rect>
-     <x>4.20281</x>
+     <x>5</x>
      <y>0</y>
-     <width>78.9286</width>
+     <width>78.9</width>
      <height>15</height>
     </rect>
     <font>
@@ -762,7 +730,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -790,7 +758,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
    </field>
    <field>
     <rect>
-     <x>164</x>
+     <x>165</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -798,7 +766,7 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
     <font>
      <face>Arial</face>
      <size>8</size>
-     <weight>normal</weight>
+     <weight>bold</weight>
     </font>
     <left/>
     <vcenter/>
@@ -921,7 +889,8 @@ formatDate(&lt;? value("asofDate") ?>) AS asOfDate,
     <query>detail</query>
     <column>base_balance</column>
    </data>
-   <tracktotal builtin="true" >qty</tracktotal>
+   <format builtin="true" >qty</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>
