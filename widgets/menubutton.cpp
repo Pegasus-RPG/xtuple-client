@@ -65,7 +65,7 @@ void MenuButton::actionEvent(QActionEvent *event)
     QWidget::actionEvent(event);
 }
 
-QString MenuButton::actionName()
+QString MenuButton::actionName() const
 {
   if (_action)
     return _action->objectName();
@@ -73,17 +73,17 @@ QString MenuButton::actionName()
   return QString();
 }
 
-QString MenuButton::image()
+QString MenuButton::image() const
 {
   return _image;
 }
 
-QString MenuButton::label()
+QString MenuButton::label() const
 {
   return _label->text();
 }
 
-void MenuButton::setLabel(QString text)
+void MenuButton::setLabel(const QString & text)
 {
   _label->setText(text);
 }
@@ -102,7 +102,7 @@ void MenuButton::setAction(QAction *action)
   setEnabled(_action->isEnabled());
 }
 
-void MenuButton::setAction(QString name)
+void MenuButton::setAction(const QString & name)
 {
   if (actionName() == name)
     return;
@@ -122,7 +122,7 @@ void MenuButton::setAction(QString name)
   }
 }
 
-void MenuButton::setImage(QString image)
+void MenuButton::setImage(const QString & image)
 {
   _image = image;
 

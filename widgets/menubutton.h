@@ -35,15 +35,17 @@ class XTUPLEWIDGETS_EXPORT MenuButton : public QWidget, public Ui::MenuButton
 
     static GuiClientInterface *_guiClientInterface;
 
-    QString image();
-    QString label();
-    QString actionName();
+    QString image() const;
+    void setImage(const QString & image);
+
+    QString label() const;
+    void setLabel(const QString & text );
+
+    QString actionName() const;
+    void setAction(const QString & name );
 
   public slots:
-    void setImage(QString image);
-    void setLabel(QString text);
     void setAction(QAction *action);
-    void setAction(QString name);
     
   protected:
     void actionEvent(QActionEvent *);
