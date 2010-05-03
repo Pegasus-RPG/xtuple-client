@@ -24,85 +24,97 @@
 /**
   \class RecurrenceWidget
   
-  \brief The RecurrenceWidget gives the %user a single interface for telling
+  \brief The RecurrenceWidget gives the %user a unified interface for telling
          the system how often certain %events occur.
 
-  In general recurrences are stored in the recur table, but the
-  RecurrenceWidget provides methods for setting and getting information
-  about the recurrence without using the recur table. As of xTuple ERP
-  3.5.0Alpha, incident, project, and todoItem use the recur table;
-  createRecurringInvoices does not.
-
-  The recurrence is set using two basic values, the frequency and the period.
-  The period is essentially the unit of measure of time (hour, day, month).
-  The frequency is the number of periods between recurrences. A
-  recurrence with the period set to W (= week) and frequency of 3 will repeat
+  In general recurrences are stored in the recur table, but this is not
+  required.
+  Two basic values describe a recurrence:
+  <UL>
+  <LI>The period is essentially the time unit of measure (hour, day, month).
+  </LI>
+  <LI>The frequency is the number of periods between recurrences.</LI>
+  </UL>
+  A recurrence with the period set to W (= week) and frequency of 3 will repeat
   once every three weeks.
 
-  To add a new recurring event or item, you need to change data in the
+  To add a new kind of recurring event or %item, you need to change data in the
   database, stored procedures, triggers, and application code.
-  We'll use Invoice in the examples here, with 'I' as the internal code value.
+  We'll use Invoice in the examples here, with 'I' as the internal code value,
+  even though %invoices already use this mechanism (xTuple ERP 3.5.1 and later).
 
   Add a column to the parent table to track the recurrence parent/child
   relationship. The column name must follow this pattern:
-    \c [tablename]_recurring_[tablename]_id
+    \c [tablename]_recurring_[tablename]_id ,
   e.g.
-    \c invchead_recurring_invchead_id
+    \c invchead_recurring_invchead_id :
+  \code
+  ALTER TABLE invchead ADD COLUMN invchead_recurring_invchead_id INTEGER;
+  COMMENT ON COLUMN invchead.invchead_recurring_invchead_id IS 'The first invchead record in the series if this is a recurring Invoice. If the invchead_recurring_invchead_id is the same as the invchead_id, this record is the first in the series.';
+  \endcode
 
-  Add a RecurrenceWidget to the .ui for window that will maintain data of this
-  type (e.g. invoice) and modify the code as described below.
+  Add a RecurrenceWidget to the .ui for the window that will maintain data of
+  this type (e.g. invoice.ui).
 
-  You'll have to initialize the widget in the window's constructor:
+  Initialize the widget in the window's constructor:
   \code
   _recur->setParent(-1, 'I');
   \endcode
 
-  When creating a new record, update the widget again when the window requests
-  a new id for the object from the sequence. This usually happens in either the
-  %set() or %save() or %sSave() method, depending on the class.
-  For invoice this is handled in the cNew case in invoice::set():
+  Update the widget again when the window gets an id for the object.
+  This usually happens in either the
+  %set(), %save(), or %sSave() method for new objects, depending on the class,
+  and in %populate() when editing existing objects:
   \code
+  // cNew case in invoice::set()
   _recur->setParent(_invcheadid, 'I');
-  \endcode
-
-  Do the same thing when reading an existing record for editing or viewing:
-  \code
+  ...
+  // invoice::populate()
   _recur->setParent(q.value("invchead_recurring_invchead_id").toInt(), "I");
   \endcode
 
-  Ask the %user how to handle recurrences before saving the data. Make sure to
-  ask before starting any transactions and to return without further processing
-  if the %user chooses to cancel:
-  \code
-  RecurrenceWidget::ChangePolicy cp = _recur->getChangePolicy();
-  if (cp == RecurrenceWidget::NoPolicy)
-    return;
-  \endcode
-
-  As part of setting up for the insert or update of the main record,
-  make sure to set the recurrence parentage:
-  \code
-  if (_recur->isRecurring())
-    q.bindValue(":invchead_recurring_invchead_id", _recur->parentId());
-  \endcode
-
+  Ask the %user how to handle existing recurrences before saving the data
+  and before starting a transaction.  getChangePolicy will return
+  RecurrenceWidget::NoPolicy) if the %user chooses to cancel.
+  Then when preparing to insert or update the
+  main record, make sure to set the recurrence parentage.
   Finally, after the insert/update, save the recurrence and check for errors:
+
   \code
-  QString errmsg;
-  if (! _recur->save(true, cp, &errmsg))
+  bool %save()
   {
-    rollbackq.exec();
-    systemError(this, errmsg, __FILE__, __LINE__);
-    return false;
+    // error checking
+    RecurrenceWidget::ChangePolicy cp = _recur->getChangePolicy();
+    if (cp == RecurrenceWidget::NoPolicy)
+      return false;
+
+    XSqlQuery beginq("BEGIN;");
+    XSqlQuery qry;
+    ...
+    // set up qry to insert or update
+    if (_recur->isRecurring())
+      qry.bindValue(":invchead_recurring_invchead_id", _recur->parentId());
+    ...
+    // execute the insert/update
+    ...
+    QString errmsg;
+    if (! _recur->save(true, cp, &errmsg))
+    {
+      rollbackq.exec();
+      systemError(this, errmsg, __FILE__, __LINE__);
+      return false;
+    }
+    ...
+    // finish processing
+    XSqlQuery commitq("COMMIT;");
+    return true;
   }
   \endcode
 
-  Don't forget to commit if you explicitly started a transaction.
-
-  To allow the stored procedures that maintain the recurrence relationships
-  to work properly, there must be a function that copies an existing record,
-  based on its id, and gives the copy a different timestamp or date,
-  like one of these:
+  To maintain the recurrence relationships,
+  there must be a function that copies an existing record
+  based on its id and gives the copy a different timestamp or date.
+  It must have a function signature like one of these:
   <OL>
     <LI>copy[tablename](INTEGER, TIMESTAMP WITH TIME ZONE)</LI>
     <LI>copy[tablename](INTEGER, TIMESTAMP WITHOUT TIME ZONE)</LI>
@@ -114,8 +126,9 @@
   the recurtype table's recurtype_copyargs column (see below) so the appropriate
   casting can be done for the date or timestamp and an appropriate number
   of NULL arguments can be passed.
-  The copy function should copy the
-  [tablename]_recurring_[tablename]_id column.
+  The copy function must copy the
+  \c [tablename]_recurring_[tablename]_id
+  column.
   
   There can be a function to delete records of this type as well. If there is
   one, it must accept a single integer id of the record to delete. If there
@@ -198,9 +211,7 @@
 
  */
 
-/* TODO: expand to allow selecting Minutes and Hours.
-         
-         The widget will need properties to set minimum/maximum periods
+/* TODO: Add properties to set minimum/maximum periods?
          (e.g. it doesn't make sense for invoicing to recur hourly).
 
          The enum value Custom is intended for use by cases like
@@ -222,8 +233,8 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
     setObjectName(pName);
 
 //_period->append(Never,        tr("Never"),   "");
-//_period->append(Minutely,     tr("Minutes"), "m");
-//_period->append(Hourly,       tr("Hours"),   "H");
+  _period->append(Minutely,     tr("Minutes"), "m");
+  _period->append(Hourly,       tr("Hours"),   "H");
   _period->append(Daily,        tr("Days"),    "D");
   _period->append(Weekly,       tr("Weeks"),   "W");
   _period->append(Monthly,      tr("Months"),  "M");
