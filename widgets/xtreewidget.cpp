@@ -223,7 +223,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
     _workingParams.clear();
   _workingParams.append(args);
 
-  if (_guiClientInterface &&
+  bool _alwaysLinear = true; // this line can be changed later to be a configurable option at the class level
+  if (_alwaysLinear && _guiClientInterface &&
       _guiClientInterface->globalQ()->result() == pQuery.result())
   {
     _linear = true;
@@ -1234,6 +1235,8 @@ void XTreeWidget::clear()
 {
   if (DEBUG)
     qDebug("%s::clear()", qPrintable(objectName()));
+  if(!_working)
+    _workingParams.clear();
   emit valid(FALSE);
   _savedId = false; // was -1;
 
