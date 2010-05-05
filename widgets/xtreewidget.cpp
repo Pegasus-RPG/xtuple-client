@@ -1132,10 +1132,20 @@ int XTreeWidget::altId() const
   return -1;
 }
 
-void XTreeWidget::setId(int pId)
+/*!
+  Selects a row with a matching value \a pId on the first column in the result set.
+  If \a pClear is true then any previous selections are cleared.
+*/
+void XTreeWidget::setId(int pId, bool pClear)
 {
   if (pId < 0)
     return;
+
+  QItemSelectionModel::SelectionFlag flag;
+  if (pClear)
+    flag = QItemSelectionModel::ClearAndSelect;
+  else
+    flag = QItemSelectionModel::Select;
 
   XTreeWidgetItem *item = (XTreeWidgetItem*)topLevelItem(0);
   QTreeWidgetItem *found = 0;
@@ -1154,7 +1164,7 @@ void XTreeWidget::setId(int pId)
     scrollToItem(found);
     QModelIndex i = indexFromItem(found);
     selectionModel()->setCurrentIndex(i,
-                                      QItemSelectionModel::ClearAndSelect |
+                                      flag |
                                       QItemSelectionModel::Rows);
   }
 }
@@ -1180,10 +1190,20 @@ QTreeWidgetItem* searchChildren(XTreeWidgetItem *parent, int pId)
   return 0;
 }
 
-void XTreeWidget::setId(int pId, int pAltId)
+/*!
+Selects a row with a matching values \a pId and \a pAltId on the first and second columns
+respectively in the result set. If \a pClear is true then any previous selections are cleared.
+*/
+void XTreeWidget::setId(int pId, int pAltId, bool pClear)
 {
   if (pId < 0)
     return;
+
+  QItemSelectionModel::SelectionFlag flag;
+  if (pClear)
+    flag = QItemSelectionModel::ClearAndSelect;
+  else
+    flag = QItemSelectionModel::Select;
 
   for (QModelIndex i = indexFromItem(topLevelItem(0)); i.isValid(); i = indexBelow(i))
   {
@@ -1191,7 +1211,7 @@ void XTreeWidget::setId(int pId, int pAltId)
     if(item && item->id() == pId && item->altId() == pAltId)
     {
       selectionModel()->setCurrentIndex(i,
-                                        QItemSelectionModel::ClearAndSelect |
+                                        flag |
                                         QItemSelectionModel::Rows);
       return;
     }

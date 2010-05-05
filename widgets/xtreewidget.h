@@ -192,8 +192,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE int  altId() const;
     Q_INVOKABLE int  id()    const;
     Q_INVOKABLE int  id(const QString)     const;
-    Q_INVOKABLE void setId(int);
-    Q_INVOKABLE void setId(int,int);
+    Q_INVOKABLE void setId(int pId, bool pClear = true);
+    Q_INVOKABLE void setId(int pId ,int pAltId, bool pClear = true);
 
     Q_INVOKABLE virtual int              column(const QString) const;
     Q_INVOKABLE virtual XTreeWidgetItem *currentItem()         const;
