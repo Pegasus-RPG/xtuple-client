@@ -28,6 +28,7 @@ HEADERS += setupscriptapi.h \
     qboxlayoutproto.h \
     qbytearrayproto.h \
     qdialogsetup.h \
+    qdockwidgetproto.h \
     qdomattrproto.h \
     qdomcdatasectionproto.h \
     qdomcharacterdataproto.h \
@@ -54,6 +55,7 @@ HEADERS += setupscriptapi.h \
     qitemdelegateproto.h \
     qlayoutproto.h \
     qlayoutitemproto.h \
+    qmainwindowproto.h \
     qmenuproto.h \
     qmessageboxsetup.h \
     qnetworkreplyproto.h \
@@ -115,6 +117,7 @@ SOURCES += setupscriptapi.cpp \
     qboxlayoutproto.cpp \
     qbytearrayproto.cpp \
     qdialogsetup.cpp \
+    qdockwidgetproto.cpp \
     qdomattrproto.cpp \
     qdomcdatasectionproto.cpp \
     qdomcharacterdataproto.cpp \
@@ -141,6 +144,7 @@ SOURCES += setupscriptapi.cpp \
     qitemdelegateproto.cpp \
     qlayoutitemproto.cpp \
     qlayoutproto.cpp \
+    qmainwindowproto.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
     qnetworkreplyproto.cpp \

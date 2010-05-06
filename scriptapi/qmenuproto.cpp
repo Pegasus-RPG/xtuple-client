@@ -110,8 +110,9 @@ QAction *QMenuProto::addAction(const QIcon &icon, const QString &text, const QOb
   return 0;
 }
 
-void QMenuProto::addAction(QAction *action)
+void QMenuProto::appendAction(QAction *action)
 {
+  // Can't use addAction here because of ambiguity problem
   if (DEBUG) qDebug("addAction(QAction)");
   QMenu *item = qscriptvalue_cast<QMenu*>(thisObject());
   if (item)

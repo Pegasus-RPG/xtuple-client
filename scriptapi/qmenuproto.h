@@ -37,7 +37,7 @@ class QMenuProto : public QObject, public QScriptable
     Q_INVOKABLE QAction *addAction(const QIcon &icon, const QString &text);
     Q_INVOKABLE QAction *addAction(const QString &text, const QObject *receiver, const char *member, const QKeySequence &shortcut = 0);
     Q_INVOKABLE QAction *addAction(const QIcon &icon, const QString &text, const QObject *receiver, const char *member, const QKeySequence &shortcut = 0);
-    Q_INVOKABLE void     addAction(QAction *action);
+    Q_INVOKABLE void     appendAction(QAction *action);
     Q_INVOKABLE QAction *addMenu(QMenu *menu);
     Q_INVOKABLE QMenu   *addMenu(const QString &title);
     Q_INVOKABLE QMenu   *addMenu(const QIcon &icon, const QString &title);

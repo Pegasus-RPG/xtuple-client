@@ -34,6 +34,7 @@
 #include "qboxlayoutproto.h"
 #include "qbytearrayproto.h"
 #include "qdialogsetup.h"
+#include "qdockwidgetproto.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
 #include "qdomcharacterdataproto.h"
@@ -60,6 +61,7 @@
 #include "qitemdelegateproto.h"
 #include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
+#include "qmainwindowproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
@@ -140,6 +142,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQBoxLayoutProto(engine);
   setupQByteArrayProto(engine);
   setupQDialog(engine);
+  setupQDockWidgetProto(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
   setupQDomCharacterDataProto(engine);
@@ -166,6 +169,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQItemDelegateProto(engine);
   setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
+  setupQMainWindowProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
