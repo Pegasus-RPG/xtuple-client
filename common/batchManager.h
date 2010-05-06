@@ -37,6 +37,7 @@ protected slots:
 
     virtual void sPopulateMenu( QMenu * );
     virtual void sFillList();
+    virtual void sHandleButtons();
 
 
 private:

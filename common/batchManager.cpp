@@ -33,6 +33,7 @@ batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_autoUpdate,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_batch, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_batch, SIGNAL(itemSelectionChanged()),    this, SLOT(sHandleButtons()));
   connect(_cancel,       SIGNAL(clicked()),          this, SLOT(sCancel()));
   connect(_reschedule,   SIGNAL(clicked()),          this, SLOT(sReschedule()));
   connect(_showCompleted,SIGNAL(toggled(bool)),      this, SLOT(sFillList()));
@@ -117,6 +118,13 @@ void batchManager::sFillList()
     _timer->singleShot(60000, this, SLOT(sFillList()));
 }
 
+void batchManager::sHandleButtons()
+{
+  QList<XTreeWidgetItem*> list = _batch->selectedItems();
+  _cancel->setEnabled(list.size() > 0);
+  _reschedule->setEnabled(list.size() == 1);
+  _view->setEnabled(list.size() == 1);
+}
 
 void batchManager::sReschedule()
 {
@@ -134,8 +142,21 @@ void batchManager::sCancel()
 {
   XSqlQuery cancel(_db);
   cancel.prepare("SELECT xtbatch.cancelBatchItem(:batch_id) AS result;");
-  cancel.bindValue(":batch_id", _batch->id());
-  cancel.exec();
+
+  QList<XTreeWidgetItem*> list = _batch->selectedItems();
+  if (list.size() > 1 &&
+      QMessageBox::question(this, tr("Cancel?"),
+                            tr("Are you sure you want to cancel %1 jobs?")
+                            .arg(list.size()),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
+  for (int i = 0; i < list.size(); i++)
+  {
+    cancel.bindValue(":batch_id", list.at(i)->id());
+    cancel.exec();
+  }
 
   sFillList();
 }

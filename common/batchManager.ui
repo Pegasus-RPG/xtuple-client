@@ -250,6 +250,9 @@ to be bound by its terms.</comment>
                  <height>100</height>
                 </size>
                </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::ExtendedSelection</enum>
+               </property>
               </widget>
              </item>
              <item>
@@ -392,54 +395,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_batch</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_reschedule</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_batch</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_cancel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_batch</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_view</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>255</x>
-     <y>276</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>546</x>
-     <y>226</y>
     </hint>
    </hints>
   </connection>
