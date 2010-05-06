@@ -541,6 +541,7 @@ void vendor::sCheck()
 //  Make sure that the newly entered vend_number is not already in use.
 //  Switch to cEdit and populate if so.
 
+  _number->setText(_number->text().trimmed().toUpper());
   if (_number->text().length() && _cachedNumber != _number->text())
   {
     if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
@@ -1029,6 +1030,6 @@ void vendor::sLoadCrmAcct(int crmacctId )
 void vendor::sNumberEdited()
 {
   _notice = TRUE;
-  _number->setText(_number->text().trimmed().toUpper());
+  _number->setText(_number->text().toUpper());
 }
 
