@@ -36,6 +36,7 @@ batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_batch, SIGNAL(itemSelectionChanged()),    this, SLOT(sHandleButtons()));
   connect(_cancel,       SIGNAL(clicked()),          this, SLOT(sCancel()));
   connect(_reschedule,   SIGNAL(clicked()),          this, SLOT(sReschedule()));
+  connect(_retry,        SIGNAL(clicked()),          this, SLOT(sRetry()));
   connect(_showCompleted,SIGNAL(toggled(bool)),      this, SLOT(sFillList()));
   connect(_usr,          SIGNAL(newID(int)),         this, SLOT(sFillList()));
   connect(_view,         SIGNAL(clicked()),          this, SLOT(sView()));
@@ -124,12 +125,52 @@ void batchManager::sHandleButtons()
   _cancel->setEnabled(list.size() > 0);
   _reschedule->setEnabled(list.size() == 1);
   _view->setEnabled(list.size() == 1);
+
+  _retry->setEnabled(false);
+  for (int i = 0; i < list.size(); i++)
+    if (! list.at(i)->text("batch_completed").isEmpty())
+    {
+      _retry->setEnabled(list.size() > 0);
+      break;
+    }
 }
 
 void batchManager::sReschedule()
 {
   if (batchItem::Reschedule(_batch->id(), this, _db) != QDialog::Rejected)
     sFillList();
+}
+
+void batchManager::sRetry()
+{
+  XSqlQuery retry(_db);
+  retry.prepare("SELECT xtbatch.rescheduleBatchItem(batch_id,"
+                "       batch_scheduled) AS result"
+                "  FROM xtbatch.batch"
+                " WHERE (batch_id=:batch_id);");
+
+  QList<XTreeWidgetItem*> list = _batch->selectedItems();
+  if (list.size() > 1 &&
+      QMessageBox::question(this, tr("Retry all?"),
+                            tr("<p>Are you sure you want to retry %1 jobs?"
+                               "<p>Note: Scheduled jobs will not be changed;"
+                               " use Reschedule to change these.")
+                            .arg(list.size()),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
+  for (int i = 0; i < list.size(); i++)
+  {
+    qDebug("%d", list.at(i)->id());
+    if (! list.at(i)->text("batch_completed").isEmpty())
+    {
+      retry.bindValue(":batch_id", list.at(i)->id());
+      retry.exec();
+    }
+  }
+
+  sFillList();
 }
 
 void batchManager::sView()
