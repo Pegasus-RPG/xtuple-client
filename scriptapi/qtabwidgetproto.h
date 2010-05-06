@@ -21,7 +21,11 @@ Q_DECLARE_METATYPE(QTabWidget*)
 //Q_DECLARE_METATYPE(QTabWidget)
 
 void setupQTabWidgetProto(QScriptEngine *engine);
+void TabPositionScriptValue(const QScriptValue &obj, enum QTabWidget::TabPosition &p);
+void TabShapeScriptValue(const QScriptValue &obj, enum QTabWidget::TabShape &p);
 QScriptValue constructQTabWidget(QScriptContext *context, QScriptEngine *engine);
+QScriptValue TabPositionScriptValue(QScriptEngine *engine, const enum QTabWidget::TabPosition &p);
+QScriptValue TabShapeScriptValue(QScriptEngine *engine, const enum QTabWidget::TabShape &p);
 
 class QTabWidgetProto : public QObject, public QScriptable
 {
