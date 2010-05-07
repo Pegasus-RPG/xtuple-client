@@ -393,6 +393,7 @@ int main(int argc, char *argv[])
     {
       files << "xTuple." + langext;
       files << "openrpt." + langext;
+      files << "reports." + langext;
 
       XSqlQuery pkglist("SELECT pkghead_name FROM pkghead WHERE packageIsEnabled(pkghead_name);");
       while(pkglist.next())
