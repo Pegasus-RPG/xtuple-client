@@ -305,7 +305,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
   return NoError;
 }
 
-void itemSite::sSave()
+bool itemSite::sSave()
 {
   if (_warehouse->id() == -1)
   {
@@ -313,7 +313,7 @@ void itemSite::sSave()
                            tr( "<p>You must select a Site for this "
 			      "Item Site before creating it." ) );
     _warehouse->setFocus();
-    return;
+    return false;
   }
 
   if(!_costNone->isChecked() && !_costAvg->isChecked()
@@ -322,7 +322,7 @@ void itemSite::sSave()
     QMessageBox::critical(this, tr("Cannot Save Item Site"),
                           tr("<p>You must select a Cost Method for this "
                              "Item Site before you may save it.") );
-    return;
+    return false;
   }
 
   if(_costAvg->isChecked() && _qohCache < 0)
@@ -330,7 +330,7 @@ void itemSite::sSave()
     QMessageBox::critical(this, tr("Cannot Save Item Site"), 
                           tr("<p>You can not change an Item Site to "
                              "Average Costing when it has a negative Qty. On Hand.") );
-    return;
+    return false;
   }
 
   if (_costcat->id() == -1)
@@ -339,7 +339,7 @@ void itemSite::sSave()
                            tr("<p>You must select a Cost Category for this "
 			      "Item Site before you may save it.") );
     _costcat->setFocus();
-    return;
+    return false;
   } 
     
   if (_plannerCode->id() == -1)
@@ -348,7 +348,7 @@ void itemSite::sSave()
                            tr("<p>You must select a Planner Code for this "
 			      "Item Site before you may save it.") );
     _plannerCode->setFocus();
-    return;
+    return false;
   } 
   
   if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
@@ -357,7 +357,7 @@ void itemSite::sSave()
                            tr("<p>You must set a reorder level "
 			      "for a stocked item before you may save it.") );
     _reorderLevel->setFocus();
-    return;
+    return false;
   }
 
   bool isLocationControl = _locationControl->isChecked();
@@ -389,7 +389,7 @@ void itemSite::sSave()
 				 "<p>You must first create at least one valid "
 				 "Location for this Item Site before it may be "
 				 "multiply located." ) );
-      return;
+      return false;
     }
   }
     
@@ -406,7 +406,7 @@ void itemSite::sSave()
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("This Item Site refers to an inactive Item and must be marked as inactive.") );
-      return;
+      return false;
     }
   }
 
@@ -440,12 +440,12 @@ void itemSite::sSave()
                                    "then you should fix the Bill Of Operations."),
                                 QMessageBox::Yes | QMessageBox::No,
                                 QMessageBox::No) == QMessageBox::No)
-        return;
+        return false;
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
   }
     
@@ -455,7 +455,7 @@ void itemSite::sSave()
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("This Item Site has a quantity on hand and must be marked as active.") );
-      return;
+      return false;
     }
 
     q.prepare("SELECT coitem_id "
@@ -485,7 +485,7 @@ void itemSite::sSave()
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("This Item Site is used in an active order and must be marked as active.") );
-      return;
+      return false;
     }
     
     if (_metrics->boolean("MultiWhs"))
@@ -509,7 +509,7 @@ void itemSite::sSave()
       { 
         QMessageBox::warning( this, tr("Cannot Save Item Site"),
           tr("This Item Site is used in an active order and must be marked as active.") );
-        return;
+        return false;
       }
     }
   }
@@ -530,7 +530,7 @@ void itemSite::sSave()
       { 
         QMessageBox::warning( this, tr("Cannot Save Item Site"),
           tr("The Supplied From Site must be different from this Site.") );
-        return;
+        return false;
       }
       else
         _supplyItemsiteId = q.value("itemsite_id").toInt();
@@ -539,7 +539,7 @@ void itemSite::sSave()
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("Cannot find Supplied From Item Site.") );
-      return;
+      return false;
     }
   }
 
@@ -553,7 +553,7 @@ void itemSite::sSave()
     else if (newItemsiteid.lastError().type() != QSqlError::NoError)
     {
       systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
 	
     newItemSite.prepare( "INSERT INTO itemsite "
@@ -624,7 +624,7 @@ void itemSite::sSave()
                              tr( "<p>You have indicated that this Item Site "
 				"should be mutiply located and there is existing quantity on hand."
 				 "<p>You must select a default location for the on hand balance to be relocated to." ) );
-      return;
+      return false;
     }
     
     if ( (state == 24) || (state == 42) || (state == 44) )
@@ -638,7 +638,7 @@ void itemSite::sSave()
 				    "Are you sure that you want to do this?" ),
 				  QMessageBox::Yes,
 				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-        return;
+        return true;
     }
     
     if (_qohCache != 0.0)
@@ -782,7 +782,7 @@ void itemSite::sSave()
   if (newItemSite.lastError().type() != QSqlError::NoError)
   {
     systemError(this, newItemSite.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
     
   omfgThis->sItemsitesUpdated();
@@ -794,6 +794,7 @@ void itemSite::sSave()
     _warehouse->setNull();
     clear();
   }
+  return true;
 }
 
 void itemSite::sCheckItemsite()

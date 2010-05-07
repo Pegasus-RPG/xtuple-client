@@ -28,7 +28,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSave();
+    virtual bool sSave();
     virtual void sCheckItemsite();
     virtual void sHandlePlanningType();
     virtual void sHandleJobCost();
