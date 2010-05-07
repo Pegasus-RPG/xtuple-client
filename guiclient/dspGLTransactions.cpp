@@ -414,10 +414,11 @@ void dspGLTransactions::sViewDocument()
   }
   else if(item->rawValue("gltrans_doctype").toString() == "PO")
   {
+    QStringList docnumber = item->rawValue("docnumber").toString().split("-");
     q.prepare("SELECT pohead_id"
               "  FROM pohead"
-              " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->rawValue("docnumber").toString());
+              " WHERE (pohead_number=:docnumber)");
+    q.bindValue(":docnumber", docnumber[0]);
     q.exec();
     if(!q.first())
       return;
