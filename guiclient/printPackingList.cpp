@@ -247,7 +247,7 @@ void printPackingList::sPopulate()
 // qDebug("sPopulate: _headtype %s, _shipment %d, _order %d",
 // _headtype.toAscii().data(), _shipment->id(), _order->id());
 
-  _print->setEnabled(_shipment->isValid());
+  _print->setEnabled(_order->isValid());
 
   if (! _headtype.isEmpty())
   {
