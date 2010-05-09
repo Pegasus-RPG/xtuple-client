@@ -445,6 +445,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _qedelete->setEnabled(FALSE);
       _qecurrency->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
+      _documents->setReadOnly(TRUE);
 
       _delete->hide();
       _edit->setText(tr("&View"));
@@ -505,6 +506,7 @@ void purchaseOrder::createHeader()
 
   // need to set at least the _order date before the INSERT
   _comments->setId(_poheadid);
+  _documents->setId(_poheadid);
   _orderDate->setDate(omfgThis->dbDate(), true);
   _status->setCurrentIndex(0);
   _vendor->setType(__activeVendors);
@@ -628,6 +630,7 @@ void purchaseOrder::populate()
     _shiptoAddr->setCountry(po.value("pohead_shiptocountry").toString());
 
     _comments->setId(_poheadid);
+    _documents->setId(_poheadid);
     _vendor->setId(po.value("vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());

@@ -1036,6 +1036,20 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_documentsTab">
+      <attribute name="title">
+       <string>Documents</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="0">
+        <widget class="Documents" name="_documents">
+         <property name="type">
+          <enum>Documents::PurchaseOrder</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="0" column="0">
@@ -1121,14 +1135,19 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
+  </customwidget>
+  <customwidget>
    <class>OrderCluster</class>
    <extends>QWidget</extends>
    <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
-   <class>VendorInfo</class>
+   <class>VendorCluster</class>
    <extends>QWidget</extends>
-   <header>vendorinfo.h</header>
+   <header>vendorcluster.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
