@@ -113,6 +113,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _linear = false;
   _workingTimer.setInterval(1);
   _workingTimer.setSingleShot(true);
+  _alwaysLinear = true;
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -223,9 +224,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
     _workingParams.clear();
   _workingParams.append(args);
 
-  bool _alwaysLinear = true; // this line can be changed later to be a configurable option at the class level
-  if (_alwaysLinear && _guiClientInterface &&
-      _guiClientInterface->globalQ()->result() == pQuery.result())
+  if (_alwaysLinear || (_guiClientInterface &&
+      _guiClientInterface->globalQ()->result() == pQuery.result()))
   {
     _linear = true;
     populateWorker();
@@ -1229,6 +1229,12 @@ QString XTreeWidget::altDragString() const { return _altDragString; }
 void XTreeWidget::setAltDragString(QString pAltDragString)
 {
   _altDragString = pAltDragString;
+}
+
+bool XTreeWidget::populateLinear() { return _alwaysLinear; }
+void XTreeWidget::setPopulateLinear(bool alwaysLinear)
+{
+  _alwaysLinear = alwaysLinear;
 }
 
 void XTreeWidget::clear()

@@ -171,6 +171,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_OBJECT
   Q_PROPERTY(QString dragString READ dragString WRITE setDragString)
   Q_PROPERTY(QString altDragString READ altDragString WRITE setAltDragString)
+  Q_PROPERTY(bool    populateLinear READ populateLinear WRITE setPopulateLinear)
 
   Q_ENUMS   (PopulateStyle)
 
@@ -188,6 +189,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void setDragString(QString);
     QString altDragString() const;
     void setAltDragString(QString);
+    bool populateLinear();
+    void setPopulateLinear(bool alwaysLinear = true);
 
     Q_INVOKABLE int  altId() const;
     Q_INVOKABLE int  id()    const;
@@ -326,6 +329,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QList<XTreeWidgetPopulateParams> _workingParams;
     bool _deleted;
     QTimer _workingTimer;
+    bool _alwaysLinear;
     bool _linear;
 
   private slots:
