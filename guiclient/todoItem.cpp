@@ -68,6 +68,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
         _todoitemid = q.value("todoitem_id").toInt();
         _alarms->setId(_todoitemid);
 	_comments->setId(_todoitemid);
+        _documents->setId(_todoitemid);
         _recurring->setParent(_todoitemid, "TODO");
       }
 
@@ -111,6 +112,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _alarms->setReadOnly(TRUE);
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
 
       _close->setText(tr("&Close"));
       _save->hide();
@@ -307,6 +309,7 @@ void todoItem::sPopulate()
 
     _alarms->setId(_todoitemid);
     _comments->setId(_todoitemid);
+    _documents->setId(_todoitemid);
     _recurring->setParent(q.value("todoitem_recurring_todoitem_id").isNull() ?
                           _todoitemid : q.value("todoitem_recurring_todoitem_id").toInt(),
                           "TODO");
