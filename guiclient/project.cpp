@@ -104,6 +104,7 @@ enum SetResponse project::set(const ParameterList &pParams)
       }
 
       _comments->setId(_prjid);
+      _documents->setId(_prjid);
       _recurring->setParent(_prjid, "J");
 
       _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
@@ -138,6 +139,7 @@ enum SetResponse project::set(const ParameterList &pParams)
       _newTask->setEnabled(FALSE);
       connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
       _comments->setReadOnly(TRUE);
+      _documents->setReadOnly(TRUE);
       _started->setEnabled(FALSE);
       _assigned->setEnabled(FALSE);
       _due->setEnabled(FALSE);
@@ -191,6 +193,7 @@ void project::populate()
 
   sFillTaskList();
   _comments->setId(_prjid);
+  _documents->setId(_prjid);
 }
 
 void project::sClose()
