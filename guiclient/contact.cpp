@@ -95,6 +95,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
     _captive = TRUE;
     _contact->setId(param.toInt());
     _comments->setId(_contact->id());
+    _documents->setId(_contact->id());
     sPopulate();
   }
 
@@ -153,6 +154,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
 	return UndefinedError;
       }
       _comments->setId(_contact->id());
+      _documents->setId(_contact->id());
       _contact->setFirst("");
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -178,6 +180,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _contact->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
+      _documents->setEnabled(FALSE);
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);
