@@ -132,6 +132,7 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
       
       param = pParams.value("crmacct_id", &valid);
       if (valid)
@@ -176,6 +177,7 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       _cancel->setText(tr("&Close"));
       _cancel->setFocus();
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
     }
   }
 
@@ -396,6 +398,7 @@ void opportunity::populate()
     _notes->setText(q.value("ophead_notes").toString());
 
     _comments->setId(_opheadid);
+    _documents->setId(_opheadid);
 
     sFillTodoList();
     sFillSalesList();
