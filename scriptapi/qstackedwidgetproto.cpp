@@ -10,6 +10,16 @@
 
 #include "qstackedwidgetproto.h"
 
+QScriptValue QStackedWidgettoScriptValue(QScriptEngine *engine, QStackedWidget* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void QStackedWidgetfromScriptValue(const QScriptValue &obj, QStackedWidget* &item)
+{
+  item = qobject_cast<QStackedWidget*>(obj.toQObject());
+}
+
 void setupQStackedWidgetProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QStackedWidgetProto(engine));
@@ -21,12 +31,13 @@ void setupQStackedWidgetProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QStackedWidget",  constructor);
 }
 
-QScriptValue constructQStackedWidget(QScriptContext * /*context*/,
+QScriptValue constructQStackedWidget(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
   QStackedWidget *obj = 0;
-  // if (context->argumentCount() > 0)
-  // else
+  if (context->argumentCount() == 1)
+    obj = new QStackedWidget(qobject_cast<QWidget*>(context->argument(0).toQObject()));
+  else
     obj = new QStackedWidget();
   return engine->toScriptValue(obj);
 }

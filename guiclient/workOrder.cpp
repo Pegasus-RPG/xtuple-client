@@ -74,6 +74,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
   _comments->setReadOnly(TRUE);
+  _documents->setReadOnly(TRUE);
   _woNumber->setValidator(omfgThis->orderVal());
   _qty->setValidator(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
@@ -277,6 +278,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _dueDate->setDate(wo.value("wo_duedate").toDate());
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
+        _documents->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
         _bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
         _booRevision->setId(wo.value("wo_boo_rev_id").toInt());
@@ -1893,6 +1895,7 @@ void workOrder::populate()
     _dueDate->setDate(_oldDueDate);
     _productionNotes->setText(wo.value("wo_prodnotes").toString());
     _comments->setId(_woid);
+    _documents->setId(_woid);
     _project->setId(wo.value("wo_prj_id").toInt());
     _bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
     _booRevision->setId(wo.value("wo_boo_rev_id").toInt());
@@ -1934,6 +1937,7 @@ void workOrder::populate()
     }
     _warehouse->setEnabled(false);
     _comments->setReadOnly(false);
+    _documents->setReadOnly(false);
     _leadTimeLit->hide();
     _leadTime->hide();
     _daysLit->hide();

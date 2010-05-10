@@ -86,7 +86,9 @@ Documents::Documents(QWidget *pParent) :
   connect(_editDoc, SIGNAL(clicked()), this, SLOT(sEditDoc()));
   connect(_viewDoc, SIGNAL(clicked()), this, SLOT(sViewDoc()));
   connect(_detachDoc, SIGNAL(clicked()), this, SLOT(sDetachDoc()));
-  connect(_doc, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(sEditDoc()));
+  connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
+  connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
+  connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
 
   if (_x_privileges)
   {
@@ -135,23 +137,18 @@ void Documents::setId(int pSourceid)
 
 void Documents::setReadOnly(bool pReadOnly)
 {
-
   _newDoc->setEnabled(!pReadOnly);
   _attachDoc->setEnabled(!pReadOnly);
-  _editDoc->setEnabled(!pReadOnly);
   _detachDoc->setEnabled(!pReadOnly);
 
-  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _viewDoc, SLOT(animateClick()));
-  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
-  disconnect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
+  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
   disconnect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
-  disconnect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
+  disconnect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
   if(!pReadOnly)
   {
-    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _editDoc, SLOT(animateClick()));
-    connect(_doc, SIGNAL(doubleClicked(QModelIndex)), _detachDoc, SLOT(animateClick()));
+    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
     connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
-    connect(_doc, SIGNAL(valid(bool)), _detachDoc, SLOT(setEnabled(bool)));
+    connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
   }
 }
 
@@ -202,14 +199,14 @@ void Documents::sNewOpp()
 
 void Documents::sInsertDocass(QString target_type, int target_id)
 {
-  XSqlQuery q;
-  q.prepare("INSERT INTO docass ( docass_source_id, docass_source_type, docass_target_id, docass_target_type )"
+  XSqlQuery ins;
+  ins.prepare("INSERT INTO docass ( docass_source_id, docass_source_type, docass_target_id, docass_target_type )"
             "  VALUES ( :sourceid, :sourcetype::text, :targetid, :targettype); ");
-  q.bindValue(":sourceid", _sourceid);
-  q.bindValue(":sourcetype", _documentMap[_source].ident);
-  q.bindValue(":targetid", target_id);
-  q.bindValue(":targettype", target_type);
-  q.exec();
+  ins.bindValue(":sourceid", _sourceid);
+  ins.bindValue(":sourcetype", _documentMap[_source].ident);
+  ins.bindValue(":targetid", target_id);
+  ins.bindValue(":targettype", target_type);
+  ins.exec();
 }
 
 void Documents::sEditDoc()
@@ -363,28 +360,28 @@ void Documents::sAttachDoc()
 
 void Documents::sDetachDoc()
 {
-  XSqlQuery q;
-	if (_doc->id() < 0)
-		return;
+  XSqlQuery detach;
+  if (_doc->id() < 0)
+    return;
 
-	if ( _doc->currentItem()->rawValue("target_type") == "IMG" )
-	{
-	  q.prepare( "DELETE FROM imageass "
-	             "WHERE (imageass_id = :docid );" );
-	}
-	else if ( _doc->currentItem()->rawValue("target_type") == "URL"  )
-	{
-	  q.prepare( "DELETE FROM url "
-	             "WHERE (url_id = :docid );" );
-	}
-	else
-	{
-	  q.prepare( "DELETE FROM docass "
-	             "WHERE (docass_id = :docid );" );
-	}
-	q.bindValue(":docid", _doc->id());
-	q.exec();
-	refresh();
+  if ( _doc->currentItem()->rawValue("target_type") == "IMG" )
+  {
+    detach.prepare( "DELETE FROM imageass "
+                    "WHERE (imageass_id = :docid );" );
+  }
+  else if ( _doc->currentItem()->rawValue("target_type") == "URL"  )
+  {
+    detach.prepare( "DELETE FROM url "
+                    "WHERE (url_id = :docid );" );
+  }
+  else
+  {
+    detach.prepare( "DELETE FROM docass "
+                    "WHERE (docass_id = :docid );" );
+  }
+  detach.bindValue(":docid", _doc->id());
+  detach.exec();
+  refresh();
 }
 
 void Documents::refresh()

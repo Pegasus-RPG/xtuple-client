@@ -151,38 +151,5 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>_doc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_editDoc</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>160</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>147</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_doc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewDoc</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>160</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>376</x>
-     <y>123</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
