@@ -525,32 +525,39 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*)));
 
-  //Restore Window Size Saved on Close                                                                       
-  QRect availableGeometry = QApplication::desktop()->availableGeometry();                                    
-  QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();                           
-  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();                          
-  int mainXMax = availableGeometry.bottomRight().x();                                                        
-  int mainYMax = availableGeometry.bottomRight().y();                                                        
-                                                                                                             
-  //if the window size is bigger than the                                                                    
-  //screen make it the screen size                                                                           
+  //Restore Window Size Saved on Close
+  QRect availableGeometry = QApplication::desktop()->availableGeometry();
+
+  QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();
+  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();
+  int mainXMax = availableGeometry.bottomRight().x();
+  int mainYMax = availableGeometry.bottomRight().y();
+
+  //if the window size is bigger than the
+  //screen make it the screen size
   if(size.isValid())
   {
-    if(size.width() > mainXMax)                                                                                
-       size.setWidth(mainXMax);                                                                                
-    if(size.height() > mainYMax)                                                                               
-      size.setHeight(mainYMax);                                                                                
-    resize(size);                                                                                              
+    if(size.width() > mainXMax)
+       size.setWidth(mainXMax);
+    if(size.height() > mainYMax)
+      size.setHeight(mainYMax);
+    resize(size);
   }
-  //put the main window back on screen at top                                                                
-  //left if it is off screen in part or full                                                                 
+  //put the main window back on screen if it is off screen in part or full
   if(!pos.isNull())
   {
-    if(pos.x() < 0 || (pos.x() + size.width()) > mainXMax)                                                     
-      pos.setX(0);                                                                                             
-    if(pos.y() < 0 || (pos.y() + size.height()) > mainYMax)                                                    
-      pos.setY(0);                                                                                             
-    move(pos);                                                                                                 
+    if (pos.x() < availableGeometry.left())
+      pos.setX(availableGeometry.left());
+    else if (pos.x() + size.width() > mainXMax)
+      pos.setX(qMax(availableGeometry.right() - size.width(),
+                    availableGeometry.left()));
+
+    if (pos.y() < availableGeometry.top())
+      pos.setY(availableGeometry.top());
+    else if (pos.y() + size.height() > mainYMax)
+      pos.setY(qMax(availableGeometry.height() - size.height(),
+                    availableGeometry.top()));
+    move(pos);
   }
 
   collectMetrics();
@@ -651,42 +658,42 @@ void GUIClient::initMenuBar()
     QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(this);
     while(!toolbars.isEmpty())
       delete toolbars.takeFirst();
-  
+
     _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     productsMenu = new menuProducts(this);
-        
+
     _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     inventoryMenu = new menuInventory(this);
-        
+
     if(_metrics->value("Application") != "PostBooks")
     {
       _splash->showMessage(tr("Initializing the Scheduling Module"), SplashTextAlignment, SplashTextColor);
       qApp->processEvents();
       scheduleMenu = new menuSchedule(this);
     }
-    
+
     _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     purchaseMenu = new menuPurchase(this);
-    
+
     _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     manufactureMenu = new menuManufacture(this);
-    
+
     _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     crmMenu = new menuCRM(this);
-    
+
     _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     salesMenu = new menuSales(this);
-        
+
     _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     accountingMenu = new menuAccounting(this);
-    
+
     _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     systemMenu = new menuSystem(this);
@@ -784,7 +791,7 @@ void GUIClient::showEvent(QShowEvent *event)
           }
           loadScriptGlobals(engine);
         }
-  
+
         QScriptValue result = engine->evaluate(script, "initMenu");
         if (engine->hasUncaughtException())
         {
@@ -912,7 +919,7 @@ void GUIClient::sTick()
             _registerButton->setMaximumSize(QSize(32, 32));
             statusBar()->setMinimumHeight(36);
             statusBar()->addWidget(_registerButton);
-  
+
             connect(_registerButton, SIGNAL(clicked()), systemMenu, SLOT(sRegister()));
           }
         }
@@ -1164,10 +1171,10 @@ void GUIClient::sIdleTimeout()
 
   ParameterList params;
   params.append("minutes", _timeoutHandler->idleMinutes());
-  
+
   idleShutdown newdlg(this, "", TRUE);
   newdlg.set(params);
-  
+
   if (newdlg.exec() == XDialog::Accepted)
     qApp->quit();
 }
