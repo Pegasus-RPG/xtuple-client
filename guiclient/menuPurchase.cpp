@@ -93,8 +93,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Purchase Tools"));
   toolBar->setObjectName("Purchase Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowPOToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
     
   mainMenu = new QMenu(parent);
   requestMenu = new QMenu(parent);

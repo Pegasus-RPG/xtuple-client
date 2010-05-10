@@ -107,8 +107,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   toolBar->setObjectName("Community Tools");
   toolBar->setIconSize(QSize(32, 32));
   QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(parent);
-  if(!toolbars.isEmpty())
-    parent->insertToolBar(toolbars.at(0), toolBar);
+  parent->insertToolBar(toolbars.at(0), toolBar);
 
   errorLogListener::initialize();
 

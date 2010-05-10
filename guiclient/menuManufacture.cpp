@@ -76,8 +76,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Manufacture Tools"));
   toolBar->setObjectName("Manufacture Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowWOToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
   mainMenu	 = new QMenu(parent);
   ordersMenu	 = new QMenu(parent);

@@ -691,11 +691,6 @@ void GUIClient::initMenuBar()
     qApp->processEvents();
     systemMenu = new menuSystem(this);
 
-    toolbars = qFindChildren<QToolBar *>(this);
-    for (int i = 0; i < toolbars.size(); ++i)
-    {
-      toolbars.at(i)->show();
-    }
   }
 
   findChild<QMenu*>("menu.prod")->menuAction()->setVisible(_preferences->boolean("ShowPDMenu"));
@@ -709,6 +704,31 @@ void GUIClient::initMenuBar()
   findChild<QMenu*>("menu.crm")->menuAction()->setVisible(_preferences->boolean("ShowCRMMenu"));
   findChild<QMenu*>("menu.sales")->menuAction()->setVisible(_preferences->boolean("ShowSOMenu"));
   findChild<QMenu*>("menu.accnt")->menuAction()->setVisible(_preferences->boolean("ShowGLMenu"));
+
+  // Restore toolbar positions from local machine
+  restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
+
+  // Set visibility of toolbars based on preferences stored in the databse
+  findChild<QToolBar*>("Products Tools")->setVisible(_preferences->boolean("ShowPDToolbar"));
+  findChild<QToolBar*>("Inventory Tools")->setVisible(_preferences->boolean("ShowIMToolbar"));
+  if(_metrics->value("Application") != "PostBooks")
+  {
+    findChild<QToolBar*>("Schedule Tools")->setVisible(_preferences->boolean("ShowMSToolbar"));
+  }
+  findChild<QToolBar*>("Purchase Tools")->setVisible(_preferences->boolean("ShowPOToolbar"));
+  findChild<QToolBar*>("Manufacture Tools")->setVisible(_preferences->boolean("ShowWOToolbar"));
+  findChild<QToolBar*>("CRM Tools")->setVisible(_preferences->boolean("ShowCRMToolbar"));
+  findChild<QToolBar*>("Sales Tools")->setVisible(_preferences->boolean("ShowSOToolbar"));
+  findChild<QToolBar*>("Accounting Tools")->setVisible(_preferences->boolean("ShowGLToolbar"));
+
+  findChild<QToolBar*>("Community Tools")->setVisible(_preferences->boolean("ShowPDToolbar") ||
+                                                      _preferences->boolean("ShowIMToolbar") ||
+                                                      _preferences->boolean("ShowMSToolbar") ||
+                                                      _preferences->boolean("ShowPOToolbar") ||
+                                                      _preferences->boolean("ShowWOToolbar") ||
+                                                      _preferences->boolean("ShowCRMToolbar") ||
+                                                      _preferences->boolean("ShowSOToolbar") ||
+                                                      _preferences->boolean("ShowGLToolbar"));
 
   firstRun = false;
   qApp->restoreOverrideCursor();
@@ -801,10 +821,6 @@ void GUIClient::showEvent(QShowEvent *event)
       }
     // END script code
   }
-
-  // Put toolbars and dock widgets back in previous positions
-  restoreState(xtsettingsValue("MainWindowState", QByteArray()).toByteArray(), 1);
-
 
   QMainWindow::showEvent(event);
 }

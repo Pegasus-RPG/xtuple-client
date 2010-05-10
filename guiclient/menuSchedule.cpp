@@ -49,8 +49,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Schedule Tools"));
   toolBar->setObjectName("Schedule Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowMSToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
   mainMenu = new QMenu(parent);
   plannedOrdersMenu = new QMenu(parent);

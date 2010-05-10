@@ -62,8 +62,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("CRM Tools"));
   toolBar->setObjectName("CRM Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowCRMToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
   // Menus
   crmMenu           = new QMenu(parent);

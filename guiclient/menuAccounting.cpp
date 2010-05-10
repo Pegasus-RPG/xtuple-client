@@ -162,8 +162,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Accounting Tools"));
   toolBar->setObjectName("Accounting Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowGLToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
 
   mainMenu		= new QMenu(parent);

@@ -145,8 +145,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Inventory Tools"));
   toolBar->setObjectName("Inventory Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowIMToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
   mainMenu                 = new QMenu(parent);
   itemSitesMenu            = new QMenu(parent);

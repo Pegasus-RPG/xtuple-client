@@ -161,8 +161,7 @@ menuSales::menuSales(GUIClient *pParent) :
   toolBar = new QToolBar(tr("Sales Tools"));
   toolBar->setObjectName("Sales Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowSOToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
 
   mainMenu = new QMenu(parent);
   quotesMenu = new QMenu(parent);

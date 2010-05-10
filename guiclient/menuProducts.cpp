@@ -88,8 +88,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Products Tools"));
   toolBar->setObjectName("Products Tools");
   toolBar->setIconSize(QSize(32, 32));
-  if (_preferences->boolean("ShowPDToolbar"))
-    parent->addToolBar(toolBar);
+  parent->addToolBar(toolBar);
     
   mainMenu	= new QMenu(parent);
   itemsMenu	= new QMenu(parent);
