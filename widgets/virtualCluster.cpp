@@ -910,6 +910,7 @@ void VirtualList::init()
     _titleLit	= new QLabel(_listTab, "", this, "_titleLit");
 
     _listTab->setObjectName("_listTab");
+    _listTab->setPopulateLinear(false);
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
@@ -1050,6 +1051,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _titleLit = new QLabel(_listTab, "", this, "_titleLit");
 
     _listTab->setObjectName("_listTab");
+    _listTab->setPopulateLinear(false);
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
