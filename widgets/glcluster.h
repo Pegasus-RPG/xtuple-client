@@ -64,6 +64,8 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public QWidget
     void keyPressEvent(QKeyEvent *);
     void focusInEvent(QFocusEvent *);
 
+    static QPalette _disabledPalette;
+
   private slots:
     void sEllipses();
     void sSearch();

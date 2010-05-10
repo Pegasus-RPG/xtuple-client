@@ -24,9 +24,22 @@
 #include "accountList.h"
 #include "accountSearch.h"
 
+QPalette GLCluster::_disabledPalette = QPalette(QColor("black"),   // windowtext
+                                                QColor("black"),   // button
+                                                QColor("lightgrey"), // light
+                                                QColor("darkgrey"),  // dark
+                                                QColor("darkgrey"),  // mid
+                                                QColor("black"),     // text
+                                                QColor("darkgrey"),// brighttext
+                                                QColor("lightgrey"), // base
+                                                QColor("lightgrey")  // window
+                                               );
+
 GLCluster::GLCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
+  setObjectName(name);
+
 //  Create and place the component Widgets
   QHBoxLayout *_layoutMain = new QHBoxLayout(this);
   _layoutMain->setMargin(0);
@@ -45,44 +58,49 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   {
     if (_x_metrics->value("GLCompanySize").toInt() > 0)
     {
-      _company = new QLineEdit(_layoutFieldsWidget, "_company");
+      _company = new QLineEdit(_layoutFieldsWidget);
+      _company->setObjectName("_company");
       _company->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
       _company->setMaximumWidth(40);
       _company->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-      _company->setReadOnly(TRUE);
-      _company->setPaletteBackgroundColor(QColor("lightgrey"));
+      _company->setDisabled(TRUE);
+      _company->setPalette(_disabledPalette);
       _company->setFocusPolicy(Qt::NoFocus);
       _layoutFields->addWidget(_company);
 
-      QLabel *_sep1Lit = new QLabel(tr("-"), _layoutFieldsWidget, "_sep1Lit");
+      QLabel *_sep1Lit = new QLabel(tr("-"), _layoutFieldsWidget);
+      _sep1Lit->setObjectName("_sep1Lit");
       _sep1Lit->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
       _layoutFields->addWidget(_sep1Lit);
     }
 
     if (_x_metrics->value("GLProfitSize").toInt() > 0)
     {
-      _profit = new QLineEdit(_layoutFieldsWidget, "_profit");
+      _profit = new QLineEdit(_layoutFieldsWidget);
+      _profit->setObjectName("_profit");
       _profit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
       _profit->setMaximumWidth(40);
       _profit->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-      _profit->setReadOnly(TRUE);
-      _profit->setPaletteBackgroundColor(QColor("lightgrey"));
+      _profit->setDisabled(TRUE);
+      _profit->setPalette(_disabledPalette);
       _profit->setFocusPolicy(Qt::NoFocus);
       _layoutFields->addWidget(_profit);
 
-      QLabel *_sep2Lit = new QLabel(tr("-"), _layoutFieldsWidget, "_sep2Lit");
+      QLabel *_sep2Lit = new QLabel(tr("-"), _layoutFieldsWidget);
+      _sep2Lit->setObjectName("_sep2Lit");
       _sep2Lit->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
       _layoutFields->addWidget(_sep2Lit);
     }
   }
 
-  _main = new XLineEdit(_layoutFieldsWidget, "_main");
+  _main = new XLineEdit(_layoutFieldsWidget);
+  _main->setObjectName("_main");
   _main->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _main->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
   if(!(_x_metrics && _x_metrics->boolean("AllowManualGLAccountEntry")))
   {
-    _main->setReadOnly(TRUE);
-    _main->setPaletteBackgroundColor(QColor("lightgrey"));
+    _main->setDisabled(TRUE);
+    _main->setPalette(_disabledPalette);
     _main->setFocusPolicy(Qt::NoFocus);
   }
   _layoutFields->addWidget(_main);
@@ -91,16 +109,18 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   {
     if (_x_metrics->value("GLSubaccountSize").toInt() > 0)
     {
-      QLabel *_sep3Lit = new QLabel(tr("-"), _layoutFieldsWidget,  "_sep3Lit");
+      QLabel *_sep3Lit = new QLabel(tr("-"), _layoutFieldsWidget);
+      _sep3Lit->setObjectName("_sep3Lit");
       _sep3Lit->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
       _layoutFields->addWidget(_sep3Lit);
 
-      _sub = new QLineEdit(_layoutFieldsWidget, "_sub");
+      _sub = new QLineEdit(_layoutFieldsWidget);
+      _sub->setObjectName("_sub");
       _sub->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
       _sub->setMaximumWidth(40);
       _sub->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-      _sub->setReadOnly(TRUE);
-      _sub->setPaletteBackgroundColor(QColor("lightgrey"));
+      _sub->setDisabled(TRUE);
+      _sub->setPalette(_disabledPalette);
       _sub->setFocusPolicy(Qt::NoFocus);
       _layoutFields->addWidget(_sub);
     }
@@ -109,14 +129,16 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   _layoutFieldsWidget->setLayout(_layoutFields);
   _layoutMain->addWidget(_layoutFieldsWidget);
 
-  _account = new QLineEdit(this, "_account");
+  _account = new QLineEdit(this);
+  _account->setObjectName("_account");
   _account->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-  _account->setReadOnly(TRUE);
-  _account->setPaletteBackgroundColor(QColor("lightgrey"));
+  _account->setDisabled(TRUE);
+  _account->setPalette(_disabledPalette);
   _account->setFocusPolicy(Qt::NoFocus);
   _layoutMain->addWidget(_account);
 
-  _list = new QPushButton(tr("..."), this, "_list");
+  _list = new QPushButton(tr("..."), this);
+  _list->setObjectName("_list");
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #endif
@@ -158,7 +180,7 @@ void GLCluster::setReadOnly(bool pReadOnly)
   else
     _list->show();
   if(_x_metrics && _x_metrics->boolean("AllowManualGLAccountEntry"))
-    _main->setReadOnly(pReadOnly);
+    _main->setDisabled(pReadOnly);
 }
 
 void GLCluster::setId(int pId)
@@ -355,7 +377,7 @@ int GLCluster::id()
 
 void GLCluster::keyPressEvent(QKeyEvent *event)
 {
-  if (event->state() == Qt::ControlModifier)
+  if (event->modifiers() & Qt::ControlModifier)
   {
     if (event->key() == Qt::Key_L)
     {

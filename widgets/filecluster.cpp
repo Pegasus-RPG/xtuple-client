@@ -12,8 +12,9 @@
 #include <QHBoxLayout>
 
 FileCluster::FileCluster(QWidget* pParent, const char* pName) :
-    QWidget(pParent, pName)
+    QWidget(pParent)
 {
+  setObjectName(pName);
   _caption = tr("Open File");
   _dir     = "";
   _fileMode = QFileDialog::AnyFile;
@@ -24,7 +25,8 @@ FileCluster::FileCluster(QWidget* pParent, const char* pName) :
 
   _file = new FileLineEdit();
 
-  _list = new QPushButton(tr("..."), this, "_list");
+  _list = new QPushButton(tr("..."), this);
+  _list->setObjectName("_list");
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
@@ -69,7 +71,7 @@ FileLineEdit::FileLineEdit(QWidget *parent)
 void FileLineEdit::keyPressEvent(QKeyEvent *event)
 {
   bool handled = false;
-  if (event->state() == Qt::ControlModifier)
+  if (event->modifiers() & Qt::ControlModifier)
   {
     if (event->key() == Qt::Key_L)
     {
