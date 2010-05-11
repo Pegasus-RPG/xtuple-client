@@ -756,6 +756,14 @@ void GUIClient::closeEvent(QCloseEvent *event)
   xtsettingsSetValue("GUIClient/geometry/pos", pos());
   xtsettingsSetValue("GUIClient/geometry/size", size());
 
+  // save state of any main window children
+  QList<QMainWindow*> windows = findChildren<QMainWindow*>();
+  for (int i = 0; i < windows.size(); i++)
+  {
+    QByteArray state = windows.at(i)->saveState();
+    xtsettingsSetValue(windows.at(i)->objectName() + "/WindowState", state);
+  }
+
   event->accept();
 }
 
