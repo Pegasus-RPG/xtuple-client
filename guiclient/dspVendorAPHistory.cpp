@@ -52,6 +52,7 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   _vendhist->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "docdate" );
   _vendhist->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "duedate" );
   _vendhist->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _vendhist->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()), _bigMoneyColumn, Qt::AlignRight, false, "base_amount"  );
   _vendhist->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _vendhist->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
   _vendhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
@@ -199,10 +200,15 @@ void dspVendorAPHistory::sFillList()
              "       apopen_docdate AS docdate, apopen_duedate AS duedate, apopen_amount AS amount,"
              "       (apopen_amount - apopen_paid) AS balance,"
              "       currconcat(apopen_curr_id) AS currAbbr,"
+             "       CASE WHEN (apopen_doctype='C') THEN apopen_amount / apopen_curr_rate * -1.0"
+             "            ELSE apopen_amount / apopen_curr_rate"
+             "       END AS base_amount,"
              "       CASE WHEN (apopen_doctype='C') THEN (apopen_amount - apopen_paid) / apopen_curr_rate * -1.0"
              "            ELSE (apopen_amount - apopen_paid) / apopen_curr_rate"
 			 "       END AS base_balance,"
              "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS base_amount_xtnumericrole,"
+             "       'curr' AS base_amount_xttotalrole,"
              "       'curr' AS balance_xtnumericrole,"
              "       'curr' AS base_balance_xtnumericrole,"
              "       'curr' AS base_balance_xttotalrole,"
@@ -226,8 +232,11 @@ void dspVendorAPHistory::sFillList()
              "       apapply_amount AS amount,"
              "       0 AS balance,"
              "       currconcat(apapply_curr_id) AS currAbbr,"
+             "       (apapply_amount / apopen_curr_rate) AS base_amount, "
              "       0 AS base_balance,"
              "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS base_amount_xtnumericrole,"
+             "       'curr' AS base_amount_xttotalrole,"
              "       'curr' AS balance_xtnumericrole,"
              "       'curr' AS base_balance_xtnumericrole,"
              "       'curr' AS base_balance_xttotalrole,"
@@ -253,8 +262,11 @@ void dspVendorAPHistory::sFillList()
              "       apapply_amount AS amount,"
              "       0 AS balance,"
              "       currconcat(apapply_curr_id) AS currAbbr,"
+             "       (apapply_amount / apopen_curr_rate) AS base_amount, "
              "       0 AS base_balance,"
              "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS base_amount_xtnumericrole,"
+             "       'curr' AS base_amount_xttotalrole,"
              "       'curr' AS balance_xtnumericrole,"
              "       'curr' AS base_balance_xtnumericrole,"
              "       'curr' AS base_balance_xttotalrole,"

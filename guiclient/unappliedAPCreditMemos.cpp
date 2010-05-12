@@ -37,7 +37,9 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   _apopen->addColumn( tr("Doc. #"),       _itemColumn,     Qt::AlignLeft,   true,  "apopen_docnumber" );
   _apopen->addColumn( tr("Vendor"),       -1,              Qt::AlignLeft,   true,  "vendor"   );
   _apopen->addColumn( tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "apopen_amount"  );
+  _apopen->addColumn( tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_amount"  );
   _apopen->addColumn( tr("Applied"),      _moneyColumn,    Qt::AlignRight,  true,  "apopen_paid"  );
+  _apopen->addColumn( tr("Applied (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_applied"  );
   _apopen->addColumn( tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _apopen->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
   _apopen->addColumn( tr("Balance (%1)").arg(CurrDisplay::baseCurrAbbr()), _bigMoneyColumn, Qt::AlignRight, true, "basebalance");
@@ -113,7 +115,8 @@ void unappliedAPCreditMemos::sFillList()
   MetaSQLQuery mql(
              "SELECT apopen_id, apopen_docnumber,"
              "       (vend_number || '-' || vend_name) AS vendor,"
-             "       apopen_amount, apopen_paid,"
+             "       apopen_amount, (apopen_amount / apopen_curr_rate) AS base_amount, "
+             "       apopen_paid, (apopen_paid / apopen_curr_rate) AS base_applied, "
              "       (apopen_amount - apopen_paid) AS balance,"
              "       (apopen_amount - apopen_paid) / apopen_curr_rate AS basebalance,"
              "	     currConcat(apopen_curr_id) AS currAbbr,"
@@ -121,7 +124,11 @@ void unappliedAPCreditMemos::sFillList()
              "       'curr' AS apopen_paid_xtnumericrole,"
              "       'curr' AS balance_xtnumericrole,"
              "       'curr' AS basebalance_xtnumericrole,"
-             "       0 AS basebalance_xttotalrole "
+             "       'curr' AS base_amount_xtnumericrole,"
+             "       'curr' AS base_applied_xtnumericrole,"
+             "       0 AS basebalance_xttotalrole, "
+             "       0 AS base_amount_xttotalrole, "
+             "       0 AS base_applied_xttotalrole "
              "FROM apopen, vend "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"

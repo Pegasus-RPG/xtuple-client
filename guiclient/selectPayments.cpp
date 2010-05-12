@@ -48,19 +48,23 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _apopen->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft  , true, "vendor" );
-  _apopen->addColumn(tr("Doc. Type"), _orderColumn, Qt::AlignCenter, true, "doctype" );
-  _apopen->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight , true, "apopen_docnumber" );
-  _apopen->addColumn(tr("Inv. #"),    _orderColumn, Qt::AlignRight , true, "apopen_invcnumber" );
-  _apopen->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight , true, "apopen_ponumber" );
-  _apopen->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "apopen_duedate" );
-  _apopen->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter, false, "apopen_docdate" );
-  _apopen->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight , true, "amount" );
-  _apopen->addColumn(tr("Selected"),  _moneyColumn, Qt::AlignRight , true, "selected" );
-  _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight , true, "discount" );
-  _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft, true, "curr_concat" );
+  _apopen->addColumn(tr("Vendor"),         -1,           Qt::AlignLeft  ,        true, "vendor" );
+  _apopen->addColumn(tr("Doc. Type"),      _orderColumn, Qt::AlignCenter,        true, "doctype" );
+  _apopen->addColumn(tr("Doc. #"),         _orderColumn, Qt::AlignRight ,        true, "apopen_docnumber" );
+  _apopen->addColumn(tr("Inv. #"),         _orderColumn, Qt::AlignRight ,        true, "apopen_invcnumber" );
+  _apopen->addColumn(tr("P/O #"),          _orderColumn, Qt::AlignRight ,        true, "apopen_ponumber" );
+  _apopen->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter,        true, "apopen_duedate" );
+  _apopen->addColumn(tr("Doc. Date"),      _dateColumn,  Qt::AlignCenter,        false, "apopen_docdate" );
+  _apopen->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight ,        true, "amount" );
+  _apopen->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_amount"  );
+  _apopen->addColumn(tr("Running Amount"), _moneyColumn, Qt::AlignRight, false, "running_amount" );
+  _apopen->addColumn(tr("Selected"),       _moneyColumn, Qt::AlignRight ,        true, "selected" );
+  _apopen->addColumn(tr("Selected (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_selected"  );
+  _apopen->addColumn(tr("Discount"),       _moneyColumn, Qt::AlignRight ,        true, "discount" );
+  _apopen->addColumn(tr("Discount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_discount"  );
+  _apopen->addColumn(tr("Currency"),       _currencyColumn, Qt::AlignLeft,       true, "curr_concat" );
   _apopen->addColumn(tr("Running (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, true, "running_selected"  );
-  _apopen->addColumn(tr("Status"),  _currencyColumn, Qt::AlignCenter, true, "apopen_status" );
+  _apopen->addColumn(tr("Status"),         _currencyColumn, Qt::AlignCenter,     true, "apopen_status" );
 
   if (omfgThis->singleCurrency())
   {
@@ -421,6 +425,11 @@ void selectPayments::sFillList()
   if(_ignoreUpdates)
     return;
 
+  if (_vendorgroup->isSelectedVend())
+    _apopen->showColumn(9);
+  else
+    _apopen->hideColumn(9);
+
   if ( (_selectDate->currentIndex() == 1 && !_onOrBeforeDate->isValid())  ||
         (_selectDate->currentIndex() == 2 && (!_startDate->isValid() || !_endDate->isValid())) )
     return;
@@ -456,9 +465,29 @@ void selectPayments::sFillList()
          "                              AND (NOT checkhead_void) "
          "                              AND (NOT checkhead_posted)) "
          "                           ), 0)) AS amount,"
+         "       ((apopen_amount - apopen_paid - "
+         "                   COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
+         "                             FROM checkitem, checkhead "
+         "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
+         "                                AND (checkitem_apopen_id=apopen_id) "
+         "                                AND (NOT checkhead_void) "
+         "                                AND (NOT checkhead_posted)) "
+         "                            ), 0)) / apopen_curr_rate) AS base_amount, "
+         "       <? if exists(\"vend_id\") ?>"
+         "       COALESCE((apopen_amount - apopen_paid - "
+         "                   COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
+         "                             FROM checkitem, checkhead "
+         "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
+         "                              AND (checkitem_apopen_id=apopen_id) "
+         "                              AND (NOT checkhead_void) "
+         "                              AND (NOT checkhead_posted)) "
+         "                           ), 0)), 0) AS running_amount, "
+         "       <? endif ?>"
          "       COALESCE(SUM(apselect_amount), 0) AS selected,"
+         "       (COALESCE(SUM(apselect_amount), 0) / apopen_curr_rate) AS base_selected, "
          "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS running_selected,"
-         "       COALESCE(SUM(apselect_discount),0) AS discount,"
+         "       COALESCE(SUM(apselect_discount),0) AS discount, "
+         "       (COALESCE(SUM(apselect_discount),0) / apopen_curr_rate)AS base_discount,"
          "       CASE WHEN (apopen_duedate < CURRENT_DATE) THEN 'error' "
 		 "         ELSE CASE WHEN(apopen_duedate > CURRENT_DATE) THEN 'emphasis' "
 		 "           ELSE CASE WHEN(CURRENT_DATE <= (apopen_docdate + terms_discdays)) THEN 'altemphasis' "
@@ -471,7 +500,14 @@ void selectPayments::sFillList()
          "       'curr' AS selected_xtnumericrole, "
          "       'curr' AS running_selected_xtnumericrole, "
          "       'curr' AS running_selected_xtrunningrole, "
-         "       'curr' AS discount_xtnumericrole "
+         "       'curr' AS discount_xtnumericrole, "
+         "       'curr' AS base_amount_xtnumericrole, "
+         "       'curr' AS base_selected_xtnumericrole, "
+         "       'curr' AS base_discount_xtnumericrole, "
+         "       'curr' AS base_amount_xttotalrole, "
+         "       'curr' AS base_selected_xttotalrole, "
+         "       'curr' AS base_discount_xttotalrole, "
+         "       'curr' AS running_amount_xtrunningrole "
          "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
 		 "LEFT OUTER JOIN terms ON (apopen_terms_id=terms_id) "
          "WHERE ( (apopen_open)"
@@ -495,8 +531,8 @@ void selectPayments::sFillList()
          " AND (apopen_curr_id=<? value(\"curr_id\") ?>)"
          "<? endif ?>"
          ") "
-         "GROUP BY apopen_id, apselect_id, vend_number, vend_name,"
-         "         apopen_doctype, apopen_docnumber, apopen_ponumber,"
+         "GROUP BY apopen_id, apselect_id, vend_number, vend_name, apopen_curr_rate,"
+         "         apopen_doctype, apopen_docnumber, apopen_ponumber, vend_curr_id,"
          "         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, "
          "         curr_concat, apopen_curr_id, apselect_curr_id, apopen_invcnumber, apopen_status, terms.terms_discdays "
          "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC) AS data "
