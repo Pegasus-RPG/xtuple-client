@@ -108,7 +108,7 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _vendorCopy->setChecked(_metrics->boolean("POVendor"));
   _requirePoitemStdCost->setChecked(_metrics->boolean("RequireStdCostForPOItem"));
-
+  _notes->setChecked(_metrics->boolean("CopyPRtoPOItem"));
   if (_metrics->value("POInternal").toInt() > 0)
   {
     _internalCopy->setChecked(TRUE);
@@ -169,6 +169,7 @@ void configurePO::sSave()
  
   _metrics->set("POVendor", _vendorCopy->isChecked());
   _metrics->set("RequireStdCostForPOItem", _requirePoitemStdCost->isChecked());
+  _metrics->set("CopyPRtoPOItem", _notes->isChecked());
   _metrics->set("POInternal", ((_internalCopy->isChecked()) ? _numOfCopies->value() : 0) );
   _metrics->set("DefaultPOShipVia", _defaultShipVia->text().trimmed());
 

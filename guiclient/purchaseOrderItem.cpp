@@ -132,6 +132,13 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   if (valid)
     _parentso = param.toInt();
 
+  if (_metrics->boolean("CopyPRtoPOItem"))
+  {
+    param = pParams.value("pr_releasenote", &valid);
+    if(valid)
+      _notes->setText(param.toString());
+  }
+
   param = pParams.value("pohead_id", &valid);
   if (valid)
   {

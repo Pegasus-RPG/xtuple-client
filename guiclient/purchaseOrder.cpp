@@ -153,6 +153,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   int      prjid = -1;
   double   qty;
   QDate    dueDate;
+  QString  prnotes;
 
   setPoheadid(-1);
   int _prid = -1;
@@ -193,7 +194,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                    "       CASE WHEN(pr_order_type='S') THEN pr_order_id"
                    "            ELSE -1"
                    "       END AS parentso,"
-                   "       pr_prj_id "
+                   "       pr_prj_id, pr_releasenote "
                    "FROM pr "
                    "WHERE (pr_id=:pr_id);" );
         q.bindValue(":pr_id", _prid);
@@ -206,6 +207,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           parentwo = q.value("parentwo").toInt();
           parentso = q.value("parentso").toInt();
           prjid = q.value("pr_prj_id").toInt();
+          prnotes = q.value("pr_releasenote").toString();
         }
         else
         {
@@ -358,6 +360,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
           if (prjid != -1)
             newItemParams.append("prj_id", prjid);
+
+          newItemParams.append("pr_releasenote", prnotes);
 
           purchaseOrderItem poItem(this, "", TRUE);
           poItem.set(newItemParams);
