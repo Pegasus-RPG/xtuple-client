@@ -45,100 +45,100 @@
 #include "purchaseOrder.h"
 #include "workOrder.h"
 
-#define cNewQuote  (0x20 | cNew)
-#define cEditQuote (0x20 | cEdit)
-#define cViewQuote (0x20 | cView)
+#define cNewQuote   (0x20 | cNew)
+#define cEditQuote  (0x20 | cEdit)
+#define cViewQuote  (0x20 | cView)
 
-#define ISQUOTE(mode)        (((mode) & 0x20) == 0x20)
-#define ISORDER(mode)        (! ISQUOTE(mode))
+#define ISQUOTE(mode) (((mode) & 0x20) == 0x20)
+#define ISORDER(mode) (!ISQUOTE(mode))
 
-#define ISNEW(mode)        (((mode) & 0x0F) == cNew)
-#define ISEDIT(mode)        (((mode) & 0x0F) == cEdit)
-#define ISVIEW(mode)        (((mode) & 0x0F) == cView)
+#define ISNEW(mode)   (((mode) & 0x0F) == cNew)
+#define ISEDIT(mode)  (((mode) & 0x0F) == cEdit)
+#define ISVIEW(mode)  (((mode) & 0x0F) == cView)
 
 #define cClosed       0x01
 #define cActiveOpen   0x02
 #define cInactiveOpen 0x04
 #define cCanceled     0x08
 
-#define iDontUpdate 1
-#define iAskToUpdate 2
-#define iJustUpdate 3
+#define iDontUpdate   1
+#define iAskToUpdate  2
+#define iJustUpdate   3
 
-salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
+  : XWidget(parent, name, fl)
 {
   setupUi(this);
 
   sCheckValidContacts();
 
-  connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
-  connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
-  connect(_charge,    SIGNAL(clicked()), this, SLOT(sChargeCC()));
-  connect(_clear, SIGNAL(pressed()), this, SLOT(sClear()));
-  connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
-  connect(_cust, SIGNAL(addressChanged(const int)), _billToAddr, SLOT(setId(int)));
-  connect(_cust, SIGNAL(nameChanged(const QString&)), _billToName, SLOT(setText(const QString&)));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
-  connect(_newCust,       SIGNAL(clicked()), this, SLOT(sNewCust()));
-  connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
-  connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserEnteredOrderNumber()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_saveAndAdd, SIGNAL(clicked()), this, SLOT(sSaveAndAdd()));
-  connect(_shippingCharges, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
-  connect(_shipVia, SIGNAL(textChanged(const QString&)), this, SLOT(sFillItemList()));
-  connect(_shipToAddr, SIGNAL(changed()),        this, SLOT(sConvertShipTo()));
-  connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
-  connect(_shipToName, SIGNAL(textChanged(const QString&)),        this, SLOT(sConvertShipTo()));
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
-  connect(_showCanceled, SIGNAL(toggled(bool)), this, SLOT(sFillItemList()));
-  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
-  connect(_taxZone,        SIGNAL(newID(int)),        this, SLOT(sTaxZoneChanged()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_freightLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sFreightDetail()));
-  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
-  connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
-  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFOB(int)));
-  connect(_issueStock, SIGNAL(clicked()), this, SLOT(sIssueStock()));
-  connect(_issueLineBalance, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
-  connect(_reserveStock, SIGNAL(clicked()), this, SLOT(sReserveStock()));
-  connect(_reserveLineBalance, SIGNAL(clicked()), this, SLOT(sReserveLineBalance()));
-  connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
-  connect(_allocatedCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
-  connect(_orderDate, SIGNAL(newDate(QDate)), this, SLOT(sOrderDateChanged()));
-  connect(_shipDate, SIGNAL(newDate(QDate)), this, SLOT(sShipDateChanged()));
-  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
-  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+  connect(_action,              SIGNAL(clicked()),                              this,         SLOT(sAction()));
+  connect(_authorize,           SIGNAL(clicked()),                              this,         SLOT(sAuthorizeCC()));
+  connect(_charge,              SIGNAL(clicked()),                              this,         SLOT(sChargeCC()));
+  connect(_clear,               SIGNAL(pressed()),                              this,         SLOT(sClear()));
+  connect(_copyToShipto,        SIGNAL(clicked()),                              this,         SLOT(sCopyToShipto()));
+  connect(_cust,                SIGNAL(addressChanged(const int)),              _billToAddr,  SLOT(setId(int)));
+  connect(_cust,                SIGNAL(nameChanged(const QString &)),           _billToName,  SLOT(setText(const QString &)));
+  connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
+  connect(_delete,              SIGNAL(clicked()),                              this,         SLOT(sDelete()));
+  connect(_downCC,              SIGNAL(clicked()),                              this,         SLOT(sMoveDown()));
+  connect(_edit,                SIGNAL(clicked()),                              this,         SLOT(sEdit()));
+  connect(_editCC,              SIGNAL(clicked()),                              this,         SLOT(sEditCreditCard()));
+  connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(sNew()));
+  connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
+  connect(_newCust,             SIGNAL(clicked()),                              this,         SLOT(sNewCust()));
+  connect(_orderNumber,         SIGNAL(lostFocus()),                            this,         SLOT(sHandleOrderNumber()));
+  connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
+  connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
+  connect(_saveAndAdd,          SIGNAL(clicked()),                              this,         SLOT(sSaveAndAdd()));
+  connect(_shippingCharges,     SIGNAL(newID(int)),                             this,         SLOT(sHandleShipchrg(int)));
+  connect(_shipVia,             SIGNAL(textChanged(const QString &)),           this,         SLOT(sFillItemList()));
+  connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
+  connect(_shipToList,          SIGNAL(clicked()),                              this,         SLOT(sShipToList()));
+  connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
+  connect(_shipToNumber,        SIGNAL(lostFocus()),                            this,         SLOT(sParseShipToNumber()));
+  connect(_showCanceled,        SIGNAL(toggled(bool)),                          this,         SLOT(sFillItemList()));
+  connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
+  connect(_soitem,              SIGNAL(itemSelectionChanged()),                 this,         SLOT(sHandleButtons()));
+  connect(_taxZone,             SIGNAL(newID(int)),                             this,         SLOT(sTaxZoneChanged()));
+  connect(_taxLit,              SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sTaxDetail()));
+  connect(_freightLit,          SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sFreightDetail()));
+  connect(_upCC,                SIGNAL(clicked()),                              this,         SLOT(sMoveUp()));
+  connect(_viewCC,              SIGNAL(clicked()),                              this,         SLOT(sViewCreditCard()));
+  connect(_warehouse,           SIGNAL(newID(int)),                             this,         SLOT(sPopulateFOB(int)));
+  connect(_issueStock,          SIGNAL(clicked()),                              this,         SLOT(sIssueStock()));
+  connect(_issueLineBalance,    SIGNAL(clicked()),                              this,         SLOT(sIssueLineBalance()));
+  connect(_reserveStock,        SIGNAL(clicked()),                              this,         SLOT(sReserveStock()));
+  connect(_reserveLineBalance,  SIGNAL(clicked()),                              this,         SLOT(sReserveLineBalance()));
+  connect(_subtotal,            SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_miscCharge,          SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_freight,             SIGNAL(valueChanged()),                         this,         SLOT(sFreightChanged()));
+  connect(_allocatedCM,         SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_outstandingCM,       SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_authCC,              SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_more,                SIGNAL(clicked()),                              this,         SLOT(sHandleMore()));
+  connect(_orderDate,           SIGNAL(newDate(QDate)),                         this,         SLOT(sOrderDateChanged()));
+  connect(_shipDate,            SIGNAL(newDate(QDate)),                         this,         SLOT(sShipDateChanged()));
+  connect(_cust,                SIGNAL(newCrmacctId(int)),                      _billToAddr,  SLOT(setSearchAcct(int)));
+  connect(_cust,                SIGNAL(newCrmacctId(int)),                      _shipToAddr,  SLOT(setSearchAcct(int)));
 
-  connect(_billToAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+  connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
-  connect(_shipToAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
+  connect(_shipToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _shipToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
   _saved = false;
 
-  QAction* _saveAct = new QAction(this);
+  QAction *_saveAct = new QAction(this);
   _saveAct->setShortcut(QKeySequence::Save);
   connect(_saveAct, SIGNAL(triggered()), this, SLOT(sSave()));
 
-  QAction* _closeAct = new QAction(this);
+  QAction *_closeAct = new QAction(this);
   _closeAct->setShortcut(QKeySequence::Close);
   connect(_closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  QList<QAction*> _actions;
+  QList<QAction *> _actions;
   _actions.append(_saveAct);
   _actions.append(_closeAct);
   addActions(_actions);
@@ -149,20 +149,20 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _shipToList->setMaximumWidth(25);
 #endif
 
-  _soheadid = -1;
-  _shiptoid = -1;
-  _orderNumberGen = 0;
+  _soheadid          = -1;
+  _shiptoid          = -1;
+  _orderNumberGen    = 0;
 
-  _numSelected = 0;
+  _numSelected       = 0;
 
-  _calcfreight = false;
-  _freightCache = 0;
-  _taxzoneidCache = -1;
-  _custtaxzoneid = -1;
+  _calcfreight       = false;
+  _freightCache      = 0;
+  _taxzoneidCache    = -1;
+  _custtaxzoneid     = -1;
   _amountOutstanding = 0.0;
-  _crmacctid=-1;
+  _crmacctid         =-1;
 
-  _captive = FALSE;
+  _captive       = FALSE;
 
   _ignoreSignals = TRUE;
 
@@ -208,17 +208,17 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _ignoreSignals = FALSE;
 
-  if(!_privileges->check("ShowMarginsOnSalesOrder"))
+  if (!_privileges->check("ShowMarginsOnSalesOrder"))
   {
     _margin->hide();
     _marginLit->hide();
   }
 
   _project->setType(ProjectLineEdit::SalesOrder);
-  if(!_metrics->boolean("UseProjects"))
+  if (!_metrics->boolean("UseProjects"))
     _project->hide();
 
-  //If not multi-warehouse hide whs control
+  // If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _shippingWhseLit->hide();
@@ -228,20 +228,20 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("EnableReturnAuth"))
     _holdType->removeItem(4);
 
-  if(!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
+  if (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
   }
 
-  if(_metrics->boolean("EnableSOReservations"))
+  if (_metrics->boolean("EnableSOReservations"))
   {
     _requireInventory->setChecked(true);
     _requireInventory->setEnabled(false);
   }
-  
-  if(!_metrics->boolean("AlwaysShowSaveAndAdd"))
+
+  if (!_metrics->boolean("AlwaysShowSaveAndAdd"))
     _saveAndAdd->hide();
-  
+
   _more->setChecked(_preferences->boolean("SoShowAll"));
   _newCust->setVisible(_privileges->check("MaintainCustomerMasters") ||
                        _privileges->check("MaintainProspectMasters"));
@@ -266,11 +266,11 @@ void salesOrder::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse salesOrder::set(const ParameterList &pParams)
+enum SetResponse salesOrder:: set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
-  QVariant param;
-  bool     valid;
+  QVariant  param;
+  bool      valid;
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -312,7 +312,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      if(_metrics->boolean("AlwaysShowSaveAndAdd"))
+      if (_metrics->boolean("AlwaysShowSaveAndAdd"))
         _saveAndAdd->setEnabled(true);
       else
         _saveAndAdd->hide();
@@ -347,7 +347,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     {
       setViewMode();
       _cust->setType(CLineEdit::AllCustomers);
-	  _salesRep->setType(XComboBox::SalesReps);
+      _salesRep->setType(XComboBox::SalesReps);
 
       _issueStock->hide();
       _issueLineBalance->hide();
@@ -409,7 +409,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
     if (ISORDER(_mode))
       q.exec("SELECT NEXTVAL('cohead_cohead_id_seq') AS head_id;");
-    else // (ISQUOTE(_mode))
+    else  // (ISQUOTE(_mode))
       q.exec("SELECT NEXTVAL('quhead_quhead_id_seq') AS head_id;");
     if (q.first())
     {
@@ -508,7 +508,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _expire->hide();
   }
 
-  if(_metrics->boolean("HideSOMiscCharge"))
+  if (_metrics->boolean("HideSOMiscCharge"))
   {
     _miscChargeDescriptionLit->hide();
     _miscChargeDescription->hide();
@@ -518,7 +518,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _miscCharge->hide();
   }
 
-  if(ISQUOTE(_mode) || !_metrics->boolean("EnableSOShipping"))
+  if (ISQUOTE(_mode) || !_metrics->boolean("EnableSOShipping"))
   {
     _requireInventory->hide();
     _issueStock->hide();
@@ -531,7 +531,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   else
     _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  if(ISQUOTE(_mode) || !_metrics->boolean("EnableSOReservations"))
+  if (ISQUOTE(_mode) || !_metrics->boolean("EnableSOReservations"))
   {
     _reserveStock->hide();
     _reserveLineBalance->hide();
@@ -549,11 +549,11 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   if (valid)
   {
     _soheadid = param.toInt();
-    if(cEdit == _mode)
+    if (cEdit == _mode)
       setObjectName(QString("salesOrder edit %1").arg(_soheadid));
-    else if(cView == _mode)
+    else if (cView == _mode)
       setObjectName(QString("salesOrder view %1").arg(_soheadid));
-    populate();
+      populate();
     populateCMInfo();
     populateCCInfo();
     sFillCcardList();
@@ -646,7 +646,7 @@ bool salesOrder::save(bool partial)
   if (!_orderDate->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                          tr("You must enter an Order Date for this order before you may save it.") );
+                              tr("You must enter an Order Date for this order before you may save it.") );
     _orderDate->setFocus();
     return FALSE;
   }
@@ -654,7 +654,7 @@ bool salesOrder::save(bool partial)
   if (!_cust->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                          tr("You must select a Customer for this order before you may save it.") );
+                              tr("You must select a Customer for this order before you may save it.") );
     _cust->setFocus();
     return FALSE;
   }
@@ -662,7 +662,7 @@ bool salesOrder::save(bool partial)
   if (_salesRep->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                          tr("You must select a Sales Rep. for this Sales Order before you may save it.") );
+                              tr("You must select a Sales Rep. for this Sales Order before you may save it.") );
     _salesRep->setFocus();
     return FALSE;
   }
@@ -670,7 +670,7 @@ bool salesOrder::save(bool partial)
   if (_terms->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                          tr("You must select the Terms for this Sales Order before you may save it.") );
+                              tr("You must select the Terms for this Sales Order before you may save it.") );
     _terms->setFocus();
     return FALSE;
   }
@@ -678,35 +678,35 @@ bool salesOrder::save(bool partial)
   if ( (_shiptoid == -1) && (!_shipToAddr->isEnabled()) )
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                          tr("You must select a Ship-To for this Sales Order before you may save it.") );
+                              tr("You must select a Ship-To for this Sales Order before you may save it.") );
     _shipToNumber->setFocus();
     return FALSE;
   }
-  
-  if (_total->localValue() < 0 )
+
+  if (_total->localValue() < 0)
   {
     QMessageBox::information(this, tr("Total Less than Zero"),
-                             tr("<p>The Total must be a positive value.") );
+                              tr("<p>The Total must be a positive value.") );
     _cust->setFocus();
     return FALSE;
   }
 
   if (_opportunity->isValid())
   {
-	q.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id " 
-			   "FROM crmacct JOIN ophead ON (crmacct_id = ophead_crmacct_id) "
-			   "WHERE (ophead_id = :ophead_id);" );
-	q.bindValue(":ophead_id", _opportunity->id());
-	q.exec();
-	if (q.first())
-	{
-	  if (q.value("crmacct_cust_id").toInt() == 0 && q.value("crmacct_prospect_id").toInt() == 0)
-	  {
-            QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                                  tr("Only opportunities from Customers or Prospects can be related.") );
-            _opportunity->setFocus();
-            return FALSE;
-	  }
+    q.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id "
+               "FROM crmacct JOIN ophead ON (crmacct_id = ophead_crmacct_id) "
+               "WHERE (ophead_id = :ophead_id);" );
+    q.bindValue(":ophead_id", _opportunity->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("crmacct_cust_id").toInt() == 0 && q.value("crmacct_prospect_id").toInt() == 0)
+      {
+        QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+                              tr("Only opportunities from Customers or Prospects can be related.") );
+        _opportunity->setFocus();
+        return FALSE;
+      }
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -722,7 +722,7 @@ bool salesOrder::save(bool partial)
       if (_custPONumber->text().trimmed().length() == 0)
       {
         QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
+                                tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
         _custPONumber->setFocus();
         return FALSE;
       }
@@ -748,11 +748,11 @@ bool salesOrder::save(bool partial)
         {
           QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                                 tr("<p>This Customer does not use Blanket P/O "
-                                   "Numbers and the P/O Number you entered has "
-                                   "already been used for another Sales Order."
-                                   "Please verify the P/O Number and either"
-                                   "enter a new P/O Number or add to the"
-                                   "existing Sales Order." ) );
+                                     "Numbers and the P/O Number you entered has "
+                                     "already been used for another Sales Order."
+                                     "Please verify the P/O Number and either"
+                                     "enter a new P/O Number or add to the"
+                                     "existing Sales Order." ) );
           _custPONumber->setFocus();
           return FALSE;
         }
@@ -769,7 +769,7 @@ bool salesOrder::save(bool partial)
   {
     QMessageBox::warning( this, tr("Create Line Items for this Order"),
                           tr("<p>You must create at least one Line Item for "
-                             "this Sales Order before you may save it."));
+                               "this Sales Order before you may save it."));
     _new->setFocus();
     return FALSE;
   }
@@ -778,18 +778,18 @@ bool salesOrder::save(bool partial)
   {
     QMessageBox::warning( this, tr("Invalid S/O # Entered"),
                           tr( "<p>You must enter a valid S/O # for this Sales"
-                              "Order before you may save it." ) );
+                                "Order before you may save it." ) );
     _orderNumber->setFocus();
   }
 
   //  We can't post a Misc. Charge without a Sales Account
-  if ( (! _miscCharge->isZero()) && (!_miscChargeAccount->isValid()) )
+  if ( (!_miscCharge->isZero()) && (!_miscChargeAccount->isValid()) )
   {
     QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
                           tr("<p>You may not enter a Misc. Charge without "
-                             "indicating the G/L Sales Account number for the "
-                             "charge.  Please set the Misc. Charge amount to 0 "
-                             "or select a Misc. Charge Sales Account." ) );
+                               "indicating the G/L Sales Account number for the "
+                               "charge.  Please set the Misc. Charge amount to 0 "
+                               "or select a Misc. Charge Sales Account." ) );
     _salesOrderInformation->setCurrentPage(1);
     _miscChargeAccount->setFocus();
     return FALSE;
@@ -1131,7 +1131,7 @@ bool salesOrder::save(bool partial)
     q.bindValue(":prj_id", _project->id());
   if (_opportunity->isValid())
     q.bindValue(":ophead_id", _opportunity->id());
-  if(_expire->isValid())
+  if (_expire->isValid())
     q.bindValue(":expire", _expire->date());
 
   if (_holdType->currentIndex() == 0)
@@ -1155,13 +1155,13 @@ bool salesOrder::save(bool partial)
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
   // if this is a new so record and we haven't saved already
   // then we need to lock this record.
-  if((cNew == _mode) && (!_saved))
+  if ((cNew == _mode) && (!_saved))
   {
     // should I bother to check because no one should have this but us?
     q.prepare("SELECT lockSohead(:head_id) AS result;");
@@ -1176,12 +1176,11 @@ bool salesOrder::save(bool partial)
 
   _saved = true;
 
-  if(!partial)
+  if (!partial)
   {
-
-    if((cNew == _mode) && _metrics->boolean("AutoAllocateCreditMemos"))
+    if ((cNew == _mode) && _metrics->boolean("AutoAllocateCreditMemos"))
     {
-      sAllocateCreditMemos();          
+      sAllocateCreditMemos();
     }
 
     if ( (_mode == cNew) || (_mode == cEdit) )
@@ -1205,9 +1204,9 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
   if ((_mode == cNew) || (_mode == cEdit))
   {
-    int menuid = 0;
-    bool didsomething = false;
-    if(_numSelected == 1)
+    int   menuid       = 0;
+    bool  didsomething = false;
+    if (_numSelected == 1)
     {
       didsomething = true;
       if (_lineMode == cClosed)
@@ -1234,9 +1233,9 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       }
     }
 
-    if(_metrics->boolean("EnableSOReservations"))
+    if (_metrics->boolean("EnableSOReservations"))
     {
-      if(didsomething)
+      if (didsomething)
         pMenu->insertSeparator();
 
       menuid = pMenu->insertItem(tr("Show Reservations..."), this, SLOT(sShowReservations()));
@@ -1253,9 +1252,9 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       didsomething = true;
     }
 
-    if(_metrics->boolean("EnableSOShipping"))
+    if (_metrics->boolean("EnableSOShipping"))
     {
-      if(didsomething)
+      if (didsomething)
         pMenu->insertSeparator();
 
       menuid = pMenu->insertItem(tr("Return Stock"), this, SLOT(sReturnStock()), 0);
@@ -1271,23 +1270,23 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
     createOrder.prepare( "SELECT coitem_order_type "
                          "FROM coitem "
                          "WHERE (coitem_id=:coitem_id);");
-    QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+    QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      createOrder.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      createOrder.bindValue(":coitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
       createOrder.exec();
       if (createOrder.first())
       {
-        if(didsomething)
+        if (didsomething)
           pMenu->insertSeparator();
-        if(createOrder.value("coitem_order_type").toString() == "P")
+        if (createOrder.value("coitem_order_type").toString() == "P")
         {
           XSqlQuery checkPO;
           checkPO.prepare( "SELECT pohead_id "
                            "FROM pohead JOIN poitem ON (pohead_id=poitem_pohead_id) "
                            "     RIGHT OUTER JOIN coitem ON (poitem_id=coitem_order_id) "
                            "WHERE (coitem_id=:coitem_id);" );
-          checkPO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkPO.bindValue(":coitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
           checkPO.exec();
           if (checkPO.first())
           {
@@ -1303,13 +1302,13 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
             return;
           }
         }
-        else if(createOrder.value("coitem_order_type").toString() == "R")
+        else if (createOrder.value("coitem_order_type").toString() == "R")
         {
           XSqlQuery checkPR;
           checkPR.prepare( "SELECT pr_id "
                            "FROM pr JOIN coitem ON (pr_id=coitem_order_id) "
                            "WHERE (coitem_id=:coitem_id);" );
-          checkPR.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkPR.bindValue(":coitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
           checkPR.exec();
           if (checkPR.first())
           {
@@ -1325,13 +1324,13 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
             return;
           }
         }
-        else if(createOrder.value("coitem_order_type").toString() == "W")
+        else if (createOrder.value("coitem_order_type").toString() == "W")
         {
           XSqlQuery checkWO;
           checkWO.prepare( "SELECT wo_id "
                            "FROM wo JOIN coitem ON (wo_id=coitem_order_id)"
                            "WHERE (coitem_id=:coitem_id);" );
-          checkWO.bindValue(":coitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          checkWO.bindValue(":coitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
           checkWO.exec();
           if (checkWO.first())
           {
@@ -1350,7 +1349,7 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       }
       else if (createOrder.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, createOrder.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, createOrder.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       didsomething = true;
@@ -1376,13 +1375,12 @@ void salesOrder::populateOrderNumber()
       }
       else if (q.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
     _userEnteredOrderNumber = FALSE;
   }
-
   else if (_mode == cNewQuote)
   {
     if ( (_metrics->value("QUNumberGeneration") == "A") ||
@@ -1405,7 +1403,7 @@ void salesOrder::populateOrderNumber()
       }
       else if (q.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       _userEnteredOrderNumber = FALSE;
@@ -1425,7 +1423,6 @@ void salesOrder::sHandleOrderNumber()
 
   if (_orderNumber->text().length() == 0)
   {
-
     if (_mode == cNew)
     {
       if ( (_metrics->value("CONumberGeneration") == "A") ||
@@ -1439,7 +1436,6 @@ void salesOrder::sHandleOrderNumber()
         return;
       }
     }
-
     else if (_mode == cNewQuote)
     {
       if ( (_metrics->value("QUNumberGeneration") == "A") ||
@@ -1454,7 +1450,6 @@ void salesOrder::sHandleOrderNumber()
         return;
       }
     }
-
   }
   else
   {
@@ -1476,7 +1471,7 @@ void salesOrder::sHandleOrderNumber()
       }
       else if (query.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
 
@@ -1487,8 +1482,8 @@ void salesOrder::sHandleOrderNumber()
       query.exec();
       if (query.first())
       {
-        _mode = cEdit;
-        _soheadid = query.value("cohead_id").toInt();
+        _mode      = cEdit;
+        _soheadid  = query.value("cohead_id").toInt();
         populate();
         _orderNumber->setEnabled(FALSE);
         _cust->setReadOnly(TRUE);
@@ -1508,15 +1503,14 @@ void salesOrder::sHandleOrderNumber()
         _orderNumber->setEnabled(FALSE);
       }
     }
-
     else if ((_mode == cNewQuote) && (_userEnteredOrderNumber))
     {
       query.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
       query.bindValue(":quhead_id", _soheadid);
       query.bindValue(":quhead_number", _orderNumber->text().toInt());
       query.exec();
-      if (query.first() && ! query.value("result").toBool())
-        systemError(this, tr("Could not delete Quote."), __FILE__, __LINE__);
+      if (query.first() && !query.value("result").toBool())
+        systemError(this, tr("Could not delete Quote."),    __FILE__, __LINE__);
       else if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 
@@ -1529,19 +1523,19 @@ void salesOrder::sHandleOrderNumber()
       {
         QMessageBox::warning( this, tr("Quote Order Number Already exists."),
                               tr( "<p>The Quote Order Number you have entered"
-                                  "already exists. Please enter a new one." ) );
-        clear();
+                                    "already exists. Please enter a new one." ) );
+          clear();
         _orderNumber->setFocus();
         return;
       }
       else
       {
         QString orderNumber = _orderNumber->text();
-        if((_metrics->value("QUNumberGeneration") == "S") ||
-           (_metrics->value("QUNumberGeneration") == "A")) 
-        {	
+        if ((_metrics->value("QUNumberGeneration") == "S") ||
+            (_metrics->value("QUNumberGeneration") == "A"))
+        {
           clear();
-          if(_metrics->value("QUNumberGeneration") == "S")
+          if (_metrics->value("QUNumberGeneration") == "S")
             query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
           else
             query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
@@ -1593,33 +1587,33 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
                 "       cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
-				"       true AS iscustomer "
+                "       true AS iscustomer "
                 "FROM custtype, custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
                 "                 AND (shipto_default)) "
                 "LEFT OUTER JOIN crmacct ON (crmacct_cust_id = cust_id) "
                 "WHERE (cust_id=<? value(\"cust_id\") ?>) "
                 "<? if exists(\"isQuote\") ?>"
-                "UNION "
-                "SELECT NULL AS cust_salesrep_id, NULL AS cust_shipchrg_id,"
-                "       NULL AS cust_shipform_id,"
-                "       0.0 AS commission,"
-                "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
-                "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
-                "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
-                "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
-                "       NULL AS cust_shipvia,"
-                "       -1 AS shiptoid,"
-                "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
-				"       false AS iscustomer "
-                "FROM prospect "
-                "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
-                "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
-                "<? endif ?>"
-                ";" );
+                  "UNION "
+                  "SELECT NULL AS cust_salesrep_id, NULL AS cust_shipchrg_id,"
+                  "       NULL AS cust_shipform_id,"
+                  "       0.0 AS commission,"
+                  "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
+                  "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
+                  "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
+                  "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
+                  "       NULL AS cust_shipvia,"
+                  "       -1 AS shiptoid,"
+                  "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
+                  "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
+                  "       false AS iscustomer "
+                  "FROM prospect "
+                  "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
+                  "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
+                  "<? endif ?>"
+                    ";" );
 
-    MetaSQLQuery mql(sql);
+    MetaSQLQuery  mql(sql);
     ParameterList params;
     params.append("cust_id", pCustid);
     if (ISQUOTE(_mode))
@@ -1634,41 +1628,41 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         {
           QMessageBox::warning( this, tr("Selected Customer on Credit Hold"),
                                 tr( "<p>The selected Customer has been placed "
-                                    "on a Credit Hold and you do not have "
-                                    "privilege to create Sales Orders for "
-                                    "Customers on Credit Hold.  The selected "
-                                    "Customer must be taken off of Credit Hold "
-                                    "before you may create a new Sales Order "
-                                    "for the Customer." ) );
+                                      "on a Credit Hold and you do not have "
+                                      "privilege to create Sales Orders for "
+                                      "Customers on Credit Hold.  The selected "
+                                      "Customer must be taken off of Credit Hold "
+                                      "before you may create a new Sales Order "
+                                      "for the Customer." ) );
           _cust->setId(-1);
           _cust->setFocus();
           return;
-        }      
+        }
 
         if ( (cust.value("cust_creditstatus").toString() == "W") &&
              (!_privileges->check("CreateSOForWarnCustomer")) )
         {
           QMessageBox::warning( this, tr("Selected Customer on Credit Warning"),
                                 tr( "<p>The selected Customer has been placed on "
-                                    "a Credit Warning and you do not have "
-                                    "privilege to create Sales Orders for "
-                                    "Customers on Credit Warning.  The "
-                                    "selected Customer must be taken off of "
-                                    "Credit Warning before you may create a "
-                                    "new Sales Order for the Customer." ) );
+                                      "a Credit Warning and you do not have "
+                                      "privilege to create Sales Orders for "
+                                      "Customers on Credit Warning.  The "
+                                      "selected Customer must be taken off of "
+                                      "Credit Warning before you may create a "
+                                      "new Sales Order for the Customer." ) );
           _cust->setId(-1);
           _cust->setFocus();
           return;
-        }      
+        }
 
-        if( (cust.value("cust_creditstatus").toString() == "H") || (cust.value("cust_creditstatus").toString() == "W") )
+        if ( (cust.value("cust_creditstatus").toString() == "H") || (cust.value("cust_creditstatus").toString() == "W") )
           _holdType->setCurrentIndex(1);
       }
 
-	  _cust->setInfoVisible(cust.value("iscustomer").toBool());
-      sFillCcardList();    
-      _usesPos = cust.value("cust_usespos").toBool();
-      _blanketPos = cust.value("cust_blanketpos").toBool();
+      _cust->setInfoVisible(cust.value("iscustomer").toBool());
+      sFillCcardList();
+      _usesPos     = cust.value("cust_usespos").toBool();
+      _blanketPos  = cust.value("cust_blanketpos").toBool();
       _salesRep->setId(cust.value("cust_salesrep_id").toInt());
       _shippingCharges->setId(cust.value("cust_shipchrg_id").toInt());
       _shippingForm->setId(cust.value("cust_shipform_id").toInt());
@@ -1722,15 +1716,14 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _commission->clear();
     _terms->setCurrentIndex(-1);
     _taxZone->setCurrentIndex(-1);
-    _taxzoneidCache = -1;
-    _custtaxzoneid        = -1;
+    _taxzoneidCache  = -1;
+    _custtaxzoneid   = -1;
 
     _shipToNumber->clear();
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
     _billToCntct->clear();
-
   }
 }
 
@@ -1748,8 +1741,8 @@ void salesOrder::sShipToList()
   if (shiptoid != -1)
   {
     populateShipto(shiptoid);
-	if (_soitem->topLevelItemCount())
-		sRecalculatePrice();
+    if (_soitem->topLevelItemCount())
+      sRecalculatePrice();
   }
 }
 
@@ -1773,15 +1766,15 @@ void salesOrder::sParseShipToNumber()
                                  tr("<p>This Ship To number is inactive, are you sure you want to proceed?"),
                                  QMessageBox::Yes,
                                  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-          
+
           populateShipto(shiptoid.value("shipto_id").toInt());
         else
           _shipToNumber->clear();
       }
       else
       {
-        populateShipto(shiptoid.value("shipto_id").toInt());
-		if (_soitem->topLevelItemCount())
+          populateShipto(shiptoid.value("shipto_id").toInt());
+        if (_soitem->topLevelItemCount())
           sRecalculatePrice();
       }
     }
@@ -1861,9 +1854,9 @@ void salesOrder::sConvertShipTo()
 
 void salesOrder::sNew()
 {
-  if( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
+  if ( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
   {
-    if(!save(true))
+    if (!save(true))
       return;
     else
       populate();
@@ -1878,7 +1871,7 @@ void salesOrder::sNew()
   params.append("orderDate", _orderDate->date());
   params.append("taxzone_id", _taxZone->id());
   if (_warehouse->id() != -1)
-    params.append("warehous_id", _warehouse->id());  
+    params.append("warehous_id", _warehouse->id());
   if (_shipDate->isValid())
     params.append("shipDate", _shipDate->date());
 
@@ -1891,7 +1884,7 @@ void salesOrder::sNew()
   newdlg.set(params);
 
   newdlg.exec();
-  sFillItemList();
+    sFillItemList();
 }
 
 void salesOrder::sCopyToShipto()
@@ -1950,10 +1943,10 @@ void salesOrder::sHandleButtons()
   XTreeWidgetItem *selected = 0;
   _numSelected = 0;
 
-  QList<XTreeWidgetItem*> selectedlist = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selectedlist = _soitem->selectedItems();
   _numSelected = selectedlist.size();
   if (_numSelected > 0)
-    selected = (XTreeWidgetItem*)(selectedlist[0]);
+    selected = (XTreeWidgetItem *)(selectedlist[0]);
 
   if (selected)
   {
@@ -2013,9 +2006,9 @@ void salesOrder::sHandleButtons()
           _delete->setEnabled(FALSE);
         }
 
-        if (1 == lineMode       // closed
-            || 4 == lineMode    // cancelled
-            || selected->rawValue("item_type").toString() == "K"    // kit item
+        if (1 == lineMode ||                                  // closed
+            4 == lineMode ||                                  // cancelled
+            selected->rawValue("item_type").toString() == "K" // kit item
             )
         {
           _issueStock->setEnabled(FALSE);
@@ -2039,7 +2032,7 @@ void salesOrder::sHandleButtons()
           _edit->setText(tr("View"));
           _delete->setEnabled(FALSE);
         }
-        else if(cNew == _mode || cEdit == _mode || cNewQuote == _mode || cEditQuote == _mode)
+        else if (cNew == _mode || cEdit == _mode || cNewQuote == _mode || cEditQuote == _mode)
         {
           _edit->setText(tr("&Edit"));
         }
@@ -2069,6 +2062,7 @@ void salesOrder::sFirm()
 {
   if (_lineMode == cCanceled)
     return;
+
   if ( (_mode == cNew) || (_mode == cEdit) )
   {
     q.prepare( "UPDATE coitem "
@@ -2084,6 +2078,7 @@ void salesOrder::sSoften()
 {
   if (_lineMode == cCanceled)
     return;
+
   if ( (_mode == cNew) || (_mode == cEdit) )
   {
     q.prepare( "UPDATE coitem "
@@ -2099,6 +2094,7 @@ void salesOrder::sAction()
 {
   if (_lineMode == cCanceled)
     return;
+
   if ( (_mode == cNew) || (_mode == cEdit) )
   {
     if (_lineMode == cClosed)
@@ -2113,13 +2109,13 @@ void salesOrder::sAction()
                  " GROUP BY coitem_qtyshipped;");
       q.bindValue(":coitem_id", _soitem->id());
       q.exec();
-      if(q.first() && q.value("atshipping").toDouble() > 0)
+      if (q.first() && q.value("atshipping").toDouble() > 0)
       {
         QMessageBox::information(this, tr("Cannot Close Item"),
                                  tr("The item cannot be Closed at this time as there is inventory at shipping.") );
         return;
       }
-      if(_metrics->boolean("EnableSOReservations"))
+      if (_metrics->boolean("EnableSOReservations"))
         sUnreserveStock();
       q.prepare( "UPDATE coitem "
                  "SET coitem_status='C' "
@@ -2132,16 +2128,16 @@ void salesOrder::sAction()
 }
 
 void salesOrder::sDelete()
-{ 
+{
   if ( (_mode == cEdit) || (_mode == cNew) )
   {
     if (QMessageBox::question(this, tr("Delete Selected Line Item?"),
                               tr("<p>Are you sure that you want to delete the "
-                                 "selected Line Item?"),
+                                   "selected Line Item?"),
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     {
-      if(_metrics->boolean("EnableSOReservations"))
+      if (_metrics->boolean("EnableSOReservations"))
         sUnreserveStock();
 
       q.prepare( "SELECT deleteSOItem(:soitem_id) AS result;");
@@ -2152,29 +2148,29 @@ void salesOrder::sDelete()
         int result = q.value("result").toInt();
         if (result == -20)
           QMessageBox::information(this, tr("Cannot Delete Purchase Order Item"),
-                              tr("<p>Purchase Order Item and its associated "
-		                         "Purchase Order will remain open and must be "
-								 "deleted separately if desired."));
+                                    tr("<p>Purchase Order Item and its associated "
+                                        "Purchase Order will remain open and must be "
+                                        "deleted separately if desired."));
         else if (result == -10)
           QMessageBox::critical(this, tr("Cannot Delete Sales Order Item"),
-                              tr("<p>Purchase Order Item associated with this "
-		                         "Sales Order Item is Closed or has Receipts. "
-								 "You may not delete the Sales Order line, "
-								 "but instead must cancel it."));
-		else if (result < 0)
-          systemError(this, storedProcErrorLookup("deleteSOItem", result), __FILE__, __LINE__);
+                                    tr("<p>Purchase Order Item associated with this "
+                                     "Sales Order Item is Closed or has Receipts. "
+                                     "You may not delete the Sales Order line, "
+                                     "but instead must cancel it."));
+        else if (result < 0)
+          systemError(this, storedProcErrorLookup("deleteSOItem", result),  __FILE__, __LINE__);
       }
       else if (q.lastError().type() != QSqlError::NoError)
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, q.lastError().databaseText(),                   __FILE__, __LINE__);
 
-      sFillItemList();
+          sFillItemList();
 
       if (_soitem->topLevelItemCount() == 0)
       {
         if (QMessageBox::question(this, tr("Cancel Sales Order?"),
                                   tr("<p>You have deleted all of the Line "
-                                     "Items for this Sales Order. Would you "
-                                     "like to cancel this Sales Order?"),
+                                       "Items for this Sales Order. Would you "
+                                       "like to cancel this Sales Order?"),
                                   QMessageBox::Yes,
                                   QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
         {
@@ -2186,10 +2182,10 @@ void salesOrder::sDelete()
           {
             int result = q.value("result").toInt();
             if (result < 0)
-              systemError(this, storedProcErrorLookup("deleteSO", result), __FILE__, __LINE__);
+              systemError(this, storedProcErrorLookup("deleteSO", result),  __FILE__, __LINE__);
           }
           else if (q.lastError().type() != QSqlError::NoError)
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              systemError(this, q.lastError().databaseText(),               __FILE__, __LINE__);
 
           omfgThis->sSalesOrdersUpdated(_soheadid);
           _captive = false;
@@ -2210,8 +2206,8 @@ void salesOrder::sDelete()
     {
       if ( QMessageBox::question(this, tr("Cancel Quote?"),
                                  tr("<p>You have deleted all of the order "
-                                    "lines for this Quote. Would you like to "
-                                    "cancel this Quote?."),
+                                      "lines for this Quote. Would you like to "
+                                      "cancel this Quote?."),
                                  QMessageBox::Yes,
                                  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
       {
@@ -2219,10 +2215,10 @@ void salesOrder::sDelete()
         q.bindValue(":quhead_id", _soheadid);
         q.bindValue(":quhead_number", _orderNumber->text().toInt());
         q.exec();
-        if (q.first() && ! q.value("result").toBool())
-          systemError(this, tr("Could not delete Quote."), __FILE__, __LINE__);
+        if (q.first() && !q.value("result").toBool())
+          systemError(this, tr("Could not delete Quote."),  __FILE__, __LINE__);
         else if (q.lastError().type() != QSqlError::NoError)
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, q.lastError().databaseText(),   __FILE__, __LINE__);
 
         omfgThis->sQuotesUpdated(_soheadid);
         _captive = false;
@@ -2237,19 +2233,19 @@ void salesOrder::populate()
   if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
   {
     XSqlQuery so;
-    if(_mode == cEdit)
+    if (_mode == cEdit)
     {
       // Lock the record
       so.prepare("SELECT lockSohead(:sohead_id) AS result;");
       so.bindValue(":sohead_id", _soheadid);
       so.exec();
-      if(so.first())
+      if (so.first())
       {
-        if(so.value("result").toBool() != true)
+        if (so.value("result").toBool() != true)
         {
           QMessageBox::critical( this, tr("Record Currently Being Edited"),
                                  tr("<p>The record you are trying to edit is currently being edited "
-                                    "by another user. Continue in View Mode.") );
+                                      "by another user. Continue in View Mode.") );
           setViewMode();
         }
       }
@@ -2257,7 +2253,7 @@ void salesOrder::populate()
       {
         QMessageBox::critical( this, tr("Cannot Lock Record for Editing"),
                                tr("<p>There was an unexpected error while trying to lock the record "
-                                  "for editing. Please report this to your administator.") );
+                                    "for editing. Please report this to your administator.") );
         setViewMode();
       }
     }
@@ -2291,7 +2287,7 @@ void salesOrder::populate()
 
       _cust->setId(so.value("cohead_cust_id").toInt());
 
-      setFreeFormShipto(so.value("cust_ffshipto").toBool());
+        setFreeFormShipto(so.value("cust_ffshipto").toBool());
       _blanketPos = so.value("cust_blanketpos").toBool();
 
       _warehouse->setId(so.value("cohead_warehous_id").toInt());
@@ -2384,7 +2380,6 @@ void salesOrder::populate()
       if (_mode == cView)
         _shipToNumber->setEnabled(FALSE);
 
-
       if (so.value("cohead_origin").toString() == "C")
         _origin->setCurrentIndex(0);
       else if (so.value("cohead_origin").toString() == "I")
@@ -2416,7 +2411,7 @@ void salesOrder::populate()
       _shippingComments->setText(so.value("cohead_shipcomments").toString());
       _shippingCharges->setId(so.value("cohead_shipchrg_id").toInt());
       _shippingForm->setId(so.value("cohead_shipform_id").toInt());
-      
+
       _calcfreight = so.value("cohead_calcfreight").toBool();
       // Auto calculated _freight is populated in sFillItemList
       if (!_calcfreight)
@@ -2431,7 +2426,7 @@ void salesOrder::populate()
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
 
-      //Check for link to Return Authorization
+      // Check for link to Return Authorization
       if (_metrics->boolean("EnableReturnAuth"))
       {
         q.prepare("SELECT rahead_number "
@@ -2489,12 +2484,12 @@ void salesOrder::populate()
       _orderDateCache = qu.value("quhead_quotedate").toDate();
       _orderDate->setDate(_orderDateCache, true);
       _packDate->setDate(qu.value("quhead_packdate").toDate());
-      if(!qu.value("quhead_expire").isNull())
+      if (!qu.value("quhead_expire").isNull())
         _expire->setDate(qu.value("quhead_expire").toDate());
 
       _cust->setId(qu.value("quhead_cust_id").toInt());
 
-      setFreeFormShipto(qu.value("cust_ffshipto").toBool());
+        setFreeFormShipto(qu.value("cust_ffshipto").toBool());
       _blanketPos = qu.value("cust_blanketpos").toBool();
 
       _warehouse->setId(qu.value("quhead_warehous_id").toInt());
@@ -2539,7 +2534,7 @@ void salesOrder::populate()
       _billToCntct->setEmailAddress(qu.value("quhead_billto_cntct_email").toString());
 
       _ignoreSignals = TRUE;
-      _shiptoid = qu.value("quhead_shipto_id").toInt();
+      _shiptoid      = qu.value("quhead_shipto_id").toInt();
       if (_shiptoid == -1)
         setFreeFormShipto(true);
       else
@@ -2630,9 +2625,9 @@ void salesOrder::sFillItemList()
     if (ISNEW(_mode))
       _packDate->setDate(q.value("shipdate").toDate());
   }
-  else  if (q.lastError().type() != QSqlError::NoError)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -2702,30 +2697,30 @@ void salesOrder::sFillItemList()
                   "                  'error'"
                   "       END AS qtforegroundrole,"
                   "       CASE WHEN coitem_subnumber = 0 THEN 0"
-                "            ELSE 1 END AS xtindentrole,"
-				"       CASE WHEN coitem_order_type = 'W' THEN TEXT( 'WO')"
-                "         ELSE CASE WHEN coitem_order_type='P' THEN TEXT('PO' )"
-                "           ELSE CASE WHEN coitem_order_type='R' THEN TEXT('PR')"
-                "             ELSE TEXT (' ')"
-                "           END"
-                "         END"
-                "       END AS spplytype,"
-				"       CASE WHEN coitem_order_type = 'W' THEN (wo_number || '-' || wo_subnumber)"
-                "         ELSE CASE WHEN coitem_order_type='P' THEN (pohead_number || '-' || poitem_linenumber)"
-                "           ELSE CASE WHEN coitem_order_type='R' THEN (pr_number || '-' || pr_subnumber)"
-                "             ELSE TEXT (' ')"
-                "           END"
-                "         END"
-                "       END AS ordrnumbr"
+                  "            ELSE 1 END AS xtindentrole,"
+                  "       CASE WHEN coitem_order_type = 'W' THEN TEXT( 'WO')"
+                  "         ELSE CASE WHEN coitem_order_type='P' THEN TEXT('PO' )"
+                  "           ELSE CASE WHEN coitem_order_type='R' THEN TEXT('PR')"
+                  "             ELSE TEXT (' ')"
+                  "           END"
+                  "         END"
+                  "       END AS spplytype,"
+                  "       CASE WHEN coitem_order_type = 'W' THEN (wo_number || '-' || wo_subnumber)"
+                  "         ELSE CASE WHEN coitem_order_type='P' THEN (pohead_number || '-' || poitem_linenumber)"
+                  "           ELSE CASE WHEN coitem_order_type='R' THEN (pr_number || '-' || pr_subnumber)"
+                  "             ELSE TEXT (' ')"
+                  "           END"
+                  "         END"
+                  "       END AS ordrnumbr"
                   "  FROM itemsite, item, whsinfo, uom AS quom, uom AS puom,"
                   "       coitem LEFT OUTER JOIN"
                   "       (shipitem JOIN shiphead ON (shipitem_shiphead_id=shiphead_id"
                   "                               AND shiphead_order_id=:cohead_id"
                   "                               AND shiphead_order_type='SO')) ON (shipitem_orderitem_id=coitem_id)"
-				"       LEFT OUTER JOIN wo ON (coitem_order_id = wo_id)"
-				"       LEFT OUTER JOIN pr ON (coitem_order_id = pr_id)"
-				"       LEFT OUTER JOIN (pohead JOIN poitem ON (pohead_id = poitem_pohead_id))"
-				"         ON (coitem_order_id = poitem_id) "
+                  "       LEFT OUTER JOIN wo ON (coitem_order_id = wo_id)"
+                  "       LEFT OUTER JOIN pr ON (coitem_order_id = pr_id)"
+                  "       LEFT OUTER JOIN (pohead JOIN poitem ON (pohead_id = poitem_pohead_id))"
+                  "         ON (coitem_order_id = poitem_id) "
                   " WHERE ( (coitem_itemsite_id=itemsite_id)"
                   "   AND   (coitem_qty_uom_id=quom.uom_id)"
                   "   AND   (coitem_price_uom_id=puom.uom_id)"
@@ -2733,7 +2728,7 @@ void salesOrder::sFillItemList()
                   "   AND   (itemsite_warehous_id=warehous_id)";
 
     if (!_showCanceled->isChecked())
-      sql += " AND (coitem_status != 'X') " ;
+      sql += " AND (coitem_status != 'X') ";
 
     sql += " AND (coitem_cohead_id=:cohead_id) ) "
            "GROUP BY coitem_id, coitem_cohead_id, itemsite_id,"
@@ -2748,7 +2743,7 @@ void salesOrder::sFillItemList()
            "         coitem_subnumber, coitem_order_type, item_type,"
            "         wo_number, wo_subnumber, pohead_number,"
            "         poitem_linenumber, pr_number, pr_subnumber "
-           "ORDER BY coitem_linenumber, coitem_subnumber;" ;
+           "ORDER BY coitem_linenumber, coitem_subnumber;";
 
     XSqlQuery fl;
     fl.prepare(sql);
@@ -2771,13 +2766,13 @@ void salesOrder::sFillItemList()
           "       (shipitem JOIN shiphead ON (shipitem_shiphead_id=shiphead_id"
           "                               AND shiphead_order_id=:cohead_id"
           "                               AND shiphead_order_type='SO')) ON (shipitem_orderitem_id=coitem_id)"
-          " WHERE ((coitem_cohead_id=:cohead_id)" ;
+          " WHERE ((coitem_cohead_id=:cohead_id)";
 
     if (!_showCanceled->isChecked())
-      sql += " AND (coitem_status != 'X') " ;
+      sql += " AND (coitem_status != 'X') ";
 
     sql += ") GROUP BY coitem_id, coitem_qtyshipped, coitem_qty_invuomratio,"
-           "coitem_price, coitem_price_invuomratio;" ;
+           "coitem_price, coitem_price_invuomratio;";
     q.prepare(sql);
     q.bindValue(":cohead_id", _soheadid);
     q.bindValue(":cust_id", _cust->id());
@@ -2795,31 +2790,31 @@ void salesOrder::sFillItemList()
   {
     XSqlQuery fl;
     fl.prepare( "SELECT quitem_id,"
-               "       quitem_linenumber AS f_linenumber,"
-               "       0 AS coitem_subnumber, item_type,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       warehous_code, '' AS enhanced_status,"
-               "       quitem_scheddate AS coitem_scheddate,"
-               "       quom.uom_name AS qty_uom,"
-               "       quitem_qtyord AS coitem_qtyord,"
-               "       0 AS qtyshipped, 0 AS qtyatshipping, 0 AS balance,"
-               "       puom.uom_name AS price_uom,"
-               "       quitem_price AS coitem_price,"
-               "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
-               "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
-               "       'qty' AS coitem_qtyord_xtnumericrole,"
-               "       'qty' AS qtyshipped_xtnumericrole,"
-               "       'qty' AS balance_xtnumericrole,"
-               "       'qty' AS qtyatshipping_xtnumericrole,"
-               "       'salesprice' AS coitem_price_xtnumericrole,"
-               "       'curr' AS extprice_xtnumericrole "
-               "  FROM item, uom AS quom, uom AS puom,"
-               "       quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
-               " WHERE ( (quitem_item_id=item_id)"
-               "   AND   (quitem_qty_uom_id=quom.uom_id)"
-               "   AND   (quitem_price_uom_id=puom.uom_id)"
-               "   AND   (quitem_quhead_id=:quhead_id) ) "
-               "ORDER BY quitem_linenumber;" );
+                "       quitem_linenumber AS f_linenumber,"
+                "       0 AS coitem_subnumber, item_type,"
+                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+                "       warehous_code, '' AS enhanced_status,"
+                "       quitem_scheddate AS coitem_scheddate,"
+                "       quom.uom_name AS qty_uom,"
+                "       quitem_qtyord AS coitem_qtyord,"
+                "       0 AS qtyshipped, 0 AS qtyatshipping, 0 AS balance,"
+                "       puom.uom_name AS price_uom,"
+                "       quitem_price AS coitem_price,"
+                "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
+                "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
+                "       'qty' AS coitem_qtyord_xtnumericrole,"
+                "       'qty' AS qtyshipped_xtnumericrole,"
+                "       'qty' AS balance_xtnumericrole,"
+                "       'qty' AS qtyatshipping_xtnumericrole,"
+                "       'salesprice' AS coitem_price_xtnumericrole,"
+                "       'curr' AS extprice_xtnumericrole "
+                "  FROM item, uom AS quom, uom AS puom,"
+                "       quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+                " WHERE ( (quitem_item_id=item_id)"
+                "   AND   (quitem_qty_uom_id=quom.uom_id)"
+                "   AND   (quitem_price_uom_id=puom.uom_id)"
+                "   AND   (quitem_quhead_id=:quhead_id) ) "
+                "ORDER BY quitem_linenumber;" );
     fl.bindValue(":quhead_id", _soheadid);
     fl.exec();
     _cust->setReadOnly(fl.size() || !ISNEW(_mode));
@@ -2857,7 +2852,7 @@ void salesOrder::sFillItemList()
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -2891,7 +2886,7 @@ void salesOrder::sFillItemList()
     _weight->setDouble(q.value("grossweight").toDouble());
   else if (q.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -2924,7 +2919,7 @@ void salesOrder::sFillItemList()
     }
   }
 
-  sCalculateTax(); // triggers sCalculateTotal();
+  sCalculateTax();  // triggers sCalculateTotal();
 
   _orderCurrency->setEnabled(_soitem->topLevelItemCount() == 0);
 }
@@ -2934,11 +2929,11 @@ void salesOrder::sCalculateTotal()
   _total->setLocalValue(_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue());
 
   double balance = _total->localValue() - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
-  if(balance < 0)
+  if (balance < 0)
     balance = 0;
   _balance->setLocalValue(balance);
   _CCAmount->setLocalValue(balance);
-  if(ISVIEW(_mode) || balance==0)
+  if (ISVIEW(_mode) || balance==0)
   {
     _authorize->hide();
     _charge->hide();
@@ -2959,14 +2954,14 @@ bool salesOrder::deleteForCancel()
     int answer;
     if (_mode == cNew)
       answer = QMessageBox::question(this, tr("Delete Sales Order?"),
-                                     tr("<p>Are you sure you want to delete this "
-                                        "Sales Order and its associated Line Items?"),
+                                      tr("<p>Are you sure you want to delete this "
+                                          "Sales Order and its associated Line Items?"),
                                      QMessageBox::Yes,
                                      QMessageBox::No | QMessageBox::Default);
     else
       answer = QMessageBox::question(this, tr("Delete Quote?"),
-                                     tr("<p>Are you sure you want to delete this "
-                                        "Quote and its associated Line Items?"),
+                                      tr("<p>Are you sure you want to delete this "
+                                          "Quote and its associated Line Items?"),
                                      QMessageBox::Yes,
                                      QMessageBox::No | QMessageBox::Default);
     if (answer == QMessageBox::No)
@@ -2987,11 +2982,11 @@ bool salesOrder::deleteForCancel()
                     __FILE__, __LINE__);
     }
     else if (query.lastError().type() != QSqlError::NoError)
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 
-    if((_metrics->value("CONumberGeneration") == "A") ||
-       (_metrics->value("CONumberGeneration") == "O")) 
-    {	
+    if ((_metrics->value("CONumberGeneration") == "A") ||
+        (_metrics->value("CONumberGeneration") == "O"))
+    {
       query.prepare( "SELECT releaseSONumber(:orderNumber);" );
       query.bindValue(":orderNumber", _orderNumber->text().toInt());
       query.exec();
@@ -3005,16 +3000,16 @@ bool salesOrder::deleteForCancel()
     query.bindValue(":head_id", _soheadid);
     query.bindValue(":quhead_number", _orderNumber->text().toInt());
     query.exec();
-    if (query.first() && ! query.value("result").toBool())
-      systemError(this, tr("Could not delete Quote."), __FILE__, __LINE__);
+    if (query.first() && !query.value("result").toBool())
+        systemError(this, tr("Could not delete Quote."),    __FILE__, __LINE__);
     else if (query.lastError().type() != QSqlError::NoError)
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 
-    if((_metrics->value("QUNumberGeneration") == "S") ||
-       (_metrics->value("QUNumberGeneration") == "A") ||
-       (_metrics->value("QUNumberGeneration") == "O")) 
-    {	
-      if(_metrics->value("QUNumberGeneration") == "S")
+    if ((_metrics->value("QUNumberGeneration") == "S") ||
+        (_metrics->value("QUNumberGeneration") == "A") ||
+        (_metrics->value("QUNumberGeneration") == "O"))
+    {
+      if (_metrics->value("QUNumberGeneration") == "S")
         query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
       else
         query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
@@ -3025,16 +3020,16 @@ bool salesOrder::deleteForCancel()
     }
   }
 
-  if(cView != _mode)
+  if (cView != _mode)
   {
     query.prepare("SELECT releaseSohead(:sohead_id) AS result;");
     query.bindValue(":sohead_id", _soheadid);
     query.exec();
-    if (query.first() && ! query.value("result").toBool())
-      systemError(this, tr("Could not release this Sales Order record."),
+    if (query.first() && !query.value("result").toBool())
+        systemError(this, tr("Could not release this Sales Order record."),
                   __FILE__, __LINE__);
     else if (query.lastError().type() != QSqlError::NoError)
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
   }
 
   return true;
@@ -3042,20 +3037,21 @@ bool salesOrder::deleteForCancel()
 
 void salesOrder::sClear()
 {
-  if (! deleteForCancel())
+  if (!deleteForCancel())
     return;
+
   _captive = false;
   clear();
 }
 
 void salesOrder::clear()
 {
-  if(cView != _mode)
+  if (cView != _mode)
   {
     q.prepare("SELECT releaseSohead(:sohead_id) AS result;");
     q.bindValue(":sohead_id", _soheadid);
     q.exec();
-    if (q.first() && ! q.value("result").toBool())
+    if (q.first() && !q.value("result").toBool())
       systemError(this, tr("Could not release this Sales Order record."),
                   __FILE__, __LINE__);
     else if (q.lastError().type() != QSqlError::NoError)
@@ -3079,16 +3075,16 @@ void salesOrder::clear()
   _billToName->clear();
   _shipToName->clear();
   _taxZone->setCurrentIndex(-1);
-  _taxzoneidCache = -1;
-  _custtaxzoneid        = -1;
+  _taxzoneidCache  = -1;
+  _custtaxzoneid   = -1;
   _terms->setCurrentIndex(-1);
   _origin->setCurrentIndex(0);
   _shipVia->setCurrentIndex(-1);
   _shippingCharges->setCurrentIndex(-1);
   _shippingForm->setCurrentIndex(-1);
   _holdType->setCurrentIndex(0);
-  _calcfreight = _metrics->boolean("CalculateFreight");
-  _freightCache = 0;
+  _calcfreight   = _metrics->boolean("CalculateFreight");
+  _freightCache  = 0;
   disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   _freight->clear();
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
@@ -3163,17 +3159,17 @@ void salesOrder::clear()
 
 void salesOrder::closeEvent(QCloseEvent *pEvent)
 {
-  if (! deleteForCancel())
+  if (!deleteForCancel())
   {
     pEvent->ignore();
     return;
   }
-  
+
   disconnect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
 
   if (cNew == _mode && _saved)
     omfgThis->sSalesOrdersUpdated(-1);
-  else if(cNewQuote == _mode && _saved)
+  else if (cNewQuote == _mode && _saved)
     omfgThis->sQuotesUpdated(-1);
 
   _preferences->set("SoShowAll", _more->isChecked());
@@ -3186,7 +3182,7 @@ void salesOrder::dragEnterEvent(QDragEnterEvent *pEvent)
   if (!_cust->isValid())
   {
     message(tr("<p>You must select a Customer for this Sales Order before you "
-               "may add Line Items to it."), 5000);
+                 "may add Line Items to it."), 5000);
     pEvent->accept(FALSE);
   }
   else
@@ -3216,9 +3212,9 @@ void salesOrder::dropEvent(QDropEvent *pEvent)
       if (target.contains(","))
         target = target.left(target.find(","));
 
-      if( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
+      if ( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
       {
-        if(!save(true))
+        if (!save(true))
           return;
         else
           populate();
@@ -3241,7 +3237,7 @@ void salesOrder::dropEvent(QDropEvent *pEvent)
       newdlg.set(params);
 
       newdlg.exec();
-      sFillItemList();
+        sFillItemList();
     }
   }
 }
@@ -3268,8 +3264,8 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
       }
       else
       {
-        _calcfreight = FALSE;
-        _freightCache = 0;
+        _calcfreight   = FALSE;
+        _freightCache  = 0;
         _freight->setEnabled(FALSE);
         _freight->clear();
         sCalculateTax();
@@ -3287,7 +3283,7 @@ void salesOrder::sHandleSalesOrderEvent(int pSoheadid, bool)
 void salesOrder::sTaxDetail()
 {
   XSqlQuery taxq;
-  if (! ISVIEW(_mode))
+  if (!ISVIEW(_mode))
   {
     if (ISORDER(_mode))
       taxq.prepare("UPDATE cohead SET cohead_taxzone_id=:taxzone_id, "
@@ -3373,15 +3369,15 @@ void salesOrder::setFreeFormShipto(bool pFreeForm)
 
 void salesOrder::setViewMode()
 {
-  if(cEdit == _mode)
+  if (cEdit == _mode)
   {
     // Undo some changes set for the edit mode
     _captive = false;
 
     setAcceptDrops(false);
 
-    disconnect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-    disconnect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+    disconnect( _cust,    SIGNAL(valid(bool)),                    _new, SLOT(setEnabled(bool)));
+    disconnect( omfgThis, SIGNAL(salesOrdersUpdated(int, bool)),  this, SLOT(sHandleSalesOrderEvent(int, bool)));
 
     _new->setEnabled(false);
   }
@@ -3426,7 +3422,7 @@ void salesOrder::setViewMode()
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
-  if(_metrics->boolean("AlwaysShowSaveAndAdd"))
+  if (_metrics->boolean("AlwaysShowSaveAndAdd"))
     _saveAndAdd->setEnabled(false);
   else
     _saveAndAdd->hide();
@@ -3434,38 +3430,39 @@ void salesOrder::setViewMode()
   _delete->hide();
 }
 
-void salesOrder::keyPressEvent( QKeyEvent * e )
+void salesOrder::keyPressEvent( QKeyEvent *e )
 {
 #ifdef Q_WS_MAC
-  if(e->key() == Qt::Key_N && e->state() == Qt::ControlModifier)
+  if (e->key() == Qt::Key_N && e->state() == Qt::ControlModifier)
   {
     _new->animateClick();
     e->accept();
   }
-  else if(e->key() == Qt::Key_E && e->state() == Qt::ControlModifier)
+  else if (e->key() == Qt::Key_E && e->state() == Qt::ControlModifier)
   {
     _edit->animateClick();
     e->accept();
   }
-  if(e->isAccepted())
+  if (e->isAccepted())
     return;
+
 #endif
   e->ignore();
 }
 
-void salesOrder::newSalesOrder(int pCustid, QWidget* parent)
+void salesOrder::newSalesOrder(int pCustid, QWidget *parent)
 {
   // Check for an Item window in new mode already.
-  if(pCustid == -1)
+  if (pCustid == -1)
   {
     QWidgetList list = omfgThis->windowList();
-    for(int i = 0; i < list.size(); i++)
+    for (int i = 0; i < list.size(); i++)
     {
-      QWidget * w = list.at(i);
-      if(QString::compare(w->name(), "salesOrder new")==0)
+      QWidget *w = list.at(i);
+      if (QString::compare(w->name(), "salesOrder new")==0)
       {
         w->setFocus();
-        if(omfgThis->showTopLevel())
+        if (omfgThis->showTopLevel())
         {
           w->raise();
           w->activateWindow();
@@ -3478,7 +3475,7 @@ void salesOrder::newSalesOrder(int pCustid, QWidget* parent)
   // If none found then create one.
   ParameterList params;
   params.append("mode", "new");
-  if(pCustid != -1)
+  if (pCustid != -1)
     params.append("cust_id", pCustid);
 
   salesOrder *newdlg = new salesOrder(parent);
@@ -3486,18 +3483,18 @@ void salesOrder::newSalesOrder(int pCustid, QWidget* parent)
   omfgThis->handleNewWindow(newdlg);
 }
 
-void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd, QWidget* parent )
+void salesOrder::editSalesOrder( int pId, bool enableSaveAndAdd, QWidget *parent )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
-  QString n = QString("salesOrder edit %1").arg(pId);
+  QString     n    = QString("salesOrder edit %1").arg(pId);
   QWidgetList list = omfgThis->windowList();
-  for(int i = 0; i < list.size(); i++)
+  for (int i = 0; i < list.size(); i++)
   {
-    QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    QWidget *w = list.at(i);
+    if (QString::compare(w->name(), n)==0)
     {
       w->setFocus();
-      if(omfgThis->showTopLevel())
+      if (omfgThis->showTopLevel())
       {
         w->raise();
         w->activateWindow();
@@ -3510,7 +3507,7 @@ void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd, QWidget* paren
   ParameterList params;
   params.append("mode", "edit");
   params.append("sohead_id", pId);
-  if(enableSaveAndAdd)
+  if (enableSaveAndAdd)
     params.append("enableSaveAndAdd");
 
   salesOrder *newdlg = new salesOrder(parent);
@@ -3518,18 +3515,18 @@ void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd, QWidget* paren
   omfgThis->handleNewWindow(newdlg);
 }
 
-void salesOrder::viewSalesOrder( int pId, QWidget* parent )
+void salesOrder::viewSalesOrder( int pId, QWidget *parent )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
-  QString n = QString("salesOrder view %1").arg(pId);
+  QString     n    = QString("salesOrder view %1").arg(pId);
   QWidgetList list = omfgThis->windowList();
-  for(int i = 0; i < list.size(); i++)
+  for (int i = 0; i < list.size(); i++)
   {
-    QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    QWidget *w = list.at(i);
+    if (QString::compare(w->name(), n)==0)
     {
       w->setFocus();
-      if(omfgThis->showTopLevel())
+      if (omfgThis->showTopLevel())
       {
         w->raise();
         w->activateWindow();
@@ -3550,7 +3547,7 @@ void salesOrder::viewSalesOrder( int pId, QWidget* parent )
 
 void salesOrder::populateCMInfo()
 {
-  if(cNew != _mode && cEdit != _mode && cView != _mode)
+  if (cNew != _mode && cEdit != _mode && cView != _mode)
     return;
 
   // Allocated C/M's
@@ -3563,7 +3560,7 @@ void salesOrder::populateCMInfo()
   q.bindValue(":curr_id",   _allocatedCM->id());
   q.bindValue(":effective", _allocatedCM->effective());
   q.exec();
-  if(q.first())
+  if (q.first())
     _allocatedCM->setLocalValue(q.value("amount").toDouble());
   else
     _allocatedCM->setLocalValue(0);
@@ -3584,20 +3581,19 @@ void salesOrder::populateCMInfo()
   q.bindValue(":curr_id",   _outstandingCM->id());
   q.bindValue(":effective", _outstandingCM->effective());
   q.exec();
-  if(q.first())
+  if (q.first())
     _outstandingCM->setLocalValue(q.value("f_amount").toDouble());
   else
     _outstandingCM->setLocalValue(0);
 }
 
-
 void salesOrder::populateCCInfo()
 {
-  if(cNew != _mode && cEdit != _mode && cView != _mode)
+  if (cNew != _mode && cEdit != _mode && cView != _mode)
     return;
 
   int ccValidDays = _metrics->value("CCValidDays").toInt();
-  if(ccValidDays < 1)
+  if (ccValidDays < 1)
     ccValidDays = 7;
 
   q.prepare("SELECT COALESCE(SUM(currToCurr(payco_curr_id, :curr_id,"
@@ -3612,7 +3608,7 @@ void salesOrder::populateCCInfo()
   q.bindValue(":curr_id",   _authCC->id());
   q.bindValue(":effective", _authCC->effective());
   q.exec();
-  if(q.first())
+  if (q.first())
     _authCC->setLocalValue(q.value("amount").toDouble());
   else
     _authCC->setLocalValue(0);
@@ -3624,83 +3620,83 @@ void salesOrder::sNewCust()
   ask.setIcon(QMessageBox::Question);
   QPushButton *cbutton = ask.addButton(tr("Customer"), QMessageBox::YesRole);
   QPushButton *pbutton = ask.addButton(tr("Prospect"), QMessageBox::YesRole);
-  /*QPushButton *cancel  = */ask.addButton(QMessageBox::Cancel);
+  /*QPushButton *cancel  = */ ask.addButton(QMessageBox::Cancel);
 
-                             ask.setWindowTitle(tr("Customer or Prospect?"));
+  ask.setWindowTitle(tr("Customer or Prospect?"));
 
-                             if (ISQUOTE(_mode))
-                               ask.setText(tr("<p>Would you like to create a new Customer or "
-                                              "a new Prospect?"));
-                             else
-                               ask.setText(tr("<p>Would you like to create a new Customer or convert "
-                                              "an existing Prospect?"));
+  if (ISQUOTE(_mode))
+    ask.setText(tr("<p>Would you like to create a new Customer or "
+                     "a new Prospect?"));
+  else
+    ask.setText(tr("<p>Would you like to create a new Customer or convert "
+                     "an existing Prospect?"));
 
-                             ask.exec();
+  ask.exec();
 
-                             if (ask.clickedButton() == cbutton)
-                             {
-                               ParameterList params;
-                               params.append("mode", "new");
+  if (ask.clickedButton() == cbutton)
+  {
+    ParameterList params;
+    params.append("mode", "new");
 
-                               customer *custWind = new customer(this, "customer", Qt::Dialog);
-                               custWind->set(params);
-                               omfgThis->handleNewWindow(custWind, Qt::WindowModal);
-                               connect(custWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
-                             }
-                             else if (ask.clickedButton() == pbutton && ISQUOTE(_mode))
-                             {
-                               ParameterList params;
-                               params.append("mode", "new");
+    customer *custWind = new customer(this, "customer", Qt::Dialog);
+    custWind->set(params);
+    omfgThis->handleNewWindow(custWind, Qt::WindowModal);
+    connect(custWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
+  }
+  else if (ask.clickedButton() == pbutton && ISQUOTE(_mode))
+  {
+    ParameterList params;
+    params.append("mode", "new");
 
-                               prospect *prospectWind = new prospect(this, "prospect", Qt::Dialog);
-                               prospectWind->set(params);
-                               omfgThis->handleNewWindow(prospectWind, Qt::WindowModal);
-                               connect(prospectWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
-                             }
-                             else if (ask.clickedButton() == pbutton) // converting prospect
-                             {
-                               CLineEdit::CLineEditTypes oldtype = _cust->type();
-                               _cust->setType(CLineEdit::ActiveProspects);
+    prospect *prospectWind = new prospect(this, "prospect", Qt::Dialog);
+    prospectWind->set(params);
+    omfgThis->handleNewWindow(prospectWind, Qt::WindowModal);
+    connect(prospectWind, SIGNAL(newId(int)), _cust, SLOT(setId(int)));
+  }
+  else if (ask.clickedButton() == pbutton)  // converting prospect
+  {
+    CLineEdit::CLineEditTypes oldtype = _cust->type();
+    _cust->setType(CLineEdit::ActiveProspects);
 
-                               int prospectid = -1;
-                               if (_preferences->value("DefaultEllipsesAction") == "search")
-                               {
-                                 CRMAcctSearch *newdlg = new CRMAcctSearch(_cust);
-                                 prospectid = newdlg->exec();
-                               }
-                               else
-                               {
-                                 CRMAcctList *newdlg = new CRMAcctList(_cust);
-                                 prospectid = newdlg->exec();
-                               }
-                               _cust->setType(oldtype);
+    int prospectid = -1;
+    if (_preferences->value("DefaultEllipsesAction") == "search")
+    {
+      CRMAcctSearch *newdlg = new CRMAcctSearch(_cust);
+      prospectid = newdlg->exec();
+    }
+    else
+    {
+      CRMAcctList *newdlg = new CRMAcctList(_cust);
+      prospectid = newdlg->exec();
+    }
+    _cust->setType(oldtype);
 
-                               if (prospectid > 0)
-                               {
-                                 XSqlQuery convertq;
-                                 convertq.prepare("SELECT convertProspectToCustomer(:id) AS result;");
-                                 convertq.bindValue(":id", prospectid);
-                                 convertq.exec();
-                                 if (convertq.first())
-                                 {
-                                   int result = convertq.value("result").toInt();
-                                   if (result < 0)
-                                   {
-                                     systemError(this, storedProcErrorLookup("convertProspectToCustomer",
-                                                                             result), __FILE__, __LINE__);
-                                     return;
-                                   }
-                                   _cust->setId(prospectid);
-                                 }
-                                 else if (convertq.lastError().type() != QSqlError::NoError)
-                                 {
-                                   systemError(this, convertq.lastError().databaseText(),
-                                               __FILE__, __LINE__);
-                                   return;
-                                 }
-                               }
-                             }
-                           }
+    if (prospectid > 0)
+    {
+      XSqlQuery convertq;
+      convertq.prepare("SELECT convertProspectToCustomer(:id) AS result;");
+      convertq.bindValue(":id", prospectid);
+      convertq.exec();
+      if (convertq.first())
+      {
+        int result = convertq.value("result").toInt();
+        if (result < 0)
+        {
+          systemError(this, storedProcErrorLookup("convertProspectToCustomer",
+                                                  result), __FILE__, __LINE__);
+          return;
+        }
+        _cust->setId(prospectid);
+      }
+      else if (convertq.lastError().type() != QSqlError::NoError)
+      {
+          systemError(this, convertq.lastError().databaseText(),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+  }
+}
 
 void salesOrder::sNewCreditCard()
 {
@@ -3713,9 +3709,7 @@ void salesOrder::sNewCreditCard()
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillCcardList();
-
 }
-
 
 void salesOrder::sEditCreditCard()
 {
@@ -3729,9 +3723,7 @@ void salesOrder::sEditCreditCard()
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillCcardList();
-
 }
-
 
 void salesOrder::sViewCreditCard()
 {
@@ -3745,16 +3737,14 @@ void salesOrder::sViewCreditCard()
   newdlg.exec();
 }
 
-
 void salesOrder::sMoveUp()
 {
   q.prepare("SELECT moveCcardUp(:ccard_id) AS result;");
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
 
-  sFillCcardList();
+    sFillCcardList();
 }
-
 
 void salesOrder::sMoveDown()
 {
@@ -3762,20 +3752,20 @@ void salesOrder::sMoveDown()
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
 
-  sFillCcardList();
+    sFillCcardList();
 }
 
 void salesOrder::sFillCcardList()
 {
-  if(ISQUOTE(_mode) || (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards")))
+  if (ISQUOTE(_mode) || (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards")))
     return;
 
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":key", omfgThis->_key);
-  q.exec(); 
+  q.exec();
 
-  MetaSQLQuery mql = mqlLoad("creditCards", "detail");
+  MetaSQLQuery  mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",         _cust->id());
   params.append("masterCard",      tr("MasterCard"));
@@ -3796,18 +3786,18 @@ void salesOrder::sFillCcardList()
 
 void salesOrder::sAuthorizeCC()
 {
-  if (! okToProcessCC())
+  if (!okToProcessCC())
     return;
 
   CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-  if (! cardproc)
+  if (!cardproc)
   {
     QMessageBox::critical(this, tr("Credit Card Processing Error"),
                           CreditCardProcessor::errorMsg());
     return;
   }
 
-  if (! cardproc->errorMsg().isEmpty())
+  if (!cardproc->errorMsg().isEmpty())
   {
     QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
     return;
@@ -3816,24 +3806,24 @@ void salesOrder::sAuthorizeCC()
   _authorize->setEnabled(false);
   _charge->setEnabled(false);
 
-  int ccpayid   = -1;
-  QString sonumber = _orderNumber->text();
-  QString ponumber = _custPONumber->text();
-  int returnVal = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
-                                      _CCAmount->localValue(),
-                                      _tax->localValue(),
-                                      (_tax->isZero() && _taxZone->id() == -1),
-                                      _freight->localValue(), 0,
-                                      _CCAmount->id(),
-                                      sonumber, ponumber, ccpayid,
-                                      QString("cohead"), _soheadid);
+  int     ccpayid    = -1;
+  QString sonumber   = _orderNumber->text();
+  QString ponumber   = _custPONumber->text();
+  int     returnVal  = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
+                                           _CCAmount->localValue(),
+                                           _tax->localValue(),
+                                           (_tax->isZero() && _taxZone->id() == -1),
+                                           _freight->localValue(), 0,
+                                           _CCAmount->id(),
+                                           sonumber, ponumber, ccpayid,
+                                           QString("cohead"), _soheadid);
   if (returnVal < 0)
     QMessageBox::critical(this, tr("Credit Card Processing Error"),
                           cardproc->errorMsg());
   else if (returnVal > 0)
     QMessageBox::warning(this, tr("Credit Card Processing Warning"),
                          cardproc->errorMsg());
-  else if (! cardproc->errorMsg().isEmpty())
+  else if (!cardproc->errorMsg().isEmpty())
     QMessageBox::information(this, tr("Credit Card Processing Note"),
                              cardproc->errorMsg());
   else
@@ -3850,18 +3840,18 @@ void salesOrder::sAuthorizeCC()
 
 void salesOrder::sChargeCC()
 {
-  if (! okToProcessCC())
+  if (!okToProcessCC())
     return;
 
   CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-  if (! cardproc)
+  if (!cardproc)
   {
     QMessageBox::critical(this, tr("Credit Card Processing Error"),
                           CreditCardProcessor::errorMsg());
     return;
   }
 
-  if (! cardproc->errorMsg().isEmpty())
+  if (!cardproc->errorMsg().isEmpty())
   {
     QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
     return;
@@ -3870,24 +3860,24 @@ void salesOrder::sChargeCC()
   _authorize->setEnabled(false);
   _charge->setEnabled(false);
 
-  int ccpayid   = -1;
-  QString ordernum = _orderNumber->text();
-  QString refnum   = _custPONumber->text();
-  int returnVal    = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
-                                      _CCAmount->localValue(),
-                                      _tax->localValue(),
-                                      (_tax->isZero() && _taxZone->id() == -1),
-                                      _freight->localValue(), 0,
-                                      _CCAmount->id(),
-                                      ordernum, refnum, ccpayid,
-                                      QString("cohead"), _soheadid);
+  int     ccpayid    = -1;
+  QString ordernum   = _orderNumber->text();
+  QString refnum     = _custPONumber->text();
+  int     returnVal  = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
+                                        _CCAmount->localValue(),
+                                        _tax->localValue(),
+                                        (_tax->isZero() && _taxZone->id() == -1),
+                                        _freight->localValue(), 0,
+                                        _CCAmount->id(),
+                                        ordernum, refnum, ccpayid,
+                                        QString("cohead"), _soheadid);
   if (returnVal < 0)
     QMessageBox::critical(this, tr("Credit Card Processing Error"),
                           cardproc->errorMsg());
   else if (returnVal > 0)
     QMessageBox::warning(this, tr("Credit Card Processing Warning"),
                          cardproc->errorMsg());
-  else if (! cardproc->errorMsg().isEmpty())
+  else if (!cardproc->errorMsg().isEmpty())
     QMessageBox::information(this, tr("Credit Card Processing Note"),
                              cardproc->errorMsg());
   else
@@ -3909,9 +3899,9 @@ bool salesOrder::okToProcessCC()
     if (_custPONumber->text().trimmed().length() == 0)
     {
       QMessageBox::warning( this, tr("Cannot Process Credit Card Transaction"),
-                            tr("<p>You must enter a Customer P/O for this "
-                               "Sales Order before you may process a credit"
-                               "card transaction.") );
+                              tr("<p>You must enter a Customer P/O for this "
+                                 "Sales Order before you may process a credit"
+                                 "card transaction.") );
       _custPONumber->setFocus();
       return false;
     }
@@ -3937,11 +3927,11 @@ bool salesOrder::okToProcessCC()
       {
         QMessageBox::warning( this, tr("Cannot Process Credit Card Transaction"),
                               tr("<p>This Customer does not use Blanket P/O "
-                                 "Numbers and the P/O Number you entered has "
-                                 "already been used for another Sales Order. "
-                                 "Please verify the P/O Number and either "
-                                 "enter a new P/O Number or add to the "
-                                 "existing Sales Order." ) );
+                                   "Numbers and the P/O Number you entered has "
+                                   "already been used for another Sales Order. "
+                                   "Please verify the P/O Number and either "
+                                   "enter a new P/O Number or add to the "
+                                   "existing Sales Order." ) );
         _custPONumber->setFocus();
         return false;
       }
@@ -3956,12 +3946,12 @@ void salesOrder::sReturnStock()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  q.exec("BEGIN;"); // because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT returnItemShipments(:soitem_id) AS result;");
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     q.exec();
     if (q.first())
     {
@@ -3992,22 +3982,22 @@ void salesOrder::sReturnStock()
     }
   }
 
-  sFillItemList();
+    sFillItemList();
 }
 
 void salesOrder::sIssueStock()
 {
-  bool update  = FALSE;
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  bool update = FALSE;
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    XTreeWidgetItem* soitem = (XTreeWidgetItem*)(selected[i]);
+    XTreeWidgetItem *soitem = (XTreeWidgetItem *)(selected[i]);
     if (soitem->altId() != 1 && soitem->altId() != 4)
     {
       ParameterList params;
       params.append("soitem_id", soitem->id());
 
-      if(_requireInventory->isChecked())
+      if (_requireInventory->isChecked())
         params.append("requireInventory");
 
       issueLineToShipping newdlg(this, "", TRUE);
@@ -4024,14 +4014,13 @@ void salesOrder::sIssueStock()
 void salesOrder::sIssueLineBalance()
 {
   bool job = false;
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    XTreeWidgetItem* soitem = (XTreeWidgetItem*)(selected[i]);
+    XTreeWidgetItem *soitem = (XTreeWidgetItem *)(selected[i]);
     if (soitem->altId() != 1 && soitem->altId() != 4)
     {
-
-      if(_requireInventory->isChecked())
+      if (_requireInventory->isChecked())
       {
         q.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
                   "       (roundQty(item_fractional, noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - "
@@ -4047,16 +4036,16 @@ void salesOrder::sIssueLineBalance()
                   "   AND (coitem_id=:soitem_id)); ");
         q.bindValue(":soitem_id", soitem->id());
         q.exec();
-        while(q.next())
+        while (q.next())
         {
           if (q.value("itemsite_costmethod").toString() == "J")
             job = true;
 
-          if(!(q.value("isqtyavail").toBool()) && q.value("itemsite_costmethod").toString() != "J")
+          if (!(q.value("isqtyavail").toBool()) && q.value("itemsite_costmethod").toString() != "J")
           {
             QMessageBox::critical(this, tr("Insufficient Inventory"),
                                   tr("<p>There is not enough Inventory to issue the amount required"
-                                     " of Item %1 in Site %2.")
+                                       " of Item %1 in Site %2.")
                                   .arg(q.value("item_number").toString())
                                   .arg(q.value("warehous_code").toString()) );
             return;
@@ -4084,27 +4073,27 @@ void salesOrder::sIssueLineBalance()
                 "   AND (coitem_id=:soitem_id)); ");
       q.bindValue(":soitem_id", soitem->id());
       q.exec();
-      while(q.next())
+      while (q.next())
       {
-        if(!q.value("isqtyavail").toBool() && q.value("itemsite_costmethod").toString() != "J")
+        if (!q.value("isqtyavail").toBool() && q.value("itemsite_costmethod").toString() != "J")
         {
           QMessageBox::critical(this, tr("Insufficient Inventory"),
-                                tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
-                                   "Lot/Serial controlled Item which is short on Inventory. "
-                                   "This transaction cannot be completed as is. Please make "
-                                   "sure there is sufficient Quantity on Hand before proceeding.")
+                                  tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
+                                     "Lot/Serial controlled Item which is short on Inventory. "
+                                     "This transaction cannot be completed as is. Please make "
+                                     "sure there is sufficient Quantity on Hand before proceeding.")
                                 .arg(q.value("item_number").toString())
                                 .arg(q.value("warehous_code").toString()));
           return;
         }
       }
 
-      int invhistid = 0;
-      int itemlocSeries = 0;
+      int       invhistid      = 0;
+      int       itemlocSeries  = 0;
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
-      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+      q.exec("BEGIN;"); // because of possible lot, serial, or location distribution cancelations
       // If this is a lot/serial controlled job item, we need to post production first
       if (job)
       {
@@ -4119,7 +4108,7 @@ void salesOrder::sIssueLineBalance()
           if (itemlocSeries < 0)
           {
             rollback.exec();
-            systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
+                      systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
                         __FILE__, __LINE__);
             return;
           }
@@ -4135,21 +4124,22 @@ void salesOrder::sIssueLineBalance()
                        "FROM invhist "
                        "WHERE ((invhist_series = :itemlocseries) "
                        " AND (invhist_transtype = 'RM')); ");
-          prod.bindValue(":itemlocseries" , itemlocSeries);
+          prod.bindValue(":itemlocseries", itemlocSeries);
           prod.exec();
           if (prod.first())
             invhistid = prod.value("invhist_id").toInt();
           else
           {
             rollback.exec();
-            systemError(this, tr("Inventory history not found"),
+                      systemError(this, tr("Inventory history not found"),
                         __FILE__, __LINE__);
             return;
           }
         }
       }
 
-      q.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id) AS result;");;
+      q.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id) AS result;");
+      ;
       q.bindValue(":soitem_id", soitem->id());
       if (invhistid)
         q.bindValue(":invhist_id", invhistid);
@@ -4162,12 +4152,12 @@ void salesOrder::sIssueLineBalance()
         if (result < 0)
         {
           rollback.exec();
-          systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result) +
+                      systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result) +
                       tr("<br>Line Item %1").arg(selected[i]->text(0)),
                       __FILE__, __LINE__);
           return;
         }
-        
+
         if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
         {
           rollback.exec();
@@ -4202,8 +4192,8 @@ void salesOrder::sFreightChanged()
       int answer;
       answer = QMessageBox::question(this, tr("Manual Freight?"),
                                      tr("<p>Manually editing the freight will disable "
-                                        "automatic Freight recalculations.  Are you "
-                                        "sure you want to do this?"),
+                                          "automatic Freight recalculations.  Are you "
+                                          "sure you want to do this?"),
                                      QMessageBox::Yes,
                                      QMessageBox::No | QMessageBox::Default);
       if (answer == QMessageBox::Yes)
@@ -4220,8 +4210,8 @@ void salesOrder::sFreightChanged()
       int answer;
       answer = QMessageBox::question(this, tr("Automatic Freight?"),
                                      tr("<p>Manually clearing the freight will enable "
-                                        "automatic Freight recalculations.  Are you "
-                                        "sure you want to do this?"),
+                                          "automatic Freight recalculations.  Are you "
+                                          "sure you want to do this?"),
                                      QMessageBox::Yes,
                                      QMessageBox::No | QMessageBox::Default);
       if (answer == QMessageBox::Yes)
@@ -4233,7 +4223,7 @@ void salesOrder::sFreightChanged()
       }
     }
   }
-  
+
   save(true);
   sCalculateTax();
 }
@@ -4249,7 +4239,7 @@ void salesOrder::sCalculateTax()
                 "GROUP BY tax_id) AS data;" );
 
   taxq.bindValue(":cohead_id", _soheadid);
-  if ISQUOTE(_mode)
+  if (ISQUOTE(_mode))
     taxq.bindValue(":type","Q");
   else
     taxq.bindValue(":type","S");
@@ -4260,7 +4250,7 @@ void salesOrder::sCalculateTax()
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }       
+  }
   sCalculateTotal();
 }
 
@@ -4275,11 +4265,11 @@ void salesOrder::sTaxZoneChanged()
 
 void salesOrder::sReserveStock()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
-    params.append("soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
 
     reserveSalesOrderItem newdlg(this, "", true);
     newdlg.set(params);
@@ -4292,10 +4282,10 @@ void salesOrder::sReserveStock()
 void salesOrder::sReserveLineBalance()
 {
   q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     q.exec();
     if (q.first())
     {
@@ -4322,10 +4312,10 @@ void salesOrder::sReserveLineBalance()
 void salesOrder::sUnreserveStock()
 {
   q.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     q.exec();
     if (q.first())
     {
@@ -4340,7 +4330,7 @@ void salesOrder::sUnreserveStock()
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
+        systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                   q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -4349,14 +4339,14 @@ void salesOrder::sUnreserveStock()
 
 void salesOrder::sShowReservations()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
-    params.append("soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     params.append("run");
 
-    dspReservations * newdlg = new dspReservations();
+    dspReservations *newdlg = new dspReservations();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
@@ -4366,10 +4356,10 @@ void salesOrder::sAllocateCreditMemos()
 {
   // Determine the balance I need to select
   // This is the same as in sCalculateTotal except that the Unallocated amount is not included.
-  double balance = (_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue())
-                   - _allocatedCM->localValue() - _authCC->localValue();
-  double initBalance = balance;
-  if(balance > 0)
+  double  balance      = (_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue())-
+                         _allocatedCM->localValue() - _authCC->localValue();
+  double  initBalance  = balance;
+  if (balance > 0)
   {
     // Get the list of Unallocated CM's with amount
     q.prepare("SELECT aropen_id,"
@@ -4390,27 +4380,27 @@ void salesOrder::sAllocateCreditMemos()
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    double amount = 0.0;
-    double initAmount = 0.0;
+    double    amount     = 0.0;
+    double    initAmount = 0.0;
     XSqlQuery allocCM;
     allocCM.prepare("INSERT INTO aropenco"
                     "      (aropenco_aropen_id, aropenco_cohead_id, "
                     "       aropenco_amount, aropenco_curr_id)"
                     "VALUES(:aropen_id, :cohead_id, :amount, :curr_id);");
 
-    while(balance > 0.0 && q.next())
+    while (balance > 0.0 && q.next())
     {
-      amount = q.value("amount").toDouble();
+      amount     = q.value("amount").toDouble();
       initAmount = _outstandingCM->localValue();
 
-      if(amount <= 0.0) // if this credit memo does not have a positive value just ignore it
+      if (amount <= 0.0)  // if this credit memo does not have a positive value just ignore it
         continue;
 
-      if(amount > balance) // make sure we don't apply more to a credit memo than we have left.
+      if (amount > balance) // make sure we don't apply more to a credit memo than we have left.
         amount = balance;
       // apply credit memo's to this sales order until the balance is 0.
       allocCM.bindValue(":cohead_id", _soheadid);
@@ -4431,11 +4421,15 @@ void salesOrder::sAllocateCreditMemos()
 
 void salesOrder::sCheckValidContacts()
 {
-  if(_shipToCntct->isValid()) _shipToCntct->setEnabled(true);
-  else _shipToCntct->setEnabled(false);
+  if (_shipToCntct->isValid())
+    _shipToCntct->setEnabled(true);
+  else
+    _shipToCntct->setEnabled(false);
 
-  if(_billToCntct->isValid()) _billToCntct->setEnabled(true);
-  else _billToCntct->setEnabled(false);
+  if (_billToCntct->isValid())
+    _billToCntct->setEnabled(true);
+  else
+    _billToCntct->setEnabled(false);
 }
 
 void salesOrder::sHandleMore()
@@ -4476,66 +4470,68 @@ void salesOrder::sRecalculatePrice()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     ParameterList params;
-    QString sql;
-    if (ISORDER(_mode)) {
+    QString       sql;
+    if (ISORDER(_mode))
+    {
       sql ="UPDATE coitem SET coitem_price=itemprice(item_id, "
            "cohead_cust_id, <? value(\"shipto_id\") ?>, coitem_qtyord, "
            "coitem_qty_uom_id, coitem_price_uom_id, "
            "cohead_curr_id,cohead_orderdate, "
            "<? if exists(\"UseSchedDate\") ?>"
-           " coitem_scheddate "
-           "<? else ?> "
-           "<? value(\"asOf\") ?>"
-           "<? endif ?> "
-           "), "
-           "coitem_custprice=itemprice(item_id, cohead_cust_id, "
-           "<? value(\"shipto_id\") ?>,coitem_qtyord, coitem_qty_uom_id, "
-           "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, "
-           "<? if exists(\"UseSchedDate\") ?>"
-           " coitem_scheddate "
-           "<? else ?> "
-           "<? value(\"asOf\") ?>"
-           "<? endif ?> "
-           ") "
-           "FROM cohead, item, itemsite "
-           "WHERE ( (coitem_status NOT IN ('C','X')) "
-           "AND (NOT coitem_firm) "
-           "<? if exists(\"ignoreDiscounts\") ?>"
-           "AND (coitem_price = coitem_custprice) "
-           "<? endif ?>"
-           "AND (itemsite_id=coitem_itemsite_id) "
-           "AND (itemsite_item_id=item_id) "
-           "AND (coitem_cohead_id=cohead_id) "
-           "AND (cohead_id=<? value(\"cohead_id\") ?>) );";
+             " coitem_scheddate "
+             "<? else ?> "
+               "<? value(\"asOf\") ?>"
+                 "<? endif ?> "
+                   "), "
+                   "coitem_custprice=itemprice(item_id, cohead_cust_id, "
+                   "<? value(\"shipto_id\") ?>,coitem_qtyord, coitem_qty_uom_id, "
+                     "coitem_price_uom_id, cohead_curr_id, cohead_orderdate, "
+                     "<? if exists(\"UseSchedDate\") ?>"
+                       " coitem_scheddate "
+                       "<? else ?> "
+                         "<? value(\"asOf\") ?>"
+                           "<? endif ?> "
+                             ") "
+                             "FROM cohead, item, itemsite "
+                             "WHERE ( (coitem_status NOT IN ('C','X')) "
+                             "AND (NOT coitem_firm) "
+                             "<? if exists(\"ignoreDiscounts\") ?>"
+                               "AND (coitem_price = coitem_custprice) "
+                               "<? endif ?>"
+                                 "AND (itemsite_id=coitem_itemsite_id) "
+                                 "AND (itemsite_item_id=item_id) "
+                                 "AND (coitem_cohead_id=cohead_id) "
+                                 "AND (cohead_id=<? value(\"cohead_id\") ?>) );";
     }
-    else {
+    else
+    {
       sql = "UPDATE quitem SET quitem_price=itemprice(item_id, "
             "quhead_cust_id, <? value(\"shipto_id\") ?>, quitem_qtyord, "
             "quitem_qty_uom_id, quitem_price_uom_id, "
             "quhead_curr_id,quhead_quotedate, "
-           "<? if exists(\"UseSchedDate\") ?>"
-           " quitem_scheddate "
-           "<? else ?> "
-           "<? value(\"asOf\") ?>"
-           "<? endif ?> "
-            "), "
-            "quitem_custprice=itemprice(item_id, quhead_cust_id, "
-            "<? value(\"shipto_id\") ?>,quitem_qtyord, quitem_qty_uom_id, "
-            "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, "
-           "<? if exists(\"UseSchedDate\") ?>"
-           " quitem_scheddate "
-           "<? else ?> "
-           "<? value(\"asOf\") ?>"
-           "<? endif ?> "
-            ") "
-            "FROM quhead, item, itemsite "
-            "WHERE ( (itemsite_id=quitem_itemsite_id) "
-            "<? if exists(\"ignoreDiscounts\") ?>"
-            "AND (quitem_price = quitem_custprice) "
-            "<? endif ?>"
-            "AND (itemsite_item_id=item_id) "
-            "AND (quitem_quhead_id=quhead_id) "
-            "AND (quhead_id=<? value(\"cohead_id\") ?>) );";
+            "<? if exists(\"UseSchedDate\") ?>"
+              " quitem_scheddate "
+              "<? else ?> "
+                "<? value(\"asOf\") ?>"
+                  "<? endif ?> "
+                    "), "
+                    "quitem_custprice=itemprice(item_id, quhead_cust_id, "
+                    "<? value(\"shipto_id\") ?>,quitem_qtyord, quitem_qty_uom_id, "
+                      "quitem_price_uom_id, quhead_curr_id, quhead_quotedate, "
+                      "<? if exists(\"UseSchedDate\") ?>"
+                        " quitem_scheddate "
+                        "<? else ?> "
+                          "<? value(\"asOf\") ?>"
+                            "<? endif ?> "
+                              ") "
+                              "FROM quhead, item, itemsite "
+                              "WHERE ( (itemsite_id=quitem_itemsite_id) "
+                              "<? if exists(\"ignoreDiscounts\") ?>"
+                                "AND (quitem_price = quitem_custprice) "
+                                "<? endif ?>"
+                                  "AND (itemsite_item_id=item_id) "
+                                  "AND (quitem_quhead_id=quhead_id) "
+                                  "AND (quhead_id=<? value(\"cohead_id\") ?>) );";
     }
     params.append("cohead_id", _soheadid);
     params.append("shipto_id", _shiptoid);
@@ -4544,16 +4540,20 @@ void salesOrder::sRecalculatePrice()
     if (_metrics->value("soPriceEffective") == "ScheduleDate")
       params.append("UseSchedDate", true);
     MetaSQLQuery mql(sql);
-    if (_metrics->value("soPriceEffective") == "OrderDate") {
-      if (!_orderDate->isValid()) {
+    if (_metrics->value("soPriceEffective") == "OrderDate")
+    {
+      if (!_orderDate->isValid())
+      {
         QMessageBox::critical(this,tr("Order Date Required"),tr("Prices can not be recalculated without a valid Order Date."));
         _orderDate->setFocus();
         return;
       }
       params.append("asOf", _orderDate->date());
     }
-    else if (_metrics->value("soPriceEffective") == "ScheduleDate") {
-      if (!_orderDate->isValid()) {
+    else if (_metrics->value("soPriceEffective") == "ScheduleDate")
+    {
+      if (!_orderDate->isValid())
+      {
         QMessageBox::critical(this,tr("Schedule Date Required"),tr("Prices can not be recalculated without a valid Schedule Date."));
         _shipDate->setFocus();
         return;
@@ -4564,7 +4564,8 @@ void salesOrder::sRecalculatePrice()
       params.append("asOf", omfgThis->dbDate());
 
     XSqlQuery setitemprice = mql.toQuery(params);
-    if (setitemprice.lastError().type() != QSqlError::NoError) {
+    if (setitemprice.lastError().type() != QSqlError::NoError)
+    {
       systemError(this, setitemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -4579,9 +4580,10 @@ void salesOrder::sOrderDateChanged()
   if (_orderDate->date() == _orderDateCache ||
       !_orderDate->isValid())
     return;
-  else  if (!_soitem->topLevelItemCount() ||
-            !_orderDateCache.isValid() ||
-            _metrics->value("soPriceEffective") != "OrderDate") {
+  else if (!_soitem->topLevelItemCount() ||
+           !_orderDateCache.isValid() ||
+           _metrics->value("soPriceEffective") != "OrderDate")
+  {
     _orderDateCache = _orderDate->date();
     return;
   }
@@ -4597,21 +4599,21 @@ void salesOrder::sShipDateChanged()
   if (_shipDate->date() == _shipDateCache ||
       !_shipDate->isValid())
     return;
-  else  if (!_soitem->topLevelItemCount())
+  else if (!_soitem->topLevelItemCount())
   {
     _shipDateCache = _shipDate->date();
     return;
   }
 
-  QString sql;
-  XSqlQuery upd;
+  QString       sql;
+  XSqlQuery     upd;
   ParameterList params;
   params.append("cohead_id", _soheadid);
   params.append("newDate", _shipDate->date());
   params.append("ignoreCustDisc", _metrics->value("IgnoreCustDisc"));
 
   if (QMessageBox::question(this, tr("Update all schedule dates?"),
-                            tr("Changing this date will update the Schedule Date on all editable line items. "
+                                  tr("Changing this date will update the Schedule Date on all editable line items. "
                                "Is this what you want to do?"),
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
@@ -4647,10 +4649,10 @@ void salesOrder::sShipDateChanged()
     upd = vmql.toQuery(params);
     if (upd.first())
     {
-      if (upd.size() == 2) // Both valid and invalid records
+      if (upd.size() == 2)  // Both valid and invalid records
       {
         if (QMessageBox::warning(this, tr("Can not reschedule all Items"),
-                                 tr("Some exclusive items may not be rescheduled because there is no "
+                                  tr("Some exclusive items may not be rescheduled because there is no "
                                     "valid price schedule for the date entered.  Proceed rescheduling "
                                     "only qualifying items?"),
                                  QMessageBox::Yes | QMessageBox::Default,
@@ -4660,11 +4662,11 @@ void salesOrder::sShipDateChanged()
           return;
         }
       }
-      else if (!upd.value("valid").toBool()) // No valid items
+      else if (!upd.value("valid").toBool())  // No valid items
       {
         QMessageBox::warning(this, tr("Can not reschedule Items"),
-                           tr("No Items can be rescheduled because there are no "
-                              "valid price schedules for the date entered."));
+                                  tr("No Items can be rescheduled because there are no "
+                                "valid price schedules for the date entered."));
         _shipDate->setDate(_shipDateCache);
         return;
       }
@@ -4724,170 +4726,170 @@ void salesOrder::sShipDateChanged()
 
 void salesOrder::sViewWO()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery wo;
     wo.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
-    wo.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    wo.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     wo.exec();
     if (wo.first())
-	{
-	  ParameterList params;
+    {
+      ParameterList params;
       params.append("wo_id",  wo.value("coitem_order_id").toInt());
-   	  params.append("mode", "view");
+      params.append("mode", "view");
 
-      workOrder * newdlg = new workOrder();
+      workOrder *newdlg = new workOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
-	}
-	else if (wo.lastError().type() != QSqlError::NoError)
-	{
+    }
+    else if (wo.lastError().type() != QSqlError::NoError)
+    {
       systemError(this, wo.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+      return;
+    }
   }
 }
 
 void salesOrder::sMaintainWO()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery wo;
     wo.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
-    wo.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    wo.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     wo.exec();
     if (wo.first())
-	{
-	  ParameterList params;
+    {
+      ParameterList params;
       params.append("wo_id",  wo.value("coitem_order_id").toInt());
-   	  params.append("mode", "edit");
-	  
-      workOrder * newdlg = new workOrder();
+      params.append("mode", "edit");
+
+      workOrder *newdlg = new workOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
-	}
-	else if (wo.lastError().type() != QSqlError::NoError)
-	{
+    }
+    else if (wo.lastError().type() != QSqlError::NoError)
+    {
       systemError(this, wo.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+      return;
+    }
   }
 }
 
 void salesOrder::sViewPO()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery po;
     po.prepare("SELECT poitem_pohead_id "
-	           "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
-			   "WHERE (coitem_id=:soitem_id);");
-    po.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+               "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
+               "WHERE (coitem_id=:soitem_id);");
+    po.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     po.exec();
     if (po.first())
-	{
-	  ParameterList params;
+    {
+      ParameterList params;
       params.append("pohead_id", po.value("poitem_pohead_id").toInt());
-	  params.append("mode", "view");
+      params.append("mode", "view");
 
-      purchaseOrder * newdlg = new purchaseOrder();
+      purchaseOrder *newdlg = new purchaseOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
-	}
-	else if (po.lastError().type() != QSqlError::NoError)
+    }
+    else if (po.lastError().type() != QSqlError::NoError)
     {
       systemError(this, po.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}  
+      return;
+    }
   }
 }
 
 void salesOrder::sMaintainPO()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery po;
     po.prepare("SELECT poitem_pohead_id "
-	           "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
-			   "WHERE (coitem_id=:soitem_id);");
-    po.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+               "FROM coitem JOIN poitem ON (coitem_order_id = poitem_id) "
+               "WHERE (coitem_id=:soitem_id);");
+    po.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     po.exec();
     if (po.first())
-	{
-	  ParameterList params;
+    {
+      ParameterList params;
       params.append("pohead_id", po.value("poitem_pohead_id").toInt());
-	  params.append("mode", "edit");
-	  
-      purchaseOrder * newdlg = new purchaseOrder();
+      params.append("mode", "edit");
+
+      purchaseOrder *newdlg = new purchaseOrder();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
-	}
-	else if (po.lastError().type() != QSqlError::NoError)
+    }
+    else if (po.lastError().type() != QSqlError::NoError)
     {
       systemError(this, po.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}  
+      return;
+    }
   }
 }
 
 void salesOrder::sReleasePR()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery pr;
     pr.prepare("SELECT coitem_order_id FROM coitem WHERE (coitem_id=:soitem_id);");
-    pr.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    pr.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     pr.exec();
     if (pr.first())
-	{
-	  ParameterList params;
+    {
+      ParameterList params;
       params.append("mode", "releasePr");
       params.append("pr_id", pr.value("coitem_order_id").toInt());
-	  purchaseOrder *newdlg = new purchaseOrder();
-      if(newdlg->set(params) == NoError)
+      purchaseOrder *newdlg = new purchaseOrder();
+      if (newdlg->set(params) == NoError)
         omfgThis->handleNewWindow(newdlg);
       else
         delete newdlg;
-	}
-	else if (pr.lastError().type() != QSqlError::NoError)
+    }
+    else if (pr.lastError().type() != QSqlError::NoError)
     {
       systemError(this, pr.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}   
+      return;
+    }
   }
 }
 
 void salesOrder::sViewPR()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XSqlQuery pr;
     pr.prepare("SELECT pr_itemsite_id, pr_qtyreq, pr_duedate, pr_order_id, coitem_order_id "
-	           "FROM pr JOIN coitem ON (pr_id = coitem_order_id) "
-			   "WHERE (coitem_id=:soitem_id);");
-    pr.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+               "FROM pr JOIN coitem ON (pr_id = coitem_order_id) "
+               "WHERE (coitem_id=:soitem_id);");
+    pr.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     pr.exec();
     if (pr.first())
-	{
-	  ParameterList params;
-	  params.append("mode", "view");
+    {
+      ParameterList params;
+      params.append("mode", "view");
       params.append("pr_id", pr.value("coitem_order_id").toInt());
-	  purchaseRequest *newdlg = new purchaseRequest();
-      if(newdlg->set(params) == NoError)
+      purchaseRequest *newdlg = new purchaseRequest();
+      if (newdlg->set(params) == NoError)
         omfgThis->handleNewWindow(newdlg);
       else
         delete newdlg;
-	}
-	else if (pr.lastError().type() != QSqlError::NoError)
+    }
+    else if (pr.lastError().type() != QSqlError::NoError)
     {
       systemError(this, pr.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+      return;
+    }
   }
 }

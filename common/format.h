@@ -15,21 +15,21 @@
 #include <QLocale>
 #include <QString>
 
-int     decimalPlaces(QString);
-QString formatNumber(double, int);
-QString formatMoney(double, int = -1, int = 0);
-QString formatCost(double, int = -1);
-QString formatExtPrice(double, int = -1);
-QString formatWeight(double);
-QString formatQty(double);
-QString formatQtyPer(double);
-QString formatSalesPrice(double, int = -1);
-QString formatPurchPrice(double, int = -1);
-QString formatUOMRatio(double);
-QString formatPercent(double);
-QColor  namedColor(QString);
+int             decimalPlaces(QString);
+QString         formatNumber(double, int);
+QString         formatMoney(double, int = -1, int = 0);
+QString         formatCost(double, int = -1);
+QString         formatExtPrice(double, int = -1);
+QString         formatWeight(double);
+QString         formatQty(double);
+QString         formatQtyPer(double);
+QString         formatSalesPrice(double, int = -1);
+QString         formatPurchPrice(double, int = -1);
+QString         formatUOMRatio(double);
+QString         formatPercent(double);
+QColor          namedColor(QString);
 
-inline QString formatDate(const QDate &pDate)
+inline QString  formatDate(const QDate &pDate)
 {
   return QLocale().toString(pDate, QLocale::ShortFormat);
 }
