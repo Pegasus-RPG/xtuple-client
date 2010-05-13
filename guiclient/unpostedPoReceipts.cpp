@@ -218,10 +218,10 @@ void unpostedPoReceipts::sPost()
   
   XSqlQuery postLine;
   postLine.prepare("SELECT postReceipt(:id, NULL::integer) AS result, "
-                   "  (recv_order_type = 'RA' AND itemsite_costmethod = 'J') AS issuewo, "
+                   "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod, '') = 'J') AS issuewo, "
                    "  COALESCE(pohead_dropship, false) AS dropship "
                    "FROM recv "
-                   " JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
+                   "  LEFT OUTER JOIN itemsite ON (itemsite_id=recv_itemsite_id) "
                    "  LEFT OUTER JOIN poitem ON ((recv_order_type='PO') "
                    "                         AND (recv_orderitem_id=poitem_id)) "
                    "  LEFT OUTER JOIN pohead ON (poitem_pohead_id=pohead_id) "
