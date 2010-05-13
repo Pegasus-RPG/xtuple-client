@@ -47,6 +47,11 @@ QScriptValue constructQUrl(QScriptContext *context, QScriptEngine *engine)
     if (DEBUG) qDebug("qurl(1 string arg)");
     url = new QUrl(context->argument(0).toString());
   }
+  else if (context->argumentCount() == 1 && context->argument(0).isVariant() &&
+           context->argument(0).toVariant().type() == QVariant::Url)
+  {
+    url = new QUrl(context->argument(0).toVariant().toUrl());
+  }
   else if (context->argumentCount() == 1) // && argument(0) is not a string
   {
     if (DEBUG) qDebug("qurl(1 arg that isn't a string)");

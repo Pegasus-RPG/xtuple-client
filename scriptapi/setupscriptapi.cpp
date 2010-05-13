@@ -83,6 +83,7 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebpageproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -192,6 +193,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebPageProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
