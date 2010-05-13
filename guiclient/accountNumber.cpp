@@ -248,9 +248,13 @@ void accountNumber::populate()
   q.prepare( "SELECT accnt_company, accnt_profit, accnt_number, accnt_sub,"
              "       accnt_closedpost, accnt_forwardupdate,"
              "       accnt_type, accnt_descrip, accnt_extref, accnt_comments, subaccnttype_id, "
-	     "       accnt_curr_id "
-             "FROM accnt LEFT OUTER JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code) "
-             "WHERE (accnt_id=:accnt_id);" );
+             "       accnt_curr_id, "
+             "       CASE WHEN (gltrans_id IS NULL) THEN false ELSE true END AS used "
+             "FROM accnt "
+             "  LEFT OUTER JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code) "
+             "  LEFT OUTER JOIN gltrans ON (accnt_id=gltrans_accnt_id) "
+             "WHERE (accnt_id=:accnt_id)"
+             "LIMIT 1" );
   q.bindValue(":accnt_id", _accntid);
   q.exec();
   if (q.first())
@@ -282,6 +286,8 @@ void accountNumber::populate()
       _type->setCurrentIndex(3);
     else if (q.value("accnt_type").toString() == "Q")
       _type->setCurrentIndex(4);
+
+    _type->setDisabled(q.value("used").toBool());
 
     populateSubTypes();
     _subType->setId(q.value("subaccnttype_id").toInt());
