@@ -314,6 +314,7 @@ void dspCashReceipts::sPostCashrcpt()
   }
     
   tx.exec("COMMIT;");
+  omfgThis->sCashReceiptsUpdated(_arapply->currentItem()->id("source"), TRUE);
   sFillList();
 }
 

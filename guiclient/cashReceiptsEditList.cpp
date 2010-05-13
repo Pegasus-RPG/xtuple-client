@@ -193,6 +193,7 @@ void cashReceiptsEditList::sPost()
       tx.exec("ROLLBACK;");
       return;
     }
+    omfgThis->sCashReceiptsUpdated(((XTreeWidgetItem*)(selected[i]))->id(), TRUE);
   }
   tx.exec("COMMIT;");
   sFillList();
