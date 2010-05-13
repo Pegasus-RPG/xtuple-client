@@ -1031,7 +1031,8 @@ void purchaseOrder::sHandleDeleteButton()
       _delete->setEnabled(TRUE);
       _delete->setText(tr("&Delete"));
     }
-    else if (_poitem->currentItem()->text(1) == tr("Open"))
+    //else if (_poitem->currentItem()->text(1) == tr("Open"))
+    else
     {
       _deleteMode = cClose;
       _delete->setEnabled(TRUE);
