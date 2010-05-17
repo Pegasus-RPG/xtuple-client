@@ -62,8 +62,15 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   QString baseBalanceTitle(tr("Balance"));
+  QString baseAmountTitle(tr("Amount"));
+  QString basePaidTitle(tr("Paid"));
+
   if (! omfgThis->singleCurrency())
+  {
     baseBalanceTitle = tr("Balance (in %1)").arg(CurrDisplay::baseCurrAbbr());
+    baseAmountTitle  = tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr());
+    basePaidTitle    = tr("Paid (in %1)").arg(CurrDisplay::baseCurrAbbr());
+  }
 
   _aropen->setRootIsDecorated(TRUE);
   _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,   true,  "doctype");
@@ -77,7 +84,9 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Doc. Date"),     _dateColumn, Qt::AlignCenter, true,  "docdate");
   _aropen->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignCenter, true,  "aropen_duedate");
   _aropen->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight,  true,  "amount");
+  _aropen->addColumn(baseAmountTitle,    _moneyColumn, Qt::AlignRight,  false,  "base_amount");
   _aropen->addColumn(tr("Paid"),         _moneyColumn, Qt::AlignRight,  true,  "paid");
+  _aropen->addColumn(basePaidTitle,      _moneyColumn, Qt::AlignRight,  false,  "base_paid");
   _aropen->addColumn(tr("Balance"),      _moneyColumn, Qt::AlignRight,  true,  "balance");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   _aropen->addColumn(baseBalanceTitle,   _moneyColumn, Qt::AlignRight,  true,  "base_balance");
