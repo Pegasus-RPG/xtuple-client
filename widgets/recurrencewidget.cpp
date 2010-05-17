@@ -586,7 +586,8 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
     recurq.bindValue(":recur_period",      periodCode());
     recurq.bindValue(":recur_freq",        frequency());
     recurq.bindValue(":recur_start",       startDateTime());
-    recurq.bindValue(":recur_end",         endDateTime());
+    if (endDate() < _eot)
+      recurq.bindValue(":recur_end",       endDateTime());
     recurq.bindValue(":recur_max",         max());
     recurq.exec();
     if (recurq.first())
