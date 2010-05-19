@@ -28,6 +28,7 @@
 #include "filterManager.h"
 #include "contactcluster.h"
 #include "filtersave.h"
+#include "glcluster.h"
 
 #define DEBUG false
 
@@ -403,6 +404,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 						if (contactCluster != 0)
 							contactCluster->setId(tempFilterList[1].toInt());
 						break;
+                                        case GLAccount:
+                                               GLCluster *glCluster;
+                                               glCluster = qobject_cast<GLCluster*>(found);
+                                               if (glCluster != 0)
+                                                   glCluster->setId(tempFilterList[1].toInt());
+                                        break;
 					case XComBox:
 						XComboBox *xBox;
 						xBox = qobject_cast<XComboBox*>(found);
@@ -515,6 +522,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 						if (contactCluster != 0)
 							contactCluster->setId(k.value().toInt());
 						break;
+                                        case GLAccount:
+                                                GLCluster *glCluster;
+                                                glCluster = qobject_cast<GLCluster*>(found);
+                                                if (glCluster != 0)
+                                                        glCluster->setId(k.value().toInt());
+                                        break;
 					case XComBox:
 						XComboBox *xBox;
 						xBox = qobject_cast<XComboBox*>(found);
@@ -650,6 +663,17 @@ void ParameterWidget::changeFilterObject(int index)
 
       connect(button, SIGNAL(clicked()), contactCluster, SLOT( deleteLater() ) );
       connect(contactCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case GLAccount:
+    {
+      GLCluster *glCluster = new GLCluster(_filterGroup);
+      newWidget = glCluster;
+      //glCluster->setDescriptionVisible(false);
+      //glCluster->setLabel("");
+
+      connect(button, SIGNAL(clicked()), glCluster, SLOT( deleteLater() ) );
+      connect(glCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case XComBox:
@@ -1270,6 +1294,7 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Date", QScriptValue(engine, ParameterWidget::Date), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("XComBox", QScriptValue(engine, ParameterWidget::XComBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Contact", QScriptValue(engine, ParameterWidget::Contact), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("GLAccount", QScriptValue(engine, ParameterWidget::GLAccount), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Multiselect", QScriptValue(engine, ParameterWidget::Multiselect), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
