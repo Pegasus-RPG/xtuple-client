@@ -107,6 +107,7 @@
 #include "xsqltablemodelproto.h"
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
+#include "xvariantsetup.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
 
@@ -217,5 +218,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXSqlQueryProto(engine);
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
-
+  setupXVariant(engine);
 }

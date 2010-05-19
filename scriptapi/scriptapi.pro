@@ -6,19 +6,17 @@ CONFIG += qt \
     staticlib
 DBFILE = scriptapi.db
 LANGUAGE = C++
-DEPENDPATH += . \
-    ../common \
-    ../widgets \
-    ../widgets/tmp/lib
 INCLUDEPATH += . \
     ../common \
     ../widgets \
     ../widgets/tmp/lib \
     .
+DEPENDPATH += $${INCLUDEPATH}
 DESTDIR = ../lib
 MOC_DIR = tmp
 OBJECTS_DIR = tmp
 UI_DIR = tmp
+
 HEADERS += setupscriptapi.h \
     include.h \
     metasqlhighlighterproto.h \
@@ -108,7 +106,9 @@ HEADERS += setupscriptapi.h \
     wcomboboxsetup.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
-    xsqltablenodeproto.h
+    xsqltablenodeproto.h \
+    xvariantsetup.h
+
 SOURCES += setupscriptapi.cpp \
     include.cpp \
     metasqlhighlighterproto.cpp \
@@ -198,7 +198,9 @@ SOURCES += setupscriptapi.cpp \
     wcomboboxsetup.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
-    xsqltablnodeproto.cpp
+    xsqltablnodeproto.cpp \
+    xvariantsetup.cpp
+
 QT += sql \
     xml \
     script \
