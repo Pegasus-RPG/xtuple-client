@@ -103,7 +103,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       preassign.exec();
       if (preassign.first())
       {
-        _lotSerial->setEditable(FALSE);
+        _lotSerial->setAllowNull(true);
         _lotSerial->populate(preassign);
         _preassigned = true;
       }
@@ -251,6 +251,15 @@ void createLotSerial::sAssign()
                                    " quantity preassigned to the order being received." ) );
         return;
       }
+    }
+    else
+    {
+      QMessageBox::critical( this, tr("Invalid Number"),
+                             tr( "<p>The number entered is not valid.  Please select from the list "
+                                 "of valid numbers." ) );
+      _lotSerial->removeItem(_lotSerial->currentIndex());
+      _lotSerial->setCurrentIndex(0);
+      return;
     }
   }
 
