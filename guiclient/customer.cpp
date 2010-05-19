@@ -75,7 +75,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _quotes->findChild<XCheckBox*>("_showProspects")->hide();
   _quotes->findChild<XTreeWidget*>("_quote")->hideColumn("quhead_billtoname");
   
-  _orders = new openSalesOrders(this, "_orders", Qt::Widget);
+  _orders = new openSalesOrders(this, "openSalesOrders", Qt::Widget);
   _ordersPage->layout()->addWidget(_orders);
   _orders->findChild<QWidget*>("_close")->hide();
   _orders->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
@@ -88,14 +88,14 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->findChild<XTreeWidget*>("_so")->hideColumn("cust_number");
   _orders->findChild<XTreeWidget*>("_so")->hideColumn("cohead_billtoname");
   
-  _returns = new returnAuthorizationWorkbench(this, "_returns", Qt::Widget);
+  _returns = new returnAuthorizationWorkbench(this, "returnAuthorizationWorkbench", Qt::Widget);
   _returnsPage->layout()->addWidget(_returns);
   _returns->findChild<QWidget*>("_close")->hide();
   _returns->findChild<QWidget*>("_customerSelector")->hide();
   _returns->findChild<XTreeWidget*>("_ra")->hideColumn("cust_name");
   _returns->findChild<XTreeWidget*>("_radue")->hideColumn("cust_name");
   
-  _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
+  _aritems = new dspAROpenItems(this, "dspAROpenItems", Qt::Widget);
   _aritems->setObjectName("dspAROpenItems");
   _aritemsPage->layout()->addWidget(_aritems);
   _aritems->findChild<QWidget*>("_close")->hide();
@@ -106,7 +106,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_number");
   _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_name");
   
-  _cashreceipts = new dspCashReceipts(this, "_cashreceipts", Qt::Widget);
+  _cashreceipts = new dspCashReceipts(this, "dspCashReceipts", Qt::Widget);
   _cashreceiptsPage->layout()->addWidget(_cashreceipts);
   _cashreceipts->findChild<QWidget*>("_close")->hide();
   _cashreceipts->findChild<QWidget*>("_customerSelector")->hide();
@@ -114,7 +114,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_number");
   _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_name");
   
-  _cctrans = new dspCreditCardTransactions(this, "_cctrans", Qt::Widget);
+  _cctrans = new dspCreditCardTransactions(this, "dspCreditCardTransactions", Qt::Widget);
   _cctransPage->layout()->addWidget(_cctrans);
   _cctrans->findChild<QWidget*>("_close")->hide();
   _cctrans->findChild<QWidget*>("_customerSelector")->hide();
