@@ -283,10 +283,12 @@ void unpostedPoReceipts::sPost()
           XSqlQuery issue;
           issue.prepare("SELECT issueToShipping('SO', coitem_id, recv_qty, "
                         "  :itemlocseries, now(), invhist_id ) AS result, "
-                        "  coitem_cohead_id "
+                        "  coitem_cohead_id, cohead_holdtype, pohead_number "
                         "FROM invhist, recv "
                         " JOIN poitem ON (poitem_id=recv_orderitem_id) "
+                        " JOIN pohead ON (poitem_pohead_id=pohead_id) "
                         " JOIN coitem ON (coitem_id=poitem_soitem_id) "
+                        " JOIN cohead ON (coitem_cohead_id=cohead_id) "
                         "WHERE ((invhist_series=:itemlocseries) "
                         " AND (recv_id=:id));");
           issue.bindValue(":itemlocseries", postLine.value("result").toInt());
@@ -294,6 +296,18 @@ void unpostedPoReceipts::sPost()
           issue.exec();
           if (issue.first())
           {
+            if (issue.value("cohead_holdtype").toString() != "N")
+            {
+              QString msg = tr("Purchase Order %1 is being drop shipped against "
+                       "a Sales Order that is on Hold.  The Sales Order must "
+                       "be taken off Hold before the Receipt may be Posted.")
+                  .arg(issue.value("pohead_number").toString());
+              rollback.exec();
+              QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
+              sFillList();
+              return;
+            }
+
             if (!_soheadid.contains(issue.value("coitem_cohead_id").toInt()))
               _soheadid.append(issue.value("coitem_cohead_id").toInt());
             issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
