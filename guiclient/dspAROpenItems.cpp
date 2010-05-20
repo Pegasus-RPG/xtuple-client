@@ -1007,57 +1007,61 @@ void dspAROpenItems::sPostInvoice()
   }
 
   sum.bindValue(":invchead_id", _aropen->currentItem()->id("docnumber"));
-  if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
+  sum.exec();
+  if (sum.first())
   {
-    if (QMessageBox::question(this, tr("Invoice Has Value 0"),
-                        tr("Invoice #%1 has a total value of 0.\n"
-                           "Would you like to post it anyway?")
-                          .arg(_aropen->currentItem()->text("docnumber")),
-                        QMessageBox::Yes,
-                        QMessageBox::No | QMessageBox::Default)
-    == QMessageBox::No)
-      return;
+    if (sum.value("subtotal").toDouble() == 0)
+    {
+      if (QMessageBox::question(this, tr("Invoice Has Value 0"),
+                          tr("Invoice #%1 has a total value of 0.\n"
+                             "Would you like to post it anyway?")
+                            .arg(_aropen->currentItem()->text("docnumber")),
+                          QMessageBox::Yes,
+                          QMessageBox::No | QMessageBox::Default)
+      == QMessageBox::No)
+        return;
+    }
+    else
+    {
+      xrate.bindValue(":invchead_id", _aropen->currentItem()->id("docnumber"));
+      xrate.exec();
+      if (xrate.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, tr("System Error posting Invoice #%1\n%2")
+                            .arg(_aropen->currentItem()->text("docnumber"))
+                            .arg(xrate.lastError().databaseText()),
+                        __FILE__, __LINE__);
+        return;
+      }
+      else if (!xrate.first() || xrate.value("curr_rate").isNull())
+      {
+        systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
+                                        .arg(_aropen->currentItem()->text("docnumber")));
+        return;
+      }
+    }
   }
   else if (sum.lastError().type() != QSqlError::NoError)
   {
     systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else if (sum.value("subtotal").toDouble() != 0)
+
+  post.bindValue(":invchead_id", _aropen->currentItem()->id("docnumber"));
+  post.bindValue(":journal",     journal);
+  post.exec();
+  if (post.first())
   {
-    xrate.bindValue(":invchead_id", _aropen->currentItem()->id("docnumber"));
-    xrate.exec();
-    if (xrate.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, tr("System Error posting Invoice #%1\n%2")
-                          .arg(_aropen->currentItem()->text("docnumber"))
-                          .arg(xrate.lastError().databaseText()),
-                      __FILE__, __LINE__);
-      return;
-    }
-    else if (!xrate.first() || xrate.value("curr_rate").isNull())
-    {
-      systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
-                                      .arg(_aropen->currentItem()->text("docnumber")));
-      return;
-    }
-
-    post.bindValue(":invchead_id", _aropen->currentItem()->id("docnumber"));
-    post.bindValue(":journal",     journal);
-    post.exec();
-    if (post.first())
-    {
-      int result = post.value("result").toInt();
-      if (result < 0)
-        systemError(this, storedProcErrorLookup("postInvoice", result),
-                    __FILE__, __LINE__);
-    }
-    // contains() string is hard-coded in stored procedure
-    else if (post.lastError().databaseText().contains("post to closed period"))
-      systemError(this, tr("Could not post Invoice #%1 into a closed period.")
-                              .arg(_aropen->currentItem()->text("docnumber")));
-
+    int result = post.value("result").toInt();
+    if (result < 0)
+      systemError(this, storedProcErrorLookup("postInvoice", result),
+                  __FILE__, __LINE__);
   }
+  // contains() string is hard-coded in stored procedure
+  else if (post.lastError().databaseText().contains("post to closed period"))
+    systemError(this, tr("Could not post Invoice #%1 into a closed period.")
+                            .arg(_aropen->currentItem()->text("docnumber")));
+
   else if (post.lastError().type() != QSqlError::NoError)
         systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
                 .arg(_aropen->currentItem()->text("docnumber"))
