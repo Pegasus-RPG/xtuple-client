@@ -4205,7 +4205,9 @@ void salesOrder::sFreightChanged()
         connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       }
     }
-    else if ( (!_calcfreight) && (_freight->localValue() == 0) )
+    else if ( (!_calcfreight) &&
+              (_freight->localValue() == 0) &&
+              (_metrics->boolean("CalculateFreight")))
     {
       int answer;
       answer = QMessageBox::question(this, tr("Automatic Freight?"),
@@ -4222,6 +4224,8 @@ void salesOrder::sFreightChanged()
         connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       }
     }
+    else
+      _freightCache = _freight->localValue();
   }
 
   save(true);
