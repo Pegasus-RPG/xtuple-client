@@ -13,7 +13,10 @@
   <name>detail</name>
   <sql>SELECT e.emp_id, m.emp_id, warehous_code, e.emp_code, e.emp_number,
        cntct_first_name, cntct_last_name, 
-       m.emp_code AS mgr_code, dept_number, shift_number 
+       m.emp_code AS mgr_code, dept_number, shift_number,
+       CASE WHEN (e.emp_active) THEN 'Yes'
+            ELSE 'No'
+       END AS f_active 
 FROM emp e 
   LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) 
   LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) 
@@ -526,7 +529,7 @@ AS filter;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>emp_active</column>
+     <column>f_active</column>
     </data>
    </field>
   </detail>
