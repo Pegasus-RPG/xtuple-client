@@ -42,26 +42,24 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
       .arg(tr("Resolved"))
       .arg(tr("Closed"));
 
-  parameterWidget->setType(tr("Owner"), "owner_username", ParameterWidget::User);
-  parameterWidget->setType(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
-  parameterWidget->setType(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
-  parameterWidget->setType(tr("Start Date"), "startDate", ParameterWidget::Date);
-  parameterWidget->setType(tr("End Date"), "endDate", ParameterWidget::Date);
-  parameterWidget->setType(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
-  parameterWidget->setType(tr("Contact"),"cntct_id", ParameterWidget::Contact);
-  parameterWidget->setXComboBoxType(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
-  //parameterWidget->setXComboBoxType(tr("Category"), "category_id", XComboBox::IncidentCategory);
-  parameterWidget->setType(tr("Category"), "categorylist",
+  parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
+  parameterWidget->append(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget->append(tr("End Date"), "endDate", ParameterWidget::Date);
+  parameterWidget->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
+  parameterWidget->append(tr("Contact"),"cntct_id", ParameterWidget::Contact);
+  parameterWidget->append(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
+  parameterWidget->append(tr("Category"), "categorylist",
                            ParameterWidget::Multiselect, 0,
                            "SELECT incdtcat_id, incdtcat_name"
                            "  FROM incdtcat"
                            " ORDER BY incdtcat_name;");
-	parameterWidget->setType(tr("Status"), "statuslist",
+        parameterWidget->append(tr("Status"), "statuslist",
                            ParameterWidget::Multiselect, 0,
                            qryStatus);
-  //parameterWidget->setXComboBoxType(tr("Status is"), "status_equal", qryStatus);
-  parameterWidget->setXComboBoxType(tr("Status Above"), "status_above", qryStatus, 4);
+  parameterWidget->append(tr("Status Above"), "status_above", qryStatus, 4);
 
   _closeAct = new QAction(tr("Close"), this);
   _closeAct->setShortcut(QKeySequence::Close);

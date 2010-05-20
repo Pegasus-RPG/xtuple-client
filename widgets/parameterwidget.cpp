@@ -1016,7 +1016,7 @@ void ParameterWidget::setSavedFiltersIndex(QString filterSetName)
   _filterList->setText(filterSetName);
 }
 
-void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
+void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
 {
   _types[pName] = qMakePair(pParam, type);
   if (pDefault != 0)
@@ -1035,25 +1035,46 @@ void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetType
   }
 }
 
-void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
+void ParameterWidget::append(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
 {
   _comboTypes[pName] = xType;
   _types[pName] = qMakePair(pParam, XComBox);
-	if (pDefault != 0)
-	{
-		_defaultTypes[pName] = pDefault;
-	}
+        if (pDefault != 0)
+        {
+                _defaultTypes[pName] = pDefault;
+        }
 }
 
-void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault)
+void ParameterWidget::append(QString pName, QString pParam, QString pQry, QVariant pDefault)
 {
   _comboTypes[pName] = XComboBox::Adhoc;
   _query[pName] = pQry;
   _types[pName] = qMakePair(pParam, XComBox);
-	if (pDefault != 0)
-	{
-		_defaultTypes[pName] = pDefault;
-	}
+        if (pDefault != 0)
+        {
+                _defaultTypes[pName] = pDefault;
+        }
+}
+
+void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
+{
+  append(pName, pParam, type, pDefault, extraInfo);
+  qWarning("setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo) on parameterWidget is deprecated.  "
+           "Use appendQString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo).");
+}
+
+void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
+{
+  append(pName, pParam, xType, pDefault);
+  qWarning("setType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault) is deprecated. "
+           "Use append(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault).");
+}
+
+void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault)
+{
+  append(pName, pParam, pQry, pDefault);
+  qWarning("setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault) is deprecated."
+           "Use append(QString pName, QString pParam, QString pQry, QVariant pDefault).");
 }
 
 void ParameterWidget::sManageFilters()
