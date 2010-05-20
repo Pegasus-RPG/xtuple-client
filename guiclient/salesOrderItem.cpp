@@ -1613,7 +1613,7 @@ void salesOrderItem::sDeterminePrice(bool force)
        _mode == cViewQuote ||
        !_item->isValid() ||
        !_qtyOrdered->text().length() || (
-         _qtyOrdered->toDouble() == _orderQtyCache && (
+         !force && _qtyOrdered->toDouble() == _orderQtyCache && (
            _metrics->value("soPriceEffective") != "ScheduleDate" || (
              !_scheduledDate->isValid() ||
              _scheduledDate->date() == _dateCache) ) ) )
