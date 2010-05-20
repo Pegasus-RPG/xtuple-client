@@ -125,6 +125,13 @@ void accountingPeriod::sHandleNumber()
 
 void accountingPeriod::sSave()
 {
+  if (_startDate->date() >= _endDate->date())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Period"),
+          tr("The start date must be less than the end date.") );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.prepare("SELECT createAccountingPeriod(:startDate, :endDate, :yearperiod_id, :quarter) AS _period_id;");
