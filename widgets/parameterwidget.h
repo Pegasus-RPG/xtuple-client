@@ -45,14 +45,15 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     
  public slots:
     void addParam();
-    void append(QString, QString, enum ParameterWidgetTypes = Text, QVariant pDefault = 0, QVariant extraInfo =  QVariant());
-    void append(QString, QString, enum XComboBox::XComboBoxTypes, QVariant pDefault = 0);
-    void append(QString, QString, QString, QVariant pDefault = 0);
+    void append(QString pName, QString pParam, enum ParameterWidgetTypes pType = Text, QVariant pDefault = 0, QVariant extraInfo =  QVariant());
+    void append(QString pName, QString pParam, enum XComboBox::XComboBoxTypes pType, QVariant pDefault = 0);
+    void append(QString pName, QString pParam, QString, QVariant pDefault = 0);
     void applySaved(int pId = 0, int filter_id = 0);
     void changeFilterObject(int index);
     void clearFilters();
     void removeParam(int);
     void save();
+    void setDefault(QString pName, QVariant pDefault, bool pAutoApply = false);
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
     void setType(QString, QString, enum ParameterWidgetTypes = Text, QVariant pDefault = 0, QVariant extraInfo =  QVariant());
@@ -62,7 +63,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void storeFilterValue(int pId = -1, QObject* filter = 0);
     void setFiltersVisabiltyPreference();
     void toggleSave();
-		void setFiltersDefault();
+    void setFiltersDefault();
 
 
   signals:

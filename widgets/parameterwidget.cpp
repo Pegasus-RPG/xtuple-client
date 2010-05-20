@@ -271,6 +271,57 @@ void ParameterWidget::addParam()
 
 }
 
+/*!
+  Appends a parameter selection \a pName using parameterWidgetTypes \a pType to the filter set list using
+  output parameter name \a pParam.  An optional default value can be set using \a pDefault along with an
+  option query \a extraInfo.
+*/
+void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes pType, QVariant pDefault, QVariant extraInfo)
+{
+  _types[pName] = qMakePair(pParam, pType);
+  if (pDefault != 0)
+    _defaultTypes[pName] = pDefault;
+
+  if (pType == Multiselect)
+  {
+    if (extraInfo.type() == QVariant::String)
+      _query[pName] = extraInfo.toString();
+    else
+      qWarning("%s::setType(%s, %s, %d, %s, %s) called for Multiselect but "
+               "was not given a query to use",
+               qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
+               pType, qPrintable(pDefault.toString()),
+               qPrintable(extraInfo.toString()));
+  }
+}
+
+/*!
+  Appends a parameter selection \a pName using an xcombobox to the filter set list using
+  output parameter name \a pParam.  The xcombobox type is specified by \a pType with an optional
+  default id that can be set using \a pDefault.
+*/
+void ParameterWidget::append(QString pName, QString pParam, XComboBox::XComboBoxTypes pType, QVariant pDefault)
+{
+  _comboTypes[pName] = pType;
+  _types[pName] = qMakePair(pParam, XComBox);
+  if (pDefault != 0)
+    _defaultTypes[pName] = pDefault;
+}
+
+/*!
+  Appends a parameter selection \a pName using an xcombobox to the filter set list using
+  output parameter name \a pParam.  The xcombobox type is populated by query string \a pQry with
+  an optional default id that can be set using \a pDefault.
+*/
+void ParameterWidget::append(QString pName, QString pParam, QString pQry, QVariant pDefault)
+{
+  _comboTypes[pName] = XComboBox::Adhoc;
+  _query[pName] = pQry;
+  _types[pName] = qMakePair(pParam, XComBox);
+  if (pDefault != 0)
+    _defaultTypes[pName] = pDefault;
+}
+
 void ParameterWidget::applySaved(int pId, int filter_id)
 {
   QWidget *found = 0;
@@ -327,11 +378,11 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
   int windowIdx = _filtersLayout->rowCount();
 
-	if (filterRows.size() == 1  && pId == 0 && filter_id != 0)
-	{
-		emit updated();
-		return;
-	}
+  if (filterRows.size() == 1  && pId == 0 && filter_id != 0)
+  {
+    emit updated();
+    return;
+  }
 
   for (int i = 0; i < filterRows.size(); ++i)
   {
@@ -340,243 +391,243 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     {
       //0 is filterType, 1 is filterValue, 2 is parameterwidgettype
       QStringList tempFilterList = tempFilter.split(":");
-			QString key = this->getParameterTypeKey(tempFilterList[0]);
-			if (key.isEmpty())
-			{
-				//parametertype is no longer found, prompt user to delete filter
-				if (QMessageBox::question(this, tr("Invalid Filter Set"), tr("This filter set contains an obsolete filter and will be deleted. Do you want to do this?"),
-					  QMessageBox::No | QMessageBox::Default,
-            QMessageBox::Yes) == QMessageBox::No)
-				return;
-				else
-				{
-					QString query = "delete from filter where filter_id=:filter_id";
-					XSqlQuery qry;
+      QString key = this->getParameterTypeKey(tempFilterList[0]);
+      if (key.isEmpty())
+      {
+        //parametertype is no longer found, prompt user to delete filter
+        if (QMessageBox::question(this, tr("Invalid Filter Set"), tr("This filter set contains an obsolete filter and will be deleted. Do you want to do this?"),
+                                  QMessageBox::No | QMessageBox::Default,
+                                  QMessageBox::Yes) == QMessageBox::No)
+          return;
+        else
+        {
+          QString query = "delete from filter where filter_id=:filter_id";
+          XSqlQuery qry;
 
-					qry.prepare(query);
-					qry.bindValue(":filter_id", filter_id);
-					qry.exec();
+          qry.prepare(query);
+          qry.bindValue(":filter_id", filter_id);
+          qry.exec();
 
-					setSavedFilters();
-					return;
-				}
-			}
-			else
-			{
-				this->addParam();
+          setSavedFilters();
+          return;
+        }
+      }
+      else
+      {
+        this->addParam();
 
-				QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
-				XComboBox *mybox = (XComboBox*)test->widget();
+        QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
+        XComboBox *mybox = (XComboBox*)test->widget();
 
-      
-				int idx = mybox->findText(key);
 
-				mybox->setCurrentIndex(idx);
+        int idx = mybox->findText(key);
+
+        mybox->setCurrentIndex(idx);
 	
-		    found = getFilterWidget(windowIdx);
+        found = getFilterWidget(windowIdx);
 
-			  int widgetType = tempFilterList[2].toInt();
+        int widgetType = tempFilterList[2].toInt();
 
-			  //grab pointer to newly created filter object
-				switch (widgetType)
-				{
-					case Date:
-						DLineEdit *dLineEdit;
-						dLineEdit = qobject_cast<DLineEdit*>(found);
-						if (dLineEdit != 0)
-							dLineEdit->setDate(today.addDays(tempFilterList[1].toInt()), true);
-						break;
-					case User:
-						UsernameCluster *usernameCluster;
-							usernameCluster = qobject_cast<UsernameCluster*>(found);
-						if (usernameCluster != 0)
-							usernameCluster->setUsername(tempFilterList[1]);
-						break;
-					case Crmacct:
-						CRMAcctCluster *crmacctCluster;
-						crmacctCluster = qobject_cast<CRMAcctCluster*>(found);
-						if (crmacctCluster != 0)
-							crmacctCluster->setId(tempFilterList[1].toInt());
-							break;
-					case Contact:
-						ContactCluster *contactCluster;
-						contactCluster = qobject_cast<ContactCluster*>(found);
-						if (contactCluster != 0)
-							contactCluster->setId(tempFilterList[1].toInt());
-						break;
-                                        case GLAccount:
-                                               GLCluster *glCluster;
-                                               glCluster = qobject_cast<GLCluster*>(found);
-                                               if (glCluster != 0)
-                                                   glCluster->setId(tempFilterList[1].toInt());
-                                        break;
-					case XComBox:
-						XComboBox *xBox;
-						xBox = qobject_cast<XComboBox*>(found);
-						if (xBox != 0)
-						{
-							//fix for setid not emitting id signal if id found for filter is first in list
-							//set to any other valid id first to fix it
-							xBox->setId(2);
+        //grab pointer to newly created filter object
+        switch (widgetType)
+        {
+        case Date:
+          DLineEdit *dLineEdit;
+          dLineEdit = qobject_cast<DLineEdit*>(found);
+          if (dLineEdit != 0)
+            dLineEdit->setDate(today.addDays(tempFilterList[1].toInt()), true);
+          break;
+        case User:
+          UsernameCluster *usernameCluster;
+          usernameCluster = qobject_cast<UsernameCluster*>(found);
+          if (usernameCluster != 0)
+            usernameCluster->setUsername(tempFilterList[1]);
+          break;
+        case Crmacct:
+          CRMAcctCluster *crmacctCluster;
+          crmacctCluster = qobject_cast<CRMAcctCluster*>(found);
+          if (crmacctCluster != 0)
+            crmacctCluster->setId(tempFilterList[1].toInt());
+          break;
+        case Contact:
+          ContactCluster *contactCluster;
+          contactCluster = qobject_cast<ContactCluster*>(found);
+          if (contactCluster != 0)
+            contactCluster->setId(tempFilterList[1].toInt());
+          break;
+        case GLAccount:
+          GLCluster *glCluster;
+          glCluster = qobject_cast<GLCluster*>(found);
+          if (glCluster != 0)
+            glCluster->setId(tempFilterList[1].toInt());
+          break;
+        case XComBox:
+          XComboBox *xBox;
+          xBox = qobject_cast<XComboBox*>(found);
+          if (xBox != 0)
+          {
+            //fix for setid not emitting id signal if id found for filter is first in list
+            //set to any other valid id first to fix it
+            xBox->setId(2);
 
-							xid = tempFilterList[1].toInt();
-							xBox->setId(xid);
-						}
-						break;
+            xid = tempFilterList[1].toInt();
+            xBox->setId(xid);
+          }
+          break;
 					case Multiselect:
-					{
-						QTableWidget *tab;
-						tab = qobject_cast<QTableWidget*>(found);
-						if (tab != 0)
-						{
-							QStringList   savedval = tempFilterList[1].split(",");
-							bool oldblk = tab->blockSignals(true);
-							/* the obvious, loop calling tab->selectRow(), gives one selected row,
+          {
+            QTableWidget *tab;
+            tab = qobject_cast<QTableWidget*>(found);
+            if (tab != 0)
+            {
+              QStringList   savedval = tempFilterList[1].split(",");
+              bool oldblk = tab->blockSignals(true);
+              /* the obvious, loop calling tab->selectRow(), gives one selected row,
 							 so try this to get multiple selections:
 							   make only the desired values selectable,
 							   select everything, and
 							   connect to a slot that can clean up after us.
 							 yuck.
 						*/
-							for (int j = 0; j < tab->rowCount(); j++)
-							{
-								if (! savedval.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
-									tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
-							}
-							QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
-							                               tab->columnCount() - 1);
-							tab->setRangeSelected(range, true);
-							connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
+              for (int j = 0; j < tab->rowCount(); j++)
+              {
+                if (! savedval.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
+                  tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
+              }
+              QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
+                                               tab->columnCount() - 1);
+              tab->setRangeSelected(range, true);
+              connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
 
-							tab->blockSignals(oldblk);
-							storeFilterValue(-1, tab);
-						}
-					}
-					break;
+              tab->blockSignals(oldblk);
+              storeFilterValue(-1, tab);
+            }
+          }
+          break;
 					default:
-					{
-						QLineEdit *lineEdit;
-						lineEdit = qobject_cast<QLineEdit*>(found);
-						if (lineEdit != 0)
-						{
-							lineEdit->setText(tempFilterList[1]);
-							storeFilterValue(-1, lineEdit);
-						}
-						}
-								break;
-				}//end of switch
-				
-			}//end of not empty key else
-			windowIdx++;
-		}//end of if tempfilter not empty
+          {
+            QLineEdit *lineEdit;
+            lineEdit = qobject_cast<QLineEdit*>(found);
+            if (lineEdit != 0)
+            {
+              lineEdit->setText(tempFilterList[1]);
+              storeFilterValue(-1, lineEdit);
+            }
+          }
+          break;
+        }//end of switch
+
+      }//end of not empty key else
+      windowIdx++;
+    }//end of if tempfilter not empty
   }//end of for
 
   // TODO: the switch below is like the switch above. can we remove duplication?
-	//This code is similar in concept, but the implementation is different. 
-	if (filterRows.size() == 1  && pId == 0)
-	{
-			//apply filter defaults					
-			QMapIterator<QString, QVariant> k(_defaultTypes);
-			
-			while(k.hasNext())
-			{
-				k.next();
-				int windowIdx = _filtersLayout->rowCount();
-				this->addParam();
+  //This code is similar in concept, but the implementation is different.
+  if (filterRows.size() == 1  && pId == 0)
+  {
+    //apply filter defaults
+    QMapIterator<QString, QVariant> k(_defaultTypes);
 
-				QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
-				XComboBox *mybox = (XComboBox*)test->widget();
+    while(k.hasNext())
+    {
+      k.next();
+      int windowIdx = _filtersLayout->rowCount();
+      this->addParam();
 
-				int idx = mybox->findText(k.key());
+      QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
+      XComboBox *mybox = (XComboBox*)test->widget();
 
-				mybox->setCurrentIndex(idx);
-				
-				found = getFilterWidget(windowIdx);
+      int idx = mybox->findText(k.key());
 
-				tempPair = _types[k.key()];
-				int widgetType = tempPair.second;
-				
-				switch (widgetType)
-				{
-					case Date:
-						DLineEdit *dLineEdit;
-						dLineEdit = qobject_cast<DLineEdit*>(found);
-						if (dLineEdit != 0)
-							dLineEdit->setDate(QDate::fromString(k.value().toString(), "yyyy-MM-dd"), true);
-						break;
-					case User:
-						UsernameCluster *usernameCluster;
-						usernameCluster = qobject_cast<UsernameCluster*>(found);
-						if (usernameCluster != 0)
-							usernameCluster->setUsername(k.value().toString());
-						break;
-					case Crmacct:
-						CRMAcctCluster *crmacctCluster;
-						crmacctCluster = qobject_cast<CRMAcctCluster*>(found);
-						if (crmacctCluster != 0)
-							crmacctCluster->setId(k.value().toInt());
-						break;
-					case Contact:
-						ContactCluster *contactCluster;
-						contactCluster = qobject_cast<ContactCluster*>(found);
-						if (contactCluster != 0)
-							contactCluster->setId(k.value().toInt());
-						break;
-                                        case GLAccount:
-                                                GLCluster *glCluster;
-                                                glCluster = qobject_cast<GLCluster*>(found);
-                                                if (glCluster != 0)
-                                                        glCluster->setId(k.value().toInt());
-                                        break;
-					case XComBox:
-						XComboBox *xBox;
-						xBox = qobject_cast<XComboBox*>(found);
-						if (xBox != 0)
-						{
-							//fix for setid not emitting id signal if id found for filter is first in list
-							//set to any other valid id first to fix it
-							xBox->setId(2);
+      mybox->setCurrentIndex(idx);
 
-							xid = k.value().toInt();
-							xBox->setId(xid);
-						}
-						break;
+      found = getFilterWidget(windowIdx);
+
+      tempPair = _types[k.key()];
+      int widgetType = tempPair.second;
+
+      switch (widgetType)
+      {
+      case Date:
+        DLineEdit *dLineEdit;
+        dLineEdit = qobject_cast<DLineEdit*>(found);
+        if (dLineEdit != 0)
+          dLineEdit->setDate(QDate::fromString(k.value().toString(), "yyyy-MM-dd"), true);
+        break;
+      case User:
+        UsernameCluster *usernameCluster;
+        usernameCluster = qobject_cast<UsernameCluster*>(found);
+        if (usernameCluster != 0)
+          usernameCluster->setUsername(k.value().toString());
+        break;
+      case Crmacct:
+        CRMAcctCluster *crmacctCluster;
+        crmacctCluster = qobject_cast<CRMAcctCluster*>(found);
+        if (crmacctCluster != 0)
+          crmacctCluster->setId(k.value().toInt());
+        break;
+      case Contact:
+        ContactCluster *contactCluster;
+        contactCluster = qobject_cast<ContactCluster*>(found);
+        if (contactCluster != 0)
+          contactCluster->setId(k.value().toInt());
+        break;
+      case GLAccount:
+        GLCluster *glCluster;
+        glCluster = qobject_cast<GLCluster*>(found);
+        if (glCluster != 0)
+          glCluster->setId(k.value().toInt());
+        break;
+      case XComBox:
+        XComboBox *xBox;
+        xBox = qobject_cast<XComboBox*>(found);
+        if (xBox != 0)
+        {
+          //fix for setid not emitting id signal if id found for filter is first in list
+          //set to any other valid id first to fix it
+          xBox->setId(2);
+
+          xid = k.value().toInt();
+          xBox->setId(xid);
+        }
+        break;
           case Multiselect:
+        {
+          QTableWidget *tab;
+          tab = qobject_cast<QTableWidget *>(found);
+          if (tab != 0)
+          {
+            QVariantList vlist = k.value().toList();
+            bool oldblk = tab->blockSignals(true);
+            /* see the comment in the 'case Multiselect:' above */
+            for (int j = 0; j < tab->rowCount(); j++)
             {
-              QTableWidget *tab;
-							tab = qobject_cast<QTableWidget *>(found);
-							if (tab != 0)
-							{
-								QVariantList vlist = k.value().toList();
-								bool oldblk = tab->blockSignals(true);
-								/* see the comment in the 'case Multiselect:' above */
-								for (int j = 0; j < tab->rowCount(); j++)
-								{
-								  if (! vlist.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
-								    tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
-								}
-								QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
-                                               tab->columnCount() - 1);
-								tab->setRangeSelected(range, true);
-								connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
+              if (! vlist.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
+                tab->item(j, 0)->setFlags(tab->item(j, 0)->flags() & (~ Qt::ItemIsSelectable));
+            }
+            QTableWidgetSelectionRange range(0, 0, tab->rowCount() - 1,
+                                             tab->columnCount() - 1);
+            tab->setRangeSelected(range, true);
+            connect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
 
-								tab->blockSignals(oldblk);
-							}
-						}
-            break;
+            tab->blockSignals(oldblk);
+          }
+        }
+        break;
 					default:
-						QLineEdit *lineEdit;
-						lineEdit = qobject_cast<QLineEdit*>(found);
-						if (lineEdit != 0)
-						{
-							lineEdit->setText(k.value().toString());
-							storeFilterValue(-1, lineEdit);
-						}
-						break;
-				}			
-				windowIdx++;
-			}//end of while _defaultTypes
-	}
+        QLineEdit *lineEdit;
+        lineEdit = qobject_cast<QLineEdit*>(found);
+        if (lineEdit != 0)
+        {
+          lineEdit->setText(k.value().toString());
+          storeFilterValue(-1, lineEdit);
+        }
+        break;
+      }
+      windowIdx++;
+    }//end of while _defaultTypes
+  }
 
   emit updated();
 }
@@ -949,6 +1000,29 @@ void ParameterWidget::save()
   _filterList->setId(filter_id);
 }
 
+/*!
+  Set the default value on an existing parameter \a pName to \a pDefault.  If
+  \a pDefault is not passed or 0 then the previous default, if any, will be removed.
+  if \a pAutoApply is true, then the default filter set will be automatically applied.
+
+  \sa applyDefaultFilterSet();
+*/
+void ParameterWidget::setDefault(QString pName, QVariant pDefault, bool pAutoApply)
+{
+  if (_types.contains(pName))
+  {
+    if (pDefault != 0)
+      _defaultTypes[pName] = pDefault;
+    else
+      _defaultTypes.remove(pName);
+  }
+  else
+    qWarning(QString("Parameter %1 not found.").arg(pName));
+
+  if (pAutoApply)
+    applyDefaultFilterSet();
+}
+
 void ParameterWidget::setFiltersVisabiltyPreference()
 {
   QString pname;
@@ -961,24 +1035,32 @@ void ParameterWidget::setFiltersVisabiltyPreference()
     _x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());
   }
 }
+
+/*!
+  Sets the current filter as the default for the parent object it resides in.
+*/
 void ParameterWidget::setFiltersDefault()
 {
-	QString pname;
-	int filter_id;
+  QString pname;
+  int filter_id;
 
   if(parent())
     pname = parent()->metaObject()->className();
-		pname += "/";
+  pname += "/";
   _settingsName2 = pname + this->objectName();
 
-	filter_id = _filterList->id(_filterList->currentIndex());
+  filter_id = _filterList->id(_filterList->currentIndex());
 
-	if (!_settingsName2.isEmpty() && _x_preferences)
-  {
+  if (!_settingsName2.isEmpty() && _x_preferences)
     _x_preferences->set(_settingsName2 + "/filter_default", filter_id);
-  }
-
 }
+
+/*!
+  Sets a saved filter set with Id \a defaultId to the currently selected filter.
+  If no \a pDefaultId is provided the default filter will be used.
+
+  \sa setSavedFiltersIndex(QString);
+  */
 void ParameterWidget::setSavedFilters(int defaultId)
 {
   QString query;
@@ -1014,46 +1096,6 @@ void ParameterWidget::setSavedFiltersIndex(QString filterSetName)
 {
   _filterList->findText(filterSetName);
   _filterList->setText(filterSetName);
-}
-
-void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
-{
-  _types[pName] = qMakePair(pParam, type);
-  if (pDefault != 0)
-    _defaultTypes[pName] = pDefault;
-
-  if (type == Multiselect)
-  {
-    if (extraInfo.type() == QVariant::String)
-      _query[pName] = extraInfo.toString();
-    else
-      qWarning("%s::setType(%s, %s, %d, %s, %s) called for Multiselect but "
-               "was not given a query to use",
-               qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
-               type, qPrintable(pDefault.toString()),
-               qPrintable(extraInfo.toString()));
-  }
-}
-
-void ParameterWidget::append(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
-{
-  _comboTypes[pName] = xType;
-  _types[pName] = qMakePair(pParam, XComBox);
-        if (pDefault != 0)
-        {
-                _defaultTypes[pName] = pDefault;
-        }
-}
-
-void ParameterWidget::append(QString pName, QString pParam, QString pQry, QVariant pDefault)
-{
-  _comboTypes[pName] = XComboBox::Adhoc;
-  _query[pName] = pQry;
-  _types[pName] = qMakePair(pParam, XComBox);
-        if (pDefault != 0)
-        {
-                _defaultTypes[pName] = pDefault;
-        }
 }
 
 void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
