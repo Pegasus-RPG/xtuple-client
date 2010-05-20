@@ -14,6 +14,8 @@
 #include <QDialog>
 #include <QUrl>
 #include <QMenu>
+#include <QFileInfo>
+#include <QDir>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -139,6 +141,7 @@ void Documents::setReadOnly(bool pReadOnly)
 {
   _newDoc->setEnabled(!pReadOnly);
   _attachDoc->setEnabled(!pReadOnly);
+  _editDoc->setEnabled(!pReadOnly);
   _detachDoc->setEnabled(!pReadOnly);
 
   disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
@@ -243,12 +246,43 @@ void Documents::sOpenDoc(QString mode)
   //url -- In the future this needs to be changed to use docass instead of url
   else if (docType == "URL")
   {
-   //If url scheme is missing, we'll assume it is "file" for now.
-    QUrl url(_doc->currentItem()->rawValue("description").toString());
-    if (url.scheme().isEmpty())
-      url.setScheme("file");
-    QDesktopServices::openUrl(url);
-    return;
+    XSqlQuery qfile;
+    qfile.prepare("SELECT url_id, url_source_id, url_source, url_title, url_url, url_stream"
+                  " FROM url"
+                  " WHERE (url_id=:url_id);");
+
+    qfile.bindValue(":url_id", _doc->id());
+    qfile.exec();
+
+    if (qfile.first() && (qfile.value("url_stream").toByteArray().length()>5))
+    {
+      QFileInfo fi( qfile.value("url_url").toString() );
+      QString ext = fi.extension( FALSE );
+      QDir tdir;
+      if (!tdir.exists(tdir.tempPath() + "/xtTempDoc/"))
+        tdir.mkpath(tdir.tempPath() + "/xtTempDoc/");
+      QFile tfile(tdir.tempPath() + "/xtTempDoc/xDocView." + ext);
+      if (!tfile.open(QIODevice::WriteOnly))
+      {
+        QMessageBox::warning( this, tr("File Open Error"),tr("Could Not Create File " + tfile.fileName() + ".") );
+        return;
+      }
+      tfile.write(qfile.value("url_stream").toByteArray());
+      QUrl urldb(tfile.fileName());
+      tfile.close();
+      urldb.setScheme("file");
+      QDesktopServices::openUrl(urldb);
+      return;
+    }
+    else
+    {
+     //If url scheme is missing, we'll assume it is "file" for now.
+      QUrl url(_doc->currentItem()->rawValue("description").toString());
+      if (url.scheme().isEmpty())
+        url.setScheme("file");
+      QDesktopServices::openUrl(url);
+      return;
+    }
   }
   else if (docType == "INCDT")
   {

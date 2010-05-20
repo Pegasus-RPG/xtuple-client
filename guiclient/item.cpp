@@ -16,6 +16,9 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -1890,6 +1893,17 @@ void item::closeEvent(QCloseEvent *pEvent)
   {
     q.exec("ROLLBACK;");
     _inTransaction = false;
+  }
+
+  QDirIterator dirIterator(QDir::tempPath() + "/xtTempDoc/",
+                           QDir::AllDirs|QDir::Files|QDir::NoSymLinks,
+                           QDirIterator::Subdirectories);
+
+  while(dirIterator.hasNext())
+  {
+    dirIterator.next();
+    QFile rfile(dirIterator.fileInfo().absoluteFilePath());
+    rfile.remove();
   }
 
   XWidget::closeEvent(pEvent);

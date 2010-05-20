@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QUrl>
+#include <QFileInfo>
 
 #include "documents.h"
 #include "docAttach.h"
@@ -305,13 +306,33 @@ void docAttach::sSave()
       return;
     }
 
+    QByteArray  bytarr;
+    QFileInfo fi(url.toLocalFile());
+
+    if(_saveDbCheck->isChecked()&& (url.scheme()=="file"))
+    {
+      if (!fi.exists())
+      {
+        QMessageBox::warning( this, tr("File Error"),tr("File " + url.toLocalFile() + " Was Not Found And Will Not Be Saved.") );
+        return;
+      }
+      QFile sourceFile(url.toLocalFile());
+      if (!sourceFile.open(QIODevice::ReadOnly))
+      {
+        QMessageBox::warning( this, tr("File Open Error"),tr("Could Not Open Source File " + url.toLocalFile() + "File For Read.") );
+        return;
+      }
+        bytarr = sourceFile.readAll();
+    }
+
     // For now urls are handled differently because of legacy structures...
     newDocass.prepare( "INSERT INTO url "
-                       "( url_source, url_source_id, url_title, url_url ) "
+                       "( url_source, url_source_id, url_title, url_url, url_stream ) "
                        "VALUES "
-                       "( :docass_source_type, :docass_source_id, :title, :url );" );
+                       "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
     newDocass.bindValue(":title", title);
     newDocass.bindValue(":url", url.toString());
+    newDocass.bindValue(":stream", bytarr);
   }
   else
   {
