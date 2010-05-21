@@ -776,11 +776,10 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
        _item->itemType() != "L" && _item->itemType() != "J" &&
        _item->itemType() != "T")
   {
-    QMessageBox::critical(this, tr("Item of wrong type"),
-                          tr("This item is not of the proper type (%1) to have "
-                             "a Bill of Materials.").arg(_item->itemType()));
+    _tab->setTabEnabled(_tab->indexOf(costed),false);
     return false;
   }
+  _tab->setTabEnabled(_tab->indexOf(costed),true);
 
   params.append("item_id", _item->id());
 
