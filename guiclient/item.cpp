@@ -991,10 +991,11 @@ void item::sFormatItemNumber()
     q.exec();
     if (q.first())
     {
-      _itemNumber->setEnabled(FALSE);
-      _itemid = q.value("item_id").toInt();
       _mode = cEdit;
-      populate();
+      ParameterList params;
+      params.append("item_id", q.value("item_id").toInt());
+      params.append("mode", "edit");
+      set(params);
     }
     else
     {
