@@ -139,6 +139,7 @@ void dspInventoryAvailabilityByWorkOrder::sPrint()
 
 void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
+      XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
       int menuItem;
 
       menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
@@ -148,11 +149,11 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
       pMenu->insertSeparator();
 
       menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
-      if (selected->text(6).toDouble() == 0.0)
+      if (item->rawValue("woinvav_allocated").toDouble() == 0.0)
         pMenu->setItemEnabled(menuItem, FALSE);
 
       menuItem = pMenu->insertItem("View Orders...", this, SLOT(sViewOrders()), 0);
-      if (selected->text(7).toDouble() == 0.0)
+      if (item->rawValue("woinvav_ordered").toDouble() == 0.0)
         pMenu->setItemEnabled(menuItem, FALSE);
 
       menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);

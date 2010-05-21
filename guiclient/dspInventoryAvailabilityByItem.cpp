@@ -192,6 +192,7 @@ void dspInventoryAvailabilityByItem::sPrint()
 
 void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
@@ -201,11 +202,11 @@ void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
-  if (selected->text(3).remove(',').toDouble() == 0.0)
+  if (item->rawValue("allocated").toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
-  if (selected->text(5).remove(',').toDouble() == 0.0)
+  if (item->rawValue("ordered").toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);

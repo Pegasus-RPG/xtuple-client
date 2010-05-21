@@ -129,6 +129,7 @@ void dspInventoryAvailabilityByCustomerType::sPrint()
 
 void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   int menuItem;
   
   if (_avail->altId() == -2)
@@ -138,11 +139,11 @@ void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeW
   else if (_avail->altId() != -1)
   {
     menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
-    if (selected->text(5).toDouble() == 0.0)
+    if (item->rawValue("allocated").toDouble() == 0.0)
       pMenu->setItemEnabled(menuItem, FALSE);
     
     menuItem = pMenu->insertItem("View Orders...", this, SLOT(sViewOrders()), 0);
-    if (selected->text(6).toDouble() == 0.0)
+    if (item->rawValue("ordered").toDouble() == 0.0)
      pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);
