@@ -17,6 +17,7 @@
 #include <QSettings>
 #include <QSqlError>
 #include <QTextStream>
+#include <QStatusBar>
 #include <QVariant>
 #include <QtDesigner/QDesignerComponents>
 
@@ -25,6 +26,7 @@
 #include "scriptEditor.h"
 #include "storedProcErrorLookup.h"
 #include "xTupleDesigner.h"
+#include "xuiloader.h"
 
 uiform::uiform(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -312,6 +314,8 @@ void uiform::sImport()
 void uiform::sEdit()
 {
   static bool xdinit = false;
+  QWidget *ui;
+  QSize size;
   if(!xdinit)
   {
     QDesignerComponents::initializeResources();
@@ -324,7 +328,17 @@ void uiform::sEdit()
   if (_source.isEmpty())
     designer->setSource(new QFile(":newForm.ui"));
   else
+  {
     designer->setSource(new QBuffer(new QByteArray(_source.toUtf8()), this));
+
+    // Create the form independently, get size, then apply size to widget in designer
+    QByteArray ba;
+    ba.append(_source);
+    QBuffer uiFile(&ba);
+    XUiLoader loader;
+    ui = loader.load(&uiFile);
+    size = ui->size();
+  }
 
   connect(designer, SIGNAL(formEnabledChanged(bool)),_enabled,SLOT(setChecked(bool)));
   connect(designer, SIGNAL(formIdChanged(int)),      this,    SLOT(setFormId(int)));
@@ -332,6 +346,16 @@ void uiform::sEdit()
   connect(designer, SIGNAL(sourceChanged(QString)),  this,    SLOT(setSource(QString)));
 
   omfgThis->handleNewWindow(designer);
+  // Set to default UI size
+  ui = designer->findChild<QWidget*>(_name->text());
+  if (ui)
+  {
+    designer->resize(size);
+    // Make adjustments for margins
+    size.setHeight(size.height()+(designer->height()-ui->height()));
+    size.setWidth(size.width()+(designer->width()-ui->width()));
+    designer->resize(size);
+  }
 }
 
 void uiform::sExport()

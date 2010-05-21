@@ -157,9 +157,11 @@ void uiforms::sTest()
   QWidget *ui = loader.load(&uiFile);
   if (ui)
   {
+    QSize size = ui->size();
     wnd->setWindowTitle(ui->windowTitle());
     wnd->setCentralWidget(ui);
     omfgThis->handleNewWindow(wnd);
+    wnd->resize(size);
   }
   else
     QMessageBox::critical(this, tr("Could not load file"),

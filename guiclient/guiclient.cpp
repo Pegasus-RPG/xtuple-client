@@ -1366,6 +1366,7 @@ void GUIClient::sCustomCommand()
         return;
       }
       QWidget *ui = loader.load(&uiFile);
+      QSize size = ui->size();
       uiFile.close();
 
       if(asDialog)
@@ -1376,6 +1377,7 @@ void GUIClient::sCustomCommand()
         layout->addWidget(ui);
         dlg.setLayout(layout);
         dlg.setWindowTitle(ui->windowTitle());
+        dlg.resize(size);
         dlg.exec();
       }
       else
@@ -1384,6 +1386,7 @@ void GUIClient::sCustomCommand()
         wnd->setObjectName(q.value("uiform_name").toString());
         wnd->setCentralWidget(ui);
         wnd->setWindowTitle(ui->windowTitle());
+        wnd->resize(size);
         handleNewWindow(wnd);
       }
     }
@@ -1584,7 +1587,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
   QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
 
-  if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+  if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
     w->resize(size);
 
   bool wIsModal = w->isModal();

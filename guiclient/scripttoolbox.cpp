@@ -1327,6 +1327,7 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
       return 0;
     }
     QWidget *ui = loader.load(&uiFile);
+    QSize size = ui->size();
     uiFile.close();
 
     if (ui->inherits("QDialog"))
@@ -1343,6 +1344,7 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
     window->setCentralWidget(ui);
     window->setWindowTitle(ui->windowTitle());
     window->setWindowModality(modality);
+    window->resize(size);
 
     if (ui->inherits("QDialog"))
     {
