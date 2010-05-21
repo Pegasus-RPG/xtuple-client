@@ -1350,7 +1350,9 @@ void GUIClient::sCustomCommand()
       if(!q.first())
       {
         QMessageBox::critical(this, tr("Could Not Create Form"),
-          tr("Could not create the required form. Either an error occurred or the specified form does not exist.") );
+                              tr("<p>Could not create the '%1' form. Either an "
+                                 "error occurred or the specified form does "
+                                 "not exist.").arg(asName) );
         return;
       }
 
