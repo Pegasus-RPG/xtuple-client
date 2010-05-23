@@ -293,8 +293,10 @@ void Documents::sOpenDoc(QString mode)
       }
       tfile.write(qfile.value("url_stream").toByteArray());
       QUrl urldb;
-      urldb.setScheme("file");
       urldb.setUrl(tfile.fileName());
+#ifndef Q_WS_WIN
+      urldb.setScheme("file");
+#endif
       tfile.close();
       QDesktopServices::openUrl(urldb);
 
