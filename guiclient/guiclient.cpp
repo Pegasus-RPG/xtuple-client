@@ -1961,10 +1961,8 @@ bool GUIClient::removeDocumentWatch(QString path)
 
 void GUIClient::handleDocument(QString path)
 {
-  QUrl url = QUrl(path);
   QByteArray  bytarr;
-  QFile sourceFile(url.toLocalFile());
-  int id = _fileMap.value(path);
+  QFile sourceFile(path);
 
   if (!_fileMap.contains(path) ||
       !sourceFile.open(QIODevice::ReadOnly))
@@ -1972,6 +1970,8 @@ void GUIClient::handleDocument(QString path)
     qWarning(QString("Changes to file %1 could not be saved to the database.").arg(path));
     return;
   }
+
+  int id = _fileMap.value(path);
 
   bytarr = sourceFile.readAll();
   XSqlQuery qry;
