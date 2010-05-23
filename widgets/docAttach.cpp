@@ -374,7 +374,7 @@ void docAttach::sSave()
         return;
       }
       bytarr = sourceFile.readAll();
-      url.setPath(fi.fileName());
+      url.setPath(fi.fileName().remove(" "));
       url.setScheme("");
     }
 
