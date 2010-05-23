@@ -292,9 +292,10 @@ void Documents::sOpenDoc(QString mode)
         return;
       }
       tfile.write(qfile.value("url_stream").toByteArray());
-      QUrl urldb(tfile.fileName());
-      tfile.close();
+      QUrl urldb;
       urldb.setScheme("file");
+      urldb.setUrl(tfile.fileName());
+      tfile.close();
       QDesktopServices::openUrl(urldb);
 
       // Add a watch to the file that will save any changes made to the file back to the database.
