@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QFileInfo>
 #include <QDir>
+#include <QSettings>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -88,9 +89,10 @@ Documents::Documents(QWidget *pParent) :
   connect(_editDoc, SIGNAL(clicked()), this, SLOT(sEditDoc()));
   connect(_viewDoc, SIGNAL(clicked()), this, SLOT(sViewDoc()));
   connect(_detachDoc, SIGNAL(clicked()), this, SLOT(sDetachDoc()));
-  connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
   connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
   connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
+  connect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
+  handleSelection();
 
   if (_x_privileges)
   {
@@ -144,15 +146,16 @@ void Documents::setReadOnly(bool pReadOnly)
   _editDoc->setEnabled(!pReadOnly);
   _detachDoc->setEnabled(!pReadOnly);
 
-  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
   disconnect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
   disconnect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
+  disconnect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
   if(!pReadOnly)
   {
-    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
     connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
     connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
+    connect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
   }
+  handleSelection(pReadOnly);
 }
 
 void Documents::sNewDoc(QString type, QString ui)
@@ -244,8 +247,21 @@ void Documents::sOpenDoc(QString mode)
     return;
   }
   //url -- In the future this needs to be changed to use docass instead of url
-  else if (docType == "URL")
+  else if (docType == "URL" || docType == "FILE")
   {
+    if (mode == "edit")
+    {
+      ParameterList params;
+      params.append("url_id", targetid);
+
+      docAttach newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+
+      refresh();
+      return;
+    }
+
     XSqlQuery qfile;
     qfile.prepare("SELECT url_id, url_source_id, url_source, url_title, url_url, url_stream"
                   " FROM url"
@@ -254,14 +270,22 @@ void Documents::sOpenDoc(QString mode)
     qfile.bindValue(":url_id", _doc->id());
     qfile.exec();
 
-    if (qfile.first() && (qfile.value("url_stream").toByteArray().length()>5))
+    // If file is in the database, copy to a temp. directory in the file system and open it.
+    if (qfile.first() && (docType == "FILE"))
     {
       QFileInfo fi( qfile.value("url_url").toString() );
-      QString ext = fi.extension( FALSE );
       QDir tdir;
-      if (!tdir.exists(tdir.tempPath() + "/xtTempDoc/"))
-        tdir.mkpath(tdir.tempPath() + "/xtTempDoc/");
-      QFile tfile(tdir.tempPath() + "/xtTempDoc/xDocView." + ext);
+      QString fileName = fi.fileName();
+      QString filePath = tdir.tempPath() + "/xtTempDoc/" + qfile.value("url_id").toString() + "/";
+      QFile tfile(filePath + fileName);
+
+      // Remove any previous watches
+      if (_guiClientInterface)
+        _guiClientInterface->removeDocumentWatch(tfile.fileName());
+
+      if (!tdir.exists(filePath))
+        tdir.mkpath(filePath);
+
       if (!tfile.open(QIODevice::WriteOnly))
       {
         QMessageBox::warning( this, tr("File Open Error"),tr("Could Not Create File " + tfile.fileName() + ".") );
@@ -272,6 +296,10 @@ void Documents::sOpenDoc(QString mode)
       tfile.close();
       urldb.setScheme("file");
       QDesktopServices::openUrl(urldb);
+
+      // Add a watch to the file that will save any changes made to the file back to the database.
+      if (_guiClientInterface)
+        _guiClientInterface->addDocumentWatch(tfile.fileName(),qfile.value("url_id").toInt());
       return;
     }
     else
@@ -403,7 +431,8 @@ void Documents::sDetachDoc()
     detach.prepare( "DELETE FROM imageass "
                     "WHERE (imageass_id = :docid );" );
   }
-  else if ( _doc->currentItem()->rawValue("target_type") == "URL"  )
+  else if ( _doc->currentItem()->rawValue("target_type") == "URL" ||
+            _doc->currentItem()->rawValue("target_type") == "FILE")
   {
     detach.prepare( "DELETE FROM url "
                     "WHERE (url_id = :docid );" );
@@ -447,6 +476,7 @@ void Documents::refresh()
               " WHEN (target_type='C') THEN :cust "
               " WHEN (target_type='EMP') THEN :emp "
               " WHEN (target_type='URL') THEN :url "
+              " WHEN (target_type='FILE') THEN :file "
               " WHEN (target_type='IMG') THEN :image "
               " WHEN (target_type='INCDT') THEN :incident "
               " WHEN (target_type='I') THEN :item "
@@ -491,6 +521,7 @@ void Documents::refresh()
   query.bindValue(":opp", tr("Opportunity"));
   query.bindValue(":url", tr("URL"));
   query.bindValue(":emp", tr("Employee"));
+  query.bindValue(":file", tr("File"));
 
   query.bindValue(":source", _documentMap[_source].ident);
   query.bindValue(":sourceid", _sourceid);
@@ -498,5 +529,24 @@ void Documents::refresh()
   _doc->populate(query,TRUE);
 }
 
+void Documents::handleSelection(bool pReadOnly)
+{
+  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sViewDoc()));
+  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
+  if (pReadOnly)
+    return;
 
+  if (_doc->selectedItems().count() &&
+      (_doc->currentItem()->rawValue("target_type").toString() == "URL" ||
+       _doc->currentItem()->rawValue("target_type").toString() == "FILE" ))
+  {
+    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sViewDoc()));
+    _viewDoc->setText(tr("Open"));
+  }
+  else
+  {
+    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
+    _viewDoc->setText(tr("View"));
+  }
+}
 

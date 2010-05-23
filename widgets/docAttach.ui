@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>289</height>
+    <width>561</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -378,7 +378,7 @@ to be bound by its terms.</comment>
               <item row="0" column="0">
                <widget class="QLabel" name="_filetitleLit">
                 <property name="text">
-                 <string>Title:</string>
+                 <string>Name:</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -392,6 +392,9 @@ to be bound by its terms.</comment>
                <widget class="QLabel" name="_fileLit">
                 <property name="text">
                  <string>File:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -434,12 +437,9 @@ to be bound by its terms.</comment>
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="_saveDbCheck">
+               <widget class="XCheckBox" name="_saveDbCheck">
                 <property name="text">
-                 <string>Save To Database</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
+                 <string>Save to Database</string>
                 </property>
                </widget>
               </item>
@@ -789,7 +789,7 @@ to be bound by its terms.</comment>
               <item row="0" column="0">
                <widget class="QLabel" name="_urltitleLit">
                 <property name="text">
-                 <string>Title:</string>
+                 <string>Name:</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -803,6 +803,9 @@ to be bound by its terms.</comment>
                <widget class="QLabel" name="_urlLit">
                 <property name="text">
                  <string>URL:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -943,6 +946,11 @@ to be bound by its terms.</comment>
    <class>WoCluster</class>
    <extends>QWidget</extends>
    <header>wocluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

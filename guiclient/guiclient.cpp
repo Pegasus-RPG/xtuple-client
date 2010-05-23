@@ -320,6 +320,16 @@ class xTupleGuiClientInterface : public GuiClientInterface
   }
 
   const XSqlQuery* globalQ() const { return &omfgThis->_q; };
+
+  void addDocumentWatch(QString path, int id)
+  {
+    omfgThis->addDocumentWatch(path, id);
+  }
+
+  void removeDocumentWatch(QString path)
+  {
+    omfgThis->removeDocumentWatch(path);
+  }
 };
 
 class xTupleCustInfoAction : public CustInfoAction
@@ -563,6 +573,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   collectMetrics();
 
   setDocumentMode(true);
+
+  // Set up document file watcher
+  _fileWatcher = new QFileSystemWatcher();
+  connect(_fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleDocument(QString)));
 }
 
 GUIClient::~GUIClient()
@@ -749,6 +763,14 @@ void GUIClient::saveToolbarPositions()
 void GUIClient::closeEvent(QCloseEvent *event)
 {
   _shuttingDown = true;
+
+  // Remove any temporary document files being watched
+  QMapIterator<QString, int> i(_fileMap);
+  while (i.hasNext())
+  {
+    i.next();
+    removeDocumentWatch(i.key());
+  }
 
   saveToolbarPositions();
 
@@ -1916,3 +1938,48 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   setupScriptApi(engine);
 }
+
+void GUIClient::addDocumentWatch(QString path, int id)
+{
+  if (_fileWatcher->files().contains(path))
+    _fileWatcher->removePath(path);
+  _fileWatcher->addPath(path);
+  _fileMap.insert(path,id);
+}
+
+bool GUIClient::removeDocumentWatch(QString path)
+{
+  bool result;
+  if (_fileWatcher->files().contains(path))
+    _fileWatcher->removePath(path);
+  _fileMap.remove(path);
+  QFileInfo fi = QFileInfo(path);
+  QFile().remove(path);
+  result = QDir().rmdir(fi.path());
+  return result;
+}
+
+void GUIClient::handleDocument(QString path)
+{
+  QUrl url = QUrl(path);
+  QByteArray  bytarr;
+  QFile sourceFile(url.toLocalFile());
+  int id = _fileMap.value(path);
+
+  if (!_fileMap.contains(path) ||
+      !sourceFile.open(QIODevice::ReadOnly))
+  {
+    qWarning(QString("Changes to file %1 could not be saved to the database.").arg(path));
+    return;
+  }
+
+  bytarr = sourceFile.readAll();
+  XSqlQuery qry;
+  qry.prepare( "UPDATE url SET url_stream = :stream "
+               "WHERE (url_id = :id);" );
+  qry.bindValue(":id", id);
+  qry.bindValue(":stream", bytarr);
+  qry.exec();
+  addDocumentWatch(path, id);
+}
+

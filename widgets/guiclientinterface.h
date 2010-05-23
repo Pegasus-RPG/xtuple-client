@@ -18,13 +18,15 @@
 
 class XSqlQuery;
 
-class XTUPLEWIDGETS_EXPORT GuiClientInterface
+class GuiClientInterface
 {
   public:
     virtual ~GuiClientInterface() {}
     virtual QWidget* openWindow(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0) = 0;
     virtual QAction* findAction(const QString pname) = 0;
     virtual const XSqlQuery* globalQ() const = 0;
+    virtual void addDocumentWatch(QString path, int id) = 0;
+    virtual void removeDocumentWatch(QString path) = 0;
 };
 
 #endif

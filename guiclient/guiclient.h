@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QAction>
 #include <QCloseEvent>
+#include <QFileSystemWatcher>
 #include <QList>
 #include <QPixmap>
 #include <QMenu>
@@ -160,6 +161,7 @@ class GUIClient : public QMainWindow
   friend class XWidget;
   friend class XMainWindow;
   friend class XDialog;
+  friend class xTupleGuiClientInterface;
 
   Q_OBJECT
 
@@ -344,8 +346,14 @@ class GUIClient : public QMainWindow
     void closeEvent(QCloseEvent *);
     void showEvent(QShowEvent *);
 
+    void addDocumentWatch(QString path, int id);
+    bool removeDocumentWatch(QString path);
+
   protected slots:
     void windowDestroyed(QObject*);
+
+  private slots:
+    void handleDocument(QString path);
 
   private:
     QWorkspace   *_workspace;
@@ -397,6 +405,9 @@ class GUIClient : public QMainWindow
 
     bool _shown;
     bool _shuttingDown;
+
+    QFileSystemWatcher* _fileWatcher;
+    QMap<QString, int> _fileMap;
 };
 extern GUIClient *omfgThis;
 

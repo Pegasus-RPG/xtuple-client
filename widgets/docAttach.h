@@ -35,8 +35,10 @@ private:
     int _sourceid;
     int _source;
     int _targetid;
+    int _urlid;
     QString _targettype;
     QString _purpose;
+    QString _mode;
 };
 
 #endif // docAttach_H

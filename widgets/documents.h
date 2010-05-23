@@ -92,6 +92,9 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     
     void refresh();
 
+  private slots:
+    void handleSelection(bool = false);
+
   private:
     enum DocumentSources _source;
     int                  _sourceid;

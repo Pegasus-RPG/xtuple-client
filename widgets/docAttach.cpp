@@ -45,6 +45,8 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   _sourceid = -1;
   _targetid = -1;
+  _urlid = -1;
+  _mode = "new";
 
   _po->setAllowedTypes(OrderLineEdit::Purchase);
   _so->setAllowedTypes(OrderLineEdit::Sales);
@@ -85,17 +87,60 @@ void docAttach::set(const ParameterList &pParams)
   //source type from document widget
   param = pParams.value("sourceType", &valid);
   if (valid)
-   _source = (enum Documents::DocumentSources)param.toInt();
+    _source = (enum Documents::DocumentSources)param.toInt();
 
   //source id from document widget
   param = pParams.value("source_id", &valid);
   if (valid)
     _sourceid = param.toInt();
+
+  // Only urls are editable
+  param = pParams.value("url_id", &valid);
+  if(valid)
+  {
+    XSqlQuery qry;
+    _urlid = param.toInt();
+    qry.prepare("SELECT url_source, url_source_id, url_title, url_url, url_stream "
+                "  FROM url"
+                " WHERE (url_id=:url_id);" );
+    qry.bindValue(":url_id", _urlid);
+    qry.exec();
+    if(qry.first())
+    {
+      setWindowTitle(tr("Edit Attachment Link"));
+      QUrl url(qry.value("url_url").toString());
+      if (url.scheme().isEmpty())
+        url.setScheme("file");
+
+      _url->setText(url.toString());
+      if (url.scheme() == "file")
+      {
+        _docType->setCurrentIndex(5);
+        _filetitle->setText(qry.value("url_title").toString());
+        _file->setText(url.toString());
+        if (qry.value("url_stream").toString().length())
+        {
+          _fileList->setEnabled(false);
+          _file->setEnabled(false);
+          _saveDbCheck->setEnabled(false);
+        }
+      }
+      else
+      {
+        _docType->setCurrentIndex(14);
+        _urltitle->setText(qry.value("url_title").toString());
+        _url->setText(url.toString());
+      }
+      _mode = "edit";
+      _docType->setEnabled(false);
+    }
+  }
 }
 
 void docAttach::sHandleButtons()
 {
   _save->disconnect();
+  _docAttachPurpose->setEnabled(true);
 
   if (_docType->currentIndex() == 1)
   {
@@ -119,6 +164,8 @@ void docAttach::sHandleButtons()
   }
   else if (_docType->currentIndex() == 5)
   {
+    _docAttachPurpose->setEnabled(false);
+    _docAttachPurpose->setCurrentIndex(0);
     _save->setEnabled(true);
   }
   else if (_docType->currentIndex() == 6)
@@ -163,6 +210,8 @@ void docAttach::sHandleButtons()
   }
   else if (_docType->currentIndex() == 14)
   {
+    _docAttachPurpose->setEnabled(false);
+    _docAttachPurpose->setCurrentIndex(0);
     _save->setEnabled(true);
   }
   else if (_docType->currentIndex() == 15)
@@ -277,11 +326,11 @@ void docAttach::sSave()
       return;
     }
 
-     _targettype = "URL";
-     title = _urltitle->text();
-     url = QUrl(_url->text());
-     if (url.scheme().isEmpty())
-       url.setScheme("http");
+    _targettype = "URL";
+    title = _urltitle->text();
+    url = QUrl(_url->text());
+    if (url.scheme().isEmpty())
+      url.setScheme("http");
   }
   else if (_docType->currentIndex() == 15)
   {
@@ -309,7 +358,9 @@ void docAttach::sSave()
     QByteArray  bytarr;
     QFileInfo fi(url.toLocalFile());
 
-    if(_saveDbCheck->isChecked()&& (url.scheme()=="file"))
+    if(_saveDbCheck->isChecked() &&
+       (url.scheme()=="file") &&
+       (_mode == "new"))
     {
       if (!fi.exists())
       {
@@ -322,14 +373,23 @@ void docAttach::sSave()
         QMessageBox::warning( this, tr("File Open Error"),tr("Could Not Open Source File " + url.toLocalFile() + "File For Read.") );
         return;
       }
-        bytarr = sourceFile.readAll();
+      bytarr = sourceFile.readAll();
+      url.setPath(fi.fileName());
+      url.setScheme("");
     }
 
     // For now urls are handled differently because of legacy structures...
-    newDocass.prepare( "INSERT INTO url "
-                       "( url_source, url_source_id, url_title, url_url, url_stream ) "
-                       "VALUES "
-                       "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
+    if (_mode == "new")
+      newDocass.prepare( "INSERT INTO url "
+                         "( url_source, url_source_id, url_title, url_url, url_stream ) "
+                         "VALUES "
+                         "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
+    else
+      newDocass.prepare( "UPDATE url SET "
+                         "  url_title = :title, "
+                         "  url_url = :url "
+                         "WHERE (url_id=:url_id);" );
+    newDocass.bindValue(":url_id", _urlid);
     newDocass.bindValue(":title", title);
     newDocass.bindValue(":url", url.toString());
     newDocass.bindValue(":stream", bytarr);
@@ -356,4 +416,9 @@ void docAttach::sSave()
 void docAttach::sFileList()
 {
   _file->setText(QString("file:%1").arg(QFileDialog::getOpenFileName( this, tr("Select File"), QString::null)));
+  if (!_filetitle->text().length())
+  {
+    QFileInfo fi = QFileInfo(_file->text());
+    _filetitle->setText(fi.fileName());
+  }
 }
