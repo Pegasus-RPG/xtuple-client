@@ -1963,11 +1963,24 @@ void GUIClient::handleDocument(QString path)
 {
   QByteArray  bytarr;
   QFile sourceFile(path);
+  bool opened = false;
 
-  if (!_fileMap.contains(path) ||
-      !sourceFile.open(QIODevice::ReadOnly))
+  QTimer retry(this);
+  retry.setInterval(5000);
+  retry.setSingleShot(true);
+  retry.start();
+  while (retry.isActive() && !opened)
   {
-    qWarning(QString("Changes to file %1 could not be saved to the database.").arg(path));
+    // Retry for 5 sec. so OS can finish any housekeeping.
+    // In particular, Microsoft Office deletes and copies
+    // files on every save which can take a bit of time to
+    // complete.
+    opened = sourceFile.open(QIODevice::ReadOnly);
+  }
+
+  if (!opened)
+  {
+    qWarning(QString("File %1 could not be opened. Changes will not be saved to the database.").arg(path));
     return;
   }
 
