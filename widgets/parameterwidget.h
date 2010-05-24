@@ -45,9 +45,9 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     
  public slots:
     void addParam();
-    void append(QString pName, QString pParam, enum ParameterWidgetTypes pType = Text, QVariant pDefault = 0, QVariant extraInfo =  QVariant());
-    void append(QString pName, QString pParam, enum XComboBox::XComboBoxTypes pType, QVariant pDefault = 0);
-    void append(QString pName, QString pParam, QString, QVariant pDefault = 0);
+    void append(QString pName, QString pParam, enum ParameterWidgetTypes pType = Text, QVariant pDefault = 0,  bool pRequired = false, QString extraInfo =  QString());
+    void appendComboBox(QString pName, QString pParam, QString pQuery, QVariant pDefault = 0, bool pRequired = false);
+    void appendComboBox(QString pName, QString pParam, enum XComboBox::XComboBoxTypes pType, QVariant pDefault = 0, bool pRequired = false);
     void applySaved(int pId = 0, int filter_id = 0);
     void changeFilterObject(int index);
     void clearFilters();
@@ -65,11 +65,12 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void toggleSave();
     void setFiltersDefault();
 
-
   signals:
     void cleared();
+    void filterChanged();
     void filterSetSaved();
     void updated();
+
   protected:
     virtual void showEvent(QShowEvent *);
 
@@ -83,6 +84,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QMap<QString, XComboBox::XComboBoxTypes > _comboTypes;
     QMap<QString, QString > _query;
     QMap<QString, QVariant > _defaultTypes;
+    QStringList _required;
     bool _initialized;
     bool _shared;
 
@@ -94,14 +96,12 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     
     bool containsUsedType(QString);
 
-
-	private slots:
-		void repopulateComboboxes();
-		void addUsedType();
+  private slots:
+    void repopulateComboboxes();
+    void addUsedType();
 
   protected slots:
     void     resetMultiselect(QTableWidgetItem* item);
-
 
 };
 

@@ -185,6 +185,9 @@ void GLCluster::setReadOnly(bool pReadOnly)
 
 void GLCluster::setId(int pId)
 {
+  if (_accntid == pId)
+    return;
+
   XSqlQuery _query;
   if (_showExternal)
     _query.prepare("SELECT *, formatGLAccount(accnt_id) AS f_accnt "
@@ -220,6 +223,8 @@ void GLCluster::setId(int pId)
     if (_mapper->model() &&
       _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != _number)
         _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _number);
+
+    emit newId(_accntid);
   }
   else
   {
@@ -237,6 +242,7 @@ void GLCluster::setId(int pId)
     _accntid = -1;
     _valid = FALSE;
     _number = "";
+    emit newId(-1);
   }
 
   _parsed = true;

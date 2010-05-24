@@ -39,6 +39,9 @@ protected slots:
     virtual void languageChange();
     virtual bool forwardUpdate();
 
+private slots:
+    void handleTotalCheckbox();
+
 };
 
 #endif // DSPGLTRANSACTIONS_H

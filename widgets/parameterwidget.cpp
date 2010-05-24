@@ -41,7 +41,6 @@
            integer. otherwise the db contents will prevent reorganizing the
            order of the symbolic values of the type enumeration.
          - rename methods to align better with qt naming conventions
-         - fix indentation - ts=8 sw=2 tabexpand=true
          - find a solution to the problem that multiselect's use of
            qtablewidget violates the one-unit-high rule
  */
@@ -76,7 +75,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 
 void ParameterWidget::showEvent(QShowEvent * event)
 {
-	
+
   if(_initialized)
     return;
 
@@ -100,7 +99,7 @@ void ParameterWidget::showEvent(QShowEvent * event)
   }
   _initialized = true;
   QWidget::showEvent(event);
-	
+
 }
 
 void ParameterWidget::appendValue(ParameterList &pParams)
@@ -210,11 +209,11 @@ void ParameterWidget::addParam()
 
   toolButton->setObjectName("button" + currRow);
   toolButton->setText(tr("-"));
- #ifdef Q_WS_MAC
+#ifdef Q_WS_MAC
   toolButton->setMinimumWidth(25);
- #else
+#else
   toolButton->setMinimumWidth(21);
- #endif
+#endif
 
   //grab the items provided by other widgets to populate xcombobox with
   QMapIterator<QString, QPair<QString, ParameterWidgetTypes> > i(_types);
@@ -257,7 +256,7 @@ void ParameterWidget::addParam()
   connect(toolButton, SIGNAL(clicked()), toolButton, SLOT( deleteLater() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( addUsedType() ) );
   connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
-	connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
+  connect(xcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
   connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
 
   _filterSignalMapper->setMapping(toolButton, nextRow);
@@ -268,53 +267,61 @@ void ParameterWidget::addParam()
 
 /*!
   Appends a parameter selection \a pName using parameterWidgetTypes \a pType to the filter set list using
-  output parameter name \a pParam.  An optional default value can be set using \a pDefault along with an
-  option query \a extraInfo.
+  output parameter name \a pParam.  An optional default value can be set using \a pDefault. Use \a pRequired
+  to flag whether the parameter is required or not. Use \a extraInfo
+  to pass a query string for multi-select types.
 */
-void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes pType, QVariant pDefault, QVariant extraInfo)
+void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes pType, QVariant pDefault, bool pRequired, QString extraInfo)
 {
   _types[pName] = qMakePair(pParam, pType);
   if (pDefault != 0)
     _defaultTypes[pName] = pDefault;
-
+  if (pRequired)
+    _required.append(pName);
   if (pType == Multiselect)
   {
-    if (extraInfo.type() == QVariant::String)
-      _query[pName] = extraInfo.toString();
+    if (extraInfo.length())
+      _query[pName] = extraInfo;
     else
       qWarning("%s::setType(%s, %s, %d, %s, %s) called for Multiselect but "
                "was not given a query to use",
                qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
                pType, qPrintable(pDefault.toString()),
-               qPrintable(extraInfo.toString()));
+               qPrintable(extraInfo));
   }
 }
 
 /*!
   Appends a parameter selection \a pName using an xcombobox to the filter set list using
   output parameter name \a pParam.  The xcombobox type is specified by \a pType with an optional
-  default id that can be set using \a pDefault.
+  default id that can be set using \a pDefault.  Use \a pRequired to flag whether the parameter is
+  required or not.
 */
-void ParameterWidget::append(QString pName, QString pParam, XComboBox::XComboBoxTypes pType, QVariant pDefault)
+void ParameterWidget::appendComboBox(QString pName, QString pParam, XComboBox::XComboBoxTypes pType, QVariant pDefault, bool pRequired)
 {
   _comboTypes[pName] = pType;
   _types[pName] = qMakePair(pParam, XComBox);
   if (pDefault != 0)
     _defaultTypes[pName] = pDefault;
+  if (pRequired)
+    _required.append(pName);
 }
 
 /*!
   Appends a parameter selection \a pName using an xcombobox to the filter set list using
   output parameter name \a pParam.  The xcombobox type is populated by query string \a pQry with
-  an optional default id that can be set using \a pDefault.
+  an optional default id that can be set using \a pDefault. Use \a pRequired to flag whether the parameter is
+  required or not.
 */
-void ParameterWidget::append(QString pName, QString pParam, QString pQry, QVariant pDefault)
+void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQuery, QVariant pDefault, bool pRequired)
 {
   _comboTypes[pName] = XComboBox::Adhoc;
-  _query[pName] = pQry;
+  _query[pName] = pQuery;
   _types[pName] = qMakePair(pParam, XComBox);
   if (pDefault != 0)
     _defaultTypes[pName] = pDefault;
+  if (pRequired)
+    _required.append(pName);
 }
 
 void ParameterWidget::applySaved(int pId, int filter_id)
@@ -324,13 +331,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   XSqlQuery qry;
   QString query;
   QString filterValue;
-	QDate today = QDate::currentDate();
+  QDate today = QDate::currentDate();
   int xid, init_filter_id;
 
-	init_filter_id = filter_id;
+  init_filter_id = filter_id;
 
   QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
-	QPair<QString, ParameterWidgetTypes> tempPair;
+  QPair<QString, ParameterWidgetTypes> tempPair;
 
   clearFilters();
 
@@ -367,7 +374,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     _shared = qry.value("shared").toBool();
   }
 
-	
+
   QStringList filterRows = filterValue.split("|");
   QString tempFilter = QString();
 
@@ -659,7 +666,7 @@ void ParameterWidget::changeFilterObject(int index)
   QHBoxLayout *layout = _filterGroup->findChild<QHBoxLayout *>("widgetLayout1" + row);;
 
   QPair<QString, ParameterWidgetTypes> tempPair;
-
+  button->setDisabled(_required.contains(mybox->currentText()));
 
   if (widget && layout && button)
     delete widget;
@@ -726,8 +733,8 @@ void ParameterWidget::changeFilterObject(int index)
     {
       XComboBox *xBox = new XComboBox(_filterGroup);
       newWidget = xBox;
-			xBox->setNullStr("--- Please Select ---");
-			xBox->setAllowNull(true);
+      xBox->setNullStr("--- Please Select ---");
+      xBox->setAllowNull(true);
 
       xBox->setType(_comboTypes[mybox->currentText()]);
       if (_comboTypes[mybox->currentText()] == XComboBox::Adhoc)
@@ -737,7 +744,7 @@ void ParameterWidget::changeFilterObject(int index)
         qry.exec();
         xBox->populate(qry);
       }
-			//xBox->setAllowNull(true);
+      //xBox->setAllowNull(true);
       connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
       connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
@@ -802,7 +809,7 @@ void ParameterWidget::changeFilterObject(int index)
     newWidget->setObjectName("widget" + row);
     layout->insertWidget(0, newWidget);
   }
-	_saveButton->setDisabled(true);
+  _saveButton->setDisabled(true);
 }
 
 void ParameterWidget::clearFilters()
@@ -881,21 +888,21 @@ void ParameterWidget::repopulateComboboxes()
 
     idx = xlist.at(i)->findText(current);
     xlist.at(i)->setCurrentIndex(idx);
-		connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( addUsedType() ) );
+    connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( addUsedType() ) );
     connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( changeFilterObject(int)) );
-		connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
+    connect(xlist.at(i), SIGNAL(currentIndexChanged(int)), this, SLOT( repopulateComboboxes() ) );
   }
 }
 
 void ParameterWidget::addUsedType()
 {
-	XComboBox *mybox = (XComboBox *)sender();
-	QVariant filterVar(mybox->itemData(mybox->currentIndex()));
+  XComboBox *mybox = (XComboBox *)sender();
+  QVariant filterVar(mybox->itemData(mybox->currentIndex()));
   QString filterType = filterVar.toString();
   QStringList split = filterType.split(":");
-	int row = split[0].toInt();
+  int row = split[0].toInt();
 
-	if (!_usedTypes.isEmpty())
+  if (!_usedTypes.isEmpty())
     _usedTypes.remove(row);
 
   _usedTypes[row] = mybox->currentText();
@@ -927,6 +934,7 @@ void ParameterWidget::removeParam(int pRow)
   if (!mybox->currentText().isEmpty())
     _usedTypes.remove(pRow);
   emit updated();
+  emit filterChanged();
 }
 
 void ParameterWidget::save()
@@ -936,8 +944,8 @@ void ParameterWidget::save()
   QString username;
   QString query;
   QVariant tempVar;
-	QDate variantDate;
-	QDate today = QDate::currentDate();
+  QDate variantDate;
+  QDate today = QDate::currentDate();
   int filter_id;
 
   QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
@@ -954,22 +962,22 @@ void ParameterWidget::save()
 
     if ( tempVar.canConvert(QVariant::String) )
     {
-			if ( tempVar.canConvert<QDate>() )
-				variantDate = tempVar.toDate();
+      if ( tempVar.canConvert<QDate>() )
+        variantDate = tempVar.toDate();
 
-			if (variantDate.isValid())
-			{
-				variantString = QString().setNum(today.daysTo(variantDate));
-			}
-			else
-			{
-				variantString = tempVar.toString();
-			}
+      if (variantDate.isValid())
+      {
+        variantString = QString().setNum(today.daysTo(variantDate));
+      }
+      else
+      {
+        variantString = tempVar.toString();
+      }
       filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
     }
     else if (tempVar.canConvert(QVariant::StringList))
       filter += tempPair.first + ":" + tempVar.toStringList().join(",")
-                               + ":" + split[1] + "|";
+      + ":" + split[1] + "|";
   }
 
   QString classname(parent()->objectName());
@@ -1095,23 +1103,23 @@ void ParameterWidget::setSavedFiltersIndex(QString filterSetName)
 
 void ParameterWidget::setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo)
 {
-  append(pName, pParam, type, pDefault, extraInfo);
+  append(pName, pParam, type, pDefault, false, extraInfo.toString());
   qWarning("setType(QString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo) on parameterWidget is deprecated.  "
-           "Use appendQString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, QVariant extraInfo).");
+           "Use appendQString pName, QString pParam, ParameterWidgetTypes type, QVariant pDefault, bool pRequired, QString extraInfo).");
 }
 
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault)
 {
-  append(pName, pParam, xType, pDefault);
+  appendComboBox(pName, pParam, xType, pDefault);
   qWarning("setType(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault) is deprecated. "
-           "Use append(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault).");
+           "Use appendComboBox(QString pName, QString pParam, XComboBox::XComboBoxTypes xType, QVariant pDefault).");
 }
 
 void ParameterWidget::setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault)
 {
-  append(pName, pParam, pQry, pDefault);
+  appendComboBox(pName, pParam, pQry, pDefault);
   qWarning("setXComboBoxType(QString pName, QString pParam, QString pQry, QVariant pDefault) is deprecated."
-           "Use append(QString pName, QString pParam, QString pQry, QVariant pDefault).");
+           "Use appendComboBox(QString pName, QString pParam, QString pQry, QVariant pDefault).");
 }
 
 void ParameterWidget::sManageFilters()
@@ -1170,7 +1178,7 @@ QWidget *ParameterWidget::getFilterWidget(const int index)
   QWidget *filterwidget = 0;
 
   QGridLayout *rowgrid = _filtersLayout->findChild<QGridLayout *>("topLayout"
-                                                      + QString::number(index));
+                                                                  + QString::number(index));
   QLayoutItem *childLI = rowgrid->itemAtPosition(0, 0)->layout()->itemAt(0);
   QHBoxLayout *datalyt = (QHBoxLayout *)childLI->layout();
   QLayoutItem *filterLI = datalyt->itemAt(0);
@@ -1193,7 +1201,7 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
   if (! filter)
   {
     qWarning("%s::storeFilterValue(%d, %p) could not find filter",
-           qPrintable(objectName()), pId, filter);
+             qPrintable(objectName()), pId, filter);
     return;
   }
 
@@ -1201,7 +1209,7 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
   if (foundRow < 0)
   {
     qWarning("%s::storeFilterValue(%d, %p) could not find filter index",
-           qPrintable(objectName()), pId, filter);
+             qPrintable(objectName()), pId, filter);
     return;
   }
 
@@ -1219,10 +1227,10 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
     QString username = usernameCluster->username();
     _filterValues[foundRow] = qMakePair(tempPair.first, QVariant(username));
     emit updated();
-		if (classname == "XComboBox")
-		{
-			_saveButton->setDisabled(true);
-		}
+    if (classname == "XComboBox")
+    {
+      _saveButton->setDisabled(true);
+    }
   }
   else if (pId != -1)
   {
@@ -1257,6 +1265,7 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
 
   _addFilterRow->setDisabled(false);
   repopulateComboboxes();
+  emit filterChanged();
 }
 
 QString ParameterWidget::getParameterTypeKey(QString pValue)
