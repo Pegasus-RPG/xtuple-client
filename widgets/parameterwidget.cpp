@@ -61,8 +61,8 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   _filterSignalMapper = new QSignalMapper(this);
   _saveButton->setDisabled(true);
 
-	_filterGroup->setVisible(false);
-	_filterButton->setChecked(false);
+  _filterGroup->setVisible(false);
+  _filterButton->setChecked(false);
 
   connect(_addFilterRow, SIGNAL(clicked()), this, SLOT( addParam() ) );
   connect(_filterButton, SIGNAL(clicked()), this, SLOT( setFiltersVisabiltyPreference() ) );
@@ -87,7 +87,7 @@ void ParameterWidget::showEvent(QShowEvent * event)
 
   if(_x_preferences)
   {
-    if (_x_preferences->value(_settingsName + "/checked") == "f")
+    if (!_x_preferences->boolean(_settingsName + "/checked"))
     {
       _filterGroup->setVisible(false);
       _filterButton->setChecked(false);
@@ -125,42 +125,39 @@ void ParameterWidget::applyDefaultFilterSet()
   XSqlQuery qry;
   QString filter_name;
   int filter_id = -1;
-	QString pname;
-
- 
+  QString pname;
 
   //hides parameterwidget when it's embedded within another widget with a parent
   if (this->parent() && this->parent()->parent())
   {
     clearFilters();
-    this->hide();
+    hide();
 
     return;
   }
 
-	if(window())
+  if(window())
     pname = window()->objectName() + "/";
-	_settingsName2 = pname + this->objectName();
+  _settingsName2 = pname + this->objectName();
 
-	if(_x_preferences)
+  if(_x_preferences)
   {
-		_settingsName2 += "/filter_default";
-		filter_id = _x_preferences->value(_settingsName2).toInt();
-	}
+    _settingsName2 += "/filter_default";
+    filter_id = _x_preferences->value(_settingsName2).toInt();
+  }
 
   QString query = "SELECT filter_name "
                   "FROM filter "
                   "WHERE filter_id=:id ";
-                  
 
-  if (this->parent())
+  if (parent())
   {
     QString classname(parent()->objectName());
     if (classname.isEmpty())
       classname = parent()->metaObject()->className();
 
     qry.prepare(query);
-		qry.bindValue(":id", filter_id);
+    qry.bindValue(":id", filter_id);
     qry.exec();
 
     if (qry.first())
@@ -172,11 +169,9 @@ void ParameterWidget::applyDefaultFilterSet()
     else
     {
       addParam();
-			applySaved(0, 0);
+      applySaved(0, 0);
     }
-
   }
-
 }
 
 void ParameterWidget::addParam()
