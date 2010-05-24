@@ -13,293 +13,65 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>569</height>
+    <width>491</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>General Ledger Transactions</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QGridLayout">
-     <property name="margin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
-      <number>12</number>
-     </property>
-     <item row="0" column="0">
-      <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QGridLayout">
-         <item row="0" column="0" rowspan="2">
-          <widget class="QGroupBox" name="_accountGroup">
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <layout class="QVBoxLayout">
-              <item>
-               <layout class="QGridLayout">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QRadioButton" name="_allAccounts">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string>All Accounts</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QRadioButton" name="_selectedAccount">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string>Selected Account:</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="GLCluster" name="_account">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="focusPolicy">
-                   <enum>Qt::StrongFocus</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="2">
-                 <layout class="QGridLayout" name="gridLayout">
-                  <item row="0" column="0">
-                   <widget class="XCheckBox" name="_showRunningTotal">
-                    <property name="text">
-                     <string>Show Running Total</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="XLabel" name="xlabel">
-                    <property name="text">
-                     <string>Document#</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="XLineEdit" name="_docNumber"/>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="ParameterWidget" name="parameterWidget"/>
          </item>
-         <item row="0" column="1">
-          <widget class="QGroupBox" name="_dateGroup">
-           <property name="title">
-            <string/>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <widget class="DateCluster" name="_dates">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QGroupBox" name="_sourceGroup">
-           <property name="title">
-            <string/>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
            </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="_allSources">
-              <property name="text">
-               <string>All Sources</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="_selectedSource">
-              <property name="text">
-               <string>Selected Source:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout">
-              <item>
-               <widget class="XComboBox" name="_source">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>A/P</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>A/R</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>G/L</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>I/M</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>P/D</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>P/O</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>S/O</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>S/R</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>W/O</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
+          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>16</width>
-           <height>70</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>0</number>
+          <widget class="QGroupBox" name="_accountGroup">
+           <property name="title">
+            <string/>
            </property>
-           <item>
-            <widget class="QPushButton" name="_close">
-             <property name="text">
-              <string>&amp;Close</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_query">
-             <property name="text">
-              <string>&amp;Query</string>
-             </property>
-             <property name="autoDefault">
-              <bool>true</bool>
-             </property>
-             <property name="default">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_print">
-             <property name="text">
-              <string>&amp;Print</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="XCheckBox" name="_showRunningTotal">
+              <property name="text">
+               <string>Show Running Total</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>20</width>
-             <height>25</height>
+             <width>40</width>
+             <height>20</height>
             </size>
            </property>
           </spacer>
@@ -308,78 +80,135 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="QFrame" name="_frame">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
+     <item>
+      <layout class="QVBoxLayout">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
+       <item>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close">
+           <property name="text">
+            <string>&amp;Close</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_query">
+           <property name="text">
+            <string>&amp;Query</string>
+           </property>
+           <property name="autoDefault">
+            <bool>true</bool>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print">
+           <property name="text">
+            <string>&amp;Print</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>25</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QFrame" name="_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
        <layout class="QGridLayout">
-        <property name="margin">
+        <property name="verticalSpacing">
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <layout class="QGridLayout">
-          <property name="verticalSpacing">
-           <number>0</number>
+         <widget class="QLabel" name="_gltransLit">
+          <property name="text">
+           <string>Transactions:</string>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="_gltransLit">
-            <property name="text">
-             <string>Transactions:</string>
-            </property>
-            <property name="buddy">
-             <cstring>_gltrans</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="_beginningBalanceLit">
-            <property name="text">
-             <string>Beginning Balance:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="XLabel" name="_beginningBalance">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="4">
-           <widget class="XTreeWidget" name="_gltrans"/>
-          </item>
-         </layout>
+          <property name="buddy">
+           <cstring>_gltrans</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="_beginningBalanceLit">
+          <property name="text">
+           <string>Beginning Balance:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="XLabel" name="_beginningBalance">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="4">
+         <widget class="XTreeWidget" name="_gltrans"/>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -387,14 +216,9 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>DateCluster</class>
+   <class>ParameterWidget</class>
    <extends>QWidget</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GLCluster</class>
-   <extends>QWidget</extends>
-   <header>glcluster.h</header>
+   <header>parameterwidget.h</header>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
@@ -402,20 +226,9 @@ to be bound by its terms.</comment>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLabel</class>
    <extends>QLabel</extends>
    <header>xlabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -425,13 +238,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_allAccounts</tabstop>
-  <tabstop>_selectedAccount</tabstop>
-  <tabstop>_account</tabstop>
-  <tabstop>_dates</tabstop>
-  <tabstop>_allSources</tabstop>
-  <tabstop>_selectedSource</tabstop>
-  <tabstop>_source</tabstop>
   <tabstop>_gltrans</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
@@ -446,76 +252,12 @@ to be bound by its terms.</comment>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>775</x>
-     <y>47</y>
+     <x>477</x>
+     <y>35</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedSource</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_source</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>540</x>
-     <y>159</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>601</x>
-     <y>160</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedAccount</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_account</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>71</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>406</x>
-     <y>84</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedAccount</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_showRunningTotal</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>104</x>
-     <y>64</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>145</x>
-     <y>117</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_showRunningTotal</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_beginningBalanceLit</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>163</x>
-     <y>117</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>766</x>
-     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -526,12 +268,28 @@ to be bound by its terms.</comment>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>117</y>
+     <x>381</x>
+     <y>39</y>
     </hint>
     <hint type="destinationlabel">
-     <x>777</x>
-     <y>207</y>
+     <x>479</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showRunningTotal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_beginningBalanceLit</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>381</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>468</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>

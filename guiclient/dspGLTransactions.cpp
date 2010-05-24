@@ -36,6 +36,45 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
 {
   setupUi(this);
 
+  QString qryType = QString( "SELECT DISTINCT id, type "
+                             "FROM (SELECT "
+                             "        CASE WHEN (accnt_type='A') THEN 1 "
+                             "        WHEN (accnt_type='E') THEN 2 "
+                             "        WHEN (accnt_type='L') THEN 3 "
+                             "        WHEN (accnt_type='Q') THEN 4 "
+                             "        WHEN (accnt_type='R') THEN 5 "
+                             "        ELSE 0 END AS id, "
+                             "        CASE WHEN (accnt_type='A') THEN 'Asset' "
+                             "        WHEN (accnt_type='E') THEN 'Expense' " 
+                             "        WHEN (accnt_type='L') THEN 'Liability' " 
+                             "        WHEN (accnt_type='Q') THEN 'Equity' "
+                             "        WHEN (accnt_type='R') THEN 'Revenue' "
+                             "        ELSE accnt_type END AS type "
+                             "      FROM accnt) AS data;");
+
+  QString qrySubType = QString("SELECT subaccnttype_id, "
+                               "       (subaccnttype_code || '-' || subaccnttype_descrip) "
+                               "FROM subaccnttype "
+                               "ORDER BY subaccnttype_code;");
+
+  QString qrySource = QString("SELECT DISTINCT 1 AS id, 'A/P' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 2 AS id, 'A/R' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 3 AS id, 'G/L' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 4 AS id, 'I/M' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 5 AS id, 'P/D' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 6 AS id, 'P/O' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 7 AS id, 'S/O' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 8 AS id, 'S/R' AS source "
+                              "UNION "
+                              "SELECT DISTINCT 9 AS id, 'W/O' AS source;");
+
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -54,12 +93,22 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
 
   _beginningBalance->setPrecision(omfgThis->moneyVal());
 
-  _beginningBalanceLit->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
-  _beginningBalance->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
-  if (_selectedAccount->isChecked() && _showRunningTotal->isChecked())
+  _beginningBalanceLit->setVisible(_showRunningTotal->isChecked());
+  _beginningBalance->setVisible(_showRunningTotal->isChecked());
+  if (_showRunningTotal->isChecked())
     _gltrans->showColumn("running");
   else
     _gltrans->hideColumn("running");
+
+  parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
+  parameterWidget->append(tr("Type"),       "accntType", qryType);
+  parameterWidget->append(tr("Sub Type"),   "subType",   qrySubType);
+  parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
+  parameterWidget->append(tr("Document #"), "docnum",    ParameterWidget::Text);
+  parameterWidget->append(tr("Source"),     "source",    qrySource);
+
+  parameterWidget->applyDefaultFilterSet();
 }
 
 dspGLTransactions::~dspGLTransactions()
@@ -75,44 +124,16 @@ void dspGLTransactions::languageChange()
 enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
-  QVariant param;
-  bool     valid;
 
-  param = pParams.value("accnt_id", &valid);
-  if (valid)
-  {
-    _selectedAccount->setChecked(TRUE);
-    _account->setId(param.toInt());
-  }
+  parameterWidget->setSavedFilters();
 
-  param = pParams.value("startDate", &valid);
-  if (valid)
-    _dates->setStartDate(param.toDate());
+  // Following lines are commented out, since we don't know beforehand
+  // what exact values to set for the filters
+  /*parameterWidget->setDefault("GL Account", -1, true);
+  parameterWidget->setDefault("Start Date", "2010-05-19", true);
+  parameterWidget->setDefault("End Date", "2010-05-24", true);*/
 
-  param = pParams.value("endDate", &valid);
-  if (valid)
-    _dates->setEndDate(param.toDate());
-
-  param = pParams.value("period_id", &valid);
-  if (valid)
-  {
-    q.prepare( "SELECT period_start, period_end "
-               "FROM period "
-               "WHERE (period_id=:period_id);" );
-    q.bindValue(":period_id", param.toInt());
-    q.exec();
-    if (q.first())
-    {
-      _dates->setStartDate(q.value("period_start").toDate());
-      _dates->setEndDate(q.value("period_end").toDate());
-    }
-  }
-
-  if (pParams.inList("run"))
-  {
-    sFillList();
-    return NoError_Run;
-  }
+  sFillList();
 
   return NoError;
 }
@@ -148,17 +169,9 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
 
 bool dspGLTransactions::setParams(ParameterList &params)
 {
-  if(!_dates->allValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date Range"),
-      tr("You must specify a valid date range."));
-    _dates->setFocus();
-    return false;
-  }
+  parameterWidget->appendValue(params);
 
-  //_dates->appendValue(params); -- Commented by U-Haul
-
-  if (_selectedAccount->isChecked())
+/*  if (_selectedAccount->isChecked())
   {
     if (! _account->isValid())
     {
@@ -220,18 +233,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
 
       params.append("beginningBalance", beginning);
     }
-  }
-
-  if (_selectedSource->isChecked())
-    params.append("source", _source->currentText());
-
-  if (_docNumber->text() != "")
-  {
-    params.append("docnum", _docNumber->text().trimmed());
-    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  }
-  _dates->appendValue(params);
+  }*/
 
   return true;
 }
@@ -239,7 +241,6 @@ bool dspGLTransactions::setParams(ParameterList &params)
 void dspGLTransactions::sPrint()
 {
   if (!_metrics->boolean("ManualForwardUpdate") && 
-       _selectedAccount->isChecked() && 
        _showRunningTotal->isChecked())
   {
     if (!forwardUpdate())
@@ -261,7 +262,6 @@ void dspGLTransactions::sPrint()
 void dspGLTransactions::sFillList()
 {
   if (!_metrics->boolean("ManualForwardUpdate") && 
-       _selectedAccount->isChecked() && 
        _showRunningTotal->isChecked())
   {
     if (!forwardUpdate())
@@ -293,8 +293,41 @@ void dspGLTransactions::sFillList()
                    "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                    "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id"
                    "                            AND gltrans_docnumber='Misc.') "
-                   "WHERE ((gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "     LEFT OUTER JOIN subaccnttype ON (subaccnttype_accnt_type = accnt_type) "
+                   "WHERE (("
+				   "<? if exists(\"startDate\") ?>"
+				   "  <? if exists(\"endDate\") ?>"
+				   "    gltrans_date BETWEEN <? value(\"startDate\") ?>"
                    "                         AND <? value(\"endDate\") ?>)"
+                   "  <? else ?>"
+                   "    gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "                         AND endoftime())"
+				   "  <? endif ?>"
+                   "<? else ?>"
+				   "  <? if exists(\"endDate\") ?>"
+				   "    gltrans_date BETWEEN startoftime()"
+                   "                         AND <? value(\"endDate\") ?>)"
+                   "  <? else ?>"
+                   "    gltrans_date BETWEEN startoftime()"
+                   "                         AND endoftime())"
+				   "  <? endif ?>"
+				   "<? endif ?>"
+                   "<? if exists(\"subType\") ?>"
+                   " AND (subaccnttype_id=<? value(\"subType\") ?>)"
+                   "<? endif ?>"
+                   "<? if exists(\"accntType\") ?>"
+                   " AND (accnt_type=(SELECT DISTINCT type"
+                   "                  FROM (SELECT"
+                   "                        CASE WHEN (accnt_type='A') THEN 1"
+                   "                             WHEN (accnt_type='E') THEN 2"
+                   "                             WHEN (accnt_type='L') THEN 3"
+                   "                             WHEN (accnt_type='Q') THEN 4"
+                   "                             WHEN (accnt_type='R') THEN 5"
+                   "                          ELSE 0 END AS id,"
+                   "                        accnt_type AS type"
+                   "                        FROM accnt) AS data"
+                   "                  WHERE id = <? value(\"accntType\") ?>))"
+                   "<? endif ?>"
                    "<? if exists(\"accnt_id\") ?>"
                    " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
                    "<? endif ?>"
@@ -304,7 +337,26 @@ void dspGLTransactions::sFillList()
 											   "<? value(\"docnum\") ?> end ) "
                    "<? endif ?>"
                    "<? if exists(\"source\") ?>"
-                   " AND (gltrans_source=<? value(\"source\") ?>)"
+                   " AND (gltrans_source=(SELECT source"
+                   "                      FROM (SELECT DISTINCT 1 AS id, 'A/P' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 2 AS id, 'A/R' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 3 AS id, 'G/L' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 4 AS id, 'I/M' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 5 AS id, 'P/D' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 6 AS id, 'P/O' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 7 AS id, 'S/O' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 8 AS id, 'S/R' AS source "
+                   "                            UNION "
+                   "                            SELECT DISTINCT 9 AS id, 'W/O' AS source)"
+                   "                      AS data"
+                   "                      WHERE id=<? value(\"source\") ?>)) "
                    "<? endif ?>"
                    ") "
                    "ORDER BY gltrans_created"
@@ -314,9 +366,9 @@ void dspGLTransactions::sFillList()
   if (! setParams(params))
     return;
 
-  _beginningBalanceLit->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
-  _beginningBalance->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
-  if (_selectedAccount->isChecked() && _showRunningTotal->isChecked())
+  _beginningBalanceLit->setVisible(_showRunningTotal->isChecked());
+  _beginningBalance->setVisible(_showRunningTotal->isChecked());
+  if (_showRunningTotal->isChecked())
   {
     _gltrans->showColumn("running");
     qDebug("begbal %f", params.value("beginningBalance").toDouble());
@@ -532,7 +584,7 @@ bool dspGLTransactions::forwardUpdate()
                ";" );
 
   ParameterList params;
-  params.append("accnt_id", _account->id());
+  setParams(params);
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   if (q.first())
