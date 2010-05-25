@@ -43,6 +43,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_docType, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleButtons()));
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
 
+  _source = -1;
   _sourceid = -1;
   _targetid = -1;
   _urlid = -1;
