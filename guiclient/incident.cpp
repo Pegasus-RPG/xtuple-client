@@ -346,13 +346,15 @@ bool incident::save(bool partial)
               "       incdt_status, incdt_assigned_username,"
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
-              "       incdt_ls_id, incdt_aropen_id, incdt_owner_username) "
+              "       incdt_ls_id, incdt_aropen_id, incdt_owner_username,"
+              "       incdt_recurring_incdt_id) "
               "VALUES(:incdt_id, :incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
               "       :incdt_description, :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
-              "       :incdt_ls_id, :incdt_aropen_id, :incdt_owner_username);" );
+              "       :incdt_ls_id, :incdt_aropen_id, :incdt_owner_username,"
+              "       :incdt_recurring_incdt_id);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE incdt"
               "   SET incdt_cntct_id=:incdt_cntct_id,"
@@ -367,7 +369,8 @@ bool incident::save(bool partial)
               "       incdt_incdtseverity_id=:incdt_incdtseverity_id,"
               "       incdt_incdtresolution_id=:incdt_incdtresolution_id,"
               "       incdt_ls_id=:incdt_ls_id,"
-              "       incdt_owner_username=:incdt_owner_username "
+              "       incdt_owner_username=:incdt_owner_username,"
+              "       incdt_recurring_incdt_id=:incdt_recurring_incdt_id"
               " WHERE (incdt_id=:incdt_id); ");
 
   q.bindValue(":incdt_id", _incdtid);
@@ -395,28 +398,14 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_ls_id", _lotserial->id());
   if (_aropenid > 0)
     q.bindValue(":incdt_aropen_id", _aropenid);
+  if (_recurring->isRecurring())
+    q.bindValue(":incdt_recurring_incdt_id", _recurring->parentId());
+
   if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
-  }
-
-  // TODO: does this belong here?
-  if (_recurring->isRecurring())
-  {
-    XSqlQuery recurq;
-    recurq.prepare("UPDATE incdt"
-                   "   SET incdt_recurring_incdt_id=:parentid"
-                   " WHERE incdt_id=:id;");
-    recurq.bindValue(":parentid", _recurring->parentId());
-    recurq.bindValue(":id",       _incdtid);
-    if (! recurq.exec())
-    {
-      rollback.exec();
-      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
-      return false;
-    }
   }
 
   QString errmsg;

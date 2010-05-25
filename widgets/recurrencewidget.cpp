@@ -19,7 +19,7 @@
 
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 /**
   \class RecurrenceWidget
@@ -31,7 +31,7 @@
   required.
   Two basic values describe a recurrence:
   <UL>
-  <LI>The period is essentially the time unit of measure (hour, day, month).
+  <LI>The period is the time unit of measure (hour, day, month).
   </LI>
   <LI>The frequency is the number of periods between recurrences.</LI>
   </UL>
@@ -131,10 +131,7 @@
   column.
   
   There can be a function to delete records of this type as well. If there is
-  one, it must accept a single integer id of the record to delete. If there
-  isn't a delete function, set the recurtype_delfunc to NULL and
-  existing records will be deleted when necessary
-  by building an SQL DELETE statement.
+  one, it must accept a single integer id of the record to delete.
   
   Add a row to the recurtype table to
   describe how the recurrence stored procedures interact with the
@@ -147,6 +144,10 @@
              'invchead_invcdate', NULL,
              'copyinvoice', '{integer,date}', 'deleteinvoice');
   \endcode
+
+  If there isn't a delete function, set the recurtype_delfunc to
+  NULL.  Existing records will be deleted when necessary with an
+  SQL DELETE statement.
 
   The DELETE trigger on the table should clean up the recurrence information:
   \code
@@ -607,7 +608,7 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
   {
     recurq.prepare("DELETE FROM recur"
                    " WHERE ((recur_parent_id=:recur_parent_id)"
-                   "    AND (recur_parent_type=:recur_parent_type));");
+                   "    AND (UPPER(recur_parent_type)=UPPER(:recur_parent_type)));");
     recurq.bindValue(":recur_parent_id",   _parentId);
     recurq.bindValue(":recur_parent_type", _parentType);
     recurq.exec();
