@@ -100,6 +100,9 @@ SELECT gltrans_id,
        gltrans_username AS f_username,
        gltrans_sequence
   FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id)
+&lt;? if exists("subType") ?>
+       JOIN subaccnttype ON (subaccnttype_code = accnt_subaccnttype_code)
+&lt;? endif ?>
        LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND gltrans_docnumber='Misc.')
  WHERE ((gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("accnt_id") ?>
@@ -110,6 +113,12 @@ SELECT gltrans_id,
 &lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (gltrans_source=&lt;? value("source") ?>)
+&lt;? endif ?>
+&lt;? if exists("subType") ?>
+   AND (subaccnttype_id=&lt;? value("subType") ?>)
+&lt;? endif ?>
+&lt;? if exists("accntType") ?>
+   AND (accnt_type=&lt;? value("accntType") ?>)
 &lt;? endif ?>
        )
 ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? endif ?>,
