@@ -23,25 +23,40 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public VirtualClusterLineEdit
     Q_PROPERTY(ProjectType projectType READ type WRITE setType )
     
     public:
-      enum ProjectType {
+      enum ProjectType
+      {
         Undefined,
         SalesOrder,
         WorkOrder,
         PurchaseOrder,
       };
-      
+
+      enum ProjectStatus
+      {
+        AnyStatus = 0x00,
+        Concept  = 0x01, InProcess = 0x02, Complete = 0x04
+      };
+      Q_DECLARE_FLAGS(ProjectStatuses, ProjectStatus)
+       
       ProjectLineEdit(QWidget*, const char* = 0);
       ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, const char *pName);
-       
-      virtual enum ProjectType type() const { return _type;     }
+
+      Q_INVOKABLE virtual enum ProjectType type() const { return _type;     }
+      Q_INVOKABLE virtual ProjectStatuses allowedStatuses() const { return _allowedStatuses; }
       
     public slots:
+      virtual void setAllowedStatuses(const ProjectStatuses);
       virtual void setType(enum ProjectType ptype);
+
+    protected:
+      ProjectStatuses  _allowedStatuses;
       
     private:
       enum ProjectType _type;
+      QString _statusClause;
 
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(ProjectLineEdit::ProjectStatuses)
 
 class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 {
@@ -53,10 +68,13 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
     
     public:
       ProjectCluster(QWidget*, const char* = 0);
-      
-      enum ProjectLineEdit::ProjectType type();
+
+      Q_INVOKABLE virtual ProjectLineEdit::ProjectStatuses allowedStatuses() const;
+      Q_INVOKABLE enum ProjectLineEdit::ProjectType type();
       
     public slots:
+      virtual void setAllowedStatuses(const ProjectLineEdit::ProjectStatuses);
+      virtual void setAllowedStatuses(const int);
       virtual void setType(enum ProjectLineEdit::ProjectType ptype);
 
 };

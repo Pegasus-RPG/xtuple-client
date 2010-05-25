@@ -17,14 +17,29 @@ ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
     _name->setVisible(true);
 }
 
-ProjectLineEdit::ProjectType ProjectCluster::type()
-{
-  return (static_cast<ProjectLineEdit*>(_number))->type();
-}
-
 void ProjectCluster::setType(ProjectLineEdit::ProjectType ptype)
 {
   return (static_cast<ProjectLineEdit*>(_number))->setType(ptype);
+}
+
+ProjectLineEdit::ProjectStatuses ProjectCluster::allowedStatuses() const
+{
+  return ((ProjectLineEdit*)_number)->allowedStatuses();
+}
+
+void ProjectCluster::setAllowedStatuses(const ProjectLineEdit::ProjectStatuses p)
+{
+  ((ProjectLineEdit*)_number)->setAllowedStatuses(p);
+}
+
+void ProjectCluster::setAllowedStatuses(const int p)
+{
+  ((ProjectLineEdit*)_number)->setAllowedStatuses((ProjectLineEdit::ProjectStatuses)p);
+}
+
+ProjectLineEdit::ProjectType ProjectCluster::type()
+{
+  return (static_cast<ProjectLineEdit*>(_number))->type();
 }
 
 ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
@@ -60,4 +75,26 @@ void ProjectLineEdit::setType(ProjectType ptype)
   VirtualClusterLineEdit::setExtraClause( "(" + clauses.join(" OR ") + ")");
 
   _type = ptype;
+}
+
+void ProjectLineEdit::setAllowedStatuses(const ProjectLineEdit::ProjectStatuses p)
+{
+  if (p && (p != Concept + InProcess + Complete))
+  {
+    QStringList statusList;
+
+    if (p & Concept)	statusList << "'P'";
+    if (p & InProcess)	statusList << "'O'";
+    if (p & Complete)	statusList << "'C'";
+
+    _statusClause = "(prj_status IN (" +
+                    statusList.join(", ") +
+                    "))";
+  }
+  else
+    _statusClause = "";
+
+  VirtualClusterLineEdit::setExtraClause(_statusClause);
+
+  _allowedStatuses = p;
 }
