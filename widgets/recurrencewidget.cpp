@@ -253,17 +253,22 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
 
   setMaxVisible(false);
 
-  XSqlQuery eotq("SELECT endOfTime() AS eot;");
-  if (eotq.first())
+  if (_x_preferences)
   {
-    _eot = QDateTime(eotq.value("eot").toDate(), QTime(23, 59, 59, 999));
-    _dates->setEndNull(tr("Forever"), _eot.date(), true);
+    XSqlQuery eotq("SELECT endOfTime() AS eot;");
+    if (eotq.first())
+    {
+      _eot = QDateTime(eotq.value("eot").toDate(), QTime(23, 59, 59, 999));
+      _dates->setEndNull(tr("Forever"), _eot.date(), true);
+    }
+    else
+    {
+      qWarning("RecurrenceWidget could not get endOfTime()");
+      _dates->setEndNull(tr("Today"), QDate::currentDate(), true);
+    }
   }
   else
-  {
-    qWarning("RecurrenceWidget could not get endOfTime()");
-    _dates->setEndNull(tr("Today"), QDate::currentDate(), true);
-  }
+    _eot = QDateTime(QDate(2100,12,31), QTime(23, 59, 59, 999));
 
   clear();
 }
@@ -423,7 +428,7 @@ bool RecurrenceWidget::maxVisible() const
 
 bool RecurrenceWidget::modified() const
 {
-  //if (DEBUG)
+  if (DEBUG)
     qDebug() << "recurring:"     << isRecurring()  << _prevRecurring     << "\n"
              << "period:"        << period()       << _prevPeriod        << "\n"
              << "frequency:"     << frequency()    << _prevFrequency     << "\n"
@@ -740,7 +745,7 @@ void RecurrenceWidget::setEndDate(QDate p)
 
 void RecurrenceWidget::setEndDateTime(QDateTime p)
 {
-  //if (DEBUG)
+  if (DEBUG)
     qDebug("setEndDateTime(%s) entered, valid = %d",
            qPrintable(p.toString()), p.isValid());
   if (p.isValid())
