@@ -116,13 +116,41 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 
   _parameterWidget->setSavedFilters();
 
-  // Following lines are commented out, since we don't know beforehand
-  // what exact values to set for the filters
-  /*parameterWidget->setDefault("GL Account", -1, true);
-  parameterWidget->setDefault("Start Date", "2010-05-19", true);
-  parameterWidget->setDefault("End Date", "2010-05-24", true);*/
+  QVariant param;
+  bool     valid;
 
-  sFillList();
+  param = pParams.value("accnt_id", &valid);
+  if (valid)
+    _parameterWidget->setDefault("GL Account", param.toInt(), true);
+
+  param = pParams.value("startDate", &valid);
+  if (valid)
+    _parameterWidget->setDefault("Start Date", param.toDate(), true);
+
+  param = pParams.value("endDate", &valid);
+  if (valid)
+    _parameterWidget->setDefault("End Date", param.toDate(), true);
+
+  param = pParams.value("period_id", &valid);
+  if (valid)
+  {
+    q.prepare( "SELECT period_start, period_end "
+               "FROM period "
+               "WHERE (period_id=:period_id);" );
+    q.bindValue(":period_id", param.toInt());
+    q.exec();
+    if (q.first())
+    {
+      _parameterWidget->setDefault("Start Date", q.value("period_start").toDate(), true);
+      _parameterWidget->setDefault("End Date", q.value("period_end").toDate(), true);
+    }
+  }
+
+  if (pParams.inList("run"))
+  {
+    sFillList();
+    return NoError_Run;
+  }
 
   return NoError;
 }
