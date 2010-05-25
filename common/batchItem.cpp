@@ -89,34 +89,30 @@ void batchItem::sSave()
 {
   if (_mode == cReschedule)
   {
+    RecurrenceWidget::RecurrenceChangePolicy cp = _recur->getChangePolicy();
+    if (cp == RecurrenceWidget::NoPolicy)
+      return;
+
+    if (_recur->isRecurring() && _recur->parentId() < 0)
+      _recur->setParent(_batchid, _recur->parentType());
+
     XSqlQuery beginq("BEGIN;");
     XSqlQuery rollbackq;
     rollbackq.prepare("ROLLBACK;");
 
     XSqlQuery schedq(_db);
-    schedq.prepare("SELECT xtbatch.rescheduleBatchItem(:batchid,"
-                   "                           CAST(:date AS DATE) +"
-                   "                           CAST(:time AS TIME),"
-                   "                           'N') AS result;");
-    schedq.bindValue(":batchid",  _batchid);
+    schedq.prepare("UPDATE xtbatch.batch"
+                   "   SET batch_scheduled=CAST(:date AS DATE) + CAST(:time AS TIME),"
+                   "       batch_started=NULL, batch_completed=NULL,"
+                   "       batch_recurring_batch_id=:parentid"
+                   " WHERE (batch_id=:batchid);");
     schedq.bindValue(":date",     _scheduledDate->date());
     schedq.bindValue(":time",     _scheduledTime->time());
+    if (_recur->isRecurring())
+      schedq.bindValue(":parentid", _recur->parentId());
+    schedq.bindValue(":batchid",  _batchid);
     schedq.exec();
-    if (schedq.first())
-    {
-      int result = schedq.value("result").toInt();
-      if (result < 0)
-      {
-        rollbackq.exec();
-        QMessageBox::critical(this,
-                              tr("Error Rescheduling Batch Item at %1::%2")
-                                .arg(__FILE__, __LINE__),
-                              storedProcErrorLookup("rescheduleBatchItem",
-                                                    result));
-        return;
-      }
-    }
-    else if (schedq.lastError().type() != QSqlError::NoError)
+    if (schedq.lastError().type() != QSqlError::NoError)
     {
       rollbackq.exec();
       QMessageBox::critical(this,
@@ -126,18 +122,8 @@ void batchItem::sSave()
       return;
     }
 
-    if (_recur->isRecurring())
-    {
-      XSqlQuery recurq;
-      recurq.prepare("UPDATE xtbatch.batch"
-                     "   SET batch_recurring_batch_id=:parentid"
-                     " WHERE (batch_id=:id);");
-      recurq.bindValue(":parentid", _recur->parentId());
-      recurq.bindValue(":id",       _batchid);
-    }
-
     QString errmsg;
-    if (! _recur->save(true, RecurrenceWidget::ChangeFuture, &errmsg))
+    if (! _recur->save(true, cp, &errmsg))
     {
       rollbackq.exec();
       QMessageBox::critical(this, "Error Saving Recurrence", errmsg);
@@ -183,7 +169,10 @@ void batchItem::populate()
     _completedDate->setDate(batch.value("completed_date").toDate());
     _completedTime->setTime(batch.value("completed_time").toTime());
 
-    _recur->setParent(batch.value("batch_recurring_batch_id").toInt(),
-                      batch.value("batch_action").toString());
+    if (batch.value("batch_recurring_batch_id").isNull())
+      _recur->setParent(-1, batch.value("batch_action").toString());
+    else
+      _recur->setParent(batch.value("batch_recurring_batch_id").toInt(),
+                        batch.value("batch_action").toString());
   }
 }
