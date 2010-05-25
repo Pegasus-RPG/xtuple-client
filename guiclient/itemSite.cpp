@@ -1477,7 +1477,7 @@ void itemSite::sFillRestricted()
 {
   int locationid = _restricted->id();
   q.prepare("SELECT location_id, COALESCE(locitem_id, -1),"
-            "       location_name, firstLine(location_descrip) AS location_descrip,"
+            "       formatLocationName(location_id) AS location_name, firstLine(location_descrip) AS location_descrip,"
             "       (locitem_id IS NOT NULL) AS allowed"
             "  FROM location LEFT OUTER JOIN locitem"
             "         ON (locitem_location_id=location_id AND locitem_item_id=:item_id)"
