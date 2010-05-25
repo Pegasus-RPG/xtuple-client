@@ -67,7 +67,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
   public slots:
     virtual void clear();
     virtual bool save(bool intxn, RecurrenceChangePolicy cp, QString *msg = 0);
-    virtual void set(bool recurring = false, int frequency = 1, QString period = QString("W"), QDate startDate = QDate::currentDate(), QDate endDate = QDate(), int max = 10);
+    virtual void set(bool recurring = false, int frequency = 1, QString period = QString("W"), QDate startDate = QDate::currentDate(), QDate endDate = QDate(), int max = 1);
     virtual void set(bool recurring, int frequency, QString period, QDateTime startDateTime, QDateTime endDateTime, int max);
     virtual void setEndDate(QDate p);
     virtual void setEndDateTime(QDateTime p);
@@ -91,7 +91,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     virtual void languageChange();
 
   protected:
-   QDate            _eot;
+   QDateTime        _eot;
    int              _id;
    int              _parentId;
    QString          _parentType;
