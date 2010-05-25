@@ -944,7 +944,6 @@ void ParameterWidget::save()
   QString username;
   QString query;
   QVariant tempVar;
-  QDate variantDate;
   QDate today = QDate::currentDate();
   int filter_id;
 
@@ -962,6 +961,7 @@ void ParameterWidget::save()
 
     if ( tempVar.canConvert(QVariant::String) )
     {
+      QDate variantDate;
       if ( tempVar.canConvert<QDate>() )
         variantDate = tempVar.toDate();
 
@@ -970,9 +970,8 @@ void ParameterWidget::save()
         variantString = QString().setNum(today.daysTo(variantDate));
       }
       else
-      {
         variantString = tempVar.toString();
-      }
+
       filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
     }
     else if (tempVar.canConvert(QVariant::StringList))
