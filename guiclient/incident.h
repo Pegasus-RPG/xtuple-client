@@ -45,11 +45,15 @@ public slots:
     virtual void sNewTodoItem();
     virtual void sPopulateTodoMenu(QMenu*);
     virtual void sSave();
-	virtual void sPrint();
+    virtual void sPrint();
     virtual void sViewTodoItem();
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
+    virtual void sDeleteCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sFillCharacteristicsList();
+    virtual void sNewCharacteristic();
 
 signals:
     void populated();

@@ -19,7 +19,7 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
@@ -75,11 +75,11 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
       _contacts->setEnabled(FALSE);
       _opportunity->setEnabled(FALSE);
       _employees->setEnabled(FALSE);
+      _incidents->setEnabled(false);
 
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 
@@ -99,7 +99,8 @@ void characteristic::sSave()
   if (! (_items->isChecked()       || _customers->isChecked() ||
 	 _lotSerial->isChecked()   || _addresses->isChecked() ||
 	 _crmaccounts->isChecked() || _contacts->isChecked()  ||
-	 _opportunity->isChecked() || _employees->isChecked() ))
+         _opportunity->isChecked() || _employees->isChecked() ||
+         _incidents->isChecked()))
   {
     QMessageBox::critical(this, tr("Apply Characteristic"),
 			  tr("<p>You must apply this Characteristic to at "
@@ -124,12 +125,14 @@ void characteristic::sSave()
                "  char_contacts, char_crmaccounts, char_addresses, "
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
+               "  char_incidents, "
                "  char_notes, char_mask, char_validator ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
                "  :char_contacts, :char_crmaccounts, :char_addresses, "
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
+               "  :char_incidents, "
                "  :char_notes, :char_mask, :char_validator );" );
   }
   else if (_mode == cEdit)
@@ -144,6 +147,7 @@ void characteristic::sSave()
                "    char_opportunity=:char_opportunity,"
                "    char_lotserial=:char_lotserial,"
                "    char_employees=:char_employees,"
+               "    char_incidents=:char_incidents,"
                "    char_notes=:char_notes,"
                "    char_mask=:char_mask,"
                "    char_validator=:char_validator "
@@ -161,6 +165,7 @@ void characteristic::sSave()
   q.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
   q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
+  q.bindValue(":char_incidents",   QVariant(_incidents->isChecked()));
   q.bindValue(":char_notes",       _description->toPlainText().trimmed());
   if (_mask->currentText().trimmed().size() > 0)
     q.bindValue(":char_mask",        _mask->currentText());
@@ -215,6 +220,7 @@ void characteristic::populate()
     _lotSerial->setChecked(q.value("char_lotserial").toBool());
     _opportunity->setChecked(q.value("char_opportunity").toBool());
     _employees->setChecked(q.value("char_employees").toBool());
+    _incidents->setChecked(q.value("char_incidents").toBool());
     _description->setText(q.value("char_notes").toString());
     _mask->setText(q.value("char_mask").toString());
     _validator->setText(q.value("char_validator").toString());

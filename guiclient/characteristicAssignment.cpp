@@ -128,6 +128,14 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     handleTargetType();
   }
 
+  param = pParams.value("incdt_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "INCDT";
+    handleTargetType();
+  }
+
 
 
   param = pParams.value("charass_id", &valid);
@@ -319,6 +327,11 @@ void characteristicAssignment::handleTargetType()
   {
     setWindowTitle(tr("Employee Characteristic"));
     boolColumn = "char_employees";
+  }
+  else if (_targetType == "INCDT")
+  {
+    setWindowTitle(tr("Incident Characteristic"));
+    boolColumn = "char_incidents";
   }
   _char->populate(QString("SELECT char_id, CASE WHEN (char_notes IS NULL) THEN char_name "
                           "                     ELSE (char_name || ' - ' || firstLine(char_notes)) END "
