@@ -350,7 +350,8 @@ void dspGLTransactions::sPrint()
 void dspGLTransactions::sFillList()
 {
   if (!_metrics->boolean("ManualForwardUpdate") && 
-      _showRunningTotal->isChecked())
+      _showRunningTotal->isChecked() &&
+      _showRunningTotal->isEnabled())
   {
     if (!forwardUpdate())
       return;
@@ -361,7 +362,8 @@ void dspGLTransactions::sFillList()
   if (! setParams(params))
     return;
 
-  if (_showRunningTotal->isChecked())
+  if (_showRunningTotal->isChecked() &&
+      _showRunningTotal->isEnabled())
   {
     _gltrans->showColumn("running");
     qDebug("begbal %f", params.value("beginningBalance").toDouble());
