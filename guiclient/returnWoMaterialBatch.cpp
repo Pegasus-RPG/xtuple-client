@@ -27,6 +27,7 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _captive = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
   q.bindValue(":date",  _transDate->date());
 
