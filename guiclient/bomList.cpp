@@ -30,6 +30,7 @@ bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showComponent, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
   _bom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
@@ -121,6 +122,8 @@ void bomList::sFillList( int pItemid, bool pLocal )
   if (!_showInactive->isChecked())
     sql += " AND (item_active)";
 
+  if (_showComponent->isChecked())
+    sql += " AND (bomitem_id is not null)";
   sql += ") "
          "ORDER BY item_number;";
 
