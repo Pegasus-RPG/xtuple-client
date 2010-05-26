@@ -2659,7 +2659,8 @@ void salesOrderItem::populate()
           "          FROM coship"
           "         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
           "       coitem_taxtype_id,"
-          "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale "
+          "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
+          "       cohead_number AS ordnumber "
           "FROM coitem, warehous, itemsite, item, uom, cohead, locale "
           "LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER) "
           "WHERE ( (coitem_itemsite_id=itemsite_id)"
@@ -2694,7 +2695,7 @@ void salesOrderItem::populate()
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
             "       0 AS coship_qty,"
             "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship,"
-            "       locale_qty_scale"
+            "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
             "    LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER), quitem "
             "    LEFT OUTER JOIN (itemsite "
@@ -2731,6 +2732,7 @@ void salesOrderItem::populate()
     // do tax stuff before _qtyOrdered so signal cascade has data to work with
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
     _orderId       = item.value("coitem_order_id").toInt();
+    _orderNumber->setText(item.value("ordnumber").toString());
     _orderQtyCache = item.value("qtyord").toDouble();
     _qtyOrdered->setDouble(_orderQtyCache, item.value("locale_qty_scale").toInt());
     _dateCache     = item.value("coitem_scheddate").toDate();
