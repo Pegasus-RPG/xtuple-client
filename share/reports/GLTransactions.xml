@@ -99,29 +99,38 @@ SELECT gltrans_id,
        formatBoolYN(gltrans_posted) AS f_posted,
        gltrans_username AS f_username,
        gltrans_sequence
-  FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id)
+FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) 
+     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id
+                            AND gltrans_docnumber='Misc.') 
 &lt;? if exists("company_id") ?>
-       JOIN company ON (accnt_company=company_number)
+     JOIN company ON (accnt_company=company_number) 
 &lt;? endif ?>
 &lt;? if exists("prfcntr_id") ?>
-       JOIN prftcntr ON (accnt_profit=prftcntr_number)
+     JOIN prftcntr ON (accnt_profit=prftcntr_number) 
 &lt;? endif ?>
 &lt;? if exists("subaccnt_id") ?>
-       JOIN subaccnt ON (accnt_sub=subaccnt_number)
+     JOIN subaccnt ON (accnt_sub=subaccnt_number) 
 &lt;? endif ?>
 &lt;? if exists("subType") ?>
-       JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code)
+     JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code) 
 &lt;? endif ?>
-       LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND gltrans_docnumber='Misc.')
- WHERE ((gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("accnt_id") ?>
-   AND (gltrans_accnt_id=&lt;? value("accnt_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("docnum") ?>
-   AND (gltrans_docnumber = case when &lt;? value("docnum") ?> = '' then gltrans_docnumber else &lt;? value("docnum") ?> end )
-&lt;? endif ?>
-&lt;? if exists("source") ?>
-   AND (gltrans_source=&lt;? value("source") ?>)
+WHERE (
+&lt;? if exists("startDate") ?>
+  &lt;? if exists("endDate") ?>
+       (gltrans_date BETWEEN &lt;? value("startDate") ?>
+                         AND &lt;? value("endDate") ?>)
+  &lt;? else ?>
+       (gltrans_date BETWEEN &lt;? value("startDate") ?>
+                         AND endoftime())
+  &lt;? endif ?>
+&lt;? else ?>
+  &lt;? if exists("endDate") ?>
+       (gltrans_date BETWEEN startoftime()
+                         AND &lt;? value("endDate") ?>)
+  &lt;? else ?>
+       (gltrans_date BETWEEN startoftime()
+                         AND endoftime())
+  &lt;? endif ?>
 &lt;? endif ?>
 &lt;? if exists("company_id") ?>
    AND (company_id=&lt;? value("company_id") ?>)
@@ -129,8 +138,8 @@ SELECT gltrans_id,
 &lt;? if exists("prfcntr_id") ?>
    AND (prftcntr_id=&lt;? value("prfcntr_id") ?>)
 &lt;? endif ?>
-&lt;? if exists("num_id") ?>
-   AND (accnt_id=&lt;? value("num_id") ?>)
+&lt;? if exists("accnt_number") ?>
+   AND (accnt_number=&lt;? value("accnt_number") ?>)
 &lt;? endif ?>
 &lt;? if exists("subaccnt_id") ?>
    AND (subaccnt_id=&lt;? value("subaccnt_id") ?>)
@@ -139,7 +148,18 @@ SELECT gltrans_id,
    AND (subaccnttype_id=&lt;? value("subType") ?>)
 &lt;? endif ?>
 &lt;? if exists("accntType") ?>
-   AND (accnt_type=&lt;? value("accntType") ?>)
+   AND (accnt_type= &lt;? value("accntType") ?>)
+&lt;? endif ?>
+&lt;? if exists("accnt_id") ?>
+   AND (gltrans_accnt_id=&lt;? value("accnt_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("docnum") ?>
+   AND (gltrans_docnumber = case when &lt;? value("docnum") ?> = '' then 
+ gltrans_docnumber else 
+&lt;? value("docnum") ?> end ) 
+&lt;? endif ?>
+&lt;? if exists("source") ?>
+   AND (gltrans_source=&lt;? value("source") ?>)
 &lt;? endif ?>
        )
 ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? endif ?>,
@@ -843,7 +863,8 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
      <query>detail</query>
      <column>running</column>
     </data>
-    <tracktotal builtin="true" >qty</tracktotal>
+    <format builtin="true">qty</format>
+    <tracktotal/>
    </field>
    <field>
     <rect>
@@ -963,7 +984,8 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
     <query>detail</query>
     <column>credit_amt</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <line>
    <xstart>605</xstart>
@@ -1060,7 +1082,8 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
     <query>detail</query>
     <column>debit_amt</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <field>
    <rect>
@@ -1080,7 +1103,8 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
     <query>detail</query>
     <column>balance_amt</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>

@@ -66,12 +66,14 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   QString qryAccNum = QString("SELECT min(accnt_id) as num_id,"
                               "       accnt_number AS num_number "
                               "FROM accnt "
-                              "GROUP BY accnt_number;");
+                              "GROUP BY accnt_number "
+                              "ORDER BY accnt_number;");
  
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_parameterWidget, SIGNAL(filterChanged()), this, SLOT(handleTotalCheckbox()));
+  connect(_showRunningTotal, SIGNAL(toggled(bool)), this, SLOT(handleTotalCheckbox()));
 
   _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
   _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
@@ -94,20 +96,20 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   else
     _gltrans->hideColumn("running");
 
-  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
-  _parameterWidget->appendComboBox(tr("Type"), "accnttype_id", qryType);
-  _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
-  if (_metrics->value("GLCompanySize").toInt() > 0)
-    _parameterWidget->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
-  if (_metrics->value("GLProfitSize").toInt() >  0)
-    _parameterWidget->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
-  _parameterWidget->appendComboBox(tr("Account"), "num_id", qryAccNum);
-  if (_metrics->value("GLSubaccountSize").toInt() > 0)
-    _parameterWidget->appendComboBox(tr("Sub"), "subaccnt_id", XComboBox::Subaccounts);
   _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
   _parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
+  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
   _parameterWidget->append(tr("Document #"), "docnum",    ParameterWidget::Text);
   _parameterWidget->appendComboBox(tr("Source"), "source_id",    qrySource);
+  if (_metrics->value("GLCompanySize").toInt() > 0)
+  _parameterWidget->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
+  if (_metrics->value("GLProfitSize").toInt() >  0)
+    _parameterWidget->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
+  _parameterWidget->appendComboBox(tr("Main Segment"), "num_id", qryAccNum);
+  if (_metrics->value("GLSubaccountSize").toInt() > 0)
+    _parameterWidget->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
+  _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
+  _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
 
   _parameterWidget->applyDefaultFilterSet();
 }
@@ -250,10 +252,24 @@ bool dspGLTransactions::setParams(ParameterList &params)
     params.append("source", src);
   }
 
+  param = params.value("num_id", &valid);
+  if (valid)
+  {
+    XSqlQuery num;
+    num.prepare("SELECT accnt_number "
+                "FROM accnt "
+                "WHERE (accnt_id=:accnt_id);");
+    num.bindValue(":accnt_id", params.value("num_id").toInt());
+    num.exec();
+    if (num.first())
+      params.append("accnt_number", num.value("accnt_number").toString());
+  }
+
   param = params.value("accnt_id", &valid);
   if (valid)
   {
-    if (_showRunningTotal->isChecked())
+    if (_showRunningTotal->isChecked() &&
+        _showRunningTotal->isEnabled())
     {
       double beginning = 0;
       QDate  periodStart = params.value("startDate").toDate();
@@ -345,8 +361,6 @@ void dspGLTransactions::sFillList()
   if (! setParams(params))
     return;
 
-  _beginningBalanceLit->setVisible(_showRunningTotal->isChecked());
-  _beginningBalance->setVisible(_showRunningTotal->isChecked());
   if (_showRunningTotal->isChecked())
   {
     _gltrans->showColumn("running");
@@ -585,13 +599,17 @@ bool dspGLTransactions::forwardUpdate()
 
 void dspGLTransactions::handleTotalCheckbox()
 {
-  qDebug("handling");
-  bool valid;
   QVariant param;
   ParameterList params;
   _parameterWidget->appendValue(params);
 
-  param = params.value("accnt_id", &valid);
-  _showRunningTotal->setEnabled(valid);
+  _showRunningTotal->setEnabled(params.inList("accnt_id") &&
+                                !params.inList("source_id") &&
+                                !params.inList("docnum"));
+
+  _beginningBalanceLit->setVisible(_showRunningTotal->isChecked() &&
+                                   _showRunningTotal->isEnabled());
+  _beginningBalance->setVisible(_showRunningTotal->isChecked() &&
+                                _showRunningTotal->isEnabled());
 }
 

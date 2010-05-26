@@ -180,7 +180,11 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="1" column="0" colspan="4">
-         <widget class="XTreeWidget" name="_gltrans"/>
+         <widget class="XTreeWidget" name="_gltrans">
+          <property name="populateLinear">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -235,38 +239,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_showRunningTotal</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_beginningBalance</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>381</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>479</x>
-     <y>138</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_showRunningTotal</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_beginningBalanceLit</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>381</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>468</x>
-     <y>138</y>
     </hint>
    </hints>
   </connection>

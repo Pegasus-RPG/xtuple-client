@@ -34,11 +34,11 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
 	QSqlDatabase db = QSqlDatabase::database();
 
-  _parameterWidget->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
   _parameterWidget->append(tr("Assigned"), "assigned_username", ParameterWidget::User, db.userName());
-  _parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
   _parameterWidget->append(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
   _parameterWidget->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  _parameterWidget->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
   _parameterWidget->append(tr("Start Date Before"), "startStartDate", ParameterWidget::Date);
   _parameterWidget->append(tr("Start Date After"), "startEndDate", ParameterWidget::Date);
   _parameterWidget->append(tr("Due Date Before"), "dueStartDate", ParameterWidget::Date);

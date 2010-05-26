@@ -397,6 +397,12 @@ void initErrorLookupHash()
 			       "it. You must remove these assignments before "
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
+{ "deleteCharacteristic",
+                      -6, TR("The selected Characteristic cannot be deleted "
+                             "because there are Incidents assigned to "
+                             "it. You must remove these assignments before "
+                             "you may delete the selected Characteristic."),
+                                                               0, "" },
 
   { "deleteCheck", -1, TR("Cannot delete this check because either it has not "
                           "been voided, it has already been posted or replaced,"

@@ -182,7 +182,7 @@ void accountNumbers::sBuildList()
     _externalCol++;
   }
 
-  _account->addColumn(tr("Account Number"), 100, Qt::AlignCenter, true, "accnt_number");
+  _account->addColumn(tr("Main Segment"), 100, Qt::AlignCenter, true, "accnt_number");
   _externalCol++;
 
   if (_metrics->value("GLSubaccountSize").toInt() > 0)

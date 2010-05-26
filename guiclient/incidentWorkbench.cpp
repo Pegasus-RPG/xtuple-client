@@ -42,24 +42,24 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
       .arg(tr("Resolved"))
       .arg(tr("Closed"));
 
-  parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
-  parameterWidget->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
-  parameterWidget->append(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
-  parameterWidget->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
-  parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date);
-  parameterWidget->append(tr("End Date"), "endDate", ParameterWidget::Date);
   parameterWidget->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
   parameterWidget->append(tr("Contact"),"cntct_id", ParameterWidget::Contact);
-  parameterWidget->appendComboBox(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
   parameterWidget->append(tr("Category"), "categorylist",
                            ParameterWidget::Multiselect, 0, false,
                            "SELECT incdtcat_id, incdtcat_name"
                            "  FROM incdtcat"
                            " ORDER BY incdtcat_name;");
+  parameterWidget->appendComboBox(tr("Status Above"), "status_above", qryStatus, 4);
   parameterWidget->append(tr("Status"), "statuslist",
                            ParameterWidget::Multiselect, 0, false,
                            qryStatus);
-  parameterWidget->appendComboBox(tr("Status Above"), "status_above", qryStatus, 4);
+  parameterWidget->appendComboBox(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
+  parameterWidget->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
+  parameterWidget->append(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
+  parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget->append(tr("End Date"), "endDate", ParameterWidget::Date);
 
   _closeAct = new QAction(tr("Close"), this);
   _closeAct->setShortcut(QKeySequence::Close);
