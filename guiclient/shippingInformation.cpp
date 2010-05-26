@@ -41,6 +41,11 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight,  true,  "tareweight"  );
   _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight,  true,  "grossweight"  );
 
+  // Issue #11398 - Shipping charge data on shipment goes nowhere and logically can't because multiple
+  // shipments converge on one billing selection.  Hide shipping charges field for now until we can
+  // understand how this should work.
+  _shippingCharges->hide();
+  _shippingChargesLit->hide();
 }
 
 shippingInformation::~shippingInformation()
