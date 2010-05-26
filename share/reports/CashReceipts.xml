@@ -36,10 +36,77 @@
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate;</sql>
  </querysource>
- <querysource loadFromDb="true" >
+ <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>cashReceipts</mqlgroup>
   <mqlname>detail</mqlname>
+ </querysource>
+ <querysource>
+  <name>foot</name>
+  <sql>SELECT formatMoney(SUM(base_applied)) AS f_base_applied_total
+FROM (
+
+-- Posted cash receipts
+SELECT  currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS base_applied
+FROM cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), arapply
+  LEFT OUTER JOIN cashrcptitem ON ((arapply_reftype='CRA')
+                               AND (arapply_ref_id=cashrcptitem_id))
+  LEFT OUTER JOIN cashrcptmisc ON ((arapply_reftype='CRD')
+                               AND (arapply_ref_id=cashrcptmisc_id))
+WHERE ( (arapply_cust_id=cust_id)
+  AND   (arapply_postdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+  AND   (arapply_source_doctype ='K')
+&lt;? if exists("cust_id") ?>
+  AND   (cust_id=&lt;? value("cust_id") ?>)
+&lt;? elseif exists("custtype_id") ?>
+  AND   (cust_custtype_id=&lt;? value("custtype_id") ?>)
+&lt;? elseif exists("custgrp_id") ?>
+  AND   (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)
+&lt;? elseif exists("custtype_pattern") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
+&lt;? endif ?>
+      )
+
+-- Unposted cash receipts
+UNION
+SELECT currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate) AS base_applied
+FROM cashrcpt, cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
+WHERE ( (NOT cashrcpt_posted)
+  AND   (cashrcpt_cust_id=cust_id)
+  AND   (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("cust_id") ?>
+  AND   (cust_id=&lt;? value("cust_id") ?>)
+&lt;? elseif exists("custtype_id") ?>
+  AND   (cust_custtype_id=&lt;? value("custtype_id") ?>)
+&lt;? elseif exists("custgrp_id") ?>
+  AND   (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)
+&lt;? elseif exists("custtype_pattern") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
+&lt;? endif ?>
+      )
+
+-- Cash Advance
+UNION
+SELECT aropen_amount / aropen_curr_rate AS base_applied
+FROM cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), aropen
+  JOIN cashrcptitem ON (aropen_id=cashrcptitem_aropen_id)
+WHERE ( (aropen_cust_id=cust_id)
+  AND   (aropen_doctype IN ('R','C'))
+  AND   (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("cust_id") ?>
+  AND   (cust_id=&lt;? value("cust_id") ?>)
+&lt;? elseif exists("custtype_id") ?>
+  AND   (cust_custtype_id=&lt;? value("custtype_id") ?>)
+&lt;? elseif exists("custgrp_id") ?>
+  AND   (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)
+&lt;? elseif exists("custtype_pattern") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
+&lt;? endif ?>
+      )
+) data
+;
+
+</sql>
  </querysource>
  <rpthead>
   <height>146</height>
@@ -540,7 +607,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -578,7 +645,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -681,26 +748,6 @@
  </pgfoot>
  <rptfoot>
   <height>100</height>
-  <field>
-   <rect>
-    <x>645</x>
-    <y>10</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>base_applied</column>
-   </data>
-   <tracktotal builtin="true" >qty</tracktotal>
-  </field>
   <label>
    <rect>
     <x>535</x>
@@ -717,5 +764,25 @@
    <vcenter/>
    <string>Total Base Amount</string>
   </label>
+  <field>
+   <rect>
+    <x>645</x>
+    <y>10</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>foot</query>
+    <column>f_base_applied_total</column>
+   </data>
+   <format builtin="true">qty</format>
+  </field>
  </rptfoot>
 </report>
