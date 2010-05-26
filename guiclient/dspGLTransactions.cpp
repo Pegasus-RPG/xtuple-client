@@ -63,6 +63,11 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
                               "SELECT 8 AS id, 'S/R' AS source  UNION "
                               "SELECT 9 AS id, 'W/O' AS source;");
 
+  QString qryAccNum = QString("SELECT min(accnt_id) as num_id,"
+                              "       accnt_number AS num_number "
+                              "FROM accnt "
+                              "GROUP BY accnt_number;");
+ 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -92,6 +97,13 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
   _parameterWidget->appendComboBox(tr("Type"), "accnttype_id", qryType);
   _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
+  if (_metrics->value("GLCompanySize").toInt() > 0)
+    _parameterWidget->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
+  if (_metrics->value("GLProfitSize").toInt() >  0)
+    _parameterWidget->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
+  _parameterWidget->appendComboBox(tr("Account"), "num_id", qryAccNum);
+  if (_metrics->value("GLSubaccountSize").toInt() > 0)
+    _parameterWidget->appendComboBox(tr("Sub"), "subaccnt_id", XComboBox::Subaccounts);
   _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
   _parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
   _parameterWidget->append(tr("Document #"), "docnum",    ParameterWidget::Text);

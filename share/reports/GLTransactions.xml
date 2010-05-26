@@ -2,7 +2,7 @@
 <report>
  <title>G/L Transactions</title>
  <name>GLTransactions</name>
- <description></description>
+ <description>detail query modified to accomodate "Company", "Profit Center", "Account", "Sub", "Type" &amp; "Sub-Type" filters.</description>
  <size>Letter</size>
  <landscape/>
  <topmargin>50</topmargin>
@@ -100,8 +100,17 @@ SELECT gltrans_id,
        gltrans_username AS f_username,
        gltrans_sequence
   FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id)
+&lt;? if exists("company_id") ?>
+       JOIN company ON (accnt_company=company_number)
+&lt;? endif ?>
+&lt;? if exists("prfcntr_id") ?>
+       JOIN prftcntr ON (accnt_profit=prftcntr_number)
+&lt;? endif ?>
+&lt;? if exists("subaccnt_id") ?>
+       JOIN subaccnt ON (accnt_sub=subaccnt_number)
+&lt;? endif ?>
 &lt;? if exists("subType") ?>
-       JOIN subaccnttype ON (subaccnttype_code = accnt_subaccnttype_code)
+       JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code)
 &lt;? endif ?>
        LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND gltrans_docnumber='Misc.')
  WHERE ((gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
@@ -113,6 +122,18 @@ SELECT gltrans_id,
 &lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (gltrans_source=&lt;? value("source") ?>)
+&lt;? endif ?>
+&lt;? if exists("company_id") ?>
+   AND (company_id=&lt;? value("company_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("prfcntr_id") ?>
+   AND (prftcntr_id=&lt;? value("prfcntr_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("num_id") ?>
+   AND (accnt_id=&lt;? value("num_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("subaccnt_id") ?>
+   AND (subaccnt_id=&lt;? value("subaccnt_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("subType") ?>
    AND (subaccnttype_id=&lt;? value("subType") ?>)
