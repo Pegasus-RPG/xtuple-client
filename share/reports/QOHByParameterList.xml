@@ -50,7 +50,7 @@
        &lt;? elseif exists("itemgrp") ?>
          text('All Item Groups')
        &lt;? else ?>
-         text('')
+         text('All')
        &lt;? endif ?>
        AS value,
        &lt;? if exists("classcode") ?>
