@@ -584,6 +584,8 @@ void enterPoReceipt::sBcFind()
     return;
   }
 
+  double qtytoreceive = 0;
+
   // find item that matches barcode and is a line item in this order.
   // then call enterPoItemReceipt passing in params to preset and
   // run the receive button.
@@ -592,7 +594,9 @@ void enterPoReceipt::sBcFind()
   findbc.append("bc", _bc->text());
   MetaSQLQuery fillm = mqlLoad("receipt", "detail");
   q = fillm.toQuery(findbc);
-  if(!q.first())
+  if(q.first())
+    qtytoreceive = q.value("qty_toreceive").toDouble();
+  else
   {
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -609,7 +613,7 @@ void enterPoReceipt::sBcFind()
   params.append("lineitem_id", q.value("orderitem_id").toInt());
   params.append("order_type", _order->type());
   params.append("mode", "new");
-  params.append("qty", _bcQty->toDouble());
+  params.append("qty", _bcQty->toDouble() + qtytoreceive);
   params.append("receive");
   params.append("snooze");
 
@@ -619,9 +623,14 @@ void enterPoReceipt::sBcFind()
 	
   sFillList();
   if (_autoPost->isChecked())
+  {
+    int id = _order->id();
+    QString type = _order->type();
     sPost();
+    _order->setId(id, type);
+  }
   _bc->clear();
-  _bcQty->clear();
+  _bcQty->setText("1");
 }
 
 void enterPoReceipt::sCatchPoheadid(int pPoheadid)
