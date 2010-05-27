@@ -1349,12 +1349,7 @@ void returnAuthorization::sTaxDetail()
 void returnAuthorization::sCalculateTax()
 {  
   XSqlQuery taxq;
-  taxq.prepare( "SELECT SUM(tax) AS tax "
-                "FROM ("
-                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
-                "FROM tax "
-                " JOIN calculateTaxDetailSummary('RA', :rahead_id, 'T') ON (taxdetail_tax_id=tax_id)"
-	        "GROUP BY tax_id) AS data;" );
+  taxq.prepare( "SELECT calcRATaxAmt(:rahead_id) AS tax;" );
 
   taxq.bindValue(":rahead_id", _raheadid);
   taxq.exec();
