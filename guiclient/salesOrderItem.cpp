@@ -770,7 +770,7 @@ void salesOrderItem::sSave()
 
     if (_createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
     {
-      if (_shiptoid < 1)
+      if ( _dropShip->isChecked() && _shiptoid < 1)
       {
         QMessageBox::critical(this, tr("Cannot Save Sales Order Item"),
                               tr("<p>You must enter a valid Ship-To # before saving this Sales Order Item."));
