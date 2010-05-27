@@ -404,6 +404,14 @@ void docAttach::sSave()
     newDocass.bindValue(":docass_target_type", _targettype);
   }
 
+  if (_targettype == Documents::_documentMap[_source].ident &&
+      _targetid == _sourceid)
+  {
+    QMessageBox::critical(this,tr("Invalid Selection"),
+                          tr("You may not attach a document to itself."));
+    return;
+  }
+
   newDocass.bindValue(":docass_source_type", Documents::_documentMap[_source].ident);
   newDocass.bindValue(":docass_source_id", _sourceid);
   newDocass.bindValue(":docass_target_id", _targetid);
