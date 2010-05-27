@@ -384,6 +384,7 @@ void workOrder::sCreate()
 {
   if (_woNumber->text().length() &&
       _item->isValid() &&
+      _warehouse->id() != -1 &&
       _qty->text().length() &&
       _dueDate->isValid())
   {
@@ -402,8 +403,22 @@ void workOrder::sCreate()
              " Site before creating this Work Order.") );
       return;
     }
-    else if (q.first())
+    else
     {
+      qDebug("cost " + q.value("itemsite_costmethod").toString());
+      if (q.value("itemsite_costmethod").toString() == "J")
+      {
+        QMessageBox::critical(this,tr("Invalid Item"),
+                              tr("Item %1 is set to Job Costing on Item Site %2.  "
+                                 "Work Orders for Job Cost Item Sites may only be created "
+                                 "by Sales Orders.")
+                              .arg(_item->number())
+                              .arg(_warehouse->currentText()));
+        _item->setId(-1);
+        _item->setFocus();
+        return;
+      }
+
       if (q.value("itemsite_costmethod").toString() != "J" &&
           q.value("itemsite_costmethod").toString() != "A")
         _jobCosGroup->setEnabled(false);
@@ -766,7 +781,7 @@ void workOrder::sClose()
 	  {
 		q.prepare("SELECT deleteWo(:wo_id,true);"
 				  "SELECT releaseWoNumber(:wonumber);");
-		q.bindValue(":woNumber", _wonumber);
+                q.bindValue(":woNumber", _wonumber);
 		q.bindValue(":wo_id", _woid);
 		q.exec();
 	    
@@ -1947,7 +1962,7 @@ void workOrder::populate()
 
     _save->setEnabled(true);
   }
-  else
+  else if (wo.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A System Error occurred at %1::%2, W/O ID %3.")
                       .arg(__FILE__)
