@@ -76,8 +76,8 @@ void copyTransferOrder::populate()
 	      "       item_number,"
 	      "       (item_descrip1 || ' ' || item_descrip2) AS description,"
 	      "       'qty' AS toitem_qty_ordered_xtnumericrole "
-	      "FROM item, toitem "
-	      "WHERE ((toitem_item_id=item_id)"
+	      "FROM toitem JOIN item ON (item_id=toitem_item_id) "
+	      "WHERE ((toitem_status <> 'X')"
 	      "  AND  (toitem_tohead_id=:tohead_id)) "
 	      "ORDER BY toitem_linenumber;" );
     q.bindValue(":tohead_id", _to->id());
