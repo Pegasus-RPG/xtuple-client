@@ -231,7 +231,8 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_location_comments, itemsite_notes,"
                "  itemsite_abcclass, itemsite_freeze, itemsite_datelastused,"
                "  itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence, "
-               "  itemsite_autoabcclass, itemsite_planning_type, itemsite_costmethod, itemsite_cosdefault ) "
+               "  itemsite_autoabcclass, itemsite_planning_type, itemsite_costmethod, "
+               "  itemsite_cosdefault, itemsite_lsseq_id ) "
                "SELECT item_id,"
                "       :warehous_id, 0.0, 0.0,"
                "       CASE WHEN item_type IN ('B', 'F', 'R', 'L', 'K') THEN FALSE "
@@ -275,9 +276,9 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_abcclass, FALSE, startOfTime(),"
                "       :itemsite_ordergroup, :itemsite_ordergroup_first, :itemsite_mps_timefence, "
                "       FALSE, "
-			   "       CASE WHEN(item_type='L') THEN 'M' ELSE :itemsite_planning_type END, "
-                           "       CASE WHEN(item_type='R') THEN 'N' ELSE :itemsite_costmethod END, "
-			   "       :itemsite_cosdefault "
+               "       CASE WHEN(item_type='L') THEN 'M' ELSE :itemsite_planning_type END, "
+               "       CASE WHEN(item_type='R') THEN 'N' ELSE :itemsite_costmethod END, "
+               "       :itemsite_cosdefault,  :itemsite_lsseq_id "
                "FROM item "
                "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
                "                          FROM itemsite"
@@ -368,6 +369,9 @@ void createItemSitesByClassCode::sSave()
     else 
       q.bindValue(":itemsite_cosdefault", QString("P"));
   }
+  
+  if (_sequence->isValid())
+    q.bindValue(":itemsite_lsseq_id", _sequence->id());
   
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
