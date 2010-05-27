@@ -165,6 +165,8 @@ void scriptEditor::setMode(const int pmode)
       _source->setReadOnly(TRUE);
       _enabled->setEnabled(FALSE);
       _save->hide();
+      _import->setEnabled(false);
+      _package->setEnabled(false);
       _close->setFocus();
   };
 
