@@ -53,6 +53,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _unitcost = 0;
   _origsoid = -1;
   _costmethod = ""; 
+  _coitemitemsiteid = -1;
 
   connect(_discountFromSale,     SIGNAL(lostFocus()),                    this, SLOT(sCalculateFromDiscount()));
   connect(_saleDiscountFromSale, SIGNAL(lostFocus()),                    this, SLOT(sCalculateSaleFromDiscount()));
@@ -423,9 +424,9 @@ bool returnAuthorizationItem::sSave()
          coitemsite.prepare("SELECT itemsite_id "
                         "FROM itemsite "
                         "WHERE ((itemsite_item_id=:item_id)"
-                        " AND (itemsite_warehous_id=:warehouse_id) "
+                        " AND (itemsite_warehous_id=:warehous_id) "
                         " AND (itemsite_active) "
-                        " AND (itmesite_sold));");
+                        " AND (itemsite_sold));");
          coitemsite.bindValue(":item_id", _item->id());
          coitemsite.bindValue(":warehous_id",_shipWhs->id());
          coitemsite.exec();
