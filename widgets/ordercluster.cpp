@@ -279,80 +279,51 @@ void OrderLineEdit::sNewId(const int p)
 
 void OrderLineEdit::sParse()
 {
-  bool oldvalid = _valid;
-  if (! _parsed)
-  {
-    QString stripped = text().trimmed().toUpper();
-    if (stripped.length() == 0)
+  if (DEBUG)
+    qDebug("VCLE %s::sParse() entered with _parsed %d and text() %s",
+           qPrintable(objectName()), _parsed, qPrintable(text()));
+
+    if (! _parsed)
     {
-      _parsed = true;
-      setId(-1);
-    }
-    else
-    {
-      QString oldExtraClause = _extraClause;
-
-      XSqlQuery countQ;
-      countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE (TRUE) " +
-		      _numClause +
-		      (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		      QString(";"));
-      countQ.bindValue(":number", text());
-      countQ.exec();
-      if (countQ.first())
+      QString stripped = text().trimmed().toUpper();
+      if (stripped.length() == 0)
       {
-	int result = countQ.value("count").toInt();
-	if (result <= 0)
-	{
-	  _id = -1;
-	  XLineEdit::clear();
-	}
-	else if (result == 1)
-	{
-	  XSqlQuery numQ;
-	  numQ.prepare(_query + _numClause +
-		      (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		      QString(";"));
-	  numQ.bindValue(":number", text());
-	  numQ.exec();
-	  if (numQ.first())
-	  {
-	    _valid = true;
-	    setId(numQ.value("id").toInt(), numQ.value("name").toString());
-	    _description	= numQ.value("description").toString();
-	    _from		= numQ.value("orderhead_from").toString();
-	    _to		= numQ.value("orderhead_to").toString();
-	  }
-	  else if (numQ.lastError().type() != QSqlError::NoError)
-	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					  .arg(__FILE__)
-					  .arg(__LINE__),
-				  numQ.lastError().databaseText());
-	}
-	else
-	{
-	  _extraClause += "AND (orderhead_number LIKE '" + text() + "%')";
-          sEllipses();
-	  _extraClause += "AND (orderhead_type='" + type() + "')";
-	}
+        _parsed = TRUE;
+        setId(-1);
       }
-      else if (countQ.lastError().type() != QSqlError::NoError)
+      else
       {
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				      .arg(__FILE__)
-				      .arg(__LINE__),
-			      countQ.lastError().databaseText());
+        XSqlQuery numQ;
+        numQ.prepare(_query + _numClause +
+                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                    (_hasActive ? _activeClause : "" ) +
+                    QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
+        numQ.bindValue(":number", "^" + stripped);
+        numQ.exec();
+        if (numQ.first())
+        {
+            _valid = true;
+            setId(numQ.value("id").toInt());
+            _name = (numQ.value("name").toString());
+            _description = numQ.value("description").toString();
+            _from = numQ.value("orderhead_from").toString();
+            _to	= numQ.value("orderhead_to").toString();
+        }
+        else
+        {
+            clear();
+            if (numQ.lastError().type() != QSqlError::NoError)
+                QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                              .arg(__FILE__)
+                                              .arg(__LINE__),
+                        numQ.lastError().databaseText());
+        }
       }
-
-      _extraClause = oldExtraClause;
+      emit valid(_valid);
+      emit parsed();
+      emit numberChanged(text(), _name);
     }
-  }
-
-  _parsed = true;
-  if (_valid != oldvalid)
-    emit valid(_valid);
-  emit parsed();
-  emit numberChanged(text(), _name);
+    _parsed = TRUE;
 }
 
 OrderLineEdit::OrderStatuses OrderLineEdit::allowedStatuses() const
