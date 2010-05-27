@@ -241,6 +241,10 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _save->hide();
 
       _close->setFocus();
+
+      ParameterList params;
+      params.append("mode", "view");
+      _contacts->set(params);
     }
   }
   

@@ -372,6 +372,10 @@ enum SetResponse customer::set(const ParameterList &pParams)
       disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
       connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
 
+      ParameterList params;
+      params.append("mode", "view");
+      _contacts->set(params);
+
       _close->setFocus();
     }
   }

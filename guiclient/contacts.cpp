@@ -88,6 +88,18 @@ enum SetResponse contacts::set(const ParameterList& pParams)
   QVariant param;
   bool	   valid;
   
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "view")
+    {
+      _attach->setDisabled(true);
+      _new->setDisabled(true);
+      disconnect(_contacts, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+      disconnect(_contacts, SIGNAL(valid(bool)), _detach, SLOT(setEnabled(bool)));
+    }
+  }
+
   param = pParams.value("run", &valid);
   if (valid)
     sFillList();
