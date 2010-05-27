@@ -697,6 +697,8 @@ bool RecurrenceWidget::save(bool externaltxn, RecurrenceChangePolicy cp, QString
     }
   }
 
+  if (! externaltxn)
+    XSqlQuery commitq("COMMIT;");
   return true;
 }
 
@@ -817,8 +819,13 @@ bool RecurrenceWidget::setParent(int pid, QString ptype)
   else if (recurq.lastError().type() != QSqlError::NoError)
     QMessageBox::warning(this, tr("Database Error"),
                          recurq.lastError().text());
+  else
+  {
+    clear();
+    _parentId       = pid;
+    _parentType     = ptype;
+  }
 
-  // TODO? clear();
   return false;
 }
 
