@@ -967,11 +967,17 @@ void GUIClient::sTick()
     _tick.singleShot(60000, this, SLOT(sTick()));
   }
   else
+  {
+    // Check to make sure we are not in the middle of an aborted transaction
+    // before we go doing something rash.
+    if(tickle.lastError().databaseText().contains("current transaction is aborted"))
+      return;
     systemError(this, tr("<p>You have been disconnected from the database server.  "
                           "This is usually caused by an interruption in your "
                           "network.  Please exit the application and restart."
                           "<br><pre>%1</pre>" )
                       .arg(tickle.lastError().databaseText()));
+  }
 }
 
 void GUIClient::sNewErrorMessage()
