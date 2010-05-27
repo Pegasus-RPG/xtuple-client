@@ -368,7 +368,7 @@ void todoList::sDelete()
     recurq.prepare(recurstr);
     recurq.bindValue(":id", _todoList->id());
     recurq.exec();
-    if (recurq.first())
+    if (recurq.first() && !recurq.value("max").isNull())
     {
       QMessageBox askdelete(QMessageBox::Question, tr("Delete Recurring Item?"),
                             tr("<p>This is a recurring item. Do you want to "
@@ -391,11 +391,17 @@ void todoList::sDelete()
       systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
       return;
     }
+    else if (QMessageBox::warning(this, tr("Delete List Item?"),
+                                  tr("<p>Are you sure that you want to "
+                                     "completely delete the selected item?"),
+	  		    QMessageBox::Yes | QMessageBox::No,
+			    QMessageBox::No) == QMessageBox::No)
+      return;
   }
   else if (QMessageBox::warning(this, tr("Delete List Item?"),
                                 tr("<p>Are you sure that you want to "
                                    "completely delete the selected item?"),
-			    QMessageBox::Yes | QMessageBox::No,
+	  		    QMessageBox::Yes | QMessageBox::No,
 			    QMessageBox::No) == QMessageBox::No)
     return;
 
