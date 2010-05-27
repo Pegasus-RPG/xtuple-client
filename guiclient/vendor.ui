@@ -965,10 +965,10 @@ to be bound by its terms.</comment>
            <property name="currentIndex">
             <number>1</number>
            </property>
-           <widget class="QWidget" name="page_3">
+           <widget class="QWidget" name="_emptyPage">
             <layout class="QHBoxLayout" name="horizontalLayout"/>
            </widget>
-           <widget class="QWidget" name="page_4">
+           <widget class="QWidget" name="_eftPage">
             <layout class="QGridLayout">
              <item row="0" column="0">
               <widget class="QGroupBox" name="_achGroup">
