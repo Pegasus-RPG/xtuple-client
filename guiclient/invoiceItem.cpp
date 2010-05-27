@@ -211,30 +211,6 @@ void invoiceItem::sSave()
       _salescat->setFocus();
       return;
     }
-
-    if (!_ordered->text().length())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must enter a Quantity Ordered for this Invoice Item before you may save it.") );
-      _salescat->setFocus();
-      return;
-    }
-
-    if (!_billed->text().length())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must enter a Quantity Billed for this Invoice Item before you may save it.") );
-      _salescat->setFocus();
-      return;
-    }
-
-    if (_price->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must enter a Price for this Invoice Item before you may save it.") );
-      _salescat->setFocus();
-      return;
-    }
   }
 
   if (_mode == cNew)
