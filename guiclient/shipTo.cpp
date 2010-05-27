@@ -401,7 +401,7 @@ void shipTo::sPopulateCommission(int pSalesrepid)
     q.bindValue(":salesrep_id", pSalesrepid);
     q.exec();
     if (q.first())
-      _commission->setDouble(q.value("salesrep_commission").toDouble());
+      _commission->setDouble(q.value("salesrep_commission").toDouble() * 100);
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
