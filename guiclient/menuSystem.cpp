@@ -230,7 +230,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "separator",      NULL,                         NULL,                   designMenu, "true",                        NULL, NULL, true },
     { "sys.customCommands",tr("Custom Command&s..."), SLOT(sCustomCommands()),designMenu, "MaintainCustomCommands",      NULL, NULL, true },
     { "separator",      NULL,                         NULL,                   designMenu, "true",                        NULL, NULL, true },
-    { "sys.packages",   tr("&Packages..."),           SLOT(sPackages()),      designMenu, "ViewPackages+#superuser",     NULL, NULL, true },
+    { "sys.packages",   tr("&Packages..."),           SLOT(sPackages()),      designMenu, "ViewPackages",                NULL, NULL, true },
 
   // Utilities
     { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
