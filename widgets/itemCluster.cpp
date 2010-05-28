@@ -728,7 +728,8 @@ void ItemLineEdit::sParse()
       {
         do
         {
-          if (item.value("item_number").toString().startsWith(text().trimmed().toUpper()))
+          if (item.value("item_number").toString().startsWith(text().trimmed().toUpper()) ||
+              item.value("item_upccode").toString().startsWith(text().trimmed().toUpper()))
           {
             setId(item.value("item_id").toInt());
             return;
