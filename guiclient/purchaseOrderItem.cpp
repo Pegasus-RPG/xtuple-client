@@ -818,6 +818,9 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
   
   if (pItemid != -1 && _mode == cNew)
   {
+    // Reset order qty cache
+    _orderQtyCache = -1;
+    
     if(_metrics->boolean("RequireStdCostForPOItem"))
     {
       item.prepare("SELECT stdCost(:item_id) AS result");
