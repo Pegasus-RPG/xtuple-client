@@ -174,15 +174,6 @@ XTreeWidget::~XTreeWidget()
     else
       savedString = "-1,ASC";
       xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
-    savedString = "";
-    for (int i = 0; i < header()->count(); i++)
-    {
-      savedString.append(QString::number(i) + "," + (header()->isSectionHidden(i) ? "off" : "on") + "|");
-    }
-    if (!savedString.isEmpty())
-      _x_preferences->set(_settingsName + "/columnsShown", savedString);
-    else
-      _x_preferences->remove(_settingsName + "/columnsShown");
   }
 
   for (int i = 0; i < _roles.size(); i++)
@@ -774,7 +765,10 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
     header()->setResizeMode(column, QHeaderView::Interactive);
     _stretch.append(column);
   }
-    setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
+  bool forgetCache = _forgetful;
+  _forgetful = true;
+  setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
+  _forgetful = forgetCache;
   if (_scol >= 0 && column == _scol)
   {
     if (!header()->isSortIndicatorShown())
@@ -1556,6 +1550,20 @@ void XTreeWidget::setColumnVisible(int pColumn, bool pVisible)
     header()->showSection(pColumn);
   else
     header()->hideSection(pColumn);
+
+  // Save changes to db
+  if (!_forgetful)
+  {
+    QString savedString = "";
+    for (int i = 0; i < header()->count(); i++)
+    {
+      savedString.append(QString::number(i) + "," + (header()->isSectionHidden(i) ? "off" : "on") + "|");
+    }
+    if (!savedString.isEmpty())
+      _x_preferences->set(_settingsName + "/columnsShown", savedString);
+    else
+      _x_preferences->remove(_settingsName + "/columnsShown");
+  }
 }
 
 void XTreeWidget::popupMenuActionTriggered(QAction *pAction)
