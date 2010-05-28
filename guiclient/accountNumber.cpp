@@ -53,6 +53,7 @@ accountNumber::accountNumber(QWidget* parent, const char* name, bool modal, Qt::
   }
   if (!_metrics->boolean("ManualForwardUpdate"))
     _forwardUpdate->hide();
+
 }
 
 accountNumber::~accountNumber()
@@ -84,6 +85,7 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _number->setInputMask(QString().fill('x',_metrics->value("GLMainSize").toInt()));
       _number->setFocus();
     }
     else if (param.toString() == "edit")
