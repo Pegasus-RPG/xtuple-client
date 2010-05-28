@@ -12,35 +12,22 @@
  <querysource>
   <name>head</name>
   <sql>SELECT warehous_code AS warehouse,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate
   FROM warehous
- WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>);</sql>
+ WHERE (warehous_id=&lt;? value("warehous_id") ?>);</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT itemsite_id,
-       item_number,
-       item_descrip1,
-       item_descrip2,
-       formatQty(summTransR(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_received,
-       formatQty(summTransI(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_issued,
-       formatQty(summTransS(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_sold,
-       formatQty(summTransC(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_scrap,
-       formatQty(summTransA(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_adjustments
-  FROM item, itemsite
- WHERE ((itemsite_item_id=item_id)
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-)
-ORDER BY item_number;
-</sql>
+  <mqlgroup>usageStatistics</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>221</height>
   <label>
    <rect>
     <x>665</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -51,7 +38,7 @@ ORDER BY item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Adjustments</string>
+   <string>Transfers</string>
   </label>
   <label>
    <rect>
@@ -111,7 +98,7 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>585</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -122,7 +109,7 @@ ORDER BY item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Scrap</string>
+   <string>Adjustments</string>
   </label>
   <field>
    <rect>
@@ -146,7 +133,7 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>505</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -157,7 +144,7 @@ ORDER BY item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Sold</string>
+   <string>Scrap</string>
   </label>
   <label>
    <rect>
@@ -178,7 +165,7 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>425</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -189,7 +176,7 @@ ORDER BY item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Issued</string>
+   <string>Sold</string>
   </label>
   <field>
    <rect>
@@ -264,7 +251,23 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>345</x>
-    <y>185</y>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -310,7 +313,7 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>665</x>
-    <y>0</y>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -321,28 +324,12 @@ ORDER BY item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Adjustments</string>
+   <string>Transfers</string>
   </label>
   <label>
    <rect>
     <x>425</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issued</string>
-  </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>0</y>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -354,6 +341,22 @@ ORDER BY item_number;
    <hcenter/>
    <vcenter/>
    <string>Sold</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
   </label>
   <label>
    <rect>
@@ -374,7 +377,39 @@ ORDER BY item_number;
   <label>
    <rect>
     <x>345</x>
-    <y>0</y>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>585</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Adjustments</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -387,22 +422,6 @@ ORDER BY item_number;
    <vcenter/>
    <string>Received</string>
   </label>
-  <label>
-   <rect>
-    <x>585</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Scrap</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -414,26 +433,7 @@ ORDER BY item_number;
    <field>
     <rect>
      <x>425</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_issued</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>505</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -451,9 +451,28 @@ ORDER BY item_number;
    </field>
    <field>
     <rect>
+     <x>505</x>
+     <y>2</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_scrap</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>65</x>
      <y>0</y>
-     <width>250</width>
+     <width>180</width>
      <height>15</height>
     </rect>
     <font>
@@ -497,7 +516,7 @@ ORDER BY item_number;
    <field>
     <rect>
      <x>665</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -510,13 +529,13 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_adjustments</column>
+     <column>f_transfer</column>
     </data>
    </field>
    <field>
     <rect>
      <x>345</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -529,13 +548,13 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_received</column>
+     <column>f_issued</column>
     </data>
    </field>
    <field>
     <rect>
      <x>585</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -548,7 +567,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_scrap</column>
+     <column>f_adjust</column>
     </data>
    </field>
    <field>
@@ -568,6 +587,25 @@ ORDER BY item_number;
     <data>
      <query>detail</query>
      <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>260</x>
+     <y>2</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_received</column>
     </data>
    </field>
   </detail>

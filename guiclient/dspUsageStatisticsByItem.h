@@ -25,6 +25,7 @@ public:
     ~dspUsageStatisticsByItem();
 
     virtual enum SetResponse set(const ParameterList &);
+    virtual void setParams(ParameterList & params);
     virtual void viewTransactions(QString);
 
 public slots:
@@ -35,6 +36,7 @@ public slots:
     virtual void sViewSold();
     virtual void sViewScrap();
     virtual void sViewAdjustment();
+    virtual void sViewTransfer();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *, int pColumn );
     virtual void sFillList();
 

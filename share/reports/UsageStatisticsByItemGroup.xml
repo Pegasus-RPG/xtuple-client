@@ -11,77 +11,38 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate,
-       &lt;? if exists(&quot;itemgrp_id&quot;) ?>
+  <sql>SELECT formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate,
+       &lt;? if exists("itemgrp_id") ?>
          ( SELECT (itemgrp_name || '-' || itemgrp_descrip)
              FROM itemgrp
-            WHERE (itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
-         text(&lt;? value(&quot;itemgrp_pattern&quot;) ?>)
+            WHERE (itemgrp_id=&lt;? value("itemgrp_id") ?>) )
+       &lt;? elseif exists("itemgrp_pattern") ?>
+         text(&lt;? value("itemgrp_pattern") ?>)
        &lt;? else ?>
          text('All Item Groups')
        &lt;? endif ?>
        AS itemgroup,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>detail</name>
-  <sql>SELECT warehous_code,
-       item_number,
-       item_descrip1,
-       item_descrip2,
-       formatQty(summTransR(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_received,
-       formatQty(summTransI(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_issued,
-       formatQty(summTransS(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_sold,
-       formatQty(summTransC(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_scrap,
-       formatQty(summTransA(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>)) AS f_adjustments
-  FROM item, itemsite, warehous, itemgrp, itemgrpitem
- WHERE ((itemsite_item_id=item_id)
-   AND (itemsite_warehous_id=warehous_id)
-   AND (itemgrpitem_itemgrp_id=itemgrp_id)
-   AND (itemgrpitem_item_id=item_id)
-&lt;? if exists(&quot;itemgrp_id&quot;) ?>
-   AND (itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>)
-&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
-   AND (itemgrp_name ~ &lt;? value(&quot;itemgrp_pattern&quot;) ?>)
-&lt;? endif ?>
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-&lt;? endif ?>
-)
-ORDER BY warehous_code, item_number;
-</sql>
+  <mqlgroup>usageStatistics</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>221</height>
   <label>
    <rect>
     <x>425</x>
-    <y>185</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issued</string>
-  </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -93,6 +54,22 @@ ORDER BY warehous_code, item_number;
    <hcenter/>
    <vcenter/>
    <string>Sold</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
   </label>
   <label>
    <rect>
@@ -145,23 +122,7 @@ ORDER BY warehous_code, item_number;
   <label>
    <rect>
     <x>585</x>
-    <y>185</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Scrap</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>185</y>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -176,8 +137,8 @@ ORDER BY warehous_code, item_number;
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>185</y>
+    <x>665</x>
+    <y>188</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -188,7 +149,23 @@ ORDER BY warehous_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Received</string>
+   <string>Transfers</string>
+  </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issued</string>
   </label>
   <label>
    <rect>
@@ -353,6 +330,22 @@ ORDER BY warehous_code, item_number;
    <vcenter/>
    <string>Start Date:</string>
   </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Received</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -379,39 +372,7 @@ ORDER BY warehous_code, item_number;
   <label>
    <rect>
     <x>345</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Received</string>
-  </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sold</string>
-  </label>
-  <label>
-   <rect>
-    <x>425</x>
-    <y>0</y>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -423,6 +384,38 @@ ORDER BY warehous_code, item_number;
    <hcenter/>
    <vcenter/>
    <string>Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
+  </label>
+  <label>
+   <rect>
+    <x>425</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Sold</string>
   </label>
   <label>
    <rect>
@@ -450,7 +443,7 @@ ORDER BY warehous_code, item_number;
   <label>
    <rect>
     <x>665</x>
-    <y>0</y>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -461,7 +454,7 @@ ORDER BY warehous_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Adjustments</string>
+   <string>Transfers</string>
   </label>
   <label>
    <rect>
@@ -482,7 +475,7 @@ ORDER BY warehous_code, item_number;
   <label>
    <rect>
     <x>585</x>
-    <y>0</y>
+    <y>4</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -493,7 +486,23 @@ ORDER BY warehous_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Scrap</string>
+   <string>Adjustments</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Received</string>
   </label>
  </pghead>
  <section>
@@ -513,7 +522,7 @@ ORDER BY warehous_code, item_number;
    <field>
     <rect>
      <x>665</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -526,14 +535,14 @@ ORDER BY warehous_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_adjustments</column>
+     <column>f_transfer</column>
     </data>
    </field>
    <field>
     <rect>
      <x>65</x>
      <y>0</y>
-     <width>250</width>
+     <width>175</width>
      <height>15</height>
     </rect>
     <font>
@@ -551,7 +560,7 @@ ORDER BY warehous_code, item_number;
    <field>
     <rect>
      <x>585</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -564,13 +573,13 @@ ORDER BY warehous_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_scrap</column>
+     <column>f_adjust</column>
     </data>
    </field>
    <field>
     <rect>
      <x>425</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -583,7 +592,7 @@ ORDER BY warehous_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_issued</column>
+     <column>f_sold</column>
     </data>
    </field>
    <field>
@@ -646,7 +655,7 @@ ORDER BY warehous_code, item_number;
    <field>
     <rect>
      <x>505</x>
-     <y>0</y>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -659,13 +668,32 @@ ORDER BY warehous_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_sold</column>
+     <column>f_scrap</column>
     </data>
    </field>
    <field>
     <rect>
      <x>345</x>
-     <y>0</y>
+     <y>2</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_issued</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>260</x>
+     <y>2</y>
      <width>75</width>
      <height>15</height>
     </rect>

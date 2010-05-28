@@ -12,10 +12,13 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
+#include "mqlutil.h"
 #include "dspInventoryHistoryByItem.h"
 
 dspUsageStatisticsByWarehouse::dspUsageStatisticsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -34,12 +37,17 @@ dspUsageStatisticsByWarehouse::dspUsageStatisticsByWarehouse(QWidget* parent, co
   _usage->addColumn(tr("Sold"),        _qtyColumn,  Qt::AlignRight,  true,  "sold" );
   _usage->addColumn(tr("Scrap"),       _qtyColumn,  Qt::AlignRight,  true,  "scrap" );
   _usage->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight,  true,  "adjust" );
+  if (_metrics->boolean("MultiWhs"))
+    _usage->addColumn(tr("Transfers"), _qtyColumn,  Qt::AlignRight,  true,  "transfer"  );
 
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
     _warehouse->hide();
   }
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
 }
 
 dspUsageStatisticsByWarehouse::~dspUsageStatisticsByWarehouse()
@@ -52,19 +60,38 @@ void dspUsageStatisticsByWarehouse::languageChange()
   retranslateUi(this);
 }
 
-void dspUsageStatisticsByWarehouse::sPrint()
+void dspUsageStatisticsByWarehouse::setParams(ParameterList & params)
 {
-  if (!_dates->allValid())
+  if (!_dates->startDate().isValid())
   {
-    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
-                          tr("You must enter a valid Start Date and End Date for this report.") );
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("Please enter a valid Start Date.") );
     _dates->setFocus();
     return;
   }
 
-  ParameterList params;
-  _dates->appendValue(params);
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
   params.append("warehous_id", _warehouse->id());
+  _dates->appendValue(params);
+}
+
+void dspUsageStatisticsByWarehouse::sPrint()
+{
+  ParameterList params;
+  setParams(params);
+  if (!params.count())
+    return;
+
+  params.append("print");
 
   orReport report("UsageStatisticsByWarehouse", params);
   if (report.isValid())
@@ -77,7 +104,7 @@ void dspUsageStatisticsByWarehouse::sViewTransactions()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("itemsite_id", _usage->altId());
+  params.append("itemsite_id", _usage->id());
   params.append("run");
 
   switch (_column)
@@ -101,6 +128,10 @@ void dspUsageStatisticsByWarehouse::sViewTransactions()
     case 6:
       params.append("transtype", "A");
       break;
+
+    case 7:
+      params.append("transtype", "T");
+      break;
   }
 
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
@@ -123,41 +154,21 @@ void dspUsageStatisticsByWarehouse::sFillList()
 {
   _usage->clear();
 
-  if (!_dates->startDate().isValid())
+  ParameterList params;
+  setParams(params);
+  if (!params.count())
+    return;
+  MetaSQLQuery mql = mqlLoad("usageStatistics", "detail");
+  q = mql.toQuery(params);
+
+  if (q.first())
   {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
+    _usage->populate(q, true);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  q.prepare( "SELECT item_id, itemsite_id, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-             "       summTransR(itemsite_id, :startDate, :endDate) AS received,"
-             "       summTransI(itemsite_id, :startDate, :endDate) AS issued,"
-             "       summTransS(itemsite_id, :startDate, :endDate) AS sold,"
-             "       summTransC(itemsite_id, :startDate, :endDate) AS scrap,"
-             "       summTransA(itemsite_id, :startDate, :endDate) AS adjust,"
-             "       'qty' AS received_xtnumericrole,"
-             "       'qty' AS issued_xtnumericrole,"
-             "       'qty' AS sold_xtnumericrole,"
-             "       'qty' AS scrap_xtnumericrole,"
-             "       'qty' AS adjust_xtnumericrole "
-             "FROM itemsite, item "
-             "WHERE ( (itemsite_item_id=item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) ) "
-             "ORDER BY item_number;" );
-  _dates->bindValue(q);
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _usage->populate(q, TRUE);
 }
 

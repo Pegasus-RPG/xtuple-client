@@ -12,10 +12,13 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
+#include "mqlutil.h"
 #include "dspInventoryHistoryByItem.h"
 
 dspUsageStatisticsByClassCode::dspUsageStatisticsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -37,6 +40,8 @@ dspUsageStatisticsByClassCode::dspUsageStatisticsByClassCode(QWidget* parent, co
   _usage->addColumn(tr("Sold"),        _qtyColumn,  Qt::AlignRight,  true,  "sold"  );
   _usage->addColumn(tr("Scrap"),       _qtyColumn,  Qt::AlignRight,  true,  "scrap"  );
   _usage->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight,  true,  "adjust"  );
+  if (_metrics->boolean("MultiWhs"))
+    _usage->addColumn(tr("Transfers"), _qtyColumn,  Qt::AlignRight,  true,  "transfer"  );
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -53,13 +58,39 @@ void dspUsageStatisticsByClassCode::languageChange()
   retranslateUi(this);
 }
 
+void dspUsageStatisticsByClassCode::setParams(ParameterList & params)
+{
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+  _warehouse->appendValue(params);
+  _classCode->appendValue(params);
+  _dates->appendValue(params);
+}
+
 void dspUsageStatisticsByClassCode::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
+  setParams(params);
+  if (!params.count())
+    return;
+
   params.append("print");
-  _warehouse->appendValue(params);
-  _classCode->appendValue(params);
 
   orReport report("UsageStatisticsByClassCode", params);
   if (report.isValid())
@@ -96,6 +127,11 @@ void dspUsageStatisticsByClassCode::sViewScrap()
 void dspUsageStatisticsByClassCode::sViewAdjustment()
 {
   viewTransactions("A");
+}
+
+void dspUsageStatisticsByClassCode::sViewTransfer()
+{
+  viewTransactions("T");
 }
 
 void dspUsageStatisticsByClassCode::viewTransactions(QString pType)
@@ -152,6 +188,12 @@ void dspUsageStatisticsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
       if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
+
+    case 8:
+      menuItem = pMenu->insertItem("View Transfer Transactions...", this, SLOT(sViewTransfer()), 0);
+      if (!_privileges->check("ViewInventoryHistory"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+      break;
   }
 }
 
@@ -159,54 +201,21 @@ void dspUsageStatisticsByClassCode::sFillList()
 {
   _usage->clear();
 
-  if (!_dates->startDate().isValid())
+  ParameterList params;
+  setParams(params);
+  if (!params.count())
+    return;
+  MetaSQLQuery mql = mqlLoad("usageStatistics", "detail");
+  q = mql.toQuery(params);
+
+  if (q.first())
   {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
+    _usage->populate(q, true);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  QString sql( "SELECT itemsite_id, warehous_code,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       summTransR(itemsite_id, :startDate, :endDate) AS received,"
-               "       summTransI(itemsite_id, :startDate, :endDate) AS issued,"
-               "       summTransS(itemsite_id, :startDate, :endDate) AS sold,"
-               "       summTransC(itemsite_id, :startDate, :endDate) AS scrap,"
-               "       summTransA(itemsite_id, :startDate, :endDate) AS adjust,"
-               "       'qty' AS received_xtnumericrole,"
-               "       'qty' AS issued_xtnumericrole,"
-               "       'qty' AS sold_xtnumericrole,"
-               "       'qty' AS scrap_xtnumericrole,"
-               "       'qty' AS adjust_xtnumericrole "
-               "FROM item, itemsite, warehous "
-               "WHERE ((itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)" );
-
-  if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-
-  if (_warehouse->isSelected())
-    sql += "AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY warehous_code, item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
-  _usage->populate(q);
 }
 
