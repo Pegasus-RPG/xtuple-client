@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Submit Action to Batch Manager</string>
+   <string>Submit Action to xTuple Connect</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >

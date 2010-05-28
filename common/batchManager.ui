@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Batch Manager</string>
+   <string>xTuple Connect Console</string>
   </property>
   <widget class="QWidget" name="widget">
    <layout class="QGridLayout">
@@ -227,7 +227,7 @@ to be bound by its terms.</comment>
               </size>
              </property>
              <property name="text">
-              <string>Batch:</string>
+              <string>Jobs:</string>
              </property>
             </widget>
            </item>

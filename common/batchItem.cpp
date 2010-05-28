@@ -116,7 +116,7 @@ void batchItem::sSave()
     {
       rollbackq.exec();
       QMessageBox::critical(this,
-                            tr("Error Rescheduling Batch Item at %1::%2")
+                            tr("Error rescheduling job at %1::%2")
                               .arg(__FILE__, __LINE__),
                               schedq.lastError().databaseText());
       return;

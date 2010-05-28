@@ -161,7 +161,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.scheduleSystemMessage",    tr("Schedule S&ystem Message..."),    SLOT(sScheduleSystemMessage()),    systemMenu, "IssueSystemMessages", NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.batchManager",             tr("&Batch Manager..."),              SLOT(sBatchManager()),             systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "sys.batchManager",             tr("&xTuple Connect Console..."),          SLOT(sBatchManager()),             systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
     { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },

@@ -210,12 +210,12 @@ void batchManager::setDatabase( QSqlDatabase db )
 
   _db = db;
   if(_db.isValid())
-    setWindowTitle(tr("Batch Manager -- on %1/%2 AS %3")
+    setWindowTitle(tr("xTuple Connect Console -- on %1/%2 AS %3")
                .arg(_db.hostName())
                .arg(_db.databaseName())
                .arg(_db.userName()));
   else
-    setWindowTitle(tr("Batch Manager"));
+    setWindowTitle(tr("xTuple Connect Console"));
   
   //if(_db.isValid())
   //  connect(&_db, SIGNAL(destroyed()), this, SLOT(close()));
