@@ -870,6 +870,7 @@ void VirtualClusterLineEdit::sNew()
       if (id != QDialog::Rejected)
       {
         silentSetId(id);
+        emit newId(_id);
         emit valid(_id != -1);
       }
     }
