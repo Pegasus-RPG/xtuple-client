@@ -1440,6 +1440,11 @@ to be bound by its terms.</comment>
                 <string>Substitute</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>[ no default ]</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="2" column="0">
@@ -1462,6 +1467,11 @@ to be bound by its terms.</comment>
               <item>
                <property name="text">
                 <string>Upon Receipt</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>[ no default ]</string>
                </property>
               </item>
              </widget>
@@ -1496,6 +1506,11 @@ to be bound by its terms.</comment>
               <item>
                <property name="text">
                 <string>Credit Card</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>[ no default ]</string>
                </property>
               </item>
              </widget>

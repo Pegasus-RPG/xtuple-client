@@ -220,9 +220,16 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         _disposition->setCurrentIndex(3);
       else if (metric == "M")
         _disposition->setCurrentIndex(4);
+      else
+        _disposition->setCurrentIndex(5);
 
-      if (_metrics->value("DefaultRaTiming") == "R")
+      metric = _metrics->value("DefaultRaTiming");
+      if (metric == "I")
+        _timing->setCurrentIndex(0);
+      else if (metric == "R")
         _timing->setCurrentIndex(1);
+      else
+        _timing->setCurrentIndex(2);
 
       metric = _metrics->value("DefaultRaCreditMethod");
       if (metric == "N")
@@ -233,6 +240,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         _creditBy->setCurrentIndex(2);
       else if (metric == "C")
         _creditBy->setCurrentIndex(3);
+      else
+        _creditBy->setCurrentIndex(4);
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
@@ -357,11 +366,37 @@ void returnAuthorization::setNumber()
 
 bool returnAuthorization::sSave(bool partial)
 {
-  const char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
-  const char *creditMethods[] = { "N", "M", "K", "C" };
+  const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
+  const char *timingTypes[] = { "I", "R", "" };
+  const char *creditMethods[] = { "N", "M", "K", "C", "" };
 
   QString disposition = QString(dispositionTypes[_disposition->currentIndex()]);
+  QString timing = QString(timingTypes[_timing->currentIndex()]);
   QString creditBy = QString(creditMethods[_creditBy->currentIndex()]);
+  
+  if ( !partial && (disposition.isEmpty()) )
+  {
+    QMessageBox::warning( this, tr("Invalid Disposition"),
+                         tr("<p>You must enter a Disposition." ) );
+    _disposition->setFocus();
+    return false;
+  }
+  
+  if ( !partial && (timing.isEmpty()) )
+  {
+    QMessageBox::warning( this, tr("Invalid Timing"),
+                         tr("<p>You must enter a Timing." ) );
+    _timing->setFocus();
+    return false;
+  }
+  
+  if ( !partial && (creditBy.isEmpty()) )
+  {
+    QMessageBox::warning( this, tr("Invalid Credit Method"),
+                         tr("<p>You must enter a Credit Method." ) );
+    _creditBy->setFocus();
+    return false;
+  }
   
   if (_authNumber->text().isEmpty())
   {
@@ -451,12 +486,12 @@ bool returnAuthorization::sSave(bool partial)
     q.bindValue(":rahead_taxzone_id", _taxzone->id());
   if (_rsnCode->id() > 0)
     q.bindValue(":rahead_rsncode_id", _rsnCode->id());
-  q.bindValue(":rahead_disposition", disposition);
-  if (_timing->currentIndex() == 0)
-    q.bindValue(":rahead_timing", "I");
-  else
-    q.bindValue(":rahead_timing", "R");
-  q.bindValue(":rahead_creditmethod", creditBy);
+  if (!disposition.isEmpty())
+    q.bindValue(":rahead_disposition", disposition);
+  if (!timing.isEmpty())
+    q.bindValue(":rahead_timing", timing);
+  if (!creditBy.isEmpty())
+    q.bindValue(":rahead_creditmethod", creditBy);
   if (_origso->isValid())
     q.bindValue(":rahead_orig_cohead_id", _origso->id());
   if (_newso->isValid())

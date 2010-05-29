@@ -237,9 +237,16 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
       _disposition->setCurrentIndex(3);
     else if (metric == "M")
       _disposition->setCurrentIndex(4);
+    else
+      _disposition->setCurrentIndex(5);
 
-    if (_metrics->value("DefaultRaTiming") == "R")
+    metric = _metrics->value("DefaultRaTiming");
+    if (metric == "I")
+      _timing->setCurrentIndex(0);
+    else if (metric == "R")
       _timing->setCurrentIndex(1);
+    else
+      _timing->setCurrentIndex(2);
 
     metric = _metrics->value("DefaultRaCreditMethod");
     if (metric == "N")
@@ -250,6 +257,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
       _creditBy->setCurrentIndex(2);
     else if (metric == "C")
       _creditBy->setCurrentIndex(3);
+    else
+      _creditBy->setCurrentIndex(4);
 
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
     _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
@@ -280,8 +289,9 @@ void configureSO::languageChange()
 void configureSO::sSave()
 {
   const char *numberGenerationTypes[] = { "M", "A", "O", "S" };
-  const char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
-  const char *creditMethodTypes[] = { "N", "M", "K", "C" };
+  const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
+  const char *timingTypes[] = { "I", "R", "" };
+  const char *creditMethodTypes[] = { "N", "M", "K", "C", "" };
 
   if ( (_metrics->boolean("EnableSOReservationsByLocation")) &&
        (!_locationGroup->isChecked()) )
@@ -419,10 +429,7 @@ void configureSO::sSave()
   if (_enableReturns->isChecked() || !_enableReturns->isCheckable())
   {
     _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentIndex()]));
-    if (_timing->currentIndex() == 0)
-      _metrics->set("DefaultRaTiming", QString("I"));
-    else
-      _metrics->set("DefaultRaTiming", QString("R"));
+    _metrics->set("DefaultRaTiming", QString(timingTypes[_timing->currentIndex()]));
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentIndex()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
