@@ -900,6 +900,9 @@ to be bound by its terms.</comment>
                    <layout class="QHBoxLayout">
                     <item>
                      <widget class="CurrCluster" name="_priceFreight">
+                      <property name="format">
+                       <enum>CurrDisplay::Cost</enum>
+                      </property>
                       <property name="minimumSize">
                        <size>
                         <width>160</width>
