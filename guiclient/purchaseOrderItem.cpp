@@ -606,10 +606,14 @@ void purchaseOrderItem::sSave()
 
   if (_ordered->toDouble() == 0.0)
   {
-    QMessageBox::critical( this, tr("Cannot Save Purchase Order Item"),
-                           tr("<p>You must enter a quantity before you may save this Purchase Order Item.") );
-    _ordered->setFocus();
-    return;
+    if (QMessageBox::critical( this, tr("Zero Order Quantity"),
+                               tr( "<p>The quantity that you are ordering is zero. "
+                                   "<p>Do you wish to Continue or Change the Order Qty?" ),
+                               QString("&Continue"), QString("Change Order &Qty."), QString::null, 1, 1 ) == 1)
+    {
+      _ordered->setFocus();
+      return;
+    }
   }
 
   if (_ordered->toDouble() < _minimumOrder)
