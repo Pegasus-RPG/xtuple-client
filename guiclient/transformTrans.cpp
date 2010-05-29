@@ -60,6 +60,7 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   _controlled = true;   // safest assumption
+  _targetIsValid = false;
   _item->setFocus();
 }
 
@@ -287,11 +288,10 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
     return;
 	
   q.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
-             "FROM item, itemsite "
-             "WHERE ((item_id=itemsite_item_id)"
-             "  AND  (itemsite_item_id=:item_id)"
-             "  AND  (itemsite_warehous_id=:warehous_id)"
-			 "  AND  (itemsite_controlmethod<>'N'));" );
+             "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
+             "WHERE ( (itemsite_item_id=:item_id) "
+             "  AND   (itemsite_warehous_id=:warehous_id) "
+             "  AND   (itemsite_controlmethod <> 'N') );" );
   q.bindValue(":item_id",     _target->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
@@ -301,8 +301,43 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
     _descrip2->setText(q.value("item_descrip2").toString());
     _toBeforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
     sRecalculateAfter();
+    _targetIsValid = true;
 
   }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    _targetIsValid = false;
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+  {
+    QMessageBox::warning(this, tr("No Transform Targets"),
+                         tr("This Target Item cannot be Transformed because "
+                            "either it has no Item Site or the Item Site "
+                            "has a Control Method of None."));
+    _targetIsValid = false;
+    _target->setFocus();
+    return;
+  }
+}
+
+void transformTrans::sFillList()
+{
+  if (!_item->isValid())
+    return;
+    
+  _source->clear();
+  _target->clear();
+
+  q.prepare( "SELECT item_id, item_number "
+             "FROM itemtrans JOIN item ON (item_id=itemtrans_target_item_id) "
+             "WHERE (itemtrans_source_item_id=:item_id) "
+             "ORDER BY item_number;" );
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+    _target->populate(q);
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -316,29 +351,6 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
                             "Source Item or use the Transformations tab on the "
                             "Item window to define a target Item."));
     _item->setFocus();
-    return;
-  }
-}
-
-void transformTrans::sFillList()
-{
-  _source->clear();
-
-  q.prepare( "SELECT item_id, item_number "
-             "FROM item, itemsite, itemtrans "
-             "WHERE ( (itemtrans_target_item_id=item_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (itemsite_warehous_id=:warehous_id)"
-			 " AND (itemsite_controlmethod<>'N')"
-             " AND (itemtrans_source_item_id=:item_id) ) "
-             "ORDER BY item_number;" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _target->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -431,5 +443,5 @@ void transformTrans::sRecalculateAfter()
 
 void transformTrans::sHandleButtons()
 {
-  _post->setEnabled((! _controlled || _source->id() > -1) && _target->id() > -1);
+  _post->setEnabled((! _controlled || _source->id() > -1) && _target->id() > -1 && _targetIsValid);
 }

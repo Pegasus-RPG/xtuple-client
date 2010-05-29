@@ -40,6 +40,7 @@ private:
     int  _mode;
     bool _captive;
     bool _controlled;
+    bool _targetIsValid;
 
 };
 
