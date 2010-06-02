@@ -210,6 +210,7 @@ class GUIClient : public QMainWindow
 
     Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal);
     Q_INVOKABLE QMenuBar *menuBar();
+    Q_INVOKABLE QMenu *goMenu();
 
     // Used by scripting
     Q_INVOKABLE void addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidget );
@@ -366,6 +367,7 @@ class GUIClient : public QMainWindow
     bool         _showTopLevel;
     QWidgetList  _windowList;
     QMenuBar	*_menuBar;
+    QMenu       *_goMenu;
     QWidget     *_activeWindow;
 
     InputManager   *_inputManager;

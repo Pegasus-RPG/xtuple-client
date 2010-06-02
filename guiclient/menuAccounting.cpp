@@ -474,7 +474,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
   
   parent->populateCustomMenu(mainMenu, "Accounting");
-  QAction * m = parent->menuBar()->addMenu(mainMenu);
+  QAction * m = parent->goMenu()->addMenu(mainMenu);
   if(m)
     m->setText(tr("Accountin&g"));
 }

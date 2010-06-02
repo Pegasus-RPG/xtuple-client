@@ -666,20 +666,38 @@ void GUIClient::initMenuBar()
   }
   else
   {
+    /* Not needed anymore
     menuBar()->clear();
     _hotkeyList.clear();
 
     QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(this);
     while(!toolbars.isEmpty())
       delete toolbars.takeFirst();
+    */
+    _goMenu = new QMenu(this);
+    _goMenu->setTitle(tr("Go"));
+    menuBar()->addMenu(_goMenu);
 
-    _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
-    qApp->processEvents();
-    productsMenu = new menuProducts(this);
 
-    _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
+    _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-    inventoryMenu = new menuInventory(this);
+    accountingMenu = new menuAccounting(this);
+
+    _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    salesMenu = new menuSales(this);
+
+    _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    crmMenu = new menuCRM(this);
+
+    _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    manufactureMenu = new menuManufacture(this);
+
+    _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    purchaseMenu = new menuPurchase(this);
 
     if(_metrics->value("Application") != "PostBooks")
     {
@@ -688,25 +706,13 @@ void GUIClient::initMenuBar()
       scheduleMenu = new menuSchedule(this);
     }
 
-    _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
+    _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-    purchaseMenu = new menuPurchase(this);
+    inventoryMenu = new menuInventory(this);
 
-    _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
+    _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-    manufactureMenu = new menuManufacture(this);
-
-    _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
-    qApp->processEvents();
-    crmMenu = new menuCRM(this);
-
-    _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
-    qApp->processEvents();
-    salesMenu = new menuSales(this);
-
-    _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
-    qApp->processEvents();
-    accountingMenu = new menuAccounting(this);
+    productsMenu = new menuProducts(this);
 
     _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
@@ -1658,6 +1664,11 @@ QMenuBar *GUIClient::menuBar()
 #else
   return QMainWindow::menuBar();
 #endif
+}
+
+QMenu *GUIClient::goMenu()
+{
+  return _goMenu;
 }
 
 /*!
