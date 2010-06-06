@@ -19,6 +19,7 @@
 
 #include "widgets.h"
 #include "guiclientinterface.h"
+#include "xt.h"
 
 //  Table Column Widths
 #define _itemColumn     100
@@ -51,20 +52,6 @@ class XTreeWidget;
 
 void  setupXTreeWidgetItem(QScriptEngine *engine);
 void  setupXTreeWidget(QScriptEngine *engine);
-
-// TODO: does this really belong inside XTreeWidget?
-enum XTRole {
-  RawRole = (Qt::UserRole + 1),
-  ScaleRole,
-  IdRole,
-  RunningSetRole,
-  RunningInitRole,
-  TotalSetRole,
-  TotalInitRole,
-  // KeyRole,
-  // GroupRunningRole,
-  IndentRole
-};
 
 class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
@@ -219,7 +206,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE inline int  columnCount() const   { return QTreeWidget::columnCount(); }
     Q_INVOKABLE inline int  currentColumn() const { return QTreeWidget::currentColumn(); }
     Q_INVOKABLE inline void editItem(XTreeWidgetItem *item, int column = 0) {        QTreeWidget::editItem(item, column); }
-    Q_INVOKABLE QList<XTreeWidgetItem *>  findItems(const QString &text, Qt::MatchFlags flags, int column = 0) const;
+    Q_INVOKABLE QList<XTreeWidgetItem *>  findItems(const QString &text, Qt::MatchFlags flags, int column = 0, Xt::ItemDataRole role = Xt::QtDisplayRole) const;
     Q_INVOKABLE inline QTreeWidgetItem    *headerItem() const { return QTreeWidget::headerItem(); }
     Q_INVOKABLE inline int                indexOfTopLevelItem(XTreeWidgetItem *item) const { return QTreeWidget::indexOfTopLevelItem(item); }
     Q_INVOKABLE inline void               insertTopLevelItem(int index, XTreeWidgetItem *item) {        QTreeWidget::insertTopLevelItem(index, item); }
@@ -232,6 +219,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE inline QTreeWidgetItem    *itemBelow(const XTreeWidgetItem *item) const         { return QTreeWidget::itemBelow(item); }
     Q_INVOKABLE inline QWidget            *itemWidget(XTreeWidgetItem *item, int column) const  { return QTreeWidget::itemWidget(item, column); }
     Q_INVOKABLE inline void               openPersistentEditor(XTreeWidgetItem *item, int column = 0)       {        QTreeWidget::openPersistentEditor(item, column); }
+    Q_INVOKABLE QVariant                  rawValue(const QString colname) const;
     Q_INVOKABLE inline void               removeItemWidget(XTreeWidgetItem *item, int column)               {        QTreeWidget::removeItemWidget(item, column); }
     Q_INVOKABLE QList<XTreeWidgetItem *>  selectedItems() const;
     Q_INVOKABLE inline void               setCurrentItem(XTreeWidgetItem *item)                             {        QTreeWidget::setCurrentItem(item); }
