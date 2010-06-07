@@ -278,7 +278,7 @@ void XTreeWidget::populateWorker()
         // keep synchronized with #define ROWROLE_* above
         if (rootIsDecorated())
         {
-          rowRole[ROWROLE_INDENT] = currRecord.indexOf("xtXt::IndentRole");
+          rowRole[ROWROLE_INDENT] = currRecord.indexOf("xtindentrole");
           if (rowRole[ROWROLE_INDENT] < 0)
             rowRole[ROWROLE_INDENT] = 0;
         }
@@ -301,7 +301,7 @@ void XTreeWidget::populateWorker()
         "xtrunningrole"      << "xtrunninginit"<<
         "xtgrouprunningrole" << "xttotalrole"<<
         "xtnumericrole" << "xtnullrole"<<
-        "xtXt::IdRole";
+        "xtidrole";
         for (int wcol = 0; wcol < _roles.size(); wcol++)
         {
           QVariantMap *role = _roles.value(wcol);
@@ -389,7 +389,7 @@ void XTreeWidget::populateWorker()
             {
               lastindent = last->data(0, Xt::IndentRole).toInt();
               if (DEBUG)
-                    qDebug("getting xtXt::IndentRole from %p of %d", last, lastindent);
+                    qDebug("getting Xt::IndentRole from %p of %d", last, lastindent);
             }
           }
           if (DEBUG)
