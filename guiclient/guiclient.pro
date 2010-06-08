@@ -56,9 +56,7 @@ DESTDIR     = ../bin
 MOC_DIR     = moc
 UI_DIR      = ui
 
-FORMS =   ../common/batchItem.ui                \
-          ../common/batchManager.ui             \
-          absoluteCalendarItem.ui               \
+FORMS =   absoluteCalendarItem.ui               \
           accountNumber.ui                      \
           accountNumbers.ui                     \
           accountingPeriod.ui                   \
@@ -766,9 +764,7 @@ FORMS =   ../common/batchItem.ui                \
           xsltMap.ui                            \
           zeroUncountedCountTagsByWarehouse.ui  \
 
-HEADERS = ../common/batchItem.h                 \
-          ../common/batchManager.h              \
-          ../common/format.h                    \
+HEADERS = ../common/format.h                    \
           SaveSizePositionEventFilter.h         \
           absoluteCalendarItem.h                \
           accountNumber.h                       \
@@ -1518,9 +1514,7 @@ HEADERS = ../common/batchItem.h                 \
           yourpayprocessor.h            \
           zeroUncountedCountTagsByWarehouse.h   \
 
-SOURCES = ../common/batchItem.cpp               \
-          ../common/batchManager.cpp            \
-          absoluteCalendarItem.cpp              \
+SOURCES = absoluteCalendarItem.cpp              \
           accountNumber.cpp                     \
           accountNumbers.cpp                    \
           accountingPeriod.cpp                  \

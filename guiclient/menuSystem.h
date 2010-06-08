@@ -59,9 +59,7 @@ class menuSystem : public QObject
     void sConfigureCC();
     void sConfigureCRM();
 
-    void sScheduleSystemMessage();
     void sEventManager();
-    void sBatchManager();
     void sPreferences();
     void sHotKeys();
     void sRescanPrivileges();
@@ -71,7 +69,6 @@ class menuSystem : public QObject
     void sListEmployees();
     void sSearchEmployees();
     void sEmployeeGroups();
-    void sScheduleServerMaintenance();
     void sErrorLog();
 
     void sDatabaseInformation();

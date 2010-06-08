@@ -28,17 +28,14 @@
 
 #include <csvimpplugininterface.h>
 
-#include "batchManager.h"
 #include "importhelper.h"
 
 #include "version.h"
 
 #include "menuSystem.h"
 
-#include "systemMessage.h"
 #include "eventManager.h"
 #include "users.h"
-#include "submitAction.h"
 #include "userPreferences.h"
 #include "hotkeys.h"
 #include "errorLog.h"
@@ -158,10 +155,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-    { "sys.scheduleSystemMessage",    tr("Schedule S&ystem Message..."),    SLOT(sScheduleSystemMessage()),    systemMenu, "IssueSystemMessages", NULL, NULL, _metrics->boolean("EnableBatchManager") },
-    { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.batchManager",             tr("&xTuple Connect Console..."),          SLOT(sBatchManager()),             systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
     { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
@@ -173,14 +167,12 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
     { "menu",                         tr("&Employees"),                     (char*)employeeMenu,               systemMenu, "true",                                      NULL, NULL, true },
     { "sys.employee",                 tr("&New..."),               	    SLOT(sNewEmployee()),            employeeMenu, "MaintainEmployees",               NULL, NULL, true },
-    { "sys.listEmployees",            tr("&List..."),             	    SLOT(sListEmployees()),          employeeMenu, "ViewEmployees MaintainEmployees",                   NULL, NULL, true },
-    { "sys.searchEmployees",          tr("&Search..."),       		    SLOT(sSearchEmployees()),        employeeMenu, "ViewEmployees MaintainEmployees",               NULL, NULL, true },
+    { "sys.listEmployees",            tr("&List..."),             	    SLOT(sListEmployees()),          employeeMenu, "ViewEmployees MaintainEmployees",           NULL, NULL, true },
+    { "sys.searchEmployees",          tr("&Search..."),       		    SLOT(sSearchEmployees()),        employeeMenu, "ViewEmployees MaintainEmployees",           NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                            employeeMenu, "true",                                      NULL, NULL, true },
-    { "sys.employeeGroups",           tr("Employee &Groups..."),            SLOT(sEmployeeGroups()),         employeeMenu, "ViewEmployeeGroups MaintainEmployeeGroups",                   NULL, NULL, true },
+    { "sys.employeeGroups",           tr("Employee &Groups..."),            SLOT(sEmployeeGroups()),         employeeMenu, "ViewEmployeeGroups MaintainEmployeeGroups", NULL, NULL, true },
 
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.scheduleServerMaintenance",tr("Schedule Server Mai&ntenance..."),SLOT(sScheduleServerMaintenance()),systemMenu, "MaintainServer",      NULL, NULL, _metrics->boolean("EnableBatchManager") },
-    { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
 
   //  System | Configure Modules
     { "menu",			tr("&Configure Modules"),(char*)configModulesMenu,systemMenu,		"true",					NULL,	NULL,	true	},
@@ -466,26 +458,9 @@ void menuSystem::sCloseActive()
     parent->workspace()->closeActiveWindow();
 }
 
-void menuSystem::sScheduleSystemMessage()
-{
-  ParameterList params;
-  params.append("mode", "new");
-
-  systemMessage newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void menuSystem::sEventManager()
 {
   omfgThis->handleNewWindow(new eventManager());
-}
-
-void menuSystem::sBatchManager()
-{
-  batchManager *newdlg = new batchManager();
-  newdlg->setViewOtherEvents(_privileges->check("ViewOtherEvents"));
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSystem::sPreferences()
@@ -695,16 +670,6 @@ void menuSystem::sSearchEmployees()
 void menuSystem::sEmployeeGroups()
 {
   omfgThis->handleNewWindow(new empGroups());
-}
-
-void menuSystem::sScheduleServerMaintenance()
-{
-  ParameterList params;
-  params.append("action_name", "ServerMaintenance");
-
-  submitAction newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void menuSystem::sErrorLog()
