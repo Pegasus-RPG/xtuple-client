@@ -438,7 +438,7 @@ void XTreeWidget::populateWorker()
               continue;
             }
             QVariant rawValue = pQuery.value(colIdx[col]);
-            last->setData(col, Xt::Xt::RawRole, rawValue);
+            last->setData(col, Xt::RawRole, rawValue);
 
             // TODO: this isn't necessary for all columns so do less often?
             int     scale        = defaultScale;
@@ -824,8 +824,8 @@ QString XTreeWidgetItem::toString() const
 
 bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
 {
-  QVariant  v1         = data(treeWidget()->sortColumn(), Xt::Xt::RawRole);
-  QVariant  v2         = other.data(other.treeWidget()->sortColumn(), Xt::Xt::RawRole);
+  QVariant  v1         = data(treeWidget()->sortColumn(), Xt::RawRole);
+  QVariant  v2         = other.data(other.treeWidget()->sortColumn(), Xt::RawRole);
 
   bool      returnVal  = false;
   switch (v1.type())
