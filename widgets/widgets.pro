@@ -115,7 +115,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/xtreeviewplugin.h \
     plugins/xspinboxplugin.h \
     plugins/xtableviewplugin.h \
-    xt.h
+
 SOURCES += widgets.cpp \
     addressCluster.cpp \
     contactCluster.cpp \
@@ -198,7 +198,6 @@ SOURCES += widgets.cpp \
     xdoublevalidator.cpp \
     xspinbox.cpp \
     xitemdelegate.cpp \
-    xt.cpp \
     xtableview.cpp \
     docAttach.cpp \
     parameterwidget.cpp \
