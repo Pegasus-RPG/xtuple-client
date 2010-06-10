@@ -107,6 +107,7 @@ HEADERS += setupscriptapi.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     xsqltablenodeproto.h \
+    xt.h \
     xvariantsetup.h
 
 SOURCES += setupscriptapi.cpp \
@@ -199,6 +200,7 @@ SOURCES += setupscriptapi.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     xsqltablnodeproto.cpp \
+    xt.cpp \
     xvariantsetup.cpp
 
 QT += sql \
