@@ -145,6 +145,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
   _kitInheritCOS->setChecked(_metrics->boolean("KitComponentInheritCOS"));
   _disallowReceiptExcess->setChecked(_metrics->boolean("DisallowReceiptExcessQty"));
   _warnIfReceiptDiffers->setChecked(_metrics->boolean("WarnIfReceiptQtyDiffers"));
+  _recordPpvOnReceipt->setChecked(_metrics->boolean("RecordPPVonReceipt"));
 
   _tolerance->setValidator(omfgThis->percentVal());
   _tolerance->setText(_metrics->value("ReceiptQtyTolerancePct"));
@@ -288,6 +289,7 @@ void configureIM::sSave()
   _metrics->set("DisallowReceiptExcessQty", _disallowReceiptExcess->isChecked());
   _metrics->set("WarnIfReceiptQtyDiffers", _warnIfReceiptDiffers->isChecked());
   _metrics->set("ReceiptQtyTolerancePct", _tolerance->text());
+  _metrics->set("RecordPPVonReceipt", _recordPpvOnReceipt->isChecked());
 
   q.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
   q.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());

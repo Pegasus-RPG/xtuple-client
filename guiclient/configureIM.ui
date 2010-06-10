@@ -656,7 +656,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <layout class="QHBoxLayout">
          <property name="spacing">
           <number>2</number>
@@ -728,7 +728,7 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </item>
-       <item row="6" column="0">
+       <item row="8" column="0">
         <widget class="QGroupBox" name="_shipformGroup">
          <property name="title">
           <string>Default Shipping Form Copies:</string>
@@ -810,6 +810,19 @@ to be bound by its terms.</comment>
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QCheckBox" name="_recordPpvOnReceipt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Record Purchase Price Variance on Receipt</string>
+         </property>
         </widget>
        </item>
       </layout>
