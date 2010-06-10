@@ -75,8 +75,6 @@
 #include "plannerCodes.h"
 #include "rejectCodes.h"
 #include "termses.h"
-#include "expenseCategories.h"
-#include "apAccountAssignments.h"
 
 #include "dspItemsWithoutItemSources.h"
 #include "assignItemToPlannerCode.h"
@@ -245,8 +243,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.rejectCodes", tr("&Reject Codes..."), SLOT(sRejectCodes()), masterInfoMenu, "MaintainRejectCodes ViewRejectCodes", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, masterInfoMenu, "true", NULL, NULL, true , NULL },
     { "po.terms", tr("&Terms..."), SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms", NULL, NULL, true , NULL },
-    { "po.expenseCategories", tr("&Expense Categories..."), SLOT(sExpenseCategories()), masterInfoMenu, "MaintainExpenseCategories ViewExpenseCategories", NULL, NULL, true , NULL },
-    { "po.apAccountAssignments", tr("&A/P Account Assignments..."), SLOT(sAPAssignments()), masterInfoMenu, "MaintainVendorAccounts ViewVendorAccounts", NULL, NULL, true , NULL },
 
     // Purchasing | Utilities
     { "menu", tr("&Utilities"), (char*)utilitiesMenu, mainMenu, "true", NULL, NULL, true , NULL },
@@ -597,12 +593,6 @@ void menuPurchase::sTerms()
   omfgThis->handleNewWindow(new termses());
 }
 
-void menuPurchase::sExpenseCategories()
-{
-  omfgThis->handleNewWindow(new expenseCategories());
-}
-
-
 // Utilities
 void menuPurchase::sItemsWithoutItemSources()
 {
@@ -619,7 +609,3 @@ void menuPurchase::sAssignClassCodeToPlannerCode()
   assignClassCodeToPlannerCode(parent, "", TRUE).exec();
 }
 
-void menuPurchase::sAPAssignments()
-{
-  omfgThis->handleNewWindow(new apAccountAssignments());
-}

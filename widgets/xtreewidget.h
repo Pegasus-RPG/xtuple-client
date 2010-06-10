@@ -206,7 +206,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE inline int  columnCount() const   { return QTreeWidget::columnCount(); }
     Q_INVOKABLE inline int  currentColumn() const { return QTreeWidget::currentColumn(); }
     Q_INVOKABLE inline void editItem(XTreeWidgetItem *item, int column = 0) {        QTreeWidget::editItem(item, column); }
-    Q_INVOKABLE QList<XTreeWidgetItem *>  findItems(const QString &text, Qt::MatchFlags flags, int column = 0, Xt::ItemDataRole role = Xt::QtDisplayRole) const;
+    Q_INVOKABLE QList<XTreeWidgetItem *>  findItems(const QString &text, Qt::MatchFlags flags, int column = 0, int role = 0) const;
     Q_INVOKABLE inline QTreeWidgetItem    *headerItem() const { return QTreeWidget::headerItem(); }
     Q_INVOKABLE inline int                indexOfTopLevelItem(XTreeWidgetItem *item) const { return QTreeWidget::indexOfTopLevelItem(item); }
     Q_INVOKABLE inline void               insertTopLevelItem(int index, XTreeWidgetItem *item) {        QTreeWidget::insertTopLevelItem(index, item); }

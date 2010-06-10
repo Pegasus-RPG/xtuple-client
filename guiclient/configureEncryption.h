@@ -30,7 +30,8 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-private:
+signals:
+    void saving();
 
 };
 

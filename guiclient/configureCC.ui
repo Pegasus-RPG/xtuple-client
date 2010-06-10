@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
-    <height>560</height>
+    <width>777</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,127 +23,73 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="margin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
+     <property name="verticalSpacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
-      <layout class="QHBoxLayout">
-       <property name="spacing">
-        <number>5</number>
-       </property>
+      <layout class="QVBoxLayout">
        <item>
         <layout class="QVBoxLayout">
          <item>
-          <layout class="QVBoxLayout">
-           <item>
-            <widget class="QCheckBox" name="_ccAccept">
-             <property name="text">
-              <string>Accept Credit Cards</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="_ccTest">
-             <property name="text">
-              <string>Work in Test Mode</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="_ccAccept">
+           <property name="text">
+            <string>Accept Credit Cards</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout">
-           <property name="spacing">
-            <number>5</number>
+          <widget class="QCheckBox" name="_ccTest">
+           <property name="text">
+            <string>Work in Test Mode</string>
            </property>
-           <item>
-            <widget class="QLabel" name="_ccCompanyLit">
-             <property name="text">
-              <string>Verification Service:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QComboBox" name="_ccCompany">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::MinimumExpanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout">
+        <layout class="QHBoxLayout">
          <property name="spacing">
-          <number>0</number>
+          <number>5</number>
          </property>
          <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
+          <widget class="QLabel" name="_ccCompanyLit">
+           <property name="text">
+            <string>Verification Service:</string>
            </property>
-           <item>
-            <widget class="QPushButton" name="_close">
-             <property name="text">
-              <string>&amp;Cancel</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_save">
-             <property name="text">
-              <string>&amp;Save</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
          <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+          <layout class="QHBoxLayout">
+           <property name="spacing">
+            <number>0</number>
            </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>16</height>
-            </size>
-           </property>
-          </spacer>
+           <item>
+            <widget class="QComboBox" name="_ccCompany">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::MinimumExpanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -1532,8 +1478,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>_anCurrFixed</tabstop>
   <tabstop>_anCurrFixedValue</tabstop>
   <tabstop>_anUsingWellsFargoSecureSource</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_testsAllFail</tabstop>
   <tabstop>_testsSomeFail</tabstop>
   <tabstop>_testsAllPass</tabstop>
@@ -1559,22 +1503,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>47</x>
      <y>161</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>configureCC</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>712</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
     </hint>
    </hints>
   </connection>

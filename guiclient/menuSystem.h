@@ -47,17 +47,7 @@ class menuSystem : public QObject
     void sRememberPositionToggle();
     void sRememberSizeToggle();
 
-    void sConfigureIE();
-    void sConfigureIM();
-    void sConfigurePD();
-    void sConfigureMS();
-    void sConfigureWO();
-    void sConfigureSO();
-    void sConfigurePO();
-    void sConfigureGL();
-    void sConfigureEncryption();
-    void sConfigureCC();
-    void sConfigureCRM();
+    void sSetup();
 
     void sEventManager();
     void sPreferences();
@@ -106,7 +96,6 @@ class menuSystem : public QObject
     void sTOC();
 
     void sCommunityHome();
-    //void sCommunityNewAccount();
     void sCommunityEditAccount();
     void sCommunityForums();
     void sCommunityBlogs();
@@ -124,7 +113,6 @@ class menuSystem : public QObject
     QToolBar *toolBar;
 
     QMenu *communityMenu;
-    QMenu *configModulesMenu;
     QMenu *designMenu;
     QMenu *employeeMenu;
     QMenu *helpMenu;

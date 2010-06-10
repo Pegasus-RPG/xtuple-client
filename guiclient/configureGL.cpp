@@ -22,8 +22,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
   // AP
   _nextAPMemoNumber->setValidator(omfgThis->orderVal());
   q.exec("SELECT currentAPMemoNumber() AS result;");
@@ -198,6 +196,8 @@ void configureGL::languageChange()
 
 void configureGL::sSave()
 {
+  emit saving();
+
   if (_metrics->boolean("ACHSupported"))
   {
     QString tmpCompanyId = _companyId->text();
@@ -398,8 +398,6 @@ void configureGL::sSave()
   _metrics->set("ManualForwardUpdate", _manualFwdUpdate->isChecked());
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
 
-  _metrics->load();
-
   omfgThis->sConfigureGLUpdated();
 
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled") &&
@@ -424,6 +422,4 @@ void configureGL::sSave()
                                "checking information for Vendors until the "
                                "system is configured to perform encryption."));
   }
-
-  accept();
 }

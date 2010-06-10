@@ -21,7 +21,7 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _costcatid = -1;
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _transformClearingLit->setVisible(_metrics->boolean("Transforms")); 
@@ -80,6 +80,7 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
       _category->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _asset->setReadOnly(TRUE);
+      _expense->setReadOnly(TRUE);
       _wip->setReadOnly(TRUE);
       _inventoryCost->setReadOnly(TRUE);
       _adjustment->setReadOnly(TRUE);
@@ -91,10 +92,9 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
       _freight->setReadOnly(TRUE);
       _shippingAsset->setReadOnly(TRUE);
       _toLiabilityClearing->setReadOnly(TRUE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

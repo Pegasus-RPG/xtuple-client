@@ -23,7 +23,6 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_shipformWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditShippingFormWatermark()));
   connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
 
@@ -199,6 +198,8 @@ void configureIM::languageChange()
 
 void configureIM::sSave()
 {
+  emit saving();
+
   if(!_costAvg->isChecked() && !_costStd->isChecked())
   { 
     QMessageBox::warning(this, tr("No Cost selected"),
@@ -299,14 +300,6 @@ void configureIM::sSave()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  _metrics->load();
-  _privileges->load();
-  omfgThis->saveToolbarPositions();
-  _preferences->load();
-  omfgThis->initMenuBar();
-
-  accept();
 }
 
 

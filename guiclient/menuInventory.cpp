@@ -119,8 +119,6 @@
 #include "warehouse.h"
 #include "locations.h"
 #include "siteTypes.h"
-#include "costCategories.h"
-#include "expenseCategories.h"
 
 #include "dspUnbalancedQOHByClassCode.h"
 #include "updateABCClass.h"
@@ -434,8 +432,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Master Information
     { "menu",                   tr("&Master Information"),      (char*)masterInfoMenu,       mainMenu,       "true",                                            NULL, NULL, true, NULL },
     { "im.siteTypes",           tr("&Site Types..."),           SLOT(sSiteTypes()),          masterInfoMenu, "MaintainSiteTypes ViewSiteTypes",                 NULL, NULL, true, NULL },
-    { "im.costCategories",      tr("&Cost Categories..."),      SLOT(sCostCategories()),     masterInfoMenu, "MaintainCostCategories ViewCostCategories",       NULL, NULL, true, NULL },
-    { "im.expenseCategories",   tr("&Expense Categories..."),   SLOT(sExpenseCategories()),  masterInfoMenu, "MaintainExpenseCategories ViewExpenseCategories", NULL, NULL, true, NULL },
     { "im.characteristics",     tr("C&haracteristics..."),      SLOT(sCharacteristics()),    masterInfoMenu, "MaintainCharacteristics ViewCharacteristics",     NULL, NULL, true, NULL },
 
     // Inventory | Utilities
@@ -1160,16 +1156,6 @@ void menuInventory::sWarehouseLocations()
 void menuInventory::sSiteTypes()
 {
   omfgThis->handleNewWindow(new siteTypes());
-}
-
-void menuInventory::sCostCategories()
-{
-  omfgThis->handleNewWindow(new costCategories());
-}
-
-void menuInventory::sExpenseCategories()
-{
-  omfgThis->handleNewWindow(new expenseCategories());
 }
 
 //  Utilities

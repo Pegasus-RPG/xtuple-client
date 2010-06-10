@@ -17,8 +17,6 @@ configureEncryption::configureEncryption(QWidget* parent, const char* name, bool
 {
   setupUi(this);
 
-  connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
-
   if (_metricsenc == 0)
   {
     QMessageBox::critical( this, tr("Cannot Read Configuration"),
@@ -43,6 +41,8 @@ void configureEncryption::languageChange()
 
 void configureEncryption::sSave()
 {
+  emit saving();
+
   _metrics->set("CCEncKeyName",      _ccEncKeyName->text());
   _metrics->set("CCWinEncKey",       _ccWinEncKey->text());
   _metrics->set("CCLinEncKey",       _ccLinEncKey->text());

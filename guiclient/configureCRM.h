@@ -30,6 +30,9 @@ protected slots:
     virtual void languageChange();
     virtual void sStrictCountryChanged(bool);
 
+signals:
+    void saving();
+
 };
 
 #endif // CONFIGURECRM_H

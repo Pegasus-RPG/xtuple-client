@@ -51,7 +51,6 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_map,        SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_newAtlasMap, SIGNAL(clicked()), this, SLOT(sNewAtlasMap()));
   connect(_newMap,      SIGNAL(clicked()), this, SLOT(sNewMap()));
-  connect(_save,        SIGNAL(clicked()), this, SLOT(sSave()));
 
   _map->addColumn(tr("Name"),             -1, Qt::AlignLeft, true, "xsltmap_name");
   _map->addColumn(tr("Document Type"),    -1, Qt::AlignLeft, true, "xsltmap_doctype");
@@ -70,7 +69,12 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   _internal->setVisible(false);
   _external->setVisible(false);
 
-  adjustSize();
+#ifdef Q_WS_WIN
+  _os->setCurrentIndex(1);
+#endif
+#ifdef Q_WS_MAC
+  _os->setCurrentIndex(2);
+#endif
 
   sPopulate();
 }
@@ -87,6 +91,8 @@ void configureIE::languageChange()
 
 void configureIE::sSave()
 {
+  emit saving();
+
   if (_importRenameFiles->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("Rename"));
   else if (_importDeleteFiles->isChecked())

@@ -91,8 +91,6 @@ class menuPurchase : public QObject
     void sPlannerCodes();
     void sRejectCodes();
     void sTerms();
-    void sExpenseCategories();
-    void sAPAssignments();
 
     void sItemsWithoutItemSources();
     void sAssignItemToPlannerCode();

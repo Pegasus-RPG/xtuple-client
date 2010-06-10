@@ -29,6 +29,8 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+signals:
+    void saving();
 };
 
 #endif // CONFIGUREPD_H

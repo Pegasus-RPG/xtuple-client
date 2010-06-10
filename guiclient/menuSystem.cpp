@@ -73,19 +73,9 @@
 #include "exportData.h"
 #include "importData.h"
 
-#include "configureIE.h"
-#include "configureIM.h"
-#include "configurePD.h"
-#include "configureMS.h"
-#include "configureWO.h"
-#include "configureSO.h"
-#include "configurePO.h"
-#include "configureGL.h"
-#include "configureEncryption.h"
-#include "configureCC.h"
-#include "configureCRM.h"
-
 #include "registration.h"
+
+#include "setup.h"
 
 extern QString __path;
 
@@ -113,7 +103,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   geometryMenu     = 0;
 
   systemMenu		= new QMenu(parent);
-  configModulesMenu	= new QMenu(parent);
   masterInfoMenu	= new QMenu(parent);
   sysUtilsMenu		= new QMenu(parent);
   windowMenu		= new QMenu(parent);
@@ -122,7 +111,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   employeeMenu          = new QMenu(parent);
 
   systemMenu->setObjectName("menu.sys");
-  configModulesMenu->setObjectName("menu.sys.configmodules");
   masterInfoMenu->setObjectName("menu.sys.masterinfo");
   sysUtilsMenu->setObjectName("menu.sys.utilities");
   windowMenu->setObjectName("menu.window");
@@ -174,16 +162,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
 
-  //  System | Configure Modules
-    { "menu",			tr("&Configure Modules"),(char*)configModulesMenu,systemMenu,		"true",					NULL,	NULL,	true	},
-    { "sys.configurePD",	tr("&Products..."),	SLOT(sConfigurePD()),	configModulesMenu,	"ConfigurePD",	NULL,	NULL,	true	},
-    { "sys.configureIM",	tr("&Inventory..."),	SLOT(sConfigureIM()),	configModulesMenu,	"ConfigureIM",	NULL,	NULL,	true	},
-    { "sys.configurePO",	tr("P&urchase..."),	SLOT(sConfigurePO()),	configModulesMenu,	"ConfigurePO",	NULL,	NULL,	true	},
-    { "sys.configureMS",	tr("Sch&edule..."),	SLOT(sConfigureMS()),	configModulesMenu,	"ConfigureMS",	NULL,	NULL,	 (_metrics->value("Application") != "PostBooks")	},
-    { "sys.configureWO",	tr("&Manufacture..."),	SLOT(sConfigureWO()),	configModulesMenu,	"ConfigureWO",	NULL,	NULL,	true	},
-    { "sys.configureCRM",	tr("&CRM..."),		SLOT(sConfigureCRM()),	configModulesMenu,	"ConfigureCRM",	NULL,	NULL,	true	},
-    { "sys.configureSO",	tr("&Sales..."),	SLOT(sConfigureSO()),	configModulesMenu,	"ConfigureSO",	NULL,	NULL,	true	},
-    { "sys.configureGL",	tr("&Accounting..."),	SLOT(sConfigureGL()),	configModulesMenu,	"ConfigureGL",	NULL,	NULL,	true	},
+  // Setup
+    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	NULL,	NULL,	NULL,	true	},
 
   //  Master Information
     { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	"true",			NULL,	NULL,	true	},
@@ -197,10 +177,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.currencies",		tr("Curre&ncies..."),	SLOT(sCurrencies()),	masterInfoMenu,	"CreateNewCurrency",	NULL,	NULL,	true	},
     { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),masterInfoMenu,	"MaintainCurrencyRates ViewCurrencyRates",
 															NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.encryption",         tr("Encr&yption..."),   SLOT(sConfigureEncryption()), masterInfoMenu, "ConfigureCC ConfigureEncryption",
-                                                                                                                        NULL,	NULL,	true	},
-    { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	"ConfigureCC",	        NULL,	NULL,	true	},
+
     { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
     { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	"MaintainCountries",	NULL,	NULL,	true	},
     { "sys.states",	tr("&States and Provinces..."),	SLOT(sStates()),	masterInfoMenu,	"MaintainStates",	NULL,	NULL,	true	},
@@ -209,7 +186,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
     { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.configureIE", tr("Configure Data Import and E&xport..."), SLOT(sConfigureIE()), masterInfoMenu, "ConfigureImportExport", NULL, NULL, true },
     { "sys.CSVAtlases",  tr("Maintain CS&V Atlases..."),             SLOT(sCSVAtlases()),  masterInfoMenu, "ConfigureImportExport", NULL, NULL, loadCSVPlugin() },
 
   //  Design
@@ -558,11 +534,6 @@ void menuSystem::sDepartments()
   omfgThis->handleNewWindow(new departments());
 }
 
-void menuSystem::sConfigureIE()
-{
-  configureIE(parent, "", TRUE).exec();
-}
-
 void menuSystem::sCustomCommands()
 {
   omfgThis->handleNewWindow(new customCommands());
@@ -588,54 +559,14 @@ void menuSystem::sUIForms()
   omfgThis->handleNewWindow(new uiforms());
 }
 
-void menuSystem::sConfigureIM()
+void menuSystem::sSetup()
 {
-  configureIM(parent, "", TRUE).exec();
-}
+  ParameterList params;
+  params.append("module", setup::All);
 
-void menuSystem::sConfigurePD()
-{
-  configurePD(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureMS()
-{
-  configureMS(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureWO()
-{
-  configureWO(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigurePO()
-{
-  configurePO(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureSO()
-{
-  configureSO(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureGL()
-{
-  configureGL(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureEncryption()
-{
-  configureEncryption(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureCC()
-{
-  configureCC(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureCRM()
-{
-  configureCRM(parent, "", TRUE).exec();
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void menuSystem::sMaintainUsers()

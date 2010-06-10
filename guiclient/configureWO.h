@@ -29,6 +29,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+signals:
+    void saving();
+
 };
 
 #endif // CONFIGUREWO_H

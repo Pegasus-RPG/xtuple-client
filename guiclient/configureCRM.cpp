@@ -24,8 +24,6 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
   _nextInNumber->setValidator(omfgThis->orderVal());
   _nextAcctNumber->setValidator(omfgThis->orderVal());
 
@@ -112,6 +110,8 @@ void configureCRM::languageChange()
 
 void configureCRM::sSave()
 {
+  emit saving();
+
   const char *numberGenerationTypes[] = { "M", "A", "O" };
 
   q.prepare( "SELECT setNextIncidentNumber(:innumber);" );
@@ -166,10 +166,6 @@ void configureCRM::sSave()
   q.bindValue(":code", "L");
   q.bindValue(":color", _closed->text());
   q.exec();
-  
-  _metrics->load();
-
-  accept();
 }
 
 /* TODO: introduced option in 3.4.0beta2.

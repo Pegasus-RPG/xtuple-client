@@ -21,11 +21,6 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-
   _inactiveBomItems->setChecked(_metrics->boolean("AllowInactiveBomItems"));
   _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
   _changeLog->setChecked(_metrics->boolean("ItemChangeLog"));
@@ -82,6 +77,8 @@ void configurePD::languageChange()
 
 void configurePD::sSave()
 {
+  emit saving();
+
   if (!_metrics->boolean("RevControl") && (_revControl->isChecked()))
   {
     if (QMessageBox::warning(this, tr("Enable Revision Control"),
@@ -138,12 +135,4 @@ void configurePD::sSave()
     _metrics->set("DefaultWomatlIssueMethod", QString("L"));
   else if (_issueMethod->currentIndex() == 2)
     _metrics->set("DefaultWomatlIssueMethod", QString("M"));
-
-  _metrics->load();
-  _privileges->load();
-  omfgThis->saveToolbarPositions();
-  _preferences->load();
-  omfgThis->initMenuBar();
-
-  accept();
 }

@@ -11,13 +11,6 @@ class Xt
   public:
 
   enum ItemDataRole {
-    QtDisplayRole = (Qt::DisplayRole),
-    QtDecorationRole = (Qt::DecorationRole),
-    QtEditRole = (Qt::EditRole),
-    QtToolTipRole = (Qt::ToolTipRole),
-    QtStatusTipRole = (Qt::StatusTipRole),
-    QtWhatsThisRole = (Qt::WhatsThisRole),
-    QtSizeHintRole = (Qt::SizeHintRole),
     RawRole = (Qt::UserRole + 1),
     ScaleRole,
     IdRole,

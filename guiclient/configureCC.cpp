@@ -29,8 +29,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   connect(_anDuplicateWindow, SIGNAL(valueChanged(int)), this, SLOT(sDuplicateWindow(int)));
   connect(_ccCompany, SIGNAL(currentIndexChanged(int)), this, SLOT(sCCCompanyChanged(int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
 
   _enableChargePreauth->setVisible(false);
   _enableCredit->setVisible(false);
@@ -214,6 +212,8 @@ void configureCC::languageChange()
 
 void configureCC::sSave()
 {
+  emit saving();
+
   _metrics->set("CCAccept",          _ccAccept->isChecked());
   _metrics->set("CCTest",            _ccTest->isChecked());
   _metrics->set("CCValidDays",       _ccValidDays->value());

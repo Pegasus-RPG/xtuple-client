@@ -163,9 +163,7 @@ class menuSales : public QObject
     void sTerms();
     void sShippingForms();
     void sSalesAccountAssignments();
-    void sARAccountAssignments();
     void sCustomerFormAssignments();
-    void sSalesCategories();
 
     void sDspCustomerInformationExport();
     void sReassignCustomerTypeByCustomerType();

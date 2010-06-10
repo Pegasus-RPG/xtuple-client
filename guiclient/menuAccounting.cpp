@@ -135,17 +135,12 @@
 #include "termses.h"
 #include "bankAccounts.h"
 #include "checkFormats.h"
-#include "apAccountAssignments.h"
-#include "costCategories.h"
-#include "expenseCategories.h"
 
 #include "customers.h"
 #include "customerType.h"
 #include "customerTypes.h"
 #include "vendorTypes.h"
-#include "salesCategories.h"
 #include "reasonCodes.h"
-#include "arAccountAssignments.h"
 
 #include "updateLateCustCreditStatus.h"
 #include "createRecurringInvoices.h"
@@ -445,16 +440,10 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.postTransactionsToExternalAccountingSystem", tr("Post Transactions to External Accounting System..."), SLOT(sPostTransactionsToExternal()), utilitiesMenu, "ViewGLTransactions", NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface") , NULL },                             
     { "ap.terms", tr("Ter&ms..."), SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms", NULL, NULL, true , NULL },
     { "separator",			NULL,					NULL,				masterInfoMenu,	"true",	NULL, NULL, true , NULL },
-    { "ap.bankAccounts", tr("&Bank Accounts..."), SLOT(sBankAccounts()), masterInfoMenu, "MaintainBankAccounts ViewBankAccounts", NULL, NULL, true, NULL },
     { "ap.checkFormats", tr("&Check Formats..."), SLOT(sCheckFormats()), masterInfoMenu, "MaintainCheckFormats ViewCheckFormats", NULL, NULL, true, NULL },
-    { "ap.costCategories", tr("C&ost Categories..."), SLOT(sCostCategories()), masterInfoMenu, "MaintainCostCategories ViewCostCategories", NULL, NULL, true, NULL },
-    { "ap.expenseCategories", tr("&Expense Categories..."), SLOT(sExpenseCategories()), masterInfoMenu, "MaintainExpenseCategories ViewExpenseCategories", NULL, NULL, true, NULL },
-    { "ap.apAccountAssignments", tr("A/&P Account Assignments..."), SLOT(sAPAssignments()), masterInfoMenu, "MaintainVendorAccounts ViewVendorAccounts", NULL, NULL, true , NULL },
     { "separator",		  NULL,					NULL,					masterInfoMenu,		"true",					       NULL, NULL, true, NULL },
     { "ar.customerTypes", tr("Customer &Types..."), SLOT(sCustomerTypes()), masterInfoMenu, "MaintainCustomerTypes ViewCustomerTypes", NULL, NULL, true , NULL },
     { "ar.vendorTypes", tr("&Vendor Types..."), SLOT(sVendorTypes()), masterInfoMenu, "MaintainVendorTypes ViewVendorTypes", NULL, NULL, true , NULL },
-    { "ar.salesCategories", tr("&Sales Categories..."), SLOT(sSalesCategories()), masterInfoMenu, "MaintainSalesCategories ViewSalesCategories", NULL, NULL, true , NULL },
-    { "ar.arAccountAssignments", tr("A/R Account Assi&gnments..."), SLOT(sARAccountAssignments()), masterInfoMenu, "MaintainSalesAccount ViewSalesAccount", NULL, NULL, true , NULL },
     { "ar.reasonCodes", tr("&Reason Codes..."), SLOT(sReasonCodes()), masterInfoMenu, "MaintainReasonCodes", NULL, NULL, true , NULL },
     { "separator",		  NULL,					NULL,					masterInfoMenu,		"true",					       NULL, NULL, true, NULL },
     { "gl.adjustmentTypes",	tr("&Adjustment Types..."),	SLOT(sAdjustmentTypes()),	masterInfoMenu,	"MaintainAdjustmentTypes ViewAdjustmentTypes",	NULL, NULL, true, NULL },
@@ -1165,29 +1154,9 @@ void menuAccounting::sVendors()
   omfgThis->handleNewWindow(new vendors());
 }
 
-void menuAccounting::sBankAccounts()
-{
-  omfgThis->handleNewWindow(new bankAccounts());
-}
-
 void menuAccounting::sCheckFormats()
 {
   omfgThis->handleNewWindow(new checkFormats());
-}
-
-void menuAccounting::sAPAssignments()
-{
-  omfgThis->handleNewWindow(new apAccountAssignments());
-}
-
-void menuAccounting::sCostCategories()
-{
-  omfgThis->handleNewWindow(new costCategories());
-}
-
-void menuAccounting::sExpenseCategories()
-{
-  omfgThis->handleNewWindow(new expenseCategories());
 }
 
 void menuAccounting::sPrintStatementByCustomer()
@@ -1215,19 +1184,9 @@ void menuAccounting::sVendorTypes()
   omfgThis->handleNewWindow(new vendorTypes());
 }
 
-void menuAccounting::sSalesCategories()
-{
-  omfgThis->handleNewWindow(new salesCategories());
-}
-
 void menuAccounting::sReasonCodes()
 {
   omfgThis->handleNewWindow(new reasonCodes());
-}
-
-void menuAccounting::sARAccountAssignments()
-{
-  omfgThis->handleNewWindow(new arAccountAssignments());
 }
 
 void menuAccounting::sUpdateLateCustCreditStatus()

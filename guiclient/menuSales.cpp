@@ -138,9 +138,7 @@
 #include "shippingZones.h"
 #include "shippingForms.h"
 #include "salesAccounts.h"
-#include "arAccountAssignments.h"
 #include "customerFormAssignments.h"
-#include "salesCategories.h"
 
 #include "dspCustomerInformationExport.h"
 #include "reassignCustomerTypeByCustomerType.h"
@@ -461,11 +459,9 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.shippingChargeTypes", tr("Shipping &Charge Types..."),	SLOT(sShippingChargeTypes()), masterInfoMenu, "MaintainShippingChargeTypes ViewShippingChargeTypes",	NULL, NULL, true, NULL },
     { "so.taxCodes", tr("Ta&x Codes..."),	SLOT(sTaxCodes()), masterInfoMenu, "MaintainTaxCodes ViewTaxCodes",	NULL, NULL, true, NULL },
     { "so.shippingForms", tr("Shipping &Forms..."),	SLOT(sShippingForms()), masterInfoMenu, "MaintainShippingForms ViewShippingForms",	NULL, NULL, true, NULL },
-    { "so.salesCategories", tr("Sales Cate&gories..."),	SLOT(sSalesCategories()), masterInfoMenu, "MaintainSalesCategories ViewSalesCategories",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	masterInfoMenu,	"true",		NULL, NULL, true, NULL },
     { "so.terms", tr("&Terms..."),	SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms",	NULL, NULL, true, NULL },
     { "so.salesAccountAssignments", tr("Sa&les Account Assignments..."),	SLOT(sSalesAccountAssignments()), masterInfoMenu, "MaintainSalesAccount ViewSalesAccount",	NULL, NULL, true, NULL },
-    { "so.arAccountAssignments", tr("&A/R Account Assignments..."),	SLOT(sARAccountAssignments()), masterInfoMenu, "MaintainSalesAccount ViewSalesAccount",	NULL, NULL, true, NULL },
     { "so.customerFormAssignments", tr("C&ustomer Form Assignments..."),	SLOT(sCustomerFormAssignments()), masterInfoMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
 
     { "menu",	tr("&Utilities"),         (char*)utilitiesMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
@@ -1223,19 +1219,9 @@ void menuSales::sShippingForms()
   omfgThis->handleNewWindow(new shippingForms());
 }
 
-void menuSales::sSalesCategories()
-{
-  omfgThis->handleNewWindow(new salesCategories());
-}
-
 void menuSales::sSalesAccountAssignments()
 {
   omfgThis->handleNewWindow(new salesAccounts());
-}
-
-void menuSales::sARAccountAssignments()
-{
-  omfgThis->handleNewWindow(new arAccountAssignments());
 }
 
 void menuSales::sCustomerFormAssignments()

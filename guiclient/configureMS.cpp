@@ -18,10 +18,6 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-
   _nextPlanNumber->setValidator(omfgThis->orderVal());
 
   q.exec("SELECT currentPlanNumber() AS result;");
@@ -47,13 +43,11 @@ void configureMS::languageChange()
 
 void configureMS::sSave()
 {
+  emit saving();
+
   q.prepare("SELECT setNextPlanNumber(:planord_number) AS result;");
   q.bindValue(":planord_number", _nextPlanNumber->text().toInt());
   q.exec();
 
   _metrics->set("DefaultMSCalendar", _calendar->id());
-
-  _metrics->load();
-
-  accept();
 }

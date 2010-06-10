@@ -20,7 +20,6 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
   connect(_creditMemoNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCreditMemoCopies(int)));
   connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditInvoiceWatermark()));
@@ -288,6 +287,8 @@ void configureSO::languageChange()
 
 void configureSO::sSave()
 {
+  emit saving();
+
   const char *numberGenerationTypes[] = { "M", "A", "O", "S" };
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
   const char *timingTypes[] = { "I", "R", "" };
@@ -445,10 +446,6 @@ void configureSO::sSave()
     }
   }
   _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
-
-  _metrics->load();
-
-  accept();
 }
 
 void configureSO::sHandleInvoiceCopies(int pValue)

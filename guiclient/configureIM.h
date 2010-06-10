@@ -23,12 +23,16 @@ public:
     configureIM(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~configureIM();
 
+public slots:
+    virtual void sSave();
+
 protected slots:
     virtual void languageChange();
-    virtual void sSave();
     virtual void sHandleShippingFormCopies( int pValue );
     virtual void sEditShippingFormWatermark();
 
+signals:
+    void saving();
 };
 
 #endif // CONFIGUREIM_H

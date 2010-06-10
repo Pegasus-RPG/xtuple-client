@@ -27,8 +27,6 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
 
   // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(released()), this, SLOT(reject()));
   connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
 
   if (_metrics->value("Application") == "PostBooks")
@@ -144,6 +142,8 @@ void configurePO::languageChange()
 
 void configurePO::sSave()
 {
+  emit saving();
+
   if (_orderNumGeneration->currentIndex() == 0)
     _metrics->set("PONumberGeneration", QString("M"));
   else if (_orderNumGeneration->currentIndex() == 1)
@@ -178,9 +178,5 @@ void configurePO::sSave()
   q.bindValue(":vcNumber", _nextVcNumber->text().toInt());
   q.bindValue(":prNumber", _nextPrNumber->text().toInt());
   q.exec();
-
-  _metrics->load();
-
-  accept();
 }
 

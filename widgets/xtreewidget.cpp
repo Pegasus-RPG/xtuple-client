@@ -2263,7 +2263,7 @@ XTreeWidgetItem *XTreeWidget::itemAbove(const XTreeWidgetItem *item) const
   return dynamic_cast<XTreeWidgetItem *>(QTreeWidget::itemAbove(item));
 }
 
-QList<XTreeWidgetItem *> XTreeWidget::findItems(const QString &text, Qt::MatchFlags flags, int column, Xt::ItemDataRole role) const
+QList<XTreeWidgetItem *> XTreeWidget::findItems(const QString &text, Qt::MatchFlags flags, int column, int role) const
 {
   QModelIndexList indexes = model()->match(model()->index(0, column, QModelIndex()),
                                            role, text, -1, flags);

@@ -643,6 +643,7 @@ FORMS =   absoluteCalendarItem.ui               \
           selectPayments.ui                     \
           selectShippedOrders.ui                \
           selectedPayments.ui                   \
+          setup.ui                              \
           shipOrder.ui                          \
           shipTo.ui                             \
           shipVia.ui                            \
@@ -1377,6 +1378,7 @@ HEADERS = ../common/format.h                    \
           selectPayments.h                      \
           selectShippedOrders.h                 \
           selectedPayments.h                    \
+          setup.h                               \
           shipOrder.h                           \
           shipTo.h                              \
           shipVia.h                             \
@@ -2125,6 +2127,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           selectPayments.cpp                    \
           selectShippedOrders.cpp               \
           selectedPayments.cpp                  \
+          setup.cpp                             \
           shipOrder.cpp                         \
           shipTo.cpp                            \
           shipVia.cpp                           \

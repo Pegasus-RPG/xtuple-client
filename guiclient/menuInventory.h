@@ -147,8 +147,6 @@ class menuInventory : public QObject
     void sWarehouses();
     void sWarehouseLocations();
     void sSiteTypes();
-    void sCostCategories();
-    void sExpenseCategories();
 
     void sDspUnbalancedQOHByClassCode();
     void sUpdateABCClass();

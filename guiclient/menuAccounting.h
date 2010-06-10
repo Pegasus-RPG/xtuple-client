@@ -159,11 +159,7 @@ class menuAccounting : public QObject
 
     void sVendors();
     void sTerms();
-    void sBankAccounts();
     void sCheckFormats();
-    void sAPAssignments();
-    void sCostCategories();
-    void sExpenseCategories();
     
     void sPrintStatementByCustomer();
     void sPrintStatementsByCustomerType();
@@ -171,9 +167,7 @@ class menuAccounting : public QObject
     void sCustomers();
     void sCustomerTypes();
     void sVendorTypes();
-    void sSalesCategories();
     void sReasonCodes();
-    void sARAccountAssignments();
 
     void sUpdateLateCustCreditStatus();
     void sCreateRecurringInvoices();

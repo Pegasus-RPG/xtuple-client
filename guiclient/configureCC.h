@@ -32,7 +32,8 @@ protected slots:
     virtual void languageChange();
     virtual void sCCCompanyChanged(const int);
 
-private:
+signals:
+    void saving();
 
 };
 
