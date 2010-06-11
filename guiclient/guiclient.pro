@@ -114,6 +114,7 @@ FORMS =   absoluteCalendarItem.ui               \
           check.ui                              \
           checkFormat.ui                        \
           checkFormats.ui                       \
+          checkForUpdates.ui                    \
           classCode.ui                          \
           classCodes.ui                         \
           closePurchaseOrder.ui                 \
@@ -826,6 +827,7 @@ HEADERS = ../common/format.h                    \
           check.h                       \
           checkFormat.h                 \
           checkFormats.h                \
+          checkForUpdates.h             \
           classCode.h                   \
           classCodes.h                  \
           closePurchaseOrder.h          \
@@ -1575,6 +1577,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           check.cpp                             \
           checkFormat.cpp                       \
           checkFormats.cpp                      \
+          checkForUpdates.cpp                   \
           classCode.cpp                         \
           classCodes.cpp                        \
           closePurchaseOrder.cpp                \
