@@ -52,36 +52,20 @@ enum SetResponse setup::set(const ParameterList &pParams)
 
 /*!
   Add setup \a widget with XTreewidgetItem \a parent to the list of setup items and the stacked widget with
-  a\ title.  The item on the list will be disabled if the user does not have\a privilege granted.  Optionally
-  a save function on the widget triggered by the Apply and Save buttons can be specified by \a member.
+  a\ title.  The item on the list will be enabled according to the \a enabled value.  The value of \a mode will
+  determined whether parameters passed open the widget in "edit" or "view" mode.  A save function on the
+  widget triggered by the Apply and Save buttons can be specified by \a saveMethod.
 */
-void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString &title, const QString &privileges, const QString &method)
+void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString &title, bool enabled, int mode, const QString &saveMethod)
 {
   QBrush disabled(Qt::gray);
 
-  // Parse the privileges
-  bool enable = false;
-  QStringList privlist = privileges.split(' ', QString::SkipEmptyParts);
-  for (int i = 0; i < privlist.size(); ++i)
-  {
-    bool tb = true;
-    QStringList privandlist = privlist.at(i).split('+', QString::SkipEmptyParts);
-    if(privandlist.size() > 1)
-    {
-      for(int ii = 0; ii < privandlist.size(); ++ii)
-        tb = tb && _privileges->boolean(privandlist.at(ii));
-    }
-    else
-      tb = enable || _privileges->boolean(privlist.at(i));
-    enable = enable || tb;
-  }
-
   // Set the item on the list
-  XTreeWidgetItem* item  = new XTreeWidgetItem(parent, -1);
+  XTreeWidgetItem* item  = new XTreeWidgetItem(parent, mode);
   item->setData(0, Qt::DisplayRole, QVariant(title));
   item->setData(0, Xt::RawRole, QVariant(uiName));
 
-  if (!enable)
+  if (!enabled)
   {
     item->setFlags(Qt::NoItemFlags);
     item->setForeground(0,disabled);
@@ -89,8 +73,8 @@ void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString
   parent->addChild(item);
 
   // Store the save methad name
-  if (!method.isEmpty())
-    _methodMap.insert(uiName, method);
+  if (!saveMethod.isEmpty())
+    _methodMap.insert(uiName, saveMethod);
 }
 
 void setup::apply()
@@ -102,6 +86,21 @@ void setup::apply()
 void setup::languageChange()
 {
   retranslateUi(this);
+}
+
+/*!
+  Returns the mode value based on the privileges granted by checking \a editPriv and
+  \a viewPriv.  If the user has edit privileges cEdit (2) will be returned, if only view
+  privileges then cView (3) will be returned, otherwise 0;
+  */
+int setup::mode(const QString &editPriv, const QString &viewPriv)
+{
+  if (_privileges->check(editPriv))
+    return cEdit;
+  else if (_privileges->check(viewPriv))
+    return cView;
+
+  return 0;
 }
 
 void setup::populate(int module)
@@ -119,54 +118,67 @@ void setup::populate(int module)
   XTreeWidgetItem* configItem = new XTreeWidgetItem(_tree, 0, -1, tr("Configure"));
 
   if (module == All || module == Accounting)
-    append(configItem, "configureGL", tr("Accounting"), "ConfigureGL", "sSave()");
+    append(configItem, "configureGL", tr("Accounting"), mode("ConfigureGL"), 0, "sSave()");
 
   if (module == All || module == Sales)
-    append(configItem, "configureSO", tr("Sales"), "ConfigureSO", "sSave()" );
+    append(configItem, "configureSO", tr("Sales"), mode("ConfigureSO"), 0, "sSave()" );
 
   if (module == All || module == CRM)
-    append(configItem, "configureCRM", tr("CRM"), "ConfigureCRM", "sSave()" );
+    append(configItem, "configureCRM", tr("CRM"), mode("ConfigureCRM"), 0, "sSave()" );
 
   if (module == All || module == Manufacture)
-    append(configItem, "configureWO", tr("Manufacture"), "ConfigureWO", "sSave()");
+    append(configItem, "configureWO", tr("Manufacture"), mode("ConfigureWO"), 0, "sSave()");
 
   if (module == All || module == Purchase)
-    append(configItem, "configurePO", tr("Purchase"), "ConfigurePO", "sSave()" );
+    append(configItem, "configurePO", tr("Purchase"), mode("ConfigurePO"), 0, "sSave()" );
 
   if (module == All || module == Schedule)
-    append(configItem, "configureMS", tr("Schedule"), "ConfigureMS", "sSave()" );
+    append(configItem, "configureMS", tr("Schedule"), mode("ConfigureMS"), 0, "sSave()" );
 
   if (module == All || module == Inventory)
-    append(configItem, "configureIM", tr("Inventory"), "ConfigureIM", "sSave()" );
+    append(configItem, "configureIM", tr("Inventory"), mode("ConfigureIM"), 0, "sSave()" );
 
   if (module == All || module == Products)
-    append(configItem, "configurePD", tr("Products"), "ConfigurePD", "sSave()" );
+    append(configItem, "configurePD", tr("Products"), mode("ConfigurePD"), 0, "sSave()" );
 
   if (module == All || module == System)
   {
-    append(configItem, "configureIE", tr("Import/Export"), "ConfigureImportExport", "sSave()");
-    append(configItem, "configureEncryption", tr("Encryption"), "ConfigureEncryption", "sSave()");
-    append(configItem, "configureCC", tr("Credit Card"), "ConfigureCC", "sSave()");
+    append(configItem, "configureIE", tr("Import/Export"), mode("ConfigureImportExport"), 0, "sSave()");
+    append(configItem, "configureEncryption", tr("Encryption"), mode("ConfigureEncryption"), 0, "sSave()");
+    append(configItem, "configureCC", tr("Credit Card"), mode("ConfigureCC"), 0, "sSave()");
   }
 
   _tree->addTopLevelItem(configItem);
 
   // Account Mappings
   XTreeWidgetItem* mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Account Mappings"));
+  int modeVal;
 
   if (module == All || module == Accounting || module == Inventory)
-    append(mapItem,"costCategories", tr("Cost Categories"), "MaintainCostCategories ViewCostCategories");
+  {
+    modeVal = mode("MaintainCostCategories", "ViewCostCategories");
+    append(mapItem,"costCategories", tr("Cost Categories"), modeVal, modeVal);
+  }
 
   if (module == All || module == Accounting || module == Inventory || module == Purchase)
-    append(mapItem, "expenseCategories", tr("Expense Categories"), "MaintainExpenseCategories ViewExpenseCategories");
+  {
+    modeVal = mode("MaintainExpenseCategories", "ViewExpenseCategories");
+    append(mapItem, "expenseCategories", tr("Expense Categories"), modeVal, modeVal);
+  }
 
   if (module == All || module == Accounting || module == Purchase)
-    append(mapItem, "apAccountAssignments", tr("Payables Assignments"), "MaintainVendorAccounts ViewVendorAccounts");
+  {
+    modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
+    append(mapItem, "apAccountAssignments", tr("Payables Assignments"), modeVal, modeVal);
+  }
 
   if (module == All || module == Accounting || module == Sales)
   {
-    append(mapItem, "arAccountAssignments", tr("Receivables Assignments"), "MaintainSalesAccount ViewSalesAccount");
-    append(mapItem, "salesCategories", tr("Sales Categories"), "MaintainSalesCategories ViewSalesCategories");
+    modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
+    append(mapItem, "arAccountAssignments", tr("Receivables Assignments"), modeVal, modeVal);
+
+    modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
+    append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
   }
 
   _tree->addTopLevelItem(mapItem);
@@ -175,7 +187,11 @@ void setup::populate(int module)
   XTreeWidgetItem* masterItem = new XTreeWidgetItem(_tree, 0, -1, tr("Master Information"));
 
   if (module == All || module == Accounting)
-    append(masterItem, "bankAccounts", tr("Bank Accounts"), "MaintainBankAccounts ViewBankAccounts");
+  {
+
+    modeVal = mode("MaintainBankAccounts");
+    append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
+  }
 
   _tree->addTopLevelItem(masterItem);
 
@@ -191,6 +207,10 @@ void setup::populate(int module)
     qDebug("found:" + test.at(i)->data(0,Qt::DisplayRole).toString());
 }
 
+/*! Emits the \a saving() signal which triggers any widgets to save that have a mapped \a savedMethod()
+  specified by \sa append().  Also reloads metrics, privileges, preferences, and the menubar in the
+  main application.  The screen will close if \a close is true.
+  */
 void setup::save(bool close)
 {
   emit saving();
@@ -250,6 +270,19 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       QWidget* buttons = w->findChild<QDialogButtonBox*>();
       if (buttons)
         buttons->hide();
+
+      //Set mode if applicable
+      if (item->id() && w->inherits("XDialog"))
+      {
+        XWidget* x = dynamic_cast<XWidget*>(w);
+        ParameterList params;
+        if (item->id() == cEdit)
+          params.append("mode", "edit");
+        else if (item->id() == cView)
+          params.append("mode", "view");
+        x->set(params);
+      }
+
 
       //Connect save slot if applicable
       if (_methodMap.contains(uiName))

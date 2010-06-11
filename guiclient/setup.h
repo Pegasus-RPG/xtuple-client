@@ -58,9 +58,15 @@ public:
 
 public slots:
     enum SetResponse set(const ParameterList & pParams );
-    void append(XTreeWidgetItem* parent, const QString &uiName, const QString &title, const QString &privileges, const QString &method = QString());
+    void append(XTreeWidgetItem* parent, 
+                const QString &uiName, 
+                const QString &title,
+                bool enabled = true,
+                int mode = 0,
+                const QString &saveMethod = QString());
     void apply();
     void languageChange();
+    int mode(const QString &editPriv, const QString &viewPriv = QString());
     void populate(int module = All);
     void save(bool close = true);
 

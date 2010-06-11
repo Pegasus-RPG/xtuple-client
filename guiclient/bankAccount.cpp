@@ -21,7 +21,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
   setupUi(this);
 
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
-  connect(_save,               SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
 
   _nextCheckNum->setValidator(omfgThis->orderVal());
@@ -119,10 +119,9 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
       _form->setEnabled(FALSE);
       _ar->setEnabled(FALSE);
       _assetAccount->setReadOnly(TRUE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

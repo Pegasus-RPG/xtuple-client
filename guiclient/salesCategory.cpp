@@ -21,8 +21,8 @@ salesCategory::salesCategory(QWidget* parent, const char* name, bool modal, Qt::
   _salescatid = -1;
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
@@ -79,10 +79,9 @@ enum SetResponse salesCategory::set(const ParameterList &pParams)
       _sales->setReadOnly(TRUE);
       _prepaid->setReadOnly(TRUE);
       _araccnt->setReadOnly(TRUE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 
