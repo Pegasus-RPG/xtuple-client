@@ -33,6 +33,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void sReverse();
+    virtual void sDelete();
 
 
 };

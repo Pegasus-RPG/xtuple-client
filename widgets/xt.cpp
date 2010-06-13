@@ -22,5 +22,6 @@ void setupXt(QScriptEngine *engine)
   glob.setProperty("TotalSetRole",    QScriptValue(engine, Xt::TotalSetRole),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("TotalInitRole",   QScriptValue(engine, Xt::TotalInitRole),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("IndentRole",      QScriptValue(engine, Xt::IndentRole),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("DeletedRole",     QScriptValue(engine, Xt::DeletedRole),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
 

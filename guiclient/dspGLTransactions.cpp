@@ -110,6 +110,7 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
     _parameterWidget->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
   _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
   _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
+  _parameterWidget->append(tr("Show Deleted"), "showDeleted", ParameterWidget::Exists);
 
   _parameterWidget->applyDefaultFilterSet();
 }
@@ -171,12 +172,13 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 
 void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
 {
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
-  menuThis->insertItem(tr("View GL Series..."), this, SLOT(sViewSeries()), 0);
-
   XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
   if(0 == item)
     return;
+
+  menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
+  QAction* viewSeriesAct = menuThis->addAction(tr("View GL Series..."), this, SLOT(sViewSeries()));
+  viewSeriesAct->setDisabled(item->data(0, Xt::DeletedRole).toBool());
 
   if(item->rawValue("gltrans_doctype").toString() == "VO")
     menuThis->insertItem(tr("View Voucher..."), this, SLOT(sViewDocument()));

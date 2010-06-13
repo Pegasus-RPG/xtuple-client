@@ -68,8 +68,9 @@
 
 #define ROWROLE_INDENT        0
 #define ROWROLE_HIDDEN        1
+#define ROWROLE_DELETED       2
 // make sure ROWROLE_COUNT = last ROWROLE + 1
-#define ROWROLE_COUNT         2
+#define ROWROLE_COUNT         3
 
 static QString  yesStr = QObject::tr("Yes");
 static QString  noStr  = QObject::tr("No");
@@ -274,7 +275,7 @@ void XTreeWidget::populateWorker()
 
         QSqlRecord  currRecord = pQuery.record();
 
-        // apply indent and hidden roles to col 0 if the caller requested them
+        // apply indent, hidden and delete roles to col 0 if the caller requested them
         // keep synchronized with #define ROWROLE_* above
         if (rootIsDecorated())
         {
@@ -289,9 +290,13 @@ void XTreeWidget::populateWorker()
         if (rowRole[ROWROLE_HIDDEN] < 0)
           rowRole[ROWROLE_HIDDEN] = 0;
 
+        rowRole[ROWROLE_DELETED] = currRecord.indexOf("xtdeletedrole");
+        if (rowRole[ROWROLE_DELETED] < 0)
+          rowRole[ROWROLE_DELETED] = 0;
+
         // keep synchronized with #define COLROLE_* above
         // TODO: get rid of COLROLE_* above and replace this QStringList
-        // with a map or vector of known roles and their Qt:: role or XTRole
+        // with a map or vector of known roles and their Qt:: role or Xt
         // enum values
         QStringList knownroles;
         knownroles << "qtdisplayrole"      << "qttextalignmentrole"<<
@@ -430,7 +435,7 @@ void XTreeWidget::populateWorker()
 
           bool allNull = (indent > 0);
           for (int col = 0; col < _roles.size(); col++)
-          {
+          {            
             QVariantMap *role = _roles.value(col);
             if (!role)
             {
@@ -601,6 +606,21 @@ void XTreeWidget::populateWorker()
                             pQuery.value(colRole[col][COLROLE_TOTAL]).toInt());
             }
 
+            if (rowRole[ROWROLE_DELETED])
+            {
+              if (DEBUG)
+                qDebug("%s::populate() found xtdeleterole, value = %s",
+                        qPrintable( objectName()),
+                        qPrintable( pQuery.value(rowRole[ROWROLE_DELETED]).toString()));
+              if (pQuery.value(rowRole[ROWROLE_DELETED]).toBool())
+              {
+                last->setData(col,Xt::DeletedRole, QVariant(true));
+                QFont font = last->font(col);
+                font.setStrikeOut(true);
+                last->setFont(col, font);
+                last->setTextColor(Qt::gray);
+              }
+            }
             /*
             if (colRole[col][COLROLE_KEY])
               last->setData(col, KeyRole, pQuery.value(colRole[col][COLROLE_KEY]));

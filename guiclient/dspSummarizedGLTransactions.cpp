@@ -148,6 +148,7 @@ void dspSummarizedGLTransactions::sFillList()
                "       '' AS gltrans_username, CAST(NULL AS TIMESTAMP) AS gltrans_created "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (NOT gltrans_deleted) "
                " AND (gltrans_date BETWEEN :startDate AND :endDate) ");
 
   if (_selectedSource->isChecked())
@@ -174,6 +175,7 @@ void dspSummarizedGLTransactions::sFillList()
                "       gltrans_username, gltrans_created "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (NOT gltrans_deleted) "
                " AND (gltrans_date BETWEEN :startDate AND :endDate) ";
 
   if (_selectedSource->isChecked())

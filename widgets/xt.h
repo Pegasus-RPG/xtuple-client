@@ -18,7 +18,8 @@ class Xt
     RunningInitRole,
     TotalSetRole,
     TotalInitRole,
-    IndentRole
+    IndentRole,
+    DeletedRole
   };
 
 };

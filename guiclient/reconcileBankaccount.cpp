@@ -76,6 +76,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(populate()));
+    connect(omfgThis, SIGNAL(glSeriesUpdated()), this, SLOT(populate()));
 }
 
 reconcileBankaccount::~reconcileBankaccount()
@@ -323,6 +324,7 @@ void reconcileBankaccount::populate()
             "        AND (bankrecitem_bankrec_id=:bankrecid)) "
             "       LEFT OUTER JOIN jrnluse ON (jrnluse_number=gltrans_journalnumber AND jrnluse_use='C/R')"
             " WHERE ((gltrans_accnt_id=bankaccnt_accnt_id)"
+            "   AND (NOT gltrans_deleted) "
             "   AND (NOT gltrans_rec)"
             "   AND (gltrans_amount < 0)"
             "   AND (bankaccnt_id=:bankaccntid) ) "
@@ -432,6 +434,7 @@ void reconcileBankaccount::populate()
             "            AND (bankrecitem_source_id=gltrans_id)"
             "            AND (bankrecitem_bankrec_id=:bankrecid)"
             "            AND (bankrecitem_cleared)"
+            "            AND (NOT gltrans_deleted)"
             "            AND (NOT gltrans_rec)"
             "            AND (gltrans_amount < 0)"
             "            AND (bankaccnt_id=:bankaccntid) ) "
@@ -472,6 +475,7 @@ void reconcileBankaccount::populate()
             "    ON ((bankrecitem_source='GL') AND (bankrecitem_source_id=gltrans_id)"
             "        AND (bankrecitem_bankrec_id=:bankrecid)) "
             " WHERE ((gltrans_accnt_id=bankaccnt_accnt_id)"
+            "   AND (NOT gltrans_deleted)"
             "   AND (NOT gltrans_rec)"
             "   AND (gltrans_amount > 0)"
             "   AND (bankaccnt_id=:bankaccntid) ) "
@@ -517,6 +521,7 @@ void reconcileBankaccount::populate()
             "            AND (bankrecitem_source_id=gltrans_id)"
             "            AND (bankrecitem_bankrec_id=:bankrecid)"
             "            AND (bankrecitem_cleared)"
+            "            AND (NOT gltrans_deleted)"
             "            AND (NOT gltrans_rec)"
             "            AND (gltrans_amount > 0)"
             "            AND (bankaccnt_id=:bankaccntid) ) "

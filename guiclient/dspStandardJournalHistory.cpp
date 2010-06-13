@@ -14,8 +14,13 @@
 //#include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
+#include <QSqlError>
+
 #include <openreports.h>
 #include <parameter.h>
+#include <metasqls.h>
+
+#include "mqlutil.h"
 #include "reverseGLSeries.h"
 
 /*
@@ -67,9 +72,16 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
 {
   int menuItem;
 
+  menuItem = pMenu->insertItem(tr("Delete Journal..."), this, SLOT(sDelete()), 0);
+  if (!_privileges->check("DeletePostedJournals"))
+    pMenu->setItemEnabled(menuItem, false);
+
+  pMenu->insertSeparator();
+
   menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
   if (!_privileges->check("PostStandardJournals"))
     pMenu->setItemEnabled(menuItem, false);
+
 }
 
 void dspStandardJournalHistory::sPrint()
@@ -109,6 +121,7 @@ void dspStandardJournalHistory::sFillList()
                "       0 AS debit, 0 AS credit "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (NOT gltrans_deleted) "
                " AND (gltrans_date BETWEEN :startDate AND :endDate)"
                " AND (gltrans_doctype='ST') ) "
                "UNION "
@@ -122,6 +135,7 @@ void dspStandardJournalHistory::sFillList()
                "       0 AS debit, 0 AS credit "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (NOT gltrans_deleted)"
                " AND (gltrans_date BETWEEN :startDate AND :endDate)"
                " AND (gltrans_doctype='ST') ) "
                "UNION "
@@ -136,6 +150,7 @@ void dspStandardJournalHistory::sFillList()
                "       END AS credit "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (NOT gltrans_deleted) "
                " AND (gltrans_date BETWEEN :startDate AND :endDate)"
                " AND (gltrans_doctype='ST') ) "
                "   ) AS data "
@@ -159,3 +174,24 @@ void dspStandardJournalHistory::sReverse()
     sFillList();
 }
 
+void dspStandardJournalHistory::sDelete()
+{
+  ParameterList params;
+  params.append("glseries", _gltrans->id());
+  params.append("notes", tr("Journal deleted by %1 on %2")
+                .arg(omfgThis->username())
+                .arg(omfgThis->dbDate().toString()));
+
+  MetaSQLQuery mql("SELECT deleteGlSeries(<? value(\"glseries\") ?>,"
+                   "<? value(\"notes\") ?>) AS result;");
+  XSqlQuery del;
+  del = mql.toQuery(params);
+  if (del.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, del.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  omfgThis->sGlSeriesUpdated();
+  sFillList();
+}

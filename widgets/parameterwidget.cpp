@@ -818,7 +818,15 @@ void ParameterWidget::changeFilterObject(int index)
       connect(tab, SIGNAL(itemSelectionChanged()), this, SLOT(storeFilterValue()));
     }
     break;
+  case Exists:
+    {
+      QLineEdit *lineEdit = new QLineEdit(_filterGroup);
+      lineEdit->hide();
+      newWidget = lineEdit;
 
+      connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
+    }
+    break;
   default:
     {
       QLineEdit *lineEdit = new QLineEdit(_filterGroup);
@@ -835,6 +843,8 @@ void ParameterWidget::changeFilterObject(int index)
     connect(button, SIGNAL(clicked()), newWidget, SLOT( deleteLater() ) );
     newWidget->setObjectName("widget" + row);
     layout->insertWidget(0, newWidget);
+    if (type == Exists) // No signal for exists, so set value now
+      storeFilterValue(1, newWidget);
   }
   _saveButton->setDisabled(true);
 }

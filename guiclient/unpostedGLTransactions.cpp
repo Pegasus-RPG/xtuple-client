@@ -132,7 +132,8 @@ void unpostedGLTransactions::sFillList()
                "FROM period, gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND"
 	       "                                 gltrans_docnumber='Misc.') "
-               "WHERE (NOT gltrans_posted "
+               "WHERE ((NOT gltrans_posted) "
+               "  AND  (NOT gltrans_deleted) "
 	       "  AND  (gltrans_date BETWEEN period_start AND period_end)"
 	       "  AND  (period_id=:period_id)) "
 	       "ORDER BY gltrans_created, gltrans_sequence, gltrans_amount;");
