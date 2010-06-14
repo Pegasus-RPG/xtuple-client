@@ -22,9 +22,9 @@ terms::terms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   // signals and slots connections
   connect(_proximo, SIGNAL(toggled(bool)), _cutOffDay, SLOT(setEnabled(bool)));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_days, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   
   _discountPercent->setValidator(omfgThis->percentVal());
@@ -79,11 +79,9 @@ enum SetResponse terms::set(const ParameterList &pParams)
       _discountDays->setEnabled(FALSE);
       _discountPercent->setEnabled(FALSE);
       _cutOffDay->setEnabled(FALSE);
-      _save->hide();
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

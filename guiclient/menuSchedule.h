@@ -54,8 +54,6 @@ class menuSchedule : public QObject
     void sDspExpediteExceptionsByPlannerCode();
     void sDspReorderExceptionsByPlannerCode();
 
-    void sPlannerCodes();
-
   private:
     GUIClient *parent;
 
@@ -67,7 +65,6 @@ class menuSchedule : public QObject
     QMenu *capacityPlanTpPrdMenu;
     QMenu *reportsMenu;
     QMenu *reportsPlannedMenu;
-    QMenu *masterInfoMenu;
     
     void	addActionsToMenu(actionProperties [], unsigned int);
 };

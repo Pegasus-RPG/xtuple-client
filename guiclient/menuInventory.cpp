@@ -118,7 +118,6 @@
 #include "warehouses.h"
 #include "warehouse.h"
 #include "locations.h"
-#include "siteTypes.h"
 
 #include "dspUnbalancedQOHByClassCode.h"
 #include "updateABCClass.h"
@@ -130,7 +129,6 @@
 #include "updateOUTLevelsByClassCode.h"
 #include "summarizeInvTransByClassCode.h"
 #include "createItemSitesByClassCode.h"
-#include "characteristics.h"
 
 #include "menuInventory.h"
 
@@ -171,7 +169,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsItemUsgMenu       = new QMenu(parent);
   reportsBacklogMenu       = new QMenu(parent);
   reportsShipmentsMenu     = new QMenu(parent);
-  masterInfoMenu           = new QMenu(parent);
   updateItemInfoMenu       = new QMenu(parent);
   updateItemInfoReorderMenu= new QMenu(parent);
   updateItemInfoOutMenu    = new QMenu(parent);
@@ -203,7 +200,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
   reportsBacklogMenu->setObjectName("menu.im.reportsbacklog");
   reportsShipmentsMenu->setObjectName("menu.im.reportsshipments");
-  masterInfoMenu->setObjectName("menu.im.masterinfo");
   updateItemInfoMenu->setObjectName("menu.im.updateiteminfo");
   updateItemInfoReorderMenu->setObjectName("menu.im.updateiteminforeorder");
   updateItemInfoOutMenu->setObjectName("menu.im.updateiteminfoout");
@@ -428,11 +424,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.reassignLotSerialNumber",     tr("&Reassign Lot/Serial #..."),        SLOT(sReassignLotSerialNumber()), lotSerialControlMenu, "ReassignLotSerial",    NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
 
     { "separator", NULL, NULL, mainMenu,        "true", NULL, NULL, true, NULL },
-
-    // Inventory | Master Information
-    { "menu",                   tr("&Master Information"),      (char*)masterInfoMenu,       mainMenu,       "true",                                            NULL, NULL, true, NULL },
-    { "im.siteTypes",           tr("&Site Types..."),           SLOT(sSiteTypes()),          masterInfoMenu, "MaintainSiteTypes ViewSiteTypes",                 NULL, NULL, true, NULL },
-    { "im.characteristics",     tr("C&haracteristics..."),      SLOT(sCharacteristics()),    masterInfoMenu, "MaintainCharacteristics ViewCharacteristics",     NULL, NULL, true, NULL },
 
     // Inventory | Utilities
     { "menu",                                     tr("&Utilities"),                       (char*)utilitiesMenu,                     mainMenu,       "true",                    NULL, NULL, true, NULL },
@@ -1153,11 +1144,6 @@ void menuInventory::sWarehouseLocations()
   omfgThis->handleNewWindow(new locations());
 }
 
-void menuInventory::sSiteTypes()
-{
-  omfgThis->handleNewWindow(new siteTypes());
-}
-
 //  Utilities
 void menuInventory::sDspUnbalancedQOHByClassCode()
 {
@@ -1255,11 +1241,6 @@ void menuInventory::sCatchCountTag(int pCnttagid)
   countTag newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void menuInventory::sCharacteristics()
-{
-  omfgThis->handleNewWindow(new characteristics());
 }
 
 void menuInventory::sExternalShipping()

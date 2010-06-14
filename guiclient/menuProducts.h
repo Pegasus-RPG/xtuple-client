@@ -81,13 +81,6 @@ class menuProducts : public QObject
     void sDspCapacityUOMsByProductCategory();
     void sDspItemAvailabilityWorkbench();
 
-    void sUnitsOfMeasure();
-    void sClassCodes();
-    void sProductCategories();
-    void sFreightClasses();
-    void sCharacteristics();
-    void sLotSerialSequences();
-
     void sDspUnusedPurchasedItems();
     void sDspUndefinedManufacturedItems();
     void sDspInvalidBillsOfMaterials();
@@ -113,7 +106,6 @@ class menuProducts : public QObject
     QMenu *reportsBomsMenu;
     QMenu *reportsWhereUsdMenu;
     QMenu *reportsCapUomMenu;
-    QMenu *masterInfoMenu;
     QMenu *utilitiesMenu;
     
     void	addActionsToMenu(actionProperties [], unsigned int);

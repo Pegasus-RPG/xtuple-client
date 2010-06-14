@@ -77,6 +77,9 @@ void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString
     _methodMap.insert(uiName, saveMethod);
 }
 
+/*!
+  Saves the current metric settings and repopulates the window.
+*/
 void setup::apply()
 {
   save(false);
@@ -103,6 +106,9 @@ int setup::mode(const QString &editPriv, const QString &viewPriv)
   return 0;
 }
 
+/*!
+  Populates the list of setup widgets filtered by \a module if specified.
+  */
 void setup::populate(int module)
 {
   _tree->clear();
@@ -166,12 +172,6 @@ void setup::populate(int module)
     append(mapItem, "expenseCategories", tr("Expense Categories"), modeVal, modeVal);
   }
 
-  if (module == All || module == Accounting || module == Purchase)
-  {
-    modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
-    append(mapItem, "apAccountAssignments", tr("Payables Assignments"), modeVal, modeVal);
-  }
-
   if (module == All || module == Accounting || module == Sales)
   {
     modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
@@ -181,6 +181,12 @@ void setup::populate(int module)
     append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
   }
 
+  if (module == All || module == Accounting || module == Purchase)
+  {
+    modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
+    append(mapItem, "apAccountAssignments", tr("Payables Assignments"), modeVal, modeVal);
+  }
+
   _tree->addTopLevelItem(mapItem);
 
   // Master Information
@@ -188,9 +194,68 @@ void setup::populate(int module)
 
   if (module == All || module == Accounting)
   {
-
     modeVal = mode("MaintainBankAccounts");
     append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Products || module == Inventory)
+  {
+    modeVal = mode("MaintainCharacteristics", "ViewCharacteristics");
+    append(masterItem, "characteristics", tr("Characteristics"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Products)
+  {
+    modeVal = mode("MaintainClassCodes", "ViewClassCodes");
+    append(masterItem, "classCodes", tr("Class Codes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Products)
+  {
+    modeVal = mode("MaintainFreightClasses", "ViewFreightClasses");
+    append(masterItem, "freightClasses", tr("Freight Classes"), modeVal, modeVal);
+  }
+
+  if ((module == All || module == Products) && _metrics->boolean("LotSerialControl"))
+  {
+    modeVal = mode("MaintainLotSerialSequences", "ViewLotSerialSequences");
+    append(masterItem, "lotSerialSequences", tr("Lot/Serial Sequences"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Inventory || module == Schedule || module == Purchase)
+  {
+    modeVal = mode("MaintainPlannerCodes", "ViewPlannerCodes");
+    append(masterItem, "plannerCodes", tr("Planner Codes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Products)
+  {
+    modeVal = mode("MaintainProductCategories", "ViewProductCategories");
+    append(masterItem, "productCategories", tr("Product Categories"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Purchase)
+  {
+    modeVal = mode("MaintainRejectCodes", "ViewRejectCodes");
+    append(masterItem, "rejectCodes", tr("Reject Codes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Inventory)
+  {
+    modeVal = mode("MaintainSiteTypes", "ViewSiteTypes");
+    append(masterItem, "siteTypes", tr("Site Types"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Purchase)
+  {
+    modeVal = mode("MaintainTerms", "ViewTerms");
+    append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Products)
+  {
+    modeVal = mode("MaintainUOMs", "ViewUOMs");
+    append(masterItem, "uoms", tr("Units of Measure"), modeVal, modeVal);
   }
 
   _tree->addTopLevelItem(masterItem);

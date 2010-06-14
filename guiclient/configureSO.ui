@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>743</width>
-    <height>585</height>
+    <width>708</width>
+    <height>634</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -366,21 +366,21 @@ to be bound by its terms.</comment>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
-               <item row="0" column="0">
+               <item row="0" column="0" colspan="2">
                 <widget class="QCheckBox" name="_printSO">
                  <property name="text">
                   <string>Print Sales Order on Save by Default</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item row="0" column="2">
                 <widget class="QCheckBox" name="_enableReservations">
                  <property name="text">
                   <string>Enable Sales Reservations</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" colspan="2">
                 <widget class="QGroupBox" name="groupBox_2">
                  <property name="title">
                   <string>Date Control</string>
@@ -403,7 +403,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="1" column="2">
                 <widget class="QGroupBox" name="_locationGroup">
                  <property name="enabled">
                   <bool>false</bool>
@@ -418,30 +418,30 @@ to be bound by its terms.</comment>
                   <bool>false</bool>
                  </property>
                  <layout class="QGridLayout">
-                  <item row="0" column="0">
-                   <widget class="QRadioButton" name="_lowest">
-                    <property name="text">
-                     <string>Lowest Quantity First</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
+                  <item row="2" column="0">
                    <widget class="QRadioButton" name="_highest">
                     <property name="text">
                      <string>Highest Quantity First</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="0">
+                  <item row="3" column="0">
                    <widget class="QRadioButton" name="_alpha">
                     <property name="text">
                      <string>Alpha by Location Name</string>
                     </property>
                     <property name="checked">
                      <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QRadioButton" name="_lowest">
+                    <property name="text">
+                     <string>Lowest Quantity First</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -471,7 +471,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="2" column="1">
+               <item row="2" column="1" colspan="2">
                 <widget class="QGroupBox" name="groupBox_3">
                  <property name="title">
                   <string>Ship Control</string>
@@ -508,7 +508,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="3" column="0" colspan="2">
+               <item row="3" column="0" colspan="3">
                 <widget class="QGroupBox" name="groupBox_5">
                  <property name="title">
                   <string>Credit Control</string>
@@ -944,12 +944,12 @@ to be bound by its terms.</comment>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item>
                 <widget class="QGroupBox" name="_comboGroup">
                  <property name="title">
                   <string/>
@@ -1086,101 +1086,60 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item>
                 <widget class="QGroupBox" name="groupBox_7">
                  <property name="title">
                   <string/>
                  </property>
-                 <layout class="QGridLayout">
+                 <layout class="QGridLayout" name="gridLayout_7">
                   <item row="0" column="0">
-                   <widget class="QCheckBox" name="_partial">
-                    <property name="text">
-                     <string>Accepts Partial Shipments</string>
+                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                    <property name="spacing">
+                     <number>12</number>
                     </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QCheckBox" name="_backorders">
-                    <property name="text">
-                     <string>Accepts Backorders</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QCheckBox" name="_freeFormShiptos">
-                    <property name="text">
-                     <string>Allow Free Form Ship-Tos</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="3" column="0" colspan="2">
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::MinimumExpanding</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>16</height>
-                     </size>
-                    </property>
-                   </spacer>
+                    <item>
+                     <widget class="QCheckBox" name="_partial">
+                      <property name="text">
+                       <string>Accepts Partial Shipments</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="_backorders">
+                      <property name="text">
+                       <string>Accepts Backorders</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="_freeFormShiptos">
+                      <property name="text">
+                       <string>Allow Free Form Ship-Tos</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer>
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::MinimumExpanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>16</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </item>
                  </layout>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item>
                 <widget class="QGroupBox" name="groupBox_6">
                  <property name="title">
                   <string/>
@@ -1434,7 +1393,7 @@ to be bound by its terms.</comment>
            <property name="sizeHint" stdset="0">
             <size>
              <width>0</width>
-             <height>295</height>
+             <height>20</height>
             </size>
            </property>
           </spacer>
@@ -1505,7 +1464,6 @@ to be bound by its terms.</comment>
   <tabstop>_includePkgWeight</tabstop>
   <tabstop>_enableReservations</tabstop>
   <tabstop>_locationGroup</tabstop>
-  <tabstop>_lowest</tabstop>
   <tabstop>_highest</tabstop>
   <tabstop>_alpha</tabstop>
   <tabstop>_saveAndAdd</tabstop>

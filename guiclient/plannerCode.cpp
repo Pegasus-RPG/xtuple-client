@@ -33,8 +33,8 @@ plannerCode::plannerCode(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
   
   // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
@@ -81,9 +81,9 @@ enum SetResponse plannerCode::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _autoExplode->setEnabled(FALSE);
       _explosionGroup->setEnabled(FALSE);
-      _save->hide();
-      _close->setText(tr("&Close"));
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

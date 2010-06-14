@@ -88,9 +88,6 @@ class menuPurchase : public QObject
     void sVendors();
     void sVendorTypes();
     void sVendorWorkBench();
-    void sPlannerCodes();
-    void sRejectCodes();
-    void sTerms();
 
     void sItemsWithoutItemSources();
     void sAssignItemToPlannerCode();
@@ -114,7 +111,6 @@ class menuPurchase : public QObject
     QMenu *reportsRcptRtrnMenu;
     QMenu *reportsPriceVarMenu;
     QMenu *reportsDelvVarMenu;
-    QMenu *masterInfoMenu;
     QMenu *utilitiesMenu;
 
     void	addActionsToMenu(actionProperties [], unsigned int);

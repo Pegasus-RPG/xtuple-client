@@ -419,7 +419,7 @@
 #include "location.h"
 #include "locations.h"
 #include "lotSerial.h"
-#include "lotSerialSequence.h"
+#include "lotSerialSequences.h"
 #include "lotSerialRegistration.h"
 #include "maintainBudget.h"
 #include "maintainItemCosts.h"

@@ -72,9 +72,6 @@
 #include "vendors.h"
 #include "vendorTypes.h"
 #include "vendorWorkBench.h"
-#include "plannerCodes.h"
-#include "rejectCodes.h"
-#include "termses.h"
 
 #include "dspItemsWithoutItemSources.h"
 #include "assignItemToPlannerCode.h"
@@ -107,7 +104,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   reportsRcptRtrnMenu = new QMenu(parent);
   reportsPriceVarMenu = new QMenu(parent);
   reportsDelvVarMenu = new QMenu(parent);
-  masterInfoMenu = new QMenu(parent);
   utilitiesMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.purch");
@@ -124,7 +120,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   reportsRcptRtrnMenu->setObjectName("menu.purch.reportsrcptrtrn");
   reportsPriceVarMenu->setObjectName("menu.purch.reportspricevar");
   reportsDelvVarMenu->setObjectName("menu.purch.reportsdelvvar");
-  masterInfoMenu->setObjectName("menu.purch.masterinfo");
   utilitiesMenu->setObjectName("menu.purch.utilities");
 
   actionProperties acts[] = {
@@ -236,13 +231,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.listItemSources", tr("&List..."), SLOT(sItemSources()), itemSourcesMenu, "MaintainItemSources ViewItemSources", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
-
-    //  Purchasing | Master Information
-    { "menu", tr("&Master Information"), (char*)masterInfoMenu, mainMenu, "true", NULL, NULL, true , NULL },
-    { "po.plannerCodes", tr("&Planner Codes..."), SLOT(sPlannerCodes()), masterInfoMenu, "MaintainPlannerCodes ViewPlannerCodes", NULL, NULL, true , NULL },
-    { "po.rejectCodes", tr("&Reject Codes..."), SLOT(sRejectCodes()), masterInfoMenu, "MaintainRejectCodes ViewRejectCodes", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, masterInfoMenu, "true", NULL, NULL, true , NULL },
-    { "po.terms", tr("&Terms..."), SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms", NULL, NULL, true , NULL },
 
     // Purchasing | Utilities
     { "menu", tr("&Utilities"), (char*)utilitiesMenu, mainMenu, "true", NULL, NULL, true , NULL },
@@ -576,21 +564,6 @@ void menuPurchase::sVendorWorkBench()
 void menuPurchase::sVendorTypes()
 {
   omfgThis->handleNewWindow(new vendorTypes());
-}
-
-void menuPurchase::sPlannerCodes()
-{
-  omfgThis->handleNewWindow(new plannerCodes());
-}
-
-void menuPurchase::sRejectCodes()
-{
-  omfgThis->handleNewWindow(new rejectCodes());
-}
-
-void menuPurchase::sTerms()
-{
-  omfgThis->handleNewWindow(new termses());
 }
 
 // Utilities
