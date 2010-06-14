@@ -198,7 +198,7 @@ void setup::populate(int module)
     append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
   }
 
-  if (module == All || module == Products || module == Inventory)
+  if (module == All || module == Products || module == Inventory || module == CRM)
   {
     modeVal = mode("MaintainCharacteristics", "ViewCharacteristics");
     append(masterItem, "characteristics", tr("Characteristics"), modeVal, modeVal);
@@ -216,10 +216,52 @@ void setup::populate(int module)
     append(masterItem, "freightClasses", tr("Freight Classes"), modeVal, modeVal);
   }
 
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainIncidentCategories");
+    append(masterItem, "incidentCategories", tr("Incident Categories"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainIncidentPriorities");
+    append(masterItem, "incidentPriorities", tr("Incident Priorities"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainIncidentResolutions");
+    append(masterItem, "incidentResolutions", tr("Incident Resolutions"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainIncidentSeverities");
+    append(masterItem, "incidentSeverities", tr("Incident Severities"), modeVal, modeVal);
+  }
+
   if ((module == All || module == Products) && _metrics->boolean("LotSerialControl"))
   {
     modeVal = mode("MaintainLotSerialSequences", "ViewLotSerialSequences");
     append(masterItem, "lotSerialSequences", tr("Lot/Serial Sequences"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainOpportunitySources");
+    append(masterItem, "opportunitySources", tr("Opportunity Sources"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainOpportunityStages");
+    append(masterItem, "opportunityStages", tr("Opportunity Stages"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainOpportunityTypes");
+    append(masterItem, "opportunityTypes", tr("Opportunity Types"), modeVal, modeVal);
   }
 
   if (module == All || module == Inventory || module == Schedule || module == Purchase)
@@ -250,6 +292,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainTerms", "ViewTerms");
     append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
+  }
+
+  if (module == All || module == CRM)
+  {
+    modeVal = mode("MaintainTitles", "ViewTitles");
+    append(masterItem, "honorifics", tr("Titles"), modeVal, modeVal);
   }
 
   if (module == All || module == Products)
