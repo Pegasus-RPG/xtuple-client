@@ -24,6 +24,7 @@ class dspCustomersByCustomerType : public XWidget, public Ui::dspCustomersByCust
 public:
     dspCustomersByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCustomersByCustomerType();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

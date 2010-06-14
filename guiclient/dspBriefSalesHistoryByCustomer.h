@@ -24,7 +24,7 @@ public:
     dspBriefSalesHistoryByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBriefSalesHistoryByCustomer();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

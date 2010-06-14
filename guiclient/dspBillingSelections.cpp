@@ -17,6 +17,9 @@
 #include <QVariant>
 #include <QWorkspace>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "selectOrderForBilling.h"
 #include "printInvoices.h"
@@ -98,29 +101,10 @@ void dspBillingSelections::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 
 void dspBillingSelections::sFillList()
 {
-  q.exec( "SELECT cobmisc_id, cohead_id,"
-          "       cohead_number, cust_number, cust_name,"
-          "       sum(round(coitem_price*cobill_qty,2)) AS subtotal,"
-          "       cobmisc_misc, cobmisc_freight, calcCobmiscTax(cobmisc_id) AS cobmisc_tax, cobmisc_payment,"
-          "       (sum(round(coitem_price * cobill_qty, 2)) +"
-		  "        cobmisc_misc + cobmisc_freight +"
-		  "        calcCobmiscTax(cobmisc_id)) AS total,"
-          "       'curr' AS subtotal_xtnumericrole,"
-          "       'curr' AS total_xtnumericrole,"
-          "       'curr' AS cobmisc_misc_xtnumericrole,"
-          "       'curr' AS cobmisc_freight_xtnumericrole,"
-          "       'curr' AS cobmisc_tax_xtnumericrole,"
-          "       'curr' AS cobmisc_payment_xtnumericrole "
-          "  FROM cobmisc, cohead, cust, coitem, cobill "
-          " WHERE((cobmisc_cohead_id=cohead_id)"
-          "   AND (cohead_cust_id=cust_id)"
-          "   AND (coitem_cohead_id=cohead_id)"
-          "   AND (cobill_coitem_id=coitem_id)"
-          "   AND (NOT cobmisc_posted)) "
-          " GROUP BY cobmisc_id, cohead_id, cohead_number, cust_number,"
-          "          cust_name, cobmisc_misc,cobmisc_freight,cobmisc_tax,cobmisc_payment "
-          " ORDER BY cohead_number;" );
-  _cobill->populate(q, TRUE);
+  MetaSQLQuery mql = mqlLoad("billingSelections", "detail");
+  ParameterList params;
+  q = mql.toQuery(params);
+  _cobill->populate(q);
 }
 
 void dspBillingSelections::sPostAll()
@@ -131,7 +115,21 @@ void dspBillingSelections::sPostAll()
 
 void dspBillingSelections::sPost()
 {
-  int soheadid = _cobill->altId();
+  int soheadid = -1;
+  q.prepare("SELECT cobmisc_cohead_id AS sohead_id "
+            "FROM cobmisc "
+            "WHERE (cobmisc_id = :cobmisc_id)");
+  q.bindValue(":cobmisc_id", _cobill->id());
+  q.exec();
+  if (q.first())
+  {
+    soheadid = q.value("sohead_id").toInt();
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   q.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
   q.bindValue(":cobmisc_id", _cobill->id());
@@ -178,7 +176,22 @@ void dspBillingSelections::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("sohead_id", _cobill->altId());
+
+  q.prepare("SELECT cobmisc_cohead_id AS sohead_id "
+            "FROM cobmisc "
+            "WHERE (cobmisc_id = :cobmisc_id)");
+  q.bindValue(":cobmisc_id", _cobill->id());
+  q.exec();
+  if (q.first())
+  {
+    int sohead_id = q.value("sohead_id").toInt();
+    params.append("sohead_id", sohead_id);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   selectOrderForBilling *newdlg = new selectOrderForBilling();
   newdlg->set(params);
@@ -194,8 +207,8 @@ void dspBillingSelections::sCancel()
   {
     q.prepare( "SELECT cancelBillingSelection(cobmisc_id) AS result "
                "FROM cobmisc "
-               "WHERE (cobmisc_cohead_id=:sohead_id);" );
-    q.bindValue(":sohead_id", _cobill->altId());
+               "WHERE (cobmisc_id=:cobmisc_id);" );
+    q.bindValue(":cobmisc_id", _cobill->id());
     q.exec();
 
     sFillList();

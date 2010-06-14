@@ -16,6 +16,7 @@
 
 #include <metasql.h>
 #include <openreports.h>
+#include "mqlutil.h"
 
 #include "characteristicAssignment.h"
 #include "customer.h"
@@ -100,7 +101,10 @@ void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
 
   menuItem = pMenu->insertItem(tr("View Customer..."), this, SLOT(sView()), 0);
 
-  if (((XTreeWidgetItem *)pSelected)->altId() == -1)
+  q.prepare( "SELECT charass_id FROM charass WHERE (charass_target_id=:cust_id)" );
+  q.bindValue(":cust_id", _cust->id());
+  q.exec();
+  if (!(q.first()))
   {
     menuItem = pMenu->insertItem(tr("New Characteristic..."), this, SLOT(sNewCharacteristic()), 0);
     if (!_privileges->check("MaintainCustomerMasters"))
@@ -154,8 +158,15 @@ void dspCustomersByCharacteristic::sEditCharacteristic()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("charass_id", _cust->altId());
 
+  q.prepare( "SELECT charass_id FROM charass WHERE (charass_target_id=:cust_id)" );
+  q.bindValue(":cust_id", _cust->id());
+  q.exec();
+  if (q.first())
+  {
+    int _charassId = q.value("charass_id").toInt();
+    params.append("charass_id", _charassId);
+  }
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
 
@@ -170,37 +181,7 @@ void dspCustomersByCharacteristic::sFillList()
 
 void dspCustomersByCharacteristic::sFillList(int pCustid, bool pLocal)
 {
-  QString sql =
-		"<? if exists(\"hasCharacteristic\") ?>"
-    "SELECT cust_id, charass_id, cust_active, cust_number, cust_name, char_name, charass_value "
-		"FROM cust, charass, char "
-		"WHERE ( (charass_target_type='C')"
-		" AND (charass_target_id=cust_id)"
-		" AND (charass_char_id=char_id)"
-		" AND (char_id=<? value(\"char_id\") ?>)"
-		" <? if exists(\"emptyValue\") ?>"
-		" AND (charass_value IS NULL OR LENGTH(TRIM(charass_value)) = 0)"
-		" <? else ?>"
-		" AND (charass_value ~* <? value(\"value\") ?>) "
-		" <? endif ?>"
-		") "
-		"<? else ?>"	// if does not have characteristic
-    "SELECT cust_id, -1, cust_active, cust_number, cust_name, char_name, '' AS charass_value "
-		"FROM cust, char "
-		"WHERE ((cust_id NOT IN (SELECT charass_target_id"
-		"                        FROM charass"
-		"                        WHERE ((charass_target_type='C')"
-		"                          AND  (charass_char_id=char_id))"
-		"       ))"
-		" AND (char_id=<? value(\"char_id\") ?>)"
-		") "
-		"<? endif ?>"
-		"<? if not exists(\"showInactive\") ?>"
-		" AND (cust_active)"
-		"<? endif ?>"
-	        "ORDER BY cust_number;";
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("customer", "detail");
   ParameterList params;
   setParams(params);
   q = mql.toQuery(params);

@@ -16,6 +16,9 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspBriefSalesHistoryByCustomerType as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -34,6 +37,9 @@ dspBriefSalesHistoryByCustomerType::dspBriefSalesHistoryByCustomerType(QWidget* 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _customerType->setType(ParameterGroup::CustomerType);
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _sohist->addColumn(tr("Cust. Type"),  _orderColumn,    Qt::AlignLeft,   true,  "custtype_code"   );
   _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
@@ -94,63 +100,47 @@ void dspBriefSalesHistoryByCustomerType::sPrint()
 void dspBriefSalesHistoryByCustomerType::sFillList()
 {
   _sohist->clear();
-
-  if (!checkParameters())
+  MetaSQLQuery mql = mqlLoad("briefSalesHistory", "detail");
+  ParameterList params;
+  if (! setParams(params))
     return;
 
-  QString sql( "SELECT cust_custtype_id, custtype_code, cust_name,"
-               "       cohist_ordernumber, invoicenumber,"
-               "       cohist_orderdate, cohist_invcdate,"
-               "       SUM(baseextprice) AS extended,"
-               "       'curr' AS extended_xtnumericrole,"
-               "       0 AS extended_xttotalrole "
-               "FROM saleshistory "
-               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_customerType->isSelected())
-    sql += " AND (cust_custtype_id=:custtype_id)";
-  else if (_customerType->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
-
-  sql += ") "
-         "GROUP BY cust_custtype_id, custtype_code, cust_name,"
-         "         cohist_ordernumber, invoicenumber,"
-         "         cohist_orderdate, cohist_invcdate "
-         "ORDER BY cohist_invcdate, cohist_orderdate;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  _warehouse->bindValue(q);
-  _customerType->bindValue(q);
-  q.exec();
+  q = mql.toQuery(params);
   _sohist->populate(q);
 }
 
-bool dspBriefSalesHistoryByCustomerType::checkParameters()
+bool dspBriefSalesHistoryByCustomerType::setParams(ParameterList &params)
 {
-    if (!_dates->startDate().isValid())
+  if (!_dates->startDate().isValid())
+  {
+    if(isVisible())
     {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter Start Date"),
-                                  tr("Please enter a valid Start Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
+      QMessageBox::warning( this, tr("Enter Start Date"),
+                            tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
     }
+    return FALSE;
+  }
+  else if (!_dates->endDate().isValid())
+  {
+    if(isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter End Date"),
+                            tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+    }
+    return FALSE;
+  }
+  else
+    _dates->appendValue(params);
 
-    if (!_dates->endDate().isValid())
-    {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter End Date"),
-                                  tr("Please enter a valid End Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
-    }
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (_customerType->isSelected())
+    params.append("custtype_id", _customerType->id());
+  else if (_customerType->isPattern())
+    _customerType->appendValue(params); 
 
   return TRUE;
 }
-

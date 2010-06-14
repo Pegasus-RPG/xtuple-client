@@ -16,6 +16,9 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspBriefSalesHistoryByCustomer as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -34,6 +37,9 @@ dspBriefSalesHistoryByCustomer::dspBriefSalesHistoryByCustomer(QWidget* parent, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _productCategory->setType(ParameterGroup::ProductCategory);
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _sohist->addColumn(tr("Doc. #"),     _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
   _sohist->addColumn(tr("Cust. P/O #"), -1,             Qt::AlignLeft,   true,  "cohist_ponumber"   );
@@ -94,72 +100,60 @@ void dspBriefSalesHistoryByCustomer::sPrint()
 void dspBriefSalesHistoryByCustomer::sFillList()
 {
   _sohist->clear();
-
-  if (!checkParameters())
+  MetaSQLQuery mql = mqlLoad("briefSalesHistory", "detail");
+  ParameterList params;
+  if (! setParams(params))
     return;
 
-  QString sql( "SELECT cust_id, cohist_ordernumber, cohist_ponumber, invoicenumber,"
-               "       cohist_orderdate, cohist_invcdate,"
-               "       SUM(baseextprice) AS extended,"
-               "       'curr' AS extended_xtnumericrole,"
-               "       0 AS extended_xttotalrole "
-               "FROM saleshistory "
-               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)"
-               "  AND   (cohist_cust_id=:cust_id)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
-
-  sql += ") "
-         "GROUP BY cust_id, cohist_ordernumber, cohist_ponumber, invoicenumber,"
-         "         cohist_orderdate, cohist_invcdate "
-         "ORDER BY cohist_invcdate, cohist_orderdate;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":cust_id", _cust->id());
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  q.exec();
+  q = mql.toQuery(params);
   _sohist->populate(q);
 }
 
-bool dspBriefSalesHistoryByCustomer::checkParameters()
+bool dspBriefSalesHistoryByCustomer::setParams(ParameterList &params)
 {
-    if (!_cust->isValid())
+  if (!_cust->isValid())
+  {
+    if(isVisible())
     {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter Customer Number"),
-                                  tr("Please enter a valid Customer Number.") );
-            _cust->setFocus();
-        }
-        return FALSE;
+      QMessageBox::warning( this, tr("Enter Customer Number"),
+                           tr("Please enter a valid Customer Number.") );
+      _cust->setFocus();
     }
+    return FALSE;
+  }
+  else
+    params.append("cust_id", _cust->id());
 
-    if (!_dates->startDate().isValid())
+  if (!_dates->startDate().isValid())
+  {
+    if(isVisible())
     {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter Start Date"),
-                                  tr("Please enter a valid Start Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
+      QMessageBox::warning( this, tr("Enter Start Date"),
+                           tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
     }
+    return FALSE;
+  }
+  else if (!_dates->endDate().isValid())
+  {
+    if(isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter End Date"),
+                           tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+    }
+    return FALSE;
+  }
+  else
+    _dates->appendValue(params);
 
-    if (!_dates->endDate().isValid())
-    {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter End Date"),
-                                  tr("Please enter a valid End Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
-    }
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id()); 
+
+  if (_productCategory->isSelected())
+    params.append("prodcat_id", _productCategory->id());
+  else if (_productCategory->isPattern())
+    _productCategory->appendValue(params);
 
   return TRUE;
 }

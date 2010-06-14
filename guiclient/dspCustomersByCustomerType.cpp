@@ -14,6 +14,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "customer.h"
 #include "customerTypeList.h"
@@ -107,7 +110,15 @@ void dspCustomersByCustomerType::sView()
 void dspCustomersByCustomerType::sReassignCustomerType()
 {
   ParameterList params;
-  params.append("custtype_id", _cust->altId());
+
+  q.prepare( "SELECT cust_custtype_id FROM cust WHERE (cust_id=:cust_id)" );
+  q.bindValue(":cust_id", _cust->id());
+  q.exec();
+  if (q.first())
+  {
+    int _custTypeId = q.value("cust_custtype_id").toInt();
+    params.append("custtype_id", _custTypeId);
+  }
 
   customerTypeList *newdlg = new customerTypeList(this, "", TRUE);
   newdlg->set(params);
@@ -126,30 +137,11 @@ void dspCustomersByCustomerType::sReassignCustomerType()
 
 void dspCustomersByCustomerType::sFillList()
 {
-  QString sql( "SELECT cust_id, cust_custtype_id,"
-               "       custtype_code, cust_active, cust_number, cust_name, cust_address1 "
-               "FROM cust, custtype "
-               "WHERE ( (cust_custtype_id=custtype_id)" );
-    
-  if (_customerType->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
-  else if (_customerType->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
-
-  if (!_showInactive->isChecked())
-    sql += " AND (cust_active)";
-
-  sql += ");";
-
-  q.prepare(sql);
-  _customerType->bindValue(q);
-  q.exec();
-  _cust->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  MetaSQLQuery mql = mqlLoad("customer", "detail");
+  ParameterList params;
+  setParams(params);
+  q = mql.toQuery(params);
+  _cust->populate(q); 
 }
 
 void dspCustomersByCustomerType::sHandleRefreshButton(bool pAutoUpdate)
@@ -158,4 +150,17 @@ void dspCustomersByCustomerType::sHandleRefreshButton(bool pAutoUpdate)
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+}
+
+bool dspCustomersByCustomerType::setParams(ParameterList &params)
+{
+  if (_customerType->isSelected())
+    _customerType->appendValue(params);
+
+  if(_showInactive->isChecked())
+    params.append("showInactive");
+
+  params.append("byCustType");  
+ 
+  return TRUE;
 }

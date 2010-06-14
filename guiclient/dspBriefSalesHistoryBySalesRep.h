@@ -25,7 +25,7 @@ public:
     dspBriefSalesHistoryBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBriefSalesHistoryBySalesRep();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );

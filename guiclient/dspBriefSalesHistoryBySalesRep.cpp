@@ -15,6 +15,9 @@
 #include <QVariant>
 #include <openreports.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "salesHistoryInformation.h"
 
 dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -41,7 +44,7 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   _sohist->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
   _sohist->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
   _sohist->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
-  _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "extended"  );
   _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn, Qt::AlignRight,  true,  "extcost"  );
 
   _showCosts->setEnabled(_privileges->check("ViewCosts"));
@@ -151,46 +154,16 @@ void dspBriefSalesHistoryBySalesRep::sPrint()
 void dspBriefSalesHistoryBySalesRep::sFillList()
 {
   _sohist->clear();
-
-  if (!checkParameters())
+  MetaSQLQuery mql = mqlLoad("briefSalesHistory", "detail");
+  ParameterList params;
+  if (! setParams(params))
     return;
 
-  QString sql( "SELECT cohist_cust_id, cust_name, cohist_ordernumber,"
-               "       invoicenumber,"
-               "       cohist_orderdate, cohist_invcdate,"
-               "       SUM(baseextprice) AS extprice,"
-               "       SUM(extcost) AS extcost,"
-               "       'curr' AS extprice_xtnumericrole,"
-               "       'curr' AS extcost_xtnumericrole,"
-               "       0 AS extprice_xttotalrole,"
-               "       0 AS extcost_xttotalrole "
-               "FROM saleshistory "
-               "WHERE ( (cohist_salesrep_id=:salesrep_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (prodcat_code ~ :prodcat_pattern)";
-
-  sql += ") "
-         "GROUP BY cohist_cust_id, cust_name, cohist_ordernumber, invoicenumber,"
-         "         cohist_orderdate, cohist_invcdate "
-         "ORDER BY cohist_invcdate;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":salesrep_id", _salesrep->id());
-  q.exec();
+  q = mql.toQuery(params);
   _sohist->populate(q);
 }
 
-bool dspBriefSalesHistoryBySalesRep::checkParameters()
+bool dspBriefSalesHistoryBySalesRep::setParams(ParameterList &params)
 {
   if (isVisible())
   {
@@ -201,15 +174,24 @@ bool dspBriefSalesHistoryBySalesRep::checkParameters()
       _dates->setFocus();
       return FALSE;
     }
-
-    if (!_dates->endDate().isValid())
+    else if (!_dates->endDate().isValid())
     {
       QMessageBox::warning( this, tr("Enter End Date"),
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
       return FALSE;
     }
+	else
+      _dates->appendValue(params);
   }
+  
+  _warehouse->appendValue(params);
+  params.append("salesrep_id", _salesrep->id());
+
+  if (_productCategory->isSelected())
+    params.append("prodcat_id", _productCategory->id());
+  else if (_productCategory->isPattern())
+    _productCategory->appendValue(params);
 
   return TRUE;
 }

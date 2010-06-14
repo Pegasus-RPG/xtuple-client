@@ -18,6 +18,9 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #define DEBUG true
 
 dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -38,7 +41,7 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  _cntslip->addColumn(tr("Slip #"),     _itemColumn, Qt::AlignLeft,  true, "slipnumber");
+  _cntslip->addColumn(tr("Slip #"),     _itemColumn, Qt::AlignLeft,  true, "cntslip_number");
   _cntslip->addColumn(tr("Tag #"),     _orderColumn, Qt::AlignLeft,  true, "invcnt_tagnumber");
   _cntslip->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
   _cntslip->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
@@ -86,48 +89,16 @@ void dspCountSlipsByWarehouse::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 
 void dspCountSlipsByWarehouse::sFillList()
 {
-  QString sql("SELECT cntslip_id, ");
-
-  if (_numericSlips->isChecked())
-    sql += "toNumeric(cntslip_number, 0) AS slipnumber,"
-           "cntslip_number AS slipnumber_qtdisplayrole," ;
-  else
-    sql += "cntslip_number AS slipnumber, ";
-
-  sql += " invcnt_tagnumber, warehous_code,"
-         " item_number, (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-         " cntslip_entered, cntslip_username AS user,"
-         " cntslip_qty, 'qty' AS cntslip_qty_xtnumericrole,"
-         " cntslip_posted "
-         "FROM cntslip, invcnt, itemsite, item, warehous "
-         "WHERE ((cntslip_cnttag_id=invcnt_id)"
-         " AND (invcnt_itemsite_id=itemsite_id)"
-         " AND (itemsite_item_id=item_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (cntslip_entered BETWEEN :startDate AND :endDate)";
-
-  if (!_showUnposted->isChecked())
-    sql += " AND (cntslip_posted)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY cntslip_number";
-
   if (DEBUG)
     qDebug("dspCountSlipsByWarehouse::sFillList() about to populate _cntslip");
 
-  q.prepare(sql);
-  _dates->bindValue(q);
-  _warehouse->bindValue(q);
-  q.exec();
-  _cntslip->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery mql = mqlLoad("countSlip", "detail");
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
+
+  q = mql.toQuery(params);
+  _cntslip->populate(q);
 
   if (_numericSlips->isChecked() && _cntslip->topLevelItemCount() > 1)
   {
@@ -164,4 +135,37 @@ void dspCountSlipsByWarehouse::sFillList()
       last = curr;
     }
   }
+}
+
+bool dspCountSlipsByWarehouse::setParams(ParameterList &params)
+{
+  if (isVisible())
+  {
+    if (!_dates->startDate().isValid())
+    {
+      QMessageBox::warning( this, tr("Enter Start Date"),
+                            tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+      return FALSE;
+    }
+    else if (!_dates->endDate().isValid())
+    {
+      QMessageBox::warning( this, tr("Enter End Date"),
+                            tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+      return FALSE;
+    }
+	else
+      _dates->appendValue(params);
+  }
+  
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (!_showUnposted->isChecked())
+    params.append("showUnposted");
+
+  params.append("byWarehouse");
+
+  return TRUE;
 }

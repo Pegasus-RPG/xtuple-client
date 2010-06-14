@@ -16,6 +16,9 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
@@ -215,70 +218,38 @@ void dspExpiredInventoryByClassCode::sFillList()
 
   _expired->setColumnVisible(METHOD_COL, _showValue->isChecked() && _usePostedCosts->isChecked());
 
-  QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
-               "       ls_number, itemloc_expiration, "
-               "       itemloc_qty, costmethod, cost,"
-               "       noNeg(cost * itemloc_qty) AS value,"
-               "       'qty' AS itemloc_qty_xtnumericrole,"
-               "       'cost' AS cost_xtnumericrole,"
-               "       'curr' AS value_xtnumericrole,"
-               "       'red' AS qtforegroundrole "
-               "FROM ( SELECT itemsite_id, itemloc_id, warehous_code, item_number,"
-               "              uom_name, ls_number, "
-               "       CASE WHEN :expiretype='Perishability' THEN "
-               "         itemloc_expiration "
-               "       ELSE itemloc_warrpurc "
-               "       END AS itemloc_expiration, "
-               "              itemloc_qty,"
-               "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
-               "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
-               "            WHEN(itemsite_costmethod='J') THEN 'Job'"
-               "            WHEN(itemsite_costmethod='N') THEN 'None'"
-               "            ELSE 'UNKNOWN'"
-               "       END AS costmethod," );
+  MetaSQLQuery mql = mqlLoad("expiredInventory", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_useStandardCosts->isChecked())
-    sql += " stdcost(itemsite_item_id) AS cost ";
-  else if (_useActualCosts->isChecked())
-    sql += " actcost(itemsite_item_id) AS cost ";
-  else
-    sql += " (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END) AS cost ";
+  q = mql.toQuery(params);
+  _expired->populate(q);
 
-  sql += "FROM itemloc, itemsite, item, warehous, uom, ls "
-         "WHERE ( (itemloc_itemsite_id=itemsite_id)"
-         " AND (itemsite_item_id=item_id)"
-         " AND (item_inv_uom_id=uom_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (itemloc_ls_id=ls_id)";
-         
+}
+
+bool dspExpiredInventoryByClassCode::setParams(ParameterList &params)
+{
   if (_perishability->isChecked())
-    sql += " AND (itemsite_perishable)"
-           " AND (itemloc_expiration < (CURRENT_DATE + :thresholdDays))";
+  {
+    params.append("perishability");
+    params.append("expiretype", tr("Perishability"));
+  }
   else
-    sql += " AND (itemsite_warrpurc)"
-           " AND (itemloc_warrpurc < (CURRENT_DATE + :thresholdDays))";
+    params.append("expiretype", tr("Warranty"));
+
+  params.append("thresholdDays", _thresholdDays->value());
 
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
   if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE classcode_code ~ :classcode_pattern))";
+    _classCode->appendValue(params);
 
-  sql += ") ) AS data ";
+  if (_useStandardCosts->isChecked())
+    params.append("useStandardCosts");
+  else if (_useActualCosts->isChecked())
+    params.append("useActualCosts"); 
 
-  sql += "ORDER BY warehous_code, item_number;";
-
-  q.prepare(sql);
-  if (_perishability->isChecked())
-    q.bindValue(":expiretype", QString("Perishability"));
-  else
-    q.bindValue(":expiretype", QString("Warranty"));
-    
-  q.bindValue(":thresholdDays", _thresholdDays->value());
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
-  _expired->populate(q, true);
+  return TRUE;
 }

@@ -25,6 +25,8 @@ public:
     dspDepositsRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspDepositsRegister();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu( QMenu * );

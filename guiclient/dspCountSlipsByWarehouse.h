@@ -23,6 +23,7 @@ class dspCountSlipsByWarehouse : public XWidget, public Ui::dspCountSlipsByWareh
 public:
     dspCountSlipsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCountSlipsByWarehouse();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

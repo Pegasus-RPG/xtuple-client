@@ -16,6 +16,9 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspBriefEarnedCommissions as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -91,46 +94,42 @@ void dspBriefEarnedCommissions::sPrint()
     report.reportError(this);
 }
 
-void dspBriefEarnedCommissions::sFillList()
+bool dspBriefEarnedCommissions::setParams(ParameterList &params)
 {
   if (_dates->allValid())
   {
-    QString sql( "SELECT cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
-                 "       cohist_ordernumber, cohist_invcnumber, cohist_invcdate, currAbbr,"
-                 "       SUM(extprice) AS sumextprice,"
-                 "       SUM(cohist_commission) AS sumcommission,"
-                 "       SUM(baseextprice) AS sumbaseextprice,"
-                 "       SUM(basecommission) AS sumbasecommission,"
-                 "       'curr' AS sumextprice_xtnumericrole,"
-                 "       'curr' AS sumcommission_xtnumericrole,"
-                 "       'curr' AS sumbaseextprice_xtnumericrole,"
-                 "       'curr' AS sumbasecommission_xtnumericrole,"
-                 "       0 AS sumbaseextprice_xttotalrole,"
-                 "       0 AS sumbasecommission_xttotalrole " );
-    if (_includeMisc->isChecked())
-      sql += "FROM saleshistorymisc ";
-    else
-      sql += "FROM saleshistory ";
+    if (!_dates->startDate().isValid() && isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+      return false;
+    }
 
-    sql += "WHERE ( (cohist_commission <> 0) "
-           "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)";
-
-    if (_includeMisc->isChecked())
-      sql += " AND (COALESCE(cohist_misc_type, '') <> 'T')"
-             " AND (COALESCE(cohist_misc_type, '') <> 'F')";
-
-    if (_selectedSalesrep->isChecked())
-      sql += " AND (cohist_salesrep_id=:salesrep_id)";
-
-    sql += ") "
-           "GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
-           "         cohist_ordernumber, cohist_invcnumber, cohist_invcdate, currAbbr "
-           "ORDER BY salesrep_number, cust_number, cohist_invcdate";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":salesrep_id", _salesrep->id());
-    q.exec();
-    _commission->populate(q);
+    if (!_dates->endDate().isValid() && isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+      return false;
+    }
+    _dates->appendValue(params);
   }
+  if (_includeMisc->isChecked())
+    params.append("includeMisc");
+
+  if (_selectedSalesrep->isChecked())
+    params.append("salesrep_id", _salesrep->id());
+  return true;
+}
+
+void dspBriefEarnedCommissions::sFillList()
+{
+  MetaSQLQuery mql = mqlLoad("briefEarnedCommission", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  q = mql.toQuery(params);
+  _commission->populate(q);
 }

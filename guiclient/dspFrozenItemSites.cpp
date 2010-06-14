@@ -13,6 +13,9 @@
 #include <QMenu>
 #include <QSqlError>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -73,32 +76,21 @@ void dspFrozenItemSites::sThaw()
   sFillList();
 }
 
+bool dspFrozenItemSites::setParams(ParameterList &params)
+{
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id()); 
+  return true;
+}
+
+
 void dspFrozenItemSites::sFillList()
 {
-  QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               " (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-               " COALESCE((SELECT invcnt_tagnumber"
-               "           FROM invcnt"
-               "           WHERE ((NOT invcnt_posted)"
-               "           AND (invcnt_itemsite_id=itemsite_id)) LIMIT 1), '') AS cnttag "
-               "FROM itemsite, item, warehous "
-               "WHERE ( (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_freeze)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += " ) "
-         "ORDER BY warehous_code, item_number";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.exec();
-  _itemsite->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery mql = mqlLoad("frozenItemSites", "detail");
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
+
+  q = mql.toQuery(params);
+  _itemsite->populate(q);
 }
