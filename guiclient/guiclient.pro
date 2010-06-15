@@ -520,7 +520,6 @@ FORMS =   absoluteCalendarItem.ui               \
           postCountSlips.ui             \
           postCountTags.ui              \
           postCreditMemos.ui            \
-          postGLTransactionsToExternal.ui       \
           postInvoices.ui                       \
           postMiscProduction.ui                 \
           postPoReturnCreditMemo.ui             \
@@ -1255,7 +1254,6 @@ HEADERS = ../common/format.h                    \
           postCountSlips.h              \
           postCountTags.h               \
           postCreditMemos.h             \
-          postGLTransactionsToExternal.h\
           postInvoices.h                \
           postMiscProduction.h          \
           postPoReturnCreditMemo.h      \
@@ -2005,7 +2003,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           postCountSlips.cpp            \
           postCountTags.cpp             \
           postCreditMemos.cpp           \
-          postGLTransactionsToExternal.cpp      \
           postInvoices.cpp                      \
           postMiscProduction.cpp                \
           postPoReturnCreditMemo.cpp            \

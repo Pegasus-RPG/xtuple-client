@@ -456,7 +456,6 @@
 #include "postCountSlips.h"
 #include "postCountTags.h"
 #include "postCreditMemos.h"
-#include "postGLTransactionsToExternal.h"
 #include "postInvoices.h"
 #include "postMiscProduction.h"
 #include "postPoReturnCreditMemo.h"
