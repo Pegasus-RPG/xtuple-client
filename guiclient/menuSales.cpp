@@ -189,7 +189,6 @@ menuSales::menuSales(GUIClient *pParent) :
   pricingReportsMenu = new QMenu(parent);
   pricingMenu = new QMenu(parent);
   pricingUpdateMenu = new QMenu(parent);
-  masterInfoMenu = new QMenu(parent);
   utilitiesMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.sales");
@@ -220,7 +219,6 @@ menuSales::menuSales(GUIClient *pParent) :
   pricingReportsMenu->setObjectName("menu.sales.pricingreports");
   pricingMenu->setObjectName("menu.sales.pricing");
   pricingUpdateMenu->setObjectName("menu.sales.pricingupdate");
-  masterInfoMenu->setObjectName("menu.sales.masterinfo");
   utilitiesMenu->setObjectName("menu.sales.utilities");
 
   actionProperties acts[] = {
@@ -450,19 +448,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspFreightPricesByCustomer", tr("Freight Prices by &Customer..."),	SLOT(sDspFreightPricesByCustomer()), pricingReportsMenu, "ViewCustomerPrices", NULL, NULL,	 true, NULL },
     
     { "separator",	NULL,	NULL,	mainMenu,	"true",		NULL, NULL, true, NULL },
-
-    { "menu",	tr("&Master Information"), (char*)masterInfoMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.characteristics", tr("C&haracteristics..."),	SLOT(sCharacteristics()), masterInfoMenu, "MaintainCharacteristics ViewCharacteristics",	NULL, NULL, true, NULL },
-    { "so.salesReps", tr("&Sales Reps..."),	SLOT(sSalesReps()), masterInfoMenu, "MaintainSalesReps ViewSalesReps",	NULL, NULL, true, NULL },
-    { "so.shippingZones", tr("Shipping &Zones..."),	SLOT(sShippingZones()), masterInfoMenu, "MaintainShippingZones ViewShippingZones",	NULL, NULL, true, NULL },
-    { "so.shipVias", tr("Ship &Vias..."),	SLOT(sShipVias()), masterInfoMenu, "MaintainShipVias ViewShipVias",	NULL, NULL, true, NULL },
-    { "so.shippingChargeTypes", tr("Shipping &Charge Types..."),	SLOT(sShippingChargeTypes()), masterInfoMenu, "MaintainShippingChargeTypes ViewShippingChargeTypes",	NULL, NULL, true, NULL },
-    { "so.taxCodes", tr("Ta&x Codes..."),	SLOT(sTaxCodes()), masterInfoMenu, "MaintainTaxCodes ViewTaxCodes",	NULL, NULL, true, NULL },
-    { "so.shippingForms", tr("Shipping &Forms..."),	SLOT(sShippingForms()), masterInfoMenu, "MaintainShippingForms ViewShippingForms",	NULL, NULL, true, NULL },
-    { "separator",	NULL,	NULL,	masterInfoMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.terms", tr("&Terms..."),	SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms",	NULL, NULL, true, NULL },
-    { "so.salesAccountAssignments", tr("Sa&les Account Assignments..."),	SLOT(sSalesAccountAssignments()), masterInfoMenu, "MaintainSalesAccount ViewSalesAccount",	NULL, NULL, true, NULL },
-    { "so.customerFormAssignments", tr("C&ustomer Form Assignments..."),	SLOT(sCustomerFormAssignments()), masterInfoMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
 
     { "menu",	tr("&Utilities"),         (char*)utilitiesMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.customerInformationExport", tr("&Customer Information Export..."),	SLOT(sDspCustomerInformationExport()), utilitiesMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
@@ -1184,51 +1169,6 @@ void menuSales::sProspects()
   omfgThis->handleNewWindow(new prospects());
 }
 
-void menuSales::sSalesReps()
-{
-  omfgThis->handleNewWindow(new salesReps());
-}
-
-void menuSales::sShippingZones()
-{
-  omfgThis->handleNewWindow(new shippingZones());
-}
-
-void menuSales::sShipVias()
-{
-  omfgThis->handleNewWindow(new shipVias());
-}
-
-void menuSales::sShippingChargeTypes()
-{
-  omfgThis->handleNewWindow(new shippingChargeTypes());
-}
-
-void menuSales::sTaxCodes()
-{
-  omfgThis->handleNewWindow(new taxCodes());
-}
-
-void menuSales::sTerms()
-{
-  omfgThis->handleNewWindow(new termses());
-}
-
-void menuSales::sShippingForms()
-{
-  omfgThis->handleNewWindow(new shippingForms());
-}
-
-void menuSales::sSalesAccountAssignments()
-{
-  omfgThis->handleNewWindow(new salesAccounts());
-}
-
-void menuSales::sCustomerFormAssignments()
-{
-  omfgThis->handleNewWindow(new customerFormAssignments());
-}
-
 void menuSales::sDspCustomerInformationExport()
 {
   omfgThis->handleNewWindow(new dspCustomerInformationExport());
@@ -1237,11 +1177,6 @@ void menuSales::sDspCustomerInformationExport()
 void menuSales::sReassignCustomerTypeByCustomerType()
 {
   reassignCustomerTypeByCustomerType(parent, "", TRUE).exec();
-}
-
-void menuSales::sCharacteristics()
-{
-  omfgThis->handleNewWindow(new characteristics());
 }
 
 void menuSales::sArchiveSalesHistory()

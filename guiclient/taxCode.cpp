@@ -30,7 +30,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave())); 
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck())); 
   connect(_taxClass, SIGNAL(newID(int)), this, SLOT(populateBasis()));
   connect(_taxitems, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -261,16 +261,16 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _code->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _account->setReadOnly(TRUE); 
-      _close->setText(tr("&Close"));
-	  _taxClass->setEnabled(FALSE);
-	  _taxauth->setEnabled(FALSE);
-	  _basis->setEnabled(FALSE);
-      _save->hide(); 
-      _close->setFocus();
-	  _new->setEnabled(FALSE);
+      _taxClass->setEnabled(FALSE);
+      _taxauth->setEnabled(FALSE);
+      _basis->setEnabled(FALSE);
+      _new->setEnabled(FALSE);
       _edit->setEnabled(FALSE);
       _expire->setEnabled(FALSE);
       _delete->setEnabled(FALSE);
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }  
   return NoError;

@@ -155,19 +155,9 @@ class menuSales : public QObject
     void sNewProspect();
     void sSearchForProspect();
     void sProspects();
-    void sSalesReps();
-    void sShippingZones();
-    void sShipVias();
-    void sShippingChargeTypes();
-    void sTaxCodes();
-    void sTerms();
-    void sShippingForms();
-    void sSalesAccountAssignments();
-    void sCustomerFormAssignments();
 
     void sDspCustomerInformationExport();
     void sReassignCustomerTypeByCustomerType();
-    void sCharacteristics();
     
     void sArchiveSalesHistory();
     void sRestoreSalesHistory();
@@ -207,7 +197,6 @@ class menuSales : public QObject
     QMenu *reportsCustomersMenu;
     QMenu *reportsInvAvailMenu;
     QMenu *reportsBacklogMenu;
-    QMenu *masterInfoMenu;
     QMenu *utilitiesMenu;
     
     void	addActionsToMenu(actionProperties [], unsigned int);

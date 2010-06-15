@@ -22,7 +22,7 @@ salesRep::salesRep(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _commPrcnt->setValidator(omfgThis->percentVal());
@@ -85,9 +85,9 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
       _active->setEnabled(FALSE);
       _commPrcnt->setEnabled(FALSE);
       _employee->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

@@ -172,19 +172,20 @@ void setup::populate(int module)
     append(mapItem, "expenseCategories", tr("Expense Categories"), modeVal, modeVal);
   }
 
-  if (module == All || module == Accounting || module == Sales)
-  {
-    modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
-    append(mapItem, "arAccountAssignments", tr("Receivables Assignments"), modeVal, modeVal);
-
-    modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
-    append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
-  }
-
   if (module == All || module == Accounting || module == Purchase)
   {
     modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
     append(mapItem, "apAccountAssignments", tr("Payables Assignments"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Accounting || module == Sales)
+  {
+    modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
+    append(mapItem, "arAccountAssignments", tr("Receivables Assignments"), modeVal, modeVal);
+    append(mapItem, "salesAccounts", tr("Sales Assignments"), modeVal, modeVal);
+
+    modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
+    append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
   }
 
   _tree->addTopLevelItem(mapItem);
@@ -198,7 +199,8 @@ void setup::populate(int module)
     append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
   }
 
-  if (module == All || module == Products || module == Inventory || module == CRM)
+  if (module == All || module == Products || module == Inventory || module == CRM ||
+      module == Sales || module == Accounting)
   {
     modeVal = mode("MaintainCharacteristics", "ViewCharacteristics");
     append(masterItem, "characteristics", tr("Characteristics"), modeVal, modeVal);
@@ -208,6 +210,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainClassCodes", "ViewClassCodes");
     append(masterItem, "classCodes", tr("Class Codes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainCustomerMasters");
+    append(masterItem, "customerFormAssignments", tr("Customer Form Assignments"), modeVal, modeVal);
   }
 
   if (module == All || module == Products)
@@ -282,13 +290,49 @@ void setup::populate(int module)
     append(masterItem, "rejectCodes", tr("Reject Codes"), modeVal, modeVal);
   }
 
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainSalesReps", "ViewSalesReps");
+    append(masterItem, "salesReps", tr("Sales Reps"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainShippingChargeTypes", "ViewShippingChargeTypes");
+    append(masterItem, "shippingChargeTypes", tr("Shipping Charge Types"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainShippingForms", "ViewShippingForms");
+    append(masterItem, "shippingForms", tr("Shipping Forms"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainShippingZones", "ViewShippingZones");
+    append(masterItem, "shippingZones", tr("Shipping Zones"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainShipVias", "ViewShipVias");
+    append(masterItem, "shipVias", tr("Ship Vias"), modeVal, modeVal);
+  }
+
   if (module == All || module == Inventory)
   {
     modeVal = mode("MaintainSiteTypes", "ViewSiteTypes");
     append(masterItem, "siteTypes", tr("Site Types"), modeVal, modeVal);
   }
 
-  if (module == All || module == Purchase)
+  if (module == All || module == Sales)
+  {
+    modeVal = mode("MaintainTaxCodes", "ViewTaxCodes");
+    append(masterItem, "taxCodes", tr("Tax Codes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Purchase || module == Sales)
   {
     modeVal = mode("MaintainTerms", "ViewTerms");
     append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
