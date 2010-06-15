@@ -290,6 +290,7 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
 
 void dspQOHByParameterList::sFillList()
 {
+  _qoh->clear();
   _qoh->setColumnVisible(_qoh->column("f_costmethod"),
                          _showValue->isChecked() && _usePostedCosts->isChecked());
   
