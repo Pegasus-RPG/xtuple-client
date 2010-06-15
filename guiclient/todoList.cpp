@@ -486,6 +486,11 @@ void todoList::setParams(ParameterList &params)
   params.append("incident", tr("Incident"));
   params.append("task", tr("Task"));
   params.append("project", tr("Project"));
+  params.append("completed", tr("Completed"));
+  params.append("deferred", tr("Deferred"));
+  params.append("pending", tr("Pending"));
+  params.append("inprocess", tr("InProcess"));
+  params.append("new", tr("New"));
   _parameterWidget->appendValue(params);
 }
 
