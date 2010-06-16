@@ -38,15 +38,14 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
     _selectedUser->setEnabled(false);
 
   connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
-  connect(_close,         SIGNAL(clicked()),     this, SLOT(sClose()));
-  connect(_save,          SIGNAL(clicked()),     this, SLOT(sSave()));
+  connect(_buttonBox,         SIGNAL(rejected()),     this, SLOT(sClose()));
+  connect(_buttonBox,          SIGNAL(accepted()),     this, SLOT(sSave()));
   connect(_selectedUser,  SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
   connect(_user,          SIGNAL(newID(int)),    this, SLOT(sPopulate()));
     //hot key signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_hotkey, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_hotkey, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   connect(_hotkey, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));

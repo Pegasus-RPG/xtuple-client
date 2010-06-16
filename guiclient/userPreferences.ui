@@ -13,51 +13,51 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>537</height>
+    <width>720</width>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>User Preferences</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
+  <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
-    <layout class="QGridLayout">
+    <layout class="QGridLayout" name="gridLayout_5">
      <property name="verticalSpacing">
       <number>12</number>
      </property>
      <item row="0" column="0">
-      <widget class="QGroupBox" name="_userGroup">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>User</string>
-       </property>
-       <layout class="QGridLayout">
-        <item row="0" column="0" colspan="2">
-         <widget class="QRadioButton" name="_currentUser">
-          <property name="text">
-           <string>Current &amp;User</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="_selectedUser">
-          <property name="text">
-           <string>&amp;Selected User:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <layout class="QHBoxLayout">
-          <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="_userGroup">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="_currentUser">
+            <property name="text">
+             <string>Current &amp;User</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="_selectedUser">
+            <property name="text">
+             <string>&amp;Selected User:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
            <widget class="XComboBox" name="_user">
             <property name="enabled">
              <bool>false</bool>
@@ -70,75 +70,35 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item>
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>191</width>
-         <height>69</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="2">
-      <layout class="QGridLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="_close">
-         <property name="text">
-          <string>&amp;Cancel</string>
-         </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="_save">
-         <property name="text">
-          <string>&amp;Save</string>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
+       <item>
         <spacer>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>0</height>
+           <width>191</width>
+           <height>69</height>
           </size>
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QDialogButtonBox" name="_buttonBox">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
-     <item row="1" column="0" colspan="3">
+     <item row="1" column="0">
       <widget class="QTabWidget" name="_tab">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1356,8 +1316,6 @@ to be bound by its terms.</comment>
   <tabstop>_delete</tabstop>
   <tabstop>_event</tabstop>
   <tabstop>_warehouses</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
