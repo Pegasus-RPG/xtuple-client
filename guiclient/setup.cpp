@@ -160,12 +160,6 @@ void setup::populate(int module)
   XTreeWidgetItem* mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Account Mappings"));
   int modeVal;
 
-  if (module == All || module == Accounting)
-  {
-    modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
-    append(mapItem,"adjustmentTypes", tr("Adjustment Types"), modeVal, modeVal);
-  }
-
   if (module == All || module == Accounting || module == Inventory)
   {
     modeVal = mode("MaintainCostCategories", "ViewCostCategories");
@@ -203,6 +197,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainBankAccounts");
     append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Accounting)
+  {
+    modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
+    append(masterItem,"bankAdjustmentTypes", tr("Bank Adjustment Types"), modeVal, modeVal);
   }
 
   if (module == All || module == Products || module == Inventory || module == CRM ||

@@ -148,7 +148,6 @@ class menuAccounting : public QObject
     void sReconcileBankaccount();
     void sEnterAdjustment();
     void sAdjustmentEditList();
-    void sAdjustmentTypes();
     void sDspBankrecHistory();
     void sDspSummarizedBankrecHistory();
 
@@ -164,8 +163,6 @@ class menuAccounting : public QObject
     void sPrintStatementsByCustomerType();
 
     void sCustomers();
-    void sCustomerTypes();
-    void sVendorTypes();
 
     void sUpdateLateCustCreditStatus();
     void sCreateRecurringInvoices();

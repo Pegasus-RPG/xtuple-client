@@ -123,7 +123,6 @@
 #include "reconcileBankaccount.h"
 #include "bankAdjustment.h"
 #include "bankAdjustmentEditList.h"
-#include "bankAdjustmentTypes.h"
 #include "dspBankrecHistory.h"
 #include "dspSummarizedBankrecHistory.h"
 
@@ -136,9 +135,6 @@
 #include "checkFormats.h"
 
 #include "customers.h"
-#include "customerType.h"
-#include "customerTypes.h"
-#include "vendorTypes.h"
 
 #include "updateLateCustCreditStatus.h"
 #include "createRecurringInvoices.h"
@@ -1040,11 +1036,6 @@ void menuAccounting::sAdjustmentEditList()
   omfgThis->handleNewWindow(new bankAdjustmentEditList());
 }
 
-void menuAccounting::sAdjustmentTypes()
-{
-  omfgThis->handleNewWindow(new bankAdjustmentTypes());
-}
-
 void menuAccounting::sTaxAuthorities()
 {
   omfgThis->handleNewWindow(new taxAuthorities());
@@ -1150,16 +1141,6 @@ void menuAccounting::sPrintStatementsByCustomerType()
 void menuAccounting::sCustomers()
 {
   omfgThis->handleNewWindow(new customers());
-}
-
-void menuAccounting::sCustomerTypes()
-{
-  omfgThis->handleNewWindow(new customerTypes());
-}
-
-void menuAccounting::sVendorTypes()
-{
-  omfgThis->handleNewWindow(new vendorTypes());
 }
 
 void menuAccounting::sUpdateLateCustCreditStatus()
