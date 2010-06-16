@@ -132,7 +132,6 @@
 #include "forwardUpdateAccounts.h"
 #include "duplicateAccountNumbers.h"
 #include "vendors.h"
-#include "termses.h"
 #include "bankAccounts.h"
 #include "checkFormats.h"
 
@@ -140,7 +139,6 @@
 #include "customerType.h"
 #include "customerTypes.h"
 #include "vendorTypes.h"
-#include "reasonCodes.h"
 
 #include "updateLateCustCreditStatus.h"
 #include "createRecurringInvoices.h"
@@ -186,7 +184,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   budgetMenu = new QMenu(parent);
   taxMenu = new QMenu(parent);
   taxReportsMenu = new QMenu(parent);
-  masterInfoMenu = new QMenu(parent);
   utilitiesMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.accnt");
@@ -215,7 +212,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   budgetMenu->setObjectName("menu.accnt.budget");
   taxMenu->setObjectName("menu.accnt.tax");
   taxMenu->setObjectName("menu.accnt.tax.taxreports");
-  masterInfoMenu->setObjectName("menu.accnt.masterinfo");
   utilitiesMenu->setObjectName("menu.accnt.utilities");
 
   actionProperties acts[] = { 
@@ -434,19 +430,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.dspTaxHistory",	tr("&Tax History..."),           SLOT(sDspTaxHistory()),        taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
      
     { "separator",		  NULL,					NULL,					mainMenu,		"true",					       NULL, NULL, true, NULL },
-   
-    // Accounting | Master Information
-    { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,		mainMenu,	"true",						NULL, NULL, true, NULL },
-    { "gl.postTransactionsToExternalAccountingSystem", tr("Post Transactions to External Accounting System..."), SLOT(sPostTransactionsToExternal()), utilitiesMenu, "ViewGLTransactions", NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface") , NULL },                             
-    { "ap.terms", tr("Ter&ms..."), SLOT(sTerms()), masterInfoMenu, "MaintainTerms ViewTerms", NULL, NULL, true , NULL },
-    { "separator",			NULL,					NULL,				masterInfoMenu,	"true",	NULL, NULL, true , NULL },
-    { "ap.checkFormats", tr("&Check Formats..."), SLOT(sCheckFormats()), masterInfoMenu, "MaintainCheckFormats ViewCheckFormats", NULL, NULL, true, NULL },
-    { "separator",		  NULL,					NULL,					masterInfoMenu,		"true",					       NULL, NULL, true, NULL },
-    { "ar.customerTypes", tr("Customer &Types..."), SLOT(sCustomerTypes()), masterInfoMenu, "MaintainCustomerTypes ViewCustomerTypes", NULL, NULL, true , NULL },
-    { "ar.vendorTypes", tr("&Vendor Types..."), SLOT(sVendorTypes()), masterInfoMenu, "MaintainVendorTypes ViewVendorTypes", NULL, NULL, true , NULL },
-    { "ar.reasonCodes", tr("&Reason Codes..."), SLOT(sReasonCodes()), masterInfoMenu, "MaintainReasonCodes", NULL, NULL, true , NULL },
-    { "separator",		  NULL,					NULL,					masterInfoMenu,		"true",					       NULL, NULL, true, NULL },
-    { "gl.adjustmentTypes",	tr("&Adjustment Types..."),	SLOT(sAdjustmentTypes()),	masterInfoMenu,	"MaintainAdjustmentTypes ViewAdjustmentTypes",	NULL, NULL, true, NULL },
 
     // Accounting | Utilities
     { "menu",				tr("&Utilities"),			(char*)utilitiesMenu,		mainMenu,	"true",	NULL, NULL, true, NULL },
@@ -1144,11 +1127,6 @@ void menuAccounting::sForwardUpdateAccounts()
   forwardUpdateAccounts(parent, "", TRUE).exec();
 }
 
-void menuAccounting::sTerms()
-{
-  omfgThis->handleNewWindow(new termses());
-}
-
 void menuAccounting::sVendors()
 {
   omfgThis->handleNewWindow(new vendors());
@@ -1182,11 +1160,6 @@ void menuAccounting::sCustomerTypes()
 void menuAccounting::sVendorTypes()
 {
   omfgThis->handleNewWindow(new vendorTypes());
-}
-
-void menuAccounting::sReasonCodes()
-{
-  omfgThis->handleNewWindow(new reasonCodes());
 }
 
 void menuAccounting::sUpdateLateCustCreditStatus()

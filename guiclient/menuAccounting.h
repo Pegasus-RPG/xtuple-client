@@ -158,7 +158,6 @@ class menuAccounting : public QObject
     void sForwardUpdateAccounts();
 
     void sVendors();
-    void sTerms();
     void sCheckFormats();
     
     void sPrintStatementByCustomer();
@@ -167,7 +166,6 @@ class menuAccounting : public QObject
     void sCustomers();
     void sCustomerTypes();
     void sVendorTypes();
-    void sReasonCodes();
 
     void sUpdateLateCustCreditStatus();
     void sCreateRecurringInvoices();
@@ -201,7 +199,6 @@ class menuAccounting : public QObject
     QMenu    *budgetMenu;
     QMenu    *taxMenu;
     QMenu    *taxReportsMenu;
-    QMenu    *masterInfoMenu;
     QMenu    *bankrecMenu;
     QMenu    *bankrecDisplaysMenu;
     QMenu    *bankrecReportsMenu;

@@ -160,6 +160,12 @@ void setup::populate(int module)
   XTreeWidgetItem* mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Account Mappings"));
   int modeVal;
 
+  if (module == All || module == Accounting)
+  {
+    modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
+    append(mapItem,"adjustmentTypes", tr("Adjustment Types"), modeVal, modeVal);
+  }
+
   if (module == All || module == Accounting || module == Inventory)
   {
     modeVal = mode("MaintainCostCategories", "ViewCostCategories");
@@ -206,6 +212,12 @@ void setup::populate(int module)
     append(masterItem, "characteristics", tr("Characteristics"), modeVal, modeVal);
   }
 
+  if (module == All || module == Accounting)
+  {
+    modeVal = mode("MaintainCheckFormats", "ViewCheckFormats");
+    append(masterItem, "checkFormats", tr("Check Formats"), modeVal, modeVal);
+  }
+
   if (module == All || module == Products)
   {
     modeVal = mode("MaintainClassCodes", "ViewClassCodes");
@@ -216,6 +228,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainCustomerMasters");
     append(masterItem, "customerFormAssignments", tr("Customer Form Assignments"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Sales || module == Accounting)
+  {
+    modeVal = mode("MaintainCustomerTypes", "ViewCustomerTypes");
+    append(masterItem, "customerTypes", tr("Customer Types"), modeVal, modeVal);
   }
 
   if (module == All || module == Products)
@@ -284,6 +302,12 @@ void setup::populate(int module)
     append(masterItem, "productCategories", tr("Product Categories"), modeVal, modeVal);
   }
 
+  if (module == All || module == Inventory || module == Accounting)
+  {
+    modeVal = mode("MaintainReasonCodes");
+    append(masterItem, "reasonCodes", tr("Reason Codes"), modeVal, modeVal);
+  }
+
   if (module == All || module == Purchase)
   {
     modeVal = mode("MaintainRejectCodes", "ViewRejectCodes");
@@ -332,7 +356,7 @@ void setup::populate(int module)
     append(masterItem, "taxCodes", tr("Tax Codes"), modeVal, modeVal);
   }
 
-  if (module == All || module == Purchase || module == Sales)
+  if (module == All || module == Purchase || module == Sales || Accounting)
   {
     modeVal = mode("MaintainTerms", "ViewTerms");
     append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
@@ -348,6 +372,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainUOMs", "ViewUOMs");
     append(masterItem, "uoms", tr("Units of Measure"), modeVal, modeVal);
+  }
+
+  if (module == All || module == Purchase || module == Accounting)
+  {
+    modeVal = mode("MaintainVendorTypes", "ViewVendorTypes");
+    append(masterItem, "vendorTypes", tr("Vendor Types"), modeVal, modeVal);
   }
 
   _tree->addTopLevelItem(masterItem);

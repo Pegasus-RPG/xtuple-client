@@ -129,16 +129,6 @@
 #include "prospects.h"
 #include "updateCreditStatusByCustomer.h"
 #include "customerGroups.h"
-#include "shipVias.h"
-#include "shippingChargeTypes.h"
-#include "taxCodes.h"
-#include "customerTypes.h"
-#include "termses.h"
-#include "salesReps.h"
-#include "shippingZones.h"
-#include "shippingForms.h"
-#include "salesAccounts.h"
-#include "customerFormAssignments.h"
 
 #include "dspCustomerInformationExport.h"
 #include "reassignCustomerTypeByCustomerType.h"
@@ -424,7 +414,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
     { "so.customerWorkbench", tr("&Workbench..."),	SLOT(sCustomerWorkbench()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Workbench") }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, "MaintainCustomerTypes ViewCustomerTypes",	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, "MaintainCustomerGroups ViewCustomerGroups",	NULL, NULL, true, NULL },
    
     // Sales | Pricing
@@ -1137,11 +1126,6 @@ void menuSales::sUpdateCreditStatusByCustomer()
 void menuSales::sCustomerGroups()
 {
   omfgThis->handleNewWindow(new customerGroups());
-}
-
-void menuSales::sCustomerTypes()
-{
-  omfgThis->handleNewWindow(new customerTypes());
 }
 
 void menuSales::sNewProspect()

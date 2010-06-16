@@ -70,7 +70,6 @@
 #include "vendor.h"
 #include "searchForCRMAccount.h"
 #include "vendors.h"
-#include "vendorTypes.h"
 #include "vendorWorkBench.h"
 
 #include "dspItemsWithoutItemSources.h"
@@ -222,9 +221,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.searchForVendor", tr("&Search..."), SLOT(sSearchForVendor()), vendorMenu, "MaintainVendors ViewVendors", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, vendorMenu, "true", NULL, NULL, true , NULL },
     { "po.vendorWorkBench", tr("&Workbench..."), SLOT(sVendorWorkBench()), vendorMenu, "MaintainVendors", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, vendorMenu, "true", NULL, NULL, true , NULL },
-    { "po.vendorTypes", tr("&Types..."), SLOT(sVendorTypes()), vendorMenu, "MaintainVendorTypes ViewVendorTypes", NULL, NULL, true , NULL },
-    
+
      //  P/O | Item Source
     { "menu", tr("&Item Source"), (char*)itemSourcesMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.enterNewItemSource", tr("&New..."), SLOT(sNewItemSource()), itemSourcesMenu, "MaintainItemSources", NULL, NULL, true , NULL },
@@ -559,11 +556,6 @@ void menuPurchase::sVendors()
 void menuPurchase::sVendorWorkBench()
 {
   omfgThis->handleNewWindow(new vendorWorkBench());
-}
-
-void menuPurchase::sVendorTypes()
-{
-  omfgThis->handleNewWindow(new vendorTypes());
 }
 
 // Utilities
