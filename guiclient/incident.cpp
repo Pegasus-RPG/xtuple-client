@@ -169,6 +169,10 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _deleteTodoItem->setEnabled(false);
       _editTodoItem->setEnabled(false);
       _newTodoItem->setEnabled(false);
+      disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      disconnect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
+      _newCharacteristic->setEnabled(false);
       _owner->setEnabled(false);
 
       _save->hide();
