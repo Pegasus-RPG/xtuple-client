@@ -1398,7 +1398,8 @@ void salesOrder::populateOrderNumber()
         _orderNumber->setText(q.value("qunumber"));
         _orderNumberGen = q.value("qunumber").toInt();
 
-        if (_metrics->value("QUNumberGeneration") == "A")
+        if ( (_metrics->value("QUNumberGeneration") == "A") ||
+             (_metrics->value("QUNumberGeneration") == "S") )
           _orderNumber->setEnabled(FALSE);
       }
       else if (q.lastError().type() != QSqlError::NoError)
