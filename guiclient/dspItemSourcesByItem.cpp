@@ -17,6 +17,10 @@
 #include <QMenu>
 #include <openreports.h>
 #include <parameter.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "itemSource.h"
 #include "buyCard.h"
 #include "dspPoItemsByItem.h"
@@ -124,14 +128,14 @@ void dspItemSourcesByItem::sFillList()
 {
   if (_item->isValid())
   {
-    q.prepare( "SELECT itemsrc_id, vend_name, itemsrc_vend_item_number, itemsrc_vend_uom,"
-               "       itemsrc_invvendoruomratio, 'qty' AS itemsrc_invvendoruomratio_xtnumericrole "
-               "FROM itemsrc, vend "
-               "WHERE ( (itemsrc_vend_id=vend_id)"
-               " AND (itemsrc_item_id=:item_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    _itemsrc->populate(q);
+    ParameterList params;
+    
+    params.append("byItem");
+    params.append("item_id", _item->id());
+
+    MetaSQLQuery mql = mqlLoad("itemSources", "detail");
+    q = mql.toQuery(params);
+    _itemsrc->populate(q, true);  
   }
   else
     _itemsrc->clear();

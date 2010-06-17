@@ -18,6 +18,9 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "inputManager.h"
 #include "itemSite.h"
 #include "dspInventoryAvailabilityByItem.h"
@@ -167,50 +170,35 @@ void dspItemSitesByItem::sIssueCountTag()
 
 void dspItemSitesByItem::sFillList()
 {
-  QString sql( "SELECT itemsite_id,"
-               "       CASE WHEN ( (itemsite_loccntrl) OR"
-               "                   (itemsite_controlmethod IN ('L', 'S')) ) THEN 1"
-               "            ELSE 0"
-               "       END,"
-               "       warehous_code,"
-               "       itemsite_qtyonhand,"
-               "       itemsite_loccntrl,"
-               "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
-               "            WHEN itemsite_controlmethod='N' THEN :none"
-               "            WHEN itemsite_controlmethod='L' THEN :lot"
-               "            WHEN itemsite_controlmethod='S' THEN :serial"
-               "       END AS controlmethod,"
-               "       CASE WHEN (itemsite_sold) THEN itemsite_soldranking"
-               "       END AS soldranking,"
-               "       itemsite_datelastcount,"
-               "       itemsite_datelastused,"
-               "       'qty' AS itemsite_qtyonhand_xtnumericrole,"
-               "       :na AS soldranking_xtnullrole,"
-               "       :never AS itemsite_datelastused_xtnullrole,"
-               "       :never AS itemsite_datelastused_xtnullrole "
-               "FROM itemsite, warehous "
-               "WHERE ( (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=:item_id)" );
-
-  if (!_showInactive->isChecked())
-    sql += " AND (itemsite_active)";
-
-  sql += " )"
-         "ORDER BY warehous_code;";
-
-  q.prepare(sql);
-  q.bindValue(":regular", tr("Regular"));
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":lot", tr("Lot #"));
-  q.bindValue(":serial", tr("Serial #"));
-  q.bindValue(":na", tr("N/A"));
-  q.bindValue(":never", tr("Never"));
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  _itemsite->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  ParameterList params;
+  if (! setParams(params))
     return;
+  MetaSQLQuery mql = mqlLoad("itemSites", "detail");
+  q = mql.toQuery(params);
+  _itemsite->populate(q, true); 
+}
+
+bool dspItemSitesByItem::setParams(ParameterList &params)
+{
+  params.append("byItem");  
+
+  params.append("regular", tr("Regular"));
+  params.append("none", tr("None"));
+  params.append("lot", tr("Lot #"));
+  params.append("serial", tr("Serial #"));
+  params.append("na", tr("N/A"));
+  params.append("never", tr("Never"));
+  
+  if (_showInactive->isChecked())
+    params.append("showInactive");  
+  
+  if (_item->isValid())
+    params.append("item_id", _item->id());
+  else
+  {
+    _item->setFocus();
+    return false;
   }
+
+  return true;
 }

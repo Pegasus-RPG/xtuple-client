@@ -24,6 +24,7 @@ class dspVoucherRegister : public XWidget, public Ui::dspVoucherRegister
 public:
     dspVoucherRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspVoucherRegister();
+    virtual  bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );

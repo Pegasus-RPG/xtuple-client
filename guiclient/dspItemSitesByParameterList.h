@@ -24,6 +24,7 @@ class dspItemSitesByParameterList : public XWidget, public Ui::dspItemSitesByPar
 public:
     dspItemSitesByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemSitesByParameterList();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );

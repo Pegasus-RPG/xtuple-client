@@ -24,6 +24,7 @@ class dspItemCostSummary : public XWidget, public Ui::dspItemCostSummary
 public:
     dspItemCostSummary(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostSummary();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );

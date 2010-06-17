@@ -16,6 +16,8 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 
 dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -65,26 +67,27 @@ void dspValidLocationsByItem::sPopulateMenu(QMenu *)
 
 void dspValidLocationsByItem::sFillList()
 {
-  QString sql = "SELECT location_id, warehous_code,"
-                "       formatLocationName(location_id) AS locationname,"
-                "       firstLine(location_descrip) AS locationdescrip,"
-                "       location_restrict, location_netable "
-                "FROM itemsite, location, warehous "
-                "WHERE ( (validLocation(location_id, itemsite_id))"
-                " AND ( (itemsite_loccntrl) OR (itemsite_location_id=location_id) )"
-                " AND (itemsite_item_id=:item_id)"
-                " AND (itemsite_warehous_id=warehous_id)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY warehous_code, locationname;";
-
-  q.prepare(sql);
-  q.bindValue(":item_id", _item->id());
-  _warehouse->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("validLocationsByItem", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   _location->populate(q);
 }
 
+bool dspValidLocationsByItem::setParams(ParameterList & params)
+{
+  if (! _item->isValid())
+  { 
+    QMessageBox::warning(this, tr("Invalid Item"),
+                         tr("Please select a valid Item."));
+    _item->setFocus();
+    return false;
+  }
+  params.append("item_id", _item->id());
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  return true;
+}

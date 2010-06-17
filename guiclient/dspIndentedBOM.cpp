@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 #include "item.h"
 
@@ -120,6 +121,8 @@ bool dspIndentedBOM::setParams(ParameterList &params)
   params.append("always", tr("Always"));
   params.append("never",  tr("Never"));
 
+  params.append("byIndented");
+
   return true;
 }
 
@@ -139,28 +142,10 @@ void dspIndentedBOM::sPrint()
 
 void dspIndentedBOM::sFillList()
 {
+  MetaSQLQuery mql = mqlLoad("bom", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
-
-  MetaSQLQuery mql("SELECT bomdata_item_id AS itemid, *,"
-                   "      'percent' AS bomdata_scrap_xtnumericrole,"
-                   "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
-                   "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <="
-                   "                 startOfTime() THEN <? value(\"always\") ?>"
-                   "       END AS bomdata_effective_qtdisplayrole,"
-                   "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) >="
-                   "                 endOfTime() THEN <? value(\"never\") ?>"
-                   "       END AS bomdata_expires_qtdisplayrole,"
-                   "       CASE WHEN (bomdata_expired) THEN 'expired'"
-                   "            WHEN (bomdata_future) THEN 'future'"
-                   "       END AS qtforegroundrole,"
-                   "       bomdata_bomwork_level - 1 AS xtindentrole "
-                   "FROM indentedBOM(<? value(\"item_id\") ?>, "
-                   "                 <? value(\"revision_id\") ?>,"
-                   "                 <? value(\"expiredDays\") ?>,"
-                   "                 <? value(\"futureDays\") ?>) "
-                   "WHERE (bomdata_item_id > 0);");
 
   q = mql.toQuery(params);
   _bomitem->populate(q);

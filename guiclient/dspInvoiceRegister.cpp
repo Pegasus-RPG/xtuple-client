@@ -16,6 +16,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 
 #include "arOpenItem.h"
@@ -151,6 +152,7 @@ void dspInvoiceRegister::sViewCreditMemo()
             "  AND  (aropen_doctype=:doctype)"
             ") ORDER BY type LIMIT 1;");
   q.bindValue(":docnum", _gltrans->currentItem()->text(3));
+  
   if(_gltrans->altId()==1)
     q.bindValue(":doctype", "I");
   else if(_gltrans->altId()==2)
@@ -246,77 +248,11 @@ void dspInvoiceRegister::sPrint()
 
 void dspInvoiceRegister::sFillList()
 {
+  MetaSQLQuery mql = mqlLoad("invoiceRegister", "detail");
+
   ParameterList params;
   if (! setParams(params))
     return;
-
-  MetaSQLQuery mql(
-     "SELECT DISTINCT"
-     "       -1 AS gltrans_id, -1 AS altId,"
-     "       gltrans_date,  '' AS gltrans_source,"
-     "       '' AS doctype, '' AS gltrans_docnumber,"
-     "       '' AS notes,   '' AS account,"
-     "       CAST(NULL AS NUMERIC) AS debit,"
-     "       CAST(NULL AS NUMERIC) AS credit,"
-     "       'curr' AS debit_xtnumericrole,"
-     "       'curr' AS credit_xtnumericrole,"
-     "       0 AS xtindentrole,"
-     "       gltrans_date AS transdate "  // qtdisplay role isn't working right?
-     "FROM gltrans "
-     "WHERE ((gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
-     " AND (gltrans_source = 'A/R')"
-     " AND (gltrans_date BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>) "
-     "<? if exists(\"accnt_id\") ?>"
-     " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
-     "<? endif ?>"
-     ") "
-     "UNION "
-     "SELECT gltrans_id,"
-     "       CASE WHEN(gltrans_doctype='IN') THEN 1"
-     "            WHEN(gltrans_doctype='CM') THEN 2"
-     "            WHEN(gltrans_doctype='DM') THEN 3"
-     "            WHEN(gltrans_doctype='CD') THEN 4"
-     "            ELSE -1"
-     "       END AS altId,"
-     "       gltrans_date, gltrans_source,"
-     "       CASE WHEN(gltrans_doctype='IN') THEN <? value(\"invoice\") ?>"
-     "            WHEN(gltrans_doctype='CM') THEN <? value(\"creditmemo\") ?>"
-     "            WHEN(gltrans_doctype='DM') THEN <? value(\"debitmemo\") ?>"
-     "            WHEN(gltrans_doctype='CD') THEN <? value(\"cashdeposit\") ?>"
-     "            ELSE gltrans_doctype"
-     "       END AS doctype,"
-     "       gltrans_docnumber,"
-     "       CASE WHEN(gltrans_doctype='IN') THEN"
-     "                (SELECT invchead_shipto_name"
-     "                   FROM aropen LEFT OUTER JOIN"
-     "                        invchead"
-     "                          ON (invchead_id=aropen_cobmisc_id"
-     "                          AND invchead_cust_id=aropen_cust_id)"
-     "                  WHERE ((aropen_docnumber=gltrans_docnumber)"
-     "                    AND  (aropen_doctype='I')))"
-     "            ELSE firstLine(gltrans_notes)"
-     "       END AS f_notes,"
-     "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS f_accnt,"
-     "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
-     "            ELSE 0"
-     "       END AS debit,"
-     "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-     "            ELSE 0"
-     "       END AS credit,"
-     "       'curr' AS debit_xtnumericrole,"
-     "       'curr' AS credit_xtnumericrole,"
-     "       1 AS xtindentrole,"
-     "       NULL AS transdate "          // qtdisplay role isn't working right?
-     "FROM gltrans, accnt "
-     "WHERE ((gltrans_accnt_id=accnt_id)"
-     " AND (gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
-     " AND (gltrans_source = 'A/R')"
-     " AND (gltrans_date BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
-     "<? if exists(\"accnt_id\") ?>"
-     " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
-     "<? endif ?>"
-     ") "
-     "ORDER BY gltrans_date, gltrans_docnumber, xtindentrole;");
 
   q = mql.toQuery(params);
   _gltrans->populate(q, true);

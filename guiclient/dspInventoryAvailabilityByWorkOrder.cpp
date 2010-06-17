@@ -16,6 +16,8 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 #include "createCountTagsByItem.h"
@@ -232,8 +234,8 @@ void dspInventoryAvailabilityByWorkOrder::sViewAllocations()
 {
   q.prepare( "SELECT womatl_duedate "
              "FROM womatl "
-             "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _womatl->altId());
+             "WHERE (womatl_itemsite_id=:womatl_itemsite_id);" );
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
   q.exec();
   if (q.first())
   {
@@ -252,8 +254,8 @@ void dspInventoryAvailabilityByWorkOrder::sViewOrders()
 {
   q.prepare( "SELECT womatl_duedate "
              "FROM womatl "
-             "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _womatl->altId());
+             "WHERE (womatl_itemsite_id=:womatl_id);" );
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
   q.exec();
   if (q.first())
   {
@@ -283,8 +285,8 @@ void dspInventoryAvailabilityByWorkOrder::sViewSubstituteAvailability()
 {
   q.prepare( "SELECT womatl_duedate "
              "FROM womatl "
-             "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _womatl->altId());
+             "WHERE (womatl_itemsite_id=:womatl_itemsite_id);" );
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
   q.exec();
   if (q.first())
   {
@@ -302,6 +304,7 @@ void dspInventoryAvailabilityByWorkOrder::sViewSubstituteAvailability()
 
 void dspInventoryAvailabilityByWorkOrder::sCreatePR()
 {
+  int currentAltId;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -310,14 +313,19 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePR()
   newdlg.set(params);
   newdlg.exec();
 
+  q.prepare("SELECT womatl_id FROM womatl WHERE womatl_itemsite_id = :womatl_itemsite_id");
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
+  q.exec();
+  if (q.first())
+    int currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
-  int currentAltId = _womatl->altId();
   sFillList();
   _womatl->setId(currentId,currentAltId);
 }
 
 void dspInventoryAvailabilityByWorkOrder::sCreatePO()
 {
+  int currentAltId;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -326,14 +334,19 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePO()
   if(newdlg->set(params) == NoError)
     omfgThis->handleNewWindow(newdlg);
 
+  q.prepare("SELECT womatl_id FROM womatl WHERE womatl_itemsite_id = :womatl_itemsite_id");
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
+  q.exec();
+  if (q.first())
+    currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
-  int currentAltId = _womatl->altId();
   sFillList();
   _womatl->setId(currentId,currentAltId);
 }
 
 void dspInventoryAvailabilityByWorkOrder::sCreateWO()
 {
+  int currentAltId;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -342,14 +355,19 @@ void dspInventoryAvailabilityByWorkOrder::sCreateWO()
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 
+  q.prepare("SELECT womatl_id FROM womatl WHERE womatl_itemsite_id = :womatl_itemsite_id");
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
+  q.exec();
+  if (q.first())
+    currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
-  int currentAltId = _womatl->altId();
   sFillList();
   _womatl->setId(currentId,currentAltId);
 }
 
 void dspInventoryAvailabilityByWorkOrder::sPostMiscProduction()
 {
+  int currentAltId;
   ParameterList params;
   params.append("itemsite_id", _womatl->id());
 
@@ -357,8 +375,12 @@ void dspInventoryAvailabilityByWorkOrder::sPostMiscProduction()
   newdlg.set(params);
   newdlg.exec();
 
+  q.prepare("SELECT womatl_id FROM womatl WHERE womatl_itemsite_id = :womatl_itemsite_id");
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
+  q.exec();
+  if (q.first())
+    currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
-  int currentAltId = _womatl->altId();
   sFillList();
   _womatl->setId(currentId,currentAltId);
 }
@@ -375,6 +397,7 @@ void dspInventoryAvailabilityByWorkOrder::sIssueCountTag()
 
 void dspInventoryAvailabilityByWorkOrder::sEnterMiscCount()
 {  
+  int currentAltId;
   ParameterList params;
   params.append("itemsite_id", _womatl->id());
   
@@ -382,8 +405,12 @@ void dspInventoryAvailabilityByWorkOrder::sEnterMiscCount()
   newdlg.set(params);
   newdlg.exec();
 
+  q.prepare("SELECT womatl_id FROM womatl WHERE womatl_itemsite_id = :womatl_itemsite_id");
+  q.bindValue(":womatl_itemsite_id", _womatl->id());
+  q.exec();
+  if (q.first())
+    currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
-  int currentAltId = _womatl->altId();
   sFillList();
   _womatl->setId(currentId,currentAltId);
 }
@@ -393,52 +420,7 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-
-  MetaSQLQuery mql("SELECT *, "
-               "       'qty' AS woinvav_qoh_xtnumericrole,"
-               "       'qty' AS woinvav_balance_xtnumericrole,"
-               "       'qty' AS woinvav_allocated_xtnumericrole,"
-               "       'qty' AS woinvav_ordered_xtnumericrole,"
-               "       'qty' AS woinvav_woavail_xtnumericrole,"
-               "       'qty' AS woinvav_totalavail_xtnumericrole,"               
-               "       CASE WHEN (woinvav_womatl_id) = -1 THEN 'altemphasis'"
-               "            WHEN (woinvav_qoh < 0) THEN 'error'"
-               "            WHEN (woinvav_qoh < woinvav_reorderlevel) THEN 'warning'"
-               "            WHEN ((woinvav_qoh - woinvav_balance) < 0) THEN 'altemphasis'"
-               "            WHEN ((woinvav_qoh - woinvav_allocated) < 0) THEN 'altemphasis'"
-               "       END AS woinvav_qoh_qtforegroundrole,"
-               "       CASE WHEN (woinvav_womatl_id) = -1 THEN 'altemphasis' "
-               "            WHEN ((woinvav_qoh + woinvav_ordered - woinvav_balance) < 0) THEN 'error'"
-               "            WHEN ((woinvav_qoh + woinvav_ordered - woinvav_balance) < woinvav_reorderlevel) THEN 'warning'"
-               "       END AS woinvav_woavail_qtforegroundrole,"
-               "       CASE WHEN (woinvav_womatl_id) = -1 THEN 'altemphasis' "
-               "            WHEN ((woinvav_qoh + woinvav_ordered - woinvav_allocated) < 0) THEN 'error'"
-               "            WHEN ((woinvav_qoh + woinvav_ordered - woinvav_allocated) < woinvav_reorderlevel) THEN 'warning'"
-               "       END AS woinvav_totalavail_qtforegroundrole, "
-               "       CASE WHEN (woinvav_womatl_id = -1) THEN 'altemphasis' "
-               "           ELSE null END AS qtforegroundrole, "
-               "       woinvav_level AS xtindentrole "
-               " FROM woinvavail(<? value(\"wo_id\") ?>,"
-               "<? if exists(\"IndentedParentChild\") ?>"
-               "true, "
-               " <? else ?>"
-               "false, "
-               "<? endif ?>"
-               "<? if exists(\"summarizedParentChild\") ?>"
-               "true, "
-               " <? else ?>"
-               "false, "
-               "<? endif ?>"              
-               "<? if exists(\"onlyShowShortages\") ?>"
-               "true, "
-               " <? else ?>"
-               "false, "
-               "<? endif ?>"
-               "<? if exists(\"onlyShowInsufficientInventory\") ?>"
-               "true) AS data "
-               " <? else ?>"
-               "false) AS data "
-               "<? endif ?>");
+  MetaSQLQuery mql = mqlLoad("inventoryAvailabilitybyWorkorder", "detail");
   q = mql.toQuery(params);
   _womatl->populate(q, true);
   if(_indentedWo->isChecked())

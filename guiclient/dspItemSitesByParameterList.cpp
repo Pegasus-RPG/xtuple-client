@@ -16,6 +16,9 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <openreports.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
@@ -273,73 +276,33 @@ void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
 
 void dspItemSitesByParameterList::sFillList()
 {
- QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "      (item_descrip1 || ' ' || item_descrip2) AS description, uom_name,"
-               "      itemsite_qtyonhand, formatBoolYN(itemsite_loccntrl) AS loccntrl,"
-               "      CASE WHEN itemsite_controlmethod='R' THEN :regular"
-               "           WHEN itemsite_controlmethod='N' THEN :none"
-               "           WHEN itemsite_controlmethod='L' THEN :lot"
-               "           WHEN itemsite_controlmethod='S' THEN :serial"
-               "      END AS controlmethod,"
-               "      CASE WHEN (itemsite_sold) THEN TEXT(itemsite_soldranking)"
-               "           ELSE :na"
-               "      END AS soldranking,"
-               "      CASE WHEN (itemsite_datelastcount=startOfTime()) THEN NULL"
-               "           ELSE itemsite_datelastcount"
-               "      END AS datelastcount,"
-               "      CASE WHEN (itemsite_datelastused=startOfTime()) THEN NULL"
-               "           ELSE itemsite_datelastused"
-               "      END AS datelastused,"
-               "      itemsite_abcclass, itemsite_cyclecountfreq,"
-               "      'qty' AS itemsite_qtyonhand_xtnumericrole,"
-               "      'Never' AS datelastcount_xtnullrole,"
-               "      'Never' AS datelastused_xtnullrole "
-               "FROM itemsite, warehous, item, uom "
-               "WHERE ( (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (itemsite_warehous_id=warehous_id)" );
-
-  if (_parameter->isSelected())
-  {
-    if (_parameter->type() == ParameterGroup::ClassCode)
-      sql += " AND (item_classcode_id=:classcode_id)";
-    else if (_parameter->type() == ParameterGroup::ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-    else if (_parameter->type() == ParameterGroup::PlannerCode)
-      sql += " AND (itemsite_plancode_id=:plancode_id)";
-    else if (_parameter->type() == ParameterGroup::CostCategory)
-      sql += " AND (itemsite_costcat_id=:costcat_id)";
-  }
-  else if (_parameter->isPattern())
-  {
-    if (_parameter->type() == ParameterGroup::ClassCode)
-      sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if (_parameter->type() == ParameterGroup::ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-    else if (_parameter->type() == ParameterGroup::PlannerCode)
-      sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-    else if (_parameter->type() == ParameterGroup::CostCategory)
-      sql += " AND (itemsite_costcat_id IN (SELECT costcat_id FROM costcat WHERE (costcat_code ~ :costcat_pattern)))";
-  }
-
-  if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
-  if (!_showInactive->isChecked())
-    sql += " AND (itemsite_active)";
-
-  sql += ") "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _parameter->bindValue(q);
-  q.bindValue(":regular", tr("Regular"));
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":lot", tr("Lot #"));
-  q.bindValue(":serial", tr("Serial #"));
-  q.bindValue(":na", tr("N/A"));
-  q.exec();
-  _itemsite->populate(q);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("itemSites", "detail");
+  q = mql.toQuery(params);
+  _itemsite->populate(q, true);  
 }
 
+bool dspItemSitesByParameterList::setParams(ParameterList &params)
+  {
+  params.append("byParameterList");  
+
+  params.append("regular", tr("Regular"));
+  params.append("none", tr("None"));
+  params.append("lot", tr("Lot #"));
+  params.append("serial", tr("Serial #"));
+  params.append("na", tr("N/A"));
+  
+  if (_showInactive->isChecked())
+    params.append("showInactive");  
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (_parameter->isSelected())
+    params.append("byParameterId");
+  else if (_parameter->isPattern())
+    params.append("byParameterPattern");
+  _parameter->appendValue(params);
+  return true;
+}

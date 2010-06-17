@@ -16,6 +16,9 @@
 
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "item.h"
 #include "itemSite.h"
 
@@ -96,35 +99,13 @@ void dspInvalidBillsOfMaterials::sHandleUpdate()
 
 void dspInvalidBillsOfMaterials::sFillList()
 {
-  QString sql("SELECT itemsite_id, parent.item_id AS pitem_id,"
-              "        component.item_id AS citem_id,"
-              "        warehous_id, warehous_code,"
-              "       parent.item_number AS parentitem,"
-              "       component.item_number AS componentitem,"
-              "        (component.item_descrip1 || ' ' || component.item_descrip2) AS descrip "
-               "FROM bomitem, itemsite, item AS parent, item AS component, warehous "
-               "WHERE ( (bomitem_parent_item_id=parent.item_id)"
-               " AND (bomitem_item_id=component.item_id)"
-               " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires - 1))"
-               " AND (itemsite_item_id=parent.item_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (parent.item_type='M')"
-               " AND (itemsite_wosupply)"
-               " AND (itemsite_active)"
-               " AND (component.item_id NOT IN ( SELECT itemsite_item_id"
-               "                                 FROM itemsite"
-               "                                 WHERE ((itemsite_warehous_id=warehous_id)"
-               "                                  AND (itemsite_active)) ) )" );
+  MetaSQLQuery mql = mqlLoad("invalidBillsofMaterials", "detail");
+  ParameterList params;
 
   if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  sql += ") "
-         "ORDER BY warehous_code, parentitem, componentitem;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.exec();
+  q = mql.toQuery(params);
 
   _exceptions->populate(q, TRUE);                               
   if (q.lastError().type() != QSqlError::NoError)

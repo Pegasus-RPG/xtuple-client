@@ -16,6 +16,8 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 #include "dspItemCostSummary.h"
@@ -74,6 +76,7 @@ enum SetResponse dspItemCostsByClassCode::set(const ParameterList &pParams)
 
 bool dspItemCostsByClassCode::setParams(ParameterList &params)
 {
+  params.append("byClassCode");
   _classCode->appendValue(params);
 
   if(_onlyShowZero->isChecked())
@@ -163,7 +166,7 @@ void dspItemCostsByClassCode::sPostCosts()
 
 void dspItemCostsByClassCode::sFillList()
 {
-
+  MetaSQLQuery mql = mqlLoad("itemCost", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
@@ -174,43 +177,6 @@ void dspItemCostsByClassCode::sFillList()
     params.append("costscale", q.value("locale_cost_scale").toInt());
   else
     params.append("costscale", decimalPlaces("cost"));
-
-  MetaSQLQuery mql("SELECT item_id, item_number, description, "
-                   "       uom_name, scost, acost, "
-                   "       CASE WHEN (scost = 0) THEN NULL " 
-                   "       ELSE ((acost - scost) / scost)"      
-                   "       END AS percent_variance,  "
-                   "       'percent' AS percent_variance_xtnumericrole, "
-                   "       CASE WHEN (scost = 0) THEN NULL "
-                   "       WHEN (((acost - scost) / scost) < 0) THEN 'error' "
-                   "       ELSE NULL "
-                   "       END AS percent_variance_qtforegroundrole, "
-                   " <? if exists(\"onlyShowDiffCosts\") ?>"
-                   "       CASE WHEN (scost != acost"
-                   "              AND ABS(scost - acost) < 10 ^ (-1 * <? value(\"costscale\") ?>))"
-                   "            THEN 'altemphasis' END AS qtforegroundrole,"
-                   " <? endif ?>" 
-                   "       'cost' AS scost_xtnumericrole,"
-                   "       'cost' AS acost_xtnumericrole "
-                   "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-                   "              uom_name, stdcost(item_id) AS scost, actcost(item_id) AS acost"
-                   "       FROM item, classcode, uom"
-                   "       WHERE ((item_classcode_id=classcode_id)"
-                   "         AND  (item_inv_uom_id=uom_id)"
-                   " <? if exists(\"classcode_id\") ?>"
-                   "      AND (classcode_id=<? value(\"classcode_id\") ?>)"
-                   " <? elseif exists(\"classcode_pattern\") ?>"
-                   "      AND (classcode_code ~ <? value(\"classcode_pattern\") ?>)"
-                   " <? endif ?>" 
-                   ") ) AS data "
-                   "WHERE ( true "
-                   " <? if exists(\"onlyShowZeroCosts\") ?>"
-                   "    AND ((scost=0) OR (acost=0)) "
-                   " <? endif ?>" 
-                   " <? if exists(\"onlyShowDiffCosts\") ?>"
-                   "    AND (scost != acost) "
-                   " <? endif ?>" 
-                   ") ORDER BY item_number;");
   q = mql.toQuery(params);
   _itemcost->populate(q);
   if (q.lastError().type() != QSqlError::None)

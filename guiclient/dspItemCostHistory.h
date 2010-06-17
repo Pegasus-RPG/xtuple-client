@@ -23,6 +23,7 @@ class dspItemCostHistory : public XWidget, public Ui::dspItemCostHistory
 public:
     dspItemCostHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostHistory();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

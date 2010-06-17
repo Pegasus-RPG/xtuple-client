@@ -14,6 +14,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 #include <parameter.h>
 #include "item.h"
@@ -109,6 +110,8 @@ bool dspSummarizedBOM::setParams(ParameterList &params)
   else
     params.append("futureDays", 0);
 
+  params.append("bySummarized");
+
   return true;
 }
 
@@ -132,20 +135,11 @@ void dspSummarizedBOM::sPrint()
 
 void dspSummarizedBOM::sFillList()
 {
+  MetaSQLQuery mql = mqlLoad("bom", "detail");
   ParameterList params;
-  if (!setParams(params))
+  if (! setParams(params))
     return;
 
-  MetaSQLQuery mql(" SELECT item_id AS itemid, *,"
-                   "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
-                   "       CASE WHEN bomdata_expired THEN 'expired'"
-                   "            WHEN bomdata_future  THEN 'future'"
-                   "        END AS qtforegroundrole "
-                   "FROM summarizedBOM(<? value(\"item_id\") ?>,"
-                   "                     <? value(\"revision_id\") ?>,"
-                   "                     <? value(\"expiredDays\") ?>,"
-                   "                     <? value(\"futureDays\") ?>)"
-                   "     JOIN item ON (bomdata_item_number=item_number);" );
   q = mql.toQuery(params);
   _bomitem->populate(q);
   if (q.lastError().type() != QSqlError::NoError)

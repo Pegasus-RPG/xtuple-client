@@ -16,6 +16,10 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <openreports.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "dspItemCostDetail.h"
 #include "itemCost.h"
 
@@ -121,26 +125,22 @@ void dspItemCostSummary::sFillList()
 {
   if (_item->isValid())
   {
-    q.prepare( "SELECT itemcost_id,"
-               "       CASE WHEN (costelem_sys) THEN 1"
-               "            ELSE 0"
-               "       END,"
-               "       costelem_type, formatBoolYN(itemcost_lowlevel) AS lowlevel,"
-               "       itemcost_stdcost, itemcost_posted,"
-               "       itemcost_actcost, itemcost_updated,"
-               "       'cost' AS itemcost_stdcost_xtnumericrole,"
-               "       'cost' AS itemcost_actcost_xtnumericrole,"
-               "       0 AS itemcost_stdcost_xttotalrole,"
-               "       0 AS itemcost_actcost_xttotalrole,"
-               "       CASE WHEN COALESCE(itemcost_posted, endOfTime()) >= endOfTime() THEN :never END AS itemcost_posted_qtdisplayrole,"
-               "       CASE WHEN COALESCE(itemcost_updated, endOfTime()) >= endOfTime() THEN :never END AS itemcost_updated_qtdisplayrole "
-               "FROM itemcost, costelem "
-               "WHERE ( (itemcost_costelem_id=costelem_id)"
-               " AND (itemcost_item_id=:item_id) ) "
-               "ORDER BY itemcost_lowlevel, costelem_type;" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":never", tr("Never"));
-    q.exec();
-    _itemcost->populate(q, TRUE);
+    MetaSQLQuery mql = mqlLoad("itemCost", "detail");
+
+    ParameterList params;
+    if (! setParams(params))
+      return;
+
+   q = mql.toQuery(params);
+   _itemcost->populate(q, true);
   }
+}
+
+bool dspItemCostSummary::setParams(ParameterList &params)
+{
+  params.append("bySummrey");
+
+  params.append("item_id", _item->id());
+  params.append("never", tr("Never")); 
+  return true;
 }

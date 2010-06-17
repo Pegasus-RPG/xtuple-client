@@ -16,6 +16,10 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "guiclient.h"
 #include "salesOrder.h"
 #include "invoice.h"
@@ -201,86 +205,11 @@ void dspOrderActivityByProject::sFillList()
     return;
   }
 
-  QString sql;
-
-  if(_showSo->isChecked())
-  {
-    sql += "SELECT cohead_id AS id, 1 AS typeid,"
-           "       text(:so) AS type, text(cohead_number) AS ordernumber,"
-           "       text('') AS status,"
-           "       0 AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM cohead "
-           " WHERE (cohead_prj_id=:prj_id) ";
-
-    sql += " UNION "
-           "SELECT quhead_id AS id, 2 AS typeid,"
-           "       text(:quote) AS type, text(quhead_number) AS ordernumber,"
-           "       text('') AS status,"
-           "       0 AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM quhead "
-           " WHERE (quhead_prj_id=:prj_id) ";
-
-    sql += " UNION "
-           "SELECT invchead_id AS id, 3 AS typeid,"
-           "       text(:invoice) AS type, text(invchead_invcnumber) AS ordernumber,"
-           "       text('') AS status,"
-           "       0 AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM invchead "
-           " WHERE (invchead_prj_id=:prj_id) ";
-  }
-
-  if(_showWo->isChecked())
-  {
-    if(_showSo->isChecked())
-      sql += " UNION ";
-
-    sql += "SELECT wo_id AS id, 4 AS typeid,"
-           "       text(:wo) AS type, formatWoNumber(wo_id) AS ordernumber,"
-           "       wo_status AS status,"
-           "       wo_qtyord AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM wo "
-           " WHERE (wo_prj_id=:prj_id) ";
-  }
-
-  if(_showPo->isChecked())
-  {
-    if(_showSo->isChecked() || _showWo->isChecked())
-      sql += " UNION ";
-
-    sql += "SELECT poitem_id AS id, 5 AS typeid,"
-           "       text(:po) AS type, (text(pohead_number) || '-' || text(poitem_linenumber)) AS ordernumber,"
-           "       poitem_status AS status,"
-           "       poitem_qty_ordered AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM pohead, poitem "
-           " WHERE ((poitem_pohead_id=pohead_id) "
-           "   AND  (poitem_prj_id=:prj_id)) ";
-
-    sql += " UNION "
-           "SELECT pr_id AS id, 6 AS typeid,"
-           "       text(:pr) AS type, text(pr_number) AS ordernumber,"
-           "       pr_status AS status,"
-           "       pr_qtyreq AS qty,"
-           "       'qty' AS qty_xtnumericrole "
-           "  FROM pr "
-           " WHERE (pr_prj_id=:prj_id) ";
-  }
-
-  sql += " ORDER BY ordernumber; ";
-
-  q.prepare(sql);
-  q.bindValue(":prj_id", _project->id());
-  q.bindValue(":so", tr("S/O"));
-  q.bindValue(":wo", tr("W/O"));
-  q.bindValue(":po", tr("P/O"));
-  q.bindValue(":pr", tr("P/R"));
-  q.bindValue(":quote", tr("Quote"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.exec();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("orderActivityByProject", "detail");
+  q = mql.toQuery(params);
 
   _orders->populate(q, true);
 }
@@ -307,3 +236,25 @@ void dspOrderActivityByProject::sPrint()
     report.reportError(this);
 }
 
+bool dspOrderActivityByProject::setParams(ParameterList &params)
+{
+  params.append("prj_id", _project->id());
+  
+  params.append("so", tr("S/O"));
+  params.append("wo", tr("W/O"));
+  params.append("po", tr("P/O"));
+  params.append("pr", tr("P/R"));
+  params.append("quote", tr("Quote"));
+  params.append("invoice", tr("Invoice"));
+
+  if(_showSo->isChecked())
+    params.append("showSo");
+
+  if(_showWo->isChecked())
+    params.append("showWo");
+
+  if(_showPo->isChecked())
+    params.append("showPo");
+
+  return true;
+}

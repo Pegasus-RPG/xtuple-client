@@ -12,6 +12,9 @@
 
 #include <QMessageBox>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include <parameter.h>
 
@@ -70,31 +73,27 @@ void dspItemCostHistory::sFillList()
 
   if (_item->isValid())
   {
-    q.prepare( "SELECT costhist_id, costelem_type,"
-              "        formatBoolYN(costhist_lowlevel) AS lowlevel,"
-               "       CASE WHEN costhist_type='A' THEN :actual"
-               "            WHEN costhist_type='S' THEN :standard"
-               "            WHEN costhist_type='D' THEN :delete"
-               "            WHEN costhist_type='N' THEN :new"
-               "       END AS type,"
-               "       costhist_date,"
-               "       costhist_username AS username,"
-               "       costhist_oldcost,"
-               "       currConcat(costhist_oldcurr_id) AS oldcurr, "
-	       "       costhist_newcost,"
-               "       currConcat(costhist_newcurr_id) AS newcurr,"
-               "       'cost' AS costhist_oldcost_xtnumericrole,"
-               "       'cost' AS costhist_newcost_xtnumericrole "
-               "FROM costhist, costelem "
-               "WHERE ( (costhist_costelem_id=costelem_id)"
-               " AND (costhist_item_id=:item_id) ) "
-               "ORDER BY costhist_date, costelem_type;" );
-    q.bindValue(":actual", tr("Actual"));
-    q.bindValue(":standard", tr("Standard"));
-    q.bindValue(":delete", tr("Delete"));
-    q.bindValue(":new", tr("New"));
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    _itemcost->populate(q);
+    MetaSQLQuery mql = mqlLoad("itemCost", "detail");
+
+    ParameterList params;
+    if (! setParams(params))
+      return;
+
+   q = mql.toQuery(params);
+   _itemcost->populate(q, true);
   }
+}
+
+bool dspItemCostHistory::setParams(ParameterList &params)
+{
+  params.append("byHistory");
+
+  params.append("actual", tr("Actual"));
+  params.append("standard", tr("Standard"));
+  params.append("delete", tr("Delete"));
+  params.append("new", tr("New"));
+
+  params.append("item_id", _item->id());
+ 
+  return true;
 }

@@ -22,6 +22,7 @@ class dspOrderActivityByProject : public XWidget, public Ui::dspOrderActivityByP
 public:
     dspOrderActivityByProject(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspOrderActivityByProject();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPopulateMenu( QMenu * );

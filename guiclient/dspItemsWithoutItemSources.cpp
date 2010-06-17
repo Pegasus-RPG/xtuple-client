@@ -14,6 +14,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "item.h"
 #include "itemSource.h"
 
@@ -73,21 +76,14 @@ void dspItemsWithoutItemSources::sEditItem()
 
 void dspItemsWithoutItemSources::sFillList()
 {
-  q.prepare( "SELECT item_id, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-             "       CASE WHEN (item_type = 'P') THEN :purchased"
-             "            WHEN (item_type = 'O') THEN :outside"
-             "       END AS type "
-             "FROM item "
-             "WHERE ( (item_type IN ('P', 'O'))"
-             " AND (item_active)"
-             " AND (item_id NOT IN (SELECT DISTINCT itemsrc_item_id"
-             "                      FROM itemsrc WHERE (itemsrc_active))) ) "
-             "ORDER BY item_number;" );
-  q.bindValue(":purchased", tr("Purchased"));
-  q.bindValue(":outside", tr("Outside"));
-  q.exec();
-  _item->populate(q);
+  ParameterList params;
+    
+  params.append("purchased", tr("Purchased"));
+  params.append("outside", tr("Outside"));
+
+  MetaSQLQuery mql = mqlLoad("itemsWithoutItemSources", "detail");
+  q = mql.toQuery(params);
+  _item->populate(q, true);  
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

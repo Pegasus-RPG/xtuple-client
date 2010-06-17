@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 #include <parameter.h>
 
@@ -172,64 +173,15 @@ void dspPartiallyShippedOrders::sFillList()
   _so->clear();
 
   ParameterList params;
-  if (setParams(params))
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("partiallyShippedOrders", "detail");
+  q = mql.toQuery(params);
+  _so->populate(q, true);
+  if (q.lastError().type() != QSqlError::NoError)
   {
-    QString sql( "SELECT CASE WHEN (cohead_holdtype IN ('P', 'C', 'R')) THEN -1"
-		 "            ELSE cohead_id"
-		 "       END AS _coheadid, cohead_id,"
-		 "       cohead_holdtype, cohead_number, cust_name,"
-		 "       CASE WHEN (cohead_holdtype='N') THEN <? value(\"none\") ?>"
-		 "            WHEN (cohead_holdtype='C') THEN <? value(\"credit\") ?>"
-		 "            WHEN (cohead_holdtype='S') THEN <? value(\"ship\") ?>"
-		 "            WHEN (cohead_holdtype='P') THEN <? value(\"pack\") ?>"
-		 "            WHEN (cohead_holdtype='R') THEN <? value(\"return\") ?>"
-		 "            ELSE <? value(\"other\") ?>"
-		 "       END AS f_holdtype,"
-		 "       cohead_orderdate,"
-		 "       (MIN(coitem_scheddate)) AS minscheddate,"
-		 "       cohead_packdate,"
-		 "       SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "                         (coitem_price / coitem_price_invuomratio) ) AS extprice,"
-		 "       currConcat(cohead_curr_id) AS currAbbr,"
-		 "       SUM(currToBase(cohead_curr_id,"
-                 "           (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "            (coitem_price / coitem_price_invuomratio),"
-                 "                      CURRENT_DATE)) AS extprice_base,"
-                 "       'curr' AS extprice_xtnumericrole,"
-                 "       'curr' AS extprice_base_xtnumericrole,"
-                 "<? if exists(\"singlecurrency\") ?>"
-                 "       0 AS extprice_xttotalrole "
-                 "<? else ?>"
-                 "       0 AS extprice_base_xttotalrole "
-                 "<? endif ?>"
-		 "FROM cohead, itemsite, item, cust, coitem "
-		 "WHERE ( (coitem_cohead_id=cohead_id)"
-		 " AND (cohead_cust_id=cust_id)"
-		 " AND (coitem_itemsite_id=itemsite_id)"
-		 " AND (itemsite_item_id=item_id)"
-		 " AND (coitem_status='O')"
-		 " AND (cohead_id IN ( SELECT DISTINCT coitem_cohead_id"
-		 "                     FROM coitem"
-		 "                     WHERE (coitem_qtyshipped > 0) ))"
-		 " AND (coitem_qtyshipped < coitem_qtyord)"
-		 " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
-		 "                           AND <? value(\"endDate\") ?>)"
-		 "<? if exists(\"warehous_id\") ?>"
-		 " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-		 "<? endif ?>"
-		 ") "
-		 "GROUP BY cohead_id, cohead_number, cust_name,"
-		 "         cohead_holdtype, cohead_orderdate, cohead_packdate,"
-		 "         cohead_curr_id "
-		 "ORDER BY minscheddate, cohead_number;");
-    MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    _so->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    _so->setDragString("soheadid=");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+  _so->setDragString("soheadid=");
 }

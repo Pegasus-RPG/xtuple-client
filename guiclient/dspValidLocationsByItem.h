@@ -23,6 +23,7 @@ class dspValidLocationsByItem : public XWidget, public Ui::dspValidLocationsByIt
 public:
     dspValidLocationsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspValidLocationsByItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

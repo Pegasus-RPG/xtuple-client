@@ -14,6 +14,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 #include "item.h"
 
@@ -103,6 +104,7 @@ bool dspSingleLevelBOM::setParams(ParameterList &params)
   params.append("always", tr("Always"));
   params.append("never",  tr("Never"));
 
+  params.append("bySingleLvl");
   return true;
 }
 
@@ -129,45 +131,12 @@ void dspSingleLevelBOM::sFillList(int, bool)
   if (! _item->isValid())
     return;
 
-  MetaSQLQuery mql(
-               "SELECT bomitem_item_id AS itemid, bomitem.*, item_number, "
-			   "       invuom.uom_name AS invuomname, issueuom.uom_name AS issueuomname,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-               "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS invqtyfxd,"
-               "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS invqtyper,"
-               "       'qty' AS bomitem_qtyfxd_xtnumericrole,"
-               "       'qty' AS invqtyfxd_xtnumericrole,"
-               "       'qtyper' AS bomitem_qtyper_xtnumericrole,"
-               "       'qtyper' AS invqtyper_xtnumericrole,"
-               "       'percent' AS bomitem_scrap_xtnumericrole,"
-               "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomitem_effective_qtdisplayrole,"
-               "       CASE WHEN COALESCE(bomitem_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomitem_expires_qtdisplayrole,"
-               "       CASE WHEN (bomitem_expires < CURRENT_DATE) THEN 'expired'"
-               "            WHEN (bomitem_effective >= CURRENT_DATE) THEN 'future'"
-               "            WHEN (item_type='M') THEN 'altemphasis'"
-               "       END AS qtforegroundrole "
-               "FROM bomitem(<? value(\"item_id\" ?>,<? value(\"revision_id\" ?>), item, uom AS issueuom, uom AS invuom "
-               "WHERE ( (bomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=invuom.uom_id)"
-               " AND (bomitem_uom_id=issueuom.uom_id)"
-               "<? if exists(\"expiredDays\") ?>"
-               " AND (bomitem_expires > (CURRENT_DATE - <? value(\"expiredDays\") ?>))"
-               "<? else ?>"
-               " AND (bomitem_expires > CURRENT_DATE)"
-               "<? endif ?>"
-               "<? if exists(\"effectiveDays\") ?>"
-               " AND (bomitem_effective <= (CURRENT_DATE + <? value(\"effectiveDays\" ?>))"
-               "<? else ?>"
-               " AND (bomitem_effective <= CURRENT_DATE)"
-               "<? endif ?>"
-               ") "
-               "ORDER BY bomitem_seqnumber, bomitem_effective;" );
-
+  MetaSQLQuery mql = mqlLoad("bom", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
+
   q = mql.toQuery(params);
-  
   _bomitem->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {

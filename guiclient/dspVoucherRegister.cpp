@@ -13,7 +13,10 @@
 #include <QVariant>
 //#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
 #include <openreports.h>
+#include <metasql.h>
+#include "mqlutil.h"
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "invoice.h"
@@ -38,6 +41,9 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WF
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _gltrans->addColumn(tr("Date"),        _dateColumn,    Qt::AlignCenter, true, "gltrans_date" );
   _gltrans->addColumn(tr("Vend. #"),     _orderColumn,   Qt::AlignRight,  true, "vend_number"  );
@@ -152,37 +158,46 @@ void dspVoucherRegister::sPrint()
 
 void dspVoucherRegister::sFillList()
 {
-  QString sql( "SELECT gltrans_id, gltrans_date,"
-               "       vend_number, vend_name,"
-               "       gltrans_doctype, gltrans_docnumber, firstLine(gltrans_notes) AS reference,"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
-               "            ELSE 0"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE 0"
-               "       END AS credit,"
-               "       gltrans_username,"
-               "       'curr' AS debit_xtnumericrole,"
-               "       'curr' AS credit_xtnumericrole "
-               "FROM accnt, gltrans LEFT OUTER JOIN vohead JOIN vend"
-               "      ON (vohead_vend_id=vend_id)"
-               "      ON (gltrans_doctype='VO' and gltrans_docnumber=vohead_number) "
-               "WHERE ((gltrans_accnt_id=accnt_id)"
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)"
-               " AND (gltrans_source='A/P')" );
+  MetaSQLQuery mql = mqlLoad("voucherRegister", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _gltrans->populate(q);
+}
+
+bool dspVoucherRegister::setParams(ParameterList & params)
+{
+  if (! _dates->startDate().isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date"),
+                          tr("Enter a valid Start Date."));
+	_dates->setFocus();
+    return false;
+  }
+
+  if (! _dates->endDate().isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date"),
+                          tr("Enter a valid End Date."));
+    _dates->setFocus();
+    return false;
+  }
 
   if (_selectedAccount->isChecked())
-    sql += " AND (gltrans_accnt_id=:accnt_id)";
+    if (! _account->isValid())
+    {
+      QMessageBox::warning(this, tr("Invalid Account"),
+                           tr("Enter a valid Account."));
+      _account->setFocus();
+      return false;
+    }
 
-  sql += ") "
-         "ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":accnt_id", _account->id());
-  q.exec();
-  _gltrans->populate(q);
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
+  if (_selectedAccount->isChecked())
+    params.append("accnt_id", _account->id());
+  return true;
 }
 
 void dspVoucherRegister::sShowUsername( bool yes )
