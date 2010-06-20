@@ -70,10 +70,21 @@ void dspStandardJournalHistory::languageChange()
 
 void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
 {
+  bool deletable = false;
+
+  // Make sure there is nothing to restricting deletes
+  ParameterList params;
+  params.append("glSequence", _gltrans->id());
+  MetaSQLQuery mql = mqlLoad("glseries", "checkeditable");
+  XSqlQuery qry = mql.toQuery(params);
+  if (!qry.first())
+    deletable = true;
+
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Delete Journal..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("DeletePostedJournals"))
+  if (!_privileges->check("DeletePostedJournals") ||
+      !deletable)
     pMenu->setItemEnabled(menuItem, false);
 
   pMenu->insertSeparator();

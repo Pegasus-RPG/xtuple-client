@@ -32,7 +32,8 @@ public slots:
     virtual void sPrint();
     virtual void sFillList();
     virtual void sReverse();
-    virtual void sDelete();
+    virtual void sEdit();
+    virtual void sDelete(bool edited = false);
 
 protected slots:
     virtual void languageChange();

@@ -9,6 +9,7 @@
  */
 
 #include "dspGLSeries.h"
+#include "glseries.h""
 
 #include <QMenu>
 #include <QMessageBox>
@@ -83,6 +84,8 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 {
   int menuItem;
 
+  bool editable = false;
+  bool deletable = false;
   bool reversible = false;
   XTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
   if(0 != item)
@@ -91,19 +94,37 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
       item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
     if(0 != item)
     {
-      if(item->text(3) == "ST" || item->text(3) == "JE")
-        reversible = true;
+      if(item->rawValue("gltrans_doctype").toString() == "ST" ||
+         item->rawValue("gltrans_doctype").toString() == "JE")
+        reversible = _privileges->check("PostStandardJournals");
+
+      // Make sure there is nothing to restricting edits
+      ParameterList params;
+      params.append("glSequence", _gltrans->id());
+      MetaSQLQuery mql = mqlLoad("glseries", "checkeditable");
+      XSqlQuery qry = mql.toQuery(params);
+      if (!qry.first())
+      {
+        editable = _privileges->check("EditPostedJournals") &&
+                   item->rawValue("gltrans_doctype").toString() == "JE";
+        deletable = _privileges->check("DeletePostedJournals") &&
+                    reversible;
+      }
     }
   }
 
+  menuItem = pMenu->insertItem(tr("Edit Journal..."), this, SLOT(sEdit()), 0);
+  if (!editable)
+    pMenu->setItemEnabled(menuItem, false);
+
   menuItem = pMenu->insertItem(tr("Delete Journal..."), this, SLOT(sDelete()), 0);
-  if (!reversible || !_privileges->check("DeletePostedJournals"))
+  if (!deletable)
     pMenu->setItemEnabled(menuItem, false);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
-  if (!reversible || !_privileges->check("PostStandardJournals"))
+  if (!reversible)
     pMenu->setItemEnabled(menuItem, false);
 
 }
@@ -215,6 +236,39 @@ void dspGLSeries::sFillList()
   }
 }
 
+void dspGLSeries::sEdit()
+{
+  ParameterList params;
+  ParameterList params2;
+  params.append("glSequence", _gltrans->id());
+
+  MetaSQLQuery mql("SELECT copyGlSeries(gltrans_sequence) AS sequence,"
+                   "  gltrans_journalnumber "
+                   "FROM gltrans "
+                   "WHERE (gltrans_sequence=<? value(\"glSequence\") ?>) "
+                   "LIMIT 1;");
+  XSqlQuery qry;
+  qry = mql.toQuery(params);
+  if (qry.first())
+  {
+    params2.append("glSequence", qry.value("sequence"));
+    params2.append("journalnumber", qry.value("gltrans_journalnumber"));
+  }
+  else if (qry.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+    return;
+
+  glSeries newdlg(this);
+  if(newdlg.set(params2) != NoError)
+    return;
+  if(newdlg.exec() == XDialog::Accepted)
+    sDelete(true);
+}
+
 void dspGLSeries::sReverse()
 {
   ParameterList params;
@@ -227,15 +281,20 @@ void dspGLSeries::sReverse()
     sFillList();
 }
 
-void dspGLSeries::sDelete()
+void dspGLSeries::sDelete(bool edited)
 {
+  QString action = tr("deleted");
+  if (edited)
+    action = tr("edited");
+
   ParameterList params;
-  params.append("glseries", _gltrans->id());
-  params.append("notes", tr("Journal deleted by %1 on %2")
+  params.append("glSequence", _gltrans->id());
+  params.append("notes", tr("Journal %1 by %2 on %3")
+                .arg(action)
                 .arg(omfgThis->username())
                 .arg(omfgThis->dbDate().toString()));
 
-  MetaSQLQuery mql("SELECT deleteGlSeries(<? value(\"glseries\") ?>, "
+  MetaSQLQuery mql("SELECT deleteGlSeries(<? value(\"glSequence\") ?>, "
                    " <? value(\"notes\") ?>) AS result;");
   XSqlQuery del;
   del = mql.toQuery(params);

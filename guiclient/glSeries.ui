@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
+    <width>575</width>
     <height>507</height>
    </rect>
   </property>
@@ -218,44 +218,14 @@ to be bound by its terms.</comment>
      <item row="0" column="4" rowspan="3">
       <layout class="QVBoxLayout">
        <item>
-        <widget class="QPushButton" name="_close">
-         <property name="text">
-          <string>&amp;Cancel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_post">
-         <property name="text">
-          <string>&amp;Post</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_save">
-         <property name="text">
-          <string>Save</string>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
+        <widget class="QDialogButtonBox" name="_buttonBox">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>10</width>
-           <height>31</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </item>
@@ -401,9 +371,6 @@ to be bound by its terms.</comment>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_post</tabstop>
-  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -424,17 +391,17 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
+   <sender>_buttonBox</sender>
+   <signal>rejected()</signal>
    <receiver>glSeries</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>28</y>
+     <x>520</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>277</x>
+     <x>287</x>
      <y>253</y>
     </hint>
    </hints>
