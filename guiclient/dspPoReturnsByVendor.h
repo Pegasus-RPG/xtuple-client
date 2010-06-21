@@ -23,6 +23,7 @@ class dspPoReturnsByVendor : public XWidget, public Ui::dspPoReturnsByVendor
 public:
     dspPoReturnsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoReturnsByVendor();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

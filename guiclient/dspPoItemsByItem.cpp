@@ -24,6 +24,7 @@
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
+#include "mqlutil.h"
 
 #define POITEM_STATUS_COL 8
 
@@ -104,6 +105,8 @@ enum SetResponse dspPoItemsByItem::set(const ParameterList &pParams)
 
 void dspPoItemsByItem::setParams(ParameterList &params)
 {
+  params.append("byItem");
+
   params.append("item_id", _item->id() );
 
   _warehouse->appendValue(params);
@@ -327,44 +330,9 @@ void dspPoItemsByItem::sFillList()
 {
   _poitem->clear();
 
-  QString sql( "SELECT pohead_id, poitem_id, warehous_code, pohead_number,"
-               "       poitem_status,"
-               "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
-               "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
-               "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
-               "            ELSE poitem_status"
-               "       END AS poitemstatus,"
-               "       vend_name,"
-               "       poitem_duedate, poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
-               "       CASE WHEN (poitem_duedate < CURRENT_DATE) THEN 'error' END AS poitem_duedate_qtforegroundrole,"
-               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
-               "       'qty' AS poitem_qty_received_xtnumericrole,"
-               "       'qty' AS poitem_qty_returned_xtnumericrole "
-               "FROM pohead, poitem, vend, itemsite, warehous "
-               "WHERE ((poitem_pohead_id=pohead_id)"
-               " AND (pohead_vend_id=vend_id)"
-               "<? if exists(\"warehous_id\") ?>"
-               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-               "<? endif ?>"
-               "<? if exists(\"agentUsername\") ?>"
-               " AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
-               "<? endif ?>"
-               "<? if exists(\"openItems\") ?>"
-               " AND (poitem_status='O')"
-               "<? endif ?>"
-               "<? if exists(\"closedItems\") ?>"
-               " AND (poitem_status='C')"
-               "<? endif ?>"
-               " AND (poitem_itemsite_id=itemsite_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=<? value(\"item_id\") ?>)) "
-               "ORDER BY poitem_duedate;" );
-
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("poItems", "detail");
   q = mql.toQuery(params);
 
   q.exec();

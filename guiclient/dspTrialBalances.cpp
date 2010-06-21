@@ -21,6 +21,7 @@
 
 #include "dspGLTransactions.h"
 #include "storedProcErrorLookup.h"
+#include "mqlutil.h"
 
 dspTrialBalances::dspTrialBalances(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -145,49 +146,9 @@ void dspTrialBalances::sFillList()
       return;
   }
   
-  QString sql( "SELECT accnt_id, period_id, accnt_descrip, trialbal_dirty,"
-               "       period_start, period_end,"
-               "       formatGLAccount(accnt_id) AS account,"
-               "       (trialbal_debits) AS debits,"
-               "       (trialbal_credits) AS credits,"
-               "       trialbal_beginning AS beginning,"
-               "       trialbal_ending AS ending,"
-               "       (trialbal_debits - trialbal_credits) AS diff,"
-               "       CASE WHEN ((trialbal_beginning*-1.0)<0.0) THEN 'CR' END AS beginningsense,"
-               "       CASE WHEN ((trialbal_ending*-1.0)<0.0) THEN 'CR' END AS endingsense,"
-               "       CASE WHEN ((trialbal_debits - trialbal_credits)<0.0) THEN 'CR' END AS diffsense,"
-               "       'curr' AS beginning_xtnumericrole,"
-               "       'curr' AS debits_xtnumericrole,"
-               "       'curr' AS credits_xtnumericrole,"
-               "       'curr' AS ending_xtnumericrole,"
-               "       'curr' AS diff_xtnumericrole,"
-               "       0 AS beginning_xttotalrole,"
-               "       0 AS debits_xttotalrole,"
-               "       0 AS credits_xttotalrole,"
-               "       0 AS ending_xttotalrole,"
-               "       0 AS diff_xttotalrole,"
-			   "       CASE WHEN (trialbal_beginning < 0.0) THEN ABS(trialbal_beginning) END AS beginning_qtdisplayrole,"
-			   "       CASE WHEN (trialbal_ending < 0.0) THEN ABS(trialbal_ending) END AS ending_qtdisplayrole,"
-			   "       CASE WHEN ((trialbal_debits - trialbal_credits) < 0.0) THEN ABS(trialbal_debits - trialbal_credits) END AS diff_qtdisplayrole,"
-               "       CASE WHEN (trialbal_dirty) THEN 'warning' END AS ending_qtforegroundrole "
-               "FROM trialbal, accnt, period "
-               "WHERE ( (trialbal_accnt_id=accnt_id)"
-               " AND (trialbal_period_id=period_id)"
-	       "<? if exists(\"accnt_id\") ?>"
-	       " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"period_id\") ?>"
-	       " AND (period_id=<? value(\"period_id\") ?>)"
-	       "<? endif ?>"
-         "<? if not exists(\"showZero\") ?>"
-         " AND (abs(trialbal_beginning)+abs(trialbal_ending)+abs(trialbal_debits)+abs(trialbal_credits) > 0) "
-         "<? endif ?>"
-	       ") "
-	       "ORDER BY period_start, formatGLAccount(accnt_id);" );
-
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("trialBalances", "detail");
   XSqlQuery r = mql.toQuery(params);
   if (r.first())
   {

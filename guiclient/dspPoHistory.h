@@ -23,6 +23,7 @@ class dspPoHistory : public XWidget, public Ui::dspPoHistory
 public:
     dspPoHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoHistory();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sCopy();

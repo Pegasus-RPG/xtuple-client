@@ -25,6 +25,7 @@ public:
     ~dspUnusedPurchasedItems();
 
     virtual void init();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

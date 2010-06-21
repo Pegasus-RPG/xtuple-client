@@ -12,9 +12,12 @@
 
 #include <QMenu>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <openreports.h>
+#include <metasql.h>
 
+#include "mqlutil.h"
 #include "bom.h"
 #include "dspInventoryHistoryByItem.h"
 #include "item.h"
@@ -138,7 +141,18 @@ void dspSingleLevelWhereUsed::sEditItem()
 void dspSingleLevelWhereUsed::sViewInventoryHistory()
 {
   ParameterList params;
-  params.append("item_id", _bomitem->altId());
+
+  q.prepare( "SELECT item_id "
+             "FROM item JOIN bomitem ON (bomitem_parent_item_id=item_id) "
+             "WHERE (bomitem_parent_item_id = :bomitem_parent_item_id) " );
+  q.bindValue(":bomitem_parent_item_id", _bomitem->id());
+  q.exec();
+  if (q.first())
+  {
+    int _itemId = q.value("item_id").toInt();
+    params.append("item_id", _itemId);
+  }
+
   params.append("warehous_id", -1);
   params.append("run");
 
@@ -156,38 +170,13 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
 {
   if ((_item->isValid()) && (_effective->isValid()))
   {
-    QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
-                 "       item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-                 "       uom_name,"
-                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id,"
-                 "                    NULL, bomitem_qtyfxd) AS qtyfxd,"
-                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id,"
-                 "                    NULL, bomitem_qtyper) AS qtyper,"
-                 "       bomitem_scrap,"
-                 "       bomitem_effective, bomitem_expires,"
-                 "       'qty' AS qtyfxd_xtnumericrole,"
-                 "       'qtyper' AS qtyper_xtnumericrole,"
-                 "       'scrap' AS bomitem_scrap_xtnumericrole,"
-                 "       CASE WHEN (COALESCE(bomitem_effective, startoftime()) = startoftime()) THEN 'Always' END AS bomitem_effective_qtdisplayrole,"
-                 "       CASE WHEN (COALESCE(bomitem_expires, endoftime()) = endoftime()) THEN 'Never' END AS bomitem_expires_qtdisplayrole "
-		 "FROM bomitem, item, uom "
-                 "WHERE ( (bomitem_parent_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
-                 " AND (bomitem_item_id=:item_id)"
-                 " AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))");
+    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
+    ParameterList params;
+    if (! setParams(params))
+      return;
 
-    if (_effective->isNull())
-      sql += "AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))";
-    else
-      sql += " AND (:effective BETWEEN bomitem_effective AND (bomitem_expires-1))";
-
-    sql += ") ORDER BY item_number";
-
-    q.prepare(sql);
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":effective", _effective->date());
-    q.exec();
+    q = mql.toQuery(params);
+    _bomitem->populate(q);
 
     if (pLocal)
       _bomitem->populate(q, TRUE, pItemid);
@@ -196,4 +185,24 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
   }
   else
     _bomitem->clear();
+}
+
+bool dspSingleLevelWhereUsed::setParams(ParameterList &params)
+{
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
+                          tr("You must enter a valid Item Number.") );
+    _item->setFocus();
+    return false;
+  }
+
+  params.append("item_id", _item->id());
+
+  if (_effective->isNull())
+    params.append("notEffective");
+  else
+    params.append("effective", _effective->date());
+
+  return true;
 }

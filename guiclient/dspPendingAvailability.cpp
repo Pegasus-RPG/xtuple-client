@@ -16,6 +16,9 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspPendingAvailability as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -106,58 +109,33 @@ void dspPendingAvailability::sPrint()
 
 void dspPendingAvailability::sFillList()
 {
-  if (!checkParameters())
-    return;
-
   _items->clear();
 
-  QString sql( "SELECT itemsite_id, bomitem_seqnumber, item_number, item_descrip, uom_name,"
-               "       pendalloc, (totalalloc + pendalloc) AS totalalloc,"
-               "       qoh, (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-               "       reorderlevel,"
-               "       'qty' AS pendalloc_xtnumericrole,"
-               "       'qty' AS totalalloc_xtnumericrole,"
-               "       'qty' AS qoh_xtnumericrole,"
-               "       'qty' AS totalavail_xtnumericrole,"
-               "       CASE WHEN (qoh < pendalloc) THEN 'error' END AS qoh_qtforegroundrole,"
-               "       CASE WHEN ((qoh + ordered - (totalalloc + pendalloc)) < reorderlevel) THEN 'error'"
-               "            WHEN ((qoh + ordered - (totalalloc + pendalloc)) = reorderlevel) THEN 'warning'"
-               "       END AS totalavail_qtforegroundrole "
-               "FROM ( SELECT itemsite_id, bomitem_seqnumber, item_number,"
-               "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
-               "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
-			   "                            (bomitem_qtyfxd + bomitem_qtyper * :buildQty) * (1 + bomitem_scrap)))) AS pendalloc,"
-               "              qtyAllocated(itemsite_id, DATE(:buildDate)) AS totalalloc,"
-               "              noNeg(itemsite_qtyonhand) AS qoh,"
-               "              qtyOrdered(itemsite_id, DATE(:buildDate)) AS ordered,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
-			   "       FROM itemsite, item, bomitem(:item_id), uom "
-               "       WHERE ( (bomitem_item_id=itemsite_item_id)"
-               "        AND (itemsite_item_id=item_id)"
-               "        AND (item_inv_uom_id=uom_id)"
-               "        AND (itemsite_warehous_id=:warehous_id)" );
-
-  if (_effective->isNull())
-    sql += " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))) ) AS data ";
-  else
-    sql += " AND (:effective BETWEEN bomitem_effective AND (bomitem_expires-1))) ) AS data ";
-
-  if (_showShortages->isChecked())
-    sql += "WHERE ((qoh + ordered - (totalalloc + pendalloc)) < 0) ";
-    
-  sql += "ORDER BY bomitem_seqnumber";
-
-  q.prepare(sql);
-  q.bindValue(":buildQty", _qtyToBuild->toDouble());
-  q.bindValue(":buildDate", _buildDate->date());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":effective", _effective->date());
-  q.exec();
-  _items->populate(q);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("pendingAvailability", "detail");
+  q = mql.toQuery(params);
+  _items->populate(q, true); 
 }
 
-bool dspPendingAvailability::checkParameters()
+bool dspPendingAvailability::setParams(ParameterList &params)
 {
-  return TRUE;
+  params.append("buildQty", _qtyToBuild->toDouble());
+  params.append("buildDate", _buildDate->date());
+
+  params.append("warehous_id", _warehouse->id());
+
+  if (_item->isValid())
+    params.append("item_id", _item->id());
+  else
+    return false;
+
+  if (!(_effective->isNull()))
+    params.append("effective",  _effective->date());
+
+  if (_showShortages->isChecked())
+    params.append("showShortages");
+
+  return true;
 }

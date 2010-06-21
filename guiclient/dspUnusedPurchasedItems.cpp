@@ -10,10 +10,15 @@
 
 #include "dspUnusedPurchasedItems.h"
 
+#include <QMessageBox>
+
 #include <qvariant.h>
 //#include <qstatusbar.h>
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspUnusedPurchasedItems as a child of 'parent', with the
@@ -84,35 +89,36 @@ void dspUnusedPurchasedItems::sPrint()
 
 void dspUnusedPurchasedItems::sFillList()
 {
-  QString sql( "SELECT DISTINCT item_id, item_number,"
-               "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-               "                SUM(itemsite_qtyonhand) AS qoh,"
-               "                MAX(itemsite_datelastcount) AS lastcount,"
-               "                MAX(itemsite_datelastused) AS lastused,"
-               "                'qty' AS qoh_xtnumericrole,"
-               "                CASE WHEN (COALESCE(MAX(itemsite_datelastcount), startOfTime()) = startOfTime()) THEN 'Never' END AS lastcount_qtdisplayrole,"
-               "                CASE WHEN (COALESCE(MAX(itemsite_datelastused), startOfTime()) = startOfTime()) THEN 'Never' END AS lastused_qtdisplayrole "
-               "FROM item, itemsite, uom "
-               "WHERE ((itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (item_id NOT IN (SELECT DISTINCT bomitem_item_id FROM bomitem))"
-               " AND (NOT item_sold)"
-               " AND (item_type IN ('P', 'O'))" );
+  _item->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("unusedPurchasedItems", "detail");
+  q = mql.toQuery(params);
+  _item->populate(q);
+}
+
+bool dspUnusedPurchasedItems::setParams(ParameterList & params)
+{
+  if (_classCode->isPattern() && ! _classCode->isAll())
+  {
+    QString pattern = _classCode->pattern();
+    if (pattern.length() == 0)
+    {
+      QMessageBox::warning(this, tr("Enter Class Code"),
+                           tr("Class Code Pattern cannot be blank."));
+	  return false;
+    }
+  }
 
   if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
+    params.append("classcode_id", _classCode->id());
+  else if (_classCode->isPattern()  && ! _classCode->isAll())
+    params.append("classcode_pattern", _classCode->pattern());
 
   if (!_includeUncontrolled->isChecked())
-    sql += " AND (itemsite_controlmethod <> 'N')";
+    params.append("includeUncontrolled");
 
-  sql += ") "
-         "GROUP BY item_id, item_number, uom_name, item_descrip1, item_descrip2 "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  _classCode->bindValue(q);
-  q.exec();
-  _item->populate(q);
+  return true;
 }

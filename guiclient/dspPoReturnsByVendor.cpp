@@ -16,6 +16,9 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspPoReturnsByVendor as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -91,34 +94,40 @@ void dspPoReturnsByVendor::sPrint()
 
 void dspPoReturnsByVendor::sFillList()
 {
-  QString sql( "SELECT poreject_id, poreject_ponumber, vend_name,"
-               "       poreject_date, poreject_qty,"
-               "       poreject_vend_item_number, poreject_vend_item_descrip,"
-               "       rjctcode_code,"
-               "       'qty' AS poreject_qty_xtnumericrole "
-               "FROM poreject, vend, itemsite, rjctcode "
-               "WHERE ( (poreject_posted)"
-               " AND (poreject_vend_id=vend_id)"
-               " AND (poreject_rjctcode_id=rjctcode_id)"
-               " AND (poreject_itemsite_id=itemsite_id)"
-               " AND (vend_id=:vend_id)"
-               " AND (DATE(poreject_date) BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (poreject_agent_username=:username)";
-
-  sql += ") "
-         "ORDER BY poreject_date DESC;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":vend_id", _vendor->id());
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  _poreject->populate(q);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("poReturns", "detail");
+  q = mql.toQuery(params);
+  _poreject->populate(q, true);
 }
 
+bool dspPoReturnsByVendor::setParams(ParameterList &params)
+{
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr( "Please enter a valid Start Date." ) );
+    _dates->setFocus();
+    return false ;
+  }
+  else if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr( "Please eneter a valid End Date." ) );
+    _dates->setFocus();
+    return false ;
+  }
+  else
+    _dates->appendValue(params);
+
+  if (_selectedPurchasingAgent->isChecked())
+    params.append("username", _agent->currentText());
+
+    params.append("vend_id", _vendor->id());
+
+  return true;
+}

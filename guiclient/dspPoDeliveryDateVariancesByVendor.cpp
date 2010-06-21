@@ -15,6 +15,9 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspPoDeliveryDateVariancesByVendor as a child of 'parent', with the
@@ -85,31 +88,52 @@ void dspPoDeliveryDateVariancesByVendor::sPrint()
 
 void dspPoDeliveryDateVariancesByVendor::sFillList()
 {
-  QString sql( "SELECT porecv_id, porecv_ponumber, vend_name,"
-               "       DATE(porecv_date) AS receivedate,"
-               "       firstLine(porecv_vend_item_number) AS venditemnumber,"
-               "       firstLine(porecv_vend_item_descrip) AS venditemdescrip,"
-               "       porecv_qty, porecv_duedate, porecv_date,"
-               "       'qty' AS porecv_qty_xtnumericrole "
-               "FROM porecv, vend "
-               "WHERE ( (porecv_vend_id=vend_id)"
-               " AND (vend_id=:vend_id)"
-               " AND (DATE(porecv_date) BETWEEN :startDate AND :endDate)" );
+  MetaSQLQuery mql = mqlLoad("poDeliveryDateVariances", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  q = mql.toQuery(params);
+  _porecv->populate(q);
+}
+
+bool dspPoDeliveryDateVariancesByVendor::setParams(ParameterList &params)
+{
+  if (_vendor->isValid())
+  {
+    params.append("vend_id", _vendor->id());
+    params.append("username", _agent->currentText());
+  }
+  else
+    return false;
+
+  if (!_dates->startDate().isValid())
+  {
+    if (isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter Start Date"),
+                            tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+    }
+    return FALSE;
+  }
+  else if (!_dates->endDate().isValid())
+  {
+    if (isVisible())
+    {
+      QMessageBox::warning( this, tr("Enter End Date"),
+                            tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+    }
+    return FALSE;
+  }
+  else
+    _dates->appendValue(params);
 
   if (_warehouse->isSelected())
-    sql += " AND (porecv_itemsite_id in (SELECT itemsite_id FROM itemsite WHERE (itemsite_warehous_id=:warehous_id)))";
+    params.append("warehous_id", _warehouse->id());
 
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (porecv_agent_username=:username)";
+  params.append("byVendor");
 
-  sql += ") "
-         "ORDER BY porecv_date DESC;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":vend_id", _vendor->id());
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  _porecv->populate(q);
+  return true;
 }

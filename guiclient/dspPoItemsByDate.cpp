@@ -24,6 +24,7 @@
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
+#include "mqlutil.h"
 
 #define POITEM_STATUS_COL 11
 
@@ -74,6 +75,8 @@ void dspPoItemsByDate::languageChange()
 
 void dspPoItemsByDate::setParams(ParameterList &params)
 {
+  params.append("byDate");
+
   _warehouse->appendValue(params);
   _dates->appendValue(params);
 
@@ -305,62 +308,9 @@ void dspPoItemsByDate::sFillList()
 {
   _poitem->clear();
 
-  QString sql( "SELECT pohead_id, poitem_id, pohead_number,"
-               "       CASE WHEN (itemsite_id IS NULL) THEN ( SELECT warehous_code"
-               "                                              FROM warehous"
-               "                                              WHERE (pohead_warehous_id=warehous_id) )"
-               "            ELSE ( SELECT warehous_code"
-               "                   FROM warehous"
-               "                   WHERE (itemsite_warehous_id=warehous_id) )"
-               "       END AS warehousecode,"
-               "       poitem_status,"
-               "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
-               "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
-               "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
-               "            ELSE poitem_status"
-               "       END AS poitemstatus,"
-               "       vend_name,"
-               "       poitem_duedate,"
-               "       COALESCE(item_number, (<? value(\"nonInv\") ?> || poitem_vend_item_number)) AS itemnumber,"
-               "       COALESCE(item_descrip1, firstLine(poitem_vend_item_descrip)) AS itemdescrip,"
-               "       COALESCE(uom_name, poitem_vend_uom) AS itemuom,"
-               "       poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
-               "       CASE WHEN (poitem_duedate < CURRENT_DATE) THEN 'error' END AS poitem_duedate_qtforegroundrole,"
-               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
-               "       'qty' AS poitem_qty_received_xtnumericrole,"
-               "       'qty' AS poitem_qty_returned_xtnumericrole "
-               "FROM pohead, vend,"
-               "     poitem LEFT OUTER JOIN"
-               "     ( itemsite JOIN item"
-               "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))"
-               "     ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE ((poitem_pohead_id=pohead_id)"
-               " AND (pohead_vend_id=vend_id)"
-               " AND (poitem_duedate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
-               "<? if exists(\"warehous_id\") ?>"
-               " AND (((itemsite_id IS NULL) AND"
-               "       (pohead_warehous_id=<? value(\"warehous_id\") ?>)) OR"
-               "      ((itemsite_id IS NOT NULL) AND"
-               "       (itemsite_warehous_id=<? value(\"warehous_id\") ?>)))"
-               "<? endif ?>"
-               "<? if exists(\"agentUsername\") ?>"
-               " AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
-               "<? endif ?>"
-               "<? if exists(\"openItems\") ?>"
-               " AND (poitem_status='O')"
-               "<? endif ?>"
-               "<? if exists(\"closedItems\") ?>"
-               " AND (poitem_status='C')"
-               "<? endif ?>"
-               ") "
-               "ORDER BY poitem_duedate;" );
-
   ParameterList params;
   setParams(params);
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("poItems", "detail");
   q = mql.toQuery(params);
   if (q.first())
   {

@@ -304,7 +304,7 @@ void dspInventoryAvailabilityByWorkOrder::sViewSubstituteAvailability()
 
 void dspInventoryAvailabilityByWorkOrder::sCreatePR()
 {
-  int currentAltId;
+  int currentAltId = 0;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -317,7 +317,7 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePR()
   q.bindValue(":womatl_itemsite_id", _womatl->id());
   q.exec();
   if (q.first())
-    int currentAltId =  q.value("womatl_id").toInt();
+    currentAltId =  q.value("womatl_id").toInt();
   int currentId = _womatl->id();
   sFillList();
   _womatl->setId(currentId,currentAltId);
@@ -325,7 +325,7 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePR()
 
 void dspInventoryAvailabilityByWorkOrder::sCreatePO()
 {
-  int currentAltId;
+  int currentAltId = 0;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -346,7 +346,7 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePO()
 
 void dspInventoryAvailabilityByWorkOrder::sCreateWO()
 {
-  int currentAltId;
+  int currentAltId = 0;
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsite_id", _womatl->id());
@@ -367,7 +367,7 @@ void dspInventoryAvailabilityByWorkOrder::sCreateWO()
 
 void dspInventoryAvailabilityByWorkOrder::sPostMiscProduction()
 {
-  int currentAltId;
+  int currentAltId = 0;
   ParameterList params;
   params.append("itemsite_id", _womatl->id());
 
@@ -397,7 +397,7 @@ void dspInventoryAvailabilityByWorkOrder::sIssueCountTag()
 
 void dspInventoryAvailabilityByWorkOrder::sEnterMiscCount()
 {  
-  int currentAltId;
+  int currentAltId = 0;
   ParameterList params;
   params.append("itemsite_id", _womatl->id());
   

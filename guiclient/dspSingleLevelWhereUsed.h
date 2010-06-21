@@ -24,6 +24,7 @@ class dspSingleLevelWhereUsed : public XWidget, public Ui::dspSingleLevelWhereUs
 public:
     dspSingleLevelWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSingleLevelWhereUsed();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );

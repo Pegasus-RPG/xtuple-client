@@ -23,6 +23,7 @@ class dspPoDeliveryDateVariancesByVendor : public XWidget, public Ui::dspPoDeliv
 public:
     dspPoDeliveryDateVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoDeliveryDateVariancesByVendor();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

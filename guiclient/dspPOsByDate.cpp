@@ -16,6 +16,7 @@
 #include <openreports.h>
 #include <metasql.h>
 
+#include "mqlutil.h"
 #include "purchaseOrder.h"
 
 dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -56,6 +57,7 @@ void dspPOsByDate::languageChange()
 
 bool dspPOsByDate::setParams(ParameterList &pParams)
 {
+  pParams.append("byDate");
   if (!_dates->startDate().isValid())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
@@ -143,48 +145,11 @@ void dspPOsByDate::sViewOrder()
 
 void dspPOsByDate::sFillList()
 {
-  QString sql( "SELECT pohead_id, pohead_number,"
-               "       warehous_code AS warehousecode,"
-               "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
-               "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
-               "            WHEN(poitem_status='O'"
-               "                 AND (SUM(poitem_qty_received-poitem_qty_returned) > 0)"
-               "                 AND (SUM(poitem_qty_ordered)>SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
-               "            WHEN(poitem_status='O'"
-               "                 AND (SUM(poitem_qty_received-poitem_qty_returned) > 0)"
-               "                 AND (SUM(poitem_qty_ordered)<=SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
-               "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
-               "            ELSE poitem_status"
-               "       END AS poitemstatus,"
-               "       vend_name,"
-               "       MIN(poitem_duedate) AS minDueDate,"
-               "       CASE WHEN (MIN(poitem_duedate) < CURRENT_DATE) THEN 'error'"
-               "       END AS minDueDate_qtforegroundrole "
-               "  FROM vend, poitem, pohead "
-               "       LEFT OUTER JOIN warehous ON (pohead_warehous_id=warehous_id)"
-               " WHERE ((poitem_pohead_id=pohead_id)"
-               "   AND  (pohead_vend_id=vend_id)"
-               "   AND  (poitem_duedate BETWEEN <? value(\"startDate\") ?>"
-               "                            AND <? value(\"endDate\") ?>)"
-               "<? if exists(\"warehous_id\") ?>"
-               "   AND (pohead_warehous_id=<? value(\"warehous_id\") ?>) "
-               "<? endif ?>"
-               "<? if not exists(\"showClosed\") ?>"
-               "   AND (poitem_status!='C')"
-               "<? endif ?>"
-               "<? if exists(\"agentUsername\") ?>"
-               "   AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
-               "<? endif ?>"
-               ") "
-               "GROUP BY pohead_id, pohead_number, warehous_code,"
-               "         poitem_status, vend_name "
-               "ORDER BY minDueDate;");
-
   ParameterList params;
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("purchaseOrders", "detail");
   q = mql.toQuery(params);
   _poitem->populate(q);
   if (q.lastError().type() != QSqlError::NoError)

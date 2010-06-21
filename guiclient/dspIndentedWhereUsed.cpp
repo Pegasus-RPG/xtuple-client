@@ -18,6 +18,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "mqlutil.h"
 #include "dspInventoryHistoryByItem.h"
 
 dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -95,6 +96,8 @@ bool dspIndentedWhereUsed::setParams(ParameterList &params)
   if(_showFuture->isChecked())
     params.append("showFuture");
 
+  params.append("byIndented");
+
   return true;
 }
 
@@ -154,6 +157,7 @@ void dspIndentedWhereUsed::sFillList()
   q.exec();
   if (q.first())
   {
+    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
     ParameterList params;
     if (! setParams(params))
       return;
@@ -161,32 +165,6 @@ void dspIndentedWhereUsed::sFillList()
     int worksetid = q.value("workset_id").toInt();
     params.append("bomwork_set_id", worksetid);
 
-    MetaSQLQuery mql("SELECT bomwork_id, item_id, bomwork_parent_id,"
-                     "       bomworkitemsequence(bomwork_id) AS seqord, "
-                     "       bomwork_seqnumber, item_number, uom_name,"
-                     "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-                     "       bomwork_qtyfxd ,bomwork_qtyper,"
-                     "       bomwork_scrap,"
-                     "       bomwork_effective,"
-                     "       bomwork_expires,"
-                     "       'qty' AS bomwork_qtyfxd_xtnumericrole,"
-                     "       'qtyper' AS bomwork_qtyper_xtnumericrole,"
-                     "       'scrap' AS bomwork_scrap_xtnumericrole,"
-                     "       CASE WHEN COALESCE(bomwork_effective,startOfTime())=startOfTime() THEN 'Always' END AS bomwork_effective_qtdisplayrole,"
-                     "       CASE WHEN COALESCE(bomwork_expires,endOfTime())=endOfTime() THEN 'Never' END AS bomwork_expires_qtdisplayrole,"
-                     "       bomwork_level - 1 AS xtindentrole "
-                     "FROM bomwork, item, uom "
-                     "WHERE ( (bomwork_item_id=item_id)"
-                     " AND (item_inv_uom_id=uom_id)"
-                     " AND (bomwork_set_id=<? value(\"bomwork_set_id\") ?>)"
-                     "<? if not exists(\"showExpired\") ?>"
-                     " AND (bomwork_expires > CURRENT_DATE)"
-                     "<? endif ?>"
-                     "<? if not exists(\"showFuture\") ?>"
-                     " AND (bomwork_effective <= CURRENT_DATE)"
-                     "<? endif ?>"
-                     ") "
-                     "ORDER BY seqord;");
     q = mql.toQuery(params);
     _bomitem->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)

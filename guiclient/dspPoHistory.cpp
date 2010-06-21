@@ -14,7 +14,9 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
 
+#include "mqlutil.h"
 #include "copyPurchaseOrder.h"
 
 dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -56,27 +58,13 @@ void dspPoHistory::sFillList()
 {
   if (_po->isValid())
   {
-    q.prepare( "SELECT poitem_id, poitem.*,"
-               "       COALESCE(item_number, :nonInventory) AS itemnumber,"
-               "       COALESCE(uom_name, :na) AS uomname,"
-               "       CASE WHEN (LENGTH(TRIM(BOTH '    ' FROM poitem_vend_item_descrip)) <= 0) THEN "
-               "                 (item_descrip1 || ' ' || item_descrip2) "
-               "            ELSE poitem_vend_item_descrip "
-               "       END AS itemdescription, "
-               "      'qty' AS poitem_qty_ordered_xtnumericrole,"
-               "      'qty' AS poitem_qty_received_xtnumericrole,"
-               "      'qty' AS poitem_qty_returned_xtnumericrole "
-               "FROM poitem LEFT OUTER JOIN"
-               "     ( itemsite JOIN item"
-               "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))"
-               "     ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE (poitem_pohead_id=:pohead_id) "
-               "ORDER BY poitem_linenumber;" );
-    q.bindValue(":nonInventory", tr("Non-Inventory"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
-    _poitem->populate(q);
+    ParameterList params;
+    if (! setParams(params))
+      return;
+
+    MetaSQLQuery mql = mqlLoad("poHistory", "detail");
+    q = mql.toQuery(params);
+    _poitem->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -107,4 +95,14 @@ void dspPoHistory::sCopy()
   copyPurchaseOrder newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+bool dspPoHistory::setParams(ParameterList &params)
+{
+  params.append("nonInventory", tr("Non-Inventory"));
+  params.append("na", tr("N/A"));
+
+  params.append("pohead_id", _po->id());
+
+  return true;
 }

@@ -21,6 +21,7 @@
 #include "enterPoitemReceipt.h"
 #include "poLiabilityDistrib.h"
 #include "postPoReturnCreditMemo.h"
+#include "mqlutil.h"
 
 dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -159,70 +160,9 @@ void dspUninvoicedReceivings::sPrint()
 void dspUninvoicedReceivings::sFillList()
 {
   _porecv->clear();
-  QString sql( "SELECT recv_id AS id,"
-               "       CASE WHEN(poitem_status='C') THEN 2"
-               "            ELSE 1"
-               "       END AS doctype,"
-               "       recv_date AS thedate,"
-               "       recv_trans_usr_name AS f_user,"
-               "       recv_order_number AS ponumber, poitem_linenumber,"
-               "       vend_name,"
-               "       COALESCE(item_number,"
-               "       ('Misc. - ' || recv_vend_item_number)) AS itemnumber,"
-               "       recv_qty AS qty, 'qty' AS qty_xtnumericrole,"
-               "       'Receipt' AS type, "
-               "       recv_value AS value,"
-               "       'curr' AS value_xtnumericrole, 0 AS value_xttotalrole "
-               "FROM recv, vend, poitem LEFT OUTER JOIN"
-               "                   ( itemsite JOIN item"
-               "                     ON (itemsite_item_id=item_id)"
-               "                   ) ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE ( (recv_orderitem_id=poitem_id)"
-               " AND (recv_order_type='PO')"
-               " AND (recv_vend_id=vend_id)"
-               " AND (recv_posted)"
-               " AND (recv_vohead_id IS NULL)"
-               " AND (NOT recv_invoiced) "
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"agentUsername\") ?>"
-	       " AND (recv_agent_username=<? value(\"agentUsername\") ?>)"
-	       "<? endif ?>"
-	       ") "
-	       "UNION "
-               "SELECT poreject_id AS id,"
-               "       3 AS doctype,"
-               "       poreject_date AS thedate,"
-               "       poreject_trans_username AS f_user,"
-               "       poreject_ponumber AS ponumber, poitem_linenumber,"
-               "       vend_name,"
-               "       COALESCE(item_number,"
-               "       ('Misc. - ' || poreject_vend_item_number)) AS itemnumber,"
-               "       poreject_qty, 'qty' AS qty_xtnumericrole,"
-               "       'Return' AS type, "
-               "       poreject_value * -1 AS value,"
-               "       'curr' AS value_xtnumericrole, 0 AS value_xtotalrole "
-               "FROM poreject, vend, poitem LEFT OUTER JOIN"
-               "                   ( itemsite JOIN item"
-               "                     ON (itemsite_item_id=item_id)"
-               "                   ) ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE ( (poreject_poitem_id=poitem_id)"
-               " AND (poreject_vend_id=vend_id)"
-               " AND (poreject_posted)"
-               " AND (NOT poreject_invoiced) "
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"agentUsername\") ?>"
-	       " AND (poreject_agent_username=<? value(\"agentUsername\") ?>)"
-	       "<? endif ?>"
-	       ") "
-	       "ORDER BY ponumber, poitem_linenumber;");
-
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("uninvoicedReceivings", "detail");
   q = mql.toQuery(params);
   _porecv->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)

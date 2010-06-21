@@ -17,6 +17,7 @@
 #include <parameter.h>
 
 #include "guiclient.h"
+#include "mqlutil.h"
 
 dspPoDeliveryDateVariancesByItem::dspPoDeliveryDateVariancesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -54,6 +55,7 @@ void dspPoDeliveryDateVariancesByItem::languageChange()
 
 bool dspPoDeliveryDateVariancesByItem::setParams(ParameterList &pParams)
 {
+  pParams.append("byItem");
   pParams.append("item_id", _item->id());
 
   _warehouse->appendValue(pParams);
@@ -80,26 +82,9 @@ void dspPoDeliveryDateVariancesByItem::sPrint()
 
 void dspPoDeliveryDateVariancesByItem::sFillList()
 {
-  QString sql( "SELECT recv.*, vend_name,"
-               "       firstLine(recv_vend_item_number) AS itemnumber,"
-               "       firstLine(recv_vend_item_descrip) AS itemdescrip,"
-               "       'qty' AS recv_qty_xtnumericrole "
-               "FROM recv, vend, itemsite "
-               "WHERE ((recv_vend_id=vend_id)"
-               "  AND  (recv_itemsite_id=itemsite_id)"
-               "  AND  (itemsite_item_id=<? value(\"item_id\") ?>)"
-               "  AND  (recv_order_type='PO')"
-               "  AND  (DATE(recv_date) BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
-               "<? if exists(\"warehous_id\") ?>"
-               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-               "<? endif ?>"
-               " <? if exists(\"agentUsername\") ?>"
-               " AND (recv_agent_username=<? value(\"agentUsername\") ?>)"
-               "<? endif ?>"
-               ") "
-               "ORDER BY recv_date DESC;" );
-  MetaSQLQuery mql(sql);
   ParameterList params;
+
+  MetaSQLQuery mql = mqlLoad("poDeliveryDateVariances", "detail");
   if (! setParams(params))
     return;
   q = mql.toQuery(params);

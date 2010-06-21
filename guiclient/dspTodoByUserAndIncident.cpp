@@ -20,6 +20,7 @@
 
 #include "incident.h"
 #include "todoItem.h"
+#include "mqlutil.h"
 
 dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -113,48 +114,10 @@ void dspTodoByUserAndIncident::sFillList()
 
   _todoitem->clear();
 
-  // explicitly get todoitem_id and incdt_id first to set id() and altId()
-  QString sql = "SELECT todoitem_id, incdt_id, *,"
-		"       firstLine(todoitem_description) AS todoitem_description,"
-                "  CASE WHEN (todoitem_status != 'C' AND todoitem_due_date < CURRENT_DATE) THEN 'expired'"
-                "       WHEN (todoitem_status != 'C' AND todoitem_due_date > CURRENT_DATE) THEN 'future'"
-                "  END AS todoitem_due_date_qtforegroundrole "
-	        "FROM todoitem LEFT OUTER JOIN"
-	        "     incdt ON (todoitem_incdt_id = incdt_id) "
-                "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-	        "WHERE ((true) "
-		"<? if not exists(\"showInactive\") ?>"
-		"  AND todoitem_active "
-		"<? endif ?>"
-		"<? if not exists(\"showCompleted\") ?>"
-		"  AND todoitem_status != 'C' "
-		"<? endif ?>"
-		"<? if exists(\"username\") ?>"
-		"  AND (todoitem_username=<? value(\"username\") ?>)"
-		"<? elseif exists(\"usr_pattern\") ?>"
-		"  AND (todoitem_username ~* <? value(\"usr_pattern\") ?>)"
-		"<? endif ?>"
-		"<? if exists(\"incdt_id\") ?>"
-		"  AND (todoitem_incdt_id=<? value(\"incdt_id\") ?>)"
-		"<? endif ?>"
-		"<? if exists(\"start_date_start\") ?>"
-		"  AND (todoitem_start_date>=<? value(\"start_date_start\") ?>)"
-		"<? endif ?>"
-		"<? if exists(\"start_date_end\") ?>"
-		"  AND (todoitem_start_date<=<? value(\"start_date_end\") ?>)"
-		"<? endif ?>"
-		"<? if exists(\"due_date_start\") ?>"
-		"  AND (todoitem_due_date>=<? value(\"due_date_start\") ?>)"
-		"<? endif ?>"
-		"<? if exists(\"due_date_end\") ?>"
-		"  AND (todoitem_due_date<=<? value(\"due_date_end\") ?>)"
-		"<? endif ?>"
-		") "
-	        "ORDER BY todoitem_username, incdtpriority_order;" ;
   ParameterList params;
   setParams(params);
 
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql = mqlLoad("todoByUserAndIncident", "detail");
   XSqlQuery todos = mql.toQuery(params);
   _todoitem->populate(todos);
   if (todos.lastError().type() != QSqlError::NoError)
@@ -225,4 +188,3 @@ void dspTodoByUserAndIncident::sViewTodoItem()
 
   newdlg.exec();
 }
-
