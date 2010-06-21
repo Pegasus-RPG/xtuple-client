@@ -28,6 +28,9 @@ class databaseInformation : public XDialog, public Ui::databaseInformation
     virtual void languageChange();
 
     virtual void sSave();
+
+  signals:
+    void saving();
 };
 
 #endif // DATABASEINFORMATION_H

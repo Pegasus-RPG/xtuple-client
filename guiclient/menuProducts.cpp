@@ -69,6 +69,8 @@
 #include "reassignClassCodeByClassCode.h"
 #include "reassignProductCategoryByProductCategory.h"
 
+#include "setup.h"
+
 #include "menuProducts.h"
 
 menuProducts::menuProducts(GUIClient *Pparent) :
@@ -225,6 +227,9 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "separator", NULL, NULL, utilitiesMenu,	"true", NULL, NULL, true , NULL },
   { "pd.reassignClassCodeByClassCode", tr("Reassign &Class Codes..."), SLOT(sReassignClassCodeByClassCode()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
   { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
+
+  // Setup
+  { "pd.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -535,5 +540,15 @@ void menuProducts::sReassignClassCodeByClassCode()
 void menuProducts::sReassignProductCategoryByProductCategory()
 {
   reassignProductCategoryByProductCategory(parent, "", TRUE).exec();
+}
+
+void menuProducts::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Products);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
 }
 

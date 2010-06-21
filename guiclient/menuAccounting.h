@@ -168,6 +168,8 @@ class menuAccounting : public QObject
     void sCreateRecurringInvoices();
     void sSyncCompanies();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 

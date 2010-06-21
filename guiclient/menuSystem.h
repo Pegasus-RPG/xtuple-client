@@ -61,21 +61,6 @@ class menuSystem : public QObject
     void sEmployeeGroups();
     void sErrorLog();
 
-    void sDatabaseInformation();
-
-    void sImages();
-    void sReports();
-    void sForms();
-    void sLabelForms();
-    void sCalendars();
-    void sCurrencies();
-    void sExchangeRates();
-    void sCountries();
-    void sStates();
-    void sLocales();
-    void sCommentTypes();
-    void sAccountNumbers();
-    void sDepartments();
     void sCustomCommands();
     void sScripts();
     void sUIForms();

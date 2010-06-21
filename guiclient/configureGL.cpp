@@ -180,6 +180,11 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
 
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
+
+  if (_metrics->boolean("UseSubLedger"))
+    _subLedger->setChecked(true);
+  else
+    _generalLedger->setChecked(true);
   
   adjustSize();
 }
@@ -381,6 +386,7 @@ void configureGL::sSave()
       subaccounts->setEnabled(FALSE);
   }
 
+  _metrics->set("UseSubLedger", _subLedger->isChecked());
   _metrics->set("YearEndEquityAccount", _yearend->id());
 
   //if (! omfgThis->singleCurrency())

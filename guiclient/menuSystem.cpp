@@ -40,8 +40,6 @@
 #include "hotkeys.h"
 #include "errorLog.h"
 
-#include "databaseInformation.h"
-
 #include "accountNumbers.h"
 #include "calendars.h"
 #include "commentTypes.h"
@@ -164,32 +162,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
     { "sys.checkForUpdates",          tr("Check For Updates..."),           SLOT(sCheckForUpdates()),          systemMenu, "#superuser",          NULL, NULL, true },
 
-  // Setup
-    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	NULL,	NULL,	NULL,	true	},
-
-  //  Master Information
-    { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,		systemMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.databaseInformation",tr("&Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	"ConfigDatabaseInfo",	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	"MaintainImages",	NULL,	NULL,	true	},
-    { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	"MaintainForms",	NULL,	NULL,	true	},
-    { "sys.labelForms",		tr("&Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	"MaintainForms",	NULL,	NULL,	true	},
-    { "sys.calendars",		tr("C&alendars..."),	SLOT(sCalendars()),	masterInfoMenu,	"MaintainCalendars",	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.currencies",		tr("Curre&ncies..."),	SLOT(sCurrencies()),	masterInfoMenu,	"CreateNewCurrency",	NULL,	NULL,	true	},
-    { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),masterInfoMenu,	"MaintainCurrencyRates ViewCurrencyRates",
-															NULL,	NULL,	true	},
-
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	"MaintainCountries",	NULL,	NULL,	true	},
-    { "sys.states",	tr("&States and Provinces..."),	SLOT(sStates()),	masterInfoMenu,	"MaintainStates",	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	"MaintainLocales",	NULL,	NULL,	true	},
-    { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	"MaintainCommentTypes", NULL, NULL,	true	},
-    { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	"ViewDepartments MaintainDepartments",	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			masterInfoMenu,	"true",			NULL,	NULL,	true	},
-    { "sys.CSVAtlases",  tr("Maintain CS&V Atlases..."),             SLOT(sCSVAtlases()),  masterInfoMenu, "ConfigureImportExport", NULL, NULL, loadCSVPlugin() },
-
   //  Design
     { "menu",           tr("&Design"),                (char*)designMenu,      systemMenu, "true",                        NULL, NULL, true },
     { "sys.reports",    tr("&Reports..."),            SLOT(sReports()),       designMenu, "MaintainReports",             NULL, NULL, true },
@@ -203,14 +175,19 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.packages",   tr("&Packages..."),           SLOT(sPackages()),      designMenu, "ViewPackages",                NULL, NULL, true },
 
   // Utilities
-    { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
+    { "menu",              tr("&Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL+#superuser",           NULL, NULL, true },
     { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
+    { "separator",      NULL,                         NULL,             sysUtilsMenu, "true",                        NULL, NULL, true },
+    { "sys.CSVAtlases",  tr("Maintain CS&V Atlases..."),             SLOT(sCSVAtlases()),  masterInfoMenu, "ConfigureImportExport", NULL, NULL, loadCSVPlugin() },
     { "sys.importData",    tr("&Import Data"),     SLOT(sImportData()), sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
     { "sys.exportData",    tr("&Export Data"),     SLOT(sExportData()), sysUtilsMenu,  "ExportXML",       NULL, NULL, true },
+    { "separator",		NULL,				NULL,				sysUtilsMenu,	"true",	NULL,	NULL,	true	},
+    { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	sysUtilsMenu,	"true",	NULL,	NULL,	true	},
 
-    { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
-    { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	"true",	NULL,	NULL,	true	},
+    // Setup
+    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	NULL,	NULL,	NULL,	true	},
+
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
     { "sys.exit",	tr("E&xit xTuple ERP..."), SLOT(sExit()),				systemMenu,	"true",	NULL,	NULL,	true	},
 
@@ -466,76 +443,6 @@ void menuSystem::sRescanPrivileges()
   omfgThis->initMenuBar();
 }
 
-void menuSystem::sDatabaseInformation()
-{
-  databaseInformation(parent, "", TRUE).exec();
-}
-
-void menuSystem::sImages()
-{
-  omfgThis->handleNewWindow(new images());
-}
-
-void menuSystem::sReports()
-{
-  omfgThis->handleNewWindow(new reports());
-}
-
-void menuSystem::sForms()
-{
-  omfgThis->handleNewWindow(new forms());
-}
-
-void menuSystem::sLabelForms()
-{
-  omfgThis->handleNewWindow(new labelForms());
-}
-
-void menuSystem::sCalendars()
-{
-  omfgThis->handleNewWindow(new calendars());
-}
-
-void menuSystem::sCurrencies()
-{
-  omfgThis->handleNewWindow(new currencies());
-}
-
-void menuSystem::sExchangeRates()
-{
-  omfgThis->handleNewWindow(new currencyConversions());
-}
-
-void menuSystem::sCountries()
-{
-  omfgThis->handleNewWindow(new countries());
-}
-
-void menuSystem::sStates()
-{
-  omfgThis->handleNewWindow(new states());
-}
-
-void menuSystem::sLocales()
-{
-  omfgThis->handleNewWindow(new locales());
-}
-
-void menuSystem::sCommentTypes()
-{
-  omfgThis->handleNewWindow(new commentTypes());
-}
-
-void menuSystem::sAccountNumbers()
-{
-  omfgThis->handleNewWindow(new accountNumbers());
-}
-
-void menuSystem::sDepartments()
-{
-  omfgThis->handleNewWindow(new departments());
-}
-
 void menuSystem::sCustomCommands()
 {
   omfgThis->handleNewWindow(new customCommands());
@@ -564,7 +471,7 @@ void menuSystem::sUIForms()
 void menuSystem::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::All);
+  params.append("module", setup::System);
 
   setup newdlg(parent);
   newdlg.set(params);

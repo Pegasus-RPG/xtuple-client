@@ -92,6 +92,8 @@ class menuPurchase : public QObject
     void sAssignItemToPlannerCode();
     void sAssignClassCodeToPlannerCode();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 

@@ -43,7 +43,7 @@ enum SetResponse setup::set(const ParameterList &pParams)
 
   param = pParams.value("module", &valid);
   if (valid)
-    populate((enum Modules)param.toInt());
+    _modules->setCurrentIndex(param.toInt());
   else
     populate();
 
@@ -126,11 +126,26 @@ void setup::populate(int module)
   if (module == All || module == Accounting)
     append(configItem, "configureGL", tr("Accounting"), mode("ConfigureGL"), 0, "sSave()");
 
-  if (module == All || module == Sales)
-    append(configItem, "configureSO", tr("Sales"), mode("ConfigureSO"), 0, "sSave()" );
+  if (module == All || module == System)
+    append(configItem, "configureCC", tr("Credit Card"), mode("ConfigureCC"), 0, "sSave()");
 
   if (module == All || module == CRM)
     append(configItem, "configureCRM", tr("CRM"), mode("ConfigureCRM"), 0, "sSave()" );
+
+  if (module == All || module == Inventory)
+    append(configItem, "configureIM", tr("Inventory"), mode("ConfigureIM"), 0, "sSave()" );
+
+  if (module == All || module == System)
+    append(configItem, "databaseInformation", tr("Database"), mode("ConfigDatabaseInfo"), 0, "sSave()");
+
+  if (module == All || module == System)
+  {
+    append(configItem, "configureIE", tr("Import/Export"), mode("ConfigureImportExport"), 0, "sSave()");
+    append(configItem, "configureEncryption", tr("Encryption"), mode("ConfigureEncryption"), 0, "sSave()");
+  }
+
+  if (module == All || module == Sales)
+    append(configItem, "configureSO", tr("Sales"), mode("ConfigureSO"), 0, "sSave()" );
 
   if (module == All || module == Manufacture)
     append(configItem, "configureWO", tr("Manufacture"), mode("ConfigureWO"), 0, "sSave()");
@@ -138,23 +153,14 @@ void setup::populate(int module)
   if (module == All || module == Purchase)
     append(configItem, "configurePO", tr("Purchase"), mode("ConfigurePO"), 0, "sSave()" );
 
-  if (module == All || module == Schedule)
-    append(configItem, "configureMS", tr("Schedule"), mode("ConfigureMS"), 0, "sSave()" );
-
-  if (module == All || module == Inventory)
-    append(configItem, "configureIM", tr("Inventory"), mode("ConfigureIM"), 0, "sSave()" );
-
   if (module == All || module == Products)
     append(configItem, "configurePD", tr("Products"), mode("ConfigurePD"), 0, "sSave()" );
 
-  if (module == All || module == System)
-  {
-    append(configItem, "configureIE", tr("Import/Export"), mode("ConfigureImportExport"), 0, "sSave()");
-    append(configItem, "configureEncryption", tr("Encryption"), mode("ConfigureEncryption"), 0, "sSave()");
-    append(configItem, "configureCC", tr("Credit Card"), mode("ConfigureCC"), 0, "sSave()");
-  }
+  if (module == All || module == Schedule)
+    append(configItem, "configureMS", tr("Schedule"), mode("ConfigureMS"), 0, "sSave()" );
 
-  _tree->addTopLevelItem(configItem);
+  if (!configItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(configItem));
 
   // Account Mappings
   XTreeWidgetItem* mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Account Mappings"));
@@ -188,7 +194,8 @@ void setup::populate(int module)
     append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
   }
 
-  _tree->addTopLevelItem(mapItem);
+  if (!mapItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(mapItem));
 
   // Master Information
   XTreeWidgetItem* masterItem = new XTreeWidgetItem(_tree, 0, -1, tr("Master Information"));
@@ -203,6 +210,12 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
     append(masterItem,"bankAdjustmentTypes", tr("Bank Adjustment Types"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainCalendars");
+    append(masterItem, "calendars", tr("Calendars"), modeVal, modeVal);
   }
 
   if (module == All || module == Products || module == Inventory || module == CRM ||
@@ -224,6 +237,24 @@ void setup::populate(int module)
     append(masterItem, "classCodes", tr("Class Codes"), modeVal, modeVal);
   }
 
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainCommentTypes");
+    append(masterItem, "commentTypes", tr("Comment Types"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainCountries");
+    append(masterItem, "countries", tr("Countries"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("CreateNewCurrency");
+    append(masterItem, "currencies", tr("Currencies"), modeVal, modeVal);
+  }
+
   if (module == All || module == Sales)
   {
     modeVal = mode("MaintainCustomerMasters");
@@ -236,10 +267,34 @@ void setup::populate(int module)
     append(masterItem, "customerTypes", tr("Customer Types"), modeVal, modeVal);
   }
 
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainCurrencyRates", "ViewCurrencyRates");
+    append(masterItem, "exchangeRates", tr("Exchange Rates"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("ViewDepartments", "MaintainDepartments");
+    append(masterItem, "departments", tr("Departments"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainForms");
+    append(masterItem, "forms", tr("Forms"), modeVal, modeVal);
+  }
+
   if (module == All || module == Products)
   {
     modeVal = mode("MaintainFreightClasses", "ViewFreightClasses");
     append(masterItem, "freightClasses", tr("Freight Classes"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainImages");
+    append(masterItem, "images", tr("Images"), modeVal, modeVal);
   }
 
   if (module == All || module == CRM)
@@ -264,6 +319,18 @@ void setup::populate(int module)
   {
     modeVal = mode("MaintainIncidentSeverities");
     append(masterItem, "incidentSeverities", tr("Incident Severities"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainForms");
+    append(masterItem, "labelForms", tr("Label Forms"), modeVal, modeVal);
+  }
+
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainLocales");
+    append(masterItem, "locales", tr("Locales"), modeVal, modeVal);
   }
 
   if ((module == All || module == Products) && _metrics->boolean("LotSerialControl"))
@@ -320,6 +387,12 @@ void setup::populate(int module)
     append(masterItem, "salesReps", tr("Sales Reps"), modeVal, modeVal);
   }
 
+  if (module == All || module == System)
+  {
+    modeVal = mode("MaintainStates");
+    append(masterItem, "states", tr("States and Provinces"), modeVal, modeVal);
+  }
+
   if (module == All || module == Sales)
   {
     modeVal = mode("MaintainShippingChargeTypes", "ViewShippingChargeTypes");
@@ -356,7 +429,7 @@ void setup::populate(int module)
     append(masterItem, "taxCodes", tr("Tax Codes"), modeVal, modeVal);
   }
 
-  if (module == All || module == Purchase || module == Sales || Accounting)
+  if (module == All || module == Purchase || module == Sales || module == Accounting)
   {
     modeVal = mode("MaintainTerms", "ViewTerms");
     append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
@@ -380,7 +453,8 @@ void setup::populate(int module)
     append(masterItem, "vendorTypes", tr("Vendor Types"), modeVal, modeVal);
   }
 
-  _tree->addTopLevelItem(masterItem);
+  if (!masterItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(masterItem));
 
   _tree->expandAll();
   if (_tree->topLevelItemCount())

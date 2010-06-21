@@ -36,6 +36,8 @@
 #include "dspExpediteExceptionsByPlannerCode.h"
 #include "dspReorderExceptionsByPlannerCode.h"
 
+#include "setup.h"
+
 #include "menuSchedule.h"
 
 menuSchedule::menuSchedule(GUIClient *Pparent) :
@@ -96,6 +98,10 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspExpediteExceptionsByPlannerCode", tr("E&xpedite Exceptions..."), SLOT(sDspExpediteExceptionsByPlannerCode()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
     { "ms.dspReorderExceptionsByPlannerCode", tr("Reorder &Exceptions..."), SLOT(sDspReorderExceptionsByPlannerCode()),reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
+
+    { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
+    { "ms.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+
   };
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
@@ -238,4 +244,13 @@ void menuSchedule::sDspReorderExceptionsByPlannerCode()
   omfgThis->handleNewWindow(new dspReorderExceptionsByPlannerCode());
 }
 
+void menuSchedule::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Schedule);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
+}
 

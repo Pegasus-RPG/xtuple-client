@@ -40,6 +40,8 @@
 #include "editOwners.h"
 #include "createRecurringItems.h"
 
+#include "setup.h"
+
 #include "menuCRM.h"
 
 menuCRM::menuCRM(GUIClient *Pparent) :
@@ -132,7 +134,9 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     //Utilities
     { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL },
-    { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainIncidents MaintainProjects MaintainPersonalTodoList MaintainOthertodoLists", NULL, NULL, true, NULL }
+    { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainIncidents MaintainProjects MaintainPersonalTodoList MaintainOthertodoLists", NULL, NULL, true, NULL },
+
+    { "crm.setup",	tr("&Setup..."),	SLOT(sSetup()),	crmMenu,	NULL,	NULL,	NULL,	true	}
 
   };
 
@@ -352,4 +356,14 @@ void menuCRM::sOpportunities()
   opportunityList* win = new opportunityList();
   win->set(params);
   omfgThis->handleNewWindow(win);
+}
+
+void menuCRM::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::CRM);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
 }

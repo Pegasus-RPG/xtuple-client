@@ -19,9 +19,6 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
 {
   setupUi(this);
 
-  // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-
   QString server;
   QString database;
   QString port;
@@ -67,8 +64,6 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   {
     _description->setEnabled(FALSE);
     _comments->setEnabled(FALSE);
-    _close->setText(tr("&Close"));
-    _save->hide();
   }
 }
 
@@ -84,6 +79,8 @@ void databaseInformation::languageChange()
 
 void databaseInformation::sSave()
 {
+  emit saving();
+
   _metrics->set("DatabaseName", _description->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());

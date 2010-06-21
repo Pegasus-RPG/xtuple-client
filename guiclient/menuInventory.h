@@ -163,6 +163,8 @@ class menuInventory : public QObject
     void sCatchLocationContents(int);
     void sCatchCountTag(int);
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 

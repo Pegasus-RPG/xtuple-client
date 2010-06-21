@@ -76,6 +76,8 @@
 #include "assignItemToPlannerCode.h"
 #include "assignClassCodeToPlannerCode.h"
 
+#include "setup.h"
+
 #include "menuPurchase.h"
 
 menuPurchase::menuPurchase(GUIClient *Pparent) :
@@ -234,6 +236,9 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.itemsWithoutItemSources", tr("&Items without Item Sources..."), SLOT(sItemsWithoutItemSources()), utilitiesMenu, "ViewItemMasters", NULL, NULL, true , NULL },
     { "po.assignItemToPlannerCode", tr("&Assign Item to Planner Code..."), SLOT(sAssignItemToPlannerCode()), utilitiesMenu, "AssignItemsToPlannerCode", NULL, NULL, true , NULL },
     { "po.assignItemsToPlannerCodeByClassCode", tr("Assign Item&s to Planner Code..."), SLOT(sAssignClassCodeToPlannerCode()), utilitiesMenu, "AssignItemsToPlannerCode", NULL, NULL, true , NULL },
+
+    // Setup
+    { "po.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -573,4 +578,15 @@ void menuPurchase::sAssignClassCodeToPlannerCode()
 {
   assignClassCodeToPlannerCode(parent, "", TRUE).exec();
 }
+
+void menuPurchase::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Purchase);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
 

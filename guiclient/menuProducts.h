@@ -87,6 +87,8 @@ class menuProducts : public QObject
     void sReassignClassCodeByClassCode();
     void sReassignProductCategoryByProductCategory();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 

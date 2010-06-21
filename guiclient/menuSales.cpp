@@ -138,6 +138,8 @@
 #include "archRestoreSalesHistory.h"
 #include "allocateReservations.h"
 
+#include "setup.h"
+
 #include "menuSales.h"
 
 menuSales::menuSales(GUIClient *pParent) :
@@ -450,6 +452,9 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	utilitiesMenu,	"true",		NULL, NULL, true, NULL },
     { "sa.archieveSalesHistory", tr("&Archive Sales History..."), SLOT(sArchiveSalesHistory()), utilitiesMenu, "ArchiveSalesHistory", NULL, NULL, true , NULL },
     { "sa.restoreSalesHistory", tr("Restore &Sales History..."), SLOT(sRestoreSalesHistory()), utilitiesMenu, "RestoreSalesHistory", NULL, NULL, true , NULL },
+
+    { "so.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	},
+
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1193,3 +1198,13 @@ void menuSales::sAllocateReservations()
   allocateReservations(parent, "", TRUE).exec();
 }
 
+
+void menuSales::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Sales);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
+}

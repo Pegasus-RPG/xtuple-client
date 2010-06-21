@@ -13,14 +13,14 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>772</width>
-    <height>571</height>
+    <width>757</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Accounting Configuration</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_14">
+  <layout class="QGridLayout" name="gridLayout_16">
    <item row="0" column="0">
     <widget class="QTabWidget" name="_tab">
      <property name="currentIndex">
@@ -30,7 +30,7 @@ to be bound by its terms.</comment>
       <attribute name="title">
        <string>General Ledger</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_13">
+      <layout class="QGridLayout" name="gridLayout_15">
        <item row="0" column="0">
         <widget class="QGroupBox" name="_useCompanySegment">
          <property name="sizePolicy">
@@ -206,7 +206,7 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="1" column="1" rowspan="2">
+       <item row="1" column="1">
         <widget class="QGroupBox" name="_useSubaccounts">
          <property name="title">
           <string>Use Subaccounts</string>
@@ -248,30 +248,30 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" rowspan="2">
-        <widget class="QGroupBox" name="_exchangeRateSense">
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="_postGroup">
          <property name="title">
-          <string>Meaning of Currency Exchange Rates:</string>
+          <string>Module Journals Post to</string>
          </property>
-         <layout class="QVBoxLayout">
-          <item>
-           <widget class="QRadioButton" name="_baseToLocal">
+         <layout class="QGridLayout" name="gridLayout_14">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="_subLedger">
             <property name="text">
-             <string>Base × Exchange Rate = Foreign</string>
+             <string>Sub Ledger</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QRadioButton" name="_localToBase">
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="_generalLedger">
             <property name="text">
-             <string>Foreign × Exchange Rate = Base</string>
+             <string>General Ledger</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="3" column="1" rowspan="2">
+       <item row="2" column="1">
         <widget class="QGroupBox" name="_miscGroup">
          <property name="title">
           <string/>
@@ -301,59 +301,7 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QGroupBox" name="_taxGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_11">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="QLabel" name="_taxauthLit">
-              <property name="text">
-               <string>Default Tax Authority:</string>
-              </property>
-              <property name="buddy">
-               <cstring>_taxauth</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XComboBox" name="_taxauth">
-              <property name="allowNull">
-               <bool>true</bool>
-              </property>
-              <property name="nullStr">
-               <string>None</string>
-              </property>
-              <property name="type">
-               <enum>XComboBox::TaxAuths</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::MinimumExpanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
+       <item row="3" column="0" colspan="2">
         <widget class="QGroupBox" name="_assignGroup">
          <property name="title">
           <string>Assignments</string>
@@ -1206,6 +1154,126 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_globalTab">
+      <attribute name="title">
+       <string>Global</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_13">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QGroupBox" name="_exchangeRateSense">
+               <property name="title">
+                <string>Meaning of Currency Exchange Rates:</string>
+               </property>
+               <layout class="QVBoxLayout">
+                <item>
+                 <widget class="QRadioButton" name="_baseToLocal">
+                  <property name="text">
+                   <string>Base × Exchange Rate = Foreign</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_localToBase">
+                  <property name="text">
+                   <string>Foreign × Exchange Rate = Base</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="_taxGroup">
+               <property name="title">
+                <string/>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_11">
+                <item row="0" column="0">
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="_taxauthLit">
+                    <property name="text">
+                     <string>Default Tax Authority:</string>
+                    </property>
+                    <property name="buddy">
+                     <cstring>_taxauth</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="XComboBox" name="_taxauth">
+                    <property name="allowNull">
+                     <bool>true</bool>
+                    </property>
+                    <property name="nullStr">
+                     <string>None</string>
+                    </property>
+                    <property name="type">
+                     <enum>XComboBox::TaxAuths</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -1241,27 +1309,44 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_mainSize</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_useCompanySegment</tabstop>
   <tabstop>_companySegmentSize</tabstop>
   <tabstop>_externalConsolidation</tabstop>
   <tabstop>_useProfitCenters</tabstop>
   <tabstop>_profitCenterSize</tabstop>
   <tabstop>_ffProfitCenters</tabstop>
+  <tabstop>_mainSize</tabstop>
+  <tabstop>_useSubaccounts</tabstop>
   <tabstop>_subaccountSize</tabstop>
   <tabstop>_ffSubaccounts</tabstop>
-  <tabstop>_taxauth</tabstop>
+  <tabstop>_subLedger</tabstop>
+  <tabstop>_generalLedger</tabstop>
+  <tabstop>_mandatoryNotes</tabstop>
+  <tabstop>_manualGlaccnt</tabstop>
+  <tabstop>_manualFwdUpdate</tabstop>
   <tabstop>_yearend</tabstop>
   <tabstop>_gainLoss</tabstop>
   <tabstop>_discrepancy</tabstop>
-  <tabstop>_baseToLocal</tabstop>
-  <tabstop>_localToBase</tabstop>
   <tabstop>_nextAPMemoNumber</tabstop>
   <tabstop>_achGroup</tabstop>
   <tabstop>_nextACHBatchNumber</tabstop>
   <tabstop>_companyId</tabstop>
+  <tabstop>_companyIdIsEIN</tabstop>
+  <tabstop>_companyIdIsDUNS</tabstop>
+  <tabstop>_companyIdIsOther</tabstop>
   <tabstop>_companyName</tabstop>
+  <tabstop>_eftAch</tabstop>
+  <tabstop>_eftAba</tabstop>
+  <tabstop>_eftCustom</tabstop>
+  <tabstop>_eftCustomSuffix</tabstop>
+  <tabstop>_eftCustomRoutingRegex</tabstop>
+  <tabstop>_eftCustomAccountRegex</tabstop>
+  <tabstop>_eftCustomFunction</tabstop>
+  <tabstop>_reqInvoiceReg</tabstop>
+  <tabstop>_reqInvoiceMisc</tabstop>
   <tabstop>_nextARMemoNumber</tabstop>
+  <tabstop>_nextCashRcptNumber</tabstop>
   <tabstop>_hideApplyto</tabstop>
   <tabstop>_customerDeposits</tabstop>
   <tabstop>_name</tabstop>
@@ -1270,6 +1355,11 @@ to be bound by its terms.</comment>
   <tabstop>_warnLate</tabstop>
   <tabstop>_graceDays</tabstop>
   <tabstop>_recurringBuffer</tabstop>
+  <tabstop>_incdtCategory</tabstop>
+  <tabstop>_closeARIncdt</tabstop>
+  <tabstop>_baseToLocal</tabstop>
+  <tabstop>_localToBase</tabstop>
+  <tabstop>_taxauth</tabstop>
  </tabstops>
  <resources/>
  <connections>

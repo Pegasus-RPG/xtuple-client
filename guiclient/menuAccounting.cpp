@@ -140,6 +140,8 @@
 #include "createRecurringInvoices.h"
 #include "syncCompanies.h"
 
+#include "setup.h"
+
 #include "menuAccounting.h"
 
 menuAccounting::menuAccounting(GUIClient *Pparent) :
@@ -437,6 +439,9 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.createRecurringInvoices", tr("&Create Recurring Invoices..."), SLOT(sCreateRecurringInvoices()), utilitiesMenu, "MaintainMiscInvoices", NULL, NULL, true, NULL },
     { "separator",		  NULL,					NULL,					utilitiesMenu,		"true",					       NULL, NULL, _metrics->boolean("MultiCompanyFinancialConsolidation"), NULL },
     { "gl.syncCompanies",           tr("&Synchronize Companies"),        SLOT(sSyncCompanies()),           utilitiesMenu, "SynchronizeCompanies", NULL, NULL, _metrics->boolean("MultiCompanyFinancialConsolidation"), NULL },
+
+    { "gl.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	},
+
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1158,4 +1163,15 @@ void menuAccounting::sCreateRecurringInvoices()
 void menuAccounting::sSyncCompanies()
 {
   omfgThis->handleNewWindow(new syncCompanies());
+}
+
+
+void menuAccounting::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Accounting);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
 }

@@ -163,6 +163,8 @@ class menuSales : public QObject
 
     void sAllocateReservations();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 		

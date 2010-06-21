@@ -54,6 +54,8 @@ class menuSchedule : public QObject
     void sDspExpediteExceptionsByPlannerCode();
     void sDspReorderExceptionsByPlannerCode();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 

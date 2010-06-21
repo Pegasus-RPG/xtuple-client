@@ -130,6 +130,8 @@
 #include "summarizeInvTransByClassCode.h"
 #include "createItemSitesByClassCode.h"
 
+#include "setup.h"
+
 #include "menuInventory.h"
 
 menuInventory::menuInventory(GUIClient *Pparent) :
@@ -452,7 +454,10 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.createItemSitesByClassCode",            tr("&Create Item Sites..."),            SLOT(sCreateItemSitesByClassCode()),      utilitiesMenu, "MaintainItemSites",              NULL, NULL, true, NULL },
     { "separator",                                NULL,                                   NULL,                                     utilitiesMenu, "true",                           NULL, NULL, true, NULL },
     { "sr.purgeShippingRecords",                  tr("&Purge Shipping Records..."),       SLOT(sPurgeShippingRecords()),            utilitiesMenu, "PurgeShippingRecords",     NULL, NULL, true, NULL },
-    { "sr.externalShipping",                 tr("Maintain E&xternal Shipping Records..."),SLOT(sExternalShipping()),                utilitiesMenu, "MaintainExternalShipping", NULL, NULL, true, NULL }
+    { "sr.externalShipping",                 tr("Maintain E&xternal Shipping Records..."),SLOT(sExternalShipping()),                utilitiesMenu, "MaintainExternalShipping", NULL, NULL, true, NULL },
+    // Setup
+    { "im.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1246,4 +1251,14 @@ void menuInventory::sCatchCountTag(int pCnttagid)
 void menuInventory::sExternalShipping()
 {
   omfgThis->handleNewWindow(new externalShippingList());
+}
+
+void menuInventory::sSetup()
+{
+  ParameterList params;
+  params.append("module", setup::Inventory);
+
+  setup newdlg(parent);
+  newdlg.set(params);
+  newdlg.exec();
 }

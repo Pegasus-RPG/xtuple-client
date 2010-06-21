@@ -63,6 +63,8 @@ class menuCRM : public QObject
     void sOpportunities();
     void sEditOwners();
 
+    void sSetup();
+
   private:
     GUIClient *parent;
 
