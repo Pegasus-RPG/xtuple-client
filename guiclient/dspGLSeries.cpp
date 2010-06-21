@@ -9,7 +9,7 @@
  */
 
 #include "dspGLSeries.h"
-#include "glseries.h""
+#include "glSeries.h"
 
 #include <QMenu>
 #include <QMessageBox>
