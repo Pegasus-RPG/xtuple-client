@@ -18,119 +18,110 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>General Ledger Series</string>
+   <string>Journal Series</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_6">
-     <property name="margin">
-      <number>12</number>
-     </property>
-     <property name="spacing">
-      <number>12</number>
-     </property>
-     <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <property name="spacing">
-          <number>12</number>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="_sourceGroup">
+         <property name="title">
+          <string/>
          </property>
-         <item row="0" column="0">
-          <widget class="QGroupBox" name="_sourceGroup">
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="_allSources">
-              <property name="text">
-               <string>All Sources</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0" colspan="2">
+           <widget class="QRadioButton" name="_allSources">
+            <property name="text">
+             <string>All Sources</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="_selectedSource">
+            <property name="text">
+             <string>Selected Source:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="XComboBox" name="_source">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>A/P</string>
+             </property>
             </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="_selectedSource">
-              <property name="text">
-               <string>Selected Source:</string>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>A/R</string>
+             </property>
             </item>
-            <item row="1" column="1">
-             <widget class="XComboBox" name="_source">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>A/P</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>A/R</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>G/L</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>I/M</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>P/D</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>P/O</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>S/O</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>S/R</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>W/O</string>
-               </property>
-              </item>
-             </widget>
+            <item>
+             <property name="text">
+              <string>G/L</string>
+             </property>
             </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QGroupBox" name="_dateGroup">
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <widget class="DateCluster" name="_dates">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>I/M</string>
+             </property>
             </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
+            <item>
+             <property name="text">
+              <string>P/D</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>P/O</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>S/O</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>S/R</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>W/O</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="_dateGroup">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="DateCluster" name="_dates">
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
           <widget class="QGroupBox" name="_jrnlGroup">
            <property name="enabled">
             <bool>true</bool>
@@ -162,6 +153,19 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="_endJrnlnumLit">
               <property name="text">
@@ -179,143 +183,147 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Type</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="_subLedger">
+              <property name="text">
+               <string>Sub Ledger</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="_generalLedger">
+              <property name="text">
+               <string>General Ledger</string>
               </property>
-             </spacer>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
          </item>
         </layout>
        </item>
+      </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>13</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout">
        <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>&amp;Close</string>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_query">
+         <property name="text">
+          <string>&amp;Query</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_print">
+         <property name="text">
+          <string>&amp;Print</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>0</width>
-           <height>20</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_close">
-           <property name="text">
-            <string>&amp;Close</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_query">
-           <property name="text">
-            <string>&amp;Query</string>
-           </property>
-           <property name="autoDefault">
-            <bool>true</bool>
-           </property>
-           <property name="default">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_print">
-           <property name="text">
-            <string>&amp;Print</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="QFrame" name="_frame">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <property name="margin">
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QFrame" name="_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="0">
-         <layout class="QVBoxLayout">
-          <property name="spacing">
-           <number>0</number>
+        <item>
+         <widget class="QLabel" name="_gltransLit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <item>
-           <widget class="QLabel" name="_gltransLit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>General Ledger Transactions:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XTreeWidget" name="_gltrans"/>
-          </item>
-         </layout>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Journal Transactions:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XTreeWidget" name="_gltrans"/>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -336,6 +344,7 @@ to be bound by its terms.</comment>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

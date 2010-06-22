@@ -33,14 +33,14 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _gltrans->addColumn(tr("Date"),      _dateColumn, Qt::AlignCenter,true, "transdate");
-  _gltrans->addColumn(tr("Journal #"),_orderColumn, Qt::AlignRight, true, "gltrans_journalnumber");
-  _gltrans->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "gltrans_source");
-  _gltrans->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "gltrans_doctype");
-  _gltrans->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "gltrans_docnumber");
+  _gltrans->addColumn(tr("Journal #"),_orderColumn, Qt::AlignRight, true, "journalnumber");
+  _gltrans->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "source");
+  _gltrans->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "doctype");
+  _gltrans->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "docnumber");
   _gltrans->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "account");
   _gltrans->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
   _gltrans->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
-  _gltrans->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "gltrans_posted");
+  _gltrans->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
 }
 
 dspGLSeries::~dspGLSeries()
@@ -82,6 +82,9 @@ enum SetResponse dspGLSeries::set(const ParameterList &pParams)
 
 void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 {
+  if (_subLedger->isChecked())
+    return;
+
   int menuItem;
 
   bool editable = false;
@@ -150,6 +153,14 @@ bool dspGLSeries::setParams(ParameterList &params)
     params.append("endJrnlnum", _endJrnlnum->text().toInt());
   }
 
+  if (_subLedger->isChecked())
+    params.append("table", "sltrans");
+  else
+  {
+    params.append("gltrans", true);
+    params.append("table", "gltrans");
+  }
+
   return true;
 }
 
@@ -174,59 +185,70 @@ void dspGLSeries::sFillList()
     return;
 
   MetaSQLQuery mql("SELECT *, "
-                   "       CASE WHEN gltrans_id = -1 THEN 0"
+                   "       CASE WHEN <? literal(\"table\") ?>_id = -1 THEN 0"
                    "       ELSE 1 END AS xtindentrole,"
-                   "       CASE WHEN gltrans_id = -1 THEN gltrans_date"
+                   "       CASE WHEN <? literal(\"table\") ?>_id = -1 THEN <? literal(\"table\") ?>_date"
                    "       END AS transdate,"    // qtdisplayrole isn't working?
                    "       'curr' AS debit_xtnumericrole,"
                    "       'curr' AS credit_xtnumericrole "
                    "FROM (SELECT DISTINCT "
-                   "       gltrans_sequence, -1 AS gltrans_id, gltrans_date, "
-                   "       gltrans_source, gltrans_journalnumber,"
-                   "       gltrans_doctype, '' AS gltrans_docnumber,"
-                   "       firstLine(gltrans_notes) AS account,"
-                   "       0.0 AS gltrans_amount,"
+                   "       <? literal(\"table\") ?>_sequence AS sequence, "
+                   "       -1 AS <? literal(\"table\") ?>_id, "
+                   "       <? literal(\"table\") ?>_date AS transdate, "
+                   "       <? literal(\"table\") ?>_source AS source, "
+                   "       <? literal(\"table\") ?>_journalnumber AS journalnumber,"
+                   "       <? literal(\"table\") ?>_doctype, '' AS docnumber,"
+                   "       firstLine(<? literal(\"table\") ?>_notes) AS account,"
+                   "       0.0 AS amount,"
                    "       CAST(NULL AS NUMERIC) AS debit,"
                    "       CAST(NULL AS NUMERIC) AS credit,"
-                   "       gltrans_posted "
-                   "FROM gltrans "
-                   "WHERE ( (NOT gltrans_deleted) "
-                   " AND (gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "       <? literal(\"table\") ?>_posted AS posted "
+                   "FROM <? literal(\"table\") ?> "
+                   "WHERE ( (true) "
+                   "<? if exists(\"gltrans\") ?>"
+                   " AND (gltrans_deleted) "
+                   "<? endif ?>"
+                   " AND (<? literal(\"table\") ?>_date BETWEEN <? value(\"startDate\") ?>"
                    "                         AND <? value(\"endDate\") ?>)"
                    "<? if exists(\"source\") ?>"
-                   "   AND (gltrans_source=<? value(\"source\") ?>)"
+                   "   AND (<? literal(\"table\") ?>_source=<? value(\"source\") ?>)"
                    "<? endif ?>"
                    "<? if exists(\"startJrnlnum\") ?>"
-                   "   AND (gltrans_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
+                   "   AND (<? literal(\"table\") ?>_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
                    "                                  AND <? value(\"endJrnlnum\") ?>)"
                    "<? endif ?>"
-                   ")"
-                   "UNION "
-                   "SELECT gltrans_sequence, gltrans_id, gltrans_date, "
+                   ") "
+                   "UNION ALL "
+                   "SELECT <? literal(\"table\") ?>_sequence AS sequence, "
+                   "       <? literal(\"table\") ?>_id, "
+                   "       <? literal(\"table\") ?>_date AS transdate, "
                    "       NULL, NULL,"
-                   "       NULL, gltrans_docnumber,"
+                   "       NULL, <? literal(\"table\") ?>_docnumber AS docnumber,"
                    "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-                   "       gltrans_amount,"
-                   "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
+                   "       <? literal(\"table\") ?>_amount,"
+                   "       CASE WHEN (<? literal(\"table\") ?>_amount < 0) THEN (<? literal(\"table\") ?>_amount * -1)"
                    "       END AS debit,"
-                   "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+                   "       CASE WHEN (<? literal(\"table\") ?>_amount > 0) THEN <? literal(\"table\") ?>_amount "
                    "       END AS credit,"
-                   "       NULL AS gltrans_posted "
-                   "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id)"
-                   "WHERE ( (NOT gltrans_deleted ) "
-                   "  AND (gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "       NULL AS posted "
+                   "FROM <? literal(\"table\") ?> JOIN accnt ON (gltrans_accnt_id=accnt_id) "
+                   "WHERE ( (true) "
+                   "<? if exists(\"gltrans\") ?>"
+                   " AND (NOT gltrans_deleted) "
+                   "<? endif ?>"
+                   "  AND (<? literal(\"table\") ?>_date BETWEEN <? value(\"startDate\") ?>"
                    "                         AND <? value(\"endDate\") ?>)"
                    "<? if exists(\"source\") ?>"
-                   "   AND (gltrans_source=<? value(\"source\") ?>)"
+                   "   AND (<? literal(\"table\") ?>_source=<? value(\"source\") ?>)"
                    "<? endif ?>"
                    "<? if exists(\"startJrnlnum\") ?>"
-                   "   AND (gltrans_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
+                   "   AND (<? literal(\"table\") ?>_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
                    "                                  AND <? value(\"endJrnlnum\") ?>)"
                    "<? endif ?>"
                    " ) "
                    ") AS dummy "
-                   "ORDER BY gltrans_date, gltrans_sequence,"
-                   "         xtindentrole, gltrans_amount;");
+                   "ORDER BY <? literal(\"table\") ?>_date, <? literal(\"table\") ?>_sequence,"
+                   "         xtindentrole, <? literal(\"table\") ?>_amount;");
   q = mql.toQuery(params);
   _gltrans->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
