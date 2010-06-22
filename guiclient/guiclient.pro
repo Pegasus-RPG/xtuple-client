@@ -330,6 +330,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspSingleLevelBOM.ui                          \
           dspSingleLevelWhereUsed.ui                    \
           dspSlowMovingInventoryByClassCode.ui          \
+          dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
           dspSubstituteAvailabilityByItem.ui            \
           dspSummarizedBOM.ui                           \
@@ -528,6 +529,7 @@ FORMS =   absoluteCalendarItem.ui               \
           postPurchaseOrdersByAgent.ui          \
           postStandardJournal.ui                \
           postStandardJournalGroup.ui           \
+          postSubLedger.ui                      \
           postVouchers.ui                       \
           prepareCheckRun.ui                    \
           priceList.ui                          \
@@ -1044,6 +1046,7 @@ HEADERS = ../common/format.h                    \
           dspSingleLevelBOM.h                   \
           dspSingleLevelWhereUsed.h             \
           dspSlowMovingInventoryByClassCode.h   \
+          dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
           dspSubstituteAvailabilityByItem.h     \
           dspSummarizedBOM.h                    \
@@ -1262,6 +1265,7 @@ HEADERS = ../common/format.h                    \
           postPurchaseOrdersByAgent.h   \
           postStandardJournal.h         \
           postStandardJournalGroup.h    \
+          postSubLedger.h               \
           postVouchers.h                \
           prepareCheckRun.h             \
           priceList.h                   \
@@ -1795,6 +1799,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspSingleLevelWhereUsed.cpp                   \
           dspSlowMovingInventoryByClassCode.cpp         \
           dspStandardJournalHistory.cpp                 \
+          dspSubLedger.cpp                              \
           dspSubstituteAvailabilityByItem.cpp           \
           dspSummarizedBOM.cpp                          \
           dspSummarizedBacklogByWarehouse.cpp           \
@@ -2011,6 +2016,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           postPurchaseOrdersByAgent.cpp         \
           postStandardJournal.cpp               \
           postStandardJournalGroup.cpp          \
+          postSubLedger.cpp                     \
           postVouchers.cpp                      \
           prepareCheckRun.cpp                   \
           priceList.cpp                         \

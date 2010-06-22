@@ -13,33 +13,8 @@
 
 #include "guiclient.h"
 #include "xdialog.h"
+#include "xt.h"
 #include <parameter.h>
-
-#include "configureCC.h"
-#include "configureCRM.h"
-#include "configureEncryption.h"
-#include "configureGL.h"
-#include "configureIE.h"
-#include "configureIM.h"
-#include "configureMS.h"
-#include "configurePD.h"
-#include "configurePO.h"
-#include "configureSO.h"
-#include "configureWO.h"
-
-#include "bankAccounts.h"
-#include "costCategories.h"
-#include "expenseCategories.h"
-#include "apAccountAssignments.h"
-#include "arAccountAssignments.h"
-#include "salesCategories.h"
-
-#include "termses.h"
-#include "checkFormats.h"
-#include "customerTypes.h"
-#include "vendorTypes.h"
-#include "reasonCodes.h"
-#include "bankAdjustmentTypes.h"
 
 #include "ui_setup.h"
 
@@ -51,23 +26,24 @@ public:
     setup(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~setup();
 
-    enum Modules
+    enum SetupTypes
     {
-      All, Accounting, Sales, CRM, Manufacture, Purchase, Schedule, Inventory, Products, System
+      Configure, AccountMapping, MasterInformation
     };
 
 public slots:
     enum SetResponse set(const ParameterList & pParams );
-    void append(XTreeWidgetItem* parent, 
-                const QString &uiName, 
-                const QString &title,
+    void insert(const QString &title,
+                const QString &uiName,
+                const SetupTypes type,
+                int modules,
                 bool enabled = true,
                 int mode = 0,
                 const QString &saveMethod = QString());
     void apply();
     void languageChange();
     int mode(const QString &editPriv, const QString &viewPriv = QString());
-    void populate(int module = All);
+    void populate();
     void save(bool close = true);
 
 signals:
@@ -77,36 +53,23 @@ private slots:
     void setCurrentIndex(XTreeWidgetItem* item);
 
 private:
-    int                         _mode;
-    QString                     _module;
+ //   int                         _mode;
+ //   QString                     _module;
+    struct ItemProps {
+      QString uiName;
+      SetupTypes type;
+      int modules;
+      bool enabled;
+      int mode;
+      QString saveMethod;
+    };
+    QMap<QString, ItemProps>    _itemMap;
     QMap<QString, int>          _idxmap;
-    QMap<QString, QString>      _methodMap;
+    QMap<QString, QString>      _methodMap;        
 
-    configureCC*          _configCC;
-    configureCRM*         _configCRM;
-    configureEncryption*  _configEncr;
-    configureGL*          _configGL;
-    configureIE*          _configIE;
-    configureIM*          _configIM;
-    configureMS*          _configMS;
-    configurePD*          _configPD;
-    configurePO*          _configPO;
-    configureSO*          _configSO;
-    configureWO*          _configWO;
-
-    costCategories*       _costCategories;
-    expenseCategories*    _expenseCategories;
-    apAccountAssignments* _apAccountAssignments;
-    arAccountAssignments* _arAccountAssignments;
-    salesCategories*      _salesCategories;
-
-    bankAccounts*         _bankAccounts;
-    termses*              _termses;
-    checkFormats*         _checkFormats;
-    customerTypes*        _customerTypes;
-    vendorTypes*          _vendoryTypes;
-    reasonCodes*          _reasonCodes;
-    bankAdjustmentTypes*  _bankAdjustmentTypes;
+    XTreeWidgetItem*            _configItem;
+    XTreeWidgetItem*            _mapItem;
+    XTreeWidgetItem*            _masterItem;
 };
 
 #endif // SETUP_H

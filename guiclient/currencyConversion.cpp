@@ -52,8 +52,8 @@ currencyConversion::currencyConversion(QWidget* parent, const char* name, bool m
 {
   setupUi(this);
 
-  connect(_close, SIGNAL(clicked()), this, SLOT(_sClose()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(_sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(_sClose()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(_sSave()));
   connect(_rate, SIGNAL(lostFocus()), this, SLOT(sFixRate()));
 
   _currency->setType(XComboBox::CurrenciesNotBase);
@@ -117,10 +117,9 @@ enum SetResponse currencyConversion::set(ParameterList &pParams)
       _rate->setEnabled(FALSE);
       _dateCluster->setEnabled(FALSE);
       
-      _close->setText(tr("&Close"));
-      _save->hide();
-      
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

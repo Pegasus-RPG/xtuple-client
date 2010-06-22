@@ -1256,7 +1256,7 @@ void menuInventory::sExternalShipping()
 void menuInventory::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Inventory);
+  params.append("module", Xt::InventoryModule);
 
   setup newdlg(parent);
   newdlg.set(params);

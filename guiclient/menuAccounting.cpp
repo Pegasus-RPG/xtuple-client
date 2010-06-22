@@ -1169,7 +1169,7 @@ void menuAccounting::sSyncCompanies()
 void menuAccounting::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Accounting);
+  params.append("module", Xt::AccountingModule);
 
   setup newdlg(parent);
   newdlg.set(params);

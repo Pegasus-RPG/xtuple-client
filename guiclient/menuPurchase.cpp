@@ -582,7 +582,7 @@ void menuPurchase::sAssignClassCodeToPlannerCode()
 void menuPurchase::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Purchase);
+  params.append("module", Xt::PurchaseModule);
 
   setup newdlg(parent);
   newdlg.set(params);

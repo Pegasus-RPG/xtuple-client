@@ -247,7 +247,7 @@ void menuSchedule::sDspReorderExceptionsByPlannerCode()
 void menuSchedule::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Schedule);
+  params.append("module", Xt::ScheduleModule);
 
   setup newdlg(parent);
   newdlg.set(params);

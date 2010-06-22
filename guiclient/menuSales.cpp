@@ -1202,7 +1202,7 @@ void menuSales::sAllocateReservations()
 void menuSales::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Sales);
+  params.append("module", Xt::SalesModule);
 
   setup newdlg(parent);
   newdlg.set(params);

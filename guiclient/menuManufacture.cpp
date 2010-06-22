@@ -521,7 +521,7 @@ void menuManufacture::sPrintWorkOrderForm()
 void menuManufacture::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Manufacture);
+  params.append("module", Xt::ManufactureModule);
 
   setup newdlg(parent);
   newdlg.set(params);

@@ -597,6 +597,7 @@
 #include "standardJournal.h"
 #include "standardJournalItem.h"
 #include "standardJournals.h"
+#include "states.h"
 #include "subAccntType.h"
 #include "subAccntTypes.h"
 #include "subaccount.h"

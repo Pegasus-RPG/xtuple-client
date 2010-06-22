@@ -545,7 +545,7 @@ void menuProducts::sReassignProductCategoryByProductCategory()
 void menuProducts::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::Products);
+  params.append("module", Xt::ProductsModule);
 
   setup newdlg(parent);
   newdlg.set(params);

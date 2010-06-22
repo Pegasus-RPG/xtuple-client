@@ -361,7 +361,7 @@ void menuCRM::sOpportunities()
 void menuCRM::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::CRM);
+  params.append("module", Xt::CRMModule);
 
   setup newdlg(parent);
   newdlg.set(params);

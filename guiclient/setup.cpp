@@ -10,25 +10,203 @@
 #include <QBuffer>
 #include <QUiLoader>
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "getscreen.h"
 #include "setup.h"
 #include "xt.h"
 #include "xtreewidget.h"
+#include "xwidget.h"
 
 setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
+  _modules->addItem(tr("All"), Xt::AllModules);
+  _modules->addItem(tr("Accounting"), Xt::AccountingModule);
+  _modules->addItem(tr("Sales"), Xt::SalesModule);
+  _modules->addItem(tr("CRM"), Xt::CRMModule);
+  _modules->addItem(tr("Manufacture"), Xt::ManufactureModule);
+  _modules->addItem(tr("Purchase"), Xt::PurchaseModule);
+  _modules->addItem(tr("Schedule"), Xt::ScheduleModule);
+  _modules->addItem(tr("Inventory"), Xt::InventoryModule);
+  _modules->addItem(tr("Products"), Xt::ProductsModule);
+  _modules->addItem(tr("System"), Xt::SystemModule);
+
   QPushButton* apply = _buttonBox->button(QDialogButtonBox::Apply);
   connect(apply, SIGNAL(clicked()), this, SLOT(apply()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(save()));
-  connect(_modules, SIGNAL(currentIndexChanged(int)), this, SLOT(populate(int)));
+  connect(_modules, SIGNAL(currentIndexChanged(int)), this, SLOT(populate()));
   connect(_tree, SIGNAL(currentItemChanged(XTreeWidgetItem*,XTreeWidgetItem*)), this, SLOT(setCurrentIndex(XTreeWidgetItem*)));
 
   _tree->addColumn(QString(), -1, Qt::AlignLeft, true);
   _tree->setHeaderHidden(true);
+
+  // Configure
+  insert(tr("Accounting"), "configureGL", Configure, Xt::AccountingModule, mode("ConfigureGL"), 0, "sSave()");
+  insert(tr("Credit Card"), "configureCC", Configure, Xt::SystemModule, mode("ConfigureCC"), 0, "sSave()");
+  insert(tr("CRM"), "configureCRM", Configure, Xt::CRMModule, mode("ConfigureCRM"), 0, "sSave()" );
+  insert(tr("Database"), "databaseInformation", Configure, Xt::SystemModule, mode("ConfigDatabaseInfo"), 0, "sSave()");
+  insert(tr("Encryption"), "configureEncryption", Configure, Xt::SystemModule, mode("ConfigureEncryption"), 0, "sSave()");
+  insert(tr("Inventory"), "configureIM", Configure, Xt::InventoryModule, mode("ConfigureIM"), 0, "sSave()" );
+  insert(tr("Import/Export"), "configureIE", Configure, Xt::SystemModule, mode("ConfigureImportExport"), 0, "sSave()");
+  insert(tr("Sales"), "configureSO", Configure, Xt::SalesModule, mode("ConfigureSO"), 0, "sSave()" );
+  insert(tr("Manufacture"), "configureWO", Configure, Xt::ManufactureModule, mode("ConfigureWO"), 0, "sSave()");
+  insert(tr("Products"), "configurePD", Configure, Xt::ProductsModule, mode("ConfigurePD"), 0, "sSave()" );
+  insert(tr("Purchase"), "configurePO", Configure, Xt::PurchaseModule, mode("ConfigurePO"), 0, "sSave()" );
+  insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0, "sSave()" );
+
+  // Account Mappings
+  int modeVal;
+  modeVal = mode("MaintainCostCategories", "ViewCostCategories");
+  insert(tr("Cost Categories"), "costCategories", AccountMapping,  Xt::AccountingModule | Xt::InventoryModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainExpenseCategories", "ViewExpenseCategories");
+  insert(tr("Expense Categories"), "expenseCategories", AccountMapping, Xt::AccountingModule |Xt::InventoryModule | Xt::PurchaseModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
+  insert(tr("Payables Assignments"), "apAccountAssignments", AccountMapping, Xt::AccountingModule | Xt::PurchaseModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
+  insert(tr("Receivables Assignments"), "arAccountAssignments", AccountMapping, Xt::AccountingModule | Xt::SalesModule, modeVal, modeVal);
+  insert(tr("Sales Assignments"), "salesAccounts", AccountMapping, Xt::AccountingModule | Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
+  insert(tr("Sales Categories"),  "salesCategories", AccountMapping, Xt::AccountingModule | Xt::SalesModule, modeVal, modeVal);
+
+  // Master Information
+  modeVal = mode("MaintainBankAccounts");
+  insert(tr("Bank Accounts"), "bankAccounts", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
+  insert(tr("Bank Adjustment Types"), "bankAdjustmentTypes", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCalendars");
+  insert(tr("Calendars"), "calendars", MasterInformation,  Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCharacteristics", "ViewCharacteristics");
+  insert(tr("Characteristics"), "characteristics", MasterInformation,
+         Xt::ProductsModule | Xt::InventoryModule | Xt::CRMModule |
+         Xt::SalesModule | Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCheckFormats", "ViewCheckFormats");
+  insert(tr("Check Formats"), "checkFormats", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainClassCodes", "ViewClassCodes");
+  insert( tr("Class Codes"), "classCodes", MasterInformation, Xt::ProductsModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCommentTypes");
+  insert(tr("Comment Types"), "commentTypes", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCountries");
+  insert(tr("Countries"), "countries",  MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("CreateNewCurrency");
+  insert(tr("Currencies"), "currencies", MasterInformation,  Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCustomerMasters");
+  insert(tr("Customer Form Assignments"), "customerFormAssignments", MasterInformation,  Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCustomerTypes", "ViewCustomerTypes");
+  insert(tr("Customer Types"), "customerTypes",  MasterInformation, Xt::SalesModule | Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("ViewDepartments", "MaintainDepartments");
+  insert(tr("Departments"), "departments", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainCurrencyRates", "ViewCurrencyRates");
+  insert(tr("Exchange Rates"), "currencyConversions", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainForms");
+  insert( tr("Forms"),  "forms", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainFreightClasses", "ViewFreightClasses");
+  insert(tr("Freight Classes"), "freightClasses", MasterInformation, Xt::ProductsModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainImages");
+  insert(tr("Images"), "images", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainIncidentCategories");
+  insert(tr("Incident Categories"), "incidentCategories", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainIncidentPriorities");
+  insert(tr("Incident Priorities"), "incidentPriorities", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainIncidentResolutions");
+  insert(tr("Incident Resolutions"), "incidentResolutions", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainIncidentSeverities");
+  insert(tr("Incident Severities"), "incidentSeverities", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainForms");
+  insert( tr("Label Forms"), "labelForms", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainLocales");
+  insert(tr("Locales"), "locales", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  if ( _metrics->boolean("LotSerialControl"))
+  {
+    modeVal = mode("MaintainLotSerialSequences", "ViewLotSerialSequences");
+    insert(tr("Lot/Serial Sequences"), "lotSerialSequences", MasterInformation, Xt::ProductsModule, modeVal, modeVal);
+  }
+
+  modeVal = mode("MaintainOpportunitySources");
+  insert( tr("Opportunity Sources"), "opportunitySources", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainOpportunityStages");
+  insert(tr("Opportunity Stages"), "opportunityStages", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainOpportunityTypes");
+  insert(tr("Opportunity Types"), "opportunityTypes", MasterInformation, modeVal, modeVal);
+
+  modeVal = mode("MaintainPlannerCodes", "ViewPlannerCodes");
+  insert(tr("Planner Codes"), "plannerCodes", MasterInformation, Xt::InventoryModule | Xt::ScheduleModule | Xt::PurchaseModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainProductCategories", "ViewProductCategories");
+  insert(tr("Product Categories"), "productCategories", MasterInformation, Xt::ProductsModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainReasonCodes");
+  insert(tr("Reason Codes"), "reasonCodes", MasterInformation, Xt::InventoryModule | Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainRejectCodes", "ViewRejectCodes");
+  insert(tr("Reject Codes"), "rejectCodes", MasterInformation, Xt::PurchaseModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainSalesReps", "ViewSalesReps");
+  insert(tr("Sales Reps"), "salesReps",  MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainStates");
+  insert(tr("States and Provinces"), "states", MasterInformation, Xt::SystemModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainShippingChargeTypes", "ViewShippingChargeTypes");
+  insert(tr("Shipping Charge Types"), "shippingChargeTypes", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainShippingForms", "ViewShippingForms");
+  insert( tr("Shipping Forms"), "shippingForms", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainShippingZones", "ViewShippingZones");
+  insert(tr("Shipping Zones"), "shippingZones", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainShipVias", "ViewShipVias");
+  insert(tr("Ship Vias"), "shipVias", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainSiteTypes", "ViewSiteTypes");
+  insert(tr("Site Types"), "siteTypes", MasterInformation, Xt::InventoryModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainTaxCodes", "ViewTaxCodes");
+  insert(tr("Tax Codes"), "taxCodes", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainTerms", "ViewTerms");
+  insert(tr("Terms"), "termses", MasterInformation, Xt::PurchaseModule | Xt::SalesModule | Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainTitles", "ViewTitles");
+  insert(tr("Titles"), "honorifics", MasterInformation, Xt::CRMModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainUOMs", "ViewUOMs");
+  insert(tr("Units of Measure"), "uoms", MasterInformation, Xt::ProductsModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainVendorTypes", "ViewVendorTypes");
+  insert(tr("Vendor Types"),  "vendorTypes", MasterInformation, Xt::PurchaseModule | Xt::AccountingModule, modeVal, modeVal);
+
 }
 
 setup::~setup()
@@ -43,7 +221,13 @@ enum SetResponse setup::set(const ParameterList &pParams)
 
   param = pParams.value("module", &valid);
   if (valid)
-    _modules->setCurrentIndex(param.toInt());
+  {
+    for (int i = 0; i < _modules->count(); i++)
+    {
+      if (_modules->itemData(i) == param.toInt())
+        _modules->setCurrentIndex(i);
+    }
+  }
   else
     populate();
 
@@ -56,25 +240,18 @@ enum SetResponse setup::set(const ParameterList &pParams)
   determined whether parameters passed open the widget in "edit" or "view" mode.  A save function on the
   widget triggered by the Apply and Save buttons can be specified by \a saveMethod.
 */
-void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString &title, bool enabled, int mode, const QString &saveMethod)
+void setup::insert(const QString &title, const QString &uiName, const SetupTypes type, int modules, bool enabled, int mode, const QString &saveMethod)
 {
-  QBrush disabled(Qt::gray);
+   ItemProps ip;
 
-  // Set the item on the list
-  XTreeWidgetItem* item  = new XTreeWidgetItem(parent, mode);
-  item->setData(0, Qt::DisplayRole, QVariant(title));
-  item->setData(0, Xt::RawRole, QVariant(uiName));
+   ip.uiName = uiName;
+   ip.type = type;
+   ip.modules = modules;
+   ip.enabled = enabled;
+   ip.mode = mode;
+   ip.saveMethod = saveMethod;
 
-  if (!enabled)
-  {
-    item->setFlags(Qt::NoItemFlags);
-    item->setForeground(0,disabled);
-  }
-  parent->addChild(item);
-
-  // Store the save methad name
-  if (!saveMethod.isEmpty())
-    _methodMap.insert(uiName, saveMethod);
+   _itemMap.insert(title, ip);
 }
 
 /*!
@@ -83,7 +260,7 @@ void setup::append(XTreeWidgetItem* parent, const QString &uiName, const QString
 void setup::apply()
 {
   save(false);
-  populate(_modules->currentIndex());
+  populate();
 }
 
 void setup::languageChange()
@@ -109,7 +286,7 @@ int setup::mode(const QString &editPriv, const QString &viewPriv)
 /*!
   Populates the list of setup widgets filtered by \a module if specified.
   */
-void setup::populate(int module)
+void setup::populate()
 {
   _tree->clear();
   _idxmap.clear();
@@ -120,356 +297,64 @@ void setup::populate(int module)
     w = 0;
   }
 
-  // Configure
-  XTreeWidgetItem* configItem = new XTreeWidgetItem(_tree, 0, -1, tr("Configure"));
+  XTreeWidgetItem* _configItem = new XTreeWidgetItem(_tree, 0, -1, tr("Configure"));
+  XTreeWidgetItem* _mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Accounting Mappings"));
+  XTreeWidgetItem* _masterItem = new XTreeWidgetItem(_tree, 0, -1, tr("Master Information"));
+  QBrush disabled(Qt::gray);
+  XTreeWidgetItem* parent = 0;
+  ItemProps ip;
 
-  if (module == All || module == Accounting)
-    append(configItem, "configureGL", tr("Accounting"), mode("ConfigureGL"), 0, "sSave()");
-
-  if (module == All || module == System)
-    append(configItem, "configureCC", tr("Credit Card"), mode("ConfigureCC"), 0, "sSave()");
-
-  if (module == All || module == CRM)
-    append(configItem, "configureCRM", tr("CRM"), mode("ConfigureCRM"), 0, "sSave()" );
-
-  if (module == All || module == Inventory)
-    append(configItem, "configureIM", tr("Inventory"), mode("ConfigureIM"), 0, "sSave()" );
-
-  if (module == All || module == System)
-    append(configItem, "databaseInformation", tr("Database"), mode("ConfigDatabaseInfo"), 0, "sSave()");
-
-  if (module == All || module == System)
+  QMapIterator<QString, ItemProps> i(_itemMap);
+  while (i.hasNext())
   {
-    append(configItem, "configureIE", tr("Import/Export"), mode("ConfigureImportExport"), 0, "sSave()");
-    append(configItem, "configureEncryption", tr("Encryption"), mode("ConfigureEncryption"), 0, "sSave()");
+    i.next();
+    ip = i.value();
+
+    if (_modules->currentIndex() == 0 ||
+        _modules->itemData(_modules->currentIndex()).toInt() & ip.modules)
+    {
+      if (ip.type == Configure)
+        parent = _configItem;
+      else if (ip.type == AccountMapping)
+        parent = _mapItem;
+      else
+        parent = _masterItem;
+
+      // Set the item on the list
+      XTreeWidgetItem* item  = new XTreeWidgetItem(parent, ip.mode);
+      item->setData(0, Qt::DisplayRole, QVariant(i.key()));
+      item->setData(0, Xt::RawRole, QVariant(ip.uiName));
+
+      if (!ip.enabled)
+      {
+        item->setFlags(Qt::NoItemFlags);
+        item->setForeground(0,disabled);
+      }
+      parent->addChild(item);
+
+      // Store the save methad name
+      if (!ip.saveMethod.isEmpty())
+        _methodMap.insert(ip.uiName, ip.saveMethod);
+    }
   }
 
-  if (module == All || module == Sales)
-    append(configItem, "configureSO", tr("Sales"), mode("ConfigureSO"), 0, "sSave()" );
+  if (!_configItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(_configItem));
 
-  if (module == All || module == Manufacture)
-    append(configItem, "configureWO", tr("Manufacture"), mode("ConfigureWO"), 0, "sSave()");
+  if (!_mapItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(_mapItem));
 
-  if (module == All || module == Purchase)
-    append(configItem, "configurePO", tr("Purchase"), mode("ConfigurePO"), 0, "sSave()" );
-
-  if (module == All || module == Products)
-    append(configItem, "configurePD", tr("Products"), mode("ConfigurePD"), 0, "sSave()" );
-
-  if (module == All || module == Schedule)
-    append(configItem, "configureMS", tr("Schedule"), mode("ConfigureMS"), 0, "sSave()" );
-
-  if (!configItem->childCount())
-    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(configItem));
-
-  // Account Mappings
-  XTreeWidgetItem* mapItem = new XTreeWidgetItem(_tree, 0, -1, tr("Account Mappings"));
-  int modeVal;
-
-  if (module == All || module == Accounting || module == Inventory)
-  {
-    modeVal = mode("MaintainCostCategories", "ViewCostCategories");
-    append(mapItem,"costCategories", tr("Cost Categories"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Accounting || module == Inventory || module == Purchase)
-  {
-    modeVal = mode("MaintainExpenseCategories", "ViewExpenseCategories");
-    append(mapItem, "expenseCategories", tr("Expense Categories"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Accounting || module == Purchase)
-  {
-    modeVal = mode("MaintainVendorAccounts", "ViewVendorAccounts");
-    append(mapItem, "apAccountAssignments", tr("Payables Assignments"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Accounting || module == Sales)
-  {
-    modeVal = mode("MaintainSalesAccount", "ViewSalesAccount");
-    append(mapItem, "arAccountAssignments", tr("Receivables Assignments"), modeVal, modeVal);
-    append(mapItem, "salesAccounts", tr("Sales Assignments"), modeVal, modeVal);
-
-    modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
-    append(mapItem, "salesCategories", tr("Sales Categories"), modeVal, modeVal);
-  }
-
-  if (!mapItem->childCount())
-    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(mapItem));
-
-  // Master Information
-  XTreeWidgetItem* masterItem = new XTreeWidgetItem(_tree, 0, -1, tr("Master Information"));
-
-  if (module == All || module == Accounting)
-  {
-    modeVal = mode("MaintainBankAccounts");
-    append(masterItem, "bankAccounts", tr("Bank Accounts"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Accounting)
-  {
-    modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
-    append(masterItem,"bankAdjustmentTypes", tr("Bank Adjustment Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainCalendars");
-    append(masterItem, "calendars", tr("Calendars"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Products || module == Inventory || module == CRM ||
-      module == Sales || module == Accounting)
-  {
-    modeVal = mode("MaintainCharacteristics", "ViewCharacteristics");
-    append(masterItem, "characteristics", tr("Characteristics"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Accounting)
-  {
-    modeVal = mode("MaintainCheckFormats", "ViewCheckFormats");
-    append(masterItem, "checkFormats", tr("Check Formats"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Products)
-  {
-    modeVal = mode("MaintainClassCodes", "ViewClassCodes");
-    append(masterItem, "classCodes", tr("Class Codes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainCommentTypes");
-    append(masterItem, "commentTypes", tr("Comment Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainCountries");
-    append(masterItem, "countries", tr("Countries"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("CreateNewCurrency");
-    append(masterItem, "currencies", tr("Currencies"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainCustomerMasters");
-    append(masterItem, "customerFormAssignments", tr("Customer Form Assignments"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales || module == Accounting)
-  {
-    modeVal = mode("MaintainCustomerTypes", "ViewCustomerTypes");
-    append(masterItem, "customerTypes", tr("Customer Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainCurrencyRates", "ViewCurrencyRates");
-    append(masterItem, "exchangeRates", tr("Exchange Rates"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("ViewDepartments", "MaintainDepartments");
-    append(masterItem, "departments", tr("Departments"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainForms");
-    append(masterItem, "forms", tr("Forms"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Products)
-  {
-    modeVal = mode("MaintainFreightClasses", "ViewFreightClasses");
-    append(masterItem, "freightClasses", tr("Freight Classes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainImages");
-    append(masterItem, "images", tr("Images"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainIncidentCategories");
-    append(masterItem, "incidentCategories", tr("Incident Categories"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainIncidentPriorities");
-    append(masterItem, "incidentPriorities", tr("Incident Priorities"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainIncidentResolutions");
-    append(masterItem, "incidentResolutions", tr("Incident Resolutions"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainIncidentSeverities");
-    append(masterItem, "incidentSeverities", tr("Incident Severities"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainForms");
-    append(masterItem, "labelForms", tr("Label Forms"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainLocales");
-    append(masterItem, "locales", tr("Locales"), modeVal, modeVal);
-  }
-
-  if ((module == All || module == Products) && _metrics->boolean("LotSerialControl"))
-  {
-    modeVal = mode("MaintainLotSerialSequences", "ViewLotSerialSequences");
-    append(masterItem, "lotSerialSequences", tr("Lot/Serial Sequences"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainOpportunitySources");
-    append(masterItem, "opportunitySources", tr("Opportunity Sources"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainOpportunityStages");
-    append(masterItem, "opportunityStages", tr("Opportunity Stages"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainOpportunityTypes");
-    append(masterItem, "opportunityTypes", tr("Opportunity Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Inventory || module == Schedule || module == Purchase)
-  {
-    modeVal = mode("MaintainPlannerCodes", "ViewPlannerCodes");
-    append(masterItem, "plannerCodes", tr("Planner Codes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Products)
-  {
-    modeVal = mode("MaintainProductCategories", "ViewProductCategories");
-    append(masterItem, "productCategories", tr("Product Categories"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Inventory || module == Accounting)
-  {
-    modeVal = mode("MaintainReasonCodes");
-    append(masterItem, "reasonCodes", tr("Reason Codes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Purchase)
-  {
-    modeVal = mode("MaintainRejectCodes", "ViewRejectCodes");
-    append(masterItem, "rejectCodes", tr("Reject Codes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainSalesReps", "ViewSalesReps");
-    append(masterItem, "salesReps", tr("Sales Reps"), modeVal, modeVal);
-  }
-
-  if (module == All || module == System)
-  {
-    modeVal = mode("MaintainStates");
-    append(masterItem, "states", tr("States and Provinces"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainShippingChargeTypes", "ViewShippingChargeTypes");
-    append(masterItem, "shippingChargeTypes", tr("Shipping Charge Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainShippingForms", "ViewShippingForms");
-    append(masterItem, "shippingForms", tr("Shipping Forms"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainShippingZones", "ViewShippingZones");
-    append(masterItem, "shippingZones", tr("Shipping Zones"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainShipVias", "ViewShipVias");
-    append(masterItem, "shipVias", tr("Ship Vias"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Inventory)
-  {
-    modeVal = mode("MaintainSiteTypes", "ViewSiteTypes");
-    append(masterItem, "siteTypes", tr("Site Types"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Sales)
-  {
-    modeVal = mode("MaintainTaxCodes", "ViewTaxCodes");
-    append(masterItem, "taxCodes", tr("Tax Codes"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Purchase || module == Sales || module == Accounting)
-  {
-    modeVal = mode("MaintainTerms", "ViewTerms");
-    append(masterItem, "termses", tr("Terms"), modeVal, modeVal);
-  }
-
-  if (module == All || module == CRM)
-  {
-    modeVal = mode("MaintainTitles", "ViewTitles");
-    append(masterItem, "honorifics", tr("Titles"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Products)
-  {
-    modeVal = mode("MaintainUOMs", "ViewUOMs");
-    append(masterItem, "uoms", tr("Units of Measure"), modeVal, modeVal);
-  }
-
-  if (module == All || module == Purchase || module == Accounting)
-  {
-    modeVal = mode("MaintainVendorTypes", "ViewVendorTypes");
-    append(masterItem, "vendorTypes", tr("Vendor Types"), modeVal, modeVal);
-  }
-
-  if (!masterItem->childCount())
-    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(masterItem));
+  if (!_masterItem->childCount())
+    _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(_masterItem));
 
   _tree->expandAll();
   if (_tree->topLevelItemCount())
     setCurrentIndex(_tree->topLevelItem(0));
 
-  //Test
-  qDebug("running test");
-  QList<XTreeWidgetItem *> test = _tree->findItems("e",Qt::MatchContains,0,Xt::RawRole);
-  qDebug("found count:%d", test.count());
-  for (int i = 0; i < test.count(); i++)
-    qDebug("found:" + test.at(i)->data(0,Qt::DisplayRole).toString());
 }
 
 /*! Emits the \a saving() signal which triggers any widgets to save that have a mapped \a savedMethod()
-  specified by \sa append().  Also reloads metrics, privileges, preferences, and the menubar in the
+  specified by \sa insert().  Also reloads metrics, privileges, preferences, and the menubar in the
   main application.  The screen will close if \a close is true.
   */
 void setup::save(bool close)
@@ -487,11 +372,13 @@ void setup::save(bool close)
 void setup::setCurrentIndex(XTreeWidgetItem* item)
 {
   QString uiName = item->data(0, Xt::RawRole ).toString();
+  QString label = "<span style=\" font-size:14pt; font-weight:600;\">%1</span></p></body></html>";
   qDebug("setting class name " + uiName );
 
   if (_idxmap.contains(uiName))
   {
     _stack->setCurrentIndex(_idxmap.value(uiName));
+    _stackLit->setText(label.arg(item->text(0)));
     return;
   }
   else if (!item->isDisabled())
@@ -556,6 +443,8 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       _idxmap.insert(uiName,idx);
       _stack->addWidget(w);
       _stack->setCurrentIndex(idx);
+
+      _stackLit->setText(label.arg(item->text(0)));
       return;
     }
   }

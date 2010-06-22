@@ -471,7 +471,7 @@ void menuSystem::sUIForms()
 void menuSystem::sSetup()
 {
   ParameterList params;
-  params.append("module", setup::System);
+  params.append("module", Xt::SystemModule);
 
   setup newdlg(parent);
   newdlg.set(params);
