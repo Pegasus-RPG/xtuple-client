@@ -385,27 +385,30 @@ void configureCC::sSave()
     _metricsenc->load();
   }
 
-  CreditCardProcessor *cardproc =
-		  CreditCardProcessor::getProcessor(_ccCompany->currentText());
-  if (! cardproc)
+  if (_ccAccept->isChecked())
   {
-    QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
-			 tr("<p>Internal error finding the right Credit Card "
-			    "Processor. The application saved what it could "
-			    "but you should re-open this window and double-"
-			    "check all of the settings before continuing."));
-  }
-  else if (cardproc && cardproc->testConfiguration() != 0)
-  {
-    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration"),
-			      tr("<p>The configuration has been saved but "
-				 "at least one configuration option appears "
-				 "to be invalid:<p>%1"
-				 "<p>Would you like to fix it now?")
-			      .arg(cardproc->errorMsg()),
-			      QMessageBox::Yes | QMessageBox::Default,
-			      QMessageBox::No) == QMessageBox::Yes)
-      return;
+    CreditCardProcessor *cardproc =
+        CreditCardProcessor::getProcessor(_ccCompany->currentText());
+    if (! cardproc)
+    {
+      QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
+                           tr("<p>Internal error finding the right Credit Card "
+                              "Processor. The application saved what it could "
+                              "but you should re-open this window and double-"
+                              "check all of the settings before continuing."));
+    }
+    else if (cardproc && cardproc->testConfiguration() != 0)
+    {
+      if (QMessageBox::question(this, tr("Invalid Credit Card Configuration"),
+                                tr("<p>The configuration has been saved but "
+                                   "at least one configuration option appears "
+                                   "to be invalid:<p>%1"
+                                   "<p>Would you like to fix it now?")
+        .arg(cardproc->errorMsg()),
+        QMessageBox::Yes | QMessageBox::Default,
+        QMessageBox::No) == QMessageBox::Yes)
+        return;
+    }
   }
 
   configureEncryption *encryption = _keyPage->findChild<configureEncryption*>("_encryption");

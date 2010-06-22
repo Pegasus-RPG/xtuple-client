@@ -35,7 +35,7 @@ public slots:
     enum SetResponse set(const ParameterList & pParams );
     void insert(const QString &title,
                 const QString &uiName,
-                const SetupTypes type,
+                int type,
                 int modules,
                 bool enabled = true,
                 int mode = 0,
@@ -43,7 +43,7 @@ public slots:
     void apply();
     void languageChange();
     int mode(const QString &editPriv, const QString &viewPriv = QString());
-    void populate();
+    void populate(bool first = true);
     void save(bool close = true);
 
 signals:
@@ -53,11 +53,9 @@ private slots:
     void setCurrentIndex(XTreeWidgetItem* item);
 
 private:
- //   int                         _mode;
- //   QString                     _module;
     struct ItemProps {
       QString uiName;
-      SetupTypes type;
+      int type;
       int modules;
       bool enabled;
       int mode;
@@ -71,5 +69,7 @@ private:
     XTreeWidgetItem*            _mapItem;
     XTreeWidgetItem*            _masterItem;
 };
+
+Q_DECLARE_METATYPE(enum setup::SetupTypes);
 
 #endif // SETUP_H

@@ -11,8 +11,11 @@
 #include <QUiLoader>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScriptEngine>
+#include <QScriptEngineDebugger>
 
 #include "getscreen.h"
+#include "scripttoolbox.h"
 #include "setup.h"
 #include "xt.h"
 #include "xtreewidget.h"
@@ -112,7 +115,7 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   insert(tr("Customer Types"), "customerTypes",  MasterInformation, Xt::SalesModule | Xt::AccountingModule, modeVal, modeVal);
 
   modeVal = mode("ViewDepartments", "MaintainDepartments");
-  insert(tr("Departments"), "departments", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+  insert(tr("Departments"), "departments", MasterInformation, Xt::SystemModule, modeVal, modeVal);
 
   modeVal = mode("MaintainCurrencyRates", "ViewCurrencyRates");
   insert(tr("Exchange Rates"), "currencyConversions", MasterInformation, Xt::SystemModule, modeVal, modeVal);
@@ -240,7 +243,7 @@ enum SetResponse setup::set(const ParameterList &pParams)
   determined whether parameters passed open the widget in "edit" or "view" mode.  A save function on the
   widget triggered by the Apply and Save buttons can be specified by \a saveMethod.
 */
-void setup::insert(const QString &title, const QString &uiName, const SetupTypes type, int modules, bool enabled, int mode, const QString &saveMethod)
+void setup::insert(const QString &title, const QString &uiName, int type, int modules, bool enabled, int mode, const QString &saveMethod)
 {
    ItemProps ip;
 
@@ -259,8 +262,14 @@ void setup::insert(const QString &title, const QString &uiName, const SetupTypes
 */
 void setup::apply()
 {
+  int id = _tree->id();
   save(false);
-  populate();
+  populate(id == -1);
+  if (id > -1)
+  {
+    _tree->setId(id);
+    setCurrentIndex(_tree->currentItem());
+  }
 }
 
 void setup::languageChange()
@@ -284,9 +293,10 @@ int setup::mode(const QString &editPriv, const QString &viewPriv)
 }
 
 /*!
-  Populates the list of setup widgets filtered by \a module if specified.
+  Populates the list of setup widgets filtered by selectd module.  Selects the first item
+  when \a first is true.
   */
-void setup::populate()
+void setup::populate(bool first)
 {
   _tree->clear();
   _idxmap.clear();
@@ -303,10 +313,12 @@ void setup::populate()
   QBrush disabled(Qt::gray);
   XTreeWidgetItem* parent = 0;
   ItemProps ip;
+  int id = 0;
 
   QMapIterator<QString, ItemProps> i(_itemMap);
   while (i.hasNext())
   {
+    id++;
     i.next();
     ip = i.value();
 
@@ -321,7 +333,7 @@ void setup::populate()
         parent = _masterItem;
 
       // Set the item on the list
-      XTreeWidgetItem* item  = new XTreeWidgetItem(parent, ip.mode);
+      XTreeWidgetItem* item  = new XTreeWidgetItem(parent, id);
       item->setData(0, Qt::DisplayRole, QVariant(i.key()));
       item->setData(0, Xt::RawRole, QVariant(ip.uiName));
 
@@ -348,7 +360,7 @@ void setup::populate()
     _tree->takeTopLevelItem(_tree->indexOfTopLevelItem(_masterItem));
 
   _tree->expandAll();
-  if (_tree->topLevelItemCount())
+  if (_tree->topLevelItemCount() && first)
     setCurrentIndex(_tree->topLevelItem(0));
 
 }
@@ -396,7 +408,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       screenq.bindValue(":uiform_name", uiName);
       screenq.exec();
       if (screenq.first())
-      {
+      {     
         QUiLoader loader;
         QByteArray ba = screenq.value("uiform_source").toByteArray();
         QBuffer uiFile(&ba);
@@ -405,7 +417,39 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
                                 tr("<p>There was an error loading the UI Form "
                                    "from the database."));
         w = loader.load(&uiFile);
+        w->setObjectName(uiName);
         uiFile.close();
+
+        // Load scripts if applicable
+        XSqlQuery scriptq;
+        scriptq.prepare("SELECT script_source, script_order"
+                        "  FROM script"
+                        " WHERE((script_name=:script_name)"
+                        "   AND (script_enabled))"
+                        " ORDER BY script_order;");
+        scriptq.bindValue(":script_name", uiName);
+        scriptq.exec();
+
+        QScriptEngine* engine = new QScriptEngine();
+        if (_preferences->boolean("EnableScriptDebug"))
+        {
+          QScriptEngineDebugger* debugger = new QScriptEngineDebugger(this);
+          debugger->attachTo(engine);
+        }
+        omfgThis->loadScriptGlobals(engine);
+        QScriptValue mywindow = engine->newQObject(w);
+        engine->globalObject().setProperty("mywindow", mywindow);
+
+        while(scriptq.next())
+        {
+          QString script = scriptHandleIncludes(scriptq.value("script_source").toString());
+          QScriptValue result = engine->evaluate(script, uiName);
+          if (engine->hasUncaughtException())
+          {
+            int line = engine->uncaughtExceptionLineNumber();
+            qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+          }
+        }
       }
     }
 
@@ -420,13 +464,14 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
         buttons->hide();
 
       //Set mode if applicable
-      if (item->id() && w->inherits("XDialog"))
+      int mode = _itemMap.value(item->text(0)).mode;
+      if (mode && w->inherits("XDialog"))
       {
         XWidget* x = dynamic_cast<XWidget*>(w);
         ParameterList params;
-        if (item->id() == cEdit)
+        if (mode == cEdit)
           params.append("mode", "edit");
-        else if (item->id() == cView)
+        else if (mode == cView)
           params.append("mode", "view");
         x->set(params);
       }
