@@ -23,5 +23,15 @@ void setupXt(QScriptEngine *engine)
   glob.setProperty("TotalInitRole",   QScriptValue(engine, Xt::TotalInitRole),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("IndentRole",      QScriptValue(engine, Xt::IndentRole),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("DeletedRole",     QScriptValue(engine, Xt::DeletedRole),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  glob.setProperty("AllModules",         QScriptValue(engine, Xt::AllModules),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("AccountingModule",   QScriptValue(engine, Xt::AccountingModule),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("SalesModule",        QScriptValue(engine, Xt::SalesModule),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("CRMModule",          QScriptValue(engine, Xt::CRMModule),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("ManufactureModule",  QScriptValue(engine, Xt::ManufactureModule),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("PurchaseModule",     QScriptValue(engine, Xt::PurchaseModule),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("ScheduleModule",     QScriptValue(engine, Xt::ScheduleModule),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("InventoryModule",    QScriptValue(engine, Xt::InventoryModule), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("ProductsModule",     QScriptValue(engine, Xt::ProductsModule),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
 
