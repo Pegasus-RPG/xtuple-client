@@ -395,9 +395,21 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
   }
   else if (!item->isDisabled())
   {
+    // First look for a class...
     QWidget *w = xtGetScreen(uiName, this);
-    if (!w)
+
+    if (w)
     {
+      //Connect save slot if applicable
+      if (_methodMap.contains(uiName))
+      {
+        QString method = _methodMap.value(uiName);
+        connect(this, SIGNAL(saving()), w, QString("1%1").arg(method).toUtf8().data());
+      }
+    }
+    else
+    {
+      // No class, so look for an extension
       XSqlQuery screenq;
       screenq.prepare("SELECT * "
                       "  FROM uiform "
@@ -449,6 +461,18 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
             int line = engine->uncaughtExceptionLineNumber();
             qDebug() << "uncaught exception at line" << line << ":" << result.toString();
           }
+
+          //Connect save slot if applicable
+          if (_methodMap.contains(uiName))
+          {
+            QString method = QString(_methodMap.value(uiName)).remove("(").remove(")");
+
+            if(engine->globalObject().property(method).isFunction())
+            {
+              QScriptValue slot = engine->globalObject().property(method);
+              qScriptConnect(this, SIGNAL(saving()), result, slot );
+            }
+          }
         }
       }
     }
@@ -474,14 +498,6 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
         else if (mode == cView)
           params.append("mode", "view");
         x->set(params);
-      }
-
-
-      //Connect save slot if applicable
-      if (_methodMap.contains(uiName))
-      {
-        QString method = _methodMap.value(uiName);
-        connect(this, SIGNAL(saving()), w, QString("1%1").arg(method).toUtf8().data());
       }
 
       int idx = _stack->count();
