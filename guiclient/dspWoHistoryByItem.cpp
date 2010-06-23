@@ -17,6 +17,8 @@
 #include <QMenu>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 #include "workOrder.h"
 
 /*
@@ -144,42 +146,51 @@ void dspWoHistoryByItem::sFillList()
     return;
 
   _wo->clear();
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql = mqlLoad("workOrderHistory", "detail");
+  q = mql.toQuery(params);
+  _wo->populate(q);
+}
 
-  QString sql( "SELECT wo_id,"
-               "       formatWONumber(wo_id) AS wonumber,"
-               "       wo_status, warehous_code,"
-               "       wo_qtyord, wo_qtyrcv, wo_postedvalue,"
-               "       wo_startdate, wo_duedate,"
-               "       CASE WHEN ( (wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R')) ) THEN 'error' END AS wo_startdate_qtforegroundrole,"
-               "       CASE WHEN (wo_duedate <= CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole,"
-               "       'qty' AS wo_qtyord_xtnumericrole,"
-               "       'qty' AS wo_qtyrcv_xtnumericrole,"
-               "       'cost' AS wo_postedvalue_xtnumericrole "
-               "FROM wo, itemsite, warehous "
-               "WHERE ((wo_itemsite_id=itemsite_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=:item_id)"
-               " AND (wo_duedate BETWEEN :startDate AND :endDate)" );
-
+void dspWoHistoryByItem::setParams(ParameterList & params)
+{
+  params.append("woHistoryByItem");
+  params.append("item_id", _item->id());
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
   if (_showOnlyTopLevel->isChecked())
-    sql += " AND ( (wo_ordtype<>'W') OR (wo_ordtype IS NULL) )";
+    params.append("showOnlyTopLevel");
 
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY wo_startdate DESC, wo_number, wo_subnumber;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  _warehouse->bindValue(q);
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  _wo->populate(q);
+    params.append("warehous_id", _warehouse->id());
 }
 
 bool dspWoHistoryByItem::checkParameters()
 {
+  if (! _item->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Item"),
+                         tr("Enter a valid Item."));
+    _item->setFocus();
+    return FALSE;
+  }
+
+  if (! _dates->startDate().isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Start Date"),
+                         tr("Enter a valid Start Date."));
+    _dates->setFocus();
+    return FALSE;
+  }
+
+  if (! _dates->endDate().isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid End Date"),
+                         tr("Enter a valid End Date."));
+    _dates->setFocus();
+    return FALSE;
+  }
+
   return TRUE;
 }
-

@@ -15,9 +15,11 @@
 #include <QVariant>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "inputManager.h"
 #include "salesOrderList.h"
+#include "mqlutil.h"
 
 dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -146,47 +148,11 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
       return;
     }
 
-    q.prepare( "SELECT coitem_id, coitem_linenumber, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       warehous_code,"
-               "       coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,"
-               "       SUM(COALESCE(cobill_qty, 0)) AS invoiced,"
-               "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS balance,"
-               "       CASE WHEN (coitem_status='C') THEN coitem_closedate END AS closedate,"
-               "       CASE WHEN (coitem_status='C') THEN coitem_close_username END AS closeuser,"
-               "       CASE WHEN (coitem_order_id=-1) THEN ''"
-               "            WHEN (coitem_order_type='W') THEN ( SELECT (formatWoNumber(wo_id) || '/' || wo_status)"
-               "                                                FROM wo"
-               "                                                WHERE (wo_id=coitem_order_id) )"
-               "            ELSE ''"
-               "       END AS childinfo,"
-               "       'qty' AS coitem_qtyord_xtnumericrole,"
-               "       'qty' AS coitem_qtyshipped_xtnumericrole,"
-               "       'qty' AS coitem_qtyreturned_xtnumericrole,"
-               "       'qty' AS invoiced_xtnumericrole,"
-               "       'qty' AS balance_xtnumericrole "
-               "FROM itemsite, item, warehous, coitem LEFT OUTER JOIN "
-               "     cobill ON (coitem_id=cobill_coitem_id AND "
-               "                cobill_invcitem_id IS NOT NULL) "
-               "WHERE ( (coitem_itemsite_id=itemsite_id)"
-               " AND (coitem_status <> 'X')"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (coitem_cohead_id=:sohead_id) ) "
-               "GROUP BY coitem_id, coitem_linenumber, item_number, "
-               "         item_descrip1, item_descrip2, warehous_code, "
-               "         coitem_qtyord, coitem_qtyshipped, coitem_status, "
-               "         coitem_closedate, coitem_close_username, "
-               "         coitem_qtyreturned, coitem_order_id, "
-               "         coitem_order_type "
-               "ORDER BY coitem_linenumber;" );
-    q.bindValue(":sohead_id", pSoheadid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    ParameterList params;
+    params.append("sohead_id", pSoheadid);
+
+    MetaSQLQuery mql = mqlLoad("salesOrderStatus", "detail");
+    q = mql.toQuery(params);
     _soitem->populate(q);
   }
   else

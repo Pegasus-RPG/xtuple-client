@@ -23,6 +23,7 @@ class dspWoSoStatus : public XWidget, public Ui::dspWoSoStatus
 public:
     dspWoSoStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoSoStatus();
+    virtual bool setParams(ParameterList & );
 
 public slots:
     virtual void sPrint();

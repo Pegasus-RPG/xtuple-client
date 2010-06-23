@@ -20,6 +20,7 @@
 
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
+#include "mqlutil.h"
 
 dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -120,6 +121,7 @@ bool dspCostedIndentedBOM::setParams(ParameterList &params)
 
   params.append("always", tr("Always"));
   params.append("never",  tr("Never"));
+  params.append("indentedBOM");
 
   return true;
 }
@@ -173,32 +175,8 @@ void dspCostedIndentedBOM::sFillList()
   if (! _item->isValid())
     return;
 
-  MetaSQLQuery mql( "SELECT bomdata_bomwork_id AS id,"
-                    "       CASE WHEN bomdata_bomwork_parent_id = -1 AND "
-                    "                 bomdata_bomwork_id = -1 THEN"
-                    "                     -1"
-                    "            ELSE bomdata_item_id"
-                    "       END AS altid,"
-                    "       *,"
-                    "<? if exists(\"useStandardCosts\") ?>"
-                    "       bomdata_stdunitcost AS unitcost,"
-                    "       bomdata_stdextendedcost AS extendedcost, "
-                    "<? elseif exists(\"useActualCosts\") ?>"
-                    "       bomdata_actunitcost AS unitcost,"
-                    "       bomdata_actextendedcost AS extendedcost, "
-                    "<? endif ?>"
-                    "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
-                    "       'percent' AS bomdata_scrap_xtnumericrole,"
-                    "       'cost' AS unitcost_xtnumericrole,"
-                    "       'cost' AS extendedcost_xtnumericrole,"
-                    "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomdata_effective_qtdisplayrole,"
-                    "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomdata_expires_qtdisplayrole,"
-                    "       CASE WHEN bomdata_expired THEN 'expired'"
-                    "            WHEN bomdata_future  THEN 'future'"
-                    "       END AS qtforegroundrole,"
-                    "       bomdata_bomwork_level - 1 AS xtindentrole "
-                    "FROM indentedbom(<? value(\"item_id\") ?>,"
-                    "                 <? value(\"revision_id\") ?>,0,0)");
+  MetaSQLQuery mql = mqlLoad("costedBOM", "detail");
+
   ParameterList params;
   if (! setParams(params))
     return;

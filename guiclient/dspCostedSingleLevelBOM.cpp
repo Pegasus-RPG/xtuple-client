@@ -20,6 +20,7 @@
 
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
+#include "mqlutil.h"
 
 dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -118,6 +119,7 @@ bool dspCostedSingleLevelBOM::setParams(ParameterList &params)
 
   params.append("always", tr("Always"));
   params.append("never",  tr("Never"));
+  params.append("singleLevelBOM");
 
   return true;
 }
@@ -174,31 +176,7 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
 
 void dspCostedSingleLevelBOM::sFillList()
 {
-  MetaSQLQuery mql("SELECT bomdata_bomitem_id AS id,"
-                   "       CASE WHEN (bomdata_bomitem_id = -1) THEN -1 "
-                   "            ELSE (bomdata_item_id) END AS altid, "
-                   "       *, "
-                   "<? if exists(\"useStandardCosts\") ?>"
-                   "       bomdata_stdunitcost AS unitcost,"
-                   "       bomdata_stdextendedcost AS extendedcost,"
-                   "<? elseif exists(\"useActualCosts\") ?>"
-                   "       bomdata_actunitcost AS unitcost,"
-                   "       bomdata_actextendedcost AS extendedcost,"
-                   "<? endif ?>"
-                   "       'qty' AS bomdata_batchsize_xtnumericrole,"
-                   "       'qty' AS bomdata_qtyfxd_xtnumericrole,"
-                   "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
-                   "       'percent' AS bomdata_scrap_xtnumericrole,"
-                   "       'cost' AS unitcost_xtnumericrole,"
-                   "       'cost' AS extendedcost_xtnumericrole,"
-                   "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomdata_effective_qtdisplayrole,"
-                   "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomdata_expires_qtdisplayrole,"
-                   "       CASE WHEN bomdata_expired THEN 'expired'"
-                   "            WHEN bomdata_future  THEN 'future'"
-                   "       END AS qtforegroundrole,"
-                   "       0 AS extendedcost_xttotalrole "
-                   "FROM singlelevelbom(<? value(\"item_id\") ?>,"
-                   "                    <? value(\"revision_id\") ?>,0,0);");
+  MetaSQLQuery mql = mqlLoad("costedBOM", "detail");
 
   ParameterList params;
   if (! setParams(params))
@@ -210,7 +188,6 @@ void dspCostedSingleLevelBOM::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
 
   q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
              "       formatCost(stdcost(:item_id)) AS standard;" );

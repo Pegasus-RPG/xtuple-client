@@ -23,6 +23,7 @@ class dspWoSoStatusMismatch : public XWidget, public Ui::dspWoSoStatusMismatch
 public:
     dspWoSoStatusMismatch(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoSoStatusMismatch();
+    virtual bool setParams(ParameterList & );
 
 public slots:
     virtual void sPrint();

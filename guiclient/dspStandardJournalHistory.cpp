@@ -19,9 +19,11 @@
 #include <openreports.h>
 #include <parameter.h>
 #include <metasqls.h>
+#include <metasql.h>
 
 #include "mqlutil.h"
 #include "reverseGLSeries.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspStandardJournalHistory as a child of 'parent', with the
@@ -92,7 +94,6 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
   menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
   if (!_privileges->check("PostStandardJournals"))
     pMenu->setItemEnabled(menuItem, false);
-
 }
 
 void dspStandardJournalHistory::sPrint()
@@ -113,63 +114,22 @@ void dspStandardJournalHistory::sFillList()
 {
   _gltrans->clear();
 
-  QString sql( "SELECT gltrans_sequence, gltrans_id,"
-               "       sortdate, sortdoc, level, gltrans_amount,"
-               "       gltrans_date, gltrans_journalnumber, gltrans_posted,"
-               "       gltrans_docnumber, account,"
-               "       debit, credit,"
-               "       'curr' AS debit_xtnumericrole,"
-               "       'curr' AS credit_xtnumericrole,"
-               "       CASE WHEN (debit = 0) THEN '' END AS debit_qtdisplayrole,"
-               "       CASE WHEN (credit = 0) THEN '' END AS credit_qtdisplayrole,"
-               "       level AS xtindentrole "
-               "FROM ( "
-               "SELECT DISTINCT gltrans_sequence, -1 AS gltrans_id,"
-               "       gltrans_date AS sortdate, gltrans_docnumber AS sortdoc, 0 AS level, 0 AS gltrans_amount,"
-               "       gltrans_date, gltrans_journalnumber, gltrans_posted,"
-               "       NULL AS gltrans_docnumber,"
-               "       NULL AS account,"
-               "       0 AS debit, 0 AS credit "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (NOT gltrans_deleted) "
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)"
-               " AND (gltrans_doctype='ST') ) "
-               "UNION "
-               "SELECT DISTINCT gltrans_sequence, -1 AS gltrans_id,"
-               "       gltrans_date AS sortdate, gltrans_docnumber AS sortdoc, 1 AS level, 0 AS gltrans_amount,"
-               "       CAST(NULL AS DATE) AS gltrans_date, CAST(NULL AS INTEGER) AS gltrans_journalnumber, CAST(NULL AS BOOLEAN) AS gltrans_posted,"
-               "       CASE WHEN (COALESCE(gltrans_docnumber, '') = '') THEN 'Unnamed'"
-               "            ELSE gltrans_docnumber"
-               "       END AS gltrans_docnumber,"
-               "       NULL AS account,"
-               "       0 AS debit, 0 AS credit "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (NOT gltrans_deleted)"
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)"
-               " AND (gltrans_doctype='ST') ) "
-               "UNION "
-               "SELECT gltrans_sequence, gltrans_id,"
-               "       gltrans_date AS sortdate, gltrans_docnumber AS sortdoc, 2 AS level, gltrans_amount,"
-               "       CAST(NULL AS DATE) AS gltrans_date, CAST(NULL AS INTEGER) AS gltrans_journalnumber, CAST(NULL AS BOOLEAN) AS gltrans_posted,"
-               "       NULL AS gltrans_docnumber,"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "       END AS credit "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (NOT gltrans_deleted) "
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)"
-               " AND (gltrans_doctype='ST') ) "
-               "   ) AS data "
-               "ORDER BY sortdate, gltrans_sequence, sortdoc, level, gltrans_amount;" );
+  ParameterList params;
 
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.exec();
+  if (_dates->allValid())
+  {
+    params.append("startDate", _dates->startDate());
+    params.append("endDate", _dates->endDate());
+  }
+  else
+  {
+    QMessageBox::warning( this, tr("Enter Date"),
+                          tr("Please enter a valid Start Date & End Date.") );
+    _dates->setFocus();
+    return;
+  }
+  MetaSQLQuery mql = mqlLoad("standardJournalHistory", "detail");
+  q = mql.toQuery(params);
   _gltrans->populate(q, true);
 }
 

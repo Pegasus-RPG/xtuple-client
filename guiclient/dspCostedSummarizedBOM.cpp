@@ -18,6 +18,8 @@
 #include <openreports.h>
 #include <parameter.h>
 
+#include "mqlutil.h"
+
 dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -112,6 +114,7 @@ bool dspCostedSummarizedBOM::setParams(ParameterList &params)
 
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
+  params.append("summarizedBOM");
 
   return true;
 }
@@ -135,26 +138,7 @@ void dspCostedSummarizedBOM::sFillList()
   if (! _item->isValid())
     return;
 
-  MetaSQLQuery mql("SELECT -1, *,"
-                   "<? if exists(\"useActualCosts\") ?>"
-                   "       bomdata_actunitcost AS unitcost,"
-                   "       bomdata_actextendedcost AS extendedcost,"
-                   "<? elseif exists(\"useStandardCosts\") ?>"
-                   "       bomdata_stdunitcost AS unitcost,"
-                   "       bomdata_stdextendedcost AS extendedcost,"
-                   "<? endif ?>"
-                   "       'qtyper' AS bomdata_qtyreq_xtnumericrole,"
-                   "       'cost' AS unitcost_xtnumericrole,"
-                   "       'cost' AS extendedcost_xtnumericrole,"
-                   "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomdata_effective_qtdisplayrole,"
-                   "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomdata_expires_qtdisplayrole,"
-                   "       CASE WHEN bomdata_expired THEN 'expired'"
-                   "            WHEN bomdata_future  THEN 'future'"
-                   "       END AS qtforegroundrole "
-                   "FROM summarizedBOM(<? value(\"item_id\") ?>,"
-                   "                   <? value(\"revision_id\") ?>,"
-                   "                   <? value(\"expiredDays\") ?>,"
-                   "                   <? value(\"futureDays\") ?>);");
+  MetaSQLQuery mql = mqlLoad("costedBOM", "detail");
 
   ParameterList params;
   if (! setParams(params))

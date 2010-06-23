@@ -15,6 +15,9 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <openreports.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 #include "workOrder.h"
 
 /*
@@ -133,38 +136,26 @@ void dspWoHistoryByClassCode::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT wo_id, formatWoNumber(wo_id) AS wonumber, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       wo_status, warehous_code,"
-               "       wo_qtyord, wo_qtyrcv, wo_postedvalue,"
-               "       wo_startdate,wo_duedate,"
-               "       'qty' AS wo_qtyord_xtnumericrole,"
-               "       'qty' AS wo_qtyrcv_xtnumericrole,"
-               "       'cost' AS wo_postedvalue_xtnumericrole "
-               "FROM wo, itemsite, warehous, item "
-               "WHERE ((wo_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)" );
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql = mqlLoad("workOrderHistory", "detail");
+  q = mql.toQuery(params);
+  _wo->populate(q);
+}
 
+void dspWoHistoryByClassCode::setParams(ParameterList & params)
+{
+  params.append("woHistoryByClassCode");
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
   if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
+    params.append("classcode_id", _classCode->id());
   else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
+    params.append("classcode_pattern", _classCode->pattern());
 
   if (_topLevel->isChecked())
-    sql += " AND ( (wo_ordtype<>'W') OR (wo_ordtype IS NULL) )";
-
-  sql += ") "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
-  _wo->populate(q);
+    params.append("showOnlyTopLevel");
 }
 
 bool dspWoHistoryByClassCode::checkParameters()

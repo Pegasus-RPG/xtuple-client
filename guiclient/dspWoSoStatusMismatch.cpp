@@ -15,6 +15,8 @@
 #include <QMenu>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 #include "closeWo.h"
 #include "dspWoMaterialsByWorkOrder.h"
 
@@ -112,36 +114,20 @@ void dspWoSoStatusMismatch::sViewWomatlreq()
 
 void dspWoSoStatusMismatch::sFillList()
 {
-  QString sql( "SELECT wo_id,"
-               "       formatWONumber(wo_id) AS wonumber,"
-               "       wo_status, item_number, uom_name,"
-               "       warehous_code,"
-               "       cohead_number,"
-               "       wo_qtyord,"
-               "       wo_qtyrcv,"
-               "       wo_startdate,"
-               "       wo_duedate, "
-               "       'qty' AS wo_qtyord_xtnumericrole, "
-               "       'qty' AS wo_qtyrcv_xtnumericrole "
-               "FROM coitem, cohead, wo, itemsite, warehous, item, uom "
-               "WHERE ( (coitem_cohead_id=cohead_id)"
-               " AND (coitem_order_id=wo_id)"
-               " AND (coitem_status='C')"
-               " AND (wo_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (wo_status IN ('O','E','S','R','I') )" );
+  ParameterList params;
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+  if (! setParams(params))
+    return;
 
-  sql += ") "
-         "ORDER BY wo_duedate";
-
-  q.prepare(sql);
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("workOrderSoStatus", "detail");
+  q = mql.toQuery(params);
   _wo->populate(q);
 }
 
+bool dspWoSoStatusMismatch::setParams(ParameterList & params)
+{
+  params.append("woSoStatusMismatch");
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+  return true;
+}
