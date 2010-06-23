@@ -18,7 +18,7 @@
 #include <openreports.h>
 
 #include "mqlutil.h"
-#include "GLTransactionDetail.h"
+#include "glTransactionDetail.h"
 #include "dspGLSeries.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
