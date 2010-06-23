@@ -34,6 +34,7 @@
 #include "qboxlayoutproto.h"
 #include "qbytearrayproto.h"
 #include "qdialogsetup.h"
+#include "qdialogbuttonboxproto.h"
 #include "qdockwidgetproto.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
@@ -67,6 +68,7 @@
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qprinterproto.h"
+#include "qpushbuttonproto.h"
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
 #include "qsqldatabaseproto.h"
@@ -145,6 +147,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQBoxLayoutProto(engine);
   setupQByteArrayProto(engine);
   setupQDialog(engine);
+  setupQDialogButtonBoxProto(engine);
   setupQDockWidgetProto(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
@@ -179,6 +182,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQPrinterProto(engine);
+  setupQPushButtonProto(engine);
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
   setupQSqlDatabaseProto(engine);

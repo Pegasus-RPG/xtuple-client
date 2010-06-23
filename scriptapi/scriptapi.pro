@@ -25,6 +25,7 @@ HEADERS += setupscriptapi.h \
     qactionproto.h \
     qboxlayoutproto.h \
     qbytearrayproto.h \
+    qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdockwidgetproto.h \
     qdomattrproto.h \
@@ -59,6 +60,7 @@ HEADERS += setupscriptapi.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
     qprinterproto.h \
+    qpushbuttonproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
@@ -118,6 +120,7 @@ SOURCES += setupscriptapi.cpp \
     qactionproto.cpp \
     qboxlayoutproto.cpp \
     qbytearrayproto.cpp \
+    qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdockwidgetproto.cpp \
     qdomattrproto.cpp \
@@ -152,6 +155,7 @@ SOURCES += setupscriptapi.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
     qprinterproto.cpp \
+    qpushbuttonproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
