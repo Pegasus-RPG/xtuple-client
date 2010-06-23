@@ -92,7 +92,7 @@ to be bound by its terms.</comment>
           <enum>Qt::Vertical</enum>
          </property>
          <property name="standardButtons">
-          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+          <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
          </property>
         </widget>
        </item>

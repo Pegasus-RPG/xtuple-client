@@ -37,9 +37,12 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   if(!_privileges->check("MaintainPreferencesOthers"))
     _selectedUser->setEnabled(false);
 
-  connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
+  QPushButton* apply = _buttonBox->button(QDialogButtonBox::Apply);
+  connect(apply, SIGNAL(clicked()), this, SLOT(sApply()));
   connect(_buttonBox,         SIGNAL(rejected()),     this, SLOT(sClose()));
   connect(_buttonBox,          SIGNAL(accepted()),     this, SLOT(sSave()));
+
+  connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
   connect(_selectedUser,  SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
   connect(_user,          SIGNAL(newID(int)),    this, SLOT(sPopulate()));
     //hot key signals and slots connections
@@ -166,6 +169,7 @@ void userPreferences::sPopulate()
   else
   {
     _noBackgroundImage->setChecked(TRUE);
+    _background->clear();
     _backgroundImageid = -1;
   }
 
@@ -186,8 +190,6 @@ void userPreferences::sPopulate()
     _plainText->setChecked(true);
   else
     _richText->setChecked(true);
-
-  //_rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
   
   _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
   _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
@@ -223,7 +225,10 @@ void userPreferences::sPopulate()
   else
     _ellipsesAction->setId(1);
 
-  _clusterButtons->setChecked(_pref->boolean("ClusterButtons"));
+  if (_pref->boolean("ClusterButtons"))
+    _clusterButtons->setChecked(true);
+  else
+    _clusterMenu->setChecked(true);
     
   //Hide for PostBooks 
   if (_metrics->value("Application") == "PostBooks")
@@ -241,7 +246,13 @@ void userPreferences::sPopulate()
   sFillWarehouseList();
 }
 
-void userPreferences::sSave()
+void userPreferences::sApply()
+{
+  sSave(false);
+  sPopulate();
+}
+
+void userPreferences::sSave(bool close)
 {
   if (_backgroundImage->isChecked())
     _pref->set("BackgroundImageid", _backgroundImageid);
@@ -303,13 +314,11 @@ void userPreferences::sSave()
 
   if (_currentUser->isChecked() && !_currentpassword->text().isEmpty())
   {
-    if (save())
+    if (save() && close)
      accept(); 
   }
-  else
-  {
+  else if (close)
     accept();
-  }
 }
 
 bool userPreferences::save()
