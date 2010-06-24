@@ -24,6 +24,7 @@ class dspQOHByParameterList : public XWidget, public Ui::dspQOHByParameterList
 public:
     dspQOHByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQOHByParameterList();
+    virtual bool setParams(ParameterList &);
 
     virtual SetResponse set( const ParameterList & pParams );
 

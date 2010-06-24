@@ -14,6 +14,7 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
 
 #include "adjustmentTrans.h"
 #include "createCountTagsByItem.h"
@@ -21,6 +22,7 @@
 #include "enterMiscCount.h"
 #include "inputManager.h"
 #include "transferTrans.h"
+#include "mqlutil.h"
 
 dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -213,71 +215,32 @@ void dspQOHByItem::sFillList()
   _qoh->clear();
   _qoh->setColumnVisible(8, _showValue->isChecked() && _usePostedCosts->isChecked());
 
-  QString sql( "SELECT itemsite_id, detail,"
-               "       warehous_code,"
-               "       CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
-               "            ELSE defaultLocationName(itemsite_id)"
-               "       END AS defaultlocation,"
-               "       reorderlevel, qoh, nnqoh,"
-               "       CASE WHEN (itemsite_loccntrl) THEN nnqoh END AS f_nnqoh,"
-               "       cost, (cost * qoh) AS value,"
-               "       CASE WHEN (itemsite_loccntrl) THEN (cost * nnqoh) END AS f_nnvalue,"
-               "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
-               "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
-               "            WHEN(itemsite_costmethod='J') THEN 'Job'"
-               "            WHEN(itemsite_costmethod='N') THEN 'None'"
-               "            ELSE 'UNKNOWN'"
-               "       END AS f_costmethod,"
-               "       'qty' AS reorderlevel_xtnumericrole,"
-               "       'qty' AS qoh_xtnumericrole,"
-               "       'qty' AS f_nnqoh_xtnumericrole,"
-               "       0 AS qoh_xttotalrole,"
-               "       0 AS f_nnqoh_xttotalrole,"
-               "       'cost' AS cost_xtnumericrole,"
-               "       'curr' AS value_xtnumericrole,"
-               "       'curr' AS f_nnvalue_xtnumericrole,"
-               "       0 AS value_xttotalrole,"
-               "       0 AS f_nnvalue_xttotalrole,"
-               "       :na AS f_nnqoh_xtnullrole,"
-               "       :na AS f_nnvalue_xtnullrole,"
-               "       CASE WHEN (qoh < 0) THEN 'error' END AS qoh_qtforegroundrole,"
-               "       CASE WHEN (reorderlevel > qoh) THEN 'warning' END AS qoh_qtforegroundrole "
-               "FROM ( SELECT itemsite_id, itemsite_loccntrl, itemsite_costmethod,"
-               "              CASE WHEN ((itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S'))) THEN 1"
-               "                   ELSE 0"
-               "              END AS detail,"
-               "              warehous_code,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "              itemsite_qtyonhand AS qoh,"
-               "              itemsite_nnqoh AS nnqoh," );
+  ParameterList params;
+
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("qoh", "detail");
+  q = mql.toQuery(params);
+  _qoh->populate(q, true);
+}
+
+bool dspQOHByItem::setParams(ParameterList &params)
+{
+  params.append("byItem");
+
+  params.append("none", tr("None"));
+  params.append("na", tr("N/A"));
 
   if (_useStandardCosts->isChecked())
-    sql += " stdcost(item_id) AS cost ";
+    params.append("useStandardCosts");
   else if (_useActualCosts->isChecked())
-    sql += " actcost(item_id) AS cost ";
-  else
-    sql += " (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END) AS cost ";
-
-  sql += "FROM itemsite, item, warehous "
-         "WHERE ( (itemsite_item_id=item_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (itemsite_item_id=:item_id)"
-         " AND (itemsite_active)";
+    params.append("useActualCosts");
 
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  sql += ") ) AS data "
-         "ORDER BY warehous_code;";
+  params.append("item_id", _item->id());
 
-  q.prepare(sql);
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":na", tr("N/A"));
-  q.bindValue(":item_id", _item->id());
-  _warehouse->bindValue(q);
-  q.exec();
-  if (q.first())
-  {
-    _qoh->populate(q, true);
-  }
+  return true;
 }

@@ -23,6 +23,7 @@ class dspFreightPricesByCustomer : public XWidget, public Ui::dspFreightPricesBy
 public:
     dspFreightPricesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspFreightPricesByCustomer();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

@@ -16,9 +16,11 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
 
 #include "inputManager.h"
 #include "relocateInventory.h"
+#include "mqlutil.h"
 
 dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -172,71 +174,14 @@ void dspQOHByLocation::sFillList()
       _restricted->setText(q.value("restricted").toString());
     }
 
-    QString sql( "SELECT itemloc_id, warehous_code, item_number,"
-                 "       f_descrip, f_lotserial, uom_name,"
-                 "       qty, reservedqty,"
-                 "       'qty' AS qty_xtnumericrole,"
-                 "       'qty' AS reservedqty_xtnumericrole,"
-                 "       level AS xtindentrole "
-                 "FROM ( "
-                 "SELECT itemloc_id, 0 AS level, item_number AS sortkey, warehous_code, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
-                 "       formatlotserialnumber(itemloc_ls_id) AS f_lotserial, uom_name,"
-                 "       itemloc_qty AS qty," );
+    ParameterList params;
 
-    if(_metrics->boolean("EnableSOReservationsByLocation"))
-      sql +=     "       qtyReservedLocation(itemloc_id) AS reservedqty ";
-    else
-      sql +=     "       0 AS reservedqty ";
-    sql +=       "FROM itemloc, itemsite, warehous, item, uom "
-                 "WHERE ( (itemloc_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (itemloc_location_id=:location_id) ) "
-                 "UNION "
-                 "SELECT -1 AS itemloc_id, 0 AS level, item_number AS sortkey, warehous_code, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
-                 "       :na AS f_lotserial, uom_name,"
-                 "       itemsite_qtyonhand AS qty,"
-                 "       0 AS reservedqty "
-                 "FROM itemsite, warehous, item, uom "
-                 "WHERE ((itemsite_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (NOT itemsite_loccntrl)"
-                 " AND (itemsite_location_id=:location_id)) ";
-
-    if(_metrics->boolean("EnableSOReservationsByLocation"))
-      sql +=     "UNION "
-                 "SELECT itemloc_id, 1 AS level, item_number AS sortkey, '' AS warehous_code, '' AS item_number,"
-                 "       (itemlocrsrv_source || '-' || formatSOItemNumber(itemlocrsrv_source_id)) AS f_descrip,"
-                 "       '' AS f_lotserial, '' AS uom_name,"
-                 "       NULL AS qty,"
-                 "       itemlocrsrv_qty AS reservedqty "
-                 "FROM itemlocrsrv, itemloc, itemsite, item "
-                 "WHERE ( (itemlocrsrv_itemloc_id=itemloc_id) "
-                 "  AND   (itemsite_id=itemloc_itemsite_id) "
-                 "  AND   (item_id=itemsite_item_id) "
-                 "  AND   (itemloc_location_id=:location_id) ) ";
-               
-    sql +=       "    ) AS data "
-                 "ORDER BY sortkey, itemloc_id, level;";
-                 
-    q.prepare(sql);
-    q.bindValue(":location_id", _location->id());
-    q.bindValue(":na", tr("N/A"));
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    if (! setParams(params))
       return;
-    }
 
-    if (q.first())
-    {
-      _itemloc->populate(q);
-    }
+    MetaSQLQuery mql = mqlLoad("qoh", "detail");
+    q = mql.toQuery(params);
+    _itemloc->populate(q, true);
   }
   else
   {
@@ -244,4 +189,19 @@ void dspQOHByLocation::sFillList()
     _restricted->clear();
     _itemloc->clear();
   }
+}
+
+bool dspQOHByLocation::setParams(ParameterList &params)
+{
+  params.append("byLocation");
+
+  params.append("na", tr("N/A"));
+
+  if (_location->id() != -1)
+    params.append("location_id", _location->id());
+
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+    params.append("EnableSOReservationsByLocation");
+
+  return true;
 }

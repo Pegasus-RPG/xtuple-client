@@ -14,9 +14,11 @@
 #include <QVariant>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "dspAllocations.h"
 #include "dspOrders.h"
+#include "mqlutil.h"
 
 dspSubstituteAvailabilityByItem::dspSubstituteAvailabilityByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -175,83 +177,39 @@ void dspSubstituteAvailabilityByItem::sFillList()
   {
     _availability->clear();
 
-    QString sql = "SELECT s_itemsite_id, warehous_code, item_number, itemdescrip,"
-                  "       qtyonhand, reorderlevel, leadtime, itemsub_rank,"
-                  "       allocated, ordered, available,"
-                  "      'qty' AS qtyonhand_xtnumericrole,"
-                  "      'qty' AS allocated_xtnumericrole,"
-                  "      'qty' AS ordered_xtnumericrole,"
-                  "      'qty' AS reorderlevel_xtnumericrole,"
-                  "      'qty' AS available_xtnumericrole,"
-                  "      CASE WHEN (reorderlevel >= available) THEN 'error' END AS available_qtforegroundrole "
-                  "FROM ( "
-                  "SELECT sub.itemsite_id AS s_itemsite_id,"
-                  " warehous_code, item_number,"
-                  " (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,";
+    ParameterList params;
 
-    if (_normalize->isChecked())
-      sql += " (sub.itemsite_qtyonhand * itemsub_uomratio) AS qtyonhand,"
-             " (CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END * itemsub_uomratio) AS reorderlevel,"
-             " sub.itemsite_leadtime AS leadtime, itemsub_rank,";
-    else
-      sql += " (sub.itemsite_qtyonhand) AS qtyonhand,"
-             " (CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END) AS reorderlevel,"
-             " sub.itemsite_leadtime AS leadtime, itemsub_rank,";
+    if (! setParams(params))
+      return;
 
-    if (_leadTime->isChecked())
-    {
-      if (_normalize->isChecked())
-        sql += " (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS ordered, "
-               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio)) AS available ";
-      else
-        sql += " (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime)) AS ordered, "
-               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) - qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS available ";
-    }
-    else if (_byDays->isChecked())
-    {
-      if (_normalize->isChecked())
-        sql += " (qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) AS ordered, "
-               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio)) AS available ";
-      else
-        sql += " (qtyAllocated(sub.itemsite_id, :days)) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, :days)) AS ordered, "
-               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, :days) - qtyAllocated(sub.itemsite_id, :days)) AS available ";
-    }
-    else if (_byDate->isChecked())
-    {
-      if (_normalize->isChecked())
-        sql += " (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS ordered, "
-               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio)) AS available ";
-      else
-        sql += " (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS allocated,"
-               " (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE))) AS ordered, "
-               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) - qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS available ";
-    }
-
-    sql += "FROM item, itemsite AS sub, itemsite AS root, warehous, itemsub "
-           "WHERE ( (sub.itemsite_item_id=item_id)"
-           " AND (root.itemsite_item_id=itemsub_parent_item_id)"
-           " AND (sub.itemsite_item_id=itemsub_sub_item_id)"
-           " AND (root.itemsite_warehous_id=sub.itemsite_warehous_id)"
-           " AND (sub.itemsite_warehous_id=warehous_id)"
-           " AND (root.itemsite_item_id=:item_id)";
-
-    if (_warehouse->isSelected())
-      sql += " AND (root.itemsite_warehous_id=:warehous_id)";
-
-    sql += ") ) AS data "
-           "ORDER BY itemsub_rank";
-
-    q.prepare(sql);
-    q.bindValue(":days", _days->value());
-    q.bindValue(":date", _date->date());
-    q.bindValue(":item_id", _item->id());
-    _warehouse->bindValue(q);
-    q.exec();
-    _availability->populate(q);
+    MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
+    q = mql.toQuery(params);
+    _availability->populate(q, true);
   }
+}
+
+bool dspSubstituteAvailabilityByItem::setParams(ParameterList &params)
+{
+  if (_normalize->isChecked())
+    params.append("normalize");
+
+  if (_leadTime->isChecked())
+    params.append("leadTime");
+  else if (_byDays->isChecked())
+  {
+    params.append("byDays");
+    params.append("days", _days->value());
+  }
+  else if (_byDate->isChecked())
+  {
+    params.append("byDate");
+    params.append("date", _date->date());
+  }
+
+  params.append("item_id",  _item->id());
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id",  _warehouse->id()); 
+
+  return true;
 }

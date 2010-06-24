@@ -22,6 +22,7 @@ class dspSummarizedBankrecHistory : public XWidget, public Ui::dspSummarizedBank
 public:
     dspSummarizedBankrecHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedBankrecHistory();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

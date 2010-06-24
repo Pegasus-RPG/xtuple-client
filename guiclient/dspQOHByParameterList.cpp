@@ -14,12 +14,14 @@
 #include <QMenu>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
+#include "mqlutil.h"
 
 dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -293,97 +295,50 @@ void dspQOHByParameterList::sFillList()
   _qoh->clear();
   _qoh->setColumnVisible(_qoh->column("f_costmethod"),
                          _showValue->isChecked() && _usePostedCosts->isChecked());
-  
-  QString sql( "SELECT itemsite_id, detail,"
-               "       warehous_code, classcode_code, item_number, uom_name,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       defaultlocation,"
-               "       reorderlevel, qoh, nnqoh,"
-               "       CASE WHEN (itemsite_loccntrl) THEN nnqoh END AS f_nnqoh,"
-               "       cost, (cost * qoh) AS value,"
-               "       CASE WHEN (itemsite_loccntrl) THEN (cost * nnqoh) END AS f_nnvalue,"
-               "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
-               "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
-               "            WHEN(itemsite_costmethod='J') THEN 'Job'"
-               "            WHEN(itemsite_costmethod='N') THEN 'None'"
-               "            ELSE 'UNKNOWN'"
-               "       END AS f_costmethod,"
-               "       'qty' AS reorderlevel_xtnumericrole,"
-               "       'qty' AS qoh_xtnumericrole,"
-               "       'qty' AS f_nnqoh_xtnumericrole,"
-               "       0 AS qoh_xttotalrole,"
-               "       0 AS f_nnqoh_xttotalrole,"
-               "       'cost' AS cost_xtnumericrole,"
-               "       'curr' AS value_xtnumericrole,"
-               "       'curr' AS f_nnvalue_xtnumericrole,"
-               "       0 AS value_xttotalrole,"
-               "       0 AS f_nnvalue_xttotalrole,"
-               "       :na AS f_nnqoh_xtnullrole,"
-               "       :na AS f_nnvalue_xtnullrole,"
-               "       CASE WHEN (qoh < 0) THEN 'error' END AS qoh_qtforegroundrole,"
-               "       CASE WHEN (reorderlevel > qoh) THEN 'warning' END AS qoh_qtforegroundrole "
-               "FROM ( SELECT itemsite_id, itemsite_loccntrl, itemsite_costmethod,"
-               "              ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) ) AS detail,"
-               "              warehous_code, classcode_code, item_number, uom_name, item_descrip1, item_descrip2,"
-               "              CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
-               "                   ELSE defaultLocationName(itemsite_id)"
-               "              END AS defaultlocation,"
-               "              CASE WHEN (itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "              itemsite_qtyonhand AS qoh,"
-               "              itemsite_nnqoh AS nnqoh," );
+
+  ParameterList params;
+
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("qoh", "detail");
+  q = mql.toQuery(params);
+  _qoh->populate(q, true);
+}
+
+bool dspQOHByParameterList::setParams(ParameterList &params)
+{
+  params.append("byParameterList");
+
+  params.append("none", tr("None"));
+  params.append("na", tr("N/A"));
 
   if (_useStandardCosts->isChecked())
-    sql += " stdcost(item_id) AS cost ";
+    params.append("useStandardCosts");
   else if (_useActualCosts->isChecked())
-    sql += " actcost(item_id) AS cost ";
-  else
-    sql += " (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END) AS cost ";
-
-  sql += "FROM itemsite, item, classcode, warehous, uom "
-         "WHERE ( (itemsite_item_id=item_id)"
-         " AND (item_inv_uom_id=uom_id)"
-         " AND (item_classcode_id=classcode_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (itemsite_active)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("useActualCosts");
 
   if (_parameter->isSelected())
-  {
-    if (_parameter->type() == ParameterGroup::ClassCode)
-      sql += " AND (classcode_id=:classcode_id)";
-    else if (_parameter->type() == ParameterGroup::ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-  }
+    params.append("byParameter");
   else if (_parameter->isPattern())
-  {
-    if (_parameter->type() == ParameterGroup::ClassCode)
-      sql += " AND (classcode_id IN (SELECT classcode_id FROM classcode WHERE classcode_code ~ :classcode_pattern))";
-    else if (_parameter->type() == ParameterGroup::ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-  }
+    params.append("byParameterPattern");
   else if(_parameter->type() == ParameterGroup::ItemGroup)
-    sql += " AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))";
+    params.append("byParameterType");
+
+  _parameter->appendValue(params);
+
+  if (_parameter->type() == ParameterGroup::ItemGroup)
+    params.append("itemgrp");
+  else if(_parameter->type() == ParameterGroup::ClassCode)
+    params.append("classcode");
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
 
   if (_showPositive->isChecked())
-    sql += " AND (itemsite_qtyonhand>0)";
+    params.append("showPositive");
   else if (_showNegative->isChecked())
-    sql += " AND (itemsite_qtyonhand<0)";
+    params.append("showNegative");
 
-  sql += ") ) AS data "
-         "ORDER BY warehous_code";
-
-  sql += ", item_number;";
-
-  q.prepare(sql);
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":na", tr("N/A"));
-  _warehouse->bindValue(q);
-  _parameter->bindValue(q);
-  q.exec();
-  if (q.first())
-  {
-    _qoh->populate(q, true);
-  }
+  return true;
 }

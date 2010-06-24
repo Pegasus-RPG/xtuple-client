@@ -23,6 +23,7 @@ class dspQOHByItem : public XWidget, public Ui::dspQOHByItem
 public:
     dspQOHByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQOHByItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

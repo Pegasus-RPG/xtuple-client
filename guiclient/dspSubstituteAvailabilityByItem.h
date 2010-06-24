@@ -25,6 +25,7 @@ class dspSubstituteAvailabilityByItem : public XWidget, public Ui::dspSubstitute
 public:
     dspSubstituteAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSubstituteAvailabilityByItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );

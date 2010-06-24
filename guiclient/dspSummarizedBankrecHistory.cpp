@@ -14,7 +14,10 @@
 //#include <QStatusBar>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
 #include "guiclient.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedBankrecHistory as a child of 'parent', with the
@@ -80,14 +83,18 @@ void dspSummarizedBankrecHistory::sPrint()
 
 void dspSummarizedBankrecHistory::sFillList()
 {
-  q.prepare( "SELECT bankrec.*,"
-                 "   'curr' AS bankrec_openbal_xtnumericrole,"
-                 "   'curr' AS bankrec_endbal_xtnumericrole "
-                 "FROM bankrec "
-                 "WHERE (bankrec_bankaccnt_id=:bankaccntid) "
-                 "ORDER BY bankrec_created; ");
-  q.bindValue(":bankaccntid", _bankaccnt->id());
-  q.exec();
+  _bankrec->clear();
+  ParameterList params;
+  if(! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("summarizedBankrecHistory", "detail");
+  q = mql.toQuery(params);
   _bankrec->populate(q);
 }
 
+bool dspSummarizedBankrecHistory::setParams(ParameterList & params)
+{
+  params.append("bankaccntid", _bankaccnt->id());
+  return true;
+}

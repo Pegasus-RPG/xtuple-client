@@ -12,6 +12,9 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 dspFreightPricesByCustomer::dspFreightPricesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -70,114 +73,38 @@ void dspFreightPricesByCustomer::sFillList()
 
   if (_cust->isValid())
   {
-    QString sql = "SELECT itemid, sourcetype, ipshead_name, source, ipsfreight_qtybreak, ipsfreight_price,"
-                  "       CASE WHEN (ipsfreight_type = 'F') THEN :flatrate"
-                  "            ELSE :peruom"
-                  "       END AS method,"
-                  "       currConcat(ipshead_curr_id) AS currConcat,"
-                  "       warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia,"
-                  "       'qty' AS ipsfreight_qtybreak_xtnumericrole,"
-                  "       :na AS ipsfreight_qtybreak_xtnullrole,"
-                  "       'salesprice' AS ipsfreight_price_xtnumericrole,"
-                  "       :any AS warehous_code_xtnullrole,"
-                  "       :any AS shipzone_name_xtnullrole,"
-                  "       :any AS freightclass_code_xtnullrole,"
-                  "       :any AS ipsfreight_shipvia_xtnullrole ";
+    ParameterList params;
 
-    sql += "FROM ( SELECT ipsfreight_id AS itemid, 1 AS sourcetype,"
-           "              ipshead_name, :customer AS source,"
-           "              ipsfreight_qtybreak, ipsfreight_price,"
-           "              ipsfreight_type, ipshead_curr_id,"
-           "              warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia "
-           "FROM ipsass JOIN ipshead ON (ipshead_id=ipsass_ipshead_id)"
-           "            JOIN ipsfreight ON (ipsfreight_ipshead_id=ipshead_id)"
-           "            LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)"
-           "            LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)"
-           "            LEFT OUTER JOIN freightclass ON (freightclass_id=ipsfreight_freightclass_id) "
-           "WHERE ( (ipsass_cust_id=:cust_id)"
-           " AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) = 0) ";
+    if (! setParams(params))
+      return;
 
-    if (!_showExpired->isChecked())
-      sql += " AND (ipshead_expires > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (ipshead_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT ipsfreight_id AS itemid, 2 AS sourcetype,"
-           "             ipshead_name, :custType AS source,"
-           "             ipsfreight_qtybreak, ipsfreight_price,"
-           "             ipsfreight_type, ipshead_curr_id,"
-           "             warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia "
-           "FROM ipsass JOIN ipshead ON (ipshead_id=ipsass_ipshead_id)"
-           "            JOIN ipsfreight ON (ipsfreight_ipshead_id=ipshead_id)"
-           "            JOIN cust ON (cust_custtype_id=ipsass_custtype_id)"
-           "            LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)"
-           "            LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)"
-           "            LEFT OUTER JOIN freightclass ON (freightclass_id=ipsfreight_freightclass_id) "
-           "WHERE ( (cust_id=:cust_id) ";
-                  
-    if (!_showExpired->isChecked())
-      sql += " AND (ipshead_expires > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (ipshead_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT ipsfreight_id AS itemid, 3 AS sourcetype,"
-           "             ipshead_name, :custTypePattern AS source,"
-           "             ipsfreight_qtybreak, ipsfreight_price,"
-           "             ipsfreight_type, ipshead_curr_id,"
-           "             warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia "
-           "FROM cust   JOIN custtype ON (custtype_id=cust_custtype_id)"
-           "            JOIN ipsass ON ((coalesce(length(ipsass_custtype_pattern), 0) > 0) AND"
-           "                            (custtype_code ~ ipsass_custtype_pattern))"
-           "            JOIN ipshead ON (ipshead_id=ipsass_ipshead_id)"
-           "            JOIN ipsfreight ON (ipsfreight_ipshead_id=ipshead_id)"
-           "            LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)"
-           "            LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)"
-           "            LEFT OUTER JOIN freightclass ON (freightclass_id=ipsfreight_freightclass_id) "
-           "WHERE ( (cust_id=:cust_id) ";
-                  
-    if (!_showExpired->isChecked())
-      sql += " AND (ipshead_expires > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (ipshead_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT ipsfreight_id AS itemid, 4 AS sourcetype,"
-           "             ipshead_name, (:sale || '-' || sale_name) AS source,"
-           "             ipsfreight_qtybreak, ipsfreight_price,"
-           "             ipsfreight_type, ipshead_curr_id,"
-           "             warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia "
-           "FROM sale JOIN ipshead ON (ipshead_id=sale_ipshead_id)"
-           "          JOIN ipsfreight ON (ipsfreight_ipshead_id=ipshead_id)"
-           "          LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)"
-           "          LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)"
-           "          LEFT OUTER JOIN freightclass ON (freightclass_id=ipsfreight_freightclass_id) "
-           "WHERE ((TRUE)";
-                  
-    if (!_showExpired->isChecked())
-      sql += " AND (sale_enddate > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (sale_startdate <= CURRENT_DATE)";
-
-    sql += ") ) AS data "
-           "ORDER BY ipsfreight_qtybreak, ipsfreight_price;";
-
-    q.prepare(sql);
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":any", tr("Any"));
-    q.bindValue(":flatrate", tr("Flat Rate"));
-    q.bindValue(":peruom", tr("Per UOM"));
-    q.bindValue(":customer", tr("Customer"));
-    q.bindValue(":custType", tr("Cust. Type"));
-    q.bindValue(":custTypePattern", tr("Cust. Type Pattern"));
-    q.bindValue(":sale", tr("Sale"));
-    q.bindValue(":cust_id", _cust->id());
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("freightPrices", "detail");
+    q = mql.toQuery(params);
     _price->populate(q, true);
   }
+}
+
+bool dspFreightPricesByCustomer::setParams(ParameterList &params)
+{
+  params.append("byCust");
+
+  params.append("na", tr("N/A"));
+  params.append("any", tr("Any"));
+  params.append("flatrate", tr("Flat Rate"));
+  params.append("peruom", tr("Per UOM"));
+  params.append("customer", tr("Customer"));
+  params.append("custType", tr("Cust. Type"));
+  params.append("custTypePattern", tr("Cust. Type Pattern"));
+  params.append("sale", tr("Sale"));
+
+  if (_cust->isValid())
+    params.append("cust_id", _cust->id());
+
+  if (!_showExpired->isChecked())
+    params.append("showExpired");
+
+  if (!_showFuture->isChecked())
+    params.append("showFuture");
+
+  return true;
 }
