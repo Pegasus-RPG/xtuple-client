@@ -21,6 +21,17 @@
 #include "xtreewidget.h"
 #include "xwidget.h"
 
+void setupSetupApi(QScriptEngine *engine)
+{
+  QScriptValue obj = engine->newObject();
+
+  obj.setProperty("Configure",    QScriptValue(engine, setup::Configure),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  obj.setProperty("AccountMapping",     QScriptValue(engine, setup::AccountMapping),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  obj.setProperty("MasterInformation",     QScriptValue(engine, setup::MasterInformation),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("setup", obj, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
 setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {

@@ -81,6 +81,7 @@
 #include "scripttoolbox.h"
 #include "menubutton.h"
 
+#include "setup.h"
 #include "setupscriptapi.h"
 
 #define CHECK_REGISTERED 0
@@ -1954,6 +1955,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   setupScriptApi(engine);
+  setupSetupApi(engine);
 }
 
 void GUIClient::addDocumentWatch(QString path, int id)

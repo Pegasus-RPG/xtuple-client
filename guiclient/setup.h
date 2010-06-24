@@ -18,6 +18,8 @@
 
 #include "ui_setup.h"
 
+void setupSetupApi(QScriptEngine* engine);
+
 class setup : public XDialog, public Ui::setup
 {
     Q_OBJECT
