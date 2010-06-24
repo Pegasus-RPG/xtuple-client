@@ -249,10 +249,10 @@ enum SetResponse setup::set(const ParameterList &pParams)
 }
 
 /*!
-  Add setup \a widget with XTreewidgetItem \a parent to the list of setup items and the stacked widget with
-  a\ title.  The item on the list will be enabled according to the \a enabled value.  The value of \a mode will
-  determined whether parameters passed open the widget in "edit" or "view" mode.  A save function on the
-  widget triggered by the Apply and Save buttons can be specified by \a saveMethod.
+  Insert setup item for \a title using the widget with object name \a uiName to the list of setup items.
+  The item on the list will be indented under \a type and enabled according to the \a enabled value.  The value of \a mode will
+  determine whether parameters are passed to set the widget to "edit" or "view" mode.  A save function on the
+  widget triggered by the Apply and Save buttons can optionally be specified by \a saveMethod.
 */
 void setup::insert(const QString &title, const QString &uiName, int type, int modules, bool enabled, int mode, const QString &saveMethod)
 {
@@ -269,7 +269,10 @@ void setup::insert(const QString &title, const QString &uiName, int type, int mo
 }
 
 /*!
-  Saves the current metric settings and repopulates the window.
+  Saves the current settings and repopulates the window.
+
+  \sa save(bool);
+  \sa populate(bool);
 */
 void setup::apply()
 {
@@ -379,6 +382,8 @@ void setup::populate(bool first)
 /*! Emits the \a saving() signal which triggers any widgets to save that have a mapped \a savedMethod()
   specified by \sa insert().  Also reloads metrics, privileges, preferences, and the menubar in the
   main application.  The screen will close if \a close is true.
+
+  \sa apply()
   */
 void setup::save(bool close)
 {
