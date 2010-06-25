@@ -1073,7 +1073,7 @@ void workOrder::sReprioritizeParent()
   if(_priority->value() != _oldPriority)
   {
     if ( QMessageBox::warning( this, tr("Change Priority"),
-                               tr( "A priority change fromm %1 to %2 will update all work order requirements.  "
+                               tr( "A priority change from %1 to %2 will update all work order requirements.  "
                                    "Are you sure you want to change the work order priority?" )
                                .arg(QString().setNum(_oldPriority))
                                .arg(QString().setNum(_priority->value())),
@@ -1172,7 +1172,7 @@ void workOrder::sChangeParentQty()
             newQty = q.value("qty").toDouble();
       }
       else if ( QMessageBox::warning( this, tr("Change Qty"),
-                                 tr( "A quantity change fromm %1 to %2 will update all work order requirements.  "
+                                 tr( "A quantity change from %1 to %2 will update all work order requirements.  "
                                      "Are you sure you want to change the work order quantity?" )
                                  .arg(formatQty(_oldQty))
                                  .arg(formatQty(_qty->text().toDouble())),
