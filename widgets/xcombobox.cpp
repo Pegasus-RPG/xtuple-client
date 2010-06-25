@@ -1674,7 +1674,7 @@ void setupXComboBox(QScriptEngine *engine)
   engine->globalObject().setProperty("XComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
 
-void XComboBox::insertEditor(XComboBoxTypes type, const QString &uiName, const QString &privilege)
+void XComboBox::insertEditor(int type, const QString &uiName, const QString &privilege)
 {
   QPair<QString, QString> data;
   data.first = uiName;

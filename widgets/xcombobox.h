@@ -120,6 +120,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     Q_INVOKABLE bool isValid()              const;
     int               id(int)                const;
     Q_INVOKABLE int   id()                   const;
+    Q_INVOKABLE void  insertEditor(int type, const QString& uiName, const QString& privilege);
     QString           code()                 const;
     QString           fieldName()            const  { return _fieldName;            };
     QString           listDisplayFieldName() const  { return _listDisplayFieldName; };
@@ -163,7 +164,6 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
   protected:
     QString   currentDefault();
     void      mousePressEvent(QMouseEvent *);
-    void      insertEditor(XComboBoxTypes type, const QString& uiName, const QString& privilege);
 
     bool                _allowNull;
     int                 _lastId;
@@ -181,7 +181,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _listSchemaName;
     QString             _listTableName;
     XDataWidgetMapper   *_mapper;
-    QMap<XComboBoxTypes, QPair<QString, QString > > _editorMap;
+    QMap<int, QPair<QString, QString > > _editorMap;
 };
 
 // TODO: is this necessary for script exposure?
