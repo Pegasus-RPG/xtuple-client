@@ -271,7 +271,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
   if (valid)
   {
     if (_showRunningTotal->isChecked() &&
-        _showRunningTotal->isEnabled())
+        _showRunningTotal->isVisible())
     {
       double beginning = 0;
       QDate  periodStart = params.value("startDate").toDate();
@@ -353,7 +353,7 @@ void dspGLTransactions::sFillList()
 {
   if (!_metrics->boolean("ManualForwardUpdate") && 
       _showRunningTotal->isChecked() &&
-      _showRunningTotal->isEnabled())
+      _showRunningTotal->isVisible())
   {
     if (!forwardUpdate())
       return;
@@ -365,7 +365,7 @@ void dspGLTransactions::sFillList()
     return;
 
   if (_showRunningTotal->isChecked() &&
-      _showRunningTotal->isEnabled())
+      _showRunningTotal->isVisible())
   {
     _gltrans->showColumn("running");
     qDebug("begbal %f", params.value("beginningBalance").toDouble());
@@ -607,13 +607,13 @@ void dspGLTransactions::handleTotalCheckbox()
   ParameterList params;
   _parameterWidget->appendValue(params);
 
-  _showRunningTotal->setEnabled(params.inList("accnt_id") &&
+  _showRunningTotal->setVisible(params.inList("accnt_id") &&
                                 !params.inList("source_id") &&
                                 !params.inList("docnum"));
 
   _beginningBalanceLit->setVisible(_showRunningTotal->isChecked() &&
-                                   _showRunningTotal->isEnabled());
+                                   _showRunningTotal->isVisible());
   _beginningBalance->setVisible(_showRunningTotal->isChecked() &&
-                                _showRunningTotal->isEnabled());
+                                _showRunningTotal->isVisible());
 }
 
