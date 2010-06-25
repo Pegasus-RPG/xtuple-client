@@ -15,8 +15,10 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QList>
+#include <QPair>
 #include <QSqlTableModel>
 
+#include "guiclientinterface.h"
 #include "widgets.h"
 #include "xdatawidgetmapper.h"
 
@@ -93,6 +95,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       WorkCenters, WorkOrderCommentTypes
       };
 
+    static GuiClientInterface *_guiClientInterface;
+
     XComboBoxTypes type();
     void setType(XComboBoxTypes);
 
@@ -159,6 +163,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
   protected:
     QString   currentDefault();
     void      mousePressEvent(QMouseEvent *);
+    void      insertEditor(XComboBoxTypes type, const QString& uiName, const QString& privilege);
 
     bool                _allowNull;
     int                 _lastId;
@@ -176,6 +181,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _listSchemaName;
     QString             _listTableName;
     XDataWidgetMapper   *_mapper;
+    QMap<XComboBoxTypes, QPair<QString, QString > > _editorMap;
 };
 
 // TODO: is this necessary for script exposure?

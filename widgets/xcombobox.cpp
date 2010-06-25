@@ -24,6 +24,8 @@
 
 #define DEBUG false
 
+GuiClientInterface* XComboBox::_guiClientInterface = 0;
+
 XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   QComboBox(pParent)
 {
@@ -46,6 +48,108 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   setFont(f);
   setMinimumHeight(26);
 #endif
+
+  // Build map of editor widgets to types
+  insertEditor(AddressCommentTypes,"commentTypes","MaintainCommentTypes");
+  // insertEditor(AdHoc,"",""); Users will insert this one as needed at the implementation
+  insertEditor(APBankAccounts,"bankAccounts","MaintainBankAccounts");
+  insertEditor(APTerms,"terms","MaintainTerms");
+  insertEditor(ARBankAccounts,"bankAccounts","MaintainBankAccounts");
+  insertEditor(ARCMReasonCodes,"reasonCodes","MaintainReasonCodes");
+  insertEditor(ARDMReasonCodes,"reasonCodes","MaintainReasonCodes");
+  insertEditor(ARTerms,"terms","MaintainTerms");
+  insertEditor(AccountingPeriods,"accountingPeriods","MaintainAccountingPeriods");
+  insertEditor(Agent,"users","MaintainUsers");
+  insertEditor(AllCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(AllProjects,"projects","MaintainProjects");
+  insertEditor(BBOMHeadCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(BBOMItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(BOMHeadCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(BOMItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(BOOHeadCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(BOOItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(CRMAccounts,"crmaccounts","MaintainCRMAccounts");
+  insertEditor(CRMAccountCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ClassCodes,"classCodes","MaintainClassCodes");
+  insertEditor(Companies,"companies","MaintainChartOfAccounts");
+  insertEditor(ContactCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(CostCategories,"commentTypes","MaintainCommentTypes");
+  insertEditor(Countries,"countries","MaintainCountries");
+  insertEditor(Currencies,"currencies","MaintainCurrencies");
+  insertEditor(CurrenciesNotBase,"currencies","MaintainCurrencies");
+  insertEditor(CustomerCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(CustomerGroups,"customerGroups","MaintainCustomerGroups");
+  insertEditor(CustomerTypes,"customerTypes","MaintainCustomerTypes");
+  insertEditor(EmployeeCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ExpenseCategories,"expenseCategories","MaintainCustomerTypes");
+  insertEditor(FinancialLayouts,"financialLayouts","MaintainFinancialLayouts");
+  insertEditor(FiscalYears,"accountingYearPeriods","MaintainAccountingPeriods");
+  insertEditor(FreightClasses,"freightClasses","MaintainFreightClasses");
+  insertEditor(Honorifics,"honorifics","MaintainTitles");
+  insertEditor(IncidentCategory,"incidentCategories","MaintainIncidentCategories");
+  insertEditor(IncidentCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(IncidentPriority,"incidentPriorities","MaintainIncidentPriorities");
+  insertEditor(IncidentResolution,"incidentResolutions","MaintainIncidentResolutions");
+  insertEditor(IncidentSeverity,"incidentSeverities","MaintainIncidentSeverities");
+  insertEditor(ItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ItemGroups,"itemGroups","MaintainItemGroups");
+  insertEditor(ItemSiteCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ItemSourceCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(Locales,"locales","MaintainLocales");
+  // insertEditor(LocaleCountries,"",""); // This is based on Qt countries, can not be edited
+  // insertEditor(LocaleLanguages,"",""); // This is based on Qt languages, no editor
+  insertEditor(LocationCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(LotSerialCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(OpportunityCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(OpportunityStages,"opportunityStages","MaintainOpportunityStages");
+  insertEditor(OpportunitySources,"opportunitySources","MaintainOpportunitySources");
+  insertEditor(OpportunityTypes,"opportunityTypes","MaintainOpportunityTypes");
+  insertEditor(PlannerCodes,"plannerCodes","MaintainPlannerCodes");
+  insertEditor(PoProjects,"projects","MaintainProjects");
+  insertEditor(ProductCategories,"productCategories","MaintainProductCategories");
+  insertEditor(ProfitCenters,"profitCenters","MaintainChartOfAccounts");
+  insertEditor(ProjectCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(PurchaseOrderCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(PurchaseOrderItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ReasonCodes,"reasonCodes","MaintainReasonCodes");
+  // insertEditor(RegistrationTypes,"","");  No editor currently exists
+  insertEditor(Reports,"reports","MaintainReports");
+  insertEditor(ReturnReasonCodes,"reasonCodes","MaintainReasonCodes");
+  insertEditor(ReturnAuthCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ReturnAuthItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(QuoteCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(QuoteItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(SalesOrderCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(SalesOrderItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(SalesCategories,"salesCategories","MaintainSalesCategories");
+  insertEditor(SalesReps,"salesReps","MaintainSalesReps");
+  insertEditor(SalesRepsActive,"salesReps","MaintainSalesReps");
+  insertEditor(ShipVias,"shipVias","MaintainShipVias");
+  insertEditor(ShippingCharges,"shippingChargeTypes","MaintainShippingChargeTypes");
+  insertEditor(ShippingForms,"shippingForms","MaintainShippingForms");
+  insertEditor(SiteTypes,"siteTypes","MaintainSiteTypes");
+  insertEditor(SoProjects,"projects","MaintainProjects");
+  insertEditor(Subaccounts,"subaccounts","MaintainChartOfAccounts");
+  insertEditor(TaxAuths,"taxAuthorities","MaintainTaxAuthorities");
+  insertEditor(TaxClasses,"taxclasses","MaintainTaxClasses");
+  insertEditor(TaxCodes,"taxCodes","MaintainTaxCodes");
+  insertEditor(TaxZones,"taxZones","MaintainTaxZones");
+  insertEditor(TaxTypes,"taxTypes","MaintainTaxTypes");
+  insertEditor(Terms,"terms","MaintainTerms");
+  insertEditor(TaskCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(TodoItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(TransferOrderCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(TransferOrderItemCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(UOMs,"uoms","MaintainUOMs");
+  insertEditor(Users,"users","MaintainUsers");
+  insertEditor(ActiveUsers,"users","MaintainUsers");
+  insertEditor(VendorCommentTypes,"commentTypes","MaintainCommentTypes");
+  // insertEditor(VendorGroups,"","");  Not implemented yet
+  insertEditor(VendorTypes,"vendorTypes","MaintainVendorTypes");
+  insertEditor(WarehouseCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(WoProjects,"projects","MaintainProjects");
+  insertEditor(WorkCenters,"workCenters","MaintainWorkCenters");
+  insertEditor(WorkOrderCommentTypes,"commentTypes","MaintainCommentTypes");
 }
 
 XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
@@ -898,6 +1002,17 @@ void XComboBox::setType(XComboBoxTypes pType)
     default:
       break;
   }
+
+  if (_x_privileges && _editorMap.contains(type()))
+  {
+    QString priv = _editorMap.value(type()).second;
+    if (_x_privileges->check(priv))
+    {
+      _ids.append(-1);
+      insertSeparator(count());
+      append(-2,tr("Edit List"));
+    }
+  }
 }
 
 void XComboBox::setLabel(QLabel* pLab)
@@ -1330,6 +1445,30 @@ void XComboBox::sHandleNewIndex(int pIndex)
   if (DEBUG)
     qDebug("%s::sHandleNewIndex(%d)",objectName().toAscii().data(), pIndex);
 
+  // See if request is to edit list
+  if (id() == -2 && _guiClientInterface)
+  {
+    QString ui = _editorMap.value(type()).first;
+    ParameterList params;
+    params.append("mode", "edit");
+
+    QWidget* w = 0;
+    if (parentWidget()->window())
+      w = _guiClientInterface->openWindow(ui, params, parentWidget()->window() , Qt::ApplicationModal, Qt::Dialog);
+
+    if (w)
+    {
+      if (w->inherits("QDialog"))
+      {
+        QDialog* newdlg = qobject_cast<QDialog*>(w);
+        newdlg->exec();
+      }
+
+      connect(w, SIGNAL(destroyed()), this, SLOT(populate()));
+    }
+    return;
+  }
+
   if ((pIndex >= 0) && (pIndex < _ids.count()) && (_ids.at(pIndex) != _lastId))
   {
     _lastId = _ids.at(pIndex);
@@ -1533,4 +1672,14 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("XComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
+void XComboBox::insertEditor(XComboBoxTypes type, const QString &uiName, const QString &privilege)
+{
+  QPair<QString, QString> data;
+  data.first = uiName;
+  data.second = privilege;
+
+  _editorMap.insert(type, data);
+
 }

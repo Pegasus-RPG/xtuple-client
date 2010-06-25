@@ -526,6 +526,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
   XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  XComboBox::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
 
   xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
   CustInfo::_custInfoAction = ciAction;
