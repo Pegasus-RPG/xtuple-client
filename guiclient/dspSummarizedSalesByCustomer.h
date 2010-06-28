@@ -31,6 +31,7 @@ public slots:
     virtual void sViewDetail();
     virtual void sPrint();
     virtual void sFillList();
+    virtual void setParams(ParameterList & params);
 
 protected slots:
     virtual void languageChange();

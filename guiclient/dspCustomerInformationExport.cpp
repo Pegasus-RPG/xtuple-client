@@ -12,6 +12,9 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 dspCustomerInformationExport::dspCustomerInformationExport(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -68,38 +71,37 @@ void dspCustomerInformationExport::sQuery()
     { _corrEmail,    tr("Corr. Email"),       "cust_corremail" }
   };
 
-  QString sql("SELECT cust_id ");
+  ParameterList params;
+
+  if (! setParams(params))
+    return;
 
   for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++)
   {
     if (list[i].checkbox->isChecked())
     {
       _cust->addColumn(list[i].title, 100, Qt::AlignLeft, true, list[i].dbcol);
-      sql += ", " + list[i].dbcol;
+      params.append(list[i].dbcol);
     }
   }
-
-  sql += " FROM cust, custtype "
-         "WHERE ( (cust_custtype_id=custtype_id)";
-
-  if (!_showInactive->isChecked())
-    sql += " AND (cust_active)";
-
-  if (_customerType->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
-  else if (_customerType->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
   
-  sql += " ) "
-         "ORDER BY cust_number;";
+  MetaSQLQuery mql = mqlLoad("customerInformationExport", "detail");
+  q = mql.toQuery(params);
+  _cust->populate(q, true);
 
-  q.prepare(sql);
-  _customerType->bindValue(q);
-  q.exec();
-  _cust->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool dspCustomerInformationExport::setParams(ParameterList &params)
+{
+  if (!_showInactive->isChecked())
+    params.append("showInactive");
+
+  _customerType->appendValue(params);
+
+  return true;
 }

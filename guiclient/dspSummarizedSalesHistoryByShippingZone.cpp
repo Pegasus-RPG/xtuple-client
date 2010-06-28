@@ -15,6 +15,9 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedSalesHistoryByShippingZone as a child of 'parent', with the
@@ -67,39 +70,47 @@ void dspSummarizedSalesHistoryByShippingZone::languageChange()
 
 void dspSummarizedSalesHistoryByShippingZone::sFillList()
 {
-  QString sql( "SELECT shipzone_id, cust_id, "
-               "       shipzone_name, (cust_number || '-' || cust_name) AS customer,"
-               "       item_number, itemdescription,"
-               "       SUM(cohist_qtyshipped) AS totalunits,"
-               "       SUM(baseextprice) AS totalsales,"
-               "       'qty' AS totalunits_xtnumericrole,"
-               "       'curr' AS totalsales_xtnumericrole,"
-               "       0 AS totalunits_xttotalrole,"
-               "       0 AS totalsales_xttotalrole "
-               "FROM saleshistory "
-               "WHERE ((cohist_shipdate BETWEEN :startDate and :endDate)" );
+  _sohist->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("summarizedSalesHistory", "detail");  
+  q = mql.toQuery(params);
+  _sohist->populate(q, TRUE);
+}
 
+bool dspSummarizedSalesHistoryByShippingZone::setParams(ParameterList & params)
+{
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
   if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
+    params.append("prodcat_id" , _productCategory->id());
   else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
+  {
+    QString pattern = _productCategory->pattern();
+    if (pattern.length() == 0)
+      return false;
+    params.append("prodcat_pattern" , _productCategory->pattern());
+  }
 
   if (_selectedShippingZone->isChecked())
-    sql += " AND (shipzone_id=:shipzone_id)";
+    params.append("shipzone_id", _shipZone->id());
 
-  sql += ") "
-         "GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_number, itemdescription;";
+  if (! _dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Enter Dates"),
+                         tr("Enter valid date(s)."));
+    _dates->setFocus();
+    return false;
+  }
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":shipzone_id", _shipZone->id());
-  q.exec();
-  _sohist->populate(q, TRUE);
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
+
+  params.append("byShippingZone");
+
+  return true;
 }
 
 void dspSummarizedSalesHistoryByShippingZone::sPrint()

@@ -16,6 +16,10 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include <metasql.h>
+
+#include "mqlutil.h"
+
 /*
  *  Constructs a dspSummarizedSalesByCustomerByItem as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -97,44 +101,30 @@ void dspSummarizedSalesByCustomerByItem::sPrint()
 
 void dspSummarizedSalesByCustomerByItem::sFillList()
 {
+  _sohist->clear();
+
   if (!checkParameters())
     return;
 
-  _sohist->clear();
+  ParameterList params;
+  setParams(params);
 
-  QString sql( "SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code,"
-               "       minprice, maxprice, avgprice, wtavgprice, totalunits, totalsales,"
-               "       'salesprice' AS minprice_xtnumericrole,"
-               "       'salesprice' AS maxprice_xtnumericrole,"
-               "       'salesprice' AS avgprice_xtnumericrole,"
-               "       'salesprice' AS wtavgprice_xtnumericrole,"
-               "       'qty' AS totalunits_xtnumericrole,"
-               "       'curr' AS totalsales_xtnumericrole,"
-               "       0 AS totalunits_xttotalrole,"
-               "       0 AS totalsales_xttotalrole "
-               "FROM ( SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription,"
-               "              warehous_code, MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
-               "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(baseextprice) AS totalsales,"
-               "              CASE WHEN (SUM(cohist_qtyshipped) = 0) THEN 0"
-               "                   ELSE SUM(baseextprice) / SUM(cohist_qtyshipped)"
-               "              END AS wtavgprice"
-               "       FROM saleshistory "
-               "       WHERE ( (cohist_cust_id=:cust_id)"
-               "        AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  MetaSQLQuery mql = mqlLoad("summarizedSalesHistory", "detail");
+  q = mql.toQuery(params);
+
+  _sohist->populate(q);
+}
+
+void dspSummarizedSalesByCustomerByItem::setParams(ParameterList & params)
+{
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
+  params.append("cust_id", _cust->id());
 
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  sql += ") "
-         "GROUP BY cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code ) AS data ";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-  _sohist->populate(q);
+  params.append("byCustomerByItem");
 }
 
 bool dspSummarizedSalesByCustomerByItem::checkParameters()
@@ -163,7 +153,7 @@ bool dspSummarizedSalesByCustomerByItem::checkParameters()
   {
     if(isVisible()) {
       QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Data.") );
+                            tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
     return FALSE;
@@ -171,5 +161,3 @@ bool dspSummarizedSalesByCustomerByItem::checkParameters()
 
   return TRUE;
 }
-
-

@@ -15,9 +15,13 @@
 //#include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
+
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
 #include "dspSalesHistoryByCustomer.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedSalesByCustomer as a child of 'parent', with the
@@ -120,42 +124,39 @@ void dspSummarizedSalesByCustomer::sPrint()
 
 void dspSummarizedSalesByCustomer::sFillList()
 {
+  _cohist->clear();
+
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_cust_id, (cust_number || '-' || cust_name) AS customer,"
-               "       MIN(cohist_invcdate) AS firstsale, MAX(cohist_invcdate) AS lastsale,"
-               "       SUM(cohist_qtyshipped) AS qtyshipped,"
-               "       SUM(custextprice) AS extprice,"
-               "       currConcat(cust_curr_id) AS currAbbr,"
-               "       'qty' AS qtyshipped_xtnumericrole,"
-               "       'curr' AS extprice_xtnumericrole "
-               "FROM saleshistory "
-               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  ParameterList params;
+  setParams(params);
 
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
-  
-  if (_currency->isSelected())
-      sql += " AND cust_curr_id = :curr_id ";
-  else if (_currency->isPattern())
-      sql += " AND cust_curr_id IN (SELECT curr_id FROM curr_symbol WHERE currConcat(curr_id) ~ :currConcat_pattern) ";
+  MetaSQLQuery mql = mqlLoad("summarizedSalesHistory", "detail");
+  q = mql.toQuery(params);
+
+  _cohist->populate(q);
+}
+
+void dspSummarizedSalesByCustomer::setParams(ParameterList & params)
+{
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
 
   if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  sql += ") "
-         "GROUP BY cohist_cust_id, cust_number, cust_name, cust_curr_id";
+  if (_productCategory->isSelected())
+    params.append("prodcat_id", _productCategory->id());
+  else if (_productCategory->isPattern())
+    params.append("prodcat_pattern", _productCategory->pattern());
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _currency->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
-  _cohist->populate(q);
+  if (_currency->isSelected())
+    params.append("curr_id", _currency->id());
+  else if (_currency->isPattern())
+    params.append("currConcat_pattern", _currency->pattern());
+
+  params.append("byCustomer");
 }
 
 bool dspSummarizedSalesByCustomer::checkParameters()
@@ -178,6 +179,20 @@ bool dspSummarizedSalesByCustomer::checkParameters()
       _dates->setFocus();
     }
     return FALSE;
+  }
+
+  if (_productCategory->isPattern())
+  {
+    QString pattern = _productCategory->pattern();
+    if (pattern.length() == 0)
+      return FALSE;
+  }
+
+  if (_currency->isPattern())
+  {
+    QString pattern = _currency->pattern();
+    if (pattern.length() == 0)
+      return FALSE;
   }
 
   return TRUE;

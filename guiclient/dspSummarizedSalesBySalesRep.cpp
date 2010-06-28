@@ -15,9 +15,13 @@
 //#include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
 #include "dspSalesHistoryBySalesrep.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedSalesBySalesRep as a child of 'parent', with the
@@ -114,36 +118,15 @@ void dspSummarizedSalesBySalesRep::sPrint()
 
 void dspSummarizedSalesBySalesRep::sFillList()
 {
+  _sohist->clear();
+
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_salesrep_id, (salesrep_number || '-' || salesrep_name) AS rep,"
-               "       MIN(cohist_invcdate) AS firstdate, MAX(cohist_invcdate) AS lastdate,"
-               "       SUM(cohist_qtyshipped) AS totalunits,"
-               "       SUM(baseextprice) AS totalsales,"
-               "       'qty' AS totalunits_xtnumericrole,"
-               "       'curr' AS totalsales_xtnumericrole,"
-               "       0 AS totalunits_xttotalrole,"
-               "       0 AS totalsales_xttotalrole "
-               "FROM saleshistory "
-               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
-
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("summarizedSalesHistory", "detail");
+  ParameterList params;
+  setParams(params);
+  q = mql.toQuery(params);
   _sohist->populate(q);
 }
 
@@ -169,6 +152,28 @@ bool dspSummarizedSalesBySalesRep::checkParameters()
     return FALSE;
   }
 
+  if (_productCategory->isPattern())
+  {
+    QString pattern = _productCategory->pattern();
+    if (pattern.length() == 0)
+      return FALSE;
+  }
+
   return TRUE;
 }
 
+void dspSummarizedSalesBySalesRep::setParams(ParameterList & params)
+{
+  if (_productCategory->isSelected())
+    params.append("prodcat_id", _productCategory->id());
+  else if (_productCategory->isPattern())
+    params.append("prodcat_pattern", _productCategory->pattern());
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
+
+  params.append("bySalesRep");
+}

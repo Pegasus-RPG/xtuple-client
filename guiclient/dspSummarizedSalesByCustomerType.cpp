@@ -13,8 +13,12 @@
 #include <QVariant>
 #include <QMessageBox>
 //#include <QStatusBar>
+
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedSalesByCustomerType as a child of 'parent', with the
@@ -100,43 +104,10 @@ void dspSummarizedSalesByCustomerType::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cust_custtype_id, custtype_code, warehous_code,"
-               "       minprice, maxprice, avgprice, wtavgprice, totalunits, totalsales,"
-               "       'salesprice' AS minprice_xtnumericrole,"
-               "       'salesprice' AS maxprice_xtnumericrole,"
-               "       'salesprice' AS avgprice_xtnumericrole,"
-               "       'salesprice' AS wtavgprice_xtnumericrole,"
-               "       'qty' AS totalunits_xtnumericrole,"
-               "       'curr' AS totalsales_xtnumericrole,"
-               "       0 AS totalunits_xttotalrole,"
-               "       0 AS totalsales_xttotalrole "
-               "FROM ( SELECT cust_custtype_id, custtype_code, warehous_code,"
-               "              MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
-               "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(baseextprice) AS totalsales,"
-               "              CASE WHEN (SUM(cohist_qtyshipped) = 0) THEN 0"
-               "                   ELSE SUM(baseextprice) / SUM(cohist_qtyshipped)"
-               "              END AS wtavgprice"
-               "       FROM saleshistory "
-               "       WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += "AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_customerType->isSelected())
-    sql += " AND (cust_custtype_id=:custtype_id)";
-  else if (_customerType->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
-
-  sql += ") "
-         "GROUP BY cust_custtype_id, custtype_code, warehous_code ) AS data "
-         "ORDER BY custtype_code, warehous_code;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _customerType->bindValue(q);
-  _dates->bindValue(q);
-  q.exec(); 
+  MetaSQLQuery mql = mqlLoad("summarizedSalesHistory", "detail");
+  ParameterList params;
+  setParams(params);
+  q = mql.toQuery(params);
   _sohist->populate(q);
 }
 
@@ -156,12 +127,37 @@ bool dspSummarizedSalesByCustomerType::checkParameters()
   {
     if(isVisible()) {
       QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Data.") );
+                            tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
     return FALSE;
   }
 
+  if (_customerType->isPattern())
+  {
+    QString pattern = _customerType->pattern();
+    if (pattern.length() == 0)
+      return FALSE;
+  }
+
   return TRUE;
 }
 
+void dspSummarizedSalesByCustomerType::setParams(ParameterList & params)
+{
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (_customerType->isSelected())
+    params.append("custtype_id", _customerType->id());
+  else if (_customerType->isPattern())
+  {
+    params.append("custtype_pattern", _customerType->pattern());
+  }
+
+  params.append("byCustomerType");
+  params.append("commonParamsSet1");
+}

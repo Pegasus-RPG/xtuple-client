@@ -25,6 +25,7 @@ public:
     ~dspSummarizedSalesByCustomerType();
 
     virtual bool checkParameters();
+    virtual void setParams(ParameterList & params);
 
 public slots:
     virtual void sPrint();

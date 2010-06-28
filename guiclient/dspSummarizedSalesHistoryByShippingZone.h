@@ -23,7 +23,7 @@ class dspSummarizedSalesHistoryByShippingZone : public XWidget, public Ui::dspSu
 public:
     dspSummarizedSalesHistoryByShippingZone(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedSalesHistoryByShippingZone();
-
+    virtual bool setParams(ParameterList &);
 public slots:
     virtual void sFillList();
     virtual void sPrint();

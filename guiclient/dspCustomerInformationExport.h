@@ -23,6 +23,7 @@ class dspCustomerInformationExport : public XWidget, public Ui::dspCustomerInfor
 public:
     dspCustomerInformationExport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCustomerInformationExport();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sQuery();
