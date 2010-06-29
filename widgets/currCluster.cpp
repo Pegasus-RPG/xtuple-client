@@ -706,22 +706,21 @@ void CurrDisplay::setBaseValue(double newValue)
 
 void CurrDisplay::setLocalValue(double newValue)
 {
-    _state = (_state == NANew || _state == NAInit) ? NAInit : Initialized;
+  _state = (_state == NANew || _state == NAInit) ? NAInit : Initialized;
 
-    // either the value has significantly changed or we're explicitly setting 0
-    if (ABS(_valueLocal - newValue) > EPSILON(_localScale) ||
-	newValue < EPSILON(_localScale))
-    {
-       int prec = 1;
-       for (int cnt = 0; cnt < _decimals + _localScale; cnt++)
-         prec = prec * 10;
-         
-	_valueLocal = (double)qRound(newValue*prec)/prec;
-	_localKnown = true;
-	emit valueLocalChanged(_valueLocal);
-	sValueLocalChanged(_valueLocal);
-	sReformat();
-    }
+  // either the value has significantly changed or we're explicitly setting 0
+  if (ABS(_valueLocal - newValue) > EPSILON(_localScale) ||
+      newValue < EPSILON(_localScale))
+  {
+    int prec = 1;
+    for (int cnt = 0; cnt < _decimals + _localScale; cnt++)
+      prec = prec * 10;
+    _valueLocal = floor(newValue*prec + .5f)/prec;
+    _localKnown = true;
+    emit valueLocalChanged(_valueLocal);
+    sValueLocalChanged(_valueLocal);
+    sReformat();
+  }
 }
 
 void CurrDisplay::sValueBaseChanged()
