@@ -715,6 +715,7 @@ void CurrDisplay::setLocalValue(double newValue)
     int prec = 1;
     for (int cnt = 0; cnt < _decimals + _localScale; cnt++)
       prec = prec * 10;
+    // Changed from qRound to floor because windows qRound was truncating on windows
     _valueLocal = floor(newValue*prec + .5f)/prec;
     _localKnown = true;
     emit valueLocalChanged(_valueLocal);
