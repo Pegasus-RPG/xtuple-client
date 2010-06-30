@@ -24,6 +24,7 @@ class dspUnbalancedQOHByClassCode : public XWidget, public Ui::dspUnbalancedQOHB
 public:
     dspUnbalancedQOHByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUnbalancedQOHByClassCode();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sBalance();

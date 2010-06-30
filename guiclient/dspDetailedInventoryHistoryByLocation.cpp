@@ -16,6 +16,7 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
 
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
@@ -23,6 +24,7 @@
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "countTag.h"
+#include "mqlutil.h"
 
 dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -198,54 +200,40 @@ void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
 
 void dspDetailedInventoryHistoryByLocation::sFillList()
 {
+  ParameterList params;
+
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("detailedInventoryHistory", "detail");
+  q = mql.toQuery(params);
+  _invhist->populate(q, true);
+}
+
+bool dspDetailedInventoryHistoryByLocation::setParams(ParameterList &params)
+{
+  params.append("byLocation");
+ 
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
                            tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
-
-  if (!_dates->endDate().isValid())
+  else if (!_dates->endDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter End Date"),
                            tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
+  else
+    _dates->appendValue(params);
 
-  q.prepare( "SELECT invhist_id, invhist_transdate, invhist_transtype,"
-            "        (invhist_ordtype || '-' || invhist_ordnumber) AS ordernumber,"
-             "       invhist_invuom,"
-             "       item_number, formatlotserialnumber(invdetail_ls_id) AS lotserial,"
-             "       CASE WHEN invhist_posted THEN invdetail_qty"
-             "       END AS transqty,"
-             "       CASE WHEN invhist_posted THEN invdetail_qty_before"
-             "       END AS qohbefore,"
-             "       CASE WHEN invhist_posted THEN invdetail_qty_after"
-             "       END AS qohafter,"
-             "       invhist_posted,"
-             "      'qty' AS transqty_xtnumericrole,"
-             "      'qty' AS qohbefore_xtnumericrole,"
-             "      'qty' AS qohafter_xtnumericrole,"
-             "       CASE WHEN NOT invhist_posted THEN 'warning'"
-             "       END AS qtforegroundrole "
-             "FROM invdetail, invhist, itemsite, item "
-             "WHERE ( (invdetail_invhist_id=invhist_id)"
-             " AND (invhist_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (invdetail_location_id=:location_id)"
-             " AND (DATE(invhist_transdate) BETWEEN :startDate AND :endDate)"
-             " AND (transType(invhist_transtype, :transType)) ) "
-             "ORDER BY invhist_transdate DESC, invhist_transtype;" );
-  _dates->bindValue(q);
-  q.bindValue(":location_id", _location->id());
-  q.bindValue(":transType", _transType->id());
-  q.exec();
-  _invhist->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  params.append("location_id", _location->id());
+
+  params.append("transType", _transType->id());
+
+  return true;
 }

@@ -23,6 +23,7 @@ class dspPendingBOMChanges : public XWidget, public Ui::dspPendingBOMChanges
 public:
     dspPendingBOMChanges(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPendingBOMChanges();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

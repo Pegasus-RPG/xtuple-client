@@ -12,11 +12,13 @@
 
 #include <QMenu>
 #include <QSqlError>
+#include <metasql.h>
 
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
 #include "storedProcErrorLookup.h"
+#include "mqlutil.h"
 
 dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -146,42 +148,28 @@ void dspUnbalancedQOHByClassCode::sPopulateMenu(QMenu *pMenu)
 
 void dspUnbalancedQOHByClassCode::sFillList()
 {
-  QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-               "       itemsite_qtyonhand,"
-               "       detailedQOH(itemsite_id, FALSE) AS detailedqoh,"
-               "       itemsite_nnqoh,"
-               "       detailedNNQOH(itemsite_id, FALSE) AS detailednnqoh,"
-               "       'qty' AS itemsite_qtyonhand_xtnumericrole,"
-               "       'qty' AS detailedqoh_xtnumericrole,"
-               "       'qty' AS itemsite_nnqoh_xtnumericrole,"
-               "       'qty' AS detailednnqoh_xtnumericrole "
-               "FROM warehous, item, itemsite, uom "
-               "WHERE ( (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
-               " AND ( (itemsite_qtyonhand <> detailedQOH(itemsite_id, FALSE))"
-               "    OR (itemsite_nnqoh <> detailedNNQOH(itemsite_id, FALSE)) )" );
+  ParameterList params;
 
-  if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("unbalancedQOHByClassCode", "detail");
+  q = mql.toQuery(params);
+  _itemsite->populate(q, true);
+}
+
+bool dspUnbalancedQOHByClassCode::setParams(ParameterList &params)
+{
+  if ((_classCode->isSelected()) || (_classCode->isPattern()))
+    _classCode->appendValue(params);
 
   if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  sql += ") "
-         "ORDER BY item_number;";
+  params.append("regular", tr("Regular"));
+  params.append("none", tr("None"));
+  params.append("lot", tr("Lot #"));
+  params.append("serial", tr("Serial #"));
 
-  q.prepare(sql);
-  q.bindValue(":regular", tr("Regular"));
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":lot", tr("Lot #"));
-  q.bindValue(":serial", tr("Serial #"));
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
-  _itemsite->populate(q);
+  return true;
 }

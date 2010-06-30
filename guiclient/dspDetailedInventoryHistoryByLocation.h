@@ -23,6 +23,7 @@ class dspDetailedInventoryHistoryByLocation : public XWidget, public Ui::dspDeta
 public:
     dspDetailedInventoryHistoryByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspDetailedInventoryHistoryByLocation();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPopulateLocations();

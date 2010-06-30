@@ -14,7 +14,9 @@
 
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
 
+#include "mqlutil.h"
 #include "bomItem.h"
 
 dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -124,45 +126,29 @@ void dspPendingBOMChanges::sFillList(int, bool)
 {
   if ((_item->isValid()) && (_cutoff->isValid()))
   {
-    q.prepare( "SELECT bomitem_id, actiondate, action,"
-               "       bomitem_seqnumber, item_number, description,"
-               "       uom_name, qtyfxd, qtyper,"
-               "       bomitem_scrap, actiondate,"
-               "       'qty' AS qtyfxd_xtnumericrole,"
-               "       'qtyper' AS qtyper_xtnumericrole,"
-               "       'percent' AS bomitem_scrap_xtnumericrole "
-               "FROM ( "
-               "SELECT bomitem_id, :effective AS action,"
-               "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name,"
-			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS qtyfxd,"
-			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
-               "       bomitem_scrap, bomitem_effective AS actiondate "
-               "FROM bomitem(:item_id,:revision_id), item, uom "
-               "WHERE ( (bomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (bomitem_effective BETWEEN CURRENT_DATE AND :cutOffDate) ) "
-               "UNION "
-               "SELECT bomitem_id, :expires AS action, "
-               "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name,"
-			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyfxd) AS qtyfxd,"
-			   "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
-               "       bomitem_scrap, bomitem_expires AS actiondate "
-               "FROM bomitem(:item_id,:revision_id), item, uom "
-               "WHERE ( (bomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (bomitem_expires BETWEEN CURRENT_DATE AND :cutOffDate) ) "
-               "    ) AS data "
-               "ORDER BY action, actiondate, bomitem_seqnumber;" );
-    q.bindValue(":effective", tr("Effective"));
-    q.bindValue(":expires", tr("Expires"));
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":revision_id", _revision->id());
-    q.bindValue(":cutOffDate", _cutoff->date());
-    q.exec();
+    ParameterList params;
+    if (! setParams(params))
+      return;
+    MetaSQLQuery mql = mqlLoad("pendingBOMChanges", "detail");
+    q = mql.toQuery(params);
     _bomitem->populate(q);
   }
   else
     _bomitem->clear();
+}
+
+bool dspPendingBOMChanges::setParams(ParameterList &params)
+{
+  params.append("effective", tr("Effective"));
+  params.append("expires", tr("Expires"));
+
+  params.append("revision_id", _revision->id());
+  params.append("cutOffDate", _cutoff->date());
+
+  if (_item->isValid())
+    params.append("item_id", _item->id());
+  else
+    return false;
+
+  return true;
 }

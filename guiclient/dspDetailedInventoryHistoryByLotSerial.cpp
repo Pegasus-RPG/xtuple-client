@@ -15,6 +15,7 @@
 #include <QMessageBox>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
@@ -22,6 +23,7 @@
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "countTag.h"
+#include "mqlutil.h"
 
 dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -200,73 +202,16 @@ void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(QMenu *menuThis)
 
 void dspDetailedInventoryHistoryByLotSerial::sFillList()
 {
-  QString trace;
   _invhist->clear();
 
-  if (_dateGroup->isChecked())
-  {
-    if (!_dates->startDate().isValid())
-    {
-      QMessageBox::critical( this, tr("Enter Start Date"),
-                             tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-      return;
-    }
+  ParameterList params;
 
-    if (!_dates->endDate().isValid())
-    {
-      QMessageBox::critical( this, tr("Enter End Date"),
-                             tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-      return;
-    }
-  }
-
-
-  if ( ((_selected->isChecked() && _lotSerial->number().trimmed().length() == 0)
-     || (_pattern->isChecked() && _lotSerialPattern->text().trimmed().length() == 0))
-     && (!_item->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Enter Lot/Serial #"),
-                          tr("<p>You must enter a Lot/Serial or Item criteria to view Inventory "
-			     "Detail by Lot/Serial #.</p>") );
-    _lotSerial->setFocus();
+  if (! setParams(params))
     return;
-  }
 
-
-  if (_traceGroup->isChecked())
-  {
-    if (_forward->isChecked())
-      trace="F";
-    else
-      trace="B";
-  }
-  else
-    trace="N";
-
-  q.prepare( "SELECT * FROM lshist(:itemid,:warehouseid,:lotserial,:pattern,:transType,:startDate,:endDate,:trace,1); ");
-  if (_dateGroup->isChecked())
-    _dates->bindValue(q);
-  if (_item->isValid())
-    q.bindValue(":itemid", _item->id());
-  if (_warehouse->isSelected())
-    q.bindValue(":warehouseid", _warehouse->id());
-  if (_selected->isChecked())
-  {
-    if (_lotSerial->number().trimmed().length() > 0)
-      q.bindValue(":lotserial", _lotSerial->number().trimmed());
-    q.bindValue(":pattern", FALSE);
-  }
-  else
-  {   
-    q.bindValue(":lotserial", _lotSerialPattern->text().trimmed());
-    q.bindValue(":pattern", TRUE);
-  }
-  q.bindValue(":transType", _transType->id());
-  q.bindValue(":trace", trace);
-  q.exec();
-  _invhist->populate(q);
+  MetaSQLQuery mql = mqlLoad("detailedInventoryHistory", "detail");
+  q = mql.toQuery(params);
+  _invhist->populate(q, true);
   _invhist->expandAll();
 }
 
@@ -282,4 +227,69 @@ void dspDetailedInventoryHistoryByLotSerial::sSelect()
     _lotSerial->setEnabled(false);
     _lotSerialPattern->setEnabled(true);
   }
+}
+
+bool dspDetailedInventoryHistoryByLotSerial::setParams(ParameterList &params)
+{
+  QString trace;
+
+  if (_dateGroup->isChecked())
+  {
+    if (!_dates->startDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter Start Date"),
+                             tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+      return false;
+    }
+
+    if (!_dates->endDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter End Date"),
+                             tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+      return false;
+    }
+  }
+
+  if ( ((_selected->isChecked() && _lotSerial->number().trimmed().length() == 0)
+     || (_pattern->isChecked() && _lotSerialPattern->text().trimmed().length() == 0))
+     && (!_item->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Enter Lot/Serial #"),
+                          tr("<p>You must enter a Lot/Serial or Item criteria to print Inventory "
+                 "Detail by Lot/Serial #.</p>") );
+    _lotSerial->setFocus();
+    return false;
+  }
+
+  if (_traceGroup->isChecked())
+  {
+    if (_forward->isChecked())
+      trace="F";
+    else
+      trace="B";
+  }
+  else
+    trace="N";
+
+  _dates->appendValue(params);
+  if (_item->isValid())
+    params.append("itemid", _item->id());
+  if (_warehouse->isSelected())
+    params.append("warehouseid", _warehouse->id());
+  params.append("transType", _transType->id());
+  params.append("trace", trace);
+  if (_selected->isChecked())
+  {
+    if (_lotSerial->number().trimmed().length() > 0)
+      params.append("lotSerial", _lotSerial->number().trimmed());
+  }
+  else
+  {
+    params.append("pattern");
+    params.append("lotSerial", _lotSerialPattern->text().trimmed());
+  }
+
+  return true;
 }

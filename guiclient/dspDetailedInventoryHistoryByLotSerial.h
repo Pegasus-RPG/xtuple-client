@@ -24,6 +24,7 @@ class dspDetailedInventoryHistoryByLotSerial : public XWidget, public Ui::dspDet
 public:
     dspDetailedInventoryHistoryByLotSerial(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspDetailedInventoryHistoryByLotSerial();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();
