@@ -170,10 +170,12 @@ void cashReceiptsEditList::sPost()
   }
 
   QList<XTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  XTreeWidgetItem *cursor = 0;
   for (int i = 0; i < selected.size(); i++)
   {
+    cursor = (XTreeWidgetItem*)selected.at(i);
     q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-    q.bindValue(":cashrcpt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":cashrcpt_id", cursor->id());
     q.bindValue(":journalNumber", journalNumber);
     q.exec();
     if (q.first())
@@ -193,7 +195,7 @@ void cashReceiptsEditList::sPost()
       tx.exec("ROLLBACK;");
       return;
     }
-    omfgThis->sCashReceiptsUpdated(((XTreeWidgetItem*)(selected[i]))->id(), TRUE);
+    omfgThis->sCashReceiptsUpdated(cursor->id(), TRUE);
   }
   tx.exec("COMMIT;");
   sFillList();
