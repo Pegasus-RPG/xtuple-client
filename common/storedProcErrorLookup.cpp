@@ -1092,6 +1092,14 @@ void initErrorLookupHash()
   { "postPoReceipt",   -11, "", -11, "postReceipt" },
   { "postPoReceipt",   -12, "", -12, "postReceipt" },
 
+  { "postProduction", -1, TR("Unable to post this Production because the Work Order "
+                             "status is not Exploded, Released, or InProcess."), 0, "" },
+  { "postProduction", -2, TR("Unable to post this Production because backflushing "
+                             "component usage could not be completed due "
+                             "to missing Item Sites."),		 0, "" },
+  { "postProduction", -3, TR("Unable to post this Production because of missing "
+                           "Item Site or Cost Category."), 0, "" },
+
   { "postReceipt",  -1, "",	 -1, "postInvTrans" },
   { "postReceipt",  -2, "",	 -2, "postInvTrans" },
   { "postReceipt",  -3, "",	 -3, "insertGLTransaction" },
