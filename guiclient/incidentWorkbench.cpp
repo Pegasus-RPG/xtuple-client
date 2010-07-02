@@ -128,7 +128,7 @@ void incidentWorkbench::sNew()
 
   incident newdlg(this, 0, true);
   newdlg.set(params);
-  if(newdlg.exec() == XDialog::Accepted)
+  if(newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -140,7 +140,7 @@ void incidentWorkbench::sEdit()
 
   incident newdlg(this, 0, true);
   newdlg.set(params);
-  if(newdlg.exec() == XDialog::Accepted)
+  if(newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
