@@ -712,7 +712,7 @@ void CurrDisplay::setLocalValue(double newValue)
   if (ABS(_valueLocal - newValue) > EPSILON(_localScale) ||
       newValue < EPSILON(_localScale))
   {
-    double prec = pow(10, qMax(0, (_decimals + _localScale)));
+    double prec = pow(10.0, qMax(0, (_decimals + _localScale)));
     // use the floor function here instead of qRound to prevent problem on windows builds
     _valueLocal = floor(newValue*prec + 0.5f)/prec;
     _localKnown = true;
