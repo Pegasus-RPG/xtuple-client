@@ -19,9 +19,11 @@
 #include <parameter.h>
 #include <datecluster.h>
 #include <openreports.h>
+#include <metasql.h>
 #include "guiclient.h"
 #include "dspBookingsByItem.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspTimePhasedBookingsByItem as a child of 'parent', with the
@@ -133,63 +135,23 @@ void dspTimePhasedBookingsByItem::sFillList()
 
   _columnDates.clear();
 
-  QString sql("SELECT itemsite_id, item_number");
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_salesDollars->isChecked())
-    sql += ", TEXT('$') AS uom_name, warehous_code";
-  
-  else if (_inventoryUnits->isChecked())
-    sql += ", uom_name, warehous_code";
-
-  int columns = 1;
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    QString bucketname = QString("bucket%1").arg(columns++);
-    if (_salesDollars->isChecked())
-      sql += QString(", bookingsByItemValue(itemsite_id, %1) AS %2,"
-                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
-    else if (_inventoryUnits->isChecked())
-      sql += QString(", bookingsByItemQty(itemsite_id, %1) AS %2,"
-                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
+    QString bucketname = QString("bucket_%1").arg(cursor->id());
     _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
 
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, uom, warehous "
-         "WHERE ( (itemsite_item_id=item_id)"
-         " AND (item_inv_uom_id=uom_id)"
-         " AND (item_sold)"
-         " AND (itemsite_warehous_id=warehous_id)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id) ";
- 
-  if (_productCategory->isSelected())
-    sql += "AND (item_prodcat_id=:prodcat_id) ";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id  FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern))) ";
-
-  sql += ") "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  q.exec();
-  _soitem->populate(q);
+  MetaSQLQuery mql = mqlLoad("timePhasedBookings", "detail");
+  q = mql.toQuery(params);
+  _soitem->populate(q, true);
 }
 
 void dspTimePhasedBookingsByItem::sSubmit()
@@ -235,4 +197,23 @@ ParameterList dspTimePhasedBookingsByItem::buildParameters()
   params.append("period_id_list", periodList);
 
   return params;
+}
+
+bool dspTimePhasedBookingsByItem::setParams(ParameterList & params)
+{
+  params.append("byItem");
+  params.append("period_list", _periods->periodList());
+
+  if (_salesDollars->isChecked())
+    params.append("salesDollars");
+  else if (_inventoryUnits->isChecked())
+    params.append("inventoryUnits");
+
+  if ((_productCategory->isSelected()) || (_productCategory->isPattern()))
+    _productCategory->appendValue(params);
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  return true;
 }

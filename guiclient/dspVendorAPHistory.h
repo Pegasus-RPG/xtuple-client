@@ -26,6 +26,7 @@ public:
     ~dspVendorAPHistory();
 
     virtual bool checkParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );

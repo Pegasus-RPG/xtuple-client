@@ -19,9 +19,11 @@
 #include <parameter.h>
 #include <datecluster.h>
 #include <openreports.h>
+#include <metasql.h>
 #include "guiclient.h"
 #include "dspBookingsByProductCategory.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspTimePhasedBookingsByProductCategory as a child of 'parent', with the
@@ -131,86 +133,23 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
   _soitem->setColumnCount(3);
 
   _columnDates.clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  QString sql("SELECT prodcat_id, warehous_id, prodcat_code, warehous_code");
-
-  if (_salesDollars->isChecked())
-    sql += ", TEXT('$') AS uom";
-  
-  else if (_inventoryUnits->isChecked())
-    sql += ", uom_name AS uom";
-
-  else if (_capacityUnits->isChecked())
-    sql += ", itemcapuom(item_id) AS uom";
-
-  else if (_altCapacityUnits->isChecked())
-    sql += ", itemaltcapuom(item_id) AS uom";
-
-  int columns = 1;
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    QString bucketname = QString("bucket%1").arg(columns++);
-
-    if (_salesDollars->isChecked())
-      sql += QString(", SUM(bookingsByItemValue(itemsite_id, %1)) AS %2,"
-                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
-    else if (_inventoryUnits->isChecked())
-      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %1)) AS %2,"
-                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
-    else if (_capacityUnits->isChecked())
-      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %1) * itemcapinvrat(item_id)) AS %2,"
-                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
-    else if (_altCapacityUnits->isChecked())
-      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %1) * itemaltcapinvrat(item_id)) AS %2,"
-                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
+    QString bucketname = QString("bucket_%1").arg(cursor->id());
 
     _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
 
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, uom, warehous, prodcat "
-         "WHERE ( (itemsite_item_id=item_id)"
-         " AND (item_inv_uom_id=uom_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (item_prodcat_id=prodcat_id)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id) ";
-
-  if (_productCategory->isSelected())
-    sql += "AND (prodcat_id=:prodcat_id) ";
-  else if (_productCategory->isPattern())
-    sql += "AND (prodcat_code ~ :prodcat_pattern) ";
-
-  sql += ") "
-         "GROUP BY prodcat_id, warehous_id, prodcat_code, uom, warehous_code;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("timePhasedBookings", "detail");
+  q = mql.toQuery(params);
   _soitem->populate(q, true);
 }
 
@@ -261,4 +200,27 @@ ParameterList dspTimePhasedBookingsByProductCategory::buildParameters()
   params.append("period_id_list", periodList);
 
   return params;
+}
+
+bool dspTimePhasedBookingsByProductCategory::setParams(ParameterList & params)
+{
+  params.append("byProdcat");
+  params.append("period_list",_periods->periodList());
+
+  if (_salesDollars->isChecked())
+    params.append("salesDollars");
+  else if (_inventoryUnits->isChecked())
+    params.append("inventoryUnits");
+  else if (_capacityUnits->isChecked())
+    params.append("capacityUnits");
+  else if (_altCapacityUnits->isChecked())
+    params.append("altCapacityUnits");
+
+  if ((_productCategory->isSelected()) || (_productCategory->isPattern()))
+    _productCategory->appendValue(params);
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  return true;
 }

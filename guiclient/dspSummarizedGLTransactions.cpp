@@ -15,13 +15,17 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
+
 #include <openreports.h>
 #include <parameter.h>
+#include <metasql.h>
+
 #include "glTransactionDetail.h"
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspSummarizedGLTransactions as a child of 'parent', with the
@@ -117,85 +121,36 @@ void dspSummarizedGLTransactions::sFillList()
 {
   _gltrans->clear();
 
-  QString sql( "SELECT accnt_id, gltrans_id,"
-               "       account, accnt_descrip,"
-               "       gltrans_date, gltrans_source, gltrans_doctype, gltrans_docnumber,"
-               "       f_notes,"
-               "       debit, credit,"
-               "       gltrans_username, gltrans_created,"
-               "       CASE WHEN (level=0) THEN accnt_descrip"
-               "            ELSE f_notes"
-               "       END AS descrip_notes,"
-               "       'curr' AS debit_xtnumericrole,"
-               "       'curr' AS credit_xtnumericrole,"
-               "       0 AS debit_xtnumericrole,"
-               "       0 AS credit_xtnumericrole,"
-               "       CASE WHEN (debit=0) THEN '' END AS debit_qtdisplayrole,"
-               "       CASE WHEN (credit=0) THEN '' END AS credit_qtdisplayrole,"
-               "       level AS xtindentrole "
-               "FROM ( "
-               "SELECT DISTINCT accnt_id, -1 AS gltrans_id, 0 AS level,"
-               "       accnt_number, accnt_profit, accnt_sub, "
-               "       formatGLAccount(accnt_id) AS account, accnt_descrip,"
-               "       CAST(NULL AS DATE) AS gltrans_date, '' AS gltrans_source, '' AS gltrans_doctype, '' AS gltrans_docnumber,"
-               "       '' AS f_notes,"
-               "       SUM( CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1) "
-               "                        ELSE 0 "
-               "                   END ) AS debit, "
-               "       SUM( CASE WHEN (gltrans_amount > 0) THEN gltrans_amount "
-               "                       ELSE 0 "
-               "                  END ) AS credit, "
-               "       '' AS gltrans_username, CAST(NULL AS TIMESTAMP) AS gltrans_created "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (NOT gltrans_deleted) "
-               " AND (gltrans_date BETWEEN :startDate AND :endDate) ");
+  ParameterList params;
+  if ( ! setParams(params))
+    return;
 
-  if (_selectedSource->isChecked())
-    sql += " AND (gltrans_source=:source)";
+  MetaSQLQuery mql = mqlLoad("summarizedGLTransactions", "detail");
+  q = mql.toQuery(params);
 
-  if (_unpostedTransactions->isChecked())
-    sql += " AND (NOT gltrans_posted)";
-  else if (_postedTransactions->isChecked())
-    sql += " AND (gltrans_posted)";
-
-  sql +=       ") GROUP BY accnt_id, accnt_number, accnt_profit, accnt_sub, accnt_descrip "
-               "UNION "
-               "SELECT accnt_id, gltrans_id, 1 AS level,"
-               "       accnt_number, accnt_profit, accnt_sub, "
-               "       '' AS account, '' AS accnt_descrip,"
-               "       gltrans_date, gltrans_source, gltrans_doctype, gltrans_docnumber,"
-               "       firstLine(gltrans_notes) AS f_notes,"
-               "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
-               "            ELSE 0"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE 0"
-               "       END AS credit,"
-               "       gltrans_username, gltrans_created "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (NOT gltrans_deleted) "
-               " AND (gltrans_date BETWEEN :startDate AND :endDate) ";
-
-  if (_selectedSource->isChecked())
-    sql += " AND (gltrans_source=:source)";
-
-  if (_unpostedTransactions->isChecked())
-    sql += " AND (NOT gltrans_posted)";
-  else if (_postedTransactions->isChecked())
-    sql += " AND (gltrans_posted)";
-
-  sql += ") ) AS data "
-         "ORDER BY accnt_number, accnt_profit, accnt_sub, level, gltrans_date DESC, gltrans_created;";
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":source", _source->currentText());
-  q.exec();
   if (q.first())
   {
     _gltrans->populate(q, true);
   }
+}
+
+bool dspSummarizedGLTransactions::setParams(ParameterList & params)
+{
+  if (_dates->allValid())
+  {
+    params.append("startDate", _dates->startDate());
+    params.append("endDate", _dates->endDate());
+  }
+
+  if (_selectedSource->isChecked())
+    params.append("source", _source->currentText());
+
+  if (_unpostedTransactions->isChecked())
+    params.append("unpostedTransactions");
+  else if (_postedTransactions->isChecked())
+    params.append("postedTransactions");
+
+  return true;
 }
 
 void dspSummarizedGLTransactions::sViewTrans()
@@ -272,4 +227,3 @@ void dspSummarizedGLTransactions::sViewDocument()
     omfgThis->handleNewWindow(newdlg);
   }
 }
-

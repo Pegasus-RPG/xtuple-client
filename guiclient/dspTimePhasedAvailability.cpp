@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include <datecluster.h>
 #include <openreports.h>
+#include <metasql.h>
 #include "guiclient.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspAllocations.h"
@@ -25,6 +26,7 @@
 #include "purchaseRequest.h"
 #include "purchaseOrder.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspTimePhasedAvailability as a child of 'parent', with the
@@ -236,72 +238,43 @@ void dspTimePhasedAvailability::sCalculate()
   _columnDates.clear();
   _availability->clear();
   _availability->setColumnCount(3);
+  ParameterList params;
 
-  QString sql( "SELECT itemsite_id, itemtype,"
-               "       item_number, uom_name, warehous_code,"
-               "       reorderlevel " );
+  if (! setParams(params))
+    return;
 
-  int columns = 1;
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    QString bucketname = QString("bucket%1").arg(columns++);
-    sql += QString(", %1,"
-                   "  'qty' AS %2_xtnumericrole,"
-                   "  CASE WHEN (%3 < reorderlevel) THEN 'error' END AS %4_qtforegroundrole "    )
-	   .arg(bucketname)
-	   .arg(bucketname)
-	   .arg(bucketname)
-	   .arg(bucketname);
-  }
-
-  sql +=       "FROM ( "
-               "SELECT itemsite_id,"
-               "       CASE WHEN (item_type IN ('F', 'B', 'C', 'Y', 'R')) THEN 0"
-               "            WHEN (item_type IN ('M')) THEN 1"
-               "            WHEN (item_type IN ('P', 'O')) THEN 2"
-               "            ELSE 0"
-               "       END AS itemtype,"
-               "       item_number, uom_name, warehous_code,"
-               "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel ";
-
-  columns = 1;
-  for (int i = 0; i < selected.size(); i++)
-  {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    QString bucketname = QString("bucket%1").arg(columns++);
-    sql += QString(", qtyAvailable(itemsite_id, findPeriodStart(%1)) AS %2 " )
-	   .arg(cursor->id())
-	   .arg(bucketname);
-
+    QString bucketname = QString("bucket_%1").arg(cursor->id());
     _availability->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
-
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, warehous, uom "
-         "WHERE ((itemsite_item_id=item_id)"
-         " AND (item_inv_uom_id=uom_id)"
-         " AND (itemsite_warehous_id=warehous_id)";
+  MetaSQLQuery mql = mqlLoad("timePhasedAvailability", "detail");
+  q = mql.toQuery(params);
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
- 
-  if (_plannerCode->isSelected())
-    sql += " AND (itemsite_plancode_id=:plancode_id)";
-  else if (_plannerCode->isPattern())
-    sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-
-  sql += ") ) AS data "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.exec();
   if (q.first())
-  {
     _availability->populate(q, true);
-  }
 }
 
+bool dspTimePhasedAvailability::setParams(ParameterList & params)
+{
+  params.append("item_list", _periods->periodList());
+  params.append("period_list", _periods->periodList());
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+  if (_plannerCode->isSelected())
+    params.append("plancode_id", _plannerCode->id());
+  else if (_plannerCode->isPattern())
+  {
+    QString pattern = _plannerCode->pattern();
+    if (pattern.length() == 0)
+      return false;
+
+    params.append("plancode_pattern", _plannerCode->pattern());
+  }
+  return true;
+}

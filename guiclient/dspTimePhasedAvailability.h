@@ -23,6 +23,7 @@ class dspTimePhasedAvailability : public XWidget, public Ui::dspTimePhasedAvaila
 public:
     dspTimePhasedAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedAvailability();
+    bool setParams(ParameterList & params);
 
 public slots:
     virtual void sPrint();

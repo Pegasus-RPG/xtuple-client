@@ -19,9 +19,11 @@
 #include <datecluster.h>
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
 #include "guiclient.h"
 #include "dspBookingsByCustomer.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspTimePhasedBookingsByCustomer as a child of 'parent', with the
@@ -131,38 +133,23 @@ void dspTimePhasedBookingsByCustomer::sFillList()
 
   _columnDates.clear();
 
-  QString sql("SELECT cust_id, cust_number, cust_name");
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  int columns = 1;
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    QString bucketname = QString("bucket%1").arg(columns++);
-    sql += QString(", bookingsByCustomerValue(cust_id, %1) AS %2,"
-                   "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
+    QString bucketname = QString("bucket_%1").arg(cursor->id());
 
     _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM cust ";
-
-  if (_customerType->isSelected())
-    sql += "WHERE (cust_custtype_id=:custtype_id) ";
-  else if (_customerType->isPattern())
-    sql += "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern))) ";
-
-  sql += "ORDER BY cust_number;";
-
-  q.prepare(sql);
-  _customerType->bindValue(q);
-  q.exec();
-  _soitem->populate(q);
+  MetaSQLQuery mql = mqlLoad("timePhasedBookings", "detail");
+  q = mql.toQuery(params);
+  _soitem->populate(q, true);
 }
 
 void dspTimePhasedBookingsByCustomer::sSubmit()
@@ -202,4 +189,15 @@ ParameterList dspTimePhasedBookingsByCustomer::buildParameters()
   params.append("period_id_list", periodList);
 
   return params;
+}
+
+bool dspTimePhasedBookingsByCustomer::setParams(ParameterList & params)
+{
+  params.append("byCust");
+  params.append("period_list",_periods->periodList());
+
+  if ((_customerType->isSelected()) || (_customerType->isPattern()))
+    _customerType->appendValue(params);
+
+   return true;
 }

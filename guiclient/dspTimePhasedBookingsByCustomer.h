@@ -25,6 +25,7 @@ public:
     ~dspTimePhasedBookingsByCustomer();
 
     virtual ParameterList buildParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

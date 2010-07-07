@@ -18,11 +18,13 @@
 #include <QMenu>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "apOpenItem.h"
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "dspGLSeries.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspVendorAPHistory as a child of 'parent', with the
@@ -186,113 +188,28 @@ void dspVendorAPHistory::sFillList()
   if (!checkParameters())
     return;
 
-  q.prepare( "SELECT apopen_id, -1 AS applyid, 0 AS type,"
-             "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
-             "       apopen_docnumber AS docnumber,"
-             "       formatBoolYN(apopen_open) AS f_open,"
-             "       CASE WHEN (apopen_doctype='V') THEN :voucher"
-             "            WHEN (apopen_doctype='C') THEN :creditMemo"
-             "            WHEN (apopen_doctype='D') THEN :debitMemo"
-             "            ELSE :other"
-             "       END AS documenttype,"
-             "       apopen_invcnumber AS invoicenumber,"
-             "       apopen_ponumber AS ponumber,"
-             "       apopen_docdate AS docdate, apopen_duedate AS duedate, apopen_amount AS amount,"
-             "       (apopen_amount - apopen_paid) AS balance,"
-             "       currconcat(apopen_curr_id) AS currAbbr,"
-             "       CASE WHEN (apopen_doctype='C') THEN apopen_amount / apopen_curr_rate * -1.0"
-             "            ELSE apopen_amount / apopen_curr_rate"
-             "       END AS base_amount,"
-             "       CASE WHEN (apopen_doctype='C') THEN (apopen_amount - apopen_paid) / apopen_curr_rate * -1.0"
-             "            ELSE (apopen_amount - apopen_paid) / apopen_curr_rate"
-			 "       END AS base_balance,"
-             "       'curr' AS amount_xtnumericrole,"
-             "       'curr' AS base_amount_xtnumericrole,"
-             "       'curr' AS base_amount_xttotalrole,"
-             "       'curr' AS balance_xtnumericrole,"
-             "       'curr' AS base_balance_xtnumericrole,"
-             "       'curr' AS base_balance_xttotalrole,"
-             "       0 AS xtindentrole "
-             "FROM apopen "
-             "WHERE ( (apopen_vend_id=:vend_id)" 
-             " AND (apopen_docdate BETWEEN :startDate AND :endDate) ) "
+  ParameterList params;
 
-             "UNION "
-             "SELECT apopen_id, apapply_target_apopen_id AS applyid, 1 AS type,"
-             "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
-             "       apapply_source_docnumber AS docnumber,"
-             "       '' AS f_open,"
-             "       CASE WHEN (apapply_source_doctype='C') THEN :creditMemo"
-             "            WHEN (apapply_source_doctype='K') THEN :check"
-             "            ELSE :other"
-             "       END AS documenttype,"
-             "       ' ' AS invoicenumber,"
-             "       '' AS ponumber,"
-             "       apapply_postdate AS docdate, CAST(NULL AS DATE) AS duedate,"
-             "       apapply_amount AS amount,"
-             "       0 AS balance,"
-             "       currconcat(apapply_curr_id) AS currAbbr,"
-             "       (apapply_amount / apopen_curr_rate) AS base_amount, "
-             "       0 AS base_balance,"
-             "       'curr' AS amount_xtnumericrole,"
-             "       'curr' AS base_amount_xtnumericrole,"
-             "       'curr' AS base_amount_xttotalrole,"
-             "       'curr' AS balance_xtnumericrole,"
-             "       'curr' AS base_balance_xtnumericrole,"
-             "       'curr' AS base_balance_xttotalrole,"
-             "       1 AS xtindentrole "
-             "FROM apapply, apopen "
-             "WHERE ( (apapply_target_apopen_id=apopen_id)"
-             " AND (apapply_vend_id=:vend_id)"
-             " AND (apopen_vend_id=:vend_id)"
-             " AND (apopen_docdate BETWEEN :startDate AND :endDate) ) "
-
-             "UNION "
-             "SELECT apopen_id, apapply_target_apopen_id AS applyid, 2 AS type,"
-             "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
-             "       apapply_target_docnumber AS docnumber,"
-             "       '' AS f_open,"
-             "       CASE WHEN (apapply_target_doctype='V') THEN :voucher"
-             "            WHEN (apapply_target_doctype='D') THEN :debitMemo"
-             "            ELSE :other"
-             "       END AS documenttype,"
-             "       apopen_invcnumber AS invoicenumber,"
-             "       '' AS ponumber,"
-             "       apapply_postdate AS docdate, CAST(NULL AS DATE) AS duedate,"
-             "       apapply_amount AS amount,"
-             "       0 AS balance,"
-             "       currconcat(apapply_curr_id) AS currAbbr,"
-             "       (apapply_amount / apopen_curr_rate) AS base_amount, "
-             "       0 AS base_balance,"
-             "       'curr' AS amount_xtnumericrole,"
-             "       'curr' AS base_amount_xtnumericrole,"
-             "       'curr' AS base_amount_xttotalrole,"
-             "       'curr' AS balance_xtnumericrole,"
-             "       'curr' AS base_balance_xtnumericrole,"
-             "       'curr' AS base_balance_xttotalrole,"
-             "       1 AS xtindentrole "
-             "FROM apapply, apopen "
-             "WHERE ( (apapply_source_doctype IN ('C', 'K'))"
-             " AND (apapply_source_doctype=apopen_doctype)"
-             " AND (apapply_source_docnumber=apopen_docnumber)"
-             " AND (apapply_vend_id=:vend_id)"
-             " AND (apopen_vend_id=:vend_id)"
-             " AND (apopen_docdate BETWEEN :startDate AND :endDate) ) "
-
-             "ORDER BY sortdate, apopen_id, type;" );
-
-  _dates->bindValue(q);
-  q.bindValue(":creditMemo", tr("Credit Memo"));
-  q.bindValue(":debitMemo", tr("Debit Memo"));
-  q.bindValue(":check", tr("Check"));
-  q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":vend_id", _vend->id());
-  q.exec();
+  setParams(params);
+  MetaSQLQuery mql = mqlLoad("vendorAPHistory", "detail");
+  q = mql.toQuery(params);
   if (q.first())
     _vendhist->populate(q, true);
 
   sSearchInvoiceNum();
+}
+
+bool dspVendorAPHistory::setParams(ParameterList &params)
+{
+  params.append("creditMemo", "Credit Memo");
+  params.append("debitMemo", "Debit Memo");
+  params.append("check", "Check");
+  params.append("voucher", "Voucher");
+  params.append("other", "Other");
+  params.append("vend_id", _vend->id());
+  _dates->appendValue(params);
+
+  return true;
 }
 
 bool dspVendorAPHistory::checkParameters()
@@ -427,4 +344,3 @@ void dspVendorAPHistory::sViewGLSeries()
   else
     systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
-

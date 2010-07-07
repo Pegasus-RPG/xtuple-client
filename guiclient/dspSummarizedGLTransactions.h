@@ -23,6 +23,7 @@ class dspSummarizedGLTransactions : public XWidget, public Ui::dspSummarizedGLTr
 public:
     dspSummarizedGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedGLTransactions();
+    bool setParams(ParameterList &);
 
 public slots:
     virtual void sPopulateMenu( QMenu * );
