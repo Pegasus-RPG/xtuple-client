@@ -25,6 +25,7 @@ class dspTimePhasedUsageStatisticsByItem : public XWidget, public Ui::dspTimePha
 public:
     dspTimePhasedUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedUsageStatisticsByItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

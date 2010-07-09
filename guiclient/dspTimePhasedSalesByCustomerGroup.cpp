@@ -15,14 +15,18 @@
 //#include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+
 #include <parameter.h>
 #include <q3valuevector.h>
 #include <dbtools.h>
 #include <datecluster.h>
 #include <openreports.h>
+#include <metasql.h>
+
 #include "dspSalesHistoryByCustomer.h"
 #include "guiclient.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a dspTimePhasedSalesByCustomerGroup as a child of 'parent', with the
@@ -125,57 +129,51 @@ void dspTimePhasedSalesByCustomerGroup::sFillList()
   _sohist->clear();
   _sohist->setColumnCount(2);
 
-  QString sql("SELECT cust_id, cust_number, cust_name");
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  int columns = 1;
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    QString bucketname = QString("bucket%1").arg(columns++);
-    if (_productCategory->isSelected())
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_id) AS %2,"
-                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-    else if (_productCategory->isPattern())
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_pattern) AS %2,"
-                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-    else
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1) AS %2,"
-                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
-	     .arg(cursor->id())
-	     .arg(bucketname)
-	     .arg(bucketname)
-	     .arg(bucketname);
-
+    QString bucketname = QString("bucket_%1").arg(cursor->id());
     _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM cust, custgrp, custgrpitem "
-         "WHERE ( (custgrpitem_cust_id=cust_id)"
-         " AND (custgrpitem_custgrp_id=custgrp_id)";
+  MetaSQLQuery mql = mqlLoad("timePhasedSalesByCustomer", "detail");
+  q = mql.toQuery(params);
+
+  _sohist->populate(q);
+}
+
+bool dspTimePhasedSalesByCustomerGroup::setParams(ParameterList & params)
+{
+  params.append("period_list",_periods->periodList());
+
+  if (_productCategory->isSelected())
+    params.append("prodcat_id", _productCategory->id());
+  else if(_productCategory->isPattern())
+  {
+    QString pattern = _productCategory->pattern();
+    if (pattern.length() == 0)
+      return false;
+    params.append("prodcat_pattern", _productCategory->pattern());
+  }
 
   if (_customerGroup->isSelected())
-    sql += " AND (custgrp_id=:custgrp_id)";
+    params.append("custgrp_id", _customerGroup->id());
   else if (_customerGroup->isPattern())
-    sql += " AND (custgrp_name ~ :custgrp_pattern)";
+  {
+    QString pattern = _customerGroup->pattern();
+    if (pattern.length() == 0)
+      return false;
+    params.append("custgrp_pattern", _customerGroup->pattern());
+  }
+  params.append("byCustomerGroup");
 
-  sql += ") "
-         "ORDER BY cust_number;";
-
-  q.prepare(sql);
-  _customerGroup->bindValue(q);
-  _productCategory->bindValue(q);
-  q.exec();
-  _sohist->populate(q);
+  return true;
 }
 
 void dspTimePhasedSalesByCustomerGroup::sSubmit()

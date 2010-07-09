@@ -17,10 +17,12 @@
 #include <openreports.h>
 #include <datecluster.h>
 #include <parameter.h>
+#include <metasql.h>
 
 #include "dspInventoryHistoryByItem.h"
 #include "guiclient.h"
 #include "submitReport.h"
+#include "mqlutil.h"
 
 dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -159,49 +161,25 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
     _usage->clear();
     _usage->setColumnCount(2);
 
-    QString sql("SELECT itemsite_id, warehous_code");
-
     int columns = 1;
+
+    ParameterList params;
+    if (! setParams(params))
+      return;
+
     QList<XTreeWidgetItem*> selected = _periods->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-      sql += QString( ", summTransR(itemsite_id, %1) AS r_bucket%2,"
-		      "summTransI(itemsite_id, %3) AS i_bucket%4,"
-		      "summTransS(itemsite_id, %5) AS s_bucket%6,"
-		      "summTransC(itemsite_id, %7) AS c_bucket%8," )
-	     .arg(cursor->id())
-	     .arg(columns)
-	     .arg(cursor->id())
-	     .arg(columns)
-	     .arg(cursor->id())
-	     .arg(columns)
-	     .arg(cursor->id())
-	     .arg(columns);
-
-      sql += QString("summTransA(itemsite_id, %1) AS a_bucket%2")
-	     .arg(cursor->id())
-	     .arg(columns++);
+      columns++;
 
       _usage->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
 
       _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
     }
 
-    sql += QString( " FROM itemsite, warehous "
-                    "WHERE ((itemsite_warehous_id=warehous_id)"
-                    " AND (itemsite_item_id=%1)" )
-           .arg(_item->id());
-
-    if (_warehouse->isSelected())
-	sql += QString(" AND (itemsite_warehous_id=%1)")
-			    .arg(_warehouse->id());
-
-    sql += ") "
-           "ORDER BY warehous_code;";
-
-    q.prepare(sql);
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("timePhasedUsageStatisticsByItem", "detail");
+    q = mql.toQuery(params);
     if (q.first())
     {
       do
@@ -218,16 +196,31 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
         scrap       = new XTreeWidgetItem(_usage, sold,     q.value("itemsite_id").toInt(), QVariant(tr("Scrap")),       q.value("warehous_code") );
         adjustments = new XTreeWidgetItem(_usage, scrap,    q.value("itemsite_id").toInt(), QVariant(tr("Adjustments")), q.value("warehous_code") );
 
-        for (int bucketCounter = 1; bucketCounter < columns; bucketCounter++)
+        QList<XTreeWidgetItem*> selected = _periods->selectedItems();
+        for (int i = 0; i < selected.size(); i++)
         {
-          received->setText((bucketCounter + 1), formatQty(q.value(QString("r_bucket%1").arg(bucketCounter)).toDouble()));
-          issued->setText((bucketCounter + 1), formatQty(q.value(QString("i_bucket%1").arg(bucketCounter)).toDouble()));
-          sold->setText((bucketCounter + 1), formatQty(q.value(QString("s_bucket%1").arg(bucketCounter)).toDouble()));
-          scrap->setText((bucketCounter + 1), formatQty(q.value(QString("c_bucket%1").arg(bucketCounter)).toDouble()));
-          adjustments->setText((bucketCounter + 1), formatQty(q.value(QString("a_bucket%1").arg(bucketCounter)).toDouble()));
+          PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+
+          received->setText((i + 2), formatQty(q.value(QString("r_bucket_%1").arg(cursor->id())).toDouble()));
+          issued->setText((i + 2), formatQty(q.value(QString("i_bucket_%1").arg(cursor->id())).toDouble()));
+          sold->setText((i + 2), formatQty(q.value(QString("s_bucket_%1").arg(cursor->id())).toDouble()));
+          scrap->setText((i + 2), formatQty(q.value(QString("c_bucket_%1").arg(cursor->id())).toDouble()));
+          adjustments->setText((i + 2), formatQty(q.value(QString("a_bucket_%1").arg(cursor->id())).toDouble()));
         }
       }
       while (q.next());
     }
   }
+}
+
+bool dspTimePhasedUsageStatisticsByItem::setParams(ParameterList & params)
+{
+  params.append("period_list", _periods->periodList());
+
+  params.append("item_id", _item->id());
+
+  if (_warehouse->isSelected())
+    params.append("warehous_id", _warehouse->id());
+
+   return true;
 }
