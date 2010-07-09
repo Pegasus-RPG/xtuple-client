@@ -501,339 +501,6 @@
     </message>
   </context>
   <context>
-    <name>InventoryHistoryByItemGroup</name>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Inventory History by Item Group</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Warehouse:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Group(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryHistoryByClassCode</name>
-    <message>
-      <source>Inventory History by Class Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Warehouse:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Class Code(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryHistoryByPlannerCode</name>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Planner Code(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Warehouse:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Inventory History by Planner Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>PurchaseRequestsByPlannerCode</name>
     <message>
       <source>Start Date:</source>
@@ -5979,121 +5646,6 @@
     </message>
   </context>
   <context>
-    <name>AROpenItems</name>
-    <message>
-      <source>Invoice Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Open Receivables</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Document #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Customer</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Balance</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Paid</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Currency</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Selection:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Incidents Only:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>As Of Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Currency</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice (I) #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Debit Memo# (D) </source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Customer</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Balance</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Credit Memo# (C) </source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Paid</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Total:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>SelectPaymentsList</name>
     <message>
       <source>Voucher #</source>
@@ -6173,6 +5725,113 @@
     </message>
     <message>
       <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>AROpenItems</name>
+    <message>
+      <source>Doc. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Open Receivables</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Document #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Customer</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Paid</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Currency</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Selection:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Type:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Incidents Only:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>As Of Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Currency</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Customer</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Paid</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Document #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Total:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -6837,117 +6496,6 @@
     </message>
   </context>
   <context>
-    <name>APOpenItemsByVendor</name>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>As of Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Paid</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>A/P Open Items By Vendor</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Balance</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Voucher #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Curr</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Status</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Paid</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc. Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Voucher #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Balance</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Curr</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Total:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>BillingEditList</name>
     <message>
       <source>Billing Edit List</source>
@@ -7047,6 +6595,121 @@
     </message>
     <message>
       <source>Total Sales:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>APOpenItemsByVendor</name>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>As of Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Paid</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Open Payables</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc.#</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Curr</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Selection:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Paid</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc. Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc.#</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Curr</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Total:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -8340,164 +8003,6 @@
     </message>
   </context>
   <context>
-    <name>ExpiredInventoryByClassCode</name>
-    <message>
-      <source>Expired Inventory By Class Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Expire By:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Expiration</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Threshold Days:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Warehouse:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Class Code(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Lot/Serial #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Lot/Serial #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Whs.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Expiration</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InvoiceInformation</name>
-    <message>
-      <source>Cust. P/O Number:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Ship To:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice Amount:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Notes:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Bill To:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Ship Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Customer #:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice #:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Invoice Information</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Apply Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Doc./Ref. Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Applications:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>RejectCodeMasterList</name>
     <message>
       <source>Code</source>
@@ -9146,6 +8651,164 @@
     </message>
   </context>
   <context>
+    <name>ExpiredInventoryByClassCode</name>
+    <message>
+      <source>Expired Inventory By Class Code</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Whs.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Expire By:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>UOM</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Expiration</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Threshold Days:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Warehouse:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Class Code(s):</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Lot/Serial #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Lot/Serial #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>UOM</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Whs.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Expiration</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>InvoiceInformation</name>
+    <message>
+      <source>Cust. P/O Number:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Ship To:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Invoice Amount:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Notes:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Bill To:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Ship Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Customer #:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Invoice #:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Invoice Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Invoice Information</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Apply Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Doc./Ref. Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Applications:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
     <name>StandardJournalGroupMasterList</name>
     <message>
       <source>Description</source>
@@ -9173,105 +8836,6 @@
     </message>
     <message>
       <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>PurchasePriceVariancesByVendor</name>
-    <message>
-      <source>Vendor Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Price Variances By Vendor</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vouchered Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Std. Cost at Rcpt.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Qty.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purch. Agent:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Std. Cost at Rcpt.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vouchered Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Qty.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -9526,6 +9090,121 @@
     </message>
     <message>
       <source>Total:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>PurchasePriceVariancesByVendor</name>
+    <message>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Purchase Price Variances By Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vouchered</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>%</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Dist. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Purch. Agent:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Variance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>%</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Dist. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vouchered</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Variance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Name</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10643,117 +10322,6 @@
     </message>
   </context>
   <context>
-    <name>PurchasePriceVariancesByItem</name>
-    <message>
-      <source>Vendor</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purch. Agent:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Qty.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vouchered Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Price Variances By Item</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Std. Cost at Rcpt.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Std. Cost at Rcpt.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>P/O #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vouchered Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Purchase Cost</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Qty.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>TimePhasedPlannedRevenueExpensesByPlannerCode</name>
     <message>
       <source>Planner Code:</source>
@@ -11314,6 +10882,125 @@
     </message>
     <message>
       <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>PurchasePriceVariancesByItem</name>
+    <message>
+      <source>Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Purch. Agent:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Dist. Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Variance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Purchase Price Variances By Item</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>UOM:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>%</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vouchered</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>%</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>P/O #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Variance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Dist Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vouchered</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -13761,157 +13448,6 @@
     </message>
   </context>
   <context>
-    <name>InventoryHistoryByParameterList</name>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area To</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area From</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area From</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area To</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>FinancialReportMonthDbCr</name>
     <message>
       <source>Name:</source>
@@ -13959,77 +13495,6 @@
     </message>
     <message>
       <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>EmployeeList</name>
-    <message>
-      <source>Manager</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Department</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Employee Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Last</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Active</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Shift</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Employees List</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Employee Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>First</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Employee Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Manager</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Employee Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Shift</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Department</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Active</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -14735,6 +14200,77 @@
     </message>
   </context>
   <context>
+    <name>EmployeeList</name>
+    <message>
+      <source>Manager</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Department</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Employee Code</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Last</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Active</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Shift</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Employees List</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Employee Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>First</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Employee Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Manager</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Employee Code</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Shift</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Department</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Active</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
     <name>EarnedCommissions</name>
     <message>
       <source>Invc. Date</source>
@@ -14842,530 +14378,6 @@
     </message>
     <message>
       <source>Totals:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryAvailabilityBySourceVendor</name>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Allocated</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>On Order</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Available</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Inventory Availability by Source Vendor</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>LT</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>OUT Level</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Unallocated</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Reorder Level</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Availability as of: </source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>On Order</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>LT</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>OUT Level</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Allocated</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Unallocated</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Reorder Level</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Available</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryHistoryByItem</name>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area From</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Inventory History by Item</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area To</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area To</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Area From</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryHistoryByOrderNumber</name>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Inventory History by Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Val. Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cost Method</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>InventoryHistoryByWarehouse</name>
-    <message>
-      <source>Inventory History by Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>UOM</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Trans-Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Username</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH After</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>QOH Before</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Order Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -17510,6 +16522,125 @@
     </message>
     <message>
       <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>InventoryAvailabilityBySourceVendor</name>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Allocated</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>On Order</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Available</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Inventory Availability by Source Vendor</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>LT</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>OUT Level</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Unallocated</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Reorder Level</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Availability as of: </source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>On Order</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>LT</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>OUT Level</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Allocated</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Unallocated</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Reorder Level</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Vendor #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Available</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -19804,362 +18935,6 @@
     </message>
   </context>
   <context>
-    <name>UsageStatisticsByClassCode</name>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Class Code(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Usage Statistics By Class Code</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>UsageStatisticsByItemGroup</name>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Usage Statistics By Item Group</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Group(s):</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>UsageStatisticsByItem</name>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Usage Statistics By Item</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
-    <name>UsageStatisticsByWarehouse</name>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Site:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Usage Statistics By Site</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Description</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Adjustments</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Issued</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Sold</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Item Number</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Received</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>UnpostedPoReceipts</name>
     <message>
       <source>Unposted Purchase Order Receipts</source>
@@ -20575,9 +19350,41 @@
     </message>
   </context>
   <context>
-    <name>WOMaterialRequirementsByWorkOrder</name>
+    <name>UsageStatisticsByItemGroup</name>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Usage Statistics By Item Group</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
     <message>
       <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
@@ -20585,59 +19392,23 @@
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Item Number:</source>
+      <source>End Date:</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Work Order #:</source>
+      <source>Item Group(s):</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Description</source>
+      <source>Start Date:</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Issue Method</source>
+      <source>Received</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>W/O Material Requirements By Work Order</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Required</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Balance</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Qty Per</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Scrap %</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Status:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Component Item #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Fxd Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Required</source>
+      <source>Item Number</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
@@ -20645,11 +19416,11 @@
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Issue Method</source>
+      <source>Scrap</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Qty Per</source>
+      <source>Sold</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
@@ -20657,31 +19428,27 @@
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Due Date</source>
+      <source>Transfers</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Balance</source>
+      <source>Site</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Scrap %</source>
+      <source>Adjustments</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
-      <source>Component Item #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Fxd Qty</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
+      <source>Received</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
       <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -21324,6 +20091,117 @@
     </message>
     <message>
       <source>Totals:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>WOMaterialRequirementsByWorkOrder</name>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Work Order #:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issue Method</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>W/O Material Requirements By Work Order</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Required</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty Per</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap %</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Status:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Component Item #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Fxd Qty</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Required</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issue Method</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty Per</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Balance</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap %</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Component Item #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Fxd Qty</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -23842,73 +22720,6 @@
     </message>
   </context>
   <context>
-    <name>Statement</name>
-    <message>
-      <source>Balance Due</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Document Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Statement</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Document Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Document No.</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>STATEMENT DATE</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Applied</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>61 to 90 Days</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>31 to 60 Days</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Current</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Currency:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Total Due</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Over 90</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>1 to 30 Days</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>PickingListSONoClosedLines</name>
     <message>
       <source>At Shipping</source>
@@ -24511,6 +23322,77 @@
     </message>
     <message>
       <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>Statement</name>
+    <message>
+      <source>Balance Due</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Document Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Statement</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Document Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Document No.</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>STATEMENT DATE</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Applied</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>As Of Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>61 to 90 Days</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>31 to 60 Days</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Current</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Currency:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Total Due</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Over 90</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>1 to 30 Days</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -27102,97 +25984,6 @@
     </message>
   </context>
   <context>
-    <name>CashReceipts</name>
-    <message>
-      <source>Cash Receipts By Customer</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cust. #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Target</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Customer Name</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Currency</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>End Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Source</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Base Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Customer Name</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Cust. #</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Source</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Target</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Currency</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Base Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Total Base Amount</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>ContactsMasterList</name>
     <message>
       <source>Contacts Master List</source>
@@ -27838,6 +26629,97 @@
     </message>
     <message>
       <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>CashReceipts</name>
+    <message>
+      <source>Cust. #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Target</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Customer Name</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Currency</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Source</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Base Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Cash Receipts</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Customer Name</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Cust. #</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Source</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Target</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Currency</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Base Amount</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Total Base Amount</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -28535,101 +27417,6 @@
     </message>
   </context>
   <context>
-    <name>TodoByUserAndIncident</name>
-    <message>
-      <source>Incident</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>User:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>To-Do List Items By User And Incident</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date between:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>and</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Status</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>and</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Name</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Priority</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Incident:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date between:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>User</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Start Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Status</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Due Date</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Incident</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Priority</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>User</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Name</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>TodoItem</name>
     <message>
       <source>User:</source>
@@ -28831,6 +27618,101 @@
     </message>
     <message>
       <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>TodoByUserAndIncident</name>
+    <message>
+      <source>Incident</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>User:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>To-Do List Items By User And Incident</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date between:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>and</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Status</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>and</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Name</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Priority</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Incident:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date between:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>User</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Status</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Due Date</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Incident</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Priority</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>User</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Name</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
@@ -29684,6 +28566,454 @@
     </message>
     <message>
       <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>InventoryHistory</name>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Area To</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Val. After</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH After</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Val. Before</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Area From</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH Before</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Cost Method</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>UOM</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Order Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Username</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Value</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Area From</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH Before</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Val. Before</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Cost Method</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Type</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Area To</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>UOM</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Username</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Val. After</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>QOH After</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Order Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Qty</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Value</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Total:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>UsageStatisticsByClassCode</name>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Class Code(s):</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Usage Statistics By Class Code</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>UsageStatisticsByItem</name>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Usage Statistics By Item</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>UsageStatisticsByWarehouse</name>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>End Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Site:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Usage Statistics By Site</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Start Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Description</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Transfers</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Sold</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Scrap</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Item Number</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Issued</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Adjustments</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Received</source>
       <translation type="unfinished"></translation>
     </message>
     <message>
@@ -32165,49 +31495,6 @@
     </message>
   </context>
   <context>
-    <name>TimePhasedCapacityByWorkCenter</name>
-    <message>
-      <source>Warehouse:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Work Center</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Capacity</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Period</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Time Phased Capacity By Work Center</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Capacity</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Work Center</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Period</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>TimePhasedAvailableCapacityByWorkCenter</name>
     <message>
       <source>Capacity</source>
@@ -32402,6 +31689,49 @@
     </message>
     <message>
       <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+  </context>
+  <context>
+    <name>TimePhasedCapacityByWorkCenter</name>
+    <message>
+      <source>Warehouse:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Work Center</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Capacity</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Period</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Time Phased Capacity By Work Center</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Capacity</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Work Center</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Period</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Report Date:</source>
+      <translation type="unfinished"></translation>
+    </message>
+    <message>
+      <source>Page:</source>
       <translation type="unfinished"></translation>
     </message>
   </context>
