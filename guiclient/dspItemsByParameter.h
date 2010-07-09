@@ -8,26 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPITEMSBYCHARACTERISTIC_H
-#define DSPITEMSBYCHARACTERISTIC_H
+#ifndef __DSPITEMSBYPARAMETER_H__
+#define __DSPITEMSBYPARAMETER_H__
 
 #include "display.h"
 
-#include "ui_dspItemsByCharacteristic.h"
+#include "ui_dspItemsByParameter.h"
 
-class dspItemsByCharacteristic : public display, public Ui::dspItemsByCharacteristic
+class dspItemsByParameter : public display, public Ui::dspItemsByParameter
 {
     Q_OBJECT
 
 public:
-    dspItemsByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspItemsByParameter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
     virtual void sEdit();
-    virtual void sView();
     virtual void sEditBOM();
     virtual void sViewBOM();
 
@@ -36,4 +35,4 @@ protected slots:
 
 };
 
-#endif // DSPITEMSBYCHARACTERISTIC_H
+#endif //__DSPITEMSBYPARAMETER_H__

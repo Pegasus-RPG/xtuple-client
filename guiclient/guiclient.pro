@@ -190,6 +190,7 @@ FORMS =   absoluteCalendarItem.ui               \
           deletePlannedOrdersByPlannerCode.ui   \
           department.ui                         \
           departments.ui                        \
+          display.ui                            \
           distributeInventory.ui                \
           distributeToLocation.ui               \
           dspAPApplications.ui                  \
@@ -268,8 +269,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspItemSourcesByItem.ui                       \
           dspItemSourcesByVendor.ui                     \
           dspItemsByCharacteristic.ui                   \
-          dspItemsByClassCode.ui                        \
-          dspItemsByProductCategory.ui                  \
+          dspItemsByParameter.ui                        \
           dspItemsWithoutItemSources.ui                 \
           dspJobCosting.ui                              \
           dspMRPDetail.ui                               \
@@ -906,6 +906,7 @@ HEADERS = ../common/format.h                    \
           deletePlannedOrdersByPlannerCode.h    \
           department.h                          \
           departments.h                         \
+          display.h                             \
           distributeInventory.h                 \
           distributeToLocation.h                \
           dspAPApplications.h                   \
@@ -985,6 +986,7 @@ HEADERS = ../common/format.h                    \
           dspItemSourcesByVendor.h                      \
           dspItemsByCharacteristic.h                    \
           dspItemsByClassCode.h                         \
+          dspItemsByParameter.h                         \
           dspItemsByProductCategory.h                   \
           dspItemsWithoutItemSources.h                  \
           dspJobCosting.h                               \
@@ -1658,6 +1660,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           deletePlannedOrdersByPlannerCode.cpp  \
           department.cpp                        \
           departments.cpp                       \
+          display.cpp                           \
           distributeInventory.cpp               \
           distributeToLocation.cpp              \
           dspAPApplications.cpp                 \
@@ -1737,6 +1740,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspItemSourcesByVendor.cpp                    \
           dspItemsByCharacteristic.cpp                  \
           dspItemsByClassCode.cpp                       \
+          dspItemsByParameter.cpp                       \
           dspItemsByProductCategory.cpp                 \
           dspItemsWithoutItemSources.cpp                \
           dspJobCosting.cpp                             \

@@ -8,35 +8,17 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPITEMSBYCLASSCODE_H
-#define DSPITEMSBYCLASSCODE_H
+#ifndef __DSPITEMSBYCLASSCODE_H__
+#define __DSPITEMSBYCLASSCODE_H__
 
-#include "xwidget.h"
+#include "dspItemsByParameter.h"
 
-#include "ui_dspItemsByClassCode.h"
-
-class dspItemsByClassCode : public XWidget, public Ui::dspItemsByClassCode
+class dspItemsByClassCode : public dspItemsByParameter
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    dspItemsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemsByClassCode();
-
-    virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
-    virtual void sEdit();
-    virtual void sEditBOM();
-    virtual void sViewBOM();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocal );
-
-protected slots:
-    virtual void languageChange();
-
+  public:
+    dspItemsByClassCode(QWidget * = 0, const char * = 0, Qt::WindowFlags = 0);
 };
 
-#endif // DSPITEMSBYCLASSCODE_H
+#endif //__DSPITEMSBYCLASSCODE_H__

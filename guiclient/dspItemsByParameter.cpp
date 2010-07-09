@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspItemsByCharacteristic.h"
+#include "dspItemsByParameter.h"
 
 #include <QMenu>
 #include <QVariant>
@@ -16,44 +16,40 @@
 #include <parameter.h>
 
 #include "bom.h"
-#include "item.h"
 #include "guiclient.h"
+#include "item.h"
 
-dspItemsByCharacteristic::dspItemsByCharacteristic(QWidget* parent, const char*, Qt::WFlags fl)
-    : display(parent, "dspItemsByCharacteristic", fl)
+dspItemsByParameter::dspItemsByParameter(QWidget* parent, const char * name, Qt::WFlags flags)
+  : display(parent, name, flags)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Items By Characteristic"));
-  setListLabel(tr("Items"));
-  setReportName("ItemsByCharacteristic");
   setMetaSQLOptions("products", "items");
+  setListLabel(tr("Items"));
 
-  _char->populate( "SELECT char_id, char_name "
-                   "FROM char "
-                   "WHERE (char_items) "
-                   "ORDER BY char_name;" );
-
-  list()->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,  true, "item_number");
-  list()->addColumn(tr("Description"),    -1,          Qt::AlignLeft,  true, "descrip");
-  list()->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter,true, "char_name");
-  list()->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft,  true, "charass_value");
-  list()->addColumn(tr("Type"),           _itemColumn, Qt::AlignCenter,true, "type");
-  list()->addColumn(tr("UOM"),            _uomColumn,  Qt::AlignCenter,true, "uom_name");
+  list()->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn( tr("Description"), -1,          Qt::AlignLeft,  true, "descrip");
+  list()->addColumn( tr("Class Code"),  _itemColumn, Qt::AlignLeft,  true, "classcode_code");
+  list()->addColumn( tr("Product Cat."),_itemColumn, Qt::AlignLeft, false, "prodcat_code");
+  list()->addColumn( tr("Type"),        _itemColumn, Qt::AlignCenter,true, "type");
+  list()->addColumn( tr("UOM"),         _uomColumn,  Qt::AlignCenter,true, "uom_name");
   list()->setDragString("itemid=");
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-void dspItemsByCharacteristic::languageChange()
+void dspItemsByParameter::languageChange()
 {
   display::languageChange();
   retranslateUi(this);
 }
 
-bool dspItemsByCharacteristic::setParams(ParameterList &params)
+bool dspItemsByParameter::setParams(ParameterList &params)
 {
-  params.append("char_id",      _char->id());
-  params.append("value",        _value->text().trimmed());
+  _parameter->appendValue(params);
+
+  if(_showInactive->isChecked())
+    params.append("showInactive");
+
   params.append("purchased",    tr("Purchased"));
   params.append("manufactured", tr("Manufactured"));
   params.append("job",          tr("Job"));
@@ -68,15 +64,11 @@ bool dspItemsByCharacteristic::setParams(ParameterList &params)
   params.append("kit",          tr("Kit"));
   params.append("planning",     tr("Planning"));
   params.append("error",        tr("Error"));
-  params.append("byCharacteristic");
-
-  if(_showInactive->isChecked())
-    params.append("showInactive");
 
   return true;
 }
 
-void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
+void dspItemsByParameter::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * xselected = static_cast<XTreeWidgetItem*>(selected);
   int menuItem;
@@ -84,8 +76,6 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   menuItem = pMenu->insertItem(tr("Edit Item Master..."), this, SLOT(sEdit()), 0);
   if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem(tr("View Item Master..."), this, SLOT(sView()), 0);
 
   if (xselected && (xselected->rawValue("type").toString() == "M"))
   {
@@ -99,17 +89,12 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   }
 }
 
-void dspItemsByCharacteristic::sEdit()
+void dspItemsByParameter::sEdit()
 {
   item::editItem(list()->id());
 }
 
-void dspItemsByCharacteristic::sView()
-{
-  item::viewItem(list()->id());
-}
-
-void dspItemsByCharacteristic::sEditBOM()
+void dspItemsByParameter::sEditBOM()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -120,7 +105,7 @@ void dspItemsByCharacteristic::sEditBOM()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspItemsByCharacteristic::sViewBOM()
+void dspItemsByParameter::sViewBOM()
 {
   ParameterList params;
   params.append("mode", "view");

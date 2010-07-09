@@ -8,33 +8,19 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPITEMSBYPRODUCTCATEGORY_H
-#define DSPITEMSBYPRODUCTCATEGORY_H
+#ifndef __DSPITEMSBYPRODUCTCATEGORY_H__
+#define __DSPITEMSBYPRODUCTCATEGORY_H__
 
-#include "xwidget.h"
+#include "dspItemsByParameter.h"
 
-#include "ui_dspItemsByProductCategory.h"
-
-class dspItemsByProductCategory : public XWidget, public Ui::dspItemsByProductCategory
+class dspItemsByProductCategory : public dspItemsByParameter
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    dspItemsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemsByProductCategory();
+  public:
+    dspItemsByProductCategory(QWidget * = 0, const char * = 0, Qt::WindowFlags = 0);
 
     virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
-    virtual void sEdit();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocal );
-
-protected slots:
-    virtual void languageChange();
-
 };
 
-#endif // DSPITEMSBYPRODUCTCATEGORY_H
+#endif //__DSPITEMSBYPRODUCTCATEGORY_H__
