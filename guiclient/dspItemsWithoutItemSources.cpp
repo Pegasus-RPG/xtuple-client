@@ -11,40 +11,27 @@
 #include "dspItemsWithoutItemSources.h"
 
 #include <QMenu>
-#include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include "mqlutil.h"
-
+#include "guiclient.h"
 #include "item.h"
 #include "itemSource.h"
 
-dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspItemsWithoutItemSources", fl)
 {
-  setupUi(this);
+  setWindowTitle(tr("Items without Item Sources"));
+  setListLabel(tr("Items without Item Sources"));
+  setMetaSQLOptions("itemsWithoutItemSources", "detail");
 
-  connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft, true, "item_number");
+  list()->addColumn(tr("Description"), -1,           Qt::AlignLeft, true, "descrip");
+  list()->addColumn(tr("Type"),        _itemColumn,  Qt::AlignCenter,true, "type");
+
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
-
-  _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft, true, "item_number");
-  _item->addColumn(tr("Description"), -1,           Qt::AlignLeft, true, "descrip");
-  _item->addColumn(tr("Type"),        _itemColumn,  Qt::AlignCenter,true, "type");
 }
 
-dspItemsWithoutItemSources::~dspItemsWithoutItemSources()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-void dspItemsWithoutItemSources::languageChange()
-{
-    retranslateUi(this);
-}
-
-void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu)
+void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -61,7 +48,7 @@ void dspItemsWithoutItemSources::sCreateItemSource()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("item_id", _item->id());
+  params.append("item_id", list()->id());
 
   itemSource newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -71,22 +58,14 @@ void dspItemsWithoutItemSources::sCreateItemSource()
 
 void dspItemsWithoutItemSources::sEditItem()
 {
-  item::editItem(_item->id());
+  item::editItem(list()->id());
 }
 
-void dspItemsWithoutItemSources::sFillList()
+bool dspItemsWithoutItemSources::setParams(ParameterList &params)
 {
-  ParameterList params;
-    
   params.append("purchased", tr("Purchased"));
   params.append("outside", tr("Outside"));
 
-  MetaSQLQuery mql = mqlLoad("itemsWithoutItemSources", "detail");
-  q = mql.toQuery(params);
-  _item->populate(q, true);  
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  return true;
 }
+

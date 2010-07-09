@@ -11,33 +11,16 @@
 #ifndef DSPSINGLELEVELBOM_H
 #define DSPSINGLELEVELBOM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspBOMBase.h"
 
-#include "ui_dspSingleLevelBOM.h"
-
-class dspSingleLevelBOM : public XWidget, public Ui::dspSingleLevelBOM
+class dspSingleLevelBOM : public dspBOMBase
 {
     Q_OBJECT
 
 public:
     dspSingleLevelBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSingleLevelBOM();
 
     virtual bool setParams(ParameterList &params);
-
-public slots:
-    virtual void sEdit();
-    virtual void sView();
-    virtual void sPopulateMenu( QMenu * );
-    virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sFillList();
-    virtual void sFillList( int, bool );
-
-protected slots:
-    virtual void languageChange();
 
 };
 

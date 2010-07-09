@@ -11,34 +11,16 @@
 #ifndef DSPSUMMARIZEDBOM_H
 #define DSPSUMMARIZEDBOM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspBOMBase.h"
 
-#include "ui_dspSummarizedBOM.h"
-
-class dspSummarizedBOM : public XWidget, public Ui::dspSummarizedBOM
+class dspSummarizedBOM : public dspBOMBase
 {
     Q_OBJECT
 
 public:
     dspSummarizedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedBOM();
 
     virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sEdit();
-    virtual void sView();
-    virtual void sPopulateMenu( QMenu * );
-    virtual enum SetResponse set( const ParameterList & pParams );
-
-protected slots:
-    virtual void languageChange();
-
-    virtual void sPrint();
-    virtual void sFillList();
-
 
 };
 

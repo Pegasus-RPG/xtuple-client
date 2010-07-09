@@ -25,6 +25,7 @@ public:
   displayPrivate(::display * parent) : _parent(parent)
   {
     setupUi(_parent);
+    _print->hide(); // hide the print button until a reportName is set
   }
 
   QString reportName;
@@ -69,6 +70,7 @@ XTreeWidget * display::list()
 void display::setReportName(const QString & reportName)
 {
   _data->reportName = reportName;
+  _data->_print->setVisible(!reportName.isEmpty());
 }
 
 void display::setMetaSQLOptions(const QString & group, const QString & name)

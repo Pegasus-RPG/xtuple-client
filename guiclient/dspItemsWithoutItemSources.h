@@ -11,28 +11,21 @@
 #ifndef DSPITEMSWITHOUTITEMSOURCES_H
 #define DSPITEMSWITHOUTITEMSOURCES_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspItemsWithoutItemSources.h"
-
-class dspItemsWithoutItemSources : public XWidget, public Ui::dspItemsWithoutItemSources
+class dspItemsWithoutItemSources : public display
 {
     Q_OBJECT
 
 public:
     dspItemsWithoutItemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemsWithoutItemSources();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *);
     virtual void sCreateItemSource();
     virtual void sEditItem();
-    virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

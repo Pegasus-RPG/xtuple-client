@@ -11,32 +11,19 @@
 #ifndef DSPINDENTEDBOM_H
 #define DSPINDENTEDBOM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspBOMBase.h"
 
-#include "ui_dspIndentedBOM.h"
-
-class dspIndentedBOM : public XWidget, public Ui::dspIndentedBOM
+class dspIndentedBOM : public dspBOMBase
 {
     Q_OBJECT
 
 public:
     dspIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspIndentedBOM();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sEdit();
-    virtual void sView();
-    virtual void sPopulateMenu( QMenu * );
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

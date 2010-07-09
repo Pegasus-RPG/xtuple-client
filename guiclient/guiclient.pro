@@ -204,6 +204,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspBacklogBySalesOrder.ui             \
           dspBankrecHistory.ui                  \
           dspBillingSelections.ui               \
+          dspBOMBase.ui                         \
           dspBookingsByCustomer.ui              \
           dspBookingsByCustomerGroup.ui         \
           dspBookingsByItem.ui                  \
@@ -245,7 +246,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLSeries.ui                                \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
-          dspIndentedBOM.ui                             \
           dspIndentedWhereUsed.ui                       \
           dspInvalidBillsOfMaterials.ui                 \
           dspInventoryAvailabilityByCustomerType.ui     \
@@ -270,7 +270,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspItemSourcesByVendor.ui                     \
           dspItemsByCharacteristic.ui                   \
           dspItemsByParameter.ui                        \
-          dspItemsWithoutItemSources.ui                 \
           dspJobCosting.ui                              \
           dspMRPDetail.ui                               \
           dspMaterialUsageVarianceByBOMItem.ui          \
@@ -327,13 +326,11 @@ FORMS =   absoluteCalendarItem.ui               \
           dspShipmentsByDate.ui                         \
           dspShipmentsBySalesOrder.ui                   \
           dspShipmentsByShipment.ui                     \
-          dspSingleLevelBOM.ui                          \
           dspSingleLevelWhereUsed.ui                    \
           dspSlowMovingInventoryByClassCode.ui          \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
           dspSubstituteAvailabilityByItem.ui            \
-          dspSummarizedBOM.ui                           \
           dspSummarizedBacklogByWarehouse.ui            \
           dspSummarizedBankrecHistory.ui                \
           dspSummarizedGLTransactions.ui                \
@@ -920,6 +917,7 @@ HEADERS = ../common/format.h                    \
           dspBacklogBySalesOrder.h              \
           dspBankrecHistory.h                   \
           dspBillingSelections.h                \
+          dspBOMBase.h                          \
           dspBookingsByCustomer.h               \
           dspBookingsByCustomerGroup.h          \
           dspBookingsByItem.h                   \
@@ -1674,6 +1672,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspBacklogBySalesOrder.cpp            \
           dspBankrecHistory.cpp                 \
           dspBillingSelections.cpp              \
+          dspBOMBase.cpp                        \
           dspBookingsByCustomer.cpp             \
           dspBookingsByCustomerGroup.cpp        \
           dspBookingsByItem.cpp                 \
