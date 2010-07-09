@@ -66,6 +66,7 @@ class menuSystem : public QObject
     void sUIForms();
     void sPackages();
     void sMetasqls();
+    void sReports();
 
     void sFixACL();
     void sFixSerial();

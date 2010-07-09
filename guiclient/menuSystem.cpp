@@ -453,6 +453,11 @@ void menuSystem::sPackages()
   omfgThis->handleNewWindow(new packages());
 }
 
+void menuSystem::sReports()
+{
+  omfgThis->handleNewWindow(new reports());
+}
+
 void menuSystem::sMetasqls()
 {
   omfgThis->handleNewWindow(new metasqls());
