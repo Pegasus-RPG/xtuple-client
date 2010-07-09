@@ -90,6 +90,7 @@ bool dspPoItemReceivingsByItem::setParams(ParameterList &pParams)
   pParams.append("item_id",  _item->id() );
   pParams.append("received", tr("Received"));
   pParams.append("returned", tr("Returned"));
+  pParams.append("unvouchered", tr("Not Vouchered"));
   pParams.append("nonInv",   tr("NonInv - "));
   pParams.append("na",       tr("N/A"));
 
@@ -110,6 +111,7 @@ void dspPoItemReceivingsByItem::sPrint()
   ParameterList params;
   if (! setParams(params))
     return;
+  params.append("includeFormatted");
 
   orReport report("ReceiptsReturnsByItem", params);
   if (report.isValid())

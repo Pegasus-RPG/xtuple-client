@@ -114,6 +114,7 @@ void dspPoItemReceivingsByVendor::sPrint()
   ParameterList params;
   if (! setParams(params))
     return;
+  params.append("includeFormatted");
 
   orReport report("ReceiptsReturnsByVendor", params);
   if(report.isValid())

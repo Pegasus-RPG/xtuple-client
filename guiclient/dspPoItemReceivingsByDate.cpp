@@ -78,6 +78,7 @@ bool dspPoItemReceivingsByDate::setParams(ParameterList &pParams)
 
   pParams.append("received", tr("Received"));
   pParams.append("returned", tr("Returned"));
+  pParams.append("unvouchered", tr("Not Vouchered"));
   pParams.append("nonInv",   tr("NonInv - "));
   pParams.append("na",       tr("N/A"));
 
@@ -98,6 +99,7 @@ void dspPoItemReceivingsByDate::sPrint()
   ParameterList params;
   if (! setParams(params))
     return;
+  params.append("includeFormatted");
 
   orReport report("ReceiptsReturnsByDate", params);
   if (report.isValid())
