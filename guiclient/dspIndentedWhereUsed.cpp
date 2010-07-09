@@ -12,50 +12,43 @@
 
 #include <QMenu>
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
-#include "mqlutil.h"
 #include "dspInventoryHistoryByItem.h"
 
-dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspIndentedWhereUsed", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Indented Where Used"));
+  setListLabel(tr("Bill of Materials Items"));
+  setReportName("IndentedWhereUsed");
+  setMetaSQLOptions("whereUsed", "detail");
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  _worksetid = 0;
 
   if (_metrics->boolean("AllowInactiveBomItems"))
     _item->setType(ItemLineEdit::cGeneralComponents);
   else
     _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
-  _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq. #"),               80, Qt::AlignRight, true, "bomwork_seqnumber");
-  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
-  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "descrip");
-  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
-  _bomitem->addColumn(tr("Fxd. Qty."),    _qtyColumn, Qt::AlignRight, true, "bomwork_qtyfxd");
-  _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
-  _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomwork_scrap");
-  _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
-  _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
+  list()->setRootIsDecorated(TRUE);
+  list()->addColumn(tr("Seq. #"),               80, Qt::AlignRight, true, "bomwork_seqnumber");
+  list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "descrip");
+  list()->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
+  list()->addColumn(tr("Fxd. Qty."),    _qtyColumn, Qt::AlignRight, true, "bomwork_qtyfxd");
+  list()->addColumn(tr("Qty. Per"),     _qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
+  list()->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomwork_scrap");
+  list()->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
+  list()->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
 
   _item->setFocus();
 }
 
-dspIndentedWhereUsed::~dspIndentedWhereUsed()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspIndentedWhereUsed::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -98,42 +91,15 @@ bool dspIndentedWhereUsed::setParams(ParameterList &params)
 
   params.append("byIndented");
 
+  params.append("bomworkset_id", _worksetid);
+
   return true;
-}
-
-void dspIndentedWhereUsed::sPrint()
-{
-  q.prepare("SELECT indentedWhereUsed(:item_id) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    if (! setParams(params))
-      return;
-
-    int worksetid = q.value("result").toInt();
-    params.append("bomworkset_id", worksetid);
-
-    orReport report("IndentedWhereUsed", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-
-    q.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
-    q.bindValue(":bomworkset_id", worksetid);
-    q.exec();
-  }
-  else
-      QMessageBox::critical( this, tr("Error Executing Report"),
-                             tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspIndentedWhereUsed::sViewInventoryHistory()
 {
   ParameterList params;
-  params.append("item_id", _bomitem->altId());
+  params.append("item_id", list()->altId());
   params.append("run");
 
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
@@ -141,7 +107,7 @@ void dspIndentedWhereUsed::sViewInventoryHistory()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu)
+void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
 {
   int menuItem;
 
@@ -150,32 +116,39 @@ void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu)
     menu->setItemEnabled(menuItem, FALSE);
 }
 
+void dspIndentedWhereUsed::sPrint()
+{
+  worksetWrapper(0);
+}
+
 void dspIndentedWhereUsed::sFillList()
 {
-  q.prepare("SELECT indentedWhereUsed(:item_id) AS workset_id;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
+  worksetWrapper(1);
+}
+
+void dspIndentedWhereUsed::worksetWrapper(int action)
+{
+  XSqlQuery qq;
+  qq.prepare("SELECT indentedWhereUsed(:item_id) AS workset_id;");
+  qq.bindValue(":item_id", _item->id());
+  qq.exec();
+  if (qq.first())
   {
-    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
-    ParameterList params;
-    if (! setParams(params))
-      return;
+    _worksetid = qq.value("workset_id").toInt();
 
-    int worksetid = q.value("workset_id").toInt();
-    params.append("bomwork_set_id", worksetid);
-
-    q = mql.toQuery(params);
-    _bomitem->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    if(action == 0)
+      display::sPrint();
+    else //if(action == 1)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      display::sFillList();
+      list()->expandAll();
     }
-    _bomitem->expandAll();
 
-    q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
-    q.bindValue(":bomwork_set_id", worksetid);
-    q.exec();
+    qq.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
+    qq.bindValue(":bomworkset_id", _worksetid);
+    qq.exec();
   }
+  else
+    QMessageBox::critical( this, tr("Error Executing Report"),
+                           tr( "Was unable to create/collect the required information to create this report." ) );
 }

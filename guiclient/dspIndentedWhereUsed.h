@@ -12,31 +12,33 @@
 #define DSPINDENTEDWHEREUSED_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
 #include "ui_dspIndentedWhereUsed.h"
 
-class dspIndentedWhereUsed : public XWidget, public Ui::dspIndentedWhereUsed
+class dspIndentedWhereUsed : public display, public Ui::dspIndentedWhereUsed
 {
     Q_OBJECT
 
 public:
     dspIndentedWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspIndentedWhereUsed();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sViewInventoryHistory();
-    virtual void sPopulateMenu( QMenu * menu );
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *);
+    virtual void sPrint();
     virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
 
+private:
+    void worksetWrapper(int);
+    int _worksetid;
 };
 
 #endif // DSPINDENTEDWHEREUSED_H

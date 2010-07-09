@@ -14,23 +14,18 @@
 #include <QVariant>
 #include <QMessageBox>
 
-#include <openreports.h>
-#include <metasql.h>
-
-#include "mqlutil.h"
 #include "bom.h"
 #include "dspInventoryHistoryByItem.h"
 #include "item.h"
 
-dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspSingleLevelWhereUsed", fl)
 {
-  setupUi(this);
-
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Single Level Where Used"));
+  setListLabel(tr("Bill of Materials Items"));
+  setReportName("SingleLevelWhereUsed");
+  setMetaSQLOptions("whereUsed", "detail");
 
   if (_metrics->boolean("AllowInactiveBomItems"))
     _item->setType(ItemLineEdit::cGeneralComponents);
@@ -42,28 +37,24 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* na
   _effective->setAllowNullDate(TRUE);
   _effective->setNull();
 
-  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true, "bomitem_seqnumber");
-  _bomitem->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "descrip");
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,  true, "uom_name");
-  _bomitem->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight, true, "qtyfxd");
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight, true, "qtyper");
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight, true, "bomitem_scrap");
-  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter,true, "bomitem_effective");
-  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter,true, "bomitem_expires");
+  list()->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true, "bomitem_seqnumber");
+  list()->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "descrip");
+  list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,  true, "uom_name");
+  list()->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight, true, "qtyfxd");
+  list()->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight, true, "qtyper");
+  list()->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight, true, "bomitem_scrap");
+  list()->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter,true, "bomitem_effective");
+  list()->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter,true, "bomitem_expires");
   
-  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList()));
 
   _item->setFocus();
 }
 
-dspSingleLevelWhereUsed::~dspSingleLevelWhereUsed()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspSingleLevelWhereUsed::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -90,22 +81,8 @@ enum SetResponse dspSingleLevelWhereUsed::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspSingleLevelWhereUsed::sPrint()
-{
-  ParameterList params;
-  params.append("item_id", _item->id());
 
-  if(!_effective->isNull())
-    params.append("effective", _effective->date());
-
-  orReport report("SingleLevelWhereUsed", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu)
+void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -126,7 +103,7 @@ void dspSingleLevelWhereUsed::sEditBOM()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("item_id", _bomitem->id());
+  params.append("item_id", list()->id());
 
   BOM *newdlg = new BOM();
   newdlg->set(params);
@@ -135,21 +112,22 @@ void dspSingleLevelWhereUsed::sEditBOM()
 
 void dspSingleLevelWhereUsed::sEditItem()
 {
-  item::editItem(_bomitem->id());
+  item::editItem(list()->id());
 }
 
 void dspSingleLevelWhereUsed::sViewInventoryHistory()
 {
   ParameterList params;
 
-  q.prepare( "SELECT item_id "
+  XSqlQuery qq;
+  qq.prepare( "SELECT item_id "
              "FROM item JOIN bomitem ON (bomitem_parent_item_id=item_id) "
              "WHERE (bomitem_parent_item_id = :bomitem_parent_item_id) " );
-  q.bindValue(":bomitem_parent_item_id", _bomitem->id());
-  q.exec();
-  if (q.first())
+  qq.bindValue(":bomitem_parent_item_id", list()->id());
+  qq.exec();
+  if (qq.first())
   {
-    int _itemId = q.value("item_id").toInt();
+    int _itemId = qq.value("item_id").toInt();
     params.append("item_id", _itemId);
   }
 
@@ -159,32 +137,6 @@ void dspSingleLevelWhereUsed::sViewInventoryHistory()
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void dspSingleLevelWhereUsed::sFillList()
-{
-  sFillList(-1, FALSE);
-}
-
-void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
-{
-  if ((_item->isValid()) && (_effective->isValid()))
-  {
-    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
-    ParameterList params;
-    if (! setParams(params))
-      return;
-
-    q = mql.toQuery(params);
-    _bomitem->populate(q);
-
-    if (pLocal)
-      _bomitem->populate(q, TRUE, pItemid);
-    else
-      _bomitem->populate(q, TRUE);
-  }
-  else
-    _bomitem->clear();
 }
 
 bool dspSingleLevelWhereUsed::setParams(ParameterList &params)

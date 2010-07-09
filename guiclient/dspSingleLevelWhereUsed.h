@@ -11,30 +11,25 @@
 #ifndef DSPSINGLELEVELWHEREUSED_H
 #define DSPSINGLELEVELWHEREUSED_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspSingleLevelWhereUsed.h"
 
-class dspSingleLevelWhereUsed : public XWidget, public Ui::dspSingleLevelWhereUsed
+class dspSingleLevelWhereUsed : public display, public Ui::dspSingleLevelWhereUsed
 {
     Q_OBJECT
 
 public:
     dspSingleLevelWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSingleLevelWhereUsed();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * menu );
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *);
     virtual void sEditBOM();
     virtual void sEditItem();
     virtual void sViewInventoryHistory();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocal );
 
 protected slots:
     virtual void languageChange();
