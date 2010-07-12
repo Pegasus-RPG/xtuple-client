@@ -677,7 +677,7 @@ void GUIClient::initMenuBar()
       delete toolbars.takeFirst();
     */
     _goMenu = new QMenu(this);
-    _goMenu->setTitle(tr("Go"));
+    _goMenu->setTitle(tr("&Go"));
     menuBar()->addMenu(_goMenu);
 
 
