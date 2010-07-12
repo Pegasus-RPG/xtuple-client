@@ -11,27 +11,23 @@
 #ifndef DSPPENDINGBOMCHANGES_H
 #define DSPPENDINGBOMCHANGES_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspPendingBOMChanges.h"
 
-class dspPendingBOMChanges : public XWidget, public Ui::dspPendingBOMChanges
+class dspPendingBOMChanges : public display, public Ui::dspPendingBOMChanges
 {
     Q_OBJECT
 
 public:
     dspPendingBOMChanges(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPendingBOMChanges();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
     virtual void sEdit();
     virtual void sView();
-    virtual void sFillList();
-    virtual void sFillList( int, bool );
 
 protected slots:
     virtual void languageChange();

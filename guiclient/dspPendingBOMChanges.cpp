@@ -11,24 +11,20 @@
 #include "dspPendingBOMChanges.h"
 
 #include <QMenu>
+#include <QMessageBox>
 
-#include <openreports.h>
 #include <parameter.h>
-#include <metasql.h>
 
-#include "mqlutil.h"
 #include "bomItem.h"
 
-dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspPendingBOMChanges", fl)
 {
-  setupUi(this);
-
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_cutoff, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Pending Bill of Materials Changes"));
+  setListLabel(tr("Pending Bill of Materials Changes"));
+  setReportName("PendingBOMChanges");
+  setMetaSQLOptions("pendingBOMChanges", "detail");
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
@@ -39,17 +35,17 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   _cutoff->setAllowNullDate(TRUE);
   _cutoff->setNull();
 
-  _bomitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "actiondate" );
-  _bomitem->addColumn(tr("Action"),      _itemColumn,  Qt::AlignCenter, true,  "action" );
-  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber"  );
-  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignCenter, true,  "description" );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
-  _bomitem->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight,  true,  "qtyfxd"  );
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
+  list()->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "actiondate" );
+  list()->addColumn(tr("Action"),      _itemColumn,  Qt::AlignCenter, true,  "action" );
+  list()->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber"  );
+  list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"), -1,           Qt::AlignCenter, true,  "description" );
+  list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight,  true,  "qtyfxd"  );
+  list()->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
+  list()->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
   
-  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList()));
   _revision->setMode(RevisionLineEdit::View);
   _revision->setType("BOM");
 
@@ -57,31 +53,13 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
-dspPendingBOMChanges::~dspPendingBOMChanges()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspPendingBOMChanges::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
-void dspPendingBOMChanges::sPrint()
-{
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("revision_id", _revision->id());
-  params.append("cutOffDate", _cutoff->date());
-
-  orReport report("PendingBOMChanges", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu)
+void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -98,7 +76,7 @@ void dspPendingBOMChanges::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("bomitem_id", _bomitem->id());
+  params.append("bomitem_id", list()->id());
 
   bomItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -110,45 +88,28 @@ void dspPendingBOMChanges::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("bomitem_id", _bomitem->id());
+  params.append("bomitem_id", list()->id());
 
   bomItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspPendingBOMChanges::sFillList()
-{
-  sFillList(-1, FALSE);
-}
-
-void dspPendingBOMChanges::sFillList(int, bool)
-{
-  if ((_item->isValid()) && (_cutoff->isValid()))
-  {
-    ParameterList params;
-    if (! setParams(params))
-      return;
-    MetaSQLQuery mql = mqlLoad("pendingBOMChanges", "detail");
-    q = mql.toQuery(params);
-    _bomitem->populate(q);
-  }
-  else
-    _bomitem->clear();
-}
-
 bool dspPendingBOMChanges::setParams(ParameterList &params)
 {
+  if(!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Item Required"),
+      tr("You must specify a valid item."));
+    return false;
+  }
   params.append("effective", tr("Effective"));
   params.append("expires", tr("Expires"));
 
+  params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
   params.append("cutOffDate", _cutoff->date());
 
-  if (_item->isValid())
-    params.append("item_id", _item->id());
-  else
-    return false;
-
   return true;
 }
+
