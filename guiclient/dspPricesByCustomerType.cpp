@@ -12,6 +12,9 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
+
+#include "mqlutil.h"
 
 #define CURR_COL	7
 #define COST_COL	8
@@ -103,146 +106,43 @@ void dspPricesByCustomerType::sFillList()
 
   if (_custtype->isValid())
   {
-    QString sql = "SELECT itemid, sourcetype, schedulename, type, itemnumber, itemdescrip, priceuom,"
-                  "       CASE WHEN (qtybreak <> -1) THEN qtybreak END AS f_qtybreak,"
-                  "       price,"
-                  "       currConcat(curr_id) AS currConcat,"
-                  "       'qty' AS f_qtybreak_xtnumericrole,"
-                  "       :na AS f_qtybreak_xtnullrole,"
-                  "       'salesprice' AS price_xtnumericrole ";
+    ParameterList params;
 
-    if (_showCosts->isChecked())
-    {
-      sql +=      "     , CASE WHEN (cost IS NOT NULL) THEN cost END AS f_cost,"
-                  "       CASE WHEN ((price <> 0) AND (cost <>0)) THEN ((price - cost) / price) END AS f_margin,"
-                  "       'cost' AS f_cost_xtnumericrole,"
-                  "       :costna AS f_cost_xtnullrole,"
-                  "       'percent' AS f_margin_xtnumericrole,"
-                  "       :na AS f_margin_xtnullrole,"
-                  "       CASE WHEN (cost > price) THEN 'error' END AS f_margin_qtforegroundrole ";
-    }
+    if (! setParams(params))
+      return;
 
-    sql += "FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,"
-           "              ipshead_name AS schedulename, :custType AS type,"
-           "              item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
-           "              (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "              ipsprice_qtybreak AS qtybreak, "
-	   "		  ipsprice_price AS price, ipshead_curr_id AS curr_id, "
-	   "		  ipshead_updated AS effective ";
-
-    if (_showCosts->isChecked())
-    {
-      if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-      else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-    }
-
-    sql += "FROM ipsass, ipshead, ipsprice, item, uom "
-           "WHERE ( (ipsass_ipshead_id=ipshead_id)"
-           " AND (ipsprice_ipshead_id=ipshead_id)"
-           " AND (ipsprice_item_id=item_id)"
-           " AND (item_price_uom_id=uom_id)"
-           " AND (ipsass_custtype_id=:custtype_id) ";
-                  
-    if (!_showExpired->isChecked())
-      sql += " AND (ipshead_expires > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (ipshead_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT ipsprice_id AS itemid, 2 AS sourcetype,"
-           "             ipshead_name AS schedulename, :custTypePattern AS type,"
-           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
-           "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "             ipsprice_qtybreak AS qtybreak,"
-	   "		 ipsprice_price AS price, ipshead_curr_id AS curr_id,"
-	   "		 ipshead_updated AS effective ";
-
-    if (_showCosts->isChecked())
-    {
-      if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-      else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-    }
-
-    sql += "FROM ipsass, ipshead, ipsprice, item, custtype, uom "
-           "WHERE ( (ipsass_ipshead_id=ipshead_id)"
-           " AND (ipsprice_ipshead_id=ipshead_id)"
-           " AND (ipsprice_item_id=item_id)"
-           " AND (item_price_uom_id=uom_id)"
-           " AND (coalesce(length(ipsass_custtype_pattern), 0) > 0)"
-           " AND (custtype_code ~ ipsass_custtype_pattern)" 
-           " AND (custtype_id=:custtype_id)";
-                  
-    if (!_showExpired->isChecked())
-      sql += " AND (ipshead_expires > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (ipshead_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT ipsprice_id AS itemid, 3 AS sourcetype,"
-           "             ipshead_name AS schedulename, (:sale || '-' || sale_name) AS type,"
-           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
-           "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "             ipsprice_qtybreak AS qtybreak, "
-	   "		 ipsprice_price AS price, ipshead_curr_id AS curr_id, "
-	   "		 ipshead_updated AS effective ";
-                  
-    if (_showCosts->isChecked())
-    {
-      if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-      else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
-    }
-
-    sql += "FROM sale, ipshead, ipsprice, item, uom "
-           "WHERE ( (sale_ipshead_id=ipshead_id)"
-           " AND (ipsprice_ipshead_id=ipshead_id)"
-           " AND (item_price_uom_id=uom_id)"
-           " AND (ipsprice_item_id=item_id)";
-
-    if (!_showExpired->isChecked())
-      sql += " AND (sale_enddate > CURRENT_DATE)";
-
-    if (!_showFuture->isChecked())
-      sql += " AND (sale_startdate <= CURRENT_DATE)";
-
-    sql += ") "
-           "UNION SELECT item_id AS itemid, 0 AS sourcetype,"
-           "             '' AS schedulename, :listPrice AS type,"
-           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
-           "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "             -1 AS qtybreak, item_listprice AS price, "
-	   "		  baseCurrId() AS curr_id, "
-	   "		  CURRENT_DATE AS effective ";
-
-    if (_showCosts->isChecked())
-    {
-      if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(item_id) * iteminvpricerat(item_id)) AS cost ";
-      else if (_useActualCosts->isChecked())
-        sql += ", (actcost(item_id) * iteminvpricerat(item_id)) AS cost ";
-    }
-
-    sql += "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
-           "WHERE ( (item_sold)"
-           " AND (NOT item_exclusive) ) ) AS data "
-           "ORDER BY itemnumber, price;";
-
-    q.prepare(sql);
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":costna", tr("?????"));
-    q.bindValue(":custType", tr("Cust. Type"));
-    q.bindValue(":custTypePattern", tr("Cust. Type Pattern"));
-    q.bindValue(":sale", tr("Sale"));
-    q.bindValue(":listPrice", tr("List Price"));
-    q.bindValue(":custtype_id", _custtype->id());
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("prices", "detail");
+    q = mql.toQuery(params);
     _price->populate(q, true);
   }
+}
+
+bool dspPricesByCustomerType::setParams(ParameterList & params)
+{
+  params.append("na", tr("N/A"));
+  params.append("costna",  tr("?????"));
+  params.append("custType",  tr("Cust. Type"));
+  params.append("custTypePattern", tr("Cust. Type Pattern"));
+  params.append("sale", tr("Sale"));
+  params.append("listPrice", tr("List Price"));
+  params.append("custtype_id", _custtype->id());
+
+  if (_showCosts->isChecked())
+  {
+    params.append("showCosts");
+    if (_useStandardCosts->isChecked())
+      params.append("useStandardCosts");
+    else if (_useActualCosts->isChecked())
+      params.append("useActualCosts");
+  }
+
+  if (!_showExpired->isChecked())
+    params.append("showExpired");
+
+  if (!_showFuture->isChecked())
+    params.append("showFuture");
+
+  params.append("byCustomerType");
+
+  return true;
 }

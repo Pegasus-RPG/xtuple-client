@@ -14,8 +14,11 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <parameter.h>
+#include <metasql.h>
+
 #include "bom.h"
 #include "item.h"
+#include "mqlutil.h"
 
 dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -101,24 +104,12 @@ void dspUndefinedManufacturedItems::sFillList(int pItemid, bool pLocal)
 {
   if (_bom->isChecked())
   {
-    QString sql;
-
-    sql += "SELECT item_id, 2, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-           "       item_type, item_active, :noBom AS exception "
-           "FROM item "
-           "WHERE ( (item_type IN ('M', 'F'))"
-           " AND (item_id NOT IN (SELECT DISTINCT bomitem_parent_item_id FROM bomitem) )";
-
+    ParameterList params;
+    MetaSQLQuery mql = mqlLoad("undefinedManufacturedItems", "detail");
+    params.append("noBom", tr("No BOM"));
     if (!_showInactive->isChecked())
-      sql += " AND (item_active) ";
-
-    sql += ") ";
-
-    sql += "ORDER BY item_number;";
-
-    q.prepare(sql);
-    q.bindValue(":noBom", tr("No BOM"));
-    q.exec();
+      params.append("notshowInactive");
+    q = mql.toQuery(params);
 
     if ((pItemid != -1) && (pLocal))
       _item->populate(q, pItemid, TRUE);
@@ -128,4 +119,3 @@ void dspUndefinedManufacturedItems::sFillList(int pItemid, bool pLocal)
   else
     _item->clear();
 }
-

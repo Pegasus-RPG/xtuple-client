@@ -24,6 +24,8 @@ public:
     dspPricesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPricesByItem();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual void sPrint();
     virtual void sHandleCosts( bool pShowCosts );
