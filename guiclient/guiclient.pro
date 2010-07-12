@@ -204,7 +204,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspBacklogBySalesOrder.ui             \
           dspBankrecHistory.ui                  \
           dspBillingSelections.ui               \
-          dspBOMBase.ui                         \
           dspBookingsByCustomer.ui              \
           dspBookingsByCustomerGroup.ui         \
           dspBookingsByItem.ui                  \
@@ -246,7 +245,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLSeries.ui                                \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
-          dspIndentedWhereUsed.ui                       \
           dspInvalidBillsOfMaterials.ui                 \
           dspInventoryAvailabilityByCustomerType.ui     \
           dspInventoryAvailabilityByItem.ui             \
@@ -268,8 +266,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspItemSitesByParameterList.ui                \
           dspItemSourcesByItem.ui                       \
           dspItemSourcesByVendor.ui                     \
-          dspItemsByCharacteristic.ui                   \
-          dspItemsByParameter.ui                        \
           dspJobCosting.ui                              \
           dspMRPDetail.ui                               \
           dspMaterialUsageVarianceByBOMItem.ui          \
@@ -283,7 +279,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspPOsByVendor.ui                             \
           dspPartiallyShippedOrders.ui                  \
           dspPendingAvailability.ui                     \
-          dspPendingBOMChanges.ui                       \
           dspPlannedOrdersByItem.ui                     \
           dspPlannedOrdersByPlannerCode.ui              \
           dspPoDeliveryDateVariancesByItem.ui           \
@@ -326,7 +321,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspShipmentsByDate.ui                         \
           dspShipmentsBySalesOrder.ui                   \
           dspShipmentsByShipment.ui                     \
-          dspSingleLevelWhereUsed.ui                    \
           dspSlowMovingInventoryByClassCode.ui          \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
@@ -917,7 +911,6 @@ HEADERS = ../common/format.h                    \
           dspBacklogBySalesOrder.h              \
           dspBankrecHistory.h                   \
           dspBillingSelections.h                \
-          dspBOMBase.h                          \
           dspBookingsByCustomer.h               \
           dspBookingsByCustomerGroup.h          \
           dspBookingsByItem.h                   \
@@ -959,8 +952,6 @@ HEADERS = ../common/format.h                    \
           dspGLSeries.h                                 \
           dspGLTransactions.h                           \
           dspIncidentsByCRMAccount.h                    \
-          dspIndentedBOM.h                              \
-          dspIndentedWhereUsed.h                        \
           dspInvalidBillsOfMaterials.h                  \
           dspInventoryAvailabilityByCustomerType.h      \
           dspInventoryAvailabilityByItem.h              \
@@ -982,11 +973,6 @@ HEADERS = ../common/format.h                    \
           dspItemSitesByParameterList.h                 \
           dspItemSourcesByItem.h                        \
           dspItemSourcesByVendor.h                      \
-          dspItemsByCharacteristic.h                    \
-          dspItemsByClassCode.h                         \
-          dspItemsByParameter.h                         \
-          dspItemsByProductCategory.h                   \
-          dspItemsWithoutItemSources.h                  \
           dspJobCosting.h                               \
           dspMRPDetail.h                                \
           dspMaterialUsageVarianceByBOMItem.h           \
@@ -1000,7 +986,6 @@ HEADERS = ../common/format.h                    \
           dspPOsByVendor.h                              \
           dspPartiallyShippedOrders.h                   \
           dspPendingAvailability.h                      \
-          dspPendingBOMChanges.h                        \
           dspPlannedOrdersByItem.h                      \
           dspPlannedOrdersByPlannerCode.h               \
           dspPoDeliveryDateVariancesByItem.h            \
@@ -1043,13 +1028,10 @@ HEADERS = ../common/format.h                    \
           dspShipmentsByDate.h                  \
           dspShipmentsBySalesOrder.h            \
           dspShipmentsByShipment.h              \
-          dspSingleLevelBOM.h                   \
-          dspSingleLevelWhereUsed.h             \
           dspSlowMovingInventoryByClassCode.h   \
           dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
           dspSubstituteAvailabilityByItem.h     \
-          dspSummarizedBOM.h                    \
           dspSummarizedBacklogByWarehouse.h     \
           dspSummarizedBankrecHistory.h         \
           dspSummarizedGLTransactions.h         \
@@ -1672,7 +1654,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspBacklogBySalesOrder.cpp            \
           dspBankrecHistory.cpp                 \
           dspBillingSelections.cpp              \
-          dspBOMBase.cpp                        \
           dspBookingsByCustomer.cpp             \
           dspBookingsByCustomerGroup.cpp        \
           dspBookingsByItem.cpp                 \
@@ -1714,8 +1695,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLSeries.cpp                               \
           dspGLTransactions.cpp                         \
           dspIncidentsByCRMAccount.cpp                  \
-          dspIndentedBOM.cpp                            \
-          dspIndentedWhereUsed.cpp                      \
           dspInvalidBillsOfMaterials.cpp                \
           dspInventoryAvailabilityByCustomerType.cpp    \
           dspInventoryAvailabilityByItem.cpp            \
@@ -1737,11 +1716,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspItemSitesByParameterList.cpp               \
           dspItemSourcesByItem.cpp                      \
           dspItemSourcesByVendor.cpp                    \
-          dspItemsByCharacteristic.cpp                  \
-          dspItemsByClassCode.cpp                       \
-          dspItemsByParameter.cpp                       \
-          dspItemsByProductCategory.cpp                 \
-          dspItemsWithoutItemSources.cpp                \
           dspJobCosting.cpp                             \
           dspMRPDetail.cpp                              \
           dspMaterialUsageVarianceByBOMItem.cpp         \
@@ -1755,7 +1729,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspPOsByVendor.cpp                            \
           dspPartiallyShippedOrders.cpp                 \
           dspPendingAvailability.cpp                    \
-          dspPendingBOMChanges.cpp                      \
           dspPlannedOrdersByItem.cpp                    \
           dspPlannedOrdersByPlannerCode.cpp             \
           dspPoDeliveryDateVariancesByItem.cpp          \
@@ -1798,13 +1771,10 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspShipmentsByDate.cpp                        \
           dspShipmentsBySalesOrder.cpp                  \
           dspShipmentsByShipment.cpp                    \
-          dspSingleLevelBOM.cpp                         \
-          dspSingleLevelWhereUsed.cpp                   \
           dspSlowMovingInventoryByClassCode.cpp         \
           dspStandardJournalHistory.cpp                 \
           dspSubLedger.cpp                              \
           dspSubstituteAvailabilityByItem.cpp           \
-          dspSummarizedBOM.cpp                          \
           dspSummarizedBacklogByWarehouse.cpp           \
           dspSummarizedBankrecHistory.cpp               \
           dspSummarizedGLTransactions.cpp               \
@@ -2273,6 +2243,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
           zeroUncountedCountTagsByWarehouse.cpp \
+
+include( displays/displays.pri )
 
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
