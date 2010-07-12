@@ -11,29 +11,14 @@
 #ifndef DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 #define DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 
-#include "xwidget.h"
+#include "dspCapacityUOMsByParameter.h"
 
-#include "ui_dspCapacityUOMsByProductCategory.h"
-
-class dspCapacityUOMsByProductCategory : public XWidget, public Ui::dspCapacityUOMsByProductCategory
+class dspCapacityUOMsByProductCategory : public dspCapacityUOMsByParameter
 {
     Q_OBJECT
 
 public:
     dspCapacityUOMsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCapacityUOMsByProductCategory();
-
-    virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sEditItem();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocalUpdate );
-
-protected slots:
-    virtual void languageChange();
 
 };
 

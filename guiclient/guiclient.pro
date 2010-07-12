@@ -214,8 +214,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspBriefSalesHistoryByCustomer.ui     \
           dspBriefSalesHistoryByCustomerType.ui \
           dspBriefSalesHistoryBySalesRep.ui     \
-          dspCapacityUOMsByClassCode.ui         \
-          dspCapacityUOMsByProductCategory.ui   \
           dspCashReceipts.ui                    \
           dspCheckRegister.ui                   \
           dspCostedIndentedBOM.ui               \
@@ -921,8 +919,6 @@ HEADERS = ../common/format.h                    \
           dspBriefSalesHistoryByCustomer.h      \
           dspBriefSalesHistoryByCustomerType.h  \
           dspBriefSalesHistoryBySalesRep.h      \
-          dspCapacityUOMsByClassCode.h          \
-          dspCapacityUOMsByProductCategory.h    \
           dspCashReceipts.h                     \
           dspCheckRegister.h                    \
           dspCostedIndentedBOM.h                \
@@ -1664,8 +1660,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspBriefSalesHistoryByCustomer.cpp    \
           dspBriefSalesHistoryByCustomerType.cpp        \
           dspBriefSalesHistoryBySalesRep.cpp            \
-          dspCapacityUOMsByClassCode.cpp                \
-          dspCapacityUOMsByProductCategory.cpp          \
           dspCashReceipts.cpp                   \
           dspCheckRegister.cpp                  \
           dspCostedIndentedBOM.cpp              \

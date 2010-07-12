@@ -11,29 +11,16 @@
 #ifndef DSPCAPACITYUOMSBYCLASSCODE_H
 #define DSPCAPACITYUOMSBYCLASSCODE_H
 
-#include "xwidget.h"
+#include "dspCapacityUOMsByParameter.h"
 
-#include "ui_dspCapacityUOMsByClassCode.h"
-
-class dspCapacityUOMsByClassCode : public XWidget, public Ui::dspCapacityUOMsByClassCode
+class dspCapacityUOMsByClassCode : public dspCapacityUOMsByParameter
 {
     Q_OBJECT
 
 public:
     dspCapacityUOMsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCapacityUOMsByClassCode();
 
     virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sEditItem();
-    virtual void sFillList();
-    virtual void sFillList( int pItemid, bool pLocalUpdate );
-
-protected slots:
-    virtual void languageChange();
 
 };
 

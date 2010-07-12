@@ -2,6 +2,7 @@
 INCLUDEPATH += displays
 
 FORMS   += displays/dspBOMBase.ui \
+           displays/dspCapacityUOMsByParameter.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspItemsByCharacteristic.ui \
            displays/dspItemsByParameter.ui \
@@ -9,6 +10,9 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspSingleLevelWhereUsed.ui
 
 HEADERS += displays/dspBOMBase.h \
+           displays/dspCapacityUOMsByClassCode.h \
+           displays/dspCapacityUOMsByParameter.h \
+           displays/dspCapacityUOMsByProductCategory.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspItemsByCharacteristic.h \
@@ -22,6 +26,9 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspSummarizedBOM.h
 
 SOURCES += displays/dspBOMBase.cpp \
+           displays/dspCapacityUOMsByClassCode.cpp \
+           displays/dspCapacityUOMsByParameter.cpp \
+           displays/dspCapacityUOMsByProductCategory.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspItemsByCharacteristic.cpp \
