@@ -253,15 +253,12 @@ FORMS =   absoluteCalendarItem.ui               \
           dspInventoryHistoryByItem.ui                  \
           dspInventoryHistoryByOrderNumber.ui           \
           dspInventoryHistoryByParameterList.ui         \
-          dspInventoryLocator.ui                        \
           dspInvoiceInformation.ui                      \
           dspInvoiceRegister.ui                         \
           dspItemCostDetail.ui                          \
           dspItemCostHistory.ui                         \
           dspItemCostSummary.ui                         \
           dspItemCostsByClassCode.ui                    \
-          dspItemSitesByItem.ui                         \
-          dspItemSitesByParameterList.ui                \
           dspItemSourcesByItem.ui                       \
           dspItemSourcesByVendor.ui                     \
           dspJobCosting.ui                              \
@@ -296,9 +293,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspPricesByItem.ui                            \
           dspPurchaseReqsByItem.ui                      \
           dspPurchaseReqsByPlannerCode.ui               \
-          dspQOHByItem.ui                               \
-          dspQOHByLocation.ui                           \
-          dspQOHByParameterList.ui                      \
           dspQuotesByCustomer.ui                        \
           dspQuotesByItem.ui                            \
           dspRecurringInvoices.ui                       \
@@ -356,7 +350,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspUsageStatisticsByItem.ui           \
           dspUsageStatisticsByItemGroup.ui      \
           dspUsageStatisticsByWarehouse.ui      \
-          dspValidLocationsByItem.ui            \
           dspVendorAPHistory.ui                 \
           dspVoucherRegister.ui                 \
           dspWoHistoryByClassCode.ui            \
@@ -958,15 +951,12 @@ HEADERS = ../common/format.h                    \
           dspInventoryHistoryByItem.h                   \
           dspInventoryHistoryByOrderNumber.h            \
           dspInventoryHistoryByParameterList.h          \
-          dspInventoryLocator.h                         \
           dspInvoiceInformation.h                       \
           dspInvoiceRegister.h                          \
           dspItemCostDetail.h                           \
           dspItemCostHistory.h                          \
           dspItemCostSummary.h                          \
           dspItemCostsByClassCode.h                     \
-          dspItemSitesByItem.h                          \
-          dspItemSitesByParameterList.h                 \
           dspItemSourcesByItem.h                        \
           dspItemSourcesByVendor.h                      \
           dspJobCosting.h                               \
@@ -1001,9 +991,6 @@ HEADERS = ../common/format.h                    \
           dspPricesByItem.h                     \
           dspPurchaseReqsByItem.h               \
           dspPurchaseReqsByPlannerCode.h        \
-          dspQOHByItem.h                        \
-          dspQOHByLocation.h                    \
-          dspQOHByParameterList.h               \
           dspQuotesByCustomer.h                 \
           dspQuotesByItem.h                     \
           dspRecurringInvoices.h                \
@@ -1061,7 +1048,6 @@ HEADERS = ../common/format.h                    \
           dspUsageStatisticsByItem.h            \
           dspUsageStatisticsByItemGroup.h       \
           dspUsageStatisticsByWarehouse.h       \
-          dspValidLocationsByItem.h             \
           dspVendorAPHistory.h                  \
           dspVoucherRegister.h                  \
           dspWoHistoryByClassCode.h             \
@@ -1699,15 +1685,12 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspInventoryHistoryByItem.cpp                 \
           dspInventoryHistoryByOrderNumber.cpp          \
           dspInventoryHistoryByParameterList.cpp        \
-          dspInventoryLocator.cpp                       \
           dspInvoiceInformation.cpp                     \
           dspInvoiceRegister.cpp                        \
           dspItemCostDetail.cpp                         \
           dspItemCostHistory.cpp                        \
           dspItemCostSummary.cpp                        \
           dspItemCostsByClassCode.cpp                   \
-          dspItemSitesByItem.cpp                        \
-          dspItemSitesByParameterList.cpp               \
           dspItemSourcesByItem.cpp                      \
           dspItemSourcesByVendor.cpp                    \
           dspJobCosting.cpp                             \
@@ -1742,9 +1725,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspPricesByItem.cpp                           \
           dspPurchaseReqsByItem.cpp                     \
           dspPurchaseReqsByPlannerCode.cpp              \
-          dspQOHByItem.cpp                              \
-          dspQOHByLocation.cpp                          \
-          dspQOHByParameterList.cpp                     \
           dspQuotesByCustomer.cpp                       \
           dspQuotesByItem.cpp                           \
           dspRecurringInvoices.cpp                      \
@@ -1802,7 +1782,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspUsageStatisticsByItem.cpp          \
           dspUsageStatisticsByItemGroup.cpp     \
           dspUsageStatisticsByWarehouse.cpp     \
-          dspValidLocationsByItem.cpp           \
           dspVendorAPHistory.cpp                \
           dspVoucherRegister.cpp                \
           dspWoHistoryByClassCode.cpp           \

@@ -11,24 +11,18 @@
 #ifndef DSPVALIDLOCATIONSBYITEM_H
 #define DSPVALIDLOCATIONSBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspValidLocationsByItem.h"
 
-class dspValidLocationsByItem : public XWidget, public Ui::dspValidLocationsByItem
+class dspValidLocationsByItem : public display, public Ui::dspValidLocationsByItem
 {
     Q_OBJECT
 
 public:
     dspValidLocationsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspValidLocationsByItem();
-    virtual bool setParams(ParameterList &);
 
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * );
-    virtual void sFillList();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

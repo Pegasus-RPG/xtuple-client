@@ -12,29 +12,26 @@
 #define DSPITEMSITESBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspItemSitesByParameterList.h"
 
-class dspItemSitesByParameterList : public XWidget, public Ui::dspItemSitesByParameterList
+class dspItemSitesByParameterList : public display, public Ui::dspItemSitesByParameterList
 {
     Q_OBJECT
 
 public:
     dspItemSitesByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemSitesByParameterList();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sView();
     virtual void sEdit();
     virtual void sInventoryAvailability();
     virtual void sIssueCountTag();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
 
 protected slots:
     virtual void languageChange();

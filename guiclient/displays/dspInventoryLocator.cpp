@@ -12,43 +12,34 @@
 
 #include <QMenu>
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
-
-#include <openreports.h>
-#include <metasql.h>
-#include "mqlutil.h"
 
 #include "relocateInventory.h"
 #include "reassignLotSerial.h"
 
-dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspInventoryLocator", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Location/Lot/Serial # Detail"));
+  setListLabel(tr("Locations"));
+  setReportName("LocationLotSerialNumberDetail");
+  setMetaSQLOptions("inventoryLocator", "detail");
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  _itemloc->addColumn(tr("Site"),       _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _itemloc->addColumn(tr("Location"),          200, Qt::AlignLeft,  true, "locationname");
-  _itemloc->addColumn(tr("Netable"),  _orderColumn, Qt::AlignCenter,true, "netable");
-  _itemloc->addColumn(tr("Lot/Serial #"),       -1, Qt::AlignLeft,  true, "lotserial");
-  _itemloc->addColumn(tr("Expiration"),_dateColumn, Qt::AlignCenter,true, "expiration");
-  _itemloc->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");
-  _itemloc->addColumn(tr("Qty."),       _qtyColumn, Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("Site"),       _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("Location"),          200, Qt::AlignLeft,  true, "locationname");
+  list()->addColumn(tr("Netable"),  _orderColumn, Qt::AlignCenter,true, "netable");
+  list()->addColumn(tr("Lot/Serial #"),       -1, Qt::AlignLeft,  true, "lotserial");
+  list()->addColumn(tr("Expiration"),_dateColumn, Qt::AlignCenter,true, "expiration");
+  list()->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");
+  list()->addColumn(tr("Qty."),       _qtyColumn, Qt::AlignRight, true, "qoh");
 
   _item->setFocus();
 }
 
-dspInventoryLocator::~dspInventoryLocator()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspInventoryLocator::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -95,24 +86,10 @@ bool dspInventoryLocator::setParams(ParameterList &params)
   return true;
 }
 
-void dspInventoryLocator::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("LocationLotSerialNumberDetail", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspInventoryLocator::sRelocateInventory()
 {
   ParameterList params;
-  params.append("itemloc_id", _itemloc->id());
+  params.append("itemloc_id", list()->id());
 
   relocateInventory newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -124,7 +101,7 @@ void dspInventoryLocator::sRelocateInventory()
 void dspInventoryLocator::sReassignLotSerial()
 {
   ParameterList params;
-  params.append("itemloc_id", _itemloc->id());
+  params.append("itemloc_id", list()->id());
 
   reassignLotSerial newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -149,17 +126,3 @@ void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected
   }
 }
 
-void dspInventoryLocator::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  MetaSQLQuery mql = mqlLoad("inventoryLocator", "detail");
-  q = mql.toQuery(params);
-  _itemloc->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}

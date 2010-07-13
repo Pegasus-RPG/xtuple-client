@@ -12,26 +12,24 @@
 #define DSPQOHBYLOCATION_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspQOHByLocation.h"
 
-class dspQOHByLocation : public XWidget, public Ui::dspQOHByLocation
+class dspQOHByLocation : public display, public Ui::dspQOHByLocation
 {
     Q_OBJECT
 
 public:
     dspQOHByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspQOHByLocation();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sPopulateLocations();
     virtual void sRelocate();
-    virtual void sPopulateMenu( QMenu * menu );
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *);
     virtual void sFillList();
 
 protected slots:

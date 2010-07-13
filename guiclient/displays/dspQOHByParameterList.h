@@ -8,25 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPQOHBYITEM_H
-#define DSPQOHBYITEM_H
+#ifndef DSPQOHBYPARAMETERLIST_H
+#define DSPQOHBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspQOHByItem.h"
+#include "ui_dspQOHByParameterList.h"
 
-class dspQOHByItem : public XWidget, public Ui::dspQOHByItem
+class dspQOHByParameterList : public display, public Ui::dspQOHByParameterList
 {
     Q_OBJECT
 
 public:
-    dspQOHByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspQOHByItem();
+    dspQOHByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
     virtual bool setParams(ParameterList &);
+    virtual SetResponse set( const ParameterList & pParams );
 
 public slots:
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sViewDetail();
     virtual void sTransfer();
@@ -42,6 +42,7 @@ protected slots:
 
 private:
     QButtonGroup* _costsGroupInt;
+    QButtonGroup* _showGroupInt;
 };
 
-#endif // DSPQOHBYITEM_H
+#endif // DSPQOHBYPARAMETERLIST_H

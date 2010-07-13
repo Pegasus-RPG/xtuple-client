@@ -11,28 +11,26 @@
 #ifndef DSPITEMSITESBYITEM_H
 #define DSPITEMSITESBYITEM_H
 
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspItemSitesByItem.h"
 
-class dspItemSitesByItem : public XWidget, public Ui::dspItemSitesByItem
+class dspItemSitesByItem : public display, public Ui::dspItemSitesByItem
 {
     Q_OBJECT
 
 public:
     dspItemSitesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemSitesByItem();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem * pSelected );
     virtual void sViewItemsite();
     virtual void sEditItemsite();
     virtual void sViewInventoryAvailability();
     virtual void sViewLocationLotSerialDetail();
     virtual void sIssueCountTag();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

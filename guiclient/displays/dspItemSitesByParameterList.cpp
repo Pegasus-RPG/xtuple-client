@@ -11,66 +11,41 @@
 #include "dspItemSitesByParameterList.h"
 
 #include <QVariant>
-//#include <QStatusBar>
 #include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
-#include <openreports.h>
-#include <metasql.h>
 
-#include "mqlutil.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
 
-/*
- *  Constructs a dspItemSitesByParameterList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
-dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspItemSitesByParameterList", fl)
 {
-  setupUi(this);
-
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Item Sites by Class Code"));
+  setListLabel(tr("Item Sites"));
+  setReportName("ItemSitesByParameterList");
+  setMetaSQLOptions("itemSites", "detail");
 
   _parameter->setType(ParameterGroup::ClassCode);
 
-  _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
-  _itemsite->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _itemsite->addColumn(tr("Description"),   -1,           Qt::AlignLeft,   true,  "description"   );
-  _itemsite->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
-  _itemsite->addColumn(tr("QOH"),           _qtyColumn,   Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
-  _itemsite->addColumn(tr("Loc. Cntrl."),   _dateColumn,  Qt::AlignCenter, true,  "loccntrl" );
-  _itemsite->addColumn(tr("Cntrl. Meth."),  _dateColumn,  Qt::AlignCenter, true,  "controlmethod" );
-  _itemsite->addColumn(tr("Sold Ranking"),  _dateColumn,  Qt::AlignCenter, true,  "soldranking" );
-  _itemsite->addColumn(tr("ABC Class"),     _dateColumn,  Qt::AlignCenter, true,  "itemsite_abcclass" );
-  _itemsite->addColumn(tr("Cycle Cnt."),    _dateColumn,  Qt::AlignCenter, true,  "itemsite_cyclecountfreq" );
-  _itemsite->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter, true,  "datelastcount" );
-  _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter, true,  "datelastused" );
+  list()->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"),   -1,           Qt::AlignLeft,   true,  "description"   );
+  list()->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("QOH"),           _qtyColumn,   Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  list()->addColumn(tr("Loc. Cntrl."),   _dateColumn,  Qt::AlignCenter, true,  "loccntrl" );
+  list()->addColumn(tr("Cntrl. Meth."),  _dateColumn,  Qt::AlignCenter, true,  "controlmethod" );
+  list()->addColumn(tr("Sold Ranking"),  _dateColumn,  Qt::AlignCenter, true,  "soldranking" );
+  list()->addColumn(tr("ABC Class"),     _dateColumn,  Qt::AlignCenter, true,  "itemsite_abcclass" );
+  list()->addColumn(tr("Cycle Cnt."),    _dateColumn,  Qt::AlignCenter, true,  "itemsite_cyclecountfreq" );
+  list()->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter, true,  "datelastcount" );
+  list()->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter, true,  "datelastused" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemSitesByParameterList::~dspItemSitesByParameterList()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemSitesByParameterList::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -189,27 +164,11 @@ enum SetResponse dspItemSitesByParameterList::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspItemSitesByParameterList::sPrint()
-{
-  ParameterList params;
-  _parameter->appendValue(params);
-  _warehouse->appendValue(params);
-
-  if(_showInactive->isChecked())
-    params.append("showInactive");
-
-  orReport report("ItemSitesByParameterList", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspItemSitesByParameterList::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
 
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -220,7 +179,7 @@ void dspItemSitesByParameterList::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
 
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -230,7 +189,7 @@ void dspItemSitesByParameterList::sEdit()
 void dspItemSitesByParameterList::sInventoryAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
   params.append("byLeadTime");
 
@@ -242,14 +201,14 @@ void dspItemSitesByParameterList::sInventoryAvailability()
 void dspItemSitesByParameterList::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
+void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -274,18 +233,8 @@ void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
-void dspItemSitesByParameterList::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  MetaSQLQuery mql = mqlLoad("itemSites", "detail");
-  q = mql.toQuery(params);
-  _itemsite->populate(q, true);  
-}
-
 bool dspItemSitesByParameterList::setParams(ParameterList &params)
-  {
+{
   params.append("byParameterList");  
 
   params.append("regular", tr("Regular"));
@@ -296,13 +245,13 @@ bool dspItemSitesByParameterList::setParams(ParameterList &params)
   
   if (_showInactive->isChecked())
     params.append("showInactive");  
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
+  _warehouse->appendValue(params);
 
   if (_parameter->isSelected())
     params.append("byParameterId");
   else if (_parameter->isPattern())
     params.append("byParameterPattern");
   _parameter->appendValue(params);
+
   return true;
 }

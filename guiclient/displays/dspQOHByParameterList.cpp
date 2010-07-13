@@ -13,20 +13,20 @@
 #include <QVariant>
 #include <QMenu>
 
-#include <openreports.h>
-#include <metasql.h>
-
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
-#include "mqlutil.h"
 
-dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspQOHByParameterList", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Quantities on Hand by Parameter List"));
+  setListLabel(tr("Quantities on Hand"));
+  setReportName("QOHByParameterList");
+  setMetaSQLOptions("qoh", "detail");
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
@@ -38,75 +38,31 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _showGroupInt->addButton(_showPositive);
   _showGroupInt->addButton(_showNegative);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
-  _qoh->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
-  _qoh->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _qoh->addColumn(tr("Description"),      -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
-  _qoh->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  _qoh->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
-  _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
-  _qoh->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
-  _qoh->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "f_nnqoh"  );
-  _qoh->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight,  true,  "cost"  );
-  _qoh->addColumn(tr("Value"),            _costColumn, Qt::AlignRight,  true,  "value"  );
-  _qoh->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "f_nnvalue"  );
-  _qoh->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "f_costmethod" );
+  list()->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
+  list()->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"),      -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  list()->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
+  list()->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  list()->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
+  list()->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "f_nnqoh"  );
+  list()->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight,  true,  "cost"  );
+  list()->addColumn(tr("Value"),            _costColumn, Qt::AlignRight,  true,  "value"  );
+  list()->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "f_nnvalue"  );
+  list()->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "f_costmethod" );
 
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
 }
 
-dspQOHByParameterList::~dspQOHByParameterList()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspQOHByParameterList::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
-}
-
-void dspQOHByParameterList::sPrint()
-{
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _parameter->appendValue(params);
-
-  if (_parameter->type() == ParameterGroup::ItemGroup)
-    params.append("itemgrp");
-  else if(_parameter->type() == ParameterGroup::ClassCode)
-    params.append("classcode");
-
-  if (_showPositive->isChecked())
-    params.append("onlyShowPositive");
-
-  if (_showNegative->isChecked())
-    params.append("onlyShowNegative");
-
-  if (_showValue->isChecked())
-    params.append("showValue");
-
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
-
-  if (_useActualCosts->isChecked())
-    params.append("useActualCosts");
-
-  if (_usePostedCosts->isChecked())
-    params.append("usePostedCosts");
-
-  orReport report("QOHByParameterList", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
@@ -219,7 +175,7 @@ void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
 void dspQOHByParameterList::sViewDetail()
 {
   ParameterList params;
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   dspInventoryLocator *newdlg = new dspInventoryLocator();
@@ -231,7 +187,7 @@ void dspQOHByParameterList::sTransfer()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
 
   transferTrans *newdlg = new transferTrans();
   newdlg->set(params);
@@ -242,7 +198,7 @@ void dspQOHByParameterList::sAdjust()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
 
   adjustmentTrans *newdlg = new adjustmentTrans();
   newdlg->set(params);
@@ -253,7 +209,7 @@ void dspQOHByParameterList::sReset()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
   params.append("qty", 0.0);
 
   adjustmentTrans *newdlg = new adjustmentTrans();
@@ -264,7 +220,7 @@ void dspQOHByParameterList::sReset()
 void dspQOHByParameterList::sMiscCount()
 {
   ParameterList params;
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
 
   enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -275,7 +231,7 @@ void dspQOHByParameterList::sMiscCount()
 void dspQOHByParameterList::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _qoh->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -284,26 +240,19 @@ void dspQOHByParameterList::sIssueCountTag()
 
 void dspQOHByParameterList::sHandleValue(bool pShowValue)
 {
-  _qoh->setColumnHidden(_qoh->column("cost"),         !pShowValue);
-  _qoh->setColumnHidden(_qoh->column("value"),        !pShowValue);
-  _qoh->setColumnHidden(_qoh->column("f_nnvalue"),    !pShowValue);
-  _qoh->setColumnHidden(_qoh->column("f_costmethod"), !pShowValue);
+  list()->setColumnHidden(list()->column("cost"),         !pShowValue);
+  list()->setColumnHidden(list()->column("value"),        !pShowValue);
+  list()->setColumnHidden(list()->column("f_nnvalue"),    !pShowValue);
+  list()->setColumnHidden(list()->column("f_costmethod"), !pShowValue);
 }
 
 void dspQOHByParameterList::sFillList()
 {
-  _qoh->clear();
-  _qoh->setColumnVisible(_qoh->column("f_costmethod"),
+  list()->clear();
+  list()->setColumnVisible(list()->column("f_costmethod"),
                          _showValue->isChecked() && _usePostedCosts->isChecked());
 
-  ParameterList params;
-
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("qoh", "detail");
-  q = mql.toQuery(params);
-  _qoh->populate(q, true);
+  display::sFillList();
 }
 
 bool dspQOHByParameterList::setParams(ParameterList &params)
@@ -317,6 +266,8 @@ bool dspQOHByParameterList::setParams(ParameterList &params)
     params.append("useStandardCosts");
   else if (_useActualCosts->isChecked())
     params.append("useActualCosts");
+  else if (_usePostedCosts->isChecked())
+    params.append("usePostedCosts");
 
   if (_parameter->isSelected())
     params.append("byParameter");
@@ -332,13 +283,21 @@ bool dspQOHByParameterList::setParams(ParameterList &params)
   else if(_parameter->type() == ParameterGroup::ClassCode)
     params.append("classcode");
 
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
+  _warehouse->appendValue(params);
 
   if (_showPositive->isChecked())
+  {
     params.append("showPositive");
+    params.append("onlyShowPositive"); // report
+  }
   else if (_showNegative->isChecked())
+  {
     params.append("showNegative");
+    params.append("onlyShowNegative"); // report
+  }
+
+  if (_showValue->isChecked())
+    params.append("showValue"); // report
 
   return true;
 }

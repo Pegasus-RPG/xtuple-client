@@ -12,28 +12,24 @@
 #define DSPINVENTORYLOCATOR_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspInventoryLocator.h"
 
-class dspInventoryLocator : public XWidget, public Ui::dspInventoryLocator
+class dspInventoryLocator : public display, public Ui::dspInventoryLocator
 {
     Q_OBJECT
 
 public:
     dspInventoryLocator(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryLocator();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sRelocateInventory();
     virtual void sReassignLotSerial();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
