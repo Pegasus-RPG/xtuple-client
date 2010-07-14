@@ -288,7 +288,8 @@ void Documents::sOpenDoc(QString mode)
 
       if (!tfile.open(QIODevice::WriteOnly))
       {
-        QMessageBox::warning( this, tr("File Open Error"),tr("Could Not Create File " + tfile.fileName() + ".") );
+        QMessageBox::warning( this, tr("File Open Error"),
+                             tr("Could Not Create File %1.").arg(tfile.fileName()) );
         return;
       }
       tfile.write(qfile.value("url_stream").toByteArray());

@@ -17,7 +17,7 @@
 
 #include "ui_maintainBudget.h"
 
-#include <Q3ValueList>
+class QTableWidgetItem;
 
 class maintainBudget : public XWidget, public Ui::maintainBudget
 {
@@ -29,15 +29,16 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList &);
-    virtual void sSave();
     virtual void sAccountsAdd();
-    virtual void sAccountsRemove();
-    virtual void sAccountsMoveUp();
     virtual void sAccountsMoveDown();
-    virtual void sPeriodsAll();
-    virtual void sValueChanged( int, int );
+    virtual void sAccountsMoveUp();
+    virtual void sAccountsRemove();
     virtual void sGenerateTable();
+    virtual void sPeriodsAll();
+    virtual void sPeriodsInvert();
     virtual void sPrint();
+    virtual void sSave();
+    virtual void sValueChanged(QTableWidgetItem *item);
 
 protected:
     virtual void closeEvent( QCloseEvent * e );
@@ -50,8 +51,8 @@ private:
     int _budgheadid;
     bool _dirty;
     int _mode;
-    Q3ValueList<int> _accountsRef;
-    Q3ValueList<int> _periodsRef;
+    QList<int> _accountsRef;
+    QList<int> _periodsRef;
 
 };
 

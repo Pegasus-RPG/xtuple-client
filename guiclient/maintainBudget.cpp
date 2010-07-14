@@ -18,57 +18,42 @@
 #include <glcluster.h>
 #include <openreports.h>
 
-/*
- *  Constructs a maintainBudget as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_accountsAdd, SIGNAL(clicked()), this, SLOT(sAccountsAdd()));
-  connect(_accountsDown, SIGNAL(clicked()), this, SLOT(sAccountsMoveDown()));
+  connect(_accountsAdd,    SIGNAL(clicked()), this, SLOT(sAccountsAdd()));
+  connect(_accountsDown,   SIGNAL(clicked()), this, SLOT(sAccountsMoveDown()));
   connect(_accountsRemove, SIGNAL(clicked()), this, SLOT(sAccountsRemove()));
-  connect(_accountsUp, SIGNAL(clicked()), this, SLOT(sAccountsMoveUp()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_generate, SIGNAL(clicked()), this, SLOT(sGenerateTable()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_table, SIGNAL(valueChanged(int,int)), this, SLOT(sValueChanged(int,int)));
-  connect(_periodsAll, SIGNAL(clicked()), this, SLOT(sPeriodsAll()));
+  connect(_accountsUp,     SIGNAL(clicked()), this, SLOT(sAccountsMoveUp()));
+  connect(_close,          SIGNAL(clicked()), this, SLOT(close()));
+  connect(_generate,       SIGNAL(clicked()), this, SLOT(sGenerateTable()));
+  connect(_periodsAll,     SIGNAL(clicked()), this, SLOT(sPeriodsAll()));
+  connect(_periodsInvert,  SIGNAL(clicked()), this, SLOT(sPeriodsInvert()));
+  connect(_print,          SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_save,           SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(sValueChanged(QTableWidgetItem*)));
 
   _dirty = false;
   _budgheadid = -1;
   _mode = cNew;
   
-  // populate _periods
   q.exec("SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end)) AS f_name "
          "  FROM period "
          "ORDER BY period_start DESC;" );
   while(q.next())
   {
     XListBoxText *item = new XListBoxText(q.value("f_name").toString(), q.value("period_id").toInt());
-    _periods->insertItem(item);
+    _periods->addItem(dynamic_cast<QListWidgetItem*>(item));
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 maintainBudget::~maintainBudget()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void maintainBudget::languageChange()
 {
   retranslateUi(this);
@@ -103,7 +88,7 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
       _descrip->setReadOnly(true);
       _save->setEnabled(false);
       _save->hide();
-      _table->setReadOnly(true);
+      _table->setSelectionMode(QAbstractItemView::NoSelection);
       _accountsAdd->setEnabled(false);
       _accountsDown->setEnabled(false);
       _accountsUp->setEnabled(false);
@@ -173,19 +158,22 @@ void maintainBudget::sSave()
 
   q.prepare("SELECT setBudget(:budghead_id, :period_id, :accnt_id, :amount) AS result;");
 
-  for(int r = 0; r < _table->numRows(); r++)
+  for(int r = 0; r < _table->rowCount(); r++)
   {
-    int accountid = *(_accountsRef.at(r));
-    for(int c = 1; c < _table->numCols(); c++)
+    int accountid = _accountsRef.at(r);
+    for(int c = 1; c < _table->columnCount(); c++)
     {
-      QString amount = _table->text(r, c);
-      if(!amount.isEmpty())
+      if (_table->item(r, c))
       {
-        q.bindValue(":budghead_id", _budgheadid);
-        q.bindValue(":period_id", *(_periodsRef.at(c)));
-        q.bindValue(":accnt_id", accountid);
-        q.bindValue(":amount", amount.toDouble());
-        q.exec();
+        QString amount = _table->item(r, c)->text();
+        if(!amount.isEmpty())
+        {
+          q.bindValue(":budghead_id", _budgheadid);
+          q.bindValue(":period_id", _periodsRef.at(c));
+          q.bindValue(":accnt_id", accountid);
+          q.bindValue(":amount", amount.toDouble());
+          q.exec();
+        }
       }
     }
   }
@@ -202,8 +190,8 @@ void maintainBudget::sSave()
     _periods->clearSelection();
     _accountsRef.clear();
     _periodsRef.clear();
-    _table->setNumRows(0);
-    _table->setNumCols(0);
+    _table->setRowCount(0);
+    _table->setColumnCount(0);
   }
   else
     close();
@@ -218,23 +206,25 @@ void maintainBudget::closeEvent( QCloseEvent * e )
     return;
   }
 
-  switch( QMessageBox::information( this, tr("Unsaved Changes"),
-                                    "The document has been changed since "
-                                    "the last save.",
-                                    "Save Now", "Cancel", "Close Anyway",
-                                    0, 1 ) ) {
-    case 0:
+  switch(QMessageBox::question(this, tr("Unsaved Changes"),
+                               tr("<p>The document has been changed "
+                                  "since the last save.<br>Do you want "
+                                  "to save your changes?"),
+                               QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                               QMessageBox::Save)) {
+    case QMessageBox::Save:
       sSave();
       e->accept();
       break;
-    case 1:
+    case QMessageBox::Discard:
+      e->accept();
+      break;
+    case QMessageBox::Cancel:
     default: // just for sanity
       e->ignore();
       break;
-    case 2:
-      e->accept();
-      break;
   }
+
 }
 
 void maintainBudget::sAccountsAdd()
@@ -261,51 +251,56 @@ void maintainBudget::sAccountsAdd()
     if(q.first())
     {
       XListBoxText *item = new XListBoxText(q.value("result").toString(), child->id());
-      _accounts->insertItem(item);
+      _accounts->addItem(dynamic_cast<QListWidgetItem*>(item));
     }
   }
 }
 
 void maintainBudget::sAccountsRemove()
 {
-  int idx = _accounts->currentItem();
+  int idx = _accounts->currentRow();
   if(idx != -1)
   {
-    _accounts->removeItem(idx);
-	sGenerateTable();
+    _accounts->takeItem(idx);
+    sGenerateTable();
   }
 }
 
 void maintainBudget::sAccountsMoveUp()
 {
-  int idx = _accounts->currentItem();
+  int idx = _accounts->currentRow();
   if(idx <= 0)
     return;
 
-  Q3ListBoxItem * item = _accounts->item(idx);
-  _accounts->takeItem(item);
-  _accounts->insertItem(item, idx - 1);
+  QListWidgetItem *item = _accounts->takeItem(idx);
+  _accounts->insertItem(idx - 1, item);
   _accounts->setCurrentItem(item);
 }
 
 void maintainBudget::sAccountsMoveDown()
 {
-  int idx = _accounts->currentItem();
+  int idx = _accounts->currentRow();
   if(idx == -1)
     return;
 
-  Q3ListBoxItem * item = _accounts->item(idx);
-  _accounts->takeItem(item);
-  _accounts->insertItem(item, idx + 1);
+  QListWidgetItem * item = _accounts->takeItem(idx);
+  _accounts->insertItem(idx + 1, item);
   _accounts->setCurrentItem(item);
 }
 
 void maintainBudget::sPeriodsAll()
 {
-  _periods->selectAll(TRUE);
+  _periods->selectAll();
 }
 
-void maintainBudget::sValueChanged( int, int )
+void maintainBudget::sPeriodsInvert()
+{
+  for (int row = 0; row < _periods->count(); row++)
+    _periods->setCurrentItem(_periods->item(row),
+                             QItemSelectionModel::Toggle);
+}
+
+void maintainBudget::sValueChanged(QTableWidgetItem * /* item */)
 {
   _dirty = true;
 }
@@ -315,19 +310,20 @@ void maintainBudget::sGenerateTable()
   _generate->setFocus();
   if(_dirty)
   {
-    switch( QMessageBox::information( this, tr("Unsaved Changes"),
-                                      "The document has been changed since "
-                                      "the last save.",
-                                      "Save Now", "Cancel", "Generate Anyway",
-                                      0, 1 ) ) {
-      case 0:
+    switch(QMessageBox::question(this, tr("Unsaved Changes"),
+                                 tr("<p>The document has been changed "
+                                    "since the last save.<br>Do you want "
+                                    "to save your changes?"),
+                                 QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                 QMessageBox::Save)) {
+      case QMessageBox::Save:
         sSave();
         break;
-      case 1:
+      case QMessageBox::Discard:
+        break;
+      case QMessageBox::Cancel:
       default: // just for sanity
         return;
-        break;
-      case 2:
         break;
     }
   }
@@ -336,35 +332,33 @@ void maintainBudget::sGenerateTable()
 
   _accountsRef.clear();
   _periodsRef.clear();
-  _table->setNumRows(0);
-  _table->setNumCols(0);
+  _table->setRowCount(0);
+  _table->setColumnCount(0);
 
   QStringList accounts;
   QStringList periods;
 
-  XListBoxText* item = (XListBoxText*)_accounts->firstItem();
-  while(item)
+  for (int row = 0; _accounts->item(row); row++)
   {
-    _accountsRef.append(item->id());
-    accounts.append(item->text());
-    item = (XListBoxText*)item->next();
-  }
-  _table->setNumRows(accounts.count());
-  //_table->setRowLabels(accounts);
-
-  bool isPeriodSelected = false;
-  item = (XListBoxText*)_periods->firstItem();
-  while(item)
-  {
-    if(item->isSelected())
+    XListBoxText *item = dynamic_cast<XListBoxText*>(_accounts->item(row));
+    if (item)
     {
-      isPeriodSelected = true;
+      _accountsRef.append(item->id());
+      accounts.append(item->text());
+    }
+  }
+
+  QList<QListWidgetItem *>periodlist = _periods->selectedItems();
+  for (int i = 0; i < periodlist.size(); i++)
+  {
+    XListBoxText *item = dynamic_cast<XListBoxText*>(periodlist.at(i));
+    if (item)
+    {
       _periodsRef.prepend(item->id());
       periods.prepend(item->text());
     }
-    item = (XListBoxText*)item->next();
   }
-  if (!isPeriodSelected)
+  if (periodlist.isEmpty())
   {
     QMessageBox::critical(this, tr("Incomplete criteria"),
                           tr("<p>Please select at least one Period "
@@ -374,15 +368,14 @@ void maintainBudget::sGenerateTable()
   
   _periodsRef.prepend(-1);
   periods.prepend(tr("Account"));
-  _table->setNumCols(periods.count());
-  _table->setColumnLabels(periods);
+  _table->setColumnCount(periods.count());
+  _table->setHorizontalHeaderLabels(periods);
 
   periods.clear();
-  Q3ValueList<int>::iterator it;
-  for( it = _periodsRef.begin(); it != _periodsRef.end(); ++it )
+  for(int i = 0; i < _periodsRef.count(); i++)
   {
-    if(-1 != (*it))
-      periods.append(QString::number((*it)));
+    if (_periodsRef.at(i) != -1)
+      periods.append(QString::number(_periodsRef.at(i)));
   }
 
   QString sql = "SELECT budgitem_period_id, budgitem_amount"
@@ -391,17 +384,28 @@ void maintainBudget::sGenerateTable()
                 "   AND  (budgitem_budghead_id=:budghead_id)"
                 "   AND  (budgitem_period_id IN (" + periods.join(",") + ")) ); ";
   q.prepare(sql);
+
+  _table->setRowCount(_accountsRef.count());
+  _table->setColumnCount(periods.size() + 1);   // + 1 to hold account number
   
   for(int i = 0; i < _accountsRef.count(); i++)
   {
-    _table->setText(i, 0, (accounts.at(i)));
-    q.bindValue(":accnt_id", *(_accountsRef.at(i)));
+    QTableWidgetItem *item = new QTableWidgetItem();
+    _table->setItem(i, 0, item);
+    item->setText(accounts.at(i));
+
+    q.bindValue(":accnt_id", _accountsRef.at(i));
     q.bindValue(":budghead_id", _budgheadid);
     q.exec();
     while(q.next())
-      _table->setText(i, _periodsRef.findIndex(q.value("budgitem_period_id").toInt()), q.value("budgitem_amount").toString());
+    {
+      item = new QTableWidgetItem(q.value("budgitem_amount").toString());
+      _table->setItem(i, _periodsRef.indexOf(q.value("budgitem_period_id").toInt()), item);
+    }
+    _table->item(i, 0)->setFlags(_table->item(i, 0)->flags() & (~Qt::ItemIsEditable));
   }
-  _table->setColumnReadOnly(0, true);
+
+  _dirty = false;
 }
 
 void maintainBudget::populate()
@@ -423,8 +427,9 @@ void maintainBudget::populate()
     q.exec();
     while(q.next())
     {
-      XListBoxText *item = new XListBoxText(q.value("result").toString(), q.value("budgitem_accnt_id").toInt());
-      _accounts->insertItem(item);
+      XListBoxText *item = new XListBoxText(q.value("result").toString(),
+                                            q.value("budgitem_accnt_id").toInt());
+      _accounts->addItem(item);
     }
 
     q.prepare("SELECT DISTINCT budgitem_period_id"
@@ -434,15 +439,14 @@ void maintainBudget::populate()
     q.exec();
     while(q.next())
     {
-      XListBoxText* item = (XListBoxText*)_periods->firstItem();
-      while(item)
+      for (int row = 0; _periods->item(row); row++)
       {
+        XListBoxText* item = (XListBoxText*)_periods->item(row);
         if(item->id() == q.value("budgitem_period_id").toInt())
         {
-          _periods->setSelected(item, true);
+          _periods->setCurrentItem(item, QItemSelectionModel::Select);
           break;
         }
-        item = (XListBoxText*)item->next();
       }
     }
     sGenerateTable();
