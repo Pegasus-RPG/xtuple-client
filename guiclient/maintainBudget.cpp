@@ -243,6 +243,7 @@ void maintainBudget::sAccountsAdd()
   params.append("type", (GLCluster::cAsset | GLCluster::cLiability | GLCluster::cExpense | GLCluster::cRevenue | GLCluster::cEquity));
 
   accountList newdlg(this);
+  newdlg.setAttribute(Qt::WA_DeleteOnClose, false);
   newdlg.xtreewidget()->setSelectionMode(QAbstractItemView::ExtendedSelection);
   newdlg.set(params);
   int accnt_id=newdlg.exec();
