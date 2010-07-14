@@ -244,7 +244,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Purchase");
-  QAction * m = parent->goMenu()->addMenu(mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
   if(m)
     m->setText(tr("P&urchase"));
 }

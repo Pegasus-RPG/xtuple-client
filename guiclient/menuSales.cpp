@@ -460,7 +460,7 @@ menuSales::menuSales(GUIClient *pParent) :
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
 
   parent->populateCustomMenu(mainMenu, "Sales");
-  QAction * m = parent->goMenu()->addMenu(mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
   if(m)
     m->setText(tr("S&ales"));
 }

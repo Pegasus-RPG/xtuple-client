@@ -469,7 +469,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 #endif
 
   parent->populateCustomMenu(mainMenu, "Inventory");
-  QAction * m = parent->goMenu()->addMenu(mainMenu);
+  QAction * m = parent->menuBar()->addMenu(mainMenu);
   if(m)
     m->setText(tr("&Inventory"));
 
