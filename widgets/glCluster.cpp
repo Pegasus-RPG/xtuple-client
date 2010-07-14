@@ -15,12 +15,59 @@
 GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "accnt", "accnt_id", "formatGLAccount(accnt_id)", "accnt_descrip", "accnt_extref", 0, pName)
 {
-    setTitles(tr("Account"), tr("Accounts"));
-    setUiName("accountNumber");
-    setEditPriv("MaintainChartOfAccounts");
-    setViewPriv("ViewChartOfAccounts");
+  setTitles(tr("Account"), tr("Accounts"));
+  setUiName("accountNumber");
+  setEditPriv("MaintainChartOfAccounts");
+  setViewPriv("ViewChartOfAccounts");
 
-    _showExternal = false;
+  _showExternal = false;
+
+  _query = "SELECT accnt_id, formatGLAccount(accnt_id) AS number, accnt_descrip AS name, accnt_extref AS description "
+           "FROM accnt "
+           "  LEFT OUTER JOIN company ON (accnt_company=company_number) "
+           "WHERE (true) ";
+}
+
+void GLClusterLineEdit::setType(unsigned int pType)
+{
+  _type = pType;
+}
+
+void GLClusterLineEdit::setShowExternal(bool p)
+{
+  _showExternal = p;
+}
+
+void GLClusterLineEdit::sHandleCompleter()
+{
+  _extraClause.clear();
+  QStringList types;
+
+  if(_type > 0)
+  {
+    if(_type & GLCluster::cAsset)
+      types << ("'A'");
+    if(_type & GLCluster::cLiability)
+      types << ("'L'");
+    if(_type & GLCluster::cExpense)
+      types << ("'E'");
+    if(_type & GLCluster::cRevenue)
+      types << ("'R'");
+    if(_type & GLCluster::cEquity)
+      types << ("'Q'");
+  }
+
+  if(!types.isEmpty())
+    _extraClause = "(accnt_type IN (" + types.join(",") + "))";
+
+  if (!_extraClause.isEmpty() && !_showExternal)
+    _extraClause += " AND ";
+
+  if (!_showExternal)
+    _extraClause += "(NOT COALESCE(company_external, false)) ";
+
+  VirtualClusterLineEdit::sHandleCompleter();
+  _extraClause.clear();
 }
 
 void GLClusterLineEdit::sList()

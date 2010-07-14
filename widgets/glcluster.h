@@ -64,10 +64,10 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
     public:
       GLClusterLineEdit(QWidget*, const char* = 0);
 
-      void setType(unsigned int pType) { _type = pType; }
+      void setType(unsigned int pType);
       unsigned int type()  const       { return _type; }
       bool showExternal()              { return _showExternal; }
-      void setShowExternal(bool p)     { _showExternal = p; }
+      void setShowExternal(bool p);
 
     public slots:
       void sList();
@@ -76,6 +76,7 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
     protected slots:
       accountList* listFactory();
       accountSearch* searchFactory();
+      void sHandleCompleter();
 
     private:
       unsigned int _type;
