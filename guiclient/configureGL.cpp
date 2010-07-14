@@ -175,7 +175,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _discrepancy->setId(_metrics->value("GLSeriesDiscrepancyAccount").toInt());
 
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
-  _manualGlaccnt->setChecked(_metrics->boolean("AllowManualGLAccountEntry"));
   _manualFwdUpdate->setChecked(_metrics->boolean("ManualForwardUpdate"));
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
 
@@ -400,7 +399,6 @@ void configureGL::sSave()
 
   _metrics->set("GLSeriesDiscrepancyAccount", _discrepancy->id());
   _metrics->set("MandatoryGLEntryNotes", _mandatoryNotes->isChecked());
-  _metrics->set("AllowManualGLAccountEntry", _manualGlaccnt->isChecked());
   _metrics->set("ManualForwardUpdate", _manualFwdUpdate->isChecked());
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
 

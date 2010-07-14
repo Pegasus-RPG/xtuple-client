@@ -15,7 +15,6 @@
 #include <QSqlError>
 
 #include <xlistbox.h>
-#include <accountList.h>
 #include <glcluster.h>
 #include <openreports.h>
 
@@ -243,15 +242,15 @@ void maintainBudget::sAccountsAdd()
   ParameterList params;
   params.append("type", (GLCluster::cAsset | GLCluster::cLiability | GLCluster::cExpense | GLCluster::cRevenue | GLCluster::cEquity));
 
-  accountList newdlg(this, "", true);
-  newdlg._accnt->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  accountList newdlg(this);
+  newdlg.xtreewidget()->setSelectionMode(QAbstractItemView::ExtendedSelection);
   newdlg.set(params);
   int accnt_id=newdlg.exec();
 
   if (accnt_id == -1)
     return;
 
-  QList<XTreeWidgetItem*> selected = newdlg._accnt->selectedItems();
+  QList<XTreeWidgetItem*> selected = newdlg.xtreewidget()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *child = (XTreeWidgetItem*)selected[i];

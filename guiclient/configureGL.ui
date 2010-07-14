@@ -274,17 +274,10 @@ to be bound by its terms.</comment>
        <item row="2" column="1">
         <widget class="QGroupBox" name="_miscGroup">
          <property name="title">
-          <string/>
+          <string>Options:</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_10">
           <item row="1" column="0">
-           <widget class="QCheckBox" name="_manualGlaccnt">
-            <property name="text">
-             <string>Allow manual entry of Account Numbers</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
            <widget class="QCheckBox" name="_manualFwdUpdate">
             <property name="text">
              <string>Manual Forward Update Trial Balances</string>
@@ -1323,7 +1316,6 @@ to be bound by its terms.</comment>
   <tabstop>_subLedger</tabstop>
   <tabstop>_generalLedger</tabstop>
   <tabstop>_mandatoryNotes</tabstop>
-  <tabstop>_manualGlaccnt</tabstop>
   <tabstop>_manualFwdUpdate</tabstop>
   <tabstop>_yearend</tabstop>
   <tabstop>_gainLoss</tabstop>
