@@ -74,10 +74,10 @@ static void sNoConversionRate(QWidget* parent, const int curr_id, const QDate& e
 	errorMap[currDatePair] = 0;
 	currMap = errorMap.find(currDatePair);
     }
-    if (currMap.data() <= 0)
+    if (currMap.value() <= 0)
     {
 	displayMsg = true;
-	errorMap[currDatePair] = currMap.data() + 1;
+	errorMap[currDatePair] = currMap.value() + 1;
     }
     errorListLock.unlock();
 
@@ -151,8 +151,7 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
     setWindowTitle("CurrCluster");
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    _grid->remove(_valueLocalWidget);
-    _grid->expand(2, 2);
+    _grid->removeWidget(_valueLocalWidget);
 
     _currency = new XComboBox(this, "_currency");
     //_currency->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -422,12 +421,15 @@ void CurrCluster::setEnabled(bool newValue)
     _currency->setEnabled(newValue && currencyEnabled());
 }
 
-void CurrCluster::setPaletteForegroundColor(const QColor & newColor)
+void CurrCluster::setPaletteForegroundColor(const QColor &newColor)
 {
-    CurrDisplay::setPaletteForegroundColor(newColor);
-    _currency->setPaletteForegroundColor(newColor);
-    _valueBaseLit->setPaletteForegroundColor(newColor);
-    _valueBaseWidget->setPaletteForegroundColor(newColor);
+  CurrDisplay::setPaletteForegroundColor(newColor);
+
+  QPalette p = _valueLocalWidget->palette();
+  p.setColor(QPalette::Text, newColor);
+  _currency->setPalette(p);
+  _valueBaseLit->setPalette(p);
+  _valueBaseWidget->setPalette(p);
 }
 
 // deprecated
@@ -499,9 +501,9 @@ QString CurrDisplay::baseCurrAbbr()
 }
 
 CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
-    : QWidget(parent, name)
+    : QWidget(parent)
 {
-    setObjectName("CurrDisplay");
+    setObjectName(name ? name : "CurrDisplay");
     setWindowTitle("CurrDisplay");
 
     _grid = new QGridLayout(this);
@@ -922,9 +924,11 @@ QString CurrDisplay::currSymbol(const int pid)
   return "";
 }
 
-void CurrDisplay::setPaletteForegroundColor(const QColor & newColor)
+void CurrDisplay::setPaletteForegroundColor(const QColor &newColor)
 {
-    _valueLocalWidget->setPaletteForegroundColor(newColor);
+  QPalette p = _valueLocalWidget->palette();
+  p.setColor(QPalette::Text, newColor);
+  _valueLocalWidget->setPalette(p);
 }
 
 void CurrDisplay::setNA(const bool isNA)

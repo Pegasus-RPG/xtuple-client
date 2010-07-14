@@ -47,18 +47,41 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   if (!name)
     setObjectName("comment");
 
-  QVBoxLayout *moreLayout = new QVBoxLayout(this, 5, 7, "moreLayout");
-  QHBoxLayout *commentLayout = new QHBoxLayout( 0, 5, 7, "commentLayout"); 
-  QVBoxLayout *layout11  = new QVBoxLayout( 0, 0, 5, "layout11"); 
-  QHBoxLayout *layout9   = new QHBoxLayout( 0, 0, 0, "layout9"); 
-  QBoxLayout *layout8    = new QHBoxLayout( 0, 0, 5, "layout8"); 
-  QVBoxLayout *Layout181 = new QVBoxLayout( 0, 0, 0, "Layout181"); 
-  QVBoxLayout *Layout180 = new QVBoxLayout( 0, 0, 5, "Layout180"); 
+  QVBoxLayout *moreLayout = new QVBoxLayout(this);
+  moreLayout->setContentsMargins(5, 5, 5, 5);
+  moreLayout->setSpacing(7);
+  moreLayout->setObjectName("moreLayout");
 
-  QLabel *_cmnttypeLit = new QLabel(tr("Comment Type:"), this, "_cmnttypeLit");
+  QHBoxLayout *commentLayout = new QHBoxLayout(this);
+  commentLayout->setContentsMargins(5, 5, 5, 5);
+  commentLayout->setSpacing(7);
+  commentLayout->setObjectName("commentLayout");
+
+  QVBoxLayout *layout11  = new QVBoxLayout(this);
+  layout11->setSpacing(5);
+  layout11->setObjectName("layout11");
+
+  QHBoxLayout *layout9   = new QHBoxLayout(this);
+  layout9->setObjectName("layout9");
+
+  QBoxLayout *layout8    = new QHBoxLayout(this);
+  layout8->setSpacing(5);
+  layout8->setObjectName("layout8");
+
+  QVBoxLayout *layout181 = new QVBoxLayout(this);
+  layout181->setObjectName("layout181");
+
+  QVBoxLayout *layout180 = new QVBoxLayout(this);
+  layout180->setSpacing(5);
+  layout180->setObjectName("layout180");
+
+
+  QLabel *_cmnttypeLit = new QLabel(tr("Comment Type:"), this);
+  _cmnttypeLit->setObjectName("_cmnttypeLit");
   layout8->addWidget( _cmnttypeLit );
 
-  _cmnttype = new XComboBox( FALSE, this, "_cmnttype" );
+  _cmnttype = new XComboBox( FALSE, this);
+  _cmnttype->setObjectName("_cmnttype" );
   layout8->addWidget( _cmnttype );
   layout9->addLayout( layout8 );
 
@@ -66,35 +89,42 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   layout9->addItem( spacer );
   layout11->addLayout( layout9 );
 
-  _comment = new QTextEdit( this, "_comment" );
+  _comment = new QTextEdit( this);
+  _comment->setObjectName("_comment" );
   layout11->addWidget( _comment );
   commentLayout->addLayout( layout11 );
 
-  _close = new QPushButton(tr("&Cancel"), this, "_close");
-  Layout180->addWidget( _close );
+  _close = new QPushButton(tr("&Cancel"), this);
+  _close->setObjectName("_close");
+  layout180->addWidget( _close );
 
-  _save = new QPushButton(tr("&Save"), this, "_save");
-  Layout180->addWidget( _save );
+  _save = new QPushButton(tr("&Save"), this);
+  _save->setObjectName("_save");
+  layout180->addWidget( _save );
 
-  _prev = new QPushButton(tr("&Previous"), this, "_prev");
-  Layout180->addWidget( _prev );
+  _prev = new QPushButton(tr("&Previous"), this);
+  _prev->setObjectName("_prev");
+  layout180->addWidget( _prev );
 
-  _next = new QPushButton(tr("&Next"), this, "_next");
-  Layout180->addWidget( _next );
+  _next = new QPushButton(tr("&Next"), this);
+  _next->setObjectName("_next");
+  layout180->addWidget( _next );
 
-  Layout181->addLayout( Layout180 );
+  layout181->addLayout( layout180 );
   QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  Layout181->addItem( spacer_2 );
+  layout181->addItem( spacer_2 );
 
-  _more = new QPushButton(tr("Show &More"), this, "_more");
+  _more = new QPushButton(tr("Show &More"), this);
+  _more->setObjectName("_more");
   _more->setCheckable(true);
-  Layout181->addWidget(_more);
+  layout181->addWidget(_more);
 
-  commentLayout->addLayout( Layout181 );
+  commentLayout->addLayout( layout181 );
 
   moreLayout->addLayout(commentLayout);
 
-  _comments = new Comments(this, "_comments");
+  _comments = new Comments(this);
+  _comments->setObjectName("_comments");
   _comments->setReadOnly(true);
   _comments->findChild<XCheckBox*>("_verbose")->setForgetful(true);
   _comments->findChild<XCheckBox*>("_verbose")->hide();
