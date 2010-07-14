@@ -24,6 +24,7 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFl
   setListLabel(tr("Bill of Materials Items"));
   setReportName("IndentedWhereUsed");
   setMetaSQLOptions("whereUsed", "detail");
+  setUseAltId(true);
 
   _worksetid = 0;
 

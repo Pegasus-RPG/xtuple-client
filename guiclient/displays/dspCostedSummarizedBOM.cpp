@@ -10,42 +10,34 @@
 
 #include "dspCostedSummarizedBOM.h"
 
-#include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
-#include <metasql.h>
-#include <openreports.h>
-#include <parameter.h>
-
-#include "mqlutil.h"
-
-dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspCostedSummarizedBOM", fl)
 {
-  setupUi(this);
-
-//  (void)statusBar();
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Costed Summarized Bill of Materials"));
+  setListLabel(tr("Costed Bill of Material"));
+  setReportName("CostedSummarizedBOM");
+  setMetaSQLOptions("costedBOM", "detail");
 
   QButtonGroup* _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
                  ItemLineEdit::cPlanning | ItemLineEdit::cTooling);
 
-  _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
-  _bomitem->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
-  _bomitem->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Qty. Req."),     _qtyColumn, Qt::AlignRight, true, "bomdata_qtyreq");
-  _bomitem->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext. Cost"),    _priceColumn, Qt::AlignRight, true, "extendedcost");
-  _bomitem->setIndentation(10);
+  list()->setRootIsDecorated(TRUE);
+  list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
+  list()->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
+  list()->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
+  list()->addColumn(tr("Qty. Req."),     _qtyColumn, Qt::AlignRight, true, "bomdata_qtyreq");
+  list()->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight, true, "unitcost");
+  list()->addColumn(tr("Ext. Cost"),    _priceColumn, Qt::AlignRight, true, "extendedcost");
+  list()->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
   _expiredDays->setEnabled(_showExpired->isChecked());
@@ -60,13 +52,9 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
-dspCostedSummarizedBOM::~dspCostedSummarizedBOM()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspCostedSummarizedBOM::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -96,6 +84,13 @@ enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 
 bool dspCostedSummarizedBOM::setParams(ParameterList &params)
 {
+  if(!_item->isValid())
+  {
+    QMessageBox::warning(this, tr("Item Required"),
+      tr("You must specify an Item Number."));
+    return false;
+  }
+
   params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
 
@@ -119,39 +114,10 @@ bool dspCostedSummarizedBOM::setParams(ParameterList &params)
   return true;
 }
 
-void dspCostedSummarizedBOM::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("CostedSummarizedBOM", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspCostedSummarizedBOM::sFillList()
 {
-  if (! _item->isValid())
-    return;
-
-  MetaSQLQuery mql = mqlLoad("costedBOM", "detail");
-
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  q = mql.toQuery(params);
-  _bomitem->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
-    _bomitem->collapseItem(_bomitem->topLevelItem(i));
+  display::sFillList();
+  list()->collapseAll();
 }
 
 void dspCostedSummarizedBOM::sFillList(int pid, bool)

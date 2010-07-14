@@ -31,6 +31,7 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Quantities on Hand"));
   setReportName("QOHByItem");
   setMetaSQLOptions("qoh", "detail");
+  setUseAltId(true);
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);

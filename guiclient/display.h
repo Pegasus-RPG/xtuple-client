@@ -32,6 +32,8 @@ public:
     void setReportName(const QString &);
     void setMetaSQLOptions(const QString &, const QString &);
     void setListLabel(const QString &);
+    void setUseAltId(bool);
+    bool getUseAltId() const;
 
 public slots:
     virtual void sPrint();

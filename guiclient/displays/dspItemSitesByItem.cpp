@@ -29,6 +29,7 @@ dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WF
   setListLabel(tr("Item Sites"));
   setReportName("ItemSitesByItem");
   setMetaSQLOptions("itemSites", "detail");
+  setUseAltId(true);
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setId(int)));
 

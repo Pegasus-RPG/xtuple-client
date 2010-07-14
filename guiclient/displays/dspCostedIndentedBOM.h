@@ -11,34 +11,19 @@
 #ifndef DSPCOSTEDINDENTEDBOM_H
 #define DSPCOSTEDINDENTEDBOM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspCostedBOMBase.h"
 
-#include "ui_dspCostedIndentedBOM.h"
-
-class dspCostedIndentedBOM : public XWidget, public Ui::dspCostedIndentedBOM
+class dspCostedIndentedBOM : public dspCostedBOMBase
 {
     Q_OBJECT
 
 public:
     dspCostedIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCostedIndentedBOM();
 
     virtual bool setParams(ParameterList &params);
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sMaintainItemCosts();
-    virtual void sViewItemCosting();
     virtual void sFillList();
-    virtual void sFillList(int, bool);
-
-protected slots:
-    virtual void languageChange();
-
 };
 
 #endif // DSPCOSTEDINDENTEDBOM_H

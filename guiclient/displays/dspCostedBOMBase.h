@@ -8,28 +8,24 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPCOSTEDSINGLELEVELBOM_H
-#define DSPCOSTEDSINGLELEVELBOM_H
+#ifndef __DSPCOSTEDBOMBASE_H__
+#define __DSPCOSTEDBOMBASE_H__
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspCostedSingleLevelBOM.h"
+#include "ui_dspCostedBOMBase.h"
 
-class dspCostedSingleLevelBOM : public XWidget, public Ui::dspCostedSingleLevelBOM
+class dspCostedBOMBase : public display, public Ui::dspCostedBOMBase
 {
     Q_OBJECT
 
 public:
-    dspCostedSingleLevelBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCostedSingleLevelBOM();
+    dspCostedBOMBase(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sMaintainItemCosts();
     virtual void sViewItemCosting();
@@ -41,4 +37,4 @@ protected slots:
 
 };
 
-#endif // DSPCOSTEDSINGLELEVELBOM_H
+#endif // __DSPCOSTEDBOMBASE_H__

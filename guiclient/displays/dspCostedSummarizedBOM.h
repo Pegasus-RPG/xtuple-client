@@ -12,31 +12,26 @@
 #define DSPCOSTEDSUMMARIZEDBOM_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspCostedSummarizedBOM.h"
 
-class dspCostedSummarizedBOM : public XWidget, public Ui::dspCostedSummarizedBOM
+class dspCostedSummarizedBOM : public display, public Ui::dspCostedSummarizedBOM
 {
     Q_OBJECT
 
 public:
     dspCostedSummarizedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCostedSummarizedBOM();
 
     virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sFillList( int, bool );
+    virtual void sFillList();
+    virtual void sFillList(int, bool);
 
 protected slots:
     virtual void languageChange();
-
-    virtual void sPrint();
-    virtual void sFillList();
-
 
 };
 

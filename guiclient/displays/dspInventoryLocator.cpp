@@ -25,6 +25,7 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlag
   setListLabel(tr("Locations"));
   setReportName("LocationLotSerialNumberDetail");
   setMetaSQLOptions("inventoryLocator", "detail");
+  setUseAltId(true);
 
   list()->addColumn(tr("Site"),       _whsColumn, Qt::AlignCenter,true, "warehous_code");
   list()->addColumn(tr("Location"),          200, Qt::AlignLeft,  true, "locationname");

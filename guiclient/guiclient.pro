@@ -216,9 +216,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspBriefSalesHistoryBySalesRep.ui     \
           dspCashReceipts.ui                    \
           dspCheckRegister.ui                   \
-          dspCostedIndentedBOM.ui               \
-          dspCostedSingleLevelBOM.ui            \
-          dspCostedSummarizedBOM.ui             \
           dspCountSlipEditList.ui               \
           dspCountSlipsByWarehouse.ui           \
           dspCountTagEditList.ui                \
@@ -914,9 +911,6 @@ HEADERS = ../common/format.h                    \
           dspBriefSalesHistoryBySalesRep.h      \
           dspCashReceipts.h                     \
           dspCheckRegister.h                    \
-          dspCostedIndentedBOM.h                \
-          dspCostedSingleLevelBOM.h             \
-          dspCostedSummarizedBOM.h              \
           dspCountSlipEditList.h                \
           dspCountSlipsByWarehouse.h            \
           dspCountTagEditList.h                 \
@@ -1648,9 +1642,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspBriefSalesHistoryBySalesRep.cpp            \
           dspCashReceipts.cpp                   \
           dspCheckRegister.cpp                  \
-          dspCostedIndentedBOM.cpp              \
-          dspCostedSingleLevelBOM.cpp           \
-          dspCostedSummarizedBOM.cpp            \
           dspCountSlipEditList.cpp              \
           dspCountSlipsByWarehouse.cpp          \
           dspCountTagEditList.cpp               \

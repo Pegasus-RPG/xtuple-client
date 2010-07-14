@@ -26,11 +26,14 @@ public:
   {
     setupUi(_parent);
     _print->hide(); // hide the print button until a reportName is set
+    _useAltId = false;
   }
 
   QString reportName;
   QString metasqlName;
   QString metasqlGroup;
+
+  bool _useAltId;
 
 private:
   ::display * _parent;
@@ -84,6 +87,16 @@ void display::setListLabel(const QString & pText)
   _data->_listLabel->setText(pText);
 }
 
+void display::setUseAltId(bool on)
+{
+  _data->_useAltId = on;
+}
+
+bool display::getUseAltId() const
+{
+  return _data->_useAltId;
+}
+
 void display::sPrint()
 {
   ParameterList params;
@@ -111,7 +124,7 @@ void display::sFillList()
     return;
   }
   XSqlQuery xq = mql.toQuery(params);
-  _data->_list->populate(xq, itemid);
+  _data->_list->populate(xq, itemid, _data->_useAltId);
   if (xq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, xq.lastError().databaseText(), __FILE__, __LINE__);

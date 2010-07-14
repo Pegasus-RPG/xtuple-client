@@ -3,6 +3,8 @@ INCLUDEPATH += displays
 
 FORMS   += displays/dspBOMBase.ui \
            displays/dspCapacityUOMsByParameter.ui \
+           displays/dspCostedBOMBase.ui \
+           displays/dspCostedSummarizedBOM.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInventoryLocator.ui \
            displays/dspItemsByCharacteristic.ui \
@@ -20,6 +22,10 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspCapacityUOMsByClassCode.h \
            displays/dspCapacityUOMsByParameter.h \
            displays/dspCapacityUOMsByProductCategory.h \
+           displays/dspCostedBOMBase.h \
+           displays/dspCostedIndentedBOM.h \
+           displays/dspCostedSingleLevelBOM.h \
+           displays/dspCostedSummarizedBOM.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspInventoryLocator.h \
@@ -43,6 +49,10 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspCapacityUOMsByClassCode.cpp \
            displays/dspCapacityUOMsByParameter.cpp \
            displays/dspCapacityUOMsByProductCategory.cpp \
+           displays/dspCostedBOMBase.cpp \
+           displays/dspCostedIndentedBOM.cpp \
+           displays/dspCostedSingleLevelBOM.cpp \
+           displays/dspCostedSummarizedBOM.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspInventoryLocator.cpp \
