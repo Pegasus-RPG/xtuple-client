@@ -714,8 +714,7 @@ void ParameterWidget::changeFilterObject(int index)
     {
       UsernameCluster *usernameCluster = new UsernameCluster(_filterGroup);
       newWidget = usernameCluster;
-      usernameCluster->setNameVisible(false);
-      usernameCluster->setDescriptionVisible(false);
+      usernameCluster->setOrientation(Qt::Horizontal);
       usernameCluster->setLabel("");
 
       connect(button, SIGNAL(clicked()), usernameCluster, SLOT( deleteLater() ) );
@@ -726,8 +725,7 @@ void ParameterWidget::changeFilterObject(int index)
     {
       CRMAcctCluster *crmacctCluster = new CRMAcctCluster(_filterGroup);
       newWidget = crmacctCluster;
-      crmacctCluster->setNameVisible(false);
-      crmacctCluster->setDescriptionVisible(false);
+      crmacctCluster->setOrientation(Qt::Horizontal);
       crmacctCluster->setLabel("");
 
       connect(button, SIGNAL(clicked()), crmacctCluster, SLOT( deleteLater() ) );
@@ -749,8 +747,7 @@ void ParameterWidget::changeFilterObject(int index)
     {
       GLCluster *glCluster = new GLCluster(_filterGroup);
       newWidget = glCluster;
-      //glCluster->setDescriptionVisible(false);
-      //glCluster->setLabel("");
+      glCluster->setLabel("");
 
       connect(button, SIGNAL(clicked()), glCluster, SLOT( deleteLater() ) );
       connect(glCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );

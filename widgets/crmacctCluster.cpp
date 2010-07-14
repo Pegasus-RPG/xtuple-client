@@ -432,9 +432,8 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   setTabOrder(_searchCombo,     _comboCombo);
   setTabOrder(_comboCombo,      _showInactive);
   setTabOrder(_showInactive,	_listTab);
-  setTabOrder(_listTab,		_select);
-  setTabOrder(_select,		_close);
-  setTabOrder(_close,		_search);
+  setTabOrder(_listTab,		_buttonBox);
+  setTabOrder(_buttonBox,	_search);
 
   resize(800, size().height());
   

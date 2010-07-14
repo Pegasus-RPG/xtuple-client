@@ -772,7 +772,7 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
 {
   setObjectName(pName);
   addNumberWidget(new ItemLineEdit(this, pName));
-  _label->setText(tr("Item Number:"));
+  setLabel(tr("Item Number:"));
 
 //  Create the component Widgets
   QLabel *_uomLit = new QLabel(tr("UOM:"), this, "_uomLit");

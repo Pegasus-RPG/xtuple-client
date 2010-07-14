@@ -137,8 +137,6 @@ SOURCES += widgets.cpp \
     woList.cpp \
     filecluster.cpp \
     glCluster.cpp \
-    accountList.cpp \
-    accountSearch.cpp \
     imagecluster.cpp \
     invoiceLineEdit.cpp \
     incidentCluster.cpp \
@@ -228,8 +226,6 @@ HEADERS += widgets.h \
     woList.h \
     filecluster.h \
     glcluster.h \
-    accountList.h \
-    accountSearch.h \
     imagecluster.h \
     invoicelineedit.h \
     incidentcluster.h \
@@ -296,8 +292,7 @@ HEADERS += widgets.h \
     filterManager.h \
     filtersave.h \
     menubutton.h
-FORMS += accountSearch.ui \
-    alarmMaint.ui \
+FORMS += alarmMaint.ui \
     alarms.ui \
     customerselector.ui \
     docAttach.ui \

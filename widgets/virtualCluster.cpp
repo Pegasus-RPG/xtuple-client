@@ -62,31 +62,22 @@ void VirtualCluster::init()
     }
 
     _name = new QLabel(this, "_name");
-    _name->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     _name->setVisible(false);
 
     _description = new QLabel(this, "_description");
-    _description->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     _description->setVisible(false);
     _description->setMaximumWidth(300);
 
     _grid = new QGridLayout(this);
     _grid->setMargin(0);
     _grid->setSpacing(6);
-    _grid->addWidget(_label,  0, 0);
-    _grid->addWidget(_list,   0, 2);
-    _grid->addWidget(_info,   0, 3);
-    _grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, 4);
-    _grid->addWidget(_name,   1, 1, 1, -1);
-    _grid->addWidget(_description, 2, 1, 1, -1);
-
-    _grid->setColumnMinimumWidth(0, 0);
-    _grid->setColumnMinimumWidth(2, 0);
-    _grid->setColumnMinimumWidth(3, 0);
-
-    _grid->setRowMinimumHeight(0, 0);
-    _grid->setRowMinimumHeight(1, 0);
-    _grid->setRowMinimumHeight(2, 0);
+    if (!_label->text().isEmpty())
+      _grid->addWidget(_label,  0, 0);
+    _grid->addWidget(_list,   0, _grid->columnCount() + 1);
+    _grid->addWidget(_info,   0, _grid->columnCount() + 1);
+    _grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, _grid->columnCount() + 1);
+    _orientation = Qt::Horizontal;
+    setOrientation(Qt::Vertical);
     
     _mapper = new XDataWidgetMapper(this);
 }
@@ -130,9 +121,9 @@ void VirtualCluster::setLabel(const QString& p)
 {
   _label->setText(p);
   if (p.isEmpty())
-    _label->hide();
+    _grid->removeWidget(_label);
   else
-    _label->show();
+    _grid->addWidget(_label,0,0);
 }
 
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
@@ -235,6 +226,33 @@ void VirtualCluster::updateMapperData()
   if (_mapper->model() &&
       _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != number())
     _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), number());
+}
+
+Qt::Orientation VirtualCluster::orientation()
+{
+  return _orientation;
+}
+
+void VirtualCluster::setOrientation(Qt::Orientation orientation)
+{
+  if (orientation == _orientation)
+    return;
+
+  _grid->removeWidget(_name);
+  _grid->removeWidget(_description);
+
+  if (orientation == Qt::Vertical)
+  {
+    _grid->addWidget(_name,   1, 1, 1, -1);
+    _grid->addWidget(_description, 2, 1, 1, -1);
+  }
+  else
+  {
+    _grid->addWidget(_name, 0, 4);
+    _grid->addWidget(_description, 0, 5);
+  }
+
+  _orientation = orientation;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -905,9 +923,13 @@ void VirtualList::init()
     setWindowModality(Qt::WindowModal);
     setAttribute(Qt::WA_DeleteOnClose);
     _search	= new QLineEdit(this, "_search");
+#ifdef Q_WS_MAC
+    _search->setMinimumHeight(22);
+#endif
     _searchLit	= new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
-    _close	= new QPushButton(tr("&Cancel"), this, "_close");
-    _select	= new QPushButton(tr("&Select"), this, "_select");
+    _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                      Qt::Vertical, this);
+    _select	= _buttonBox->button(QDialogButtonBox::Ok);
     _listTab	= new XTreeWidget(this);
     _titleLit	= new QLabel(_listTab, "", this, "_titleLit");
 
@@ -916,8 +938,6 @@ void VirtualList::init()
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
-    _select->setAutoDefault(true);
-    _select->setDefault(true);
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
@@ -932,8 +952,7 @@ void VirtualList::init()
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
-    buttonsLyt->addWidget(_close);
-    buttonsLyt->addWidget(_select);
+    buttonsLyt->addWidget(_buttonBox);
 
     tableLyt->addWidget(_titleLit);
     tableLyt->addWidget(_listTab);
@@ -942,11 +961,11 @@ void VirtualList::init()
     ((QBoxLayout*)_dialogLyt)->setStretchFactor(topLyt, 0);
     ((QBoxLayout*)_dialogLyt)->setStretchFactor(tableLyt, 1);
 
-    connect(_close,   SIGNAL(clicked()),	 this,   SLOT(sClose()));
+    connect(_buttonBox,   SIGNAL(rejected()),	 this,   SLOT(sClose()));
     connect(_listTab, SIGNAL(itemSelected(int)), this,	 SLOT(sSelect()));
     connect(_listTab, SIGNAL(valid(bool)),     _select, SLOT(setEnabled(bool)));
     connect(_search,  SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_select,  SIGNAL(clicked()),         this,	 SLOT(sSelect()));
+    connect(_buttonBox,  SIGNAL(accepted()),         this,	 SLOT(sSelect()));
 }
 
 VirtualList::VirtualList() : QDialog()
@@ -1030,6 +1049,12 @@ void VirtualList::sFillList()
     _listTab->populate(query);
 }
 
+void VirtualList::showEvent(QShowEvent* e)
+{
+  sFillList();
+  QDialog::showEvent(e);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
@@ -1040,6 +1065,9 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     setObjectName("virtualSearch");
 
     _search = new QLineEdit(this, "_search");
+#ifdef Q_WS_MAC
+    _search->setMinimumHeight(22);
+#endif
     _searchLit = new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
     _searchNumber = new XCheckBox(tr("Search through Numbers"));
     _searchNumber->setObjectName("_searchNumber");
@@ -1047,8 +1075,9 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _searchName->setObjectName("_searchName");
     _searchDescrip = new XCheckBox(tr("Search through Descriptions"));
     _searchDescrip->setObjectName("_searchDescrip");
-    _close = new QPushButton(tr("&Cancel"), this, "_close");
-    _select = new QPushButton(tr("&Select"), this, "_select");
+    _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                      Qt::Vertical, this);
+    _select = _buttonBox->button(QDialogButtonBox::Ok);
     _listTab = new XTreeWidget(this);
     _titleLit = new QLabel(_listTab, "", this, "_titleLit");
 
@@ -1057,8 +1086,6 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
-    _select->setAutoDefault(true);
-    _select->setDefault(true);
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
@@ -1077,8 +1104,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     selectorsLyt->addWidget(_searchNumber,  0, 0);
     selectorsLyt->addWidget(_searchName,    1, 0);
     selectorsLyt->addWidget(_searchDescrip, 2, 0);
-    buttonsLyt->addWidget(_close);
-    buttonsLyt->addWidget(_select);
+    buttonsLyt->addWidget(_buttonBox);
     buttonsLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Minimum,
 						QSizePolicy::Expanding));
     tableLyt->addWidget(_titleLit);
@@ -1089,8 +1115,8 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     ((QBoxLayout*)_dialogLyt)->setStretchFactor(tableLyt, 1);
 
     connect(_listTab,	    SIGNAL(itemSelected(int)),	this, SLOT(sSelect()));
-    connect(_select,	    SIGNAL(clicked()),		this, SLOT(sSelect()));
-    connect(_close,	    SIGNAL(clicked()),		this, SLOT(sClose()));
+    connect(_buttonBox,	    SIGNAL(accepted()),		this, SLOT(sSelect()));
+    connect(_buttonBox,	    SIGNAL(rejected()),		this, SLOT(sClose()));
     connect(_searchNumber,  SIGNAL(clicked()),	        this, SLOT(sFillList()));
     connect(_searchDescrip, SIGNAL(clicked()),  	this, SLOT(sFillList()));
     connect(_search,	    SIGNAL(lostFocus()),	this, SLOT(sFillList()));
@@ -1124,8 +1150,6 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
       _parent = 0;
       _id = -1;
     }
-
-    sFillList();
 }
 
 void VirtualSearch::sClose()
@@ -1272,3 +1296,4 @@ void VirtualInfo::sPopulate()
 					  .arg(__LINE__),
 				  qry.lastError().databaseText());
 }
+

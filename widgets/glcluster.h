@@ -11,25 +11,84 @@
 #ifndef glCluster_h
 #define glCluster_h
 
-#include <QWidget>
+#include "virtualCluster.h"
+#include "parameter.h"
+#include <QComboBox>
 
-#include "widgets.h"
-#include "xlineedit.h"
+class XTUPLEWIDGETS_EXPORT accountList : public VirtualList
+{
+    Q_OBJECT
 
-class QLineEdit;
-class QPushButton;
-class QKeyEvent;
-class QFocusEvent;
+public:
+    accountList(QWidget*, Qt::WindowFlags = 0);
+    virtual XTreeWidget* xtreewidget();
 
-class XTUPLEWIDGETS_EXPORT GLCluster : public QWidget
+public slots:
+    virtual void set( const ParameterList & pParams );
+    virtual void sFillList();
+
+private:
+    int          _accntid;
+    bool         _showExternal;
+    unsigned int _type;
+
+};
+
+class XTUPLEWIDGETS_EXPORT accountSearch : public VirtualSearch
+{
+    Q_OBJECT
+
+public:
+    accountSearch(QWidget*, Qt::WindowFlags = 0);
+
+public slots:
+    void set( ParameterList & pParams );
+    void sFillList();
+
+protected:
+    void showEvent(QShowEvent*);
+
+private:
+    int          _accntid;
+    bool         _showExternal;
+    unsigned int _typeval;
+    QComboBox*   _type;
+    QLabel*      _typeLit;
+    QHBoxLayout* _typeStrLyt;
+};
+
+class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
+{
+    Q_OBJECT
+
+    public:
+      GLClusterLineEdit(QWidget*, const char* = 0);
+
+      void setType(unsigned int pType) { _type = pType; }
+      unsigned int type()  const       { return _type; }
+      bool showExternal()              { return _showExternal; }
+      void setShowExternal(bool p)     { _showExternal = p; }
+
+    public slots:
+      void sList();
+      void sSearch();
+
+    protected slots:
+      accountList* listFactory();
+      accountSearch* searchFactory();
+
+    private:
+      unsigned int _type;
+      bool _showExternal;
+};
+
+
+class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false)
-  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false)
     
   public:
-    GLCluster(QWidget *parent, const char *name = 0);
+    GLCluster(QWidget*, const char* = 0);
 
     enum Type {
       cUndefined  = 0x00,
@@ -40,61 +99,12 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public QWidget
       cRevenue    = 0x08,
       cEquity     = 0x10
     };
-   
-    QString defaultNumber() const    { return QString();} //Default to an empty string
-    QString fieldName()  const       { return _fieldName;}
-    QString number()     const       { return _number;};
-    inline void setType(unsigned int pType) { _type = pType; }
-    inline unsigned int type()  const       { return _type; }
-    inline bool showExternal()              { return _showExternal; }
-    inline void setShowExternal(bool p)     { _showExternal = p; }
 
-    Q_INVOKABLE void setReadOnly(bool);
+    void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
+    unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
+    bool showExternal()              { return static_cast<GLClusterLineEdit*>(_number)->showExternal(); }
+    void setShowExternal(bool p)     { static_cast<GLClusterLineEdit*>(_number)->setShowExternal(p); }
 
-  public slots:
-    bool isValid();
-    int id();
-    void setDataWidgetMap(XDataWidgetMapper* m);
-    void setId(int);
-    void setEnabled(bool);
-    void setFieldName(QString name)         { _fieldName=name;}
-    void setNumber(QString number);
-
-  protected:
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
-
-    static QPalette _disabledPalette;
-
-  private slots:
-    void sEllipses();
-    void sSearch();
-    void sList();
-    void sParse();
-    void sTextChanged(const QString &);
-
-  signals:
-    void newId(int);
-    void valid(bool);
-
-  private:
-    int  _accntid;
-    bool _mapped;
-    bool _valid;
-    bool _parsed;
-    bool _showExternal;
-    unsigned int _type;
-    QString      _fieldName;
-    QString      _number;
-
-    QLineEdit   *_company;
-    QLineEdit   *_profit;
-    XLineEdit   *_main;
-    QLineEdit   *_sub;
-    QLineEdit   *_account;
-    QPushButton *_list;
-    
-    XDataWidgetMapper *_mapper;
 };
 
 #endif

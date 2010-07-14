@@ -20,6 +20,7 @@
 #include "xdatawidgetmapper.h"
 
 #include <QAction>
+#include <QDialogButtonBox>
 #include <QCheckBox>
 #include <QCompleter>
 #include <QDialog>
@@ -52,13 +53,14 @@ class XTUPLEWIDGETS_EXPORT VirtualList : public QDialog
 
     protected:
         virtual void init();
+        void showEvent(QShowEvent *);
 
         VirtualClusterLineEdit* _parent;
         QVBoxLayout* _dialogLyt;
         QLabel*      _searchLit;
         QLineEdit*   _search;
         QLabel*      _titleLit;
-        QPushButton* _close;
+        QDialogButtonBox*  _buttonBox;
         QPushButton* _select;
         XTreeWidget* _listTab;
         int          _id;
@@ -91,7 +93,7 @@ class XTUPLEWIDGETS_EXPORT VirtualSearch : public QDialog
         XCheckBox*   _searchName;
         XCheckBox*   _searchDescrip;
         QLabel*      _titleLit;
-        QPushButton* _close;
+        QDialogButtonBox*  _buttonBox;
         QPushButton* _select;
         XTreeWidget* _listTab;
         QLayout*     dialogLyt;
@@ -281,6 +283,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible)
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly)
+    Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
     Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false)
     Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false)
@@ -306,6 +309,9 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
                            virtual QString defaultNumber()  const { return _default; }
                     inline virtual QString fieldName()      const { return _fieldName; }
         Q_INVOKABLE inline virtual QString extraClause()    const { return _number->extraClause(); }
+
+        virtual Qt::Orientation orientation();
+        virtual void setOrientation(Qt::Orientation orientation);
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
@@ -355,6 +361,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
 	QString                 _fieldName;
         QString                 _default;
         XDataWidgetMapper       *_mapper;
+        Qt::Orientation         _orientation;
 
     private:
         virtual void init();
