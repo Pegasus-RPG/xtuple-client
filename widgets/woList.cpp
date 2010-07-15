@@ -25,22 +25,33 @@
 #include "warehousegroup.h"
 #include "wocluster.h"
 
-woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
-  QDialog( parent, name, modal, fl )
+woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl)
+  : QDialog(parent, fl)
 {
+  setObjectName(name ? name : "woList");
+  setModal(modal);
   setWindowTitle(tr("Work Orders"));
 
   _woid = -1;
   _type = 0;
 
-  if ( !name )
-    setObjectName( "woList" );
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  QHBoxLayout *topLayout = new QHBoxLayout(0);
+  QVBoxLayout *warehouseLayout = new QVBoxLayout(0);
+  QVBoxLayout *buttonsLayout = new QVBoxLayout(0);
+  QVBoxLayout *listLayout = new QVBoxLayout(0);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout( this, 5, 5, "woListLayout"); 
-  QHBoxLayout *topLayout = new QHBoxLayout( 0, 0, 7, "topLayout"); 
-  QVBoxLayout *warehouseLayout = new QVBoxLayout( 0, 0, 0, "warehouseLayout"); 
-  QVBoxLayout *buttonsLayout = new QVBoxLayout( 0, 0, 5, "buttonsLayout"); 
-  QVBoxLayout *listLayout = new QVBoxLayout( 0, 0, 0, "listLayout"); 
+  mainLayout->setContentsMargins(5, 5, 5, 5);
+  topLayout->setContentsMargins(0, 0, 0, 0);
+  warehouseLayout->setContentsMargins(0, 0, 0, 0);
+  buttonsLayout->setContentsMargins(0, 0, 0, 0);
+  listLayout->setContentsMargins(0, 0, 0, 0);
+
+  mainLayout->setSpacing(5);
+  topLayout->setSpacing(7);
+  warehouseLayout->setSpacing(0);
+  buttonsLayout->setSpacing(5);
+  listLayout->setSpacing(0);
 
   _warehouse = new WarehouseGroup(this, "_warehouse");
   warehouseLayout->addWidget(_warehouse);
@@ -53,17 +64,20 @@ woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   QSpacerItem* spacer_2 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
   topLayout->addItem(spacer_2);
 
-  _close = new QPushButton(tr("&Cancel"), this, "_close");
+  _close = new QPushButton(tr("&Cancel"), this);
+  _close->setObjectName("_close");
   buttonsLayout->addWidget(_close);
 
-  _select = new QPushButton(tr("&Select"), this, "_select");
+  _select = new QPushButton(tr("&Select"), this);
+  _select->setObjectName("_select");
   _select->setAutoDefault(TRUE);
   _select->setDefault(TRUE);
   buttonsLayout->addWidget(_select);
   topLayout->addLayout(buttonsLayout);
   mainLayout->addLayout(topLayout);
 
-  QLabel *_workOrdersLit = new QLabel(tr("Work Orders:"), this, "_workOrdersLit");
+  QLabel *_workOrdersLit = new QLabel(tr("Work Orders:"), this);
+  _workOrdersLit->setObjectName("_workOrdersLit");
   listLayout->addWidget(_workOrdersLit);
 
   _wo = new XTreeWidget(this);

@@ -8,17 +8,13 @@
  * to be bound by its terms.
  */
 
-#include <QPushButton>
-#include <QValidator>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLayout>
-#include <Q3DragObject>
-
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QDropEvent>
 #include <QMouseEvent>
-#include <QDragEnterEvent>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QValidator>
 
 #include <xsqlquery.h>
 #include <parameter.h>
@@ -32,13 +28,11 @@ VendorLineEdit::VendorLineEdit(QWidget *pParent, const char *name) :
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   setMaximumWidth(100);
 
-  setAcceptDrops(TRUE);
   setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
   _id       = -1;
   _valid    = FALSE;
   _parsed   = TRUE;
-  _dragging = FALSE;
   _type     = __allVendors;
 
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
@@ -192,76 +186,46 @@ void VendorLineEdit::sList()
   }
 }
 
-void VendorLineEdit::mousePressEvent(QMouseEvent *pEvent)
-{
-  QLineEdit::mousePressEvent(pEvent);
-
-  if (_valid)
-    _dragging = TRUE;
-}
-
-void VendorLineEdit::mouseMoveEvent(QMouseEvent *)
-{
-  if (_dragging)
-  {
-    Q3DragObject *drag = new Q3TextDrag(QString("vendid=%1").arg(_id), this);
-    drag->dragCopy();
-
-    _dragging = FALSE;
-  }
-}
-
-void VendorLineEdit::dragEnterEvent(QDragEnterEvent *pEvent)
-{
-  QString dragData;
-
-  if (Q3TextDrag::decode(pEvent, dragData))
-  {
-    if (dragData.contains("vendid="))
-      pEvent->accept(TRUE);
-  }
-
-  pEvent->accept(FALSE);
-}
-
-void VendorLineEdit::dropEvent(QDropEvent *pEvent)
-{
-  QString dropData;
-
-  if (Q3TextDrag::decode(pEvent, dropData))
-  {
-    if (dropData.contains("vendid="))
-    {
-      QString target = dropData.mid((dropData.find("vendid=") + 7), (dropData.length() - 7));
-
-      if (target.contains(","))
-        target = target.left(target.find(","));
-
-      setId(target.toInt());
-    }
-  }
-}
-
-
 VendorInfo::VendorInfo(QWidget *parent, const char *name) :
-  QWidget(parent, name)
+  QWidget(parent)
 {
-//  Create and place the component Widgets
-  QHBoxLayout *layoutMain   = new QHBoxLayout(this, 0, 2, "layoutMain"); 
-  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 6, "layoutNumber"); 
-  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 6, "layoutButtons"); 
+  setObjectName(name);
 
-  QLabel *_vendorNumberLit = new QLabel(tr("Vendor #:"), this, "_vendorNumberLit");
+//  Create and place the component Widgets
+  QHBoxLayout *layoutMain   = new QHBoxLayout(this);
+  layoutMain->setSpacing(2); 
+  layoutMain->setObjectName("layoutMain"); 
+
+  QHBoxLayout *layoutNumber = new QHBoxLayout(this);
+  layoutNumber->setSpacing(6); 
+  layoutNumber->setObjectName("layoutNumber"); 
+
+  QHBoxLayout *layoutButtons = new QHBoxLayout(this);
+  layoutButtons->setSpacing(6); 
+  layoutButtons->setObjectName("layoutButtons"); 
+
+  layoutMain->setContentsMargins(0, 0, 0, 0);
+  layoutNumber->setContentsMargins(0, 0, 0, 0);
+  layoutButtons->setContentsMargins(0, 0, 0, 0);
+
+  layoutMain->setSpacing(2);
+  layoutNumber->setSpacing(6);
+  layoutButtons->setSpacing(6);
+
+  QLabel *_vendorNumberLit = new QLabel(tr("Vendor #:"), this);
+  _vendorNumberLit->setObjectName("_vendorNumberLit");
   _vendorNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   layoutNumber->addWidget(_vendorNumberLit);
 
-  _vendorNumber = new VendorLineEdit(this, "_vendorNumber");
+  _vendorNumber = new VendorLineEdit(this);
+  _vendorNumber->setObjectName("_vendorNumber");
   _vendorNumber->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _vendorNumber->setMinimumWidth(100);
   layoutNumber->addWidget(_vendorNumber);
   layoutMain->addLayout(layoutNumber);
 
-  _list = new QPushButton(tr("..."), this, "_list");
+  _list = new QPushButton(tr("..."), this);
+  _list->setObjectName("_list");
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #else
@@ -272,7 +236,8 @@ VendorInfo::VendorInfo(QWidget *parent, const char *name) :
   layoutButtons->addWidget(_list);
 
 /* Can implement this later  
-  _info = new QPushButton(tr("?"), this, "_info");
+  _info = new QPushButton(tr("?"), this);
+  _info->setObjectName("_info");
   _info->setFocusPolicy(Qt::NoFocus);
   layoutButtons->addWidget(_info);
 */
@@ -341,11 +306,18 @@ void VendorInfo::setDataWidgetMap(XDataWidgetMapper* m)
 
 
 VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
-//  Create the component Widgets
-  QVBoxLayout *layoutMain      = new QVBoxLayout(this, 0, 0, "layoutMain");
-  QHBoxLayout *layoutFirstLine = new QHBoxLayout(0, 0, 5, "layoutFirstLine");
+  setObjectName(name);
+
+  QVBoxLayout *layoutMain      = new QVBoxLayout(this);
+  QHBoxLayout *layoutFirstLine = new QHBoxLayout(0);
+
+  layoutMain->setContentsMargins(0, 0, 0, 0);
+  layoutFirstLine->setContentsMargins(0, 0, 0, 0);
+
+  layoutMain->setSpacing(0);
+  layoutFirstLine->setSpacing(5);
 
   QLabel *_vendorNumberLit = new QLabel(tr("Vendor #:"), this);
   _vendorNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -372,7 +344,7 @@ VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
 
   _vendorName = new QLabel(this);
   _vendorName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _vendorName->setAlignment(int(Qt::AlignVCenter | Qt::AlignLeft));
+  _vendorName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   layoutMain->addWidget(_vendorName);
 
   connect(_vendorNumber, SIGNAL(nameChanged(const QString &)), _vendorName, SLOT(setText(const QString &)));

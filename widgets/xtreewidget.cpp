@@ -184,7 +184,7 @@ XTreeWidget::~XTreeWidget()
 
 void XTreeWidget::populate(const QString &pSql, bool pUseAltId)
 {
-  qApp->setOverrideCursor(Qt::waitCursor);
+  qApp->setOverrideCursor(Qt::WaitCursor);
 
   XSqlQuery query(pSql);
   populate(query, pUseAltId);
@@ -194,7 +194,7 @@ void XTreeWidget::populate(const QString &pSql, bool pUseAltId)
 
 void XTreeWidget::populate(const QString &pSql, int pIndex, bool pUseAltId)
 {
-  qApp->setOverrideCursor(Qt::waitCursor);
+  qApp->setOverrideCursor(Qt::WaitCursor);
 
   XSqlQuery query(pSql);
   populate(query, pIndex, pUseAltId);
@@ -248,7 +248,7 @@ void XTreeWidget::populateWorker()
   bool          pUseAltId  = args._workingUseAlt;
   PopulateStyle popstyle   = args._workingPopstyle;
 
-  qApp->setOverrideCursor(Qt::waitCursor);
+  qApp->setOverrideCursor(Qt::WaitCursor);
 
   if (pIndex < 0)
     pIndex = id();
@@ -1324,17 +1324,15 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
       disableExport = (_x_preferences->value("DisableExportContents")=="t");
     if (!disableExport)
     {
-      if (_menu->count())
-        _menu->insertSeparator();
-
-      _menu->insertItem(tr("Copy All"),  this, SLOT(sCopyVisibleToClipboard()));
-      _menu->insertItem(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));
-      _menu->insertItem(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));
-      _menu->insertSeparator();
-      _menu->insertItem(tr("Export Contents..."),  this, SLOT(sExport()));
+      _menu->addSeparator();
+      _menu->addAction(tr("Copy All"),  this, SLOT(sCopyVisibleToClipboard()));
+      _menu->addAction(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));
+      _menu->addAction(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));
+      _menu->addSeparator();
+      _menu->addAction(tr("Export Contents..."),  this, SLOT(sExport()));
     }
 
-    if (_menu->count())
+    if(! _menu->isEmpty())
       _menu->popup(mapToGlobal(pntThis));
   }
 }
@@ -1352,22 +1350,22 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
       (_defaultColumnWidths.value(logicalIndex) != currentSize) )
   {
     _resetWhichWidth = logicalIndex;
-    _menu->insertItem(tr("Reset this Width"), this, SLOT(sResetWidth()));
+    _menu->addAction(tr("Reset this Width"), this, SLOT(sResetWidth()));
   }
 
-  _menu->insertItem(tr("Reset all Widths"), this, SLOT(sResetAllWidths()));
-  _menu->insertSeparator();
+  _menu->addAction(tr("Reset all Widths"), this, SLOT(sResetAllWidths()));
+  _menu->addSeparator();
   if (_forgetful)
-    _menu->insertItem(tr("Remember Widths"), this, SLOT(sToggleForgetfulness()));
+    _menu->addAction(tr("Remember Widths"), this, SLOT(sToggleForgetfulness()));
   else
-    _menu->insertItem(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
+    _menu->addAction(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
 
   if (_forgetfulOrder)
-    _menu->insertItem(tr("Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
+    _menu->addAction(tr("Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
   else
-    _menu->insertItem(tr("Do Not Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
+    _menu->addAction(tr("Do Not Remember Sort Order"), this, SLOT(sToggleForgetfulnessOrder()));
 
-  _menu->insertSeparator();
+  _menu->addSeparator();
 
   QTreeWidgetItem *hitem = headerItem();
   for (int i = 0; i < header()->count(); i++)
@@ -1383,7 +1381,7 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
     connect(_menu, SIGNAL(triggered(QAction *)), this, SLOT(popupMenuActionTriggered(QAction *)));
   }
 
-  if (_menu->count())
+  if(! _menu->isEmpty())
     _menu->popup(mapToGlobal(pntThis));
 }
 

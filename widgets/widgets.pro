@@ -309,5 +309,6 @@ FORMS += alarmMaint.ui \
     vendorgroup.ui \
     womatlcluster.ui
 RESOURCES += widgets.qrc
-QT += sql \
-    script
+
+QT +=  sql script
+QT -= qt3support 

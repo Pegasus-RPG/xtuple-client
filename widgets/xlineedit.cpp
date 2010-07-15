@@ -23,8 +23,8 @@
 XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   QLineEdit(parent)
 {
-  if(name)
-    setObjectName(name);
+  if (! name && objectName().isEmpty())
+    setObjectName("XLineEdit");
   setAcceptDrops(FALSE);
 
 #ifdef Q_WS_MAC

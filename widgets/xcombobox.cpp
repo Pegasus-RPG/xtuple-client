@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QSqlRecord>
 #include <QSqlRelationalDelegate>
 #include <QSqlTableModel>
 #include <QtScript>
@@ -1054,7 +1055,7 @@ void XComboBox::setCode(QString pString)
   if (pString.isEmpty())
   {
     setId(-1);
-    setCurrentText(pString);
+    setItemText(0, pString);
   }
   else if (count() == _codes.count())
   {
@@ -1081,23 +1082,23 @@ void XComboBox::setCode(QString pString)
   }
   else  // this is an ad-hoc combobox without a query behind it?
   {
-    setCurrentItem(findText(pString));
+    setCurrentIndex(findText(pString));
     if (DEBUG)
       qDebug("%s::setCode(%s) set current item to %d using findData()",
              objectName().toAscii().data(), pString.toAscii().data(),
-             currentItem());
-    if (_ids.count() > currentItem())
-      setId(_ids.at(currentItem()));
+             currentIndex());
+    if (_ids.count() > currentIndex())
+      setId(_ids.at(currentIndex()));
     if (DEBUG)
       qDebug("%s::setCode(%s) current item is %d after setId",
              objectName().toAscii().data(), pString.toAscii().data(),
-             currentItem());
+             currentIndex());
   }
 
   if (editable())
   {
     setId(-1);
-    setCurrentText(pString);
+    setItemText(0, pString);
   }
 }
 
@@ -1180,7 +1181,7 @@ void XComboBox::setText(const QString &pString)
   {
     for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
     {
-      if (text(counter) == pString)
+      if (itemText(counter) == pString)
       {
         setCurrentIndex(counter);
         updateMapperData();
@@ -1193,7 +1194,7 @@ void XComboBox::setText(const QString &pString)
   if (editable())
   {
     setId(-1);
-    setCurrentText(pString);
+    setItemText(0, pString);
   }
 }
 
@@ -1279,7 +1280,7 @@ void XComboBox::setEditable(bool pEditable)
 
 bool XComboBox::editable() const
 {
-  return QComboBox::editable();
+  return QComboBox::isEditable();
 }
 
 void XComboBox::clear()
@@ -1356,7 +1357,7 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
 
 void XComboBox::populate(const QString & pSql, int pSelected)
 {
-  qApp->setOverrideCursor(Qt::waitCursor);
+  qApp->setOverrideCursor(Qt::WaitCursor);
   XSqlQuery query(pSql);
   populate(query, pSelected);
   qApp->restoreOverrideCursor();
@@ -1377,7 +1378,7 @@ void XComboBox::append(int pId, const QString &pText, const QString &pCode)
   if (! _ids.contains(pId))
   {
     _ids.append(pId);
-    insertItem(pText);
+    addItem(pText);
     _codes.append(pCode);
   }
 }
@@ -1386,7 +1387,7 @@ int XComboBox::id(int pIndex) const
 {
   if ((pIndex >= 0) && (pIndex < count()))
   {
-    if ( (allowNull()) && (currentItem() <= 0) )
+    if ( (allowNull()) && (currentIndex() <= 0) )
       return -1;
     else
       return _ids.at(pIndex);
@@ -1397,12 +1398,12 @@ int XComboBox::id(int pIndex) const
 
 int XComboBox::id() const
 {
-  if (_ids.count() && currentItem() != -1)
+  if (_ids.count() && currentIndex() != -1)
   {
-    if ( (allowNull()) && (currentItem() <= 0) )
+    if ( (allowNull()) && (currentIndex() <= 0) )
       return -1;
     else
-      return _ids.at(currentItem());
+      return _ids.at(currentIndex());
   }
   else
     return -1;
@@ -1411,17 +1412,17 @@ int XComboBox::id() const
 QString XComboBox::code() const
 {
   if (DEBUG)
-    qDebug("%s::code() with currentItem %d, allowNull %d, and _codes.count %d",
-           objectName().toAscii().data(), currentItem(), allowNull(),
+    qDebug("%s::code() with currentIndex %d, allowNull %d, and _codes.count %d",
+           objectName().toAscii().data(), currentIndex(), allowNull(),
            _codes.count());
 
   QString returnValue;
 
-  if ( allowNull() && (currentItem() <= 0) )
+  if ( allowNull() && (currentIndex() <= 0) )
     returnValue = QString::Null();
-  else if (currentItem() >= 0 && _codes.count() > currentItem())
-    returnValue = _codes.at(currentItem());
-  else if (currentItem() >= 0)
+  else if (currentIndex() >= 0 && _codes.count() > currentIndex())
+    returnValue = _codes.at(currentIndex());
+  else if (currentIndex() >= 0)
     returnValue = currentText();
   else
     returnValue = QString::Null();
@@ -1578,14 +1579,16 @@ QScriptValue constructXComboBox(QScriptContext *context,
            qscriptvalue_cast<QWidget*>(context->argument(0)) &&
            context->argument(1).isString())
     cbox = new XComboBox(qscriptvalue_cast<QWidget*>(context->argument(0)),
-                         context->argument(1).toString());
+                         context->argument(1).toString().toAscii().data());
 
   else if (context->argumentCount() >= 3  &&
            context->argument(0).isBool() &&
            qscriptvalue_cast<QWidget*>(context->argument(1)))
+  {
     cbox = new XComboBox(context->argument(0).toBool(),
                          qscriptvalue_cast<QWidget*>(context->argument(1)),
-                         context->argument(2).toString());
+                         context->argument(2).toString().toAscii().data());
+  }
 
   else
     context->throwError(QScriptContext::UnknownError,

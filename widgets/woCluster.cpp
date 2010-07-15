@@ -214,8 +214,8 @@ void WoLineEdit::sParse()
 
     else if (text().contains('-'))
     {
-      int soNumber = text().left(text().find('-')).toInt();
-      int subNumber = text().right(text().length() - text().find('-') - 1).toInt();
+      int soNumber = text().left(text().indexOf('-')).toInt();
+      int subNumber = text().right(text().length() - text().indexOf('-') - 1).toInt();
  //     bool statusCheck = FALSE;
       QString sql = QString( "SELECT wo_id "
                              "FROM wo,itemsite,site() "
@@ -335,14 +335,16 @@ void WoLineEdit::sParse()
 
 
 WoCluster::WoCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
+  setObjectName(name);
   constructor();
 }
 
 WoCluster::WoCluster(int pWoType, QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
+  setObjectName(name);
   constructor();
 
   _woNumber->setType(pWoType);
@@ -350,17 +352,35 @@ WoCluster::WoCluster(int pWoType, QWidget *pParent, const char *name) :
 
 void WoCluster::constructor()
 {
-//  Create the component Widgets
-  QVBoxLayout *_mainLayout      = new QVBoxLayout(this, 0, 2, "_layoutMain"); 
-  QHBoxLayout *_woLayout        = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
-  QHBoxLayout *_warehouseLayout = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
-  QHBoxLayout *_line1Layout     = new QHBoxLayout(0, 0, 7, "_layoutLit"); 
-  QHBoxLayout *_itemLayout      = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
-  QHBoxLayout *_uomLayout       = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
-  QHBoxLayout *_line2Layout     = new QHBoxLayout(0, 0, 7, "_layoutLit"); 
-  QHBoxLayout *_statusLayout    = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
+  QVBoxLayout *_mainLayout      = new QVBoxLayout(this);
+  QHBoxLayout *_woLayout        = new QHBoxLayout(0);
+  QHBoxLayout *_warehouseLayout = new QHBoxLayout(0);
+  QHBoxLayout *_line1Layout     = new QHBoxLayout(0);
+  QHBoxLayout *_itemLayout      = new QHBoxLayout(0);
+  QHBoxLayout *_uomLayout       = new QHBoxLayout(0);
+  QHBoxLayout *_line2Layout     = new QHBoxLayout(0);
+  QHBoxLayout *_statusLayout    = new QHBoxLayout(0);
 
-  QLabel *woNumberLit = new QLabel(tr("Work Order #:"), this, "woNumberLit");
+  _mainLayout->setContentsMargins(0, 0, 0, 0);
+  _woLayout->setContentsMargins(0, 0, 0, 0);
+  _warehouseLayout->setContentsMargins(0, 0, 0, 0);
+  _line1Layout->setContentsMargins(0, 0, 0, 0);
+  _itemLayout->setContentsMargins(0, 0, 0, 0);
+  _uomLayout->setContentsMargins(0, 0, 0, 0);
+  _line2Layout->setContentsMargins(0, 0, 0, 0);
+  _statusLayout->setContentsMargins(0, 0, 0, 0);
+
+  _mainLayout->setSpacing(2); 
+  _woLayout->setSpacing(5); 
+  _warehouseLayout->setSpacing(5); 
+  _line1Layout->setSpacing(7); 
+  _itemLayout->setSpacing(5); 
+  _uomLayout->setSpacing(5); 
+  _line2Layout->setSpacing(7); 
+  _statusLayout->setSpacing(5); 
+
+  QLabel *woNumberLit = new QLabel(tr("Work Order #:"), this);
+  woNumberLit->setObjectName("woNumberLit");
   woNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   woNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _woLayout->addWidget(woNumberLit);
@@ -369,7 +389,8 @@ void WoCluster::constructor()
   _woNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _woLayout->addWidget(_woNumber);
 
-  _woList = new QPushButton(tr("..."), this, "_woList");
+  _woList = new QPushButton(tr("..."), this);
+  _woList->setObjectName("_woList");
   _woList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
   _woList->setMaximumWidth(25);
@@ -378,65 +399,79 @@ void WoCluster::constructor()
   _woLayout->addWidget(_woList);
   _line1Layout->addLayout(_woLayout);
 
-  QLabel *warehouseLit = new QLabel(tr("Site:"), this, "warehouseLit");
+  QLabel *warehouseLit = new QLabel(tr("Site:"), this);
+  warehouseLit->setObjectName("warehouseLit");
   _woNumber->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   warehouseLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _warehouseLayout->addWidget(warehouseLit);
 
-  _warehouse = new QLabel(this, "_warehouse");
+  _warehouse = new QLabel(this);
+  _warehouse->setObjectName("_warehouse");
   _warehouse->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _warehouse->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _warehouseLayout->addWidget(_warehouse);
   _line1Layout->addLayout(_warehouseLayout);
   _mainLayout->addLayout(_line1Layout);
 
-  QLabel *itemNumberLit = new QLabel(tr("Item Number:"), this, "itemNumberLit");
+  QLabel *itemNumberLit = new QLabel(tr("Item Number:"), this);
+  itemNumberLit->setObjectName("itemNumberLit");
   itemNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   itemNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _itemLayout->addWidget(itemNumberLit);
 
-  _itemNumber = new QLabel(this, "_itemNumber");
+  _itemNumber = new QLabel(this);
+  _itemNumber->setObjectName("_itemNumber");
   _itemNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _itemNumber->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _itemLayout->addWidget(_itemNumber);
   _line2Layout->addLayout(_itemLayout);
 
-  QLabel *uomLit = new QLabel(tr("UOM:"), this, "uomLit");
+  QLabel *uomLit = new QLabel(tr("UOM:"), this);
+  uomLit->setObjectName("uomLit");
   uomLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _uomLayout->addWidget(uomLit);
 
-  _uom = new QLabel(this, "_uom");
+  _uom = new QLabel(this);
+  _uom->setObjectName("_uom");
   _uom->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _uom->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _uomLayout->addWidget(_uom);
   _line2Layout->addLayout(_uomLayout);
   _mainLayout->addLayout(_line2Layout);
 
-  _descrip1 = new QLabel(this, "_descrip1");
+  _descrip1 = new QLabel(this);
+  _descrip1->setObjectName("_descrip1");
   _descrip1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _descrip1->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _mainLayout->addWidget(_descrip1);
 
-  _descrip2 = new QLabel(this, "_descrip2");
+  _descrip2 = new QLabel(this);
+  _descrip2->setObjectName("_descrip2");
   _descrip2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _descrip2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _mainLayout->addWidget(_descrip2);
 
-  QLabel *statusLit = new QLabel(tr("Status:"), this, "statusLit");
+  QLabel *statusLit = new QLabel(tr("Status:"), this);
+  statusLit->setObjectName("statusLit");
   statusLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   statusLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _statusLayout->addWidget(statusLit);
-  _status = new QLabel(this, "_status");
+
+  _status = new QLabel(this);
+  _status->setObjectName("_status");
   _status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _status->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _statusLayout->addWidget(_status);
   
-  QLabel *methodLit = new QLabel(tr("Method:"), this, "methodLit");
+  QLabel *methodLit = new QLabel(tr("Method:"), this);
+  methodLit->setObjectName("methodLit");
   methodLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   methodLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _statusLayout->addWidget(methodLit);
-  _method = new QLabel(this, "_method");
+
+  _method = new QLabel(this);
+  _method->setObjectName("_method");
   _method->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _method->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _statusLayout->addWidget(_method);
@@ -536,13 +571,15 @@ QString WoCluster::woNumber() const
 }
 
 
-WomatlCluster::WomatlCluster(QWidget *parent, const char *name) : QWidget(parent, name)
+WomatlCluster::WomatlCluster(QWidget *parent, const char *name) : QWidget(parent)
 {
+  setObjectName(name);
   constructor();
 }
 
-WomatlCluster::WomatlCluster(WoCluster *wocParent, QWidget *parent, const char *name) : QWidget(parent, name)
+WomatlCluster::WomatlCluster(WoCluster *wocParent, QWidget *parent, const char *name) : QWidget(parent)
 {
+  setObjectName(name);
   constructor();
 
   setGeometry(0, 0, parent->width(), parent->height());

@@ -13,6 +13,7 @@
 #include <QKeySequence>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QVBoxLayout>
 
 #include "xlineedit.h"
@@ -27,14 +28,16 @@
 void VirtualCluster::init()
 {
     setFocusPolicy(Qt::StrongFocus);
-    _label = new QLabel(this, "_label");
+    _label = new QLabel(this);
+    _label->setObjectName("_label");
     _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     // TODO: Remove _list and _info, but they are still used by a couple clusters
     //       Move them up perhaps?
 
-    _list = new QPushButton(tr("..."), this, "_list");
+    _list = new QPushButton(tr("..."), this);
+    _list->setObjectName("_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 #ifndef Q_WS_MAC
@@ -43,7 +46,8 @@ void VirtualCluster::init()
     _list->setMinimumWidth(60);
     _list->setMinimumHeight(32);
 #endif
-    _info = new QPushButton("?", this, "_info");
+    _info = new QPushButton("?", this);
+    _info->setObjectName("_info");
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     _info->setEnabled(false);
 #ifndef Q_WS_MAC
@@ -61,10 +65,12 @@ void VirtualCluster::init()
       }
     }
 
-    _name = new QLabel(this, "_name");
+    _name = new QLabel(this);
+    _name->setObjectName("_name");
     _name->setVisible(false);
 
-    _description = new QLabel(this, "_description");
+    _description = new QLabel(this);
+    _description->setObjectName("_description");
     _description->setVisible(false);
     _description->setMaximumWidth(300);
 
@@ -83,7 +89,7 @@ void VirtualCluster::init()
 }
 
 VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
-    QWidget(pParent, pName)
+    QWidget(pParent)
 {
   setObjectName(pName ? pName : "VirtualCluster");
   init();
@@ -92,8 +98,10 @@ VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
 VirtualCluster::VirtualCluster(QWidget* pParent,
 			       VirtualClusterLineEdit* pNumberWidget,
 			       const char* pName) :
-    QWidget(pParent, pName)
+    QWidget(pParent)
 {
+  setObjectName(pName);
+
     init();
     if (pNumberWidget)
 	addNumberWidget(pNumberWidget);
@@ -775,7 +783,7 @@ void VirtualClusterLineEdit::sList()
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
-                          tr("%1::sList() not yet defined").arg(className()));
+                          tr("%1::sList() not yet defined").arg(objectName()));
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -808,7 +816,7 @@ void VirtualClusterLineEdit::sSearch()
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
-                          tr("%1::sSearch() not yet defined").arg(className()));
+                          tr("%1::sSearch() not yet defined").arg(objectName()));
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -827,7 +835,7 @@ void VirtualClusterLineEdit::sInfo()
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
-                          tr("%1::sInfo() not yet defined").arg(className()));
+                          tr("%1::sInfo() not yet defined").arg(objectName()));
 }
 
 void VirtualClusterLineEdit::sOpen()
@@ -922,16 +930,21 @@ void VirtualList::init()
 {
     setWindowModality(Qt::WindowModal);
     setAttribute(Qt::WA_DeleteOnClose);
-    _search	= new QLineEdit(this, "_search");
+    _search	= new QLineEdit(this);
+    _search->setObjectName("_search");
+    _searchLit	= new QLabel(tr("S&earch for:"), this);
+    _searchLit->setBuddy(_search);
+    _searchLit->setObjectName("_searchLit");
 #ifdef Q_WS_MAC
     _search->setMinimumHeight(22);
 #endif
-    _searchLit	= new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
     _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                       Qt::Vertical, this);
     _select	= _buttonBox->button(QDialogButtonBox::Ok);
     _listTab	= new XTreeWidget(this);
-    _titleLit	= new QLabel(_listTab, "", this, "_titleLit");
+    _titleLit	= new QLabel("", this);
+    _titleLit->setBuddy(_listTab);
+    _titleLit->setObjectName("_titleLit");
 
     _listTab->setObjectName("_listTab");
     _listTab->setPopulateLinear(false);
@@ -941,14 +954,23 @@ void VirtualList::init()
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
-    _dialogLyt                = new QVBoxLayout(this,      5, -1, "dialogLyt");
-    QHBoxLayout* topLyt	      = new QHBoxLayout(_dialogLyt,    -1, "topLyt");
-    QVBoxLayout* searchLyt    = new QVBoxLayout(topLyt,       -1, "searchLyt");
+    _dialogLyt                = new QVBoxLayout(this);
+    _dialogLyt->setContentsMargins(5, 5, 5, 5);
+
+    QHBoxLayout* topLyt	      = new QHBoxLayout();
+    QVBoxLayout* searchLyt    = new QVBoxLayout();
+
+    QVBoxLayout* buttonsLyt   = new QVBoxLayout();
+    QHBoxLayout* searchStrLyt = new QHBoxLayout();
+    QVBoxLayout* tableLyt     = new QVBoxLayout();
+
+    _dialogLyt->addLayout(topLyt);
+    topLyt->addLayout(searchLyt);
     topLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding,
 					    QSizePolicy::Minimum));
-    QVBoxLayout* buttonsLyt   = new QVBoxLayout(topLyt,       -1, "buttonsLyt");
-    QHBoxLayout* searchStrLyt = new QHBoxLayout(searchLyt,    -1, "searchStrLyt");
-    QVBoxLayout* tableLyt     = new QVBoxLayout(_dialogLyt,    -1, "tableLyt");
+    topLyt->addLayout(buttonsLyt);
+    searchLyt->addLayout(searchStrLyt);
+    _dialogLyt->addLayout(tableLyt);
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
@@ -957,9 +979,9 @@ void VirtualList::init()
     tableLyt->addWidget(_titleLit);
     tableLyt->addWidget(_listTab);
 
-    ((QBoxLayout*)topLyt)->setStretchFactor(searchLyt, 0);
-    ((QBoxLayout*)_dialogLyt)->setStretchFactor(topLyt, 0);
-    ((QBoxLayout*)_dialogLyt)->setStretchFactor(tableLyt, 1);
+    topLyt->setStretchFactor(searchLyt, 0);
+    _dialogLyt->setStretchFactor(topLyt, 0);
+    _dialogLyt->setStretchFactor(tableLyt, 1);
 
     connect(_buttonBox,   SIGNAL(rejected()),	 this,   SLOT(sClose()));
     connect(_listTab, SIGNAL(itemSelected(int)), this,	 SLOT(sSelect()));
@@ -1064,22 +1086,28 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     setWindowModality(Qt::WindowModal);
     setObjectName("virtualSearch");
 
-    _search = new QLineEdit(this, "_search");
+    _search = new QLineEdit(this);
+    _search->setObjectName("_search");
+    _searchLit = new QLabel(tr("S&earch for:"), this);
+    _searchLit->setBuddy(_search);
+    _searchLit->setObjectName("_searchLit");
 #ifdef Q_WS_MAC
     _search->setMinimumHeight(22);
 #endif
-    _searchLit = new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
-    _searchNumber = new XCheckBox(tr("Search through Numbers"));
+
+    _searchNumber = new XCheckBox(tr("Search through Numbers"), this);
     _searchNumber->setObjectName("_searchNumber");
-    _searchName = new XCheckBox(tr("Search through Names"));
+    _searchName = new XCheckBox(tr("Search through Names"), this);
     _searchName->setObjectName("_searchName");
-    _searchDescrip = new XCheckBox(tr("Search through Descriptions"));
+    _searchDescrip = new XCheckBox(tr("Search through Descriptions"), this);
     _searchDescrip->setObjectName("_searchDescrip");
     _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                       Qt::Vertical, this);
     _select = _buttonBox->button(QDialogButtonBox::Ok);
     _listTab = new XTreeWidget(this);
-    _titleLit = new QLabel(_listTab, "", this, "_titleLit");
+    _titleLit = new QLabel("", this);
+    _titleLit->setBuddy(_listTab);
+    _titleLit->setObjectName("_titleLit");
 
     _listTab->setObjectName("_listTab");
     _listTab->setPopulateLinear(false);
@@ -1089,15 +1117,25 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
-    _dialogLyt   = new QVBoxLayout(this,      5, -1, "dialogLyt");
-    QHBoxLayout* topLyt = new QHBoxLayout(_dialogLyt, -1, "topLyt");
-    searchLyt    = new QVBoxLayout(topLyt,    -1, "searchLyt");
+    _dialogLyt   = new QVBoxLayout(this);
+    _dialogLyt->setContentsMargins(5, 5, 5, 5);
+
+    QHBoxLayout* topLyt = new QHBoxLayout();
+    searchLyt    = new QVBoxLayout();
+    buttonsLyt   = new QVBoxLayout();
+    searchStrLyt = new QHBoxLayout();
+    selectorsLyt = new QGridLayout();
+    tableLyt     = new QVBoxLayout();
+
+    _dialogLyt->addLayout(topLyt);
+    _dialogLyt->addLayout(tableLyt);
+    topLyt->addLayout(searchLyt);
     topLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding,
 					    QSizePolicy::Minimum));
-    buttonsLyt   = new QVBoxLayout(topLyt,    -1, "buttonsLyt");
-    searchStrLyt = new QHBoxLayout(searchLyt, -1, "searchStrLyt");
-    selectorsLyt = new QGridLayout(searchLyt,  1, 1, -1, "selectorsLyt");
-    tableLyt     = new QVBoxLayout(_dialogLyt, -1, "tableLyt");
+    topLyt->addLayout(buttonsLyt);
+    searchLyt->addItem(searchStrLyt);
+    searchLyt->addItem(selectorsLyt);
+    searchLyt->setObjectName("searchLyt");
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
@@ -1225,41 +1263,57 @@ VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
     setWindowTitle(_parent->_titleSingular);
     _id = _parent->_id;
     
-    _titleLit	= new QLabel(_parent->_titleSingular, this, "_titleLit");
-    _numberLit	= new QLabel(tr("Number:"), this, "_numberLit");
-    _number	= new QLabel(this, "_number");
-    _nameLit	= new QLabel(tr("Name:"), this, "_nameLit");
-    _name	= new QLabel(this, "_name");
-    _descripLit	= new QLabel(tr("Description:"), this, "_descripLit");
-    _descrip	= new QLabel(this, "_descrip");
+    _titleLit	= new QLabel(_parent->_titleSingular, this);
+    _titleLit->setObjectName("_titleLit");
+    _numberLit	= new QLabel(tr("Number:"), this);
+    _numberLit->setObjectName("_numberLit");
+    _number	= new QLabel(this);
+    _number->setObjectName("_number");
+    _nameLit	= new QLabel(tr("Name:"), this);
+    _nameLit->setObjectName("_nameLit");
+    _name	= new QLabel(this);
+    _name->setObjectName("_name");
+    _descripLit	= new QLabel(tr("Description:"), this);
+    _descripLit->setObjectName("_descripLit");
+    _descrip	= new QLabel(this);
+    _descrip->setObjectName("_descrip");
 
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     _numberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _nameLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
-    _close	= new QPushButton(tr("&Close"), this, "_close");
+    _close	= new QPushButton(tr("&Close"), this);
+    _close->setObjectName("_close");
     _close->setDefault(true);
 
-    QHBoxLayout* dialogLyt = new QHBoxLayout(this, 5, -1, "dialogLyt");
-    QVBoxLayout* titleLyt  = new QVBoxLayout(dialogLyt, -1, "titleLyt");
+    QHBoxLayout* dialogLyt = new QHBoxLayout(this);
+    dialogLyt->setContentsMargins(5, 5, 5, 5);
+
+    QVBoxLayout* titleLyt  = new QVBoxLayout();
+    dialogLyt->addLayout(titleLyt);
     titleLyt->addWidget(_titleLit);
-    QHBoxLayout* dataLyt   = new QHBoxLayout(titleLyt,  -1, "mainLyt");
-    QVBoxLayout* litLyt	   = new QVBoxLayout(dataLyt,   -1, "litLyt");
+    QHBoxLayout* dataLyt   = new QHBoxLayout();
+    titleLyt->addLayout(dataLyt);
+    QVBoxLayout* litLyt	   = new QVBoxLayout();
+    dataLyt->addLayout(litLyt);
     litLyt->addWidget(_numberLit);
     litLyt->addWidget(_nameLit);
     litLyt->addWidget(_descripLit);
-    QVBoxLayout* infoLyt   = new QVBoxLayout(dataLyt,   -1, "infoLyt");
+    QVBoxLayout* infoLyt   = new QVBoxLayout();
+    dataLyt->addLayout(infoLyt);
     infoLyt->addWidget(_number);
     infoLyt->addWidget(_name);
     infoLyt->addWidget(_descrip);
     QSpacerItem* dataHtSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum,
 						QSizePolicy::Expanding);
     titleLyt->addItem(dataHtSpacer);
-    QHBoxLayout* buttonLyt = new QHBoxLayout(dialogLyt, -1, "buttonLyt");
+    QHBoxLayout* buttonLyt = new QHBoxLayout();
+    dialogLyt->addLayout(buttonLyt);
     QSpacerItem* wdSpacer  = new QSpacerItem(20, 20, QSizePolicy::Minimum,
 					     QSizePolicy::Expanding);
     buttonLyt->addItem(wdSpacer);
-    QVBoxLayout* buttonColLyt = new QVBoxLayout(buttonLyt, -1, "buttonColLyt");
+    QVBoxLayout* buttonColLyt = new QVBoxLayout();
+    buttonLyt->addLayout(buttonColLyt);
 
     buttonColLyt->addWidget(_close);
     QSpacerItem* htSpacer  = new QSpacerItem(20, 20, QSizePolicy::Minimum,

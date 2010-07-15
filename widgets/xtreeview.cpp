@@ -18,6 +18,7 @@
 #include <QSqlError>
 #include <QSqlField>
 #include <QSqlIndex>
+#include <QSqlQuery>
 
 #include "format.h"
 #include "xtsettings.h"
@@ -657,13 +658,11 @@ void XTreeView::sShowMenu(const QPoint &pntThis)
       disableExport = (_x_preferences->value("DisableExportContents")=="t");
     if(!disableExport)
     {
-      if (_menu->count())
-        _menu->insertSeparator();
-
-      _menu->insertItem(tr("Export Contents..."),  this, SLOT(sExport()));
+      _menu->addSeparator();
+      _menu->addAction(tr("Export Contents..."),  this, SLOT(sExport()));
     }
 
-    if(_menu->count())
+    if (! _menu->isEmpty())
       _menu->popup(mapToGlobal(pntThis));
   }
 }
@@ -680,17 +679,17 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
   if (cp && (cp->defaultWidth > 0) && (cp->defaultWidth != currentSize) )
   {
     _resetWhichWidth = logicalIndex;
-    _menu->insertItem(tr("Reset this Width"), this, SLOT(sResetWidth()));
+    _menu->addAction(tr("Reset this Width"), this, SLOT(sResetWidth()));
   }
 
-  _menu->insertItem(tr("Reset all Widths"), this, SLOT(sResetAllWidths()));
-  _menu->insertSeparator();
+  _menu->addAction(tr("Reset all Widths"), this, SLOT(sResetAllWidths()));
+  _menu->addSeparator();
   if(_forgetful)
-    _menu->insertItem(tr("Remember Widths"), this, SLOT(sToggleForgetfulness()));
+    _menu->addAction(tr("Remember Widths"), this, SLOT(sToggleForgetfulness()));
   else
-    _menu->insertItem(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
+    _menu->addAction(tr("Do Not Remember Widths"), this, SLOT(sToggleForgetfulness()));
 
-  _menu->insertSeparator();
+  _menu->addSeparator();
 
   for(int i = 0; i < header()->count(); i++)
   {
@@ -708,7 +707,7 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
     connect(_menu, SIGNAL(triggered(QAction*)), this, SLOT(popupMenuActionTriggered(QAction*)));
   }
 
-  if(_menu->count())
+  if (! _menu->isEmpty())
     _menu->popup(mapToGlobal(pntThis));
 }
 

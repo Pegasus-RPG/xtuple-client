@@ -55,14 +55,9 @@ friend class VendorCluster;
     void countryChanged(const QString &);
 
   protected:
-    void mousePressEvent(QMouseEvent *);
-    void mouseMoveEvent(QMouseEvent *);
-    void dragEnterEvent(QDragEnterEvent *);
-    void dropEvent(QDropEvent *);
     XDataWidgetMapper *_mapper;
 
   private:
-    bool _dragging;
     int  _type;
 };
 
