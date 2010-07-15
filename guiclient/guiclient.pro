@@ -252,10 +252,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspInventoryHistoryByParameterList.ui         \
           dspInvoiceInformation.ui                      \
           dspInvoiceRegister.ui                         \
-          dspItemCostDetail.ui                          \
-          dspItemCostHistory.ui                         \
-          dspItemCostSummary.ui                         \
-          dspItemCostsByClassCode.ui                    \
           dspItemSourcesByItem.ui                       \
           dspItemSourcesByVendor.ui                     \
           dspJobCosting.ui                              \
@@ -947,10 +943,6 @@ HEADERS = ../common/format.h                    \
           dspInventoryHistoryByParameterList.h          \
           dspInvoiceInformation.h                       \
           dspInvoiceRegister.h                          \
-          dspItemCostDetail.h                           \
-          dspItemCostHistory.h                          \
-          dspItemCostSummary.h                          \
-          dspItemCostsByClassCode.h                     \
           dspItemSourcesByItem.h                        \
           dspItemSourcesByVendor.h                      \
           dspJobCosting.h                               \
@@ -1678,10 +1670,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspInventoryHistoryByParameterList.cpp        \
           dspInvoiceInformation.cpp                     \
           dspInvoiceRegister.cpp                        \
-          dspItemCostDetail.cpp                         \
-          dspItemCostHistory.cpp                        \
-          dspItemCostSummary.cpp                        \
-          dspItemCostsByClassCode.cpp                   \
           dspItemSourcesByItem.cpp                      \
           dspItemSourcesByVendor.cpp                    \
           dspJobCosting.cpp                             \

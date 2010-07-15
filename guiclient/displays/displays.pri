@@ -7,6 +7,10 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInventoryLocator.ui \
+           displays/dspItemCostDetail.ui \
+           displays/dspItemCostHistory.ui \
+           displays/dspItemCostSummary.ui \
+           displays/dspItemCostsByClassCode.ui \
            displays/dspItemsByCharacteristic.ui \
            displays/dspItemsByParameter.ui \
            displays/dspItemSitesByItem.ui \
@@ -29,6 +33,10 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspInventoryLocator.h \
+           displays/dspItemCostDetail.h \
+           displays/dspItemCostHistory.h \
+           displays/dspItemCostSummary.h \
+           displays/dspItemCostsByClassCode.h \
            displays/dspItemsByCharacteristic.h \
            displays/dspItemsByClassCode.h \
            displays/dspItemsByParameter.h \
@@ -56,6 +64,10 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspInventoryLocator.cpp \
+           displays/dspItemCostDetail.cpp \
+           displays/dspItemCostHistory.cpp \
+           displays/dspItemCostSummary.cpp \
+           displays/dspItemCostsByClassCode.cpp \
            displays/dspItemsByCharacteristic.cpp \
            displays/dspItemsByClassCode.cpp \
            displays/dspItemsByParameter.cpp \

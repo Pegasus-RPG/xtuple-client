@@ -12,26 +12,23 @@
 #define DSPITEMCOSTSUMMARY_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspItemCostSummary.h"
 
-class dspItemCostSummary : public XWidget, public Ui::dspItemCostSummary
+class dspItemCostSummary : public display, public Ui::dspItemCostSummary
 {
     Q_OBJECT
 
 public:
     dspItemCostSummary(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemCostSummary();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sViewDetail();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

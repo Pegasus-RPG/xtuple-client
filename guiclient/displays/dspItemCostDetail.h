@@ -12,27 +12,22 @@
 #define DSPITEMCOSTDETAIL_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspItemCostDetail.h"
 
-class dspItemCostDetail : public XWidget, public Ui::dspItemCostDetail
+class dspItemCostDetail : public display, public Ui::dspItemCostDetail
 {
     Q_OBJECT
 
 public:
     dspItemCostDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemCostDetail();
 
     Q_INVOKABLE virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
-    virtual void sFillList();
-    virtual void sFillList(int pItemid, bool pLocale);
     virtual void sPopulate();
-    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();

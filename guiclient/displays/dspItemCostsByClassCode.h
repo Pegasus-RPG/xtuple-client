@@ -12,30 +12,26 @@
 #define DSPITEMCOSTSBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspItemCostsByClassCode.h"
 
-class dspItemCostsByClassCode : public XWidget, public Ui::dspItemCostsByClassCode
+class dspItemCostsByClassCode : public display, public Ui::dspItemCostsByClassCode
 {
     Q_OBJECT
 
 public:
     dspItemCostsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemCostsByClassCode();
 
     Q_INVOKABLE bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *);
     virtual void sMaintainItemCosts();
     virtual void sViewItemCostingSummary();
     virtual void sUpdateCosts();
     virtual void sPostCosts();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

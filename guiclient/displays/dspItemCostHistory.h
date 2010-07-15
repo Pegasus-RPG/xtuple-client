@@ -11,23 +11,18 @@
 #ifndef DSPITEMCOSTHISTORY_H
 #define DSPITEMCOSTHISTORY_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspItemCostHistory.h"
 
-class dspItemCostHistory : public XWidget, public Ui::dspItemCostHistory
+class dspItemCostHistory : public display, public Ui::dspItemCostHistory
 {
     Q_OBJECT
 
 public:
     dspItemCostHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemCostHistory();
-    virtual bool setParams(ParameterList &);
 
-public slots:
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

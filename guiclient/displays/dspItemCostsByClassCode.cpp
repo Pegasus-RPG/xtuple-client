@@ -11,46 +11,35 @@
 #include "dspItemCostsByClassCode.h"
 
 #include <QMenu>
-#include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
-
-#include <metasql.h>
-#include "mqlutil.h"
-
-#include <openreports.h>
 
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "updateActualCostsByItem.h"
 #include "postCostsByItem.h"
 
-dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspItemCostsByClassCode", fl)
 {
-  setupUi(this);
-
-  connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Item Costs by Class Code"));
+  setListLabel(tr("Items"));
+  setReportName("ItemCostsByClassCode");
+  setMetaSQLOptions("itemCost", "detail");
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _itemcost->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _itemcost->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "description"   );
-  _itemcost->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
-  _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true,  "scost"  );
-  _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true,  "acost"  );
-  _itemcost->addColumn(tr("% Var."),      _costColumn,  Qt::AlignRight,  false,  "percent_variance" );
-}
-
-dspItemCostsByClassCode::~dspItemCostsByClassCode()
-{
-  // no need to delete child widgets, Qt does it all for us
+  list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "description"   );
+  list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true,  "scost"  );
+  list()->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true,  "acost"  );
+  list()->addColumn(tr("% Var."),      _costColumn,  Qt::AlignRight,  false,  "percent_variance" );
 }
 
 void dspItemCostsByClassCode::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -85,24 +74,19 @@ bool dspItemCostsByClassCode::setParams(ParameterList &params)
   if(_onlyShowDiff->isChecked())
     params.append("onlyShowDiffCosts");
 
+  XSqlQuery qq;
+  qq.exec("SELECT locale_cost_scale "
+         "FROM locale, usr "
+         "WHERE ((usr_locale_id=locale_id) AND (usr_username=CURRENT_USER));");
+  if (qq.first())
+    params.append("costscale", qq.value("locale_cost_scale").toInt());
+  else
+    params.append("costscale", decimalPlaces("cost"));
+
   return true;
 }
 
-void dspItemCostsByClassCode::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("ItemCostsByClassCode", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu)
+void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -122,7 +106,7 @@ void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu)
 void dspItemCostsByClassCode::sMaintainItemCosts()
 {
   ParameterList params;
-  params.append("item_id", _itemcost->id());
+  params.append("item_id", list()->id());
   params.append("run");
 
   maintainItemCosts *newdlg = new maintainItemCosts();
@@ -133,7 +117,7 @@ void dspItemCostsByClassCode::sMaintainItemCosts()
 void dspItemCostsByClassCode::sViewItemCostingSummary()
 {
   ParameterList params;
-  params.append("item_id", _itemcost->id());
+  params.append("item_id", list()->id());
   params.append("run");
 
   dspItemCostSummary *newdlg = new dspItemCostSummary();
@@ -144,7 +128,7 @@ void dspItemCostsByClassCode::sViewItemCostingSummary()
 void dspItemCostsByClassCode::sUpdateCosts()
 {
   ParameterList params;
-  params.append("item_id", _itemcost->id());
+  params.append("item_id", list()->id());
 
   updateActualCostsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -156,7 +140,7 @@ void dspItemCostsByClassCode::sUpdateCosts()
 void dspItemCostsByClassCode::sPostCosts()
 {
   ParameterList params;
-  params.append("item_id", _itemcost->id());
+  params.append("item_id", list()->id());
 
   postCostsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -164,24 +148,3 @@ void dspItemCostsByClassCode::sPostCosts()
     sFillList();
 }
 
-void dspItemCostsByClassCode::sFillList()
-{
-  MetaSQLQuery mql = mqlLoad("itemCost", "detail");
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  q.exec("SELECT locale_cost_scale "
-         "FROM locale, usr "
-         "WHERE ((usr_locale_id=locale_id) AND (usr_username=CURRENT_USER));");
-  if (q.first())
-    params.append("costscale", q.value("locale_cost_scale").toInt());
-  else
-    params.append("costscale", decimalPlaces("cost"));
-  q = mql.toQuery(params);
-  _itemcost->populate(q);
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
