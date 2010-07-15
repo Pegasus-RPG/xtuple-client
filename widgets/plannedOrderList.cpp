@@ -27,8 +27,11 @@
 #include "warehouseCluster.h"
 
 plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal, Qt::WFlags fl) :
-  QDialog( parent, name, modal, fl )
+  QDialog(parent, fl)
 {
+  setObjectName(name ? name : "plannedOrderList");
+  setModal(modal);
+
   setWindowTitle(tr("Planned Orders"));
 
   _planordid = -1;
@@ -36,13 +39,29 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
   if ( !name )
     setObjectName( "plannedOrderList" );
 
-  QVBoxLayout *plannedOrderListLayout = new QVBoxLayout( this, 5, 5, "plannedOrderListLayout"); 
-  QHBoxLayout *layout6387 = new QHBoxLayout( 0, 0, 7, "layout6387"); 
-  QVBoxLayout *layout6385 = new QVBoxLayout( 0, 0, 0, "layout6385"); 
-  QHBoxLayout *layout6384 = new QHBoxLayout( 0, 0, 5, "layout6384"); 
-  QVBoxLayout *Layout183 = new QVBoxLayout( 0, 0, 5, "Layout183"); 
-  QVBoxLayout *Layout185 = new QVBoxLayout( 0, 0, 0, "Layout185"); 
-  QHBoxLayout *layout6386 = new QHBoxLayout( 0, 0, 0, "layout6386"); 
+  QVBoxLayout *plannedOrderListLayout = new QVBoxLayout(this);
+  QHBoxLayout *layout6387 = new QHBoxLayout(0);
+  QVBoxLayout *layout6385 = new QVBoxLayout(0);
+  QHBoxLayout *layout6384 = new QHBoxLayout(0);
+  QVBoxLayout *Layout183 = new QVBoxLayout(0);
+  QVBoxLayout *Layout185 = new QVBoxLayout(0);
+  QHBoxLayout *layout6386 = new QHBoxLayout(0);
+
+  plannedOrderListLayout->setContentsMargins(5, 5, 5, 5);
+  layout6387->setContentsMargins( 0, 0, 0, 0);
+  layout6385->setContentsMargins( 0, 0, 0, 0);
+  layout6384->setContentsMargins( 0, 0, 0, 0);
+  Layout183->setContentsMargins( 0, 0, 0, 0);
+  Layout185->setContentsMargins( 0, 0, 0, 0);
+  layout6386->setContentsMargins( 0, 0, 0, 0);
+
+  plannedOrderListLayout->setSpacing(5);
+  layout6387->setSpacing(7);
+  layout6385->setSpacing(0);
+  layout6384->setSpacing(5);
+  Layout183->setSpacing(5);
+  Layout185->setSpacing(0);
+  layout6386->setSpacing(0);
 
     _warehouseGroup = new QGroupBox( this );
     QVBoxLayout *_warehouseGroupLayout = new QVBoxLayout( _warehouseGroup );
@@ -50,15 +69,18 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     _warehouseGroupLayout->setMargin( 5 );
     _warehouseGroupLayout->setAlignment( Qt::AlignTop );
 
-    _allWarehouses = new QRadioButton(tr("&All Sites"), _warehouseGroup, "_allWarehouses");
+    _allWarehouses = new QRadioButton(tr("&All Sites"), _warehouseGroup);
+    _allWarehouses->setObjectName("_allWarehouses");
     _allWarehouses->setChecked( TRUE );
     _warehouseGroupLayout->addWidget( _allWarehouses );
 
-    _selectedWarehouse = new QRadioButton(tr("Site:"), _warehouseGroup, "_selectedWarehouse");
+    _selectedWarehouse = new QRadioButton(tr("Site:"), _warehouseGroup);
+    _selectedWarehouse->setObjectName("_selectedWarehouse");
     _selectedWarehouse->setChecked( FALSE );
     layout6384->addWidget( _selectedWarehouse );
 
-    _warehouse = new WComboBox( _warehouseGroup, "_warehouse" );
+    _warehouse = new WComboBox(_warehouseGroup);
+    _warehouse->setObjectName("_warehouse");
     _warehouse->setEnabled( FALSE );
     layout6384->addWidget( _warehouse );
     _warehouseGroupLayout->addLayout( layout6384 );
@@ -72,10 +94,12 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     QSpacerItem* spacer_2 = new QSpacerItem( 223, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout6386->addItem( spacer_2 );
 
-    _close = new QPushButton(tr("&Cancel"), this, "_close");
+    _close = new QPushButton(tr("&Cancel"), this);
+    _close->setObjectName("_close");
     Layout183->addWidget( _close );
 
-    _select = new QPushButton(tr("&Select"), this, "_select");
+    _select = new QPushButton(tr("&Select"), this);
+    _select->setObjectName("_select");
     _select->setAutoDefault( TRUE );
     _select->setDefault( TRUE );
     Layout183->addWidget( _select );
@@ -83,7 +107,8 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     layout6387->addLayout( layout6386 );
     plannedOrderListLayout->addLayout( layout6387 );
 
-    QLabel *_plannedOrdersLit = new QLabel(tr("Planned Orders:"), this, "_plannedOrdersLit");
+    QLabel *_plannedOrdersLit = new QLabel(tr("Planned Orders:"), this);
+    _plannedOrdersLit->setObjectName("_plannedOrdersLit");
     Layout185->addWidget( _plannedOrdersLit );
 
     _planord = new XTreeWidget( this);

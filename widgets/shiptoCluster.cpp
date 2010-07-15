@@ -126,18 +126,32 @@ void ShiptoEdit::clear()
 
 
 ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
-//  Create the component Widgets
-  QHBoxLayout *_layoutMain         = new QHBoxLayout( this, 0, 5, "_layoutMain"); 
-  QVBoxLayout *_layoutLit          = new QVBoxLayout( 0, 0, 0, "_layoutLit"); 
-  QVBoxLayout *_layoutData         = new QVBoxLayout( 0, 0, 0, "_layoutData"); 
-  QHBoxLayout *_layoutShipto       = new QHBoxLayout( 0, 0, 0, "_layoutShipto"); 
-  QHBoxLayout *_layoutShiptoNumber = new QHBoxLayout( 0, 0, 7, "_layoutShiptoNumber"); 
+  setObjectName(name);
 
-  QLabel *_shiptoNumberLit = new QLabel(tr("Ship-To #:"), this, "_shiptoNumberLit");
+  QHBoxLayout *_layoutMain         = new QHBoxLayout(this);
+  QVBoxLayout *_layoutLit          = new QVBoxLayout(0);
+  QVBoxLayout *_layoutData         = new QVBoxLayout(0);
+  QHBoxLayout *_layoutShipto       = new QHBoxLayout(0);
+  QHBoxLayout *_layoutShiptoNumber = new QHBoxLayout(0);
+
+  _layoutMain->setContentsMargins(0, 0, 0, 0);
+  _layoutLit->setContentsMargins(0, 0, 0, 0);
+  _layoutData->setContentsMargins(0, 0, 0, 0);
+  _layoutShipto->setContentsMargins(0, 0, 0, 0);
+  _layoutShiptoNumber->setContentsMargins(0, 0, 0, 0);
+
+  _layoutMain->setSpacing(5);
+  _layoutLit->setSpacing(0);
+  _layoutData->setSpacing(0);
+  _layoutShipto->setSpacing(0);
+  _layoutShiptoNumber->setSpacing(7);
+
+  QLabel *_shiptoNumberLit = new QLabel(tr("Ship-To #:"), this);
+  _shiptoNumberLit->setObjectName("_shiptoNumberLit");
   _shiptoNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  _shiptoNumberLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  _shiptoNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   QSize size = _shiptoNumberLit->minimumSize();
   size.setHeight(28);
   _shiptoNumberLit->setMinimumSize(size);
@@ -151,7 +165,8 @@ ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *name) :
   _shiptoNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _layoutShiptoNumber->addWidget( _shiptoNumber );
 
-  _list = new QPushButton(tr( "..." ), this, "_list");
+  _list = new QPushButton(tr( "..." ), this);
+  _list->setObjectName("_list");
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
@@ -164,12 +179,14 @@ ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *name) :
   _layoutShipto->addItem( spacer_2 );
   _layoutData->addLayout( _layoutShipto );
 
-  _shiptoName = new QLabel(this, "_shiptoName");
+  _shiptoName = new QLabel(this);
+  _shiptoName->setObjectName("_shiptoName");
   _shiptoName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _shiptoName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _layoutData->addWidget( _shiptoName );
 
-  _shiptoAddress1 = new QLabel( this, "_shiptoAddress1" );
+  _shiptoAddress1 = new QLabel( this);
+  _shiptoAddress1->setObjectName("_shiptoAddress1" );
   _shiptoAddress1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _shiptoAddress1->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _layoutData->addWidget( _shiptoAddress1 );

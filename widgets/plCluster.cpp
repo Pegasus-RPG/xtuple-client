@@ -90,8 +90,8 @@ void PlanOrdLineEdit::sParse()
 {
   if (text().contains('-'))
   {
-    int number = text().left(text().find('-')).toInt();
-    int subNumber = text().right(text().length() - text().find('-') - 1).toInt();
+    int number = text().left(text().indexOf('-')).toInt();
+    int subNumber = text().right(text().length() - text().indexOf('-') - 1).toInt();
 
     XSqlQuery planord;
     planord.prepare( "SELECT planord_id "
@@ -135,24 +135,43 @@ void PlanOrdLineEdit::sParse()
 
 
 PlanOrdCluster::PlanOrdCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
+  setObjectName(name);
   constructor();
 }
 
 void PlanOrdCluster::constructor()
 {
-//  Create the component Widgets
-  QVBoxLayout *_mainLayout       = new QVBoxLayout(this, 0, 0);
-  QHBoxLayout *_firstLineLayout  = new QHBoxLayout(0, 0, 7);
-  QHBoxLayout *_orderLayout      = new QHBoxLayout(0, 0, 5);
-  QHBoxLayout *_warehouseLayout  = new QHBoxLayout(0, 0, 5);
-  QHBoxLayout *_itemLineLayout   = new QHBoxLayout(0, 0, 7);
-  QHBoxLayout *_itemNumberLayout = new QHBoxLayout(0, 0, 5);
-  QHBoxLayout *_uomLayout        = new QHBoxLayout(0, 0, 5);
-  QHBoxLayout *_statusLayout     = new QHBoxLayout(0, 0, 7);
+  QVBoxLayout *_mainLayout       = new QVBoxLayout(this);
+  QHBoxLayout *_firstLineLayout  = new QHBoxLayout(0);
+  QHBoxLayout *_orderLayout      = new QHBoxLayout(0);
+  QHBoxLayout *_warehouseLayout  = new QHBoxLayout(0);
+  QHBoxLayout *_itemLineLayout   = new QHBoxLayout(0);
+  QHBoxLayout *_itemNumberLayout = new QHBoxLayout(0);
+  QHBoxLayout *_uomLayout        = new QHBoxLayout(0);
+  QHBoxLayout *_statusLayout     = new QHBoxLayout(0);
 
-  QLabel *_numberLit = new QLabel(tr("Planned Order #:"), this, "_numberLit");
+  _mainLayout       ->setContentsMargins(0, 0, 0, 0);
+  _firstLineLayout  ->setContentsMargins(0, 0, 0, 0);
+  _orderLayout      ->setContentsMargins(0, 0, 0, 0);
+  _warehouseLayout  ->setContentsMargins(0, 0, 0, 0);
+  _itemLineLayout   ->setContentsMargins(0, 0, 0, 0);
+  _itemNumberLayout ->setContentsMargins(0, 0, 0, 0);
+  _uomLayout        ->setContentsMargins(0, 0, 0, 0);
+  _statusLayout     ->setContentsMargins(0, 0, 0, 0);
+
+  _mainLayout       ->setSpacing(0);
+  _firstLineLayout  ->setSpacing(7);
+  _orderLayout      ->setSpacing(5);
+  _warehouseLayout  ->setSpacing(5);
+  _itemLineLayout   ->setSpacing(7);
+  _itemNumberLayout ->setSpacing(5);
+  _uomLayout        ->setSpacing(5);
+  _statusLayout     ->setSpacing(7);
+
+  QLabel *_numberLit = new QLabel(tr("Planned Order #:"), this);
+  _numberLit->setObjectName("_numberLit");
 
   _numberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _orderLayout->addWidget(_numberLit);
@@ -160,53 +179,64 @@ void PlanOrdCluster::constructor()
   _number = new PlanOrdLineEdit(this);
   _orderLayout->addWidget(_number);
 
-  _list = new QPushButton(tr("..."), this, "_list");
+  _list = new QPushButton(tr("..."), this);
+  _list->setObjectName("_list");
   _list->setFocusPolicy(Qt::NoFocus);
   _orderLayout->addWidget(_list);
   _firstLineLayout->addLayout(_orderLayout);
 
-  QLabel *_warehouseLit = new QLabel(tr("Whs.:"), this, "_warehouseLit");
+  QLabel *_warehouseLit = new QLabel(tr("Whs.:"), this);
+  _warehouseLit->setObjectName("_warehouseLit");
   _warehouseLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _warehouseLayout->addWidget(_warehouseLit);
 
-  _warehouse = new QLabel(this, "_warehouse");
+  _warehouse = new QLabel(this);
+  _warehouse->setObjectName("_warehouse");
   _warehouse->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _warehouseLayout->addWidget(_warehouse);
   _firstLineLayout->addLayout(_warehouseLayout);
   _mainLayout->addLayout(_firstLineLayout);
 
-  QLabel *_itemNumberLit = new QLabel(tr("Item Number:"), this, "_itemNumberLit");
+  QLabel *_itemNumberLit = new QLabel(tr("Item Number:"), this);
+  _itemNumberLit->setObjectName("_itemNumberLit");
   _itemNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _itemNumberLayout->addWidget(_itemNumberLit);
 
-  _itemNumber = new QLabel(this, "_itemNumber");
+  _itemNumber = new QLabel(this);
+  _itemNumber->setObjectName("_itemNumber");
   _itemNumber->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _itemNumberLayout->addWidget(_itemNumber);
   _itemLineLayout->addLayout(_itemNumberLayout);
 
-  QLabel *_uomLit = new QLabel(tr("UOM:"), this, "_uomLit");
+  QLabel *_uomLit = new QLabel(tr("UOM:"), this);
+  _uomLit->setObjectName("_uomLit");
   _uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _uomLayout->addWidget(_uomLit);
 
-  _uom = new QLabel(this, "_uom");
+  _uom = new QLabel(this);
+  _uom->setObjectName("_uom");
   _uom->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _uomLayout->addWidget(_uom);
   _itemLineLayout->addLayout(_uomLayout);
   _mainLayout->addLayout(_itemLineLayout);
 
-  _descrip1 = new QLabel(this, "_descrip1");
+  _descrip1 = new QLabel(this);
+  _descrip1->setObjectName("_descrip1");
   _descrip1->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _mainLayout->addWidget(_descrip1);
 
-  _descrip2 = new QLabel(this, "_descrip2");
+  _descrip2 = new QLabel(this);
+  _descrip2->setObjectName("_descrip2");
   _descrip2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _mainLayout->addWidget(_descrip2);
 
-  QLabel *_statusLit = new QLabel(tr("Status:"), this, "_statusLit");
+  QLabel *_statusLit = new QLabel(tr("Status:"), this);
+  _statusLit->setObjectName("_statusLit");
   _statusLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _statusLayout->addWidget(_statusLit);
 
-  _status = new QLabel(this, "_status");
+  _status = new QLabel(this);
+  _status->setObjectName("_status");
   _status->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _statusLayout->addWidget(_status);

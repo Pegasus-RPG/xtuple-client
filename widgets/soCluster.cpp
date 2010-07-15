@@ -188,8 +188,9 @@ void SoLineEdit::sParse()
 }
 
 
-SoCluster::SoCluster(QWidget *pParent, const char *name) : QWidget(pParent, name)
+SoCluster::SoCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 {
+  setObjectName(name);
   constructor();
 
   _soNumber->_type = 0;
@@ -213,7 +214,8 @@ void SoCluster::constructor()
   _layoutOrderNumber->setMargin(0);
   _layoutOrderNumber->setSpacing(5);
 
-  _soNumberLit = new QLabel(tr("Sales Order #:"), _layoutOrderNumberWidget, "_soNumberLit");
+  _soNumberLit = new QLabel(tr("Sales Order #:"), _layoutOrderNumberWidget);
+  _soNumberLit->setObjectName("_soNumberLit");
   _soNumberLit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   _soNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _layoutOrderNumber->addWidget(_soNumberLit);
@@ -222,7 +224,8 @@ void SoCluster::constructor()
   _soNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _layoutOrderNumber->addWidget(_soNumber);
 
-  _list = new QPushButton(tr("..."), _layoutOrderNumberWidget, "_list");
+  _list = new QPushButton(tr("..."), _layoutOrderNumberWidget);
+  _list->setObjectName("_list");
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
@@ -232,7 +235,8 @@ void SoCluster::constructor()
   _layoutOrderNumberWidget->setLayout(_layoutOrderNumber);
   _layoutMain->addWidget(_layoutOrderNumberWidget);
 
-  _custName = new QLabel(this, "_custName");
+  _custName = new QLabel(this);
+  _custName->setObjectName("_custName");
   _custName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _custName->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _layoutMain->addWidget(_custName);

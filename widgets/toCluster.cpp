@@ -8,11 +8,10 @@
  * to be bound by its terms.
  */
 
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QValidator>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -133,8 +132,9 @@ void ToLineEdit::sParse()
 }
 
 
-ToCluster::ToCluster(QWidget *pParent, const char *name) : QWidget(pParent, name)
+ToCluster::ToCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 {
+  setObjectName(name);
   constructor();
 
   _toNumber->_type = 0;

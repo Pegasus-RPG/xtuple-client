@@ -25,8 +25,11 @@
 #include "xtreewidget.h"
 
 shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlags fl) :
-  QDialog( parent, name, modal, fl )
+  QDialog(parent, fl)
 {
+  setObjectName(name ? name : "shipToList");
+  setModal(modal);
+
   setWindowTitle(tr("Ship To's"));
 
   _shiptoid = -1;
@@ -34,58 +37,79 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
   if (!name)
     setObjectName("shipToList");
 
-  QVBoxLayout *shipToListLayout = new QVBoxLayout( this, 5, 5, "shipToListLayout"); 
-  QHBoxLayout *Layout54 = new QHBoxLayout( 0, 0, 7, "Layout54"); 
-  QHBoxLayout *Layout53 = new QHBoxLayout( 0, 0, 5, "Layout53"); 
-  QVBoxLayout *Layout51 = new QVBoxLayout( 0, 0, 5, "Layout51"); 
-  QVBoxLayout *Layout49 = new QVBoxLayout( 0, 0, 0, "Layout49"); 
-  QVBoxLayout *Layout52 = new QVBoxLayout( 0, 0, 5, "Layout52"); 
-  QVBoxLayout *Layout50 = new QVBoxLayout( 0, 0, 0, "Layout50"); 
-  QHBoxLayout *Layout6 = new QHBoxLayout( 0, 0, 0, "Layout6"); 
-  QVBoxLayout *Layout2 = new QVBoxLayout( 0, 0, 5, "Layout2"); 
-  QVBoxLayout *Layout55 = new QVBoxLayout( 0, 0, 0, "Layout55"); 
+  QVBoxLayout *shipToListLayout = new QVBoxLayout(this);
+  QHBoxLayout *Layout54 = new QHBoxLayout(0);
+  QHBoxLayout *Layout53 = new QHBoxLayout(0);
+  QVBoxLayout *Layout51 = new QVBoxLayout(0);
+  QVBoxLayout *Layout49 = new QVBoxLayout(0);
+  QVBoxLayout *Layout52 = new QVBoxLayout(0);
+  QVBoxLayout *Layout50 = new QVBoxLayout(0);
+  QHBoxLayout *Layout6 = new QHBoxLayout(0);
+  QVBoxLayout *Layout2 = new QVBoxLayout(0);
+  QVBoxLayout *Layout55 = new QVBoxLayout(0);
 
-    QLabel *_custNumberLit = new QLabel(tr("Customer #:"), this, "_custNumberLit");
-    _custNumberLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  shipToListLayout->setContentsMargins(5, 5, 5, 5);
+  Layout54->setContentsMargins(7, 7, 7, 7);
+  Layout53->setContentsMargins(5, 5, 5, 5);
+  Layout51->setContentsMargins(5, 5, 5, 5);
+  Layout49->setContentsMargins(0, 0, 0, 0);
+  Layout52->setContentsMargins(5, 5, 5, 5);
+  Layout50->setContentsMargins(0, 0, 0, 0);
+  Layout6->setContentsMargins(0, 0, 0, 0);
+  Layout2->setContentsMargins(5, 5, 5, 5);
+  Layout55->setContentsMargins(0, 0, 0, 0);
+
+    QLabel *_custNumberLit = new QLabel(tr("Customer #:"), this);
+    _custNumberLit->setObjectName("_custNumberLit");
+    _custNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     Layout49->addWidget( _custNumberLit );
 
-    QLabel *_custNameLit = new QLabel(tr("Cust Name:"), this, "_custNameLit");
-    _custNameLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+    QLabel *_custNameLit = new QLabel(tr("Cust Name:"), this);
+    _custNameLit->setObjectName("_custNameLit");
+    _custNameLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     Layout49->addWidget( _custNameLit );
 
-    QLabel *_custAddressLit = new QLabel(tr("Cust Address:"), this, "_custAddressLit");
-    _custAddressLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+    QLabel *_custAddressLit = new QLabel(tr("Cust Address:"), this);
+    _custAddressLit->setObjectName("_custAddressLit");
+    _custAddressLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     Layout49->addWidget( _custAddressLit );
     Layout51->addLayout( Layout49 );
 
-    QLabel *_searchForLit = new QLabel(tr("Search For:"), this, "_searchForLit");
-    _searchForLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+    QLabel *_searchForLit = new QLabel(tr("Search For:"), this);
+    _searchForLit->setObjectName("_searchForLit");
+    _searchForLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     Layout51->addWidget( _searchForLit );
     Layout53->addLayout( Layout51 );
 
-    _custNumber = new QLabel( this, "_custNumber" );
+    _custNumber = new QLabel( this);
+    _custNumber->setObjectName("_custNumber");
     Layout6->addWidget( _custNumber );
 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout6->addItem( spacer );
     Layout50->addLayout( Layout6 );
 
-    _custName = new QLabel( this, "_custName" );
+    _custName = new QLabel( this);
+    _custName->setObjectName("_custName");
     Layout50->addWidget( _custName );
 
-    _custAddress = new QLabel( this, "_custAddress" );
+    _custAddress = new QLabel( this);
+    _custAddress->setObjectName("_custAddress" );
     Layout50->addWidget( _custAddress );
     Layout52->addLayout( Layout50 );
 
-    _searchFor = new QLineEdit( this, "_searchFor" );
+    _searchFor = new QLineEdit( this);
+    _searchFor->setObjectName("_searchFor" );
     Layout52->addWidget( _searchFor );
     Layout53->addLayout( Layout52 );
     Layout54->addLayout( Layout53 );
 
-    _close = new QPushButton(tr("&Cancel"), this, "_close");
+    _close = new QPushButton(tr("&Cancel"), this);
+    _close->setObjectName("_close");
     Layout2->addWidget( _close );
 
-    _select = new QPushButton(tr("&Select"), this, "_select");
+    _select = new QPushButton(tr("&Select"), this);
+    _select->setObjectName("_select");
     _select->setDefault( TRUE );
     Layout2->addWidget( _select );
     QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Preferred );
@@ -93,7 +117,8 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
     Layout54->addLayout( Layout2 );
     shipToListLayout->addLayout( Layout54 );
 
-    _shipTosList = new QLabel(tr("Ship To's:"), this, "_shipTosList");
+    _shipTosList = new QLabel(tr("Ship To's:"), this);
+    _shipTosList->setObjectName("_shipTosList");
     Layout55->addWidget( _shipTosList );
 
     _shipto = new XTreeWidget(this);

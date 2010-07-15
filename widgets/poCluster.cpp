@@ -214,8 +214,9 @@ void PoLineEdit::sParse()
 
 
 PoCluster::PoCluster(QWidget *parent, const char *name) :
-  QWidget(parent, name)
+  QWidget(parent)
 {
+  setObjectName(name);
 //  Create the component Widgets
 
   QVBoxLayout *layoutMain = new QVBoxLayout(this);

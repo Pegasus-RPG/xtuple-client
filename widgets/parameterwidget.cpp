@@ -1050,7 +1050,7 @@ void ParameterWidget::setDefault(QString pName, QVariant pDefault, bool pAutoApp
     pp->defaultValue = pDefault;
   }
   else
-    qWarning(QString("Parameter %1 not found.").arg(pName));
+    qWarning("Parameter %s not found.", qPrintable(pName));
 
   if (pAutoApply)
     applyDefaultFilterSet();
@@ -1392,7 +1392,7 @@ QScriptValue constructParameterWidget(QScriptContext *context,
   else if (context->argumentCount() >= 2 &&
            qscriptvalue_cast<QWidget*>(context->argument(0)))
     obj = new ParameterWidget(qscriptvalue_cast<QWidget*>(context->argument(0)),
-                              context->argument(1).toString());
+                              qPrintable(context->argument(1).toString()));
 
   return engine->toScriptValue(obj);
 }
