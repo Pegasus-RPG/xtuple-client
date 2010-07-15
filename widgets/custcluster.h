@@ -81,10 +81,6 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public XLineEdit
     void valid(bool);
 
   protected:
-    void mousePressEvent(QMouseEvent *);
-    void mouseMoveEvent(QMouseEvent *);
-    void dragEnterEvent(QDragEnterEvent *);
-    void dropEvent(QDropEvent *);
     void keyPressEvent(QKeyEvent *);
 
   private:
