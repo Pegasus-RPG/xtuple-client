@@ -22,18 +22,13 @@
 #include <QScrollArea>
 #include <quuencode.h>
 
-/*
- *  Constructs a image as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 imageview::imageview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : QDialog(parent, fl)
 {
   setupUi(this);
 
+  setObjectName(name ? name : "imageview");
+  setModal(modal);
 
   // signals and slots connections
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
@@ -205,7 +200,7 @@ void imageview::sFileList()
   {
     if (!first)
       frmtList += QString(tr(" "));
-    ext = (list.at(i)).lower();
+    ext = QString(list.at(i)).toLower();
 
     if (ext == "jpeg")
       ext = "jpg";

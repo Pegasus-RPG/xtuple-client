@@ -8,12 +8,10 @@
  * to be bound by its terms.
  */
 
-#include <QMessageBox>
-#include <QDropEvent>
-#include <QStandardItemEditorCreator>
-#include <QMouseEvent>
-#include <QDragEnterEvent>
 #include <QApplication>
+#include <QMessageBox>
+#include <QSqlRecord>
+#include <QStandardItemEditorCreator>
 
 #include <xsqlquery.h>
 
@@ -775,9 +773,11 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   setLabel(tr("Item Number:"));
 
 //  Create the component Widgets
-  QLabel *_uomLit = new QLabel(tr("UOM:"), this, "_uomLit");
+  QLabel *_uomLit = new QLabel(tr("UOM:"), this);
+  _uomLit->setObjectName("_uomLit");
   _uomLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  _uom = new QLabel(this, "_uom");
+  _uom = new QLabel(this);
+  _uom->setObjectName("_uom");
   _uom->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _uom->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _uom->setMinimumWidth(50);
@@ -802,7 +802,8 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   }
 
 
-  _descrip2 = new QLabel(this, "_descrip2");
+  _descrip2 = new QLabel(this);
+  _descrip2->setObjectName("_descrip2");
   _descrip2->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _descrip2->setMaximumWidth(300);
   _grid->addWidget(_descrip2, 3, 1, 1, -1);
@@ -904,10 +905,13 @@ itemList::itemList(QWidget* pParent, Qt::WindowFlags pFlags ) :
 
   setWindowTitle(tr("Item List"));
 
-  _showInactive = new QCheckBox(tr("Show &Inactive Items"), this, "_showInactive");
+  _showInactive = new QCheckBox(tr("Show &Inactive Items"), this);
+  _showInactive->setObjectName("_showInactive");
   _dialogLyt->insertWidget(1, _showInactive );
-  _showMake = new QCheckBox(tr("&Make Items Only"), this, "_showMake");
-  _showBuy = new QCheckBox(tr("&Buy Items Only"), this, "_showBuy");
+  _showMake = new QCheckBox(tr("&Make Items Only"), this);
+  _showMake->setObjectName("_showMake");
+  _showBuy = new QCheckBox(tr("&Buy Items Only"), this);
+  _showBuy->setObjectName("_showBuy");
   _dialogLyt->insertWidget(2, _showMake );
   _dialogLyt->insertWidget(3, _showBuy );
 
@@ -1057,7 +1061,6 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   setWindowTitle( tr( "Search for Item" ) );
 
-  _searchName->show();
   _searchName->setText(tr("Search through Description 1"));
   _searchDescrip->show();
   _searchDescrip->setText(tr("Search through Description 2"));

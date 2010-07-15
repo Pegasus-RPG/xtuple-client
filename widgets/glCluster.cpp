@@ -91,7 +91,8 @@ void GLClusterLineEdit::sList()
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
-                          tr("%1::sList() not yet defined").arg(className()));
+                          tr("%1::sList() not yet defined")
+                          .arg(metaObject()->className()));
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -117,7 +118,8 @@ void GLClusterLineEdit::sSearch()
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__),
-                          tr("%1::sSearch() not yet defined").arg(className()));
+                          tr("%1::sSearch() not yet defined")
+                          .arg(metaObject()->className()));
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -269,10 +271,12 @@ accountSearch::accountSearch(QWidget* pParent, Qt::WindowFlags pFlags)
   _type->addItem(tr("Revenue"), QVariant("R"));
   _type->addItem(tr("Equity"), QVariant("Q"));
 
-  _typeStrLyt = new QHBoxLayout(searchLyt, -1, "typeStrLyt");
+  _typeStrLyt = new QHBoxLayout(this);
+  _typeStrLyt->setObjectName("typeStrLyt");
   _typeStrLyt->addWidget(_typeLit);
   _typeStrLyt->addWidget(_type);
   _typeStrLyt->addItem(new QSpacerItem(0,0,QSizePolicy::Expanding,QSizePolicy::Fixed));
+  searchLyt->addItem(_typeStrLyt);
 
   // signals and slots connections
   connect( _type, SIGNAL(currentIndexChanged(int)), this, SLOT( sFillList()));

@@ -8,17 +8,13 @@
  * to be bound by its terms.
  */
 
-#include <Q3DragObject>
+#include <QApplication>
 #include <QHBoxLayout>
-#include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QLabel>
 #include <QMessageBox>
-#include <QMouseEvent>
 #include <QPushButton>
 #include <QSqlError>
 #include <QVBoxLayout>
-#include <QValidator>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -27,11 +23,16 @@
 #include "crmacctcluster.h"
 
 #include "custcluster.h"
+#include "format.h"
+
+#define DEBUG false
 
 //  Routines for CLineEdit - a customer and prospect validating QLineEdit
 CLineEdit::CLineEdit(QWidget *pParent, const char *name) :
   XLineEdit(pParent, name)
 {
+  if (! name && objectName().isEmpty())
+    setObjectName("CLineEdit");
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   setMaximumWidth(100);
 
@@ -41,7 +42,6 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *name) :
   _crmacctId = -1;
   _valid    = FALSE;
   _parsed   = TRUE;
-  _dragging = FALSE;
   _type     = AllCustomers;
   _autoFocus = true;
 
@@ -269,7 +269,6 @@ void CLineEdit::setNumber(const QString& pNumber)
     sParse();
 }
 
-
 void CLineEdit::setType(CLineEditTypes pType)
 {
   _type = pType;
@@ -402,55 +401,6 @@ void CLineEdit::sParse()
   }
 }
 
-void CLineEdit::mousePressEvent(QMouseEvent *pEvent)
-{
-  QLineEdit::mousePressEvent(pEvent);
-
-  if (_valid)
-    _dragging = TRUE;
-}
-
-void CLineEdit::mouseMoveEvent(QMouseEvent *)
-{
-  if (_dragging)
-  {
-    Q3DragObject *drag = new Q3TextDrag(QString("custid=%1").arg(_id), this);
-    drag->dragCopy();
-
-    _dragging = FALSE;
-  }
-}
-
-void CLineEdit::dragEnterEvent(QDragEnterEvent *pEvent)
-{
-  QString dragData;
-
-  if (Q3TextDrag::decode(pEvent, dragData))
-  {
-    if (dragData.contains("custid="))
-      pEvent->accept(TRUE);
-  }
-
-  pEvent->accept(FALSE);
-}
-
-void CLineEdit::dropEvent(QDropEvent *pEvent)
-{
-  QString dropData;
-
-  if (Q3TextDrag::decode(pEvent, dropData))
-  {
-    if (dropData.contains("custid="))
-    {
-      QString target = dropData.mid((dropData.find("custid=") + 7), (dropData.length() - 7));
-
-      if (target.contains(","))
-        target = target.left(target.find(","));
-      setId(target.toInt());
-    }
-  }
-}
-
 void CLineEdit::keyPressEvent(QKeyEvent * pEvent)
 {
   if(pEvent->key() == Qt::Key_Tab)
@@ -462,14 +412,33 @@ void CLineEdit::keyPressEvent(QKeyEvent * pEvent)
 
 CustInfoAction* CustInfo::_custInfoAction = 0;
 CustInfo::CustInfo(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+  QWidget(pParent)
 {
-//  Create and place the component Widgets
-  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 6, "layoutMain"); 
-  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 6, "layoutNumber"); 
-  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, -1, "layoutButtons"); 
+  setObjectName(name);
+  
+  /*
+  // TODO: is there a way to initialize this globally without crashing
+  //       when started from Designer (when there's no DB connection?)
+  if (_x_metrics)
+  {
+    if (_warnPalette == QApplication::palette())
+      _warnPalette.setColor(QPalette::ButtonText, namedColor("warning"));
 
-  _customerNumberLit = new QLabel(tr("Customer #:"), this, "_customerNumberLit");
+    if (_holdPalette == QApplication::palette())
+      _holdPalette.setColor(QPalette::ButtonText, namedColor("error"));
+  }
+  */
+
+  QHBoxLayout *layoutMain = new QHBoxLayout(this);
+  QHBoxLayout *layoutNumber = new QHBoxLayout();
+  QHBoxLayout *layoutButtons = new QHBoxLayout();
+
+  layoutMain->setObjectName("layoutMain"); 
+  layoutNumber->setObjectName("layoutNumber"); 
+  layoutButtons->setObjectName("layoutButtons"); 
+
+  _customerNumberLit = new QLabel(tr("Customer #:"), this);
+  _customerNumberLit->setObjectName("_customerNumberLit");
   _customerNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   layoutNumber->addWidget(_customerNumberLit);
 
@@ -484,7 +453,8 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   _customerNumberEdit->hide();
   layoutMain->addLayout(layoutNumber);
 
-  _list = new QPushButton(tr("..."), this, "_list");
+  _list = new QPushButton(tr("..."), this);
+  _list->setObjectName("_list");
   _list->setFocusPolicy(Qt::NoFocus);
   if(_x_preferences)
   {
@@ -495,24 +465,28 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   }
   layoutButtons->addWidget(_list);
 
-  _info = new QPushButton(tr("?"), this, "_info");
+  _info = new QPushButton(tr("?"), this);
+  _info->setObjectName("_info");
   _info->setFocusPolicy(Qt::NoFocus);
   _info->setToolTip(tr("Open"));
   _info->setEnabled(false);
   layoutButtons->addWidget(_info);
   connect(this, SIGNAL(valid(bool)), _info, SLOT(setEnabled(bool)));
   
-  _delete = new QPushButton(tr("x"), this, "_delete");
+  _delete = new QPushButton(tr("x"), this);
+  _delete->setObjectName("_delete");
   _delete->setFocusPolicy(Qt::NoFocus);
   _delete->setToolTip(tr("Delete"));
   layoutButtons->addWidget(_delete);
   
-  _new = new QPushButton(tr("+"), this, "_new");
+  _new = new QPushButton(tr("+"), this);
+  _new->setObjectName("_new");
   _new->setFocusPolicy(Qt::NoFocus);
   _new->setToolTip(tr("New"));
   layoutButtons->addWidget(_new);
 
-  _edit = new QPushButton(tr("!"), this, "_edit");
+  _edit = new QPushButton(tr("!"), this);
+  _edit->setObjectName("_edit");
   _edit->setFocusPolicy(Qt::NoFocus);
   _edit->setCheckable(true);
   _edit->setToolTip(tr("Edit Mode"));
@@ -611,16 +585,11 @@ void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
 
 void CustInfo::setReadOnly(bool pReadOnly)
 {
+  _customerNumber->setEnabled(! pReadOnly);
   if (pReadOnly)
-  {
-    _customerNumber->setEnabled(FALSE);
     _list->hide();
-  }
   else
-  {
-    _customerNumber->setEnabled(TRUE);
     _list->show();
-  }
 }
 
 void CustInfo::clear()
@@ -762,20 +731,21 @@ void CustInfo::setExtraClause(CLineEdit::CLineEditTypes type, const QString &cla
 
 void CustInfo::sHandleCreditStatus(const QString &pStatus)
 {
+  QString style = "";
+
   if ((pStatus == "G") || (pStatus == ""))
-  {
     _info->setText(tr("?"));
-    _info->setPaletteForegroundColor(QColor("black"));
-  }
   else
   {
     _info->setText(tr("$"));
 
     if (pStatus == "W")
-      _info->setPaletteForegroundColor(QColor("orange"));
+      style = QString("* { color: %1 }").arg(namedColor("warning").name());
     else if (pStatus == "H")
-      _info->setPaletteForegroundColor(QColor("red"));
+      style = QString("* { color: %1 }").arg(namedColor("error").name());
   }
+
+  _info->setStyleSheet(style);
 }
 
 void CustInfo::updateMapperData()
@@ -788,8 +758,9 @@ void CustInfo::updateMapperData()
 //////////////////////////////////////////////////////////////
 
 CustCluster::CustCluster(QWidget *parent, const char *name) :
-  QWidget(parent, name)
+  QWidget(parent)
 {
+  setObjectName(name);
 //  Create the component Widgets
   QVBoxLayout *_main = new QVBoxLayout(this);
   _main->setMargin(0);
@@ -799,12 +770,14 @@ CustCluster::CustCluster(QWidget *parent, const char *name) :
   _custInfo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _main->addWidget(_custInfo);
 
-  _name = new QLabel(this, "_name");
+  _name = new QLabel(this);
+  _name->setObjectName("_name");
   _name->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _name->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _main->addWidget(_name);
 
-  _address1 = new QLabel(this, "_address1");
+  _address1 = new QLabel(this);
+  _address1->setObjectName("_address1");
   _address1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _address1->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _main->addWidget(_address1);
