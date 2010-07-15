@@ -11,21 +11,20 @@
 #ifndef DSPSLOWMOVINGINVENTORYBYCLASSCODE_H
 #define DSPSLOWMOVINGINVENTORYBYCLASSCODE_H
 
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspSlowMovingInventoryByClassCode.h"
 
-class dspSlowMovingInventoryByClassCode : public XWidget, public Ui::dspSlowMovingInventoryByClassCode
+class dspSlowMovingInventoryByClassCode : public display, public Ui::dspSlowMovingInventoryByClassCode
 {
     Q_OBJECT
 
 public:
     dspSlowMovingInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSlowMovingInventoryByClassCode();
-    bool	setParams(ParameterList &);
+
+    bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sTransfer();
     virtual void sAdjust();
@@ -33,7 +32,6 @@ public slots:
     virtual void sMiscCount();
     virtual void sIssueCountTag();
     virtual void sHandleValue( bool pShowValue );
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

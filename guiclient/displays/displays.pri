@@ -5,6 +5,7 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
+           displays/dspExpiredInventoryByClassCode.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInventoryLocator.ui \
            displays/dspItemCostDetail.ui \
@@ -20,6 +21,7 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQOHByParameterList.ui \
            displays/dspSingleLevelWhereUsed.ui \
+           displays/dspSlowMovingInventoryByClassCode.ui \
            displays/dspValidLocationsByItem.ui
 
 HEADERS += displays/dspBOMBase.h \
@@ -30,6 +32,7 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspCostedIndentedBOM.h \
            displays/dspCostedSingleLevelBOM.h \
            displays/dspCostedSummarizedBOM.h \
+           displays/dspExpiredInventoryByClassCode.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspInventoryLocator.h \
@@ -50,6 +53,7 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspQOHByParameterList.h \
            displays/dspSingleLevelBOM.h \
            displays/dspSingleLevelWhereUsed.h \
+           displays/dspSlowMovingInventoryByClassCode.h \
            displays/dspSummarizedBOM.h \
            displays/dspValidLocationsByItem.h
 
@@ -61,6 +65,7 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspCostedIndentedBOM.cpp \
            displays/dspCostedSingleLevelBOM.cpp \
            displays/dspCostedSummarizedBOM.cpp \
+           displays/dspExpiredInventoryByClassCode.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspInventoryLocator.cpp \
@@ -81,6 +86,7 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspQOHByParameterList.cpp \
            displays/dspSingleLevelBOM.cpp \
            displays/dspSingleLevelWhereUsed.cpp \
+           displays/dspSlowMovingInventoryByClassCode.cpp \
            displays/dspSummarizedBOM.cpp \
            displays/dspValidLocationsByItem.cpp
 

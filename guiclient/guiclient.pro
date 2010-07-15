@@ -232,7 +232,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspDetailedInventoryHistoryByLotSerial.ui     \
           dspEarnedCommissions.ui                       \
           dspExpediteExceptionsByPlannerCode.ui         \
-          dspExpiredInventoryByClassCode.ui             \
           dspFinancialReport.ui                         \
           dspFreightPricesByCustomer.ui                 \
           dspFreightPricesByCustomerType.ui             \
@@ -306,7 +305,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspShipmentsByDate.ui                         \
           dspShipmentsBySalesOrder.ui                   \
           dspShipmentsByShipment.ui                     \
-          dspSlowMovingInventoryByClassCode.ui          \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
           dspSubstituteAvailabilityByItem.ui            \
@@ -923,7 +921,6 @@ HEADERS = ../common/format.h                    \
           dspDetailedInventoryHistoryByLotSerial.h      \
           dspEarnedCommissions.h                        \
           dspExpediteExceptionsByPlannerCode.h          \
-          dspExpiredInventoryByClassCode.h              \
           dspFinancialReport.h                          \
           dspFreightPricesByCustomer.h                  \
           dspFreightPricesByCustomerType.h              \
@@ -997,7 +994,6 @@ HEADERS = ../common/format.h                    \
           dspShipmentsByDate.h                  \
           dspShipmentsBySalesOrder.h            \
           dspShipmentsByShipment.h              \
-          dspSlowMovingInventoryByClassCode.h   \
           dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
           dspSubstituteAvailabilityByItem.h     \
@@ -1650,7 +1646,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspDetailedInventoryHistoryByLotSerial.cpp    \
           dspEarnedCommissions.cpp                      \
           dspExpediteExceptionsByPlannerCode.cpp        \
-          dspExpiredInventoryByClassCode.cpp            \
           dspFinancialReport.cpp                        \
           dspFreightPricesByCustomer.cpp                \
           dspFreightPricesByCustomerType.cpp            \
@@ -1724,7 +1719,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspShipmentsByDate.cpp                        \
           dspShipmentsBySalesOrder.cpp                  \
           dspShipmentsByShipment.cpp                    \
-          dspSlowMovingInventoryByClassCode.cpp         \
           dspStandardJournalHistory.cpp                 \
           dspSubLedger.cpp                              \
           dspSubstituteAvailabilityByItem.cpp           \

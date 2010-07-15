@@ -11,21 +11,20 @@
 #ifndef DSPEXPIREDINVENTORYBYCLASSCODE_H
 #define DSPEXPIREDINVENTORYBYCLASSCODE_H
 
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspExpiredInventoryByClassCode.h"
 
-class dspExpiredInventoryByClassCode : public XWidget, public Ui::dspExpiredInventoryByClassCode
+class dspExpiredInventoryByClassCode : public display, public Ui::dspExpiredInventoryByClassCode
 {
     Q_OBJECT
 
 public:
     dspExpiredInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspExpiredInventoryByClassCode();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu *, QTreeWidgetItem * );
     virtual void sTransfer();
     virtual void sAdjust();

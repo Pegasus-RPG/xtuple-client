@@ -29,82 +29,47 @@
 #define VALUE_COL	7
 #define METHOD_COL 8
 
-dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspExpiredInventoryByClassCode", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Expired Inventory"));
+  setListLabel(tr("Expired Inventory"));
+  setReportName("ExpiredInventoryByClassCode");
+  setMetaSQLOptions("expiredInventory", "detail");
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
   _costsGroupInt->addButton(_usePostedCosts);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _expired->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  _expired->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft,   true,  "ls_number"   );
-  _expired->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter, true,  "itemloc_expiration" );
-  _expired->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight,  true,  "itemloc_qty"  );
-  _expired->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight,  true,  "cost" );
-  _expired->addColumn(tr("Value"),        _costColumn, Qt::AlignRight,  true,  "value" );
-  _expired->addColumn(tr("Cost Method"),  _costColumn, Qt::AlignCenter, true,  "costmethod" );
+  list()->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft,   true,  "ls_number"   );
+  list()->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter, true,  "itemloc_expiration" );
+  list()->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight,  true,  "itemloc_qty"  );
+  list()->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight,  true,  "cost" );
+  list()->addColumn(tr("Value"),        _costColumn, Qt::AlignRight,  true,  "value" );
+  list()->addColumn(tr("Cost Method"),  _costColumn, Qt::AlignCenter, true,  "costmethod" );
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
   if (! _privileges->check("ViewInventoryValue") || ! _showValue->isChecked())
   {
-    _expired->hideColumn(COST_COL);
-    _expired->hideColumn(VALUE_COL);
-    _expired->hideColumn(METHOD_COL);
+    list()->hideColumn(COST_COL);
+    list()->hideColumn(VALUE_COL);
+    list()->hideColumn(METHOD_COL);
   }
-}
-
-dspExpiredInventoryByClassCode::~dspExpiredInventoryByClassCode()
-{
-  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspExpiredInventoryByClassCode::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
-}
-
-void dspExpiredInventoryByClassCode::sPrint()
-{
-  ParameterList params;
-  params.append("thresholdDays", _thresholdDays->value());
-
-  _warehouse->appendValue(params);
-  _classCode->appendValue(params);
-  
-  if(_perishability->isChecked())
-    params.append("perishability");
-  else
-    params.append("warranty");
-
-  if(_showValue->isChecked())
-    params.append("showValue");
-
-  if (_useActualCosts->isChecked())
-    params.append("useActualCost");
-
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCost");
-
-  if (_usePostedCosts->isChecked())
-    params.append("usePostedCosts");
-
-  orReport report("ExpiredInventoryByClassCode", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
@@ -145,7 +110,7 @@ void dspExpiredInventoryByClassCode::sTransfer()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _expired->id());
+  params.append("itemsite_id", list()->id());
 
   transferTrans *newdlg = new transferTrans();
   newdlg->set(params);
@@ -156,7 +121,7 @@ void dspExpiredInventoryByClassCode::sAdjust()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _expired->id());
+  params.append("itemsite_id", list()->id());
 
   adjustmentTrans *newdlg = new adjustmentTrans();
   newdlg->set(params);
@@ -167,7 +132,7 @@ void dspExpiredInventoryByClassCode::sReset()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _expired->id());
+  params.append("itemsite_id", list()->id());
   params.append("qty", 0.0);
 
   adjustmentTrans *newdlg = new adjustmentTrans();
@@ -178,7 +143,7 @@ void dspExpiredInventoryByClassCode::sReset()
 void dspExpiredInventoryByClassCode::sMiscCount()
 {
   ParameterList params;
-  params.append("itemsite_id", _expired->id());
+  params.append("itemsite_id", list()->id());
   
   enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -189,7 +154,7 @@ void dspExpiredInventoryByClassCode::sMiscCount()
 void dspExpiredInventoryByClassCode::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _expired->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -200,32 +165,24 @@ void dspExpiredInventoryByClassCode::sHandleValue(bool pShowValue)
 {
   if (pShowValue)
   {
-    _expired->showColumn(COST_COL);
-    _expired->showColumn(VALUE_COL);
-    _expired->showColumn(METHOD_COL);
+    list()->showColumn(COST_COL);
+    list()->showColumn(VALUE_COL);
+    list()->showColumn(METHOD_COL);
   }
   else
   {
-    _expired->hideColumn(COST_COL);
-    _expired->hideColumn(VALUE_COL);
-    _expired->hideColumn(METHOD_COL);
+    list()->hideColumn(COST_COL);
+    list()->hideColumn(VALUE_COL);
+    list()->hideColumn(METHOD_COL);
   }
 }
 
 void dspExpiredInventoryByClassCode::sFillList()
 {
-  _expired->clear();
+  list()->clear();
+  list()->setColumnVisible(METHOD_COL, _showValue->isChecked() && _usePostedCosts->isChecked());
 
-  _expired->setColumnVisible(METHOD_COL, _showValue->isChecked() && _usePostedCosts->isChecked());
-
-  MetaSQLQuery mql = mqlLoad("expiredInventory", "detail");
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  q = mql.toQuery(params);
-  _expired->populate(q);
-
+  display::sFillList();
 }
 
 bool dspExpiredInventoryByClassCode::setParams(ParameterList &params)
@@ -236,20 +193,26 @@ bool dspExpiredInventoryByClassCode::setParams(ParameterList &params)
     params.append("expiretype", tr("Perishability"));
   }
   else
+  {
+    params.append("warranty");
     params.append("expiretype", tr("Warranty"));
+  }
 
   params.append("thresholdDays", _thresholdDays->value());
 
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
+  _warehouse->appendValue(params);
+  _classCode->appendValue(params);
 
-  if (_classCode->isSelected())
-    _classCode->appendValue(params);
+  if(_showValue->isChecked())
+    params.append("showValue");
 
   if (_useStandardCosts->isChecked())
     params.append("useStandardCosts");
   else if (_useActualCosts->isChecked())
     params.append("useActualCosts"); 
+  else if (_usePostedCosts->isChecked())
+    params.append("usePostedCosts");
 
-  return TRUE;
+  return true;
 }
+

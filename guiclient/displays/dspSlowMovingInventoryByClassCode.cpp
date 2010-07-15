@@ -25,43 +25,40 @@
 #include "createCountTagsByItem.h"
 #include "mqlutil.h"
 
-dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspSlowMovingInventoryByClassCode", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Slow Moving Inventory"));
+  setListLabel(tr("Quantities on Hand"));
+  setReportName("SlowMovingInventoryByClassCode");
+  setMetaSQLOptions("slowMovingInventoryByClassCode", "detail");
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _itemsite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  _itemsite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _itemsite->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
-  _itemsite->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  _itemsite->addColumn(tr("Last Movement"), _itemColumn, Qt::AlignCenter, true,  "itemsite_datelastused" );
-  _itemsite->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
-  _itemsite->addColumn(tr("Unit Cost"),     _costColumn, Qt::AlignRight,  true,  "cost"  );
-  _itemsite->addColumn(tr("Value"),         _costColumn, Qt::AlignRight,  true,  "value"  );
+  list()->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  list()->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Last Movement"), _itemColumn, Qt::AlignCenter, true,  "itemsite_datelastused" );
+  list()->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  list()->addColumn(tr("Unit Cost"),     _costColumn, Qt::AlignRight,  true,  "cost"  );
+  list()->addColumn(tr("Value"),         _costColumn, Qt::AlignRight,  true,  "value"  );
 
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
 }
 
-dspSlowMovingInventoryByClassCode::~dspSlowMovingInventoryByClassCode()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspSlowMovingInventoryByClassCode::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -91,21 +88,6 @@ bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
   return true;
 }
 
-void dspSlowMovingInventoryByClassCode::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("SlowMovingInventoryByClassCode", params);
-
-  if (report.isValid())
-    report.print();
-  else
-  {
-    report.reportError(this);
-  }
-}
 
 void dspSlowMovingInventoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
@@ -143,7 +125,7 @@ void dspSlowMovingInventoryByClassCode::sTransfer()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
 
   transferTrans *newdlg = new transferTrans();
   newdlg->set(params);
@@ -154,7 +136,7 @@ void dspSlowMovingInventoryByClassCode::sAdjust()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
 
   adjustmentTrans *newdlg = new adjustmentTrans();
   newdlg->set(params);
@@ -165,7 +147,7 @@ void dspSlowMovingInventoryByClassCode::sReset()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
   params.append("qty", 0.0);
 
   adjustmentTrans *newdlg = new adjustmentTrans();
@@ -176,7 +158,7 @@ void dspSlowMovingInventoryByClassCode::sReset()
 void dspSlowMovingInventoryByClassCode::sMiscCount()
 {
   ParameterList params;
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
 
   enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -187,7 +169,7 @@ void dspSlowMovingInventoryByClassCode::sMiscCount()
 void dspSlowMovingInventoryByClassCode::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _itemsite->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -196,25 +178,7 @@ void dspSlowMovingInventoryByClassCode::sIssueCountTag()
 
 void dspSlowMovingInventoryByClassCode::sHandleValue(bool pShowValue)
 {
-  _itemsite->setColumnHidden(6, !pShowValue);
-  _itemsite->setColumnHidden(7, !pShowValue);
+  list()->setColumnHidden(6, !pShowValue);
+  list()->setColumnHidden(7, !pShowValue);
 }
 
-void dspSlowMovingInventoryByClassCode::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  _itemsite->clear();
-
-  MetaSQLQuery mql = mqlLoad("slowMovingInventoryByClassCode", "detail");
-
-  q = mql.toQuery(params);
-  _itemsite->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
