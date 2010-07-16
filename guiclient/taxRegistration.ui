@@ -253,7 +253,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0" >
          <widget class="DateCluster" name="_dates" >
           <property name="focusPolicy" >
-           <enum>Qt::TabFocus</enum>
+           <enum>Qt::StrongFocus</enum>
           </property>
          </widget>
         </item>
