@@ -152,7 +152,6 @@ SOURCES += widgets.cpp \
     salesOrderList.cpp \
     shiptoCluster.cpp \
     shipToList.cpp \
-    toCluster.cpp \
     transferOrderList.cpp \
     calendarTools.cpp \
     parametergroup.cpp \
@@ -241,7 +240,6 @@ HEADERS += widgets.h \
     salesOrderList.h \
     shiptocluster.h \
     shipToList.h \
-    tocluster.h \
     transferOrderList.h \
     calendarTools.h \
     parametergroup.h \

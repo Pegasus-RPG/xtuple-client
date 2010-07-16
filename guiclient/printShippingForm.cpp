@@ -29,15 +29,16 @@ printShippingForm::printShippingForm(QWidget* parent, const char * name, Qt::Win
   _shipchrg->hide();
   _shipchrgLit->hide();
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPrint()));
   connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
   connect(_shipformWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditShippingFormWatermark()));
   connect(_shipment,	SIGNAL(newId(int)),	this, SLOT(sHandleShipment()));
-  connect(_so,	SIGNAL(newId(int)),	this, SLOT(sHandleSo()));
-  connect(_to,	SIGNAL(newId(int)),	this, SLOT(sHandleTo()));
+  connect(_order,	SIGNAL(newId(int)),	this, SLOT(sHandleOrder()));
 
   _captive = FALSE;
-  _so->setType(cSoAtShipping);
+  _order->setAllowedTypes(OrderLineEdit::Sales | OrderLineEdit::Transfer);
+  _order->setAllowedStatuses(OrderLineEdit::Open);
+  _order->setLabel("");
 
   _shipformWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
   _shipformWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
@@ -52,8 +53,6 @@ printShippingForm::printShippingForm(QWidget* parent, const char * name, Qt::Win
     _shipformWatermarks->topLevelItem(counter)->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(counter))) ? tr("Yes") : tr("No")));
     }
   }
-
-  _to->setVisible(_metrics->boolean("MultiWhs"));
 }
 
 printShippingForm::~printShippingForm()
@@ -87,8 +86,8 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
     {
       _captive = TRUE;
 
-      _so->setId(q.value("cohead_id").toInt());
-      _so->setEnabled(FALSE);
+      _order->setId(q.value("cohead_id").toInt(),"SO");
+      _order->setEnabled(FALSE);
 
       _shipToName->setText(q.value("cohead_shiptoname").toString());
       _shipToAddr1->setText(q.value("cohead_shiptoaddress1").toString());
@@ -134,14 +133,12 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
     if (ordertype == "SO")
     {
       headp.append("sohead_id", orderid);
-      _to->setId(-1);
-      _so->setId(orderid);
+      _order->setId(orderid, "SO");
     }
     else if (ordertype == "TO")
     {
       headp.append("tohead_id", orderid);
-      _so->setId(-1);
-      _to->setId(orderid);
+      _order->setId(orderid,"TO");
     }
 
     QString heads = "<? if exists(\"sohead_id\") ?>"
@@ -169,8 +166,7 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
       if (_shippingForm->id() <= 0)
 	_shippingForm->setId(headq.value("shipform_id").toInt());
 
-      _so->setEnabled(false);
-      _to->setEnabled(false);
+      _order->setEnabled(false);
     }
     else if (headq.lastError().type() != QSqlError::NoError)
     {
@@ -217,8 +213,6 @@ void printShippingForm::sEditShippingFormWatermark()
 
 void printShippingForm::sPrint()
 {
-  _print->setFocus();
-
   if (!_shipment->isValid())
   {
     QMessageBox::warning(this, tr("Shipment Number Required"),
@@ -296,11 +290,9 @@ void printShippingForm::sPrint()
     else
     {
       _shipment->setId(-1);
-      _so->setId(-1);
-      _to->setId(-1);
-      _so->setEnabled(true);
-      _to->setEnabled(true);
-      _so->setFocus();
+      _order->setId(-1);
+      _order->setEnabled(true);
+      _order->setFocus();
     }
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -322,25 +314,21 @@ void printShippingForm::sHandleShipment()
     params.append("shiphead_id", _shipment->id());
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
-    if (_so->isValid())
-      params.append("sohead_id", _so->id());
-    if (_to->isValid())
-      params.append("tohead_id", _to->id());
+    if (_order->isValid() && _order->isSO())
+      params.append("sohead_id", _order->id());
+    if (_order->isValid() && _order->isTO())
+      params.append("tohead_id", _order->id());
     q = mql.toQuery(params);
 
     if (q.first())
     {
       int orderid = q.value("order_id").toInt();
-      if (q.value("shiphead_order_type").toString() == "SO" && _so->id() != orderid)
-      {
-	_to->setId(-1);
-	_so->setId(orderid);
-      }
-      else if (q.value("shiphead_order_type").toString() == "TO" && _to->id() != orderid)
-      {
-	_so->setId(-1);
-	_to->setId(orderid);
-      }
+      if ((q.value("shiphead_order_type").toString() == "SO") &&
+          ((_order->id() != orderid) || (!_order->isSO())))
+        _order->setId(orderid, "SO");
+      else if ((q.value("shiphead_order_type").toString() == "TO") &&
+               ((_order->id() != orderid) || (!_order->isTO())))
+        _order->setId(orderid,"TO");
 
       _shipToName->setText(q.value("shipto").toString());
       _shipToAddr1->setText(q.value("addr1").toString());
@@ -352,16 +340,8 @@ void printShippingForm::sHandleShipment()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else if (_so->isValid())
-    {
-      _so->setId(-1);
+    else if (_order->isValid())
       sHandleShipment();
-    }
-    else if (_to->isValid())
-    {
-      _to->setId(-1);
-      sHandleShipment();
-    }
     else
     {
       QMessageBox::critical(this, tr("Could not find data"),
@@ -379,9 +359,8 @@ void printShippingForm::sHandleShipment()
 
 void printShippingForm::sHandleSo()
 {
-  if (_so->isValid())
+  if (_order->isValid())
   {
-    _to->setId(-1);
     QString sql("SELECT cohead_id AS order_id, cohead_shiptoname AS shipto, "
 		"       cohead_shiptoaddress1 AS addr1, shiphead_order_type, "
 		"       shiphead_id, shiphead_shipchrg_id, shiphead_shipped, "
@@ -399,7 +378,7 @@ void printShippingForm::sHandleSo()
 
     ParameterList params;
     MetaSQLQuery mql(sql);
-    params.append("sohead_id", _so->id());
+    params.append("sohead_id", _order->id());
     if (_shipment->isValid())
       params.append("shiphead_id", _shipment->id());
     q = mql.toQuery(params);
@@ -438,11 +417,18 @@ void printShippingForm::sHandleSo()
   }
 }
 
+void printShippingForm::sHandleOrder()
+{
+  if (_order->isSO())
+    sHandleSo();
+  else if (_order->isTO())
+    sHandleTo();
+}
+
 void printShippingForm::sHandleTo()
 {
-  if (_to->isValid())
+  if (_order->isValid())
   {
-    _so->setId(-1);
     QString sql("SELECT tohead_id AS order_id, tohead_destname AS shipto, "
 		"       tohead_destaddress1 AS addr1, shiphead_order_type, "
 		"       shiphead_id, shiphead_shipchrg_id, shiphead_shipped, "
@@ -460,7 +446,7 @@ void printShippingForm::sHandleTo()
 
     ParameterList params;
     MetaSQLQuery mql(sql);
-    params.append("tohead_id", _to->id());
+    params.append("tohead_id", _order->id());
     if (_shipment->isValid())
       params.append("shiphead_id", _shipment->id());
     q = mql.toQuery(params);

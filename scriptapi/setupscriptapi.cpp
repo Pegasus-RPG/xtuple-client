@@ -95,7 +95,6 @@
 #include "setupscriptapi.h"
 #include "shipmentclusterlineeditsetup.h"
 #include "solineeditsetup.h"
-#include "tolineeditsetup.h"
 #include "usernamecluster.h"
 #include "vendorgroupsetup.h"
 #include "wcomboboxsetup.h"
@@ -208,7 +207,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupScreen(engine);
   setupShipmentClusterLineEdit(engine);
   setupSoLineEdit(engine);
-  setupToLineEdit(engine);
   setupUsernameCluster(engine);
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
