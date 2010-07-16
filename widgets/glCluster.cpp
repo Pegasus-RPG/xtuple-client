@@ -19,6 +19,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   setUiName("accountNumber");
   setEditPriv("MaintainChartOfAccounts");
   setViewPriv("ViewChartOfAccounts");
+  setNewPriv("MaintainChartOfAccounts");
 
   _showExternal = false;
 
