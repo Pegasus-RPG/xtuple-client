@@ -1989,7 +1989,8 @@ void GUIClient::handleDocument(QString path)
 
   if (!opened)
   {
-    qWarning(QString("File %1 could not be opened. Changes will not be saved to the database.").arg(path));
+    qWarning("File %s could not be opened. Changes will not be saved to the database.",
+       qPrintable(path));
     return;
   }
 
