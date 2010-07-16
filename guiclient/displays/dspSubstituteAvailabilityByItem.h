@@ -12,28 +12,26 @@
 #define DSPSUBSTITUTEAVAILABILITYBYITEM_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "parameter.h"
 
 #include "ui_dspSubstituteAvailabilityByItem.h"
 
-class dspSubstituteAvailabilityByItem : public XWidget, public Ui::dspSubstituteAvailabilityByItem
+class dspSubstituteAvailabilityByItem : public display, public Ui::dspSubstituteAvailabilityByItem
 {
     Q_OBJECT
 
 public:
     dspSubstituteAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSubstituteAvailabilityByItem();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sViewAllocations();
     virtual void sViewOrders();
-    virtual void sPopulateMenu( QMenu * menu );
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *);
 
 protected slots:
     virtual void languageChange();

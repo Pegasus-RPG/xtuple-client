@@ -8,48 +8,42 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPINVENTORYAVAILABILITYBYSOURCEVENDOR_H
-#define DSPINVENTORYAVAILABILITYBYSOURCEVENDOR_H
+#ifndef DSPINVENTORYAVAILABILITYBYWORKORDER_H
+#define DSPINVENTORYAVAILABILITYBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspInventoryAvailabilityBySourceVendor.h"
+#include "ui_dspInventoryAvailabilityByWorkOrder.h"
 
-class dspInventoryAvailabilityBySourceVendor : public XWidget, public Ui::dspInventoryAvailabilityBySourceVendor
+class dspInventoryAvailabilityByWorkOrder : public display, public Ui::dspInventoryAvailabilityByWorkOrder
 {
     Q_OBJECT
 
 public:
-    dspInventoryAvailabilityBySourceVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryAvailabilityBySourceVendor();
+    dspInventoryAvailabilityByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem * selected );
+    virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sViewHistory();
     virtual void sViewAllocations();
     virtual void sViewOrders();
     virtual void sRunningAvailability();
+    virtual void sViewSubstituteAvailability();
     virtual void sCreatePR();
     virtual void sCreatePO();
-    virtual void sViewSubstituteAvailability();
+    virtual void sCreateWO();
+    virtual void sPostMiscProduction();
     virtual void sIssueCountTag();
     virtual void sEnterMiscCount();
-    virtual void sHandleShowReorder( bool pValue );
     virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
 
-private:
-    QButtonGroup* _vendorGroupInt;
-    QButtonGroup* _showByGroupInt;
-
 };
 
-#endif // DSPINVENTORYAVAILABILITYBYSOURCEVENDOR_H
+#endif // DSPINVENTORYAVAILABILITYBYWORKORDER_H

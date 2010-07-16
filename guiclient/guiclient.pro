@@ -240,12 +240,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
           dspInvalidBillsOfMaterials.ui                 \
-          dspInventoryAvailabilityByCustomerType.ui     \
-          dspInventoryAvailabilityByItem.ui             \
-          dspInventoryAvailabilityByParameterList.ui    \
-          dspInventoryAvailabilityBySalesOrder.ui       \
-          dspInventoryAvailabilityBySourceVendor.ui     \
-          dspInventoryAvailabilityByWorkOrder.ui        \
           dspInventoryHistoryByItem.ui                  \
           dspInventoryHistoryByOrderNumber.ui           \
           dspInventoryHistoryByParameterList.ui         \
@@ -307,7 +301,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspShipmentsByShipment.ui                     \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
-          dspSubstituteAvailabilityByItem.ui            \
           dspSummarizedBacklogByWarehouse.ui            \
           dspSummarizedBankrecHistory.ui                \
           dspSummarizedGLTransactions.ui                \
@@ -929,12 +922,6 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspIncidentsByCRMAccount.h                    \
           dspInvalidBillsOfMaterials.h                  \
-          dspInventoryAvailabilityByCustomerType.h      \
-          dspInventoryAvailabilityByItem.h              \
-          dspInventoryAvailabilityByParameterList.h     \
-          dspInventoryAvailabilityBySalesOrder.h        \
-          dspInventoryAvailabilityBySourceVendor.h      \
-          dspInventoryAvailabilityByWorkOrder.h         \
           dspInventoryHistoryByItem.h                   \
           dspInventoryHistoryByOrderNumber.h            \
           dspInventoryHistoryByParameterList.h          \
@@ -996,7 +983,6 @@ HEADERS = ../common/format.h                    \
           dspShipmentsByShipment.h              \
           dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
-          dspSubstituteAvailabilityByItem.h     \
           dspSummarizedBacklogByWarehouse.h     \
           dspSummarizedBankrecHistory.h         \
           dspSummarizedGLTransactions.h         \
@@ -1654,12 +1640,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspIncidentsByCRMAccount.cpp                  \
           dspInvalidBillsOfMaterials.cpp                \
-          dspInventoryAvailabilityByCustomerType.cpp    \
-          dspInventoryAvailabilityByItem.cpp            \
-          dspInventoryAvailabilityByParameterList.cpp   \
-          dspInventoryAvailabilityBySalesOrder.cpp      \
-          dspInventoryAvailabilityBySourceVendor.cpp    \
-          dspInventoryAvailabilityByWorkOrder.cpp       \
           dspInventoryHistoryByItem.cpp                 \
           dspInventoryHistoryByOrderNumber.cpp          \
           dspInventoryHistoryByParameterList.cpp        \
@@ -1721,7 +1701,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspShipmentsByShipment.cpp                    \
           dspStandardJournalHistory.cpp                 \
           dspSubLedger.cpp                              \
-          dspSubstituteAvailabilityByItem.cpp           \
           dspSummarizedBacklogByWarehouse.cpp           \
           dspSummarizedBankrecHistory.cpp               \
           dspSummarizedGLTransactions.cpp               \

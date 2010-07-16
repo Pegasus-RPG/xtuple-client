@@ -15,9 +15,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
 #include "dspInventoryHistoryByItem.h"
@@ -25,14 +22,17 @@
 #include "dspRunningAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "enterMiscCount.h"
-#include "mqlutil.h"
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
 
 dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : display(parent, "dspInventoryAvailabilityBySourceVendor", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Inventory Availability by Source Vendor"));
+  setListLabel(tr("Availability"));
+  setReportName("InventoryAvailabilityBySourceVendor");
+  setMetaSQLOptions("inventoryAvailability", "general");
 
   _showByGroupInt = new QButtonGroup(this);
   _showByGroupInt->addButton(_leadTime);
@@ -40,24 +40,21 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _showByGroupInt->addButton(_byDate);
   _showByGroupInt->addButton(_byDates);
 
-  connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
 
-  _availability->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignLeft,  true, "vend_number");
-  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
-  _availability->addColumn(tr("Item"),         _itemColumn, Qt::AlignLeft,  true, "item_number");
-  _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
-  _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
-  _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
-  _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight, true, "qoh");
-  _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
-  _availability->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
-  _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");
-  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
-  _availability->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight, false, "outlevel");
-  _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
+  list()->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignLeft,  true, "vend_number");
+  list()->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("Item"),         _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
+  list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
+  list()->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
+  list()->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
+  list()->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
+  list()->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");
+  list()->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
+  list()->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight, false, "outlevel");
+  list()->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
   
   if (_preferences->boolean("XCheckBox/forgetful"))
     _ignoreReorderAtZero->setChecked(true);
@@ -65,13 +62,9 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   sHandleShowReorder(_showReorder->isChecked());
 }
 
-dspInventoryAvailabilityBySourceVendor::~dspInventoryAvailabilityBySourceVendor()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspInventoryAvailabilityBySourceVendor::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -149,19 +142,6 @@ bool dspInventoryAvailabilityBySourceVendor::setParams(ParameterList &params)
   return true;
 }
 
-void dspInventoryAvailabilityBySourceVendor::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("InventoryAvailabilityBySourceVendor", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
@@ -209,7 +189,7 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
 void dspInventoryAvailabilityBySourceVendor::sViewHistory()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
   newdlg->set(params);
@@ -219,7 +199,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewHistory()
 void dspInventoryAvailabilityBySourceVendor::sViewAllocations()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   if (_leadTime->isChecked())
@@ -243,7 +223,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewAllocations()
 void dspInventoryAvailabilityBySourceVendor::sViewOrders()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   if (_leadTime->isChecked())
@@ -267,7 +247,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewOrders()
 void dspInventoryAvailabilityBySourceVendor::sRunningAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   dspRunningAvailability *newdlg = new dspRunningAvailability();
@@ -279,7 +259,7 @@ void dspInventoryAvailabilityBySourceVendor::sCreatePR()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   purchaseRequest newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -290,7 +270,7 @@ void dspInventoryAvailabilityBySourceVendor::sCreatePO()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   if(newdlg->set(params) == NoError)
@@ -300,7 +280,7 @@ void dspInventoryAvailabilityBySourceVendor::sCreatePO()
 void dspInventoryAvailabilityBySourceVendor::sViewSubstituteAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   if (_leadTime->isChecked())
@@ -318,7 +298,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewSubstituteAvailability()
 void dspInventoryAvailabilityBySourceVendor::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -328,7 +308,7 @@ void dspInventoryAvailabilityBySourceVendor::sIssueCountTag()
 void dspInventoryAvailabilityBySourceVendor::sEnterMiscCount()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   
   enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -340,20 +320,4 @@ void dspInventoryAvailabilityBySourceVendor::sHandleShowReorder(bool pValue)
   _ignoreReorderAtZero->setEnabled(pValue);
   if (pValue && _preferences->boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
-}
-
-void dspInventoryAvailabilityBySourceVendor::sFillList()
-{
-
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  MetaSQLQuery mql = mqlLoad("inventoryAvailability", "general");
-  q = mql.toQuery(params);
-  _availability->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }

@@ -8,41 +8,38 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPINVENTORYAVAILABILITYBYITEM_H
-#define DSPINVENTORYAVAILABILITYBYITEM_H
+#ifndef DSPINVENTORYAVAILABILITYBYPARAMETERLIST_H
+#define DSPINVENTORYAVAILABILITYBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspInventoryAvailabilityByItem.h"
+#include "ui_dspInventoryAvailabilityByParameterList.h"
 
-class dspInventoryAvailabilityByItem : public XWidget, public Ui::dspInventoryAvailabilityByItem
+class dspInventoryAvailabilityByParameterList : public display, public Ui::dspInventoryAvailabilityByParameterList
 {
     Q_OBJECT
 
 public:
-    dspInventoryAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryAvailabilityByItem();
+    dspInventoryAvailabilityByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem * selected );
     virtual void sViewHistory();
     virtual void sViewAllocations();
     virtual void sViewOrders();
     virtual void sRunningAvailability();
     virtual void sCreateWO();
+    virtual void sPostMiscProduction();
     virtual void sCreatePR();
     virtual void sCreatePO();
     virtual void sViewSubstituteAvailability();
     virtual void sIssueCountTag();
     virtual void sEnterMiscCount();
     virtual void sHandleShowReorder( bool pValue );
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
@@ -51,4 +48,4 @@ private:
     QButtonGroup* _showByGroupInt;
 };
 
-#endif // DSPINVENTORYAVAILABILITYBYITEM_H
+#endif // DSPINVENTORYAVAILABILITYBYPARAMETERLIST_H

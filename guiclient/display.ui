@@ -88,9 +88,21 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="XCheckBox" name="_autoupdate">
+     <property name="text">
+      <string>Automatically Update</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>

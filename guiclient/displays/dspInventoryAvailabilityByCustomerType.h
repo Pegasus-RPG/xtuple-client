@@ -12,24 +12,21 @@
 #define DSPINVENTORYAVAILABILITYBYCUSTOMERTYPE_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspInventoryAvailabilityByCustomerType.h"
 
-class dspInventoryAvailabilityByCustomerType : public XWidget, public Ui::dspInventoryAvailabilityByCustomerType
+class dspInventoryAvailabilityByCustomerType : public display, public Ui::dspInventoryAvailabilityByCustomerType
 {
     Q_OBJECT
 
 public:
     dspInventoryAvailabilityByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryAvailabilityByCustomerType();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sViewAllocations();
     virtual void sViewOrders();
@@ -38,14 +35,13 @@ public slots:
     virtual void sIssuePO();
     virtual void sIssueWO();
     virtual void sIssueCountTag();
-    virtual void sFillList();
-    virtual void sAutoUpdateToggled(bool);
     virtual void sHandleReservationNetting(bool);
     virtual void sReserveStock();
     virtual void sReserveLineBalance();
     virtual void sUnreserveStock();
     virtual void sShowReservations();
     virtual void sAddToPackingListBatch();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

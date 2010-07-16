@@ -33,7 +33,9 @@ public:
     void setMetaSQLOptions(const QString &, const QString &);
     void setListLabel(const QString &);
     void setUseAltId(bool);
-    bool getUseAltId() const;
+    bool useAltId() const;
+    void setAutoUpdateEnabled(bool);
+    bool autoUpdateEnabled() const;
 
 public slots:
     virtual void sPrint();
@@ -46,6 +48,7 @@ protected:
 
 protected slots:
     virtual void languageChange();
+    virtual void sAutoUpdateToggled();
 
 private:
     displayPrivate * _data;

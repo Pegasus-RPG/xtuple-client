@@ -12,25 +12,22 @@
 #define DSPINVENTORYAVAILABILITYBYSALESORDER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspInventoryAvailabilityBySalesOrder.h"
 
-class dspInventoryAvailabilityBySalesOrder : public XWidget, public Ui::dspInventoryAvailabilityBySalesOrder
+class dspInventoryAvailabilityBySalesOrder : public display, public Ui::dspInventoryAvailabilityBySalesOrder
 {
     Q_OBJECT
 
 public:
     dspInventoryAvailabilityBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryAvailabilityBySalesOrder();
     
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSoList();
-    virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sViewAllocations();
     virtual void sViewOrders();
@@ -39,13 +36,12 @@ public slots:
     virtual void sIssuePO();
     virtual void sIssueWO();
     virtual void sIssueCountTag();
-    virtual void sFillList();
-    virtual void sAutoUpdateToggled(bool);
     virtual void sHandleReservationNetting(bool);
     virtual void sReserveStock();
     virtual void sReserveLineBalance();
     virtual void sUnreserveStock();
     virtual void sShowReservations();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

@@ -26,7 +26,9 @@ public:
   {
     setupUi(_parent);
     _print->hide(); // hide the print button until a reportName is set
+    _autoupdate->hide(); // hide until auto update is enabled
     _useAltId = false;
+    _autoUpdateEnabled = false;
   }
 
   QString reportName;
@@ -34,6 +36,7 @@ public:
   QString metasqlGroup;
 
   bool _useAltId;
+  bool _autoUpdateEnabled;
 
 private:
   ::display * _parent;
@@ -47,6 +50,7 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
 }
 
 display::~display()
@@ -92,9 +96,21 @@ void display::setUseAltId(bool on)
   _data->_useAltId = on;
 }
 
-bool display::getUseAltId() const
+bool display::useAltId() const
 {
   return _data->_useAltId;
+}
+
+void display::setAutoUpdateEnabled(bool on)
+{
+  _data->_autoUpdateEnabled = on;
+  _data->_autoupdate->setVisible(on);
+  sAutoUpdateToggled(); 
+}
+
+bool display::autoUpdateEnabled() const
+{
+  return _data->_autoUpdateEnabled;
 }
 
 void display::sPrint()
@@ -134,4 +150,13 @@ void display::sFillList()
 
 void display::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 {
+}
+
+void display::sAutoUpdateToggled()
+{
+  bool update = _data->_autoUpdateEnabled && _data->_autoupdate->isChecked();
+  if (update)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }

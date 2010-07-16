@@ -15,9 +15,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
 #include "dspInventoryHistoryByItem.h"
@@ -26,15 +23,19 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "enterMiscCount.h"
 #include "inputManager.h"
-#include "mqlutil.h"
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
 #include "workOrder.h"
 
-dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspInventoryAvailabilityByItem", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Inventory Availability by Item"));
+  setListLabel(tr("Availability"));
+  setReportName("InventoryAvailabilityByItem");
+  setMetaSQLOptions("inventoryAvailability", "general");
+  setUseAltId(true);
 
   _showByGroupInt = new QButtonGroup(this);
   _showByGroupInt->addButton(_leadTime);
@@ -42,23 +43,20 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   _showByGroupInt->addButton(_byDate);
   _showByGroupInt->addButton(_byDates);
 
-  connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _availability->addColumn(tr("Site"),         -1,         Qt::AlignCenter,true, "warehous_code");
-  _availability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter,true, "itemsite_leadtime");
-  _availability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight, true, "qoh");
-  _availability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight, true, "allocated");
-  _availability->addColumn(tr("Unallocated"),  _qtyColumn, Qt::AlignRight, true, "unallocated");
-  _availability->addColumn(tr("On Order"),     _qtyColumn, Qt::AlignRight, true, "ordered");
-  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn, Qt::AlignRight, true, "reorderlevel");
-  _availability->addColumn(tr("OUT Level"),    _qtyColumn, Qt::AlignRight, true, "outlevel");
-  _availability->addColumn(tr("Available"),    _qtyColumn, Qt::AlignRight, true, "available");
+  list()->addColumn(tr("Site"),         -1,         Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter,true, "itemsite_leadtime");
+  list()->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight, true, "allocated");
+  list()->addColumn(tr("Unallocated"),  _qtyColumn, Qt::AlignRight, true, "unallocated");
+  list()->addColumn(tr("On Order"),     _qtyColumn, Qt::AlignRight, true, "ordered");
+  list()->addColumn(tr("Reorder Lvl."), _qtyColumn, Qt::AlignRight, true, "reorderlevel");
+  list()->addColumn(tr("OUT Level"),    _qtyColumn, Qt::AlignRight, true, "outlevel");
+  list()->addColumn(tr("Available"),    _qtyColumn, Qt::AlignRight, true, "available");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -70,13 +68,9 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   sHandleShowReorder(_showReorder->isChecked());
 }
 
-dspInventoryAvailabilityByItem::~dspInventoryAvailabilityByItem()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspInventoryAvailabilityByItem::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -177,19 +171,6 @@ bool dspInventoryAvailabilityByItem::setParams(ParameterList &params)
   return true;
 }
 
-void dspInventoryAvailabilityByItem::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("InventoryAvailabilityByItem", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
@@ -251,7 +232,7 @@ void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem
 void dspInventoryAvailabilityByItem::sViewHistory()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
   newdlg->set(params);
@@ -261,7 +242,7 @@ void dspInventoryAvailabilityByItem::sViewHistory()
 void dspInventoryAvailabilityByItem::sViewAllocations()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   if (_leadTime->isChecked())
@@ -285,7 +266,7 @@ void dspInventoryAvailabilityByItem::sViewAllocations()
 void dspInventoryAvailabilityByItem::sViewOrders()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   if (_leadTime->isChecked())
@@ -309,7 +290,7 @@ void dspInventoryAvailabilityByItem::sViewOrders()
 void dspInventoryAvailabilityByItem::sRunningAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   params.append("run");
 
   dspRunningAvailability *newdlg = new dspRunningAvailability();
@@ -321,7 +302,7 @@ void dspInventoryAvailabilityByItem::sCreateWO()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   workOrder *newdlg = new workOrder();
   newdlg->set(params);
@@ -332,7 +313,7 @@ void dspInventoryAvailabilityByItem::sCreatePR()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   purchaseRequest newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -343,7 +324,7 @@ void dspInventoryAvailabilityByItem::sCreatePO()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   if(newdlg->set(params) == NoError)
@@ -353,7 +334,7 @@ void dspInventoryAvailabilityByItem::sCreatePO()
 void dspInventoryAvailabilityByItem::sViewSubstituteAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   if (_leadTime->isChecked())
     params.append("byLeadTime", TRUE);
@@ -370,7 +351,7 @@ void dspInventoryAvailabilityByItem::sViewSubstituteAvailability()
 void dspInventoryAvailabilityByItem::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -380,7 +361,7 @@ void dspInventoryAvailabilityByItem::sIssueCountTag()
 void dspInventoryAvailabilityByItem::sEnterMiscCount()
 {
   ParameterList params;
-  params.append("itemsite_id", _availability->id());
+  params.append("itemsite_id", list()->id());
 
   enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -394,17 +375,3 @@ void dspInventoryAvailabilityByItem::sHandleShowReorder(bool pValue)
     _showShortages->setChecked(TRUE);
 }
 
-void dspInventoryAvailabilityByItem::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  MetaSQLQuery mql = mqlLoad("inventoryAvailability", "general");
-  q = mql.toQuery(params);
-  _availability->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
