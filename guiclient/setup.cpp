@@ -171,7 +171,7 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   insert(tr("Opportunity Stages"), "opportunityStages", MasterInformation, Xt::CRMModule, modeVal, modeVal);
 
   modeVal = mode("MaintainOpportunityTypes");
-  insert(tr("Opportunity Types"), "opportunityTypes", MasterInformation, modeVal, modeVal);
+  insert(tr("Opportunity Types"), "opportunityTypes", MasterInformation, Xt::CRMModule, modeVal, modeVal);
 
   modeVal = mode("MaintainPlannerCodes", "ViewPlannerCodes");
   insert(tr("Planner Codes"), "plannerCodes", MasterInformation, Xt::InventoryModule | Xt::ScheduleModule | Xt::PurchaseModule, modeVal, modeVal);
