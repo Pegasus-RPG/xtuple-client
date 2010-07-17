@@ -90,7 +90,6 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/shiptoeditplugin.h \
     plugins/soclusterplugin.h \
     plugins/solineeditplugin.h \
-    plugins/toclusterplugin.h \
     plugins/usernameclusterplugin.h \
     plugins/usernamelineeditplugin.h \
     plugins/vendorclusterplugin.h \
