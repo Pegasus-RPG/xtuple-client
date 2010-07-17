@@ -32,6 +32,20 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
 {
   if(pName)
     setObjectName(pName);
+  init();
+}
+
+XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
+  QComboBox(pParent)
+{
+  if(pName)
+    setObjectName(pName);
+  init();
+  setEditable(pEditable);
+}
+
+void XComboBox::init()
+{
   _default  = First;
   _type     = Adhoc;
   _lastId   = -1;
@@ -153,29 +167,6 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   insertEditor(WorkOrderCommentTypes,"commentTypes","MaintainCommentTypes");
 }
 
-XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
-  QComboBox(pParent)
-{
-  if(pName)
-    setObjectName(pName);
-  setEditable(pEditable);
-  _default  = First;
-  _type = Adhoc;
-  _lastId = -1;
-  setAllowNull(false);
-  _label = 0;
-
-  _mapper = new XDataWidgetMapper(this);
-
-  connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
-
-#ifdef Q_WS_MAC
-  QFont f = font();
-  f.setPointSize(f.pointSize() - 2);
-  setFont(f);
-#endif
-}
-
 enum XComboBox::XComboBoxTypes XComboBox::type()
 {
   return _type;
@@ -191,10 +182,7 @@ QString XComboBox::currentDefault()
       return code();
   }
   else
-  {
-    qDebug("No codes");
     return QString("");
-  }
 }
 
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
@@ -1684,5 +1672,4 @@ void XComboBox::insertEditor(int type, const QString &uiName, const QString &pri
   data.second = privilege;
 
   _editorMap.insert(type, data);
-
 }

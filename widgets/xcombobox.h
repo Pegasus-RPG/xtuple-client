@@ -174,6 +174,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _nullStr;
 
   private:
+    void init();
+
     enum Defaults       _default;
     QString             _fieldName;
     QString             _listDisplayFieldName;
