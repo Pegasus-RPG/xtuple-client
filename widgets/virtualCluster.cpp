@@ -957,12 +957,17 @@ void VirtualList::init()
     _dialogLyt                = new QVBoxLayout(this);
     _dialogLyt->setContentsMargins(5, 5, 5, 5);
 
-    QHBoxLayout* topLyt	      = new QHBoxLayout();
-    QVBoxLayout* searchLyt    = new QVBoxLayout();
+    QHBoxLayout* topLyt	      = new QHBoxLayout(this);
+    QVBoxLayout* searchLyt    = new QVBoxLayout(this);
+    QVBoxLayout* buttonsLyt   = new QVBoxLayout(this);
+    QHBoxLayout* searchStrLyt = new QHBoxLayout(this);
+    QVBoxLayout* tableLyt     = new QVBoxLayout(this);
 
-    QVBoxLayout* buttonsLyt   = new QVBoxLayout();
-    QHBoxLayout* searchStrLyt = new QHBoxLayout();
-    QVBoxLayout* tableLyt     = new QVBoxLayout();
+    topLyt->setObjectName("topLyt");
+    searchLyt->setObjectName("searchLyt");
+    buttonsLyt->setObjectName("buttonsLyt");
+    searchStrLyt->setObjectName("searchStrLyt");
+    tableLyt->setObjectName("tableLyt");
 
     _dialogLyt->addLayout(topLyt);
     topLyt->addLayout(searchLyt);
@@ -1091,9 +1096,6 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _searchLit = new QLabel(tr("S&earch for:"), this);
     _searchLit->setBuddy(_search);
     _searchLit->setObjectName("_searchLit");
-#ifdef Q_WS_MAC
-    _search->setMinimumHeight(22);
-#endif
 
     _searchNumber = new XCheckBox(tr("Search through Numbers"), this);
     _searchNumber->setObjectName("_searchNumber");
@@ -1120,12 +1122,19 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _dialogLyt   = new QVBoxLayout(this);
     _dialogLyt->setContentsMargins(5, 5, 5, 5);
 
-    QHBoxLayout* topLyt = new QHBoxLayout();
-    searchLyt    = new QVBoxLayout();
-    buttonsLyt   = new QVBoxLayout();
-    searchStrLyt = new QHBoxLayout();
-    selectorsLyt = new QGridLayout();
-    tableLyt     = new QVBoxLayout();
+    QHBoxLayout* topLyt = new QHBoxLayout(this);
+    searchLyt    = new QVBoxLayout(this);
+    buttonsLyt   = new QVBoxLayout(this);
+    searchStrLyt = new QHBoxLayout(this);
+    selectorsLyt = new QGridLayout(this);
+    tableLyt     = new QVBoxLayout(this);
+
+    topLyt->setObjectName("topLyt");
+    searchLyt->setObjectName("searchLyt");
+    buttonsLyt->setObjectName("buttonsLyt");
+    searchStrLyt->setObjectName("searchStrLyt");
+    selectorsLyt->setObjectName("selectorsLyt");
+    tableLyt->setObjectName("tableLyt");
 
     _dialogLyt->addLayout(topLyt);
     _dialogLyt->addLayout(tableLyt);
@@ -1139,6 +1148,10 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
+#ifdef Q_WS_MAC
+    _search->setMinimumHeight(22);
+    selectorsLyt->setVerticalSpacing(6);
+#endif
     selectorsLyt->addWidget(_searchNumber,  0, 0);
     selectorsLyt->addWidget(_searchName,    1, 0);
     selectorsLyt->addWidget(_searchDescrip, 2, 0);

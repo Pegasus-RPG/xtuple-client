@@ -19,10 +19,10 @@
 #include <xsqlquery.h>
 #include <QMessageBox>
 
+#include "warehousegroup.h"
 #include "xcombobox.h"
 #include "xlineedit.h"
 
-#include "woList.h"
 #include "wocluster.h"
 
 #include "../common/format.h"
@@ -40,100 +40,96 @@ void setupWoCluster(QScriptEngine *engine)
   engine->globalObject().setProperty("WoLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
 
-WoLineEdit::WoLineEdit(QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+WoLineEdit::WoLineEdit(QWidget *pParent, const char *pName) :
+    VirtualClusterLineEdit(pParent, "wo", "wo_id", "wo_number::text || '-' || wo_subnumber::text", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
 {
   _woType = 0;
-  _warehouseid = -1;
-  _currentWarehouseid = -1;
-  _parsed = TRUE;
-  _useQuery = FALSE;
-
-  _qtyOrdered = 0.0;
-  _qtyReceived = 0.0;
-  
-  _mapper = new XDataWidgetMapper(this);
-
-  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+  init();
 }
 
-WoLineEdit::WoLineEdit(int pWoType, QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+WoLineEdit::WoLineEdit(int pWoType, QWidget* pParent, const char* pName) :
+    VirtualClusterLineEdit(pParent, "wo", "wo_id", "wo_number::text || '-' || wo_subnumber::text", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
 {
   _woType = pWoType;
+  init();
+}
+
+void WoLineEdit::init()
+{
+  setTitles(tr("Work Order"), tr("Work Orders"));
+  setUiName("workOrder");
+  setEditPriv("MaintainWorkOrders");
+  setViewPriv("ViewWorkOrders");
+
   _warehouseid = -1;
-  _parsed = TRUE;
 
   _qtyOrdered = 0.0;
   _qtyReceived = 0.0;
-  
-  _mapper = new XDataWidgetMapper(this);
 
-  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+  _query =  QString("SELECT wo_id AS id, "
+                    "       wo_number::text || '-' || wo_subnumber::text AS number,"
+                    "       item_number AS name, "
+                    "       (item_descrip1 || ' ' || item_descrip2) AS description, "
+                    "       warehous_id,"
+                    "       warehous_code, item_id, item_number, uom_name,"
+                    "       item_descrip1, "
+                    "       item_descrip2,"
+                    "       abs(wo_qtyord) AS wo_qtyord,"
+                    "       abs(wo_qtyrcv) AS wo_qtyrcv, "
+                    "       CASE WHEN (wo_status = 'O') THEN '%3' "
+                    "       WHEN (wo_status = 'E') THEN '%4' "
+                    "       WHEN (wo_status = 'I') THEN '%5' "
+                    "       WHEN (wo_status = 'R') THEN '%6' "
+                    "       WHEN (wo_status = 'C') THEN '%7' "
+                    "       END AS wo_status,"
+                    "       wo_duedate,"
+                    "       wo_startdate,"
+                    "       noNeg(abs(wo_qtyord) - abs(wo_qtyrcv)) AS balance, "
+                    "       CASE WHEN (wo_qtyord >= 0) THEN "
+                    "         '%1' "
+                    "       ELSE "
+                    "         '%2' "
+                    "       END AS wo_method, "
+                    "       CASE WHEN (wo_qtyord >= 0) THEN "
+                    "         'A' "
+                    "       ELSE "
+                    "         'D' "
+                    "       END AS method "
+                    "FROM wo "
+                    "  JOIN itemsite ON (wo_itemsite_id=itemsite_id) "
+                    "  JOIN item ON (itemsite_item_id=item_id) "
+                    "  JOIN whsinfo ON (itemsite_warehous_id=warehous_id) "
+                    "  JOIN uom ON (item_inv_uom_id=uom_id) "
+                    "WHERE (true) " )
+      .arg(tr("Assembly"))
+      .arg(tr("Disassembly"))
+      .arg(tr("Open"))
+      .arg(tr("Exploded"))
+      .arg(tr("In Process"))
+      .arg(tr("Released"))
+      .arg(tr("Closed"));
 }
 
-void WoLineEdit::setId(int pId)
+void WoLineEdit::silentSetId(const int pId)
 {
-  bool found = FALSE;
   if (pId != -1)
   {
     XSqlQuery wo;
-    if (_useQuery)
+
+    wo.prepare(_query + _idClause +
+               (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+               QString(";"));
+    wo.bindValue(":id", pId);
+    wo.exec();
+    if (wo.first())
     {
-      wo.prepare(_sql);
-      wo.exec();
-      found = (wo.findFirst("wo_id", pId) != -1);
-    }
-    else
-    {
-      wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
-                  "       warehous_id,"
-                  "       warehous_code, item_id, item_number, uom_name,"
-                  "       item_descrip1, item_descrip2,"
-                  "       abs(wo_qtyord) AS wo_qtyord,"
-                  "       abs(wo_qtyrcv) AS wo_qtyrcv, "
-                  "       CASE WHEN (wo_status = 'O') THEN :open "
-                  "       WHEN (wo_status = 'E') THEN :exploded "
-                  "       WHEN (wo_status = 'I') THEN :inprocess "
-                  "       WHEN (wo_status = 'R') THEN :released "
-                  "       WHEN (wo_status = 'C') THEN :closed "
-                  "       ELSE :unknown END AS wo_status,"
-                  "       wo_duedate,"
-                  "       wo_startdate,"
-                  "       noNeg(abs(wo_qtyord) - abs(wo_qtyrcv)) AS balance, "
-                  "       CASE WHEN (wo_qtyord >= 0) THEN "
-                  "         :assemble "
-                  "       ELSE "
-                  "         :disassemble "
-                  "       END AS wo_method, "
-                  "       CASE WHEN (wo_qtyord >= 0) THEN "
-                  "         'A' "
-                  "       ELSE "
-                  "         'D' "
-                  "       END AS method "
-                  "FROM wo, itemsite, item, whsinfo, uom "
-                  "WHERE ((wo_itemsite_id=itemsite_id)"
-                  " AND (itemsite_item_id=item_id)"
-                  " AND (item_inv_uom_id=uom_id)"
-                  " AND (itemsite_warehous_id=warehous_id)"
-                  " AND (wo_id=:wo_id));" );
-      wo.bindValue(":wo_id", pId);
-      wo.bindValue(":assemble", tr("Assembly"));
-      wo.bindValue(":disassemble", tr("Disassembly"));
-      wo.bindValue(":open", tr("Open"));
-      wo.bindValue(":exploded", tr("Exploded"));
-      wo.bindValue(":inprocess", tr("In Process"));
-      wo.bindValue(":released", tr("Released"));
-      wo.bindValue(":closed", tr("Closed"));
-      wo.exec();
-      found = (wo.first());
-    }
-    if (found)
-    {
+      if (_completer)
+        static_cast<QSqlQueryModel* >(_completer->model())->setQuery(QSqlQuery());
+
       _id    = pId;
       _valid = TRUE;
 
-      setText(wo.value("wonumber").toString());
+      setText(wo.value("number").toString());
 
       _qtyOrdered  = wo.value("wo_qtyord").toDouble();
       _qtyReceived = wo.value("wo_qtyrcv").toDouble();
@@ -164,7 +160,7 @@ void WoLineEdit::setId(int pId)
     _valid = FALSE;
     _currentWarehouseid = -1;
 
-    setText("");
+    XLineEdit::clear();
 
     emit newId(-1);
     emit newItemid(-1);
@@ -185,154 +181,137 @@ void WoLineEdit::setId(int pId)
     _qtyOrdered  = 0;
     _qtyReceived = 0;
   }
-  
-  if (_mapper->model() &&
-    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
-  
+
   _parsed = TRUE;
+  emit parsed();
 }
 
-void WoLineEdit::sParse()
+void WoLineEdit::sList()
 {
-  if (!_parsed)
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+
+  woList* newdlg = listFactory();
+  if (newdlg)
   {
-    if (text().trimmed().length() == 0)
-      setId(-1);
+    ParameterList params;
+    params.append("wo_id", _id);
+    params.append("woType", _woType);
 
-    else if (_useQuery)
-    {
-      XSqlQuery wo;
-      wo.prepare(_sql);
-      wo.exec();
-      if (wo.findFirst("wonumber", text().trimmed().toUpper()) != -1)
-      {
-        setId(wo.value("wo_id").toInt());
-        return;
-      }
-    }
+    if (_warehouseid != -1)
+      params.append("warehous_id", _warehouseid);
 
-    else if (text().contains('-'))
-    {
-      int soNumber = text().left(text().indexOf('-')).toInt();
-      int subNumber = text().right(text().length() - text().indexOf('-') - 1).toInt();
- //     bool statusCheck = FALSE;
-      QString sql = QString( "SELECT wo_id "
-                             "FROM wo,itemsite,site() "
-                             "WHERE ((wo_number=%1)"
-                             " AND (wo_subnumber=%2) "
-                             " AND (wo_itemsite_id=itemsite_id) "
-                             " AND (itemsite_warehous_id=warehous_id)" )
-                    .arg(soNumber)
-                    .arg(subNumber);
+    newdlg->set(params);
 
-  //  Add in the Status checks
-      QStringList statuses;
-      if (_woType & cWoOpen)
-        statuses << "(wo_status='O')";
-
-      if (_woType & cWoExploded)
-        statuses << "(wo_status='E')";
-
-      if (_woType & cWoReleased)
-        statuses << "(wo_status='R')";
-
-      if (_woType & cWoIssued)
-        statuses << "(wo_status='I')";
-
-      if (_woType & cWoClosed)
-        statuses << "(wo_status='C')";
-
-      if(!statuses.isEmpty())
-        sql += " AND (" + statuses.join(" OR ") + ")";
-
-      sql += ")";
-
-      XSqlQuery wo(sql);
-
-      if (wo.first())
-        setId(wo.value("wo_id").toInt());
-      else
-        setId(-1);
-    }
-
-    else
-    {
-      bool statusCheck = FALSE;
-      QString sql = QString( "SELECT wo_id, wo_number "
-                             "FROM wo,itemsite,site() "
-                             "WHERE ((wo_number=%1) "
-                             " AND (wo_itemsite_id=itemsite_id)"
-                             " AND (itemsite_warehous_id=warehous_id)")
-                    .arg(text().toInt());
-
-//  Add in the Status checks
-      if (_woType)
-      {
-        sql += " AND (";
-
-        if (_woType & cWoOpen)
-        {
-          sql += "(wo_status='O')";
-          statusCheck = TRUE;
-        }
-
-        if (_woType & cWoExploded)
-        {
-          if (statusCheck)
-            sql += " OR ";
-          sql += "(wo_status='E')";
-          statusCheck = TRUE;
-        }
-
-        if (_woType & cWoReleased)
-        {
-          if (statusCheck)
-            sql += " OR ";
-          sql += "(wo_status='R')";
-          statusCheck = TRUE;
-        }
-
-        if (_woType & cWoIssued)
-        {
-          if (statusCheck)
-            sql += " OR ";
-          sql += "(wo_status='I')";
-          statusCheck = TRUE;
-        }
-
-        if (_woType & cWoClosed)
-        {
-          if (statusCheck)
-            sql += " OR ";
-          sql += "(wo_status='C')";
-        }
-
-        sql += ")";
-      }
-      sql += ");";
-
-      XSqlQuery wo(sql);
-
-      if (wo.first())
-      {
-        if (wo.size() == 1)
-          setId(wo.value("wo_id").toInt());
-        else
-        {
-          setId(-1);
-          setText(wo.value("wo_number").toString() + "-");
-          focusNextPrevChild(FALSE);
-          home(FALSE);
-          end(FALSE);
-        }
-      }
-      else
-        setId(-1);
-    }
+    int id = newdlg->exec();
+    setId(id);
   }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sList() not yet defined")
+                          .arg(metaObject()->className()));
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
+void WoLineEdit::sSearch()
+{
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+
+  woSearch* newdlg = searchFactory();
+  if (newdlg)
+  {
+    ParameterList params;
+    params.append("wo_id", _id);
+    params.append("woType", _woType);
+
+    if (_warehouseid != -1)
+      params.append("warehous_id", _warehouseid);
+
+    newdlg->set(params);
+
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sList() not yet defined")
+                          .arg(metaObject()->className()));
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+}
+
+woList* WoLineEdit::listFactory()
+{
+  return new woList(this);
+}
+
+woSearch* WoLineEdit::searchFactory()
+{
+  return new woSearch(this);
+}
+
+void WoLineEdit::setType(int pWoType)
+{
+  if (_woType == pWoType)
+    return;
+
+  _woType = pWoType;
+
+  buildExtraClause();
+}
+
+void WoLineEdit::setWarehouse(int pWarehouseid)
+{
+  if (_warehouseid == pWarehouseid)
+    return;
+
+  _warehouseid = pWarehouseid;
+
+  buildExtraClause();
+}
+
+void WoLineEdit::buildExtraClause()
+{
+  if (!_woType && !_warehouseid)
+  {
+    _extraClause.clear();
+    return;
+  }
+
+  if (_woType)
+  {
+    QStringList statuses;
+    if (_woType & cWoOpen)
+      statuses << "'O'";
+
+    if (_woType & cWoExploded)
+      statuses << "'E'";
+
+    if (_woType & cWoReleased)
+      statuses << "'R'";
+
+    if (_woType & cWoIssued)
+      statuses << "'I'";
+
+    if (_woType & cWoClosed)
+      statuses << "'C'";
+
+    if(!statuses.isEmpty())
+      _extraClause = "(wo_status IN (" + statuses.join(",") + "))";
+  }
+
+  if (!_extraClause.isEmpty() && _warehouseid > 0)
+    _extraClause += " AND ";
+
+  if (_warehouseid > 0)
+    _extraClause += QString(" (warehous_id=%1) ").arg(_warehouseid);
+}
+
+//////////////////////////////////////////////////
 
 WoCluster::WoCluster(QWidget *pParent, const char *name) :
   QWidget(pParent)
@@ -389,14 +368,6 @@ void WoCluster::constructor()
   _woNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _woLayout->addWidget(_woNumber);
 
-  _woList = new QPushButton(tr("..."), this);
-  _woList->setObjectName("_woList");
-  _woList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _woList->setMaximumWidth(25);
-#endif
-  _woList->setFocusPolicy(Qt::NoFocus);
-  _woLayout->addWidget(_woList);
   _line1Layout->addLayout(_woLayout);
 
   QLabel *warehouseLit = new QLabel(tr("Site:"), this);
@@ -496,30 +467,21 @@ void WoCluster::constructor()
   connect(_woNumber, SIGNAL(qtyBalanceChanged(const double)),  this, SIGNAL(qtyBalanceChanged(const double)));
   connect(_woNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
 
-  connect(_woList, SIGNAL(clicked()), SLOT(sWoList()));
-  connect(_woNumber, SIGNAL(requestList()), SLOT(sWoList()));
-
   setFocusProxy(_woNumber);
 }
 
 void WoCluster::setReadOnly(bool pReadOnly)
 {
   if (pReadOnly)
-  {
     _woNumber->setEnabled(FALSE);
-    _woList->hide();
-  }
   else
-  {
     _woNumber->setEnabled(TRUE);
-    _woList->show();
-  }
 }
 
 void WoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _woNumber->_mapper=m;
+  //_woNumber->_mapper=m;
 }
 
 void WoCluster::setWoNumber(const QString& number)
@@ -535,35 +497,6 @@ void WoCluster::setId(int pId)
 {
   _woNumber->setId(pId);
 }
-
-void WoCluster::sWoList()
-{
-  ParameterList params;
-  params.append("wo_id", _woNumber->_id);
-
-  if (_woNumber->_useQuery)
-  {
-    params.append("sql", _woNumber->_sql);
-  }
-  else 
-    params.append("woType", _woNumber->_woType);
-
-  if (_woNumber->_warehouseid != -1)
-    params.append("warehous_id", _woNumber->_warehouseid);
-
-  woList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
-  
-  int id = newdlg.exec();
-  setId(id);
-
-  if (id != -1)
-  {
-    _woNumber->setFocus();
-    focusNextPrevChild(TRUE);
-  }
-}
-
 
 QString WoCluster::woNumber() const
 {
@@ -942,3 +875,200 @@ void WomatlCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(_itemNumber, _fieldName, "code", "currentDefault");
 }
+
+/////////////////////////////////////////////
+
+woList::woList(QWidget* pParent, Qt::WFlags pFlags) :
+    VirtualList(pParent, pFlags)
+{
+  setObjectName("woList");
+  setMinimumWidth(600);
+  _search->hide();
+  _searchLit->hide();
+  disconnect(_search,  SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+
+  _warehouse = new WarehouseGroup(this, "_warehouse");
+  QVBoxLayout* searchLyt = findChild<QVBoxLayout*>("searchLyt");
+  searchLyt->addWidget(_warehouse);
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+
+  _listTab->setColumnCount(0);
+  _listTab->addColumn(tr("Order#"),     _orderColumn, Qt::AlignLeft,  true, "number");
+  _listTab->addColumn(tr("Status"),              40, Qt::AlignCenter,true, "wo_status");
+  _listTab->addColumn(tr("Whs."),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _listTab->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _listTab->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
+}
+
+void woList::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("wo_id", &valid);
+  if (valid)
+    _woid = param.toInt();
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+
+  param = pParams.value("woType", &valid);
+  if (valid)
+    _type = param.toInt();
+}
+
+void woList::sFillList()
+{
+  QString sql;
+
+  sql = "SELECT wo_id,"
+        "       formatWONumber(wo_id) AS number,"
+        "       wo_status, warehous_code, item_number,"
+        "       (item_descrip1 || ' ' || item_descrip2) AS description "
+        "FROM wo, itemsite, warehous, item "
+        "WHERE ( (wo_itemsite_id=itemsite_id)"
+        " AND (itemsite_warehous_id=warehous_id)"
+        " AND (itemsite_item_id=item_id)";
+
+  if (_type != 0)
+  {
+    QStringList statuslist;
+
+    if (_type & cWoOpen)
+      statuslist << "'O'";
+
+    if (_type & cWoExploded)
+      statuslist << "'E'";
+
+    if (_type & cWoReleased)
+      statuslist << "'R'";
+
+    if (_type & cWoIssued)
+      statuslist << "'I'";
+
+    if (_type & cWoClosed)
+      statuslist << "'C'";
+
+    sql += "AND (wo_status IN (" + statuslist.join(",") + "))";
+  }
+
+  if (_warehouse->isSelected())
+    sql += " AND (itemsite_warehous_id=:warehous_id)";
+
+  sql += ") ORDER BY wo_number, wo_subnumber, warehous_code, item_number";
+
+  XSqlQuery wo;
+  wo.prepare(sql);
+  _warehouse->bindValue(wo);
+  wo.exec();
+
+  _listTab->populate(wo, _woid);
+}
+
+///////////////////////////
+
+woSearch::woSearch(QWidget* pParent, Qt::WindowFlags pFlags)
+    : VirtualSearch(pParent, pFlags)
+{
+  setObjectName( "woSearch" );
+  setMinimumWidth(600);
+
+  _warehouse = new WarehouseGroup(this, "_warehouse");
+  QVBoxLayout* searchLyt = findChild<QVBoxLayout*>("searchLyt");
+  searchLyt->addWidget(_warehouse);
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+
+  _listTab->setColumnCount(0);
+  _listTab->addColumn(tr("Order#"),     _orderColumn, Qt::AlignLeft,  true, "number");
+  _listTab->addColumn(tr("Status"),              40, Qt::AlignCenter,true, "wo_status");
+  _listTab->addColumn(tr("Whs."),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _listTab->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _listTab->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
+
+  _searchName->hide();
+}
+
+void woSearch::set(ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("wo_id", &valid);
+  if (valid)
+    _woid = param.toInt();
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+
+  param = pParams.value("woType", &valid);
+  if (valid)
+    _type = param.toInt();
+}
+
+void woSearch::sFillList()
+{
+  QString sql;
+
+  sql = "SELECT wo_id,"
+        "       formatWONumber(wo_id) AS number,"
+        "       wo_status, warehous_code, item_number,"
+        "       (item_descrip1 || ' ' || item_descrip2) AS description "
+        "FROM wo, itemsite, warehous, item "
+        "WHERE ( (wo_itemsite_id=itemsite_id)"
+        " AND (itemsite_warehous_id=warehous_id)"
+        " AND (itemsite_item_id=item_id)";
+
+  if (_type != 0)
+  {
+    QStringList statuslist;
+
+    if (_type & cWoOpen)
+      statuslist << "'O'";
+
+    if (_type & cWoExploded)
+      statuslist << "'E'";
+
+    if (_type & cWoReleased)
+      statuslist << "'R'";
+
+    if (_type & cWoIssued)
+      statuslist << "'I'";
+
+    if (_type & cWoClosed)
+      statuslist << "'C'";
+
+    sql += "AND (wo_status IN (" + statuslist.join(",") + "))";
+  }
+
+  if (!_search->text().isEmpty())
+  {
+    sql += " AND ((false)  ";
+    if (_searchNumber->isChecked())
+    {
+      sql += " OR (formatWONumber(wo_id) ~* :search) "
+             " OR (item_number ~* :search) ";
+    }
+    if (_searchDescrip->isChecked())
+    {
+      sql += " OR (item_descrip1 ~* :search) "
+             " OR (item_descrip2 ~* :search) ";
+    }
+    sql += ") ";
+  }
+
+  if (_warehouse->isSelected())
+    sql += " AND (itemsite_warehous_id=:warehous_id)";
+
+  sql += ") ORDER BY wo_number, wo_subnumber, warehous_code, item_number";
+
+  XSqlQuery wo;
+  wo.prepare(sql);
+  wo.bindValue(":search", _search->text());
+  _warehouse->bindValue(wo);
+  wo.exec();
+
+  _listTab->populate(wo, _woid);
+}
+

@@ -133,7 +133,6 @@ SOURCES += widgets.cpp \
     warehouseCluster.cpp \
     warehousegroup.cpp \
     woCluster.cpp \
-    woList.cpp \
     filecluster.cpp \
     glCluster.cpp \
     imagecluster.cpp \
@@ -221,7 +220,6 @@ HEADERS += widgets.h \
     warehouseCluster.h \
     warehousegroup.h \
     woCluster.h \
-    woList.h \
     filecluster.h \
     glcluster.h \
     imagecluster.h \
