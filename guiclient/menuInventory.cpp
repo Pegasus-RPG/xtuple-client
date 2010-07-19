@@ -208,7 +208,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   utilitiesMenu->setObjectName("menu.im.utilities");
 
   //Handle single vs. multi-warehouse scenario
-  QString whsModule;
+  const char *whsModule;
   QString whsLabel;
   if (_metrics->boolean("MultiWhs"))
   {
@@ -217,8 +217,8 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   }
   else
   {
-    whsModule="im.warehouse";
-    whsLabel=tr("&Maintain...");
+    whsModule = "im.warehouse"; // must be char*
+    whsLabel = tr("&Maintain...");
   }
 
   actionProperties acts[] = {
@@ -227,7 +227,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "menu",                     tr("Transfer &Order"),     (char*)transferOrderMenu,      mainMenu,          "true",                                      NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
     { "im.interWarehouseTransfer",tr("&New..."),             SLOT(sNewTransferOrder()),     transferOrderMenu, "MaintainTransferOrders",                    NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
     { "im.transferOrders",        tr("&List Open..."),       SLOT(sTransferOrders()),       transferOrderMenu, "ViewTransferOrders MaintainTransferOrders", NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
-    { "separator",                NULL,                      NULL,                          transferOrderMenu, "true",                                      NULL, NULL, true, NULL},
+    { "separator",                NULL,                      NULL,                          transferOrderMenu, "true",                                      NULL, NULL, true,                          NULL},
     { "im.releaseTransferOrders", tr("&Release by Agent..."),SLOT(sReleaseTransferOrders()),transferOrderMenu, "ReleaseTransferOrders",                     NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
 
     //  Inventory | Physical Inventory
@@ -260,8 +260,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.dspCountSlipEditList",        tr("Count S&lip Edit List..."),   SLOT(sDspCountSlipEditList()),    physicalReportsMenu, "ViewCountTags",       NULL, NULL, true, NULL },
     { "im.dspCountTagEditList",         tr("Count Ta&g Edit List..."),    SLOT(sDspCountTagEditList()),     physicalReportsMenu, "ViewCountTags",       NULL, NULL, true, NULL },
     { "separator",                      NULL,                             NULL,                             physicalReportsMenu, "true",                NULL, NULL, true, NULL },
-
-    { "im.dspCountSlipsByWarehouse",    tr("Count &Slips..."),SLOT(sDspCountSlipsByWarehouse()),physicalReportsMenu, "ViewCountTags",   NULL, NULL, true, NULL },
+    { "im.dspCountSlipsByWarehouse",    tr("Count &Slips..."),            SLOT(sDspCountSlipsByWarehouse()),physicalReportsMenu, "ViewCountTags",       NULL, NULL, true, NULL },
 
     //  Inventory | Physical Inventory | Reports | Count Tags
     { "menu",                           tr("Count &Tags"),       (char*)physicalReportsTagsMenu,   physicalReportsMenu,     "ViewCountTags",  NULL, NULL, true, NULL },
@@ -269,62 +268,62 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.dspCountTagsByWarehouse",     tr("by Sit&e..."),       SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
     { "im.dspCountTagsByClassCode",     tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, "ViewCountTags",  NULL, NULL, true, NULL },
 
-    { "separator",                      NULL,                             NULL,                         mainMenu, "true", NULL, NULL, true, NULL },
+    { "separator",       NULL,                             NULL,                  mainMenu,      "true",          NULL, NULL, true, NULL },
 
     //  Inventory | Receiving
-    { "menu",   tr("R&eceiving"),  (char*)receivingMenu,        mainMenu,       "true", NULL, NULL, true, NULL },
-    { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, "EnterReceipts", NULL, NULL, true, NULL },
+    { "menu",            tr("R&eceiving"),                 (char*)receivingMenu,  mainMenu,      "true",          NULL, NULL, true, NULL },
+    { "sr.enterReceipt", tr("&New Receipt..."),            SLOT(sEnterReceipt()), receivingMenu, "EnterReceipts", NULL, NULL, true, NULL },
     { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, "EnterReceipts", QPixmap(":/images/postReceipts.png"), toolBar,  true, tr("List Unposted Receipts") },
-    { "separator", NULL, NULL, receivingMenu, "true", NULL, NULL, true, NULL },
-    { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, "EnterReturns", NULL, NULL, true, NULL },
-    { "separator",                      NULL,                             NULL,                         receivingMenu, "true", NULL, NULL, true, NULL },
+    { "separator",       NULL,                             NULL,                  receivingMenu, "true",          NULL, NULL, true, NULL },
+    { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, "EnterReturns",  NULL, NULL, true, NULL },
+    { "separator",       NULL,                             NULL,                  receivingMenu, "true",          NULL, NULL, true, NULL },
 
     //  Inventory | Receiving | Forms
-    { "menu",   tr("&Forms"),  (char*)receivingFormsMenu,       receivingMenu,  "true", NULL, NULL, true, NULL },
+    { "menu",                        tr("&Forms"),                     (char*)receivingFormsMenu,         receivingMenu,      "true",         NULL, NULL, true, NULL },
     { "sr.printReceivingLabelsByPo", tr("&Print Receiving Labels..."), SLOT(sPrintReceivingLabelsByPo()), receivingFormsMenu, "ViewShipping", NULL, NULL, true, NULL },
 
     //  Inventory | Shipping
-    { "menu",   tr("&Shipping"),  (char*)shippingMenu,  mainMenu,       "true", NULL, NULL, true, NULL },
-    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, tr("Issue to Shipping") },
-    { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, "ViewShipping", NULL, NULL, true, NULL },
-    { "separator", NULL, NULL, shippingMenu, "true", NULL, NULL, true, NULL },
-    { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, "ShipOrders", NULL, NULL, true, NULL },
-    { "sr.recallOrdersToShipping", tr("R&ecall Orders to Shipping..."), SLOT(sRecallOrders()), shippingMenu, "RecallOrders", NULL, NULL, true, NULL },
+    { "menu",                        tr("&Shipping"),                      (char*)shippingMenu,           mainMenu,     "true",                 NULL, NULL, true, NULL },
+    { "sr.issueToShipping",          tr("&Issue to Shipping..."),          SLOT(sIssueStockToShipping()), shippingMenu, "IssueStockToShipping", QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, tr("Issue to Shipping") },
+    { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()),  shippingMenu, "ViewShipping",         NULL, NULL, true, NULL },
+    { "separator",                   NULL,                                 NULL,                          shippingMenu, "true",                 NULL, NULL, true, NULL },
+    { "sr.shipOrder",                tr("&Ship Order..."),                 SLOT(sShipOrders()),           shippingMenu, "ShipOrders",           NULL, NULL, true, NULL },
+    { "sr.recallOrdersToShipping",   tr("R&ecall Orders to Shipping..."),  SLOT(sRecallOrders()),         shippingMenu, "RecallOrders",         NULL, NULL, true, NULL },
 
-    { "separator",                                      NULL,                                            NULL,  shippingMenu,   "true", NULL, NULL,  true, NULL },
+    { "separator",                   NULL,                                 NULL,                          shippingMenu,  "true",                NULL, NULL,  true, NULL },
 
     // Inventory | Shipping | Forms
-    { "menu",                           tr("&Forms"),                           (char*)shippingFormsMenu,                   shippingMenu,        "true",                                        NULL, NULL, true, NULL },
-    { "sr.packingListBatch", tr("Packing List &Batch..."), SLOT(sPackingListBatch()), shippingFormsMenu, "MaintainPackingListBatch ViewPackingListBatch", NULL, NULL, true, NULL },
-    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship &Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, "PrintPackingLists", NULL, NULL, true, NULL },
-    { "sr.printPackingList", tr("&Packing List..."), SLOT(sPrintPackingLists()), shippingFormsMenu, "PrintPackingLists", NULL, NULL, true, NULL },
-    { "separator", NULL, NULL, shippingFormsMenu, "true", NULL, NULL, true, NULL },
-    { "sr.printShippingForm", tr("&Shipping Form..."), SLOT(sPrintShippingForm()), shippingFormsMenu, "PrintBillsOfLading", NULL, NULL, true, NULL },
-    { "sr.printShippingForms", tr("S&hipping Forms..."), SLOT(sPrintShippingForms()), shippingFormsMenu, "PrintBillsOfLading", NULL, NULL, true, NULL },
+    { "menu",                              tr("&Forms"),                                   (char*)shippingFormsMenu,                shippingMenu,      "true",                                          NULL, NULL, true, NULL },
+    { "sr.packingListBatch",               tr("Packing List &Batch..."),                   SLOT(sPackingListBatch()),               shippingFormsMenu, "MaintainPackingListBatch ViewPackingListBatch", NULL, NULL, true, NULL },
+    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship &Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, "PrintPackingLists",  NULL, NULL, true, NULL },
+    { "sr.printPackingList",               tr("&Packing List..."),                         SLOT(sPrintPackingLists()),              shippingFormsMenu, "PrintPackingLists",  NULL, NULL, true, NULL },
+    { "separator",                         NULL,                                           NULL,                                    shippingFormsMenu, "true",               NULL, NULL, true, NULL },
+    { "sr.printShippingForm",              tr("&Shipping Form..."),                        SLOT(sPrintShippingForm()),              shippingFormsMenu, "PrintBillsOfLading", NULL, NULL, true, NULL },
+    { "sr.printShippingForms",             tr("S&hipping Forms..."),                       SLOT(sPrintShippingForms()),             shippingFormsMenu, "PrintBillsOfLading", NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Forms | Shipping Labels
-    { "menu",   tr("Shipping &Labels"),  (char*)formsShipLabelsMenu,    shippingFormsMenu,      "true", NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsBySo", tr("by &S/O #..."), SLOT(sPrintShippingLabelsBySo()), formsShipLabelsMenu, "ViewShipping", NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsByTo", tr("by &T/O #..."), SLOT(sPrintShippingLabelsByTo()), formsShipLabelsMenu, "ViewTransferOrders", NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsByInvoice", tr("by &Invoice..."), SLOT(sPrintShippingLabelsByInvoice()), formsShipLabelsMenu, "ViewShipping", NULL, NULL, true, NULL },
+    { "menu",                            tr("Shipping &Labels"),  (char*)formsShipLabelsMenu,            shippingFormsMenu,   "true",               NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsBySo",      tr("by &S/O #..."),      SLOT(sPrintShippingLabelsBySo()),      formsShipLabelsMenu, "ViewShipping",       NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsByTo",      tr("by &T/O #..."),      SLOT(sPrintShippingLabelsByTo()),      formsShipLabelsMenu, "ViewTransferOrders", NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsByInvoice", tr("by &Invoice..."),    SLOT(sPrintShippingLabelsByInvoice()), formsShipLabelsMenu, "ViewShipping",       NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports
-    { "menu",                           tr("&Reports"),                         (char*)shippingReportsMenu,                 shippingMenu,        "true",                                        NULL, NULL, true, NULL },
+    { "menu",                               tr("&Reports"),                (char*)shippingReportsMenu,               shippingMenu,        "true",            NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports | Backlog
-    { "menu",                           tr("&Backlog"),                         (char*)reportsBacklogMenu,                  shippingReportsMenu, "true",                                        NULL, NULL, true, NULL },
-    { "sr.dspBacklogByItem", tr("by &Item..."), SLOT(sDspBacklogByItem()), reportsBacklogMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspBacklogByCustomer", tr("by &Customer..."), SLOT(sDspBacklogByCustomer()), reportsBacklogMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspBacklogByProductCategory", tr("by &Product Category..."), SLOT(sDspBacklogByProductCategory()), reportsBacklogMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspSummarizedBacklogByWarehouse", tr("S&ummarized Backlog..."), SLOT(sDspSummarizedBacklogByWarehouse()), shippingReportsMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
+    { "menu",                               tr("&Backlog"),                (char*)reportsBacklogMenu,                shippingReportsMenu, "true",            NULL, NULL, true, NULL },
+    { "sr.dspBacklogByItem",                tr("by &Item..."),             SLOT(sDspBacklogByItem()),                reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
+    { "sr.dspBacklogByCustomer",            tr("by &Customer..."),         SLOT(sDspBacklogByCustomer()),            reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
+    { "sr.dspBacklogByProductCategory",     tr("by &Product Category..."), SLOT(sDspBacklogByProductCategory()),     reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
+    { "sr.dspSummarizedBacklogByWarehouse", tr("S&ummarized Backlog..."),  SLOT(sDspSummarizedBacklogByWarehouse()), shippingReportsMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
 
     { "separator", NULL, NULL, shippingReportsMenu, "true", NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports | Shipments
-    { "menu",                           tr("&Shipments"),                               (char*)reportsShipmentsMenu,                shippingReportsMenu,         "true",                                        NULL, NULL, true, NULL },
+    { "menu",                        tr("&Shipments"),         (char*)reportsShipmentsMenu,       shippingReportsMenu,  "true",         NULL, NULL, true, NULL },
     { "sr.dspShipmentsBySalesOrder", tr("by Sales &Order..."), SLOT(sDspShipmentsBySalesOrder()), reportsShipmentsMenu, "ViewShipping", NULL, NULL, true, NULL },
-    { "sr.dspShipmentsByDate", tr("by &Date..."), SLOT(sDspShipmentsByDate()), reportsShipmentsMenu, "ViewShipping", NULL, NULL, true, NULL },
-    { "sr.dspShipmentsByShipment", tr("by &Shipment..."), SLOT(sDspShipmentsByShipment()), reportsShipmentsMenu, "ViewShipping", NULL, NULL, true, NULL },
+    { "sr.dspShipmentsByDate",       tr("by &Date..."),        SLOT(sDspShipmentsByDate()),       reportsShipmentsMenu, "ViewShipping", NULL, NULL, true, NULL },
+    { "sr.dspShipmentsByShipment",   tr("by &Shipment..."),    SLOT(sDspShipmentsByShipment()),   reportsShipmentsMenu, "ViewShipping", NULL, NULL, true, NULL },
 
     //  Inventory |  Transactions
     { "menu",                           tr("&Transactions"),         (char*)transactionsMenu,    mainMenu,         "true",                      NULL, NULL, true, NULL },
@@ -340,11 +339,11 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.interWarehouseTransfer",      tr("&Site Transfer..."),     SLOT(sTransferTrans()),     transactionsMenu, "CreateInterWarehouseTrans", NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
     { "im.relocateInventory",           tr("Re&locate Inventory..."),SLOT(sRelocateInventory()), transactionsMenu, "RelocateInventory",         NULL, NULL, true, NULL },
 
-    {  "separator",                     NULL,                                     NULL,                                 mainMenu,       "true", NULL, NULL, true, NULL },
+    {  "separator",                     NULL,                        NULL,                       mainMenu,         "true", NULL, NULL, true, NULL },
 
     // Inventory | Forms
-    { "menu",   tr("&Forms"),  (char*)formsMenu,        mainMenu,       "true", NULL, NULL, true, NULL },
-    { "im.printItemLabelsByClassCode",                  tr("Print &Item Labels..."),            SLOT(sPrintItemLabelsByClassCode()),            formsMenu, "ViewItemSites",     NULL, NULL, true, NULL },
+    { "menu",                           tr("&Forms"),                (char*)formsMenu,                    mainMenu,  "true",            NULL, NULL, true, NULL },
+    { "im.printItemLabelsByClassCode",  tr("Print &Item Labels..."), SLOT(sPrintItemLabelsByClassCode()), formsMenu, "ViewItemSites",   NULL, NULL, true, NULL },
 
     //  Inventory | Reports
     { "menu",                           tr("&Reports"),                   (char*)reportsMenu,                   mainMenu,       "true", NULL, NULL, true, NULL },
@@ -454,9 +453,9 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.createItemSitesByClassCode",            tr("&Create Item Sites..."),            SLOT(sCreateItemSitesByClassCode()),      utilitiesMenu, "MaintainItemSites",              NULL, NULL, true, NULL },
     { "separator",                                NULL,                                   NULL,                                     utilitiesMenu, "true",                           NULL, NULL, true, NULL },
     { "sr.purgeShippingRecords",                  tr("&Purge Shipping Records..."),       SLOT(sPurgeShippingRecords()),            utilitiesMenu, "PurgeShippingRecords",     NULL, NULL, true, NULL },
-    { "sr.externalShipping",                 tr("Maintain E&xternal Shipping Records..."),SLOT(sExternalShipping()),                utilitiesMenu, "MaintainExternalShipping", NULL, NULL, true, NULL },
+    { "sr.externalShipping",          tr("Maintain E&xternal Shipping Records..."),       SLOT(sExternalShipping()),                utilitiesMenu, "MaintainExternalShipping", NULL, NULL, true, NULL },
     // Setup
-    { "im.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+    { "im.setup",	                          tr("&Setup..."),                        SLOT(sSetup()),                           mainMenu,	   "true",                     NULL, NULL, true, NULL}
 
   };
 

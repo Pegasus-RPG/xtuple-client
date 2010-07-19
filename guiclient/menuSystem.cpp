@@ -12,6 +12,10 @@
 #include <QApplication>
 #include <QAssistantClient>
 #include <QDir>
+#include <QAction>
+#include <QAction>
+#include <QAction>
+#include <QAction>
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
@@ -117,7 +121,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   designMenu->setObjectName("menu.sys.design");
 
 //  Window
-  windowMenu->setCheckable(TRUE);
+  // TODO: windowMenu->setCheckable(TRUE);
 
   cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascade()), windowMenu, true);
 
@@ -288,11 +292,11 @@ void menuSystem::sPrepareWindowMenu()
 
   if(!omfgThis->showTopLevel())
   {
-    cascade->addTo(windowMenu);
-    tile->addTo(windowMenu);
+    windowMenu->addAction(cascade);
+    windowMenu->addAction(tile);
   }
-  closeActive->addTo(windowMenu);
-  closeAll->addTo(windowMenu);
+  windowMenu->addAction(closeActive);
+  windowMenu->addAction(closeAll);
 
   QWidgetList windows = omfgThis->windowList();
 
@@ -302,7 +306,7 @@ void menuSystem::sPrepareWindowMenu()
   closeActive->setEnabled(b);
   closeAll->setEnabled(b);
 
-  windowMenu->insertSeparator();
+  windowMenu->addSeparator();
 
   QWidget * activeWindow = parent->workspace()->activeWindow();
   if(omfgThis->showTopLevel())
@@ -318,23 +322,23 @@ void menuSystem::sPrepareWindowMenu()
       geometryMenu = new QMenu();
 
     geometryMenu->clear();
-    geometryMenu->setTitle(activeWindow->caption());
+    geometryMenu->setTitle(activeWindow->windowTitle());
 
     QString objName = activeWindow->objectName();
     
     _rememberPos->setChecked(xtsettingsValue(objName + "/geometry/rememberPos", true).toBool());
-    _rememberPos->addTo(geometryMenu);
+    geometryMenu->addAction(_rememberPos);
     _rememberSize->setChecked(xtsettingsValue(objName + "/geometry/rememberSize", true).toBool());
-    _rememberSize->addTo(geometryMenu);
+    geometryMenu->addAction(_rememberSize);
 
     windowMenu->addMenu(geometryMenu);
-    windowMenu->insertSeparator();
+    windowMenu->addSeparator();
   }
 
   QAction * m = 0;
   for (int cursor = 0; cursor < windows.count(); cursor++)
   {
-    m = windowMenu->addAction(windows.at(cursor)->caption(), this, SLOT(sActivateWindow()));
+    m = windowMenu->addAction(windows.at(cursor)->windowTitle(), this, SLOT(sActivateWindow()));
     if(m)
     {
       m->setData(cursor);
