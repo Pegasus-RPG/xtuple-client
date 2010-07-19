@@ -27,24 +27,6 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _wo->setQuery( "SELECT wo_id, formatWONumber(wo_id) AS wonumber,"
-                  "       warehous_code, item_id, item_number, uom_name,"
-                  "       item_descrip1, item_descrip2,"
-                  "       wo_qtyord, wo_qtyrcv, wo_status,"
-                  "       wo_duedate,"
-                  "       wo_startdate,"
-                  "       wo_qtyord,"
-                  "       wo_qtyrcv,"
-                  "       (noNeg(wo_qtyord - wo_qtyrcv)) AS balance,"
-                  "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
-                  "       itemsite_warehous_id "
-                  "FROM wo, itemsite, item, warehous, uom "
-                  "WHERE ((wo_itemsite_id=itemsite_id)"
-                  " AND (itemsite_item_id=item_id)"
-                  " AND (item_inv_uom_id=uom_id)"
-                  " AND (itemsite_warehous_id=warehous_id)) "
-                  "ORDER BY formatWONumber(wo_id) DESC");
-  
   _cost->addColumn(tr("Type"),            _itemColumn, Qt::AlignLeft,  true, "type");
   _cost->addColumn(tr("Work Center/Item"),_itemColumn, Qt::AlignLeft,  true, "code");
   _cost->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "descrip");
