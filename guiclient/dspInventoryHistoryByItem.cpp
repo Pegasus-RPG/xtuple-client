@@ -10,6 +10,7 @@
 
 #include "dspInventoryHistoryByItem.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -293,8 +294,8 @@ void dspInventoryHistoryByItem::sEditTransInfo()
 void dspInventoryHistoryByItem::sViewWOInfo()
 {
   QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
-  int sep1            = orderNumber.find('-');
-  int sep2            = orderNumber.find('-', (sep1 + 1));
+  int sep1            = orderNumber.indexOf('-');
+  int sep2            = orderNumber.indexOf('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
   int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
@@ -324,25 +325,25 @@ void dspInventoryHistoryByItem::sViewWOInfo()
 
 void dspInventoryHistoryByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
-  menuItem = pMenu->insertItem(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()), 0);
+  menuItem = pMenu->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
+  menuItem = pMenu->addAction(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()));
 
   if ( (pItem->text(_invhist->column("warehous_code")).length()) &&
        ( (pItem->text(_invhist->column("invhist_transtype")) == "RM") || (pItem->text(_invhist->column("invhist_transtype")) == "IM") ) )
   {
     QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
-    int sep1            = orderNumber.find('-');
-    int sep2            = orderNumber.find('-', (sep1 + 1));
+    int sep1            = orderNumber.indexOf('-');
+    int sep2            = orderNumber.indexOf('-', (sep1 + 1));
     int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
     int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
     if ( (mainNumber) && (subNumber) )
     {
-      menuItem = pMenu->insertItem(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()), 0);
+      menuItem = pMenu->addAction(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()));
       if ((!_privileges->check("MaintainWorkOrders")) && (!_privileges->check("ViewWorkOrders")))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
   }
 }

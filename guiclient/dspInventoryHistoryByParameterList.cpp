@@ -10,6 +10,7 @@
 
 #include "dspInventoryHistoryByParameterList.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -340,8 +341,8 @@ void dspInventoryHistoryByParameterList::sEditTransInfo()
 void dspInventoryHistoryByParameterList::sViewWOInfo()
 {
   QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
-  int sep1            = orderNumber.find('-');
-  int sep2            = orderNumber.find('-', (sep1 + 1));
+  int sep1            = orderNumber.indexOf('-');
+  int sep2            = orderNumber.indexOf('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
   int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
@@ -366,17 +367,17 @@ void dspInventoryHistoryByParameterList::sViewWOInfo()
 
 void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
-  menuItem = pMenu->insertItem(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()), 0);
+  menuItem = pMenu->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
+  menuItem = pMenu->addAction(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()));
 
   if ( (pItem->text(_invhist->column("warehous_code")).length()) &&
        ( (pItem->text(_invhist->column("invhist_transtype")) == "RM") || (pItem->text(_invhist->column("invhist_transtype")) == "IM") ) )
   {
     QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
-    int sep1            = orderNumber.find('-');
-    int sep2            = orderNumber.find('-', (sep1 + 1));
+    int sep1            = orderNumber.indexOf('-');
+    int sep2            = orderNumber.indexOf('-', (sep1 + 1));
     int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
     int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
@@ -391,9 +392,8 @@ void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidget
       q.exec();
       if (q.first())
       {
-          menuItem = pMenu->insertItem(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()), 0);
-          if ((!_privileges->check("MaintainWorkOrders")) && (!_privileges->check("ViewWorkOrders")))
-            pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem = pMenu->addAction(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()));
+        menuItem->setEnabled(_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"));
       }
     }
   }
@@ -401,8 +401,6 @@ void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidget
 
 void dspInventoryHistoryByParameterList::sFillList()
 {
-  _invhist->clear();
-
   ParameterList params;
   setParams(params);
   if (!params.count())
@@ -410,11 +408,8 @@ void dspInventoryHistoryByParameterList::sFillList()
   MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
   q = mql.toQuery(params);
 
-  if (q.first())
-  {
-    _invhist->populate(q, true);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
+  _invhist->populate(q, true);
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

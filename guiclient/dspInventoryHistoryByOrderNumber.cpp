@@ -10,6 +10,7 @@
 
 #include "dspInventoryHistoryByOrderNumber.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -207,7 +208,7 @@ void dspInventoryHistoryByOrderNumber::sViewTransInfo()
 
 void dspInventoryHistoryByOrderNumber::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *)
 {
-  menuThis->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
+  menuThis->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
 }
 
 void dspInventoryHistoryByOrderNumber::sFillList()
