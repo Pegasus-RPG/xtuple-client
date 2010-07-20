@@ -25,13 +25,18 @@ public:
     ~postSubLedger();
 
 public slots:
-    virtual bool check();
-    virtual void post();
-    virtual void populate();
-    virtual void selectionChanged();
+    bool sCheck();
+    void sPost();
+    void sFillList();
+    virtual void sSelectionChanged();
 
 protected slots:
-    virtual void languageChange();
+    void languageChange();
+
+private:
+    QPushButton* _post;
+    QPushButton* _query;
+
 
 };
 

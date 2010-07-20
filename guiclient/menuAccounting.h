@@ -116,6 +116,7 @@ class menuAccounting : public QObject
     void sStandardJournalGroups();
     void sPostStandardJournal();
     void sPostStandardJournalGroup();
+    void sPostSubLedger();
 
     void sFinancialReports();
     void sViewFinancialReport();
@@ -126,6 +127,7 @@ class menuAccounting : public QObject
     void sDspGLSeries();
     void sDspStandardJournalHistory();
     void sDspTrialBalances();
+    void sDspSubLedger();
 
     void sCompanies();
     void sProfitCenters();

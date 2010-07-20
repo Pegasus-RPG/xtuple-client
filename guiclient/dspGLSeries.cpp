@@ -245,8 +245,9 @@ void dspGLSeries::sFillList()
                    "<? endif ?>"
                    " ) "
                    ") AS dummy "
-                   "ORDER BY <? literal(\"table\") ?>_date, <? literal(\"table\") ?>_sequence,"
+                   "ORDER BY transdate, sequence,"
                    "         xtindentrole, amount;");
+
   q = mql.toQuery(params);
   _gltrans->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
