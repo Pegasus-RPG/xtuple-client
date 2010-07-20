@@ -107,31 +107,31 @@ void dspIncidentsByCRMAccount::sPrint()
 
 void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_list->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Edit CRM Account..."), this, SLOT(sEditCRMAccount()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCRMAccounts"));
-    menuItem = pMenu->insertItem(tr("View CRM Account..."), this, SLOT(sViewCRMAccount()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewCRMAccounts") ||
+    menuItem = pMenu->addAction(tr("Edit CRM Account..."), this, SLOT(sEditCRMAccount()));
+    menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
+    menuItem = pMenu->addAction(tr("View CRM Account..."), this, SLOT(sViewCRMAccount()));
+    menuItem->setEnabled( _privileges->check("ViewCRMAccounts") ||
 				    _privileges->check("MaintainCRMAccounts"));
   }
   else if (_list->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Edit Incident..."), this, SLOT(sEditIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
-    menuItem = pMenu->insertItem(tr("View Incident..."), this, SLOT(sViewIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
+    menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEditIncident()));
+    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sViewIncident()));
+    menuItem->setEnabled( _privileges->check("ViewIncidents") ||
 				    _privileges->check("MaintainIncidents"));
   }
   else if (_list->altId() == 3)
   {
-    menuItem = pMenu->insertItem(tr("Edit To-Do Item..."), this, SLOT(sEditTodoItem()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainOtherTodoLists"));
+    menuItem = pMenu->addAction(tr("Edit To-Do Item..."), this, SLOT(sEditTodoItem()));
+    menuItem->setEnabled(_privileges->check("MaintainOtherTodoLists"));
 
-    menuItem = pMenu->insertItem(tr("View To-Do Item..."), this, SLOT(sViewTodoItem()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewOtherTodoLists"));
+    menuItem = pMenu->addAction(tr("View To-Do Item..."), this, SLOT(sViewTodoItem()));
+    menuItem->setEnabled(_privileges->check("ViewOtherTodoLists"));
   }
 }
 

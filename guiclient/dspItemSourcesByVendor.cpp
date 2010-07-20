@@ -10,11 +10,11 @@
 
 #include "dspItemSourcesByVendor.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
@@ -26,19 +26,11 @@
 #include "dspPoItemsByVendor.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a dspItemSourcesByVendor as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemSourcesByVendor::dspItemSourcesByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -53,18 +45,11 @@ dspItemSourcesByVendor::dspItemSourcesByVendor(QWidget* parent, const char* name
   _itemsrc->addColumn(tr("UOM Ratio"),          _qtyColumn,  Qt::AlignRight,  true,  "itemsrc_invvendoruomratio"  );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemSourcesByVendor::~dspItemSourcesByVendor()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemSourcesByVendor::languageChange()
 {
   retranslateUi(this);
@@ -92,8 +77,8 @@ void dspItemSourcesByVendor::sPrint()
 
 void dspItemSourcesByVendor::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem("Edit...",           this, SLOT(sEdit()),     0 );
-  menuThis->insertItem("View Buy Card...",  this, SLOT(sBuyCard()),  0 );
+  menuThis->addAction("Edit...",           this, SLOT(sEdit()));
+  menuThis->addAction("View Buy Card...",  this, SLOT(sBuyCard()));
 }
 
 void dspItemSourcesByVendor::sEdit()

@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QWorkspace>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <openreports.h>
@@ -79,50 +80,50 @@ void dspOrderActivityByProject::languageChange()
 
 void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
 {
-  int menuItem;
+  QAction *menuItem;
 
   if(_orders->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEdit()));
     if (!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sView()));
     if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
   if(_orders->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Edit Quote..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction(tr("Edit Quote..."), this, SLOT(sEdit()));
     if (!_privileges->check("MaintainQuotes"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View Quote..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->addAction(tr("View Quote..."), this, SLOT(sView()));
     if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
   if(_orders->altId() == 3)
   {
-    menuItem = pMenu->insertItem(tr("Edit Invoice..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
     if (!_privileges->check("MaintainMiscInvoices"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sView()));
     if (!_privileges->check("MaintainMiscInvoices") && !_privileges->check("ViewMiscInvoices"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
   if(_orders->altId() == 5)
   {
-    menuItem = pMenu->insertItem(tr("Edit P/O Item..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction(tr("Edit P/O Item..."), this, SLOT(sEdit()));
     if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View P/O Item..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->addAction(tr("View P/O Item..."), this, SLOT(sView()));
     if (!_privileges->check("MaintainPurchaseOrders") && !_privileges->check("ViewPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
 }

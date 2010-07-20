@@ -10,6 +10,7 @@
 
 #include "dspPartiallyShippedOrders.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -148,30 +149,26 @@ void dspPartiallyShippedOrders::sPrintPackingList()
 
 void dspPartiallyShippedOrders::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if (!_privileges->check("MaintainSalesOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
 
-  menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sViewOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
+                       _privileges->check("ViewSalesOrders"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
   if ( (_so->currentItem()->text(0) != "P") && (_so->currentItem()->text(0) != "C") )
   {
-    menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-    if (!_privileges->check("PrintPackingLists"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Print Packing List..."), this, SLOT(sPrintPackingList()));
+    menuItem->setEnabled(_privileges->check("PrintPackingLists"));
   }
 }
 
 void dspPartiallyShippedOrders::sFillList()
 {
-  _so->clear();
-
   ParameterList params;
   if (! setParams(params))
     return;

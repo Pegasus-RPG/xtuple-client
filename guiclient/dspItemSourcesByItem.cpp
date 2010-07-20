@@ -10,11 +10,11 @@
 
 #include "dspItemSourcesByItem.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
@@ -26,19 +26,11 @@
 #include "dspPoItemsByItem.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a dspItemSourcesByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemSourcesByItem::dspItemSourcesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -54,18 +46,11 @@ dspItemSourcesByItem::dspItemSourcesByItem(QWidget* parent, const char* name, Qt
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemSourcesByItem::~dspItemSourcesByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemSourcesByItem::languageChange()
 {
   retranslateUi(this);
@@ -85,9 +70,9 @@ void dspItemSourcesByItem::sPrint()
 
 void dspItemSourcesByItem::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem("Edit...",           this, SLOT(sEdit()),     0 );
-  menuThis->insertItem("View Buy Card...",  this, SLOT(sBuyCard()),  0 );
-  menuThis->insertItem("View P/Os...",      this, SLOT(sViewPOs()),  0 );
+  menuThis->addAction("Edit...",           this, SLOT(sEdit()));
+  menuThis->addAction("View Buy Card...",  this, SLOT(sBuyCard()));
+  menuThis->addAction("View P/Os...",      this, SLOT(sViewPOs()));
 }
 
 void dspItemSourcesByItem::sEdit()

@@ -10,11 +10,11 @@
 
 #include "dspPoItemsByDate.h"
 
+#include <QAction>
 #include <QMenu>
-#include <QSqlError>
-//#include <QStatusBar>
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -32,8 +32,6 @@ dspPoItemsByDate::dspPoItemsByDate(QWidget* parent, const char* name, Qt::WFlags
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
@@ -126,61 +124,54 @@ void dspPoItemsByDate::sPrint()
 
 void dspPoItemsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (pSelected->text(POITEM_STATUS_COL) == "U")
   {
-    menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-    if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
 
-  menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privileges->check("MaintainPurchaseOrders")) && (!_privileges->check("ViewPurchaseOrders")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sViewOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
+                       _privileges->check("ViewPurchaseOrders"));
 
-  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
+  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
 
-  if (!_privileges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
   if (pSelected->text(POITEM_STATUS_COL) == "U")
   {
-    menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-    if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
 
-  menuItem = pMenu->insertItem(tr("View Item..."), this, SLOT(sViewItem()), 0);
-  if ((!_privileges->check("MaintainPurchaseOrders")) && (!_privileges->check("ViewPurchaseOrders")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Item..."), this, SLOT(sViewItem()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
+                       _privileges->check("ViewPurchaseOrders"));
 
   if (pSelected->text(POITEM_STATUS_COL) != "C")
   {
-    menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
-    if (!_privileges->check("ReschedulePurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sReschedule()));
+    menuItem->setEnabled(_privileges->check("ReschedulePurchaseOrders"));
 
-    menuItem = pMenu->insertItem(tr("Change Qty..."), this, SLOT(sChangeQty()), 0);
-    if (!_privileges->check("ChangePurchaseOrderQty"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Change Qty..."), this, SLOT(sChangeQty()));
+    menuItem->setEnabled(_privileges->check("ChangePurchaseOrderQty"));
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
   }
 
   if (pSelected->text(POITEM_STATUS_COL) == "O")
   {
-    menuItem = pMenu->insertItem(tr("Close Item..."), this, SLOT(sCloseItem()), 0);
-    if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Close Item..."), this, SLOT(sCloseItem()));
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
   else if (pSelected->text(POITEM_STATUS_COL) == "C")
   {
-    menuItem = pMenu->insertItem(tr("Open Item..."), this, SLOT(sOpenItem()), 0);
-    if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Open Item..."), this, SLOT(sOpenItem()));
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
 }
 

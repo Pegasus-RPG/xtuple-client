@@ -10,8 +10,8 @@
 
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 
+#include <QAction>
 #include <QMenu>
-#include <QStack>
 #include <QMessageBox>
 
 #include <openreports.h>
@@ -29,8 +29,6 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -197,7 +195,7 @@ void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(QMenu *menuThis)
        (transType == "EX") ||
        (transType == "RX") ||
        (transType == "CC") )
-    menuThis->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
+    menuThis->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
 }
 
 void dspDetailedInventoryHistoryByLotSerial::sFillList()

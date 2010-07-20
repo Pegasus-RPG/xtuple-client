@@ -10,6 +10,7 @@
 
 #include "dspPlannedOrdersByPlannerCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 
@@ -98,42 +99,38 @@ void dspPlannedOrdersByPlannerCode::sPrint()
 
 void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("ViewInventoryAvailability"));
-  menuItem = pMenu->insertItem(tr("Usage Statistics..."), this, SLOT(sDspUsageStatistics()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("ViewInventoryHistory"));
+  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
+  menuItem = pMenu->addAction(tr("Usage Statistics..."), this, SLOT(sDspUsageStatistics()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if (!_privileges->check("CreatePlannedOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+  menuItem->setEnabled(_privileges->check("CreatePlannedOrders"));
 
   if (pSelected->text(10) == "No")
   {
-    menuItem = pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
-    if (!_privileges->check("FirmPlannedOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Firm Order..."), this, SLOT(sFirmOrder()));
+    menuItem->setEnabled(_privileges->check("FirmPlannedOrders"));
   }
   else
   {
-    menuItem = pMenu->insertItem(tr("Soften Order..."), this, SLOT(sSoftenOrder()), 0);
-    if (!_privileges->check("SoftenPlannedOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Soften Order..."), this, SLOT(sSoftenOrder()));
+    menuItem->setEnabled(_privileges->check("SoftenPlannedOrders"));
   }
 
-  menuItem = pMenu->insertItem(tr("Release Order..."), this, SLOT(sReleaseOrder()), 0);
+  menuItem = pMenu->addAction(tr("Release Order..."), this, SLOT(sReleaseOrder()));
   if ( (!_privileges->check("ReleasePlannedOrders")) ||
        ((pSelected->text(1) == "T/O") && (!_privileges->check("MaintainTransferOrders")) ) ||
        ((pSelected->text(1) == "W/O") && (!_privileges->check("MaintainWorkOrders")) ) ||
        ((pSelected->text(1) == "P/O") && (!_privileges->check("MaintainPurchaseRequests")) ) )
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Delete Order..."), this, SLOT(sDeleteOrder()), 0);
-  if (!_privileges->check("DeletePlannedOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Delete Order..."), this, SLOT(sDeleteOrder()));
+  menuItem->setEnabled(_privileges->check("DeletePlannedOrders"));
 }
 
 void dspPlannedOrdersByPlannerCode::sDspRunningAvailability()

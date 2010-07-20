@@ -10,6 +10,7 @@
 
 #include "dspInvalidBillsOfMaterials.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -117,18 +118,15 @@ void dspInvalidBillsOfMaterials::sFillList()
 
 void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Parent Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Parent Item..."), this, SLOT(sEditItem()));
+  menuItem->setEnabled(_privileges->check("MaintainItemMasters"));
 
-  menuItem = pMenu->insertItem(tr("Edit Parent Item Site..."), this, SLOT(sEditItemSite()), 0);
-  if (!_privileges->check("MaintainItemSites"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Parent Item Site..."), this, SLOT(sEditItemSite()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites"));
 
-  menuItem = pMenu->insertItem(tr("Create Component Item Site..."), this, SLOT(sCreateItemSite()), 0);
-  if (!_privileges->check("MaintainItemSites"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Create Component Item Site..."), this, SLOT(sCreateItemSite()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites"));
 }
 

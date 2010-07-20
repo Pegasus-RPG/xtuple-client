@@ -10,6 +10,7 @@
 
 #include "dspDetailedInventoryHistoryByLocation.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -195,7 +196,7 @@ void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
        (transType == "EX") ||
        (transType == "RX") ||
        (transType == "CC") )
-    menuThis->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
+    menuThis->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
 }
 
 void dspDetailedInventoryHistoryByLocation::sFillList()

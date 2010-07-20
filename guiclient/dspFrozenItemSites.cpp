@@ -10,6 +10,7 @@
 
 #include "dspFrozenItemSites.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 
@@ -60,11 +61,10 @@ void dspFrozenItemSites::sPrint()
 
 void dspFrozenItemSites::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Thaw"), this, SLOT(sThaw()), 0);
-  if (!_privileges->check("ThawInventory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Thaw"), this, SLOT(sThaw()));
+  menuItem->setEnabled(_privileges->check("ThawInventory"));
 }
 
 void dspFrozenItemSites::sThaw()

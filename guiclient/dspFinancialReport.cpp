@@ -10,6 +10,7 @@
 
 #include "dspFinancialReport.h"
 
+#include <QAction>
 #include <QCloseEvent>
 #include <QInputDialog>
 #include <QList>
@@ -853,7 +854,7 @@ void dspFinancialReport::sPrint()
 
 void dspFinancialReport::sPopulateMenu( QMenu * pMenu )
 {
-  pMenu->insertItem(tr("Edit Alternate Label..."), this, SLOT(sEditPeriodLabel()));
+  pMenu->addAction(tr("Edit Alternate Label..."), this, SLOT(sEditPeriodLabel()));
 }
 
 void dspFinancialReport::sEditPeriodLabel()
@@ -863,9 +864,9 @@ void dspFinancialReport::sEditPeriodLabel()
     return;
 
   bool ok;
-  QString text = QInputDialog::getText( tr("Alternate Label"),
+  QString text = QInputDialog::getText(this, tr("Alternate Label"),
         tr("Enter an alternate label for the period %1:").arg(item->text(0)),
-        QLineEdit::Normal, item->text(1), &ok, this );
+        QLineEdit::Normal, item->text(1), &ok);
   if(ok)
     item->setText(1, text);
 }

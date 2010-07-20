@@ -10,6 +10,7 @@
 
 #include "dspOrders.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 
@@ -106,35 +107,35 @@ enum SetResponse dspOrders::set(const ParameterList &pParams)
 
 void dspOrders::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_orders->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Reschedule P/O Item..."), this, SLOT(sReschedulePoitem()), 0);
+    menuItem = pMenu->addAction(tr("Reschedule P/O Item..."), this, SLOT(sReschedulePoitem()));
     if (!_privileges->check("ReschedulePurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Change P/O Item Quantity..."), this, SLOT(sChangePoitemQty()), 0);
+    menuItem = pMenu->addAction(tr("Change P/O Item Quantity..."), this, SLOT(sChangePoitemQty()));
     if (!_privileges->check("ChangePurchaseOrderQty"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else if (_orders->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()), 0);
+    menuItem = pMenu->addAction(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()));
     if (!_privileges->check("ReprioritizeWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()), 0);
+    menuItem = pMenu->addAction(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()));
     if (!_privileges->check("RescheduleWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()), 0);
+    menuItem = pMenu->addAction(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()));
     if (!_privileges->check("ChangeWorkOrderQty"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
+    menuItem = pMenu->addAction(tr("Print Traveler..."), this, SLOT(sPrintTraveler()));
     if (!_privileges->check("PrintWorkOrderPaperWork"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

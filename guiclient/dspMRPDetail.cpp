@@ -10,6 +10,7 @@
 
 #include "dspMRPDetail.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -111,42 +112,42 @@ void dspMRPDetail::sPrint()
 
 void dspMRPDetail::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
-  int           menuItem;
-  int		mrpIndex = 0;
+  QAction *menuItem;
+  int      mrpIndex = 0;
 
   _column = pColumn;
 
-  menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
+  menuItem = pMenu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
   while ((mrpIndex < _mrp->topLevelItemCount()) &&
 	 (_mrp->topLevelItem(mrpIndex)->text(0) != tr("Allocations")))
     mrpIndex++;
   if (_mrp->topLevelItem(mrpIndex)->text(pColumn).toDouble() == 0.0)
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
+  menuItem = pMenu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
   while ((mrpIndex < _mrp->topLevelItemCount()) &&
 	 (_mrp->topLevelItem(mrpIndex)->text(0) != tr("Orders")))
     mrpIndex++;
   if (_mrp->topLevelItem(mrpIndex)->text(pColumn).toDouble() == 0.0)
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
   if (_itemsite->currentItem()->text(0) == "P")
   {
-    menuItem = pMenu->insertItem(tr("Issue P/R..."), this, SLOT(sIssuePR()));
+    menuItem = pMenu->addAction(tr("Issue P/R..."), this, SLOT(sIssuePR()));
     if (!_privileges->check("MaintainPurchaseRequests"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Issue P/O..."), this, SLOT(sIssuePO()));
+    menuItem = pMenu->addAction(tr("Issue P/O..."), this, SLOT(sIssuePO()));
     if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else if (_itemsite->currentItem()->text(0) == "M")
   {
-    menuItem = pMenu->insertItem(tr("Issue W/O..."), this, SLOT(sIssueWO()));
+    menuItem = pMenu->addAction(tr("Issue W/O..."), this, SLOT(sIssueWO()));
     if (!_privileges->check("MaintainWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

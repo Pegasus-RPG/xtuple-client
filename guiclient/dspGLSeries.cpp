@@ -11,6 +11,7 @@
 #include "dspGLSeries.h"
 #include "glSeries.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -85,7 +86,7 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
   if (_subLedger->isChecked())
     return;
 
-  int menuItem;
+  QAction *menuItem;
 
   bool editable = false;
   bool deletable = false;
@@ -116,19 +117,16 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
     }
   }
 
-  menuItem = pMenu->insertItem(tr("Edit Journal..."), this, SLOT(sEdit()), 0);
-  if (!editable)
-    pMenu->setItemEnabled(menuItem, false);
+  menuItem = pMenu->addAction(tr("Edit Journal..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(editable);
 
-  menuItem = pMenu->insertItem(tr("Delete Journal..."), this, SLOT(sDelete()), 0);
-  if (!deletable)
-    pMenu->setItemEnabled(menuItem, false);
+  menuItem = pMenu->addAction(tr("Delete Journal..."), this, SLOT(sDelete()));
+  menuItem->setEnabled(deletable);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
-  if (!reversible)
-    pMenu->setItemEnabled(menuItem, false);
+  menuItem = pMenu->addAction(tr("Reverse Journal..."), this, SLOT(sReverse()));
+  menuItem->setEnabled(reversible);
 
 }
 
@@ -192,12 +190,12 @@ void dspGLSeries::sFillList()
                    "       'curr' AS debit_xtnumericrole,"
                    "       'curr' AS credit_xtnumericrole "
                    "FROM (SELECT DISTINCT "
-                   "       <? literal(\"table\") ?>_sequence AS sequence, "
+                   "       <? literal(\"table\") ?>_sequence, "
                    "       -1 AS <? literal(\"table\") ?>_id, "
-                   "       <? literal(\"table\") ?>_date AS transdate, "
+                   "       <? literal(\"table\") ?>_date, "
                    "       <? literal(\"table\") ?>_source AS source, "
                    "       <? literal(\"table\") ?>_journalnumber AS journalnumber,"
-                   "       <? literal(\"table\") ?>_doctype, '' AS docnumber,"
+                   "       <? literal(\"table\") ?>_doctype AS doctype, '' AS docnumber,"
                    "       firstLine(<? literal(\"table\") ?>_notes) AS account,"
                    "       0.0 AS amount,"
                    "       CAST(NULL AS NUMERIC) AS debit,"
@@ -219,9 +217,9 @@ void dspGLSeries::sFillList()
                    "<? endif ?>"
                    ") "
                    "UNION ALL "
-                   "SELECT <? literal(\"table\") ?>_sequence AS sequence, "
+                   "SELECT <? literal(\"table\") ?>_sequence, "
                    "       <? literal(\"table\") ?>_id, "
-                   "       <? literal(\"table\") ?>_date AS transdate, "
+                   "       <? literal(\"table\") ?>_date, "
                    "       NULL, NULL,"
                    "       NULL, <? literal(\"table\") ?>_docnumber AS docnumber,"
                    "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
@@ -248,7 +246,7 @@ void dspGLSeries::sFillList()
                    " ) "
                    ") AS dummy "
                    "ORDER BY <? literal(\"table\") ?>_date, <? literal(\"table\") ?>_sequence,"
-                   "         xtindentrole, <? literal(\"table\") ?>_amount;");
+                   "         xtindentrole, amount;");
   q = mql.toQuery(params);
   _gltrans->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)

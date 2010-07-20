@@ -10,6 +10,7 @@
 
 #include "dspInvoiceRegister.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -104,36 +105,36 @@ enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
 
 void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_gltrans->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+    menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
         ! _privileges->check("ViewMiscInvoices"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
   else if (_gltrans->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+    menuItem = pMenu->addAction(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
         ! _privileges->check("ViewARMemos"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else if (_gltrans->altId() == 3)
   {
-    menuItem = pMenu->insertItem(tr("View Debit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+    menuItem = pMenu->addAction(tr("View Debit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
         ! _privileges->check("ViewARMemos"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else if (_gltrans->altId() == 4)
   {
-    menuItem = pMenu->insertItem(tr("View Customer Deposit..."), this, SLOT(sViewCreditMemo()), 0);
+    menuItem = pMenu->addAction(tr("View Customer Deposit..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
         ! _privileges->check("ViewARMemos"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 
