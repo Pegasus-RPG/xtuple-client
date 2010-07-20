@@ -10,9 +10,10 @@
 
 #include "dspCustomerARHistory.h"
 
-#include <QVariant>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -20,19 +21,11 @@
 #include <openreports.h>
 #include "arOpenItem.h"
 
-/*
- *  Constructs a dspCustomerARHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -52,18 +45,11 @@ dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt
   _cust->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCustomerARHistory::~dspCustomerARHistory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCustomerARHistory::languageChange()
 {
   retranslateUi(this);
@@ -98,15 +84,14 @@ enum SetResponse dspCustomerARHistory::set(const ParameterList &pParams)
 
 void dspCustomerARHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privileges->check("EditAROpenItem"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("EditAROpenItem"));
 
-    pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+    pMenu->addAction(tr("View..."), this, SLOT(sView()));
   }
 }
 

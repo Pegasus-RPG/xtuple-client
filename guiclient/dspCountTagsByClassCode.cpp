@@ -10,6 +10,7 @@
 
 #include "dspCountTagsByClassCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -97,7 +98,7 @@ void dspCountTagsByClassCode::sPrint()
 
 void dspCountTagsByClassCode::sPopulateMenu(QMenu *pMenu)
 {
-  pMenu->insertItem(tr("View Count Tag..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View Count Tag..."), this, SLOT(sView()));
 }
 
 void dspCountTagsByClassCode::sView()

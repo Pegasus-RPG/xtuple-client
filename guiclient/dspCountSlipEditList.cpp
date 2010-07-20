@@ -10,6 +10,7 @@
 
 #include "dspCountSlipEditList.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -112,17 +113,17 @@ void dspCountSlipEditList::sPrint()
 
 void dspCountSlipEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (((XTreeWidgetItem *)pSelected)->rawValue("cntslip_posted") == 0)
   {
-    menuItem = pMenu->insertItem("Edit Count Slip...", this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction("Edit Count Slip...", this, SLOT(sEdit()));
     if (!_privileges->check("EnterCountSlips"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem("Post Count Slip...", this, SLOT(sPost()), 0);
+    menuItem = pMenu->addAction("Post Count Slip", this, SLOT(sPost()));
     if (!_privileges->check("PostCountSlips"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

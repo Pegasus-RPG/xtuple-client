@@ -10,6 +10,7 @@
 
 #include "dspCustomersByCustomerType.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -72,17 +73,16 @@ void dspCustomersByCustomerType::sPrint()
 
 void dspCustomersByCustomerType::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(_privileges->check("ViewCustomerMasters"));
 
-  menuItem = pMenu->insertItem("Reassign Customer Type", this, SLOT(sReassignCustomerType()), 0);
-  if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Reassign Customer Type...", this, SLOT(sReassignCustomerType()));
+  menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 }
 
 void dspCustomersByCustomerType::sEdit()

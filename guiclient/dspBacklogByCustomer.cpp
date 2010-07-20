@@ -10,6 +10,7 @@
 
 #include "dspBacklogByCustomer.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -206,43 +207,43 @@ void dspBacklogByCustomer::sPopulateMenu(QMenu *pMenu)
       hasChildren = TRUE;
   }
 
-  int menuItem;
+  QAction *menuItem;
 
   if (selected.size() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
+    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
     if (!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
+    menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sViewOrder()));
     if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
     if (hasChildren)
     {
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-      menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
+      menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
       if (!_privileges->check("MaintainSalesOrders"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
-      menuItem = pMenu->insertItem(tr("View Item..."), this, SLOT(sViewItem()), 0);
+      menuItem = pMenu->addAction(tr("View Item..."), this, SLOT(sViewItem()));
       if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
   }
 
   if (hasParents)
   {
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
+    menuItem = pMenu->addAction(tr("Print Packing List..."), this, SLOT(sPrintPackingList()));
     if (!_privileges->check("PrintPackingLists"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Add to Packing List Batch..."), this, SLOT(sAddToPackingListBatch()), 0);
+    menuItem = pMenu->addAction(tr("Add to Packing List Batch"), this, SLOT(sAddToPackingListBatch()));
     if (!_privileges->check("MaintainPackingListBatch"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

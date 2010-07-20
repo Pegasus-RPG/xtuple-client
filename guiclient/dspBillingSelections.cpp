@@ -10,12 +10,11 @@
 
 #include "dspBillingSelections.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -25,19 +24,11 @@
 #include "printInvoices.h"
 #include "createInvoices.h"
 
-/*
- *  Constructs a dspBillingSelections as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_cobill, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
@@ -50,8 +41,6 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   connect(_cobill, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-//  statusBar()->hide();
-  
   _cobill->addColumn(tr("Order #"),       _orderColumn,  Qt::AlignLeft,   true,  "cohead_number"   );
   _cobill->addColumn(tr("Cust. #"),       _itemColumn,   Qt::AlignLeft,   true,  "cust_number"   );
   _cobill->addColumn(tr("Name"),          -1,            Qt::AlignLeft,   true,  "cust_name"   );
@@ -70,18 +59,11 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBillingSelections::~dspBillingSelections()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBillingSelections::languageChange()
 {
     retranslateUi(this);
@@ -89,14 +71,13 @@ void dspBillingSelections::languageChange()
 
 void dspBillingSelections::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  pMenu->insertItem("Cancel...", this, SLOT(sCancel()), 0);
+  pMenu->addAction("Edit...", this, SLOT(sEdit()));
+  pMenu->addAction("Cancel...", this, SLOT(sCancel()));
 
-  menuItem = pMenu->insertItem("Create Invoice", this, SLOT(sPost()), 0);
-  if (!_privileges->check("PostARDocuments"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Create Invoice", this, SLOT(sPost()));
+  menuItem->setEnabled(_privileges->check("PostARDocuments"));
 }
 
 void dspBillingSelections::sFillList()

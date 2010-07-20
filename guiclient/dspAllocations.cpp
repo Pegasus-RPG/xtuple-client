@@ -10,6 +10,7 @@
 
 #include "dspAllocations.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -106,28 +107,28 @@ enum SetResponse dspAllocations::set(const ParameterList &pParams)
 
 void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (QString(pSelected->text(0)) == "W/O")
   {
-    menuItem = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewWorkOrders"));
+    menuItem = pMenu->addAction(tr("View Work Order..."), this, SLOT(sViewWorkOrder()));
+    menuItem->setEnabled(_privileges->check("ViewWorkOrders"));
   }
   else if (QString(pSelected->text(0)) == "S/O")
   {
-    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewCustomerOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
+    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewCustomerOrder()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
 
-    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditCustomerOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainSalesOrders"));
+    menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditCustomerOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
   }
   else if (QString(pSelected->text(0)) == "T/O")
   {
-    menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
+    menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()));
+    menuItem->setEnabled(_privileges->check("ViewTransferOrders"));
 
-    menuItem = pMenu->insertItem(tr("Edit Transfer Order..."), this, SLOT(sEditTransferOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainTransferOrders"));
+    menuItem = pMenu->addAction(tr("Edit Transfer Order..."), this, SLOT(sEditTransferOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainTransferOrders"));
   }
 }
 

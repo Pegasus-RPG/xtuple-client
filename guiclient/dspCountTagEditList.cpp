@@ -12,6 +12,7 @@
 
 #include <math.h>
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -146,46 +147,46 @@ void dspCountTagEditList::sPrint()
 
 void dspCountTagEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (((XTreeWidgetItem *)pSelected)->altId() == -1)
   {
-    menuItem = pMenu->insertItem("Enter Count Slip...", this, SLOT(sEnterCountSlip()), 0);
+    menuItem = pMenu->addAction("Enter Count Slip...", this, SLOT(sEnterCountSlip()));
     if (!_privileges->check("EnterCountSlips"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem("Count Slip Edit List...", this, SLOT(sCountSlipEditList()), 0);
+    menuItem = pMenu->addAction("Count Slip Edit List...", this, SLOT(sCountSlipEditList()));
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem("View Pending Inventory History...", this, SLOT(sViewInventoryHistory()), 0);
+    menuItem = pMenu->addAction("View Pending Inventory History...", this, SLOT(sViewInventoryHistory()));
     if (!_privileges->check("ViewInventoryHistory"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem("Edit Count Tag...", this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction("Edit Count Tag...", this, SLOT(sEdit()));
     if (!_privileges->check("EnterCountTags"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
     if (pSelected->text(5) != "")
     {
-      menuItem = pMenu->insertItem("Post Count Tag...", this, SLOT(sPost()), 0);
+      menuItem = pMenu->addAction("Post Count Tag...", this, SLOT(sPost()));
       if (!_privileges->check("PostCountTags"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
 
-    menuItem = pMenu->insertItem("Delete Count Tag", this, SLOT(sDelete()), 0);
+    menuItem = pMenu->addAction("Delete Count Tag", this, SLOT(sDelete()));
     if (!_privileges->check("DeleteCountTags"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else
   {
     if (pSelected->text(3) == tr("Unposted"))
     {
-      menuItem = pMenu->insertItem("Edit Count Slip...", this, SLOT(sEdit()), 0);
+      menuItem = pMenu->addAction("Edit Count Slip...", this, SLOT(sEdit()));
       if (!_privileges->check("EnterCountSlips"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
   }
 }

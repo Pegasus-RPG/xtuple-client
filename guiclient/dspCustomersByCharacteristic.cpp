@@ -10,6 +10,7 @@
 
 #include "dspCustomersByCharacteristic.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -91,30 +92,30 @@ void dspCustomersByCharacteristic::sPrint()
     report.reportError(this);
 }
 
-void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * /*pSelected*/)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Customer..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit Customer..."), this, SLOT(sEdit()));
   if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View Customer..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View Customer..."), this, SLOT(sView()));
 
   q.prepare( "SELECT charass_id FROM charass WHERE (charass_target_id=:cust_id)" );
   q.bindValue(":cust_id", _cust->id());
   q.exec();
   if (!(q.first()))
   {
-    menuItem = pMenu->insertItem(tr("New Characteristic..."), this, SLOT(sNewCharacteristic()), 0);
+    menuItem = pMenu->addAction(tr("New Characteristic..."), this, SLOT(sNewCharacteristic()));
     if (!_privileges->check("MaintainCustomerMasters"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else
   {
-    menuItem = pMenu->insertItem(tr("Edit Characteristic..."), this, SLOT(sEditCharacteristic()), 0);
+    menuItem = pMenu->addAction(tr("Edit Characteristic..."), this, SLOT(sEditCharacteristic()));
     if (!_privileges->check("MaintainCustomerMasters"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

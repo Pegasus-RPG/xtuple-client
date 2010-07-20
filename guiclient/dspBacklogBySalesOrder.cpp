@@ -10,6 +10,7 @@
 
 #include "dspBacklogBySalesOrder.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -66,9 +67,9 @@ void dspBacklogBySalesOrder::sPopulateMenu(QMenu *pMenu)
   if (_soitem->id() <= 0)
     return;
 
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
+  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
 }
 
 void dspBacklogBySalesOrder::sPrint()

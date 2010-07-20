@@ -10,10 +10,11 @@
 
 #include "dspAPOpenItemsByVendor.h"
 
-#include <QVariant>
-#include <QSqlError>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -21,19 +22,11 @@
 #include "mqlutil.h"
 #include "apOpenItem.h"
 
-/*
- *  Constructs a dspAPOpenItemsByVendor as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -78,18 +71,11 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
   _vendorGroup->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspAPOpenItemsByVendor::~dspAPOpenItemsByVendor()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspAPOpenItemsByVendor::languageChange()
 {
   retranslateUi(this);
@@ -131,13 +117,13 @@ void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *select
 {
   QString status(selected->text(1));
    
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   if (!_privileges->check("EditAPOpenItem"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
   XSqlQuery menu;
   menu.prepare("SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
   menu.bindValue(":apopen_id", _apopen->id());
@@ -145,21 +131,15 @@ void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *select
   if (menu.first())
   {
     if(menu.value("apopen_status").toString() == "O")
-	{
-    menuItem = pMenu->insertItem(tr("On Hold"), this, SLOT(sOnHold()), 0);
-	  if (_privileges->check("EditAPOpenItem"))
-	  	pMenu->setItemEnabled(menuItem, TRUE);
-	  else
-      pMenu->setItemEnabled(menuItem, FALSE);
+    {
+      menuItem = pMenu->addAction(tr("On Hold"), this, SLOT(sOnHold()));
+      menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
     }
     if(menu.value("apopen_status").toString() == "H") 
-	{
-    menuItem = pMenu->insertItem(tr("Open"), this, SLOT(sOpen()), 0);
-	  if (_privileges->check("EditAPOpenItem"))
-	  	pMenu->setItemEnabled(menuItem, TRUE);
-	  else
-	  pMenu->setItemEnabled(menuItem, FALSE);
-	}	
+    {
+      menuItem = pMenu->addAction(tr("Open"), this, SLOT(sOpen()));
+      menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
+    }	
   }
 }
 

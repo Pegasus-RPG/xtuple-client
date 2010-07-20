@@ -10,11 +10,9 @@
 
 #include "dspCashReceipts.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMessageBox>
-#include <QWorkspace>
 #include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -25,19 +23,11 @@
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a dspCashReceipts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -72,18 +62,11 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   sHandleButtons(false);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCashReceipts::~dspCashReceipts()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCashReceipts::languageChange()
 {
   retranslateUi(this);
@@ -180,42 +163,42 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
 
 void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
 {
-  int menuItem = -1;
+  QAction *menuItem = 0;
   
   if (_arapply->id() > -1)
   {
     // Cash Receipt              
     if (!_arapply->currentItem()->rawValue("posted").toBool() && !_arapply->currentItem()->rawValue("voided").toBool())
     {
-      menuItem = pMenu->insertItem(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
+      menuItem = pMenu->addAction(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()));
+      menuItem->setEnabled(_privileges->check("MaintainCashReceipts"));
     }
 
-    pMenu->insertItem(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
+    menuItem = pMenu->addAction(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()));
+    menuItem->setEnabled(_privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
 
     if (!_arapply->currentItem()->rawValue("voided").toBool())
     {      
       if (!_arapply->currentItem()->rawValue("posted").toBool())
       {   
-        menuItem = pMenu->insertItem(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()), 0);
-        pMenu->setItemEnabled(menuItem, _privileges->check("PostCashReceipts"));
+        menuItem = pMenu->addAction(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()));
+        menuItem->setEnabled(_privileges->check("PostCashReceipts"));
       }
       else if (!_arapply->altId())
       {
-        menuItem = pMenu->insertItem(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()), 0);
-        pMenu->setItemEnabled(menuItem, _privileges->check("ReversePostedCashReceipt"));
+        menuItem = pMenu->addAction(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()));
+        menuItem->setEnabled(_privileges->check("ReversePostedCashReceipt"));
       }
     }
 
     // Open Item
     if (_arapply->currentItem()->id("target") > -1 )
     {
-      pMenu->insertSeparator();
-      menuItem = pMenu->insertItem(tr("Edit Receivable Item..."), this, SLOT(sEditAropen()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("EditAROpenItem"));
-      menuItem = pMenu->insertItem(tr("View Receivable Item..."), this, SLOT(sViewAropen()), 0);
-      pMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItems") || _privileges->check("EditAROpenItem"));
+      pMenu->addSeparator();
+      menuItem = pMenu->addAction(tr("Edit Receivable Item..."), this, SLOT(sEditAropen()));
+      menuItem->setEnabled(_privileges->check("EditAROpenItem"));
+      menuItem = pMenu->addAction(tr("View Receivable Item..."), this, SLOT(sViewAropen()));
+      menuItem->setEnabled(_privileges->check("ViewAROpenItems") || _privileges->check("EditAROpenItem"));
     }
   }
 }
@@ -351,9 +334,9 @@ void dspCashReceipts::sReversePosted()
 
 void dspCashReceipts::sHandleButtons(bool valid)
 {      
-  int menuItem = -1;
-  QMenu * editMenu = new QMenu;
-  QMenu * viewMenu = new QMenu;   
+  QAction *menuItem = 0;
+  QMenu   *editMenu = new QMenu;
+  QMenu   *viewMenu = new QMenu;   
 
   _reverse->setVisible(!_applications->isChecked());
 
@@ -368,8 +351,8 @@ void dspCashReceipts::sHandleButtons(bool valid)
     }
     else if (!_arapply->currentItem()->rawValue("posted").toBool())
     {
-      editMenu->insertItem(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
-      editMenu->setItemEnabled(menuItem, _privileges->check("MaintainCashReceipts"));
+      menuItem = editMenu->addAction(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()));
+      menuItem->setEnabled(_privileges->check("MaintainCashReceipts"));
         
       _post->show();
       _reverse->setVisible(!_applications->isChecked());
@@ -388,20 +371,22 @@ void dspCashReceipts::sHandleButtons(bool valid)
         
     if (_arapply->currentItem()->id("target") > -1)
     {
-      editMenu->insertItem(tr("Receivable Item..."), this, SLOT(sEditAropen()), 0);
-      editMenu->setItemEnabled(menuItem, _privileges->check("EditAROpenItem"));
+      menuItem = editMenu->addAction(tr("Receivable Item..."), this, SLOT(sEditAropen()));
+      menuItem->setEnabled(_privileges->check("EditAROpenItem"));
     }
     
     // Handle View Button
     // Cash Receipt             
-    viewMenu->insertItem(tr("Cash Receipt..."), this, SLOT(sViewCashrcpt()), 0);
-    viewMenu->setItemEnabled(menuItem, _privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
+    menuItem = viewMenu->addAction(tr("Cash Receipt..."), this, SLOT(sViewCashrcpt()));
+    menuItem->setEnabled(_privileges->check("ViewCashReceipts") ||
+                         _privileges->check("MaintainCashReceipts"));
    
     // Open Item
     if (_arapply->currentItem()->id("target") > -1)
     {
-      viewMenu->insertItem(tr("Receivable Item..."), this, SLOT(sViewAropen()), 0);
-      viewMenu->setItemEnabled(menuItem, _privileges->check("ViewAROpenItems") || _privileges->check("EditAROpenItem"));
+      menuItem = viewMenu->addAction(tr("Receivable Item..."), this, SLOT(sViewAropen()));
+      menuItem->setEnabled(_privileges->check("ViewAROpenItems") ||
+                           _privileges->check("EditAROpenItem"));
     }   
     
     _edit->setMenu(editMenu);

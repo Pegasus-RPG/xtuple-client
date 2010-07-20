@@ -10,6 +10,7 @@
 
 #include "dspCheckRegister.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -201,13 +202,12 @@ void dspCheckRegister::sFillList()
 
 void dspCheckRegister::sPopulateMenu( QMenu * pMenu )
 {
-  int menuItem;
+  QAction *menuItem;
 
   if(_check->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Void Posted Check"), this, SLOT(sVoidPosted()), 0);
-    if(!_privileges->check("VoidPostedAPCheck"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Void Posted Check..."), this, SLOT(sVoidPosted()));
+    menuItem->setEnabled(_privileges->check("VoidPostedAPCheck"));
   }
 }
 

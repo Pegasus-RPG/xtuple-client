@@ -10,6 +10,7 @@
 
 #include "dspARApplications.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -169,29 +170,29 @@ void dspARApplications::sViewInvoice()
 
 void dspARApplications::sPopulateMenu(QMenu* pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_arapply->currentItem()->text(4) == "C")
   {
-    menuItem = pMenu->insertItem(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+    menuItem = pMenu->addAction(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
 	! _privileges->check("ViewARMemos"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 
   if (_arapply->currentItem()->text(7) == "D")
   {
-    menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()), 0);
+    menuItem = pMenu->addAction(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()));
     if (! _privileges->check("MaintainARMemos") &&
 	! _privileges->check("ViewARMemos"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
   else if (_arapply->currentItem()->text(7) == "I")
   {
-    menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()), 0);
+    menuItem = pMenu->addAction(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
 	! _privileges->check("ViewMiscInvoices"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

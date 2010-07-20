@@ -10,6 +10,7 @@
 
 #include "dspCountTagsByItem.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -100,7 +101,7 @@ void dspCountTagsByItem::sPrint()
 
 void dspCountTagsByItem::sPopulateMenu(QMenu *pMenu)
 {
-  pMenu->insertItem(tr("View Count Tag..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View Count Tag..."), this, SLOT(sView()));
 }
 
 void dspCountTagsByItem::sView()
