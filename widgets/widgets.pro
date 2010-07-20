@@ -149,7 +149,6 @@ SOURCES += widgets.cpp \
     soCluster.cpp \
     salesOrderList.cpp \
     shiptoCluster.cpp \
-    shipToList.cpp \
     transferOrderList.cpp \
     calendarTools.cpp \
     parametergroup.cpp \
@@ -236,7 +235,6 @@ HEADERS += widgets.h \
     socluster.h \
     salesOrderList.h \
     shiptocluster.h \
-    shipToList.h \
     transferOrderList.h \
     calendarTools.h \
     parametergroup.h \

@@ -11,243 +11,253 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
 #include <parameter.h>
 #include <xsqlquery.h>
 
-#include "shipToList.h"
 #include "shiptocluster.h"
 
-//   ShiptoLineEdit - A Ship To # validating XLineEdit
-ShiptoEdit::ShiptoEdit(QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+ShiptoEdit::ShiptoEdit(QWidget *pParent, const char *pName) :
+   VirtualClusterLineEdit(pParent, "shiptoinfo", "shipto_id", "shipto_num", "shipto_name", "addr_line1","shipto_active" , pName)
 {
+  setTitles(tr("Ship To Address"), tr("Ship To Addresses"));
+  setUiName("shipTo");
+  setEditPriv("MaintainShiptos");
+  setViewPriv("ViewShiptos");
+  setNewPriv("MaintainShiptos");
+
   _custid = -1;
-
-  connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
-}
-
-void ShiptoEdit::sParse()
-{
-  if (!_parsed)
-  {
-    _parsed = TRUE;
-
-    if (text().length() == 0)
-      setId(-1);
-
-    XSqlQuery shipto;
-    shipto.prepare( "SELECT shipto_id "
-                    "  FROM shipto "
-                    " WHERE ( (shipto_cust_id=:cust_id)"
-                    "   AND   (UPPER(shipto_num)=UPPER(:shipto_num)) );" );
-    shipto.bindValue(":cust_id", _custid);
-    shipto.bindValue(":shipto_num", text());
-    shipto.exec();
-    if (shipto.first())
-      setId(shipto.value("shipto_id").toInt());
-    else
-      clear();
-  }
+  _query = "SELECT shipto_id AS id, shipto_num AS number, shipto_name AS name, "
+           "  addr_line1 AS description, "
+           "  (addr_city || ', ' || addr_state || '  ' || addr_postalcode) AS csv,"
+           "  shipto_active AS active "
+           "FROM shiptoinfo "
+           "  LEFT OUTER JOIN addr ON (shipto_addr_id=addr_id) "
+           "WHERE (true) ";
+  _extraClause = " (false) ";
 }
 
 void ShiptoEdit::setId(int pId)
 {
+  VirtualClusterLineEdit::setId(pId);
   if (pId != -1)
   {
-    XSqlQuery shipto( QString( "SELECT shipto_num, shipto_name, shipto_address1, shipto_cust_id "
-                               "FROM shipto "
-                               "WHERE (shipto_id=%1);" )
-                      .arg(pId) );
-    if (shipto.first())
-    {
-      _id = pId;
-      _valid = TRUE;
-
-      setText(shipto.value("shipto_num").toString());
-
-      if (shipto.value("shipto_cust_id").toInt() != _custid)
-      {
-        _custid = shipto.value("shipto_cust_id").toInt();
-        emit newCustid(_id);
-      }
-
-      emit newId(_id);
-      emit valid(_valid);
-      emit nameChanged(shipto.value("shipto_name").toString());
-      emit address1Changed(shipto.value("shipto_address1").toString());
-    }
+      emit nameChanged(_name);
+      emit address1Changed(_description);
   }
   else
   {
-    clear();
-
     _custid = -1;
+    _extraClause = " (false) ";
     emit newCustid(_custid);
   }
 }
 
 void ShiptoEdit::setCustid(int pCustid)
 {
-  if (pCustid != _custid)
+  if (pCustid == _custid)
+    return;
+
+  setId(-1);
+  _custid = pCustid;
+
+  if (_custid != -1)
+    _extraClause = QString(" (shipto_cust_id=%1) AND (shipto_active) ").arg(_custid);
+  else
+    _extraClause = " (false) ";
+
+  emit newCustid(pCustid);
+  emit disableList(_custid == -1);
+}
+
+void ShiptoEdit::sNew()
+{
+  if (canOpen())
   {
-    clear();
+    if (!_x_privileges->check(_newPriv))
+      return;
 
-    _custid = pCustid;
-    emit newCustid(pCustid);
+    ParameterList params;
+    params.append("mode", "new");
+    params.append("cust_id", _custid);
 
-    if (_custid == -1)
+    QWidget* w = 0;
+    if (parentWidget()->window())
     {
-      setEnabled(FALSE);
-      emit disableList(TRUE);
+      if (parentWidget()->window()->isModal())
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+      else
+        w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
     }
-    else
+
+    if (w->inherits("QDialog"))
     {
-      setEnabled(TRUE);
-      emit disableList(FALSE);
+      QDialog* newdlg = qobject_cast<QDialog*>(w);
+      int id = newdlg->exec();
+      if (id != QDialog::Rejected)
+      {
+        silentSetId(id);
+        emit newId(_id);
+        emit valid(_id != -1);
+      }
     }
   }
 }
 
-void ShiptoEdit::clear()
+void ShiptoEdit::sList()
 {
-  _id = -1;
-  _valid = FALSE;
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 
-  setText("");
+  shipToList* newdlg = listFactory();
+  if (newdlg)
+  {
+    ParameterList params;
+    params.append("cust_id", _custid);
+    newdlg->set(params);
 
-  emit nameChanged("");
-  emit address1Changed("");
-  emit newId(_id);
-  emit valid(_valid);
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sList() not yet defined")
+                          .arg(metaObject()->className()));
+
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
-
-ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent)
+void ShiptoEdit::sSearch()
 {
-  setObjectName(name);
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 
-  QHBoxLayout *_layoutMain         = new QHBoxLayout(this);
-  QVBoxLayout *_layoutLit          = new QVBoxLayout(0);
-  QVBoxLayout *_layoutData         = new QVBoxLayout(0);
-  QHBoxLayout *_layoutShipto       = new QHBoxLayout(0);
-  QHBoxLayout *_layoutShiptoNumber = new QHBoxLayout(0);
+  shipToSearch* newdlg = searchFactory();
+  if (newdlg)
+  {
+    ParameterList params;
+    params.append("cust_id", _custid);
+    newdlg->set(params);
+    newdlg->setSearchText(text());
+    int id = newdlg->exec();
+    setId(id);
+  }
+  else
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          tr("%1::sSearch() not yet defined")
+                          .arg(metaObject()->className()));
 
-  _layoutMain->setContentsMargins(0, 0, 0, 0);
-  _layoutLit->setContentsMargins(0, 0, 0, 0);
-  _layoutData->setContentsMargins(0, 0, 0, 0);
-  _layoutShipto->setContentsMargins(0, 0, 0, 0);
-  _layoutShiptoNumber->setContentsMargins(0, 0, 0, 0);
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+}
 
-  _layoutMain->setSpacing(5);
-  _layoutLit->setSpacing(0);
-  _layoutData->setSpacing(0);
-  _layoutShipto->setSpacing(0);
-  _layoutShiptoNumber->setSpacing(7);
+shipToList* ShiptoEdit::listFactory()
+{
+  return new shipToList(this);
+}
 
-  QLabel *_shiptoNumberLit = new QLabel(tr("Ship-To #:"), this);
-  _shiptoNumberLit->setObjectName("_shiptoNumberLit");
-  _shiptoNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  _shiptoNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  QSize size = _shiptoNumberLit->minimumSize();
-  size.setHeight(28);
-  _shiptoNumberLit->setMinimumSize(size);
-  _layoutLit->addWidget( _shiptoNumberLit );
+shipToSearch* ShiptoEdit::searchFactory()
+{
+  return new shipToSearch(this);
+}
 
-  QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  _layoutLit->addItem( spacer );
-  _layoutMain->addLayout( _layoutLit );
+///////////////////////////////
 
-  _shiptoNumber = new ShiptoEdit( this, "_shiptoNumber" );
-  _shiptoNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _layoutShiptoNumber->addWidget( _shiptoNumber );
-
-  _list = new QPushButton(tr( "..." ), this);
-  _list->setObjectName("_list");
-  _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
-#endif
-  _list->setFocusPolicy(Qt::NoFocus);
-  _layoutShiptoNumber->addWidget( _list );
-  _layoutShipto->addLayout( _layoutShiptoNumber );
-
-  QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  _layoutShipto->addItem( spacer_2 );
-  _layoutData->addLayout( _layoutShipto );
-
-  _shiptoName = new QLabel(this);
-  _shiptoName->setObjectName("_shiptoName");
-  _shiptoName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _shiptoName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-  _layoutData->addWidget( _shiptoName );
-
-  _shiptoAddress1 = new QLabel( this);
-  _shiptoAddress1->setObjectName("_shiptoAddress1" );
-  _shiptoAddress1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _shiptoAddress1->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-  _layoutData->addWidget( _shiptoAddress1 );
-  _layoutMain->addLayout( _layoutData );
-
-//  Make some internal connections
-  connect(_list,  SIGNAL(clicked()),  this, SLOT(sList()));
-  connect(_shiptoNumber, SIGNAL(requestList()), this, SLOT(sList()));
-  connect(_shiptoNumber, SIGNAL(nameChanged(const QString &)), _shiptoName, SLOT(setText(const QString &)));
-  connect(_shiptoNumber, SIGNAL(address1Changed(const QString &)), _shiptoAddress1, SLOT(setText(const QString &)));
-  connect(_shiptoNumber, SIGNAL(disableList(bool)), _list, SLOT(setDisabled(bool)));
-
-  connect(_shiptoNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
-  connect(_shiptoNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
-  connect(_shiptoNumber, SIGNAL(newCustid(int)), this, SIGNAL(newCustid(int)));
-
-  setFocusProxy(_shiptoNumber);
+ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *pName) :
+    VirtualCluster(pParent, pName)
+{
+  addNumberWidget(new ShiptoEdit(this, pName));
+  setLabel(tr("Ship To#"));
+  setNameVisible(true);
+  setDescriptionVisible(true);
 
   setCustid(-1);
 }
 
-void ShiptoCluster::setId(int pId)
-{
-  _shiptoNumber->setId(pId);
-}
-
 void ShiptoCluster::setCustid(int pId)
 {
-  _shiptoNumber->setCustid(pId);
+  static_cast<ShiptoEdit*>(_number)->setCustid(pId);
 }
 
-void ShiptoCluster::setReadOnly(bool pReadOnly)
+///////////////////////////////////////////////////////////////////////////////
+
+shipToList::shipToList(QWidget* pParent, Qt::WFlags pFlags) :
+    VirtualList(pParent, pFlags)
 {
-  if (pReadOnly)
-  {
-    _shiptoNumber->setEnabled(FALSE);
-    _list->hide();
-  }
-  else
-  {
-    _shiptoNumber->setEnabled(TRUE);
-    _list->show();
-  }
+  setMinimumWidth(600);
+
+  QLabel* custNumberLit = new QLabel(tr("Customer #:"), this);
+  QLabel* custNameLit = new QLabel(tr("Name:"), this);
+  QLabel* custAddrLit = new QLabel(tr("Address:"), this);
+  _custNumber = new QLabel(this);
+  _custName = new QLabel(this);
+  _custAddr = new QLabel(this);
+  QGridLayout* grid = new QGridLayout(this);
+  grid->addWidget(custNumberLit,0,0,1,1,Qt::AlignRight);
+  grid->addWidget(custNameLit,1,0,1,1,Qt::AlignRight);
+  grid->addWidget(custAddrLit,2,0,1,1,Qt::AlignRight);
+  grid->addWidget(_custNumber,0,1,1,1,Qt::AlignLeft);
+  grid->addWidget(_custName,1,1,1,1,Qt::AlignLeft);
+  grid->addWidget(_custAddr,2,1,1,1,Qt::AlignLeft);
+  QVBoxLayout* searchLayout = findChild<QVBoxLayout*>("searchLyt");
+  searchLayout->insertLayout(0,grid);
+
+  _listTab->setColumnCount(2);
+  _listTab->addColumn(tr("Address"),  75, Qt::AlignLeft,  true, "description");
+  _listTab->addColumn(tr("City, State, Zip"),      100, Qt::AlignLeft,  true, "csv");
 }
 
-void ShiptoCluster::sList()
+void shipToList::set(const ParameterList &pParams)
 {
-  ParameterList params;
-  params.append("cust_id", _shiptoNumber->_custid);
-  params.append("shipto_id", _shiptoNumber->_id);
+  QVariant param;
+  bool     valid;
 
-  shipToList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  _shiptoNumber->setId(id);
-
-  if (id != -1)
+  param = pParams.value("cust_id", &valid);
+  if (valid)
   {
-    _shiptoNumber->setFocus();
-    focusNextPrevChild(TRUE);
+     XSqlQuery cust;
+     cust.prepare("SELECT cust_number, cust_name, cust_address1 "
+                  "FROM cust "
+                  "WHERE (cust_id=:cust_id)");
+     cust.bindValue(":cust_id", param.toInt());
+     cust.exec();
+     if (cust.first())
+     {
+       _custNumber->setText(cust.value("cust_number").toString());
+       _custName->setText(cust.value("cust_name").toString());
+       _custAddr->setText(cust.value("cust_address1").toString());
+     }
   }
 }
+
+///////////////////////////
+
+shipToSearch::shipToSearch(QWidget* pParent, Qt::WindowFlags pFlags)
+    : VirtualSearch(pParent, pFlags)
+{
+  setMinimumWidth(600);
+
+  _custid = -1;
+
+  _listTab->setColumnCount(2);
+  _listTab->addColumn(tr("Address"),  75, Qt::AlignLeft,  true, "description");
+  _listTab->addColumn(tr("City, State, Zip"),      100, Qt::AlignLeft,  true, "csv");
+}
+
+void shipToSearch::set(ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("cust_id", &valid);
+  if (valid)
+    _custid = param.toInt();
+
+}
+
+
 

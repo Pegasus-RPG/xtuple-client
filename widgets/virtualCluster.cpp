@@ -517,7 +517,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
   numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                (_hasActive ? _activeClause : "") +
-               QString("ORDER BY %1 LIMIT 10;").arg(_numColName));
+               QString(" ORDER BY %1 LIMIT 10;").arg(_numColName));
   numQ.bindValue(":number", "^" + stripped);
   numQ.exec();
   if (numQ.first())
@@ -1052,12 +1052,16 @@ void VirtualList::sSelect()
 
 void VirtualList::sSearch(const QString& pTarget)
 {
-  QList<XTreeWidgetItem*> matches = _listTab->findItems(pTarget, Qt::MatchStartsWith);
-
-  if (matches.size() > 0)
+  for (int i; i < _listTab->columnCount(); i++)
   {
-    _listTab->setCurrentItem(matches[0]);
-    _listTab->scrollToItem(matches[0]);
+    QList<XTreeWidgetItem*> matches = _listTab->findItems(pTarget, Qt::MatchStartsWith, i);
+
+    if (matches.size() > 0)
+    {
+      _listTab->setCurrentItem(matches[0]);
+      _listTab->scrollToItem(matches[0]);
+      return;
+    }
   }
 }
 

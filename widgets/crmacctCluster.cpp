@@ -329,26 +329,6 @@ void CRMAcctList::sFillList()
   }
 }
 
-void CRMAcctList::sSearch(const QString& pTarget)
-{
-  XTreeWidgetItem *target = 0;
-
-  for (int i = 0; i < _listTab->topLevelItemCount(); i++)
-  {
-    target = _listTab->topLevelItem(i);
-    if (target == NULL ||
-	target->text(0).startsWith(pTarget, Qt::CaseInsensitive) ||
-	target->text(1).startsWith(pTarget, Qt::CaseInsensitive))
-      break;
-  }
-
-  if (target)
-  {
-    _listTab->setCurrentItem(target);
-    _listTab->scrollToItem(target);
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 
 CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
