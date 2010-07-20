@@ -10,6 +10,10 @@
 
 #include "dspSubstituteAvailabilityByItem.h"
 
+#include <QAction>
+#include <QAction>
+#include <QAction>
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 #include <QMessageBox>
@@ -140,8 +144,8 @@ void dspSubstituteAvailabilityByItem::sViewOrders()
 
 void dspSubstituteAvailabilityByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
 {
-  menu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
-  menu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
+  menu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
+  menu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
 }
 
 bool dspSubstituteAvailabilityByItem::setParams(ParameterList &params)

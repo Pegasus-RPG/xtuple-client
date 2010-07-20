@@ -10,6 +10,7 @@
 
 #include "dspInventoryAvailabilityBySourceVendor.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -145,45 +146,45 @@ bool dspInventoryAvailabilityBySourceVendor::setParams(ParameterList &params)
 void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = menu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
+  menuItem = menu->addAction(tr("View Inventory History..."), this, SLOT(sViewHistory()));
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menuItem = menu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
+  menuItem = menu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
   if (item->rawValue("allocated").toDouble() == 0.0)
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
+  menuItem = menu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
   if (item->rawValue("ordered").toDouble() == 0.0)
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
+  menuItem = menu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menuItem = menu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
+  menuItem = menu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
   if (!_privileges->check("MaintainPurchaseRequests"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
+  menuItem = menu->addAction(tr("Create P/O..."), this, SLOT(sCreatePO()));
   if (!_privileges->check("MaintainPurchaseOrders"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menu->insertItem(tr("View Substitute Availability..."), this, SLOT(sViewSubstituteAvailability()), 0);
+  menu->addAction(tr("View Substitute Availability..."), this, SLOT(sViewSubstituteAvailability()));
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menuItem = menu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
+  menuItem = menu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
   if (!_privileges->check("IssueCountTags"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
+  menuItem = menu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
   if (!_privileges->check("EnterMiscCounts"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 }
 
 void dspInventoryAvailabilityBySourceVendor::sViewHistory()

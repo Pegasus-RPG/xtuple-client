@@ -66,7 +66,7 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
   {
     for (int cursor = 0; cursor < _costType->count(); cursor++)
     {
-      if (_costType->text(cursor) == param.toString())
+      if (_costType->itemText(cursor) == param.toString())
       {
         _costType->setCurrentIndex(cursor);
         break;

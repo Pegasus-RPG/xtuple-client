@@ -10,6 +10,10 @@
 
 #include "dspItemCostsByClassCode.h"
 
+#include <QAction>
+#include <QAction>
+#include <QAction>
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 
@@ -88,19 +92,17 @@ bool dspItemCostsByClassCode::setParams(ParameterList &params)
 
 void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  pMenu->insertItem(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()), 0);
-  pMenu->insertItem(tr("View Item Costing Summary..."), this, SLOT(sViewItemCostingSummary()), 0);
-  pMenu->insertSeparator();
+  pMenu->addAction(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()));
+  pMenu->addAction(tr("View Item Costing Summary..."), this, SLOT(sViewItemCostingSummary()));
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Update Actual Costs..."), this, SLOT(sUpdateCosts()), 0);
-  if (!_privileges->check("UpdateActualCosts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Update Actual Costs..."), this, SLOT(sUpdateCosts()));;
+  menuItem->setEnabled(_privileges->check("UpdateActualCosts"));
 
-  menuItem = pMenu->insertItem(tr("Post Actual Costs..."), this, SLOT(sPostCosts()), 0);
-  if (!_privileges->check("PostActualCosts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Post Actual Costs..."), this, SLOT(sPostCosts()));;
+  menuItem->setEnabled(_privileges->check("PostActualCosts"));
 }
 
 void dspItemCostsByClassCode::sMaintainItemCosts()

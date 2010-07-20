@@ -10,6 +10,7 @@
 
 #include "dspItemsByCharacteristic.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 
@@ -79,23 +80,23 @@ bool dspItemsByCharacteristic::setParams(ParameterList &params)
 void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * xselected = static_cast<XTreeWidgetItem*>(selected);
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Item Master..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit Item Master..."), this, SLOT(sEdit()));;
   if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View Item Master..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View Item Master..."), this, SLOT(sView()));;
 
   if (xselected && (xselected->rawValue("type").toString() == "M"))
   {
-    menuItem = pMenu->insertItem(tr("Edit Bill of Material..."), this, SLOT(sEditBOM()), 0);
+    menuItem = pMenu->addAction(tr("Edit Bill of Material..."), this, SLOT(sEditBOM()));;
     if (!_privileges->check("MaintainBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View Bill of Material..."), this, SLOT(sViewBOM()), 0);
+    menuItem = pMenu->addAction(tr("View Bill of Material..."), this, SLOT(sViewBOM()));;
     if ( (!_privileges->check("MaintainBOMs")) && (!_privileges->check("ViewBOMs")) )
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

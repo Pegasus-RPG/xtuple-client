@@ -10,6 +10,7 @@
 
 #include "dspAPApplications.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -167,34 +168,31 @@ void dspAPApplications::sViewVoucher()
 
 void dspAPApplications::sPopulateMenu(QMenu* pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_apapply->currentItem()->rawValue("apapply_source_doctype") == "C")
   {
-    menuItem = pMenu->insertItem(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
-    pMenu->setItemEnabled(menuItem,
-                          _privileges->check("MaintainAPMemos") ||
-                          _privileges->check("ViewAPMemos"));
+    menuItem = pMenu->addAction(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()));
+    menuItem->setEnabled(_privileges->check("MaintainAPMemos") ||
+                         _privileges->check("ViewAPMemos"));
   }
   else if (_apapply->currentItem()->rawValue("apapply_source_doctype") == "K")
   {
-    menuItem = pMenu->insertItem(tr("View Source Check..."), this, SLOT(sViewCheck()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainPayments"));
+    menuItem = pMenu->addAction(tr("View Source Check..."), this, SLOT(sViewCheck()));
+    menuItem->setEnabled(_privileges->check("MaintainPayments"));
   }
 
   if (_apapply->currentItem()->rawValue("apapply_target_doctype") == "D")
   {
-    menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()), 0);
-    pMenu->setItemEnabled(menuItem,
-                          _privileges->check("MaintainAPMemos") ||
-                          _privileges->check("ViewAPMemos"));
+    menuItem = pMenu->addAction(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()));
+    menuItem->setEnabled(_privileges->check("MaintainAPMemos") ||
+                         _privileges->check("ViewAPMemos"));
   }
   else if (_apapply->currentItem()->rawValue("apapply_target_doctype") == "V")
   {
-    menuItem = pMenu->insertItem(tr("View Apply-To Voucher..."), this, SLOT(sViewVoucher()), 0);
-    pMenu->setItemEnabled(menuItem,
-                          _privileges->check("MaintainVouchers") ||
-                          _privileges->check("ViewVouchers"));
+    menuItem = pMenu->addAction(tr("View Apply-To Voucher..."), this, SLOT(sViewVoucher()));
+    menuItem->setEnabled(_privileges->check("MaintainVouchers") ||
+                         _privileges->check("ViewVouchers"));
   }
 }
 

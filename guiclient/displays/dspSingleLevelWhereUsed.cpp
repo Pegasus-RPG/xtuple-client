@@ -10,9 +10,10 @@
 
 #include "dspSingleLevelWhereUsed.h"
 
+#include <QAction>
 #include <QMenu>
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
 
 #include "bom.h"
 #include "dspInventoryHistoryByItem.h"
@@ -84,19 +85,19 @@ enum SetResponse dspSingleLevelWhereUsed::set(const ParameterList &pParams)
 
 void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = menu->insertItem(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()), 0);
+  menuItem = menu->addAction(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()));
   if (!_privileges->check("MaintainBOMs"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("Edit Item Master..."), this, SLOT(sEditItem()), 0);
+  menuItem = menu->addAction(tr("Edit Item Master..."), this, SLOT(sEditItem()));
   if (!_privileges->check("MaintainItemMasters"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 
-  menuItem = menu->insertItem(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()), 0);
+  menuItem = menu->addAction(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()));
   if (!_privileges->check("ViewInventoryHistory"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 }
 
 void dspSingleLevelWhereUsed::sEditBOM()

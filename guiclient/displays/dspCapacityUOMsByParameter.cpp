@@ -10,6 +10,7 @@
 
 #include "dspCapacityUOMsByParameter.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 
@@ -38,11 +39,11 @@ bool dspCapacityUOMsByParameter::setParams(ParameterList &params)
 
 void dspCapacityUOMsByParameter::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
+  menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));;
   if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspCapacityUOMsByParameter::sEditItem()

@@ -10,6 +10,7 @@
 
 #include "dspInventoryAvailabilityByWorkOrder.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -115,25 +116,25 @@ bool dspInventoryAvailabilityByWorkOrder::setParams(ParameterList &params)
 void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
       XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
-      int menuItem;
+      QAction *menuItem;
 
-      menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
+      menuItem = pMenu->addAction(tr("View Inventory History..."), this, SLOT(sViewHistory()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-      menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
+      menuItem = pMenu->addAction("View Allocations...", this, SLOT(sViewAllocations()));
       if (item->rawValue("woinvav_allocated").toDouble() == 0.0)
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
-      menuItem = pMenu->insertItem("View Orders...", this, SLOT(sViewOrders()), 0);
+      menuItem = pMenu->addAction("View Orders...", this, SLOT(sViewOrders()));
       if (item->rawValue("woinvav_ordered").toDouble() == 0.0)
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
-      menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);
+      menuItem = pMenu->addAction("Running Availability...", this, SLOT(sRunningAvailability()));
 
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
       
 	  q.prepare( "SELECT itemsite_posupply as result "
 				 "FROM itemsite "
@@ -144,15 +145,15 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 	  {
 		  if (q.value("result").toBool())
 		  {
-			menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
+			menuItem = pMenu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
 			if (!_privileges->check("MaintainPurchaseRequests"))
-			  pMenu->setItemEnabled(menuItem, FALSE);
+			  menuItem->setEnabled(false);
 
-			menuItem = pMenu->insertItem("Create P/O...", this, SLOT(sCreatePO()), 0);
+			menuItem = pMenu->addAction("Create P/O...", this, SLOT(sCreatePO()));
 			if (!_privileges->check("MaintainPurchaseOrders"))
-			  pMenu->setItemEnabled(menuItem, FALSE);
+			  menuItem->setEnabled(false);
 
-			pMenu->insertSeparator();
+			pMenu->addSeparator();
 		  }
 	  }
 	  q.prepare( "SELECT itemsite_wosupply as result "
@@ -166,30 +167,30 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 		  {
 			if(list()->altId() != -1)
 			{
-			  menuItem = pMenu->insertItem("Create W/O...", this, SLOT(sCreateWO()), 0);
+			  menuItem = pMenu->addAction("Create W/O...", this, SLOT(sCreateWO()));
 			  if (!_privileges->check("MaintainWorkOrders"))
-				pMenu->setItemEnabled(menuItem, FALSE);
+				menuItem->setEnabled(false);
 			}
-			menuItem = pMenu->insertItem(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()), 0);
+			menuItem = pMenu->addAction(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()));
 			if (!_privileges->check("PostMiscProduction"))
-			  pMenu->setItemEnabled(menuItem, FALSE);
+			  menuItem->setEnabled(false);
 
-			pMenu->insertSeparator();
+			pMenu->addSeparator();
 		  }
 	  }
 //      }
 
-      menuItem = pMenu->insertItem("View Substitute Availability...", this, SLOT(sViewSubstituteAvailability()), 0);
+      menuItem = pMenu->addAction("View Substitute Availability...", this, SLOT(sViewSubstituteAvailability()));
 
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-      menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
+      menuItem = pMenu->addAction("Issue Count Tag...", this, SLOT(sIssueCountTag()));
       if (!_privileges->check("IssueCountTags"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
-      menuItem = pMenu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
+      menuItem = pMenu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
       if (!_privileges->check("EnterMiscCounts"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
 }
 
@@ -227,7 +228,7 @@ void dspInventoryAvailabilityByWorkOrder::sViewOrders()
 {
   q.prepare( "SELECT womatl_duedate "
              "FROM womatl "
-             "WHERE (womatl_itemsite_id=:womatl_id);" );
+             "WHERE (womatl_itemsite_id=:womatl_itemsite_id);" );
   q.bindValue(":womatl_itemsite_id", list()->id());
   q.exec();
   if (q.first())

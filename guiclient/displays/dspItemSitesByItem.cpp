@@ -10,6 +10,7 @@
 
 #include "dspItemSitesByItem.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 #include <QMessageBox>
@@ -55,34 +56,30 @@ void dspItemSitesByItem::languageChange()
 
 void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = menu->insertItem(tr("View Item Site..."), this, SLOT(sViewItemsite()), 0);
-  if ((!_privileges->check("MaintainItemSites")) && (!_privileges->check("ViewItemSites")))
-    menu->setItemEnabled(menuItem, FALSE);
+  menuItem = menu->addAction(tr("View Item Site..."), this, SLOT(sViewItemsite()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites") || _privileges->check("ViewItemSites"));
 
-  menuItem = menu->insertItem(tr("Edit Item Site..."), this, SLOT(sEditItemsite()), 0);
-  if (!_privileges->check("MaintainItemSites"))
-    menu->setItemEnabled(menuItem, FALSE);
+  menuItem = menu->addAction(tr("Edit Item Site..."), this, SLOT(sEditItemsite()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites"));
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menuItem = menu->insertItem(tr("View Inventory Availability..."), this, SLOT(sViewInventoryAvailability()), 0);
-  if (!_privileges->check("ViewInventoryAvailability"))
-    menu->setItemEnabled(menuItem, FALSE);
+  menuItem = menu->addAction(tr("View Inventory Availability..."), this, SLOT(sViewInventoryAvailability()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
   if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
-    menuItem = menu->insertItem(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewLocationLotSerialDetail()), 0);
-    if (!_privileges->check("ViewQOH"))
-      menu->setItemEnabled(menuItem, FALSE);
+    menuItem = menu->addAction(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewLocationLotSerialDetail()));
+    menuItem->setEnabled(_privileges->check("ViewQOH"));
   }
 
-  menu->insertSeparator();
+  menu->addSeparator();
 
-  menuItem = menu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
+  menuItem = menu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
   if (!_privileges->check("IssueCountTags"))
-    menu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(FALSE);
 }
 
 void dspItemSitesByItem::sViewItemsite()

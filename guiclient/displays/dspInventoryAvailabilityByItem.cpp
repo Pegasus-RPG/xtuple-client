@@ -10,6 +10,7 @@
 
 #include "dspInventoryAvailabilityByItem.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -174,58 +175,58 @@ bool dspInventoryAvailabilityByItem::setParams(ParameterList &params)
 void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
+  menuItem = pMenu->addAction(tr("View Inventory History..."), this, SLOT(sViewHistory()));
   if (!_privileges->check("ViewInventoryHistory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
+  menuItem = pMenu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
   if (item->rawValue("allocated").toDouble() == 0.0)
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
+  menuItem = pMenu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
   if (item->rawValue("ordered").toDouble() == 0.0)
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
+  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
   if (((XTreeWidgetItem *)selected)->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
+    menuItem = pMenu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
     if (!_privileges->check("MaintainPurchaseRequests"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
+    menuItem = pMenu->addAction(tr("Create P/O..."), this, SLOT(sCreatePO()));
     if (!_privileges->check("MaintainPurchaseOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
   }
   else if (((XTreeWidgetItem *)selected)->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
+    menuItem = pMenu->addAction(tr("Create W/O..."), this, SLOT(sCreateWO()));
     if (!_privileges->check("MaintainWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
   }
 
-  menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
+  menuItem = pMenu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
   if (!_privileges->check("IssueCountTags"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
+  menuItem = pMenu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
   if (!_privileges->check("EnterMiscCounts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  pMenu->insertItem(tr("View Substitute Availability..."), this, SLOT(sViewSubstituteAvailability()), 0);
+  pMenu->addAction(tr("View Substitute Availability..."), this, SLOT(sViewSubstituteAvailability()));
 
 }
 

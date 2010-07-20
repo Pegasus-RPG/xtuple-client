@@ -10,6 +10,7 @@
 
 #include "dspInventoryLocator.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
@@ -113,17 +114,17 @@ void dspInventoryLocator::sReassignLotSerial()
 
 void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (((XTreeWidgetItem *)pSelected)->altId() == -1)
   {
-    menuItem = pMenu->insertItem(tr("Relocate..."), this, SLOT(sRelocateInventory()), 0);
+    menuItem = pMenu->addAction(tr("Relocate..."), this, SLOT(sRelocateInventory()));;
     if (!_privileges->check("RelocateInventory"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Reassign Lot/Serial #..."), this, SLOT(sReassignLotSerial()), 0);
+    menuItem = pMenu->addAction(tr("Reassign Lot/Serial #..."), this, SLOT(sReassignLotSerial()));;
     if (!_privileges->check("ReassignLotSerial"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

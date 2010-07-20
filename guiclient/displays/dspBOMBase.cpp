@@ -105,13 +105,13 @@ bool dspBOMBase::setParams(ParameterList &params)
 
 void dspBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));;
   if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));;
 }
 
 void dspBOMBase::sEdit()

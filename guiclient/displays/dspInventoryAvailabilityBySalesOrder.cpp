@@ -136,20 +136,20 @@ bool dspInventoryAvailabilityBySalesOrder::setParams(ParameterList &params)
 void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
-  int menuItem;
+  QAction *menuItem;
   
   if (list()->altId() != -1)
   {
-    menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
+    menuItem = pMenu->addAction("View Allocations...", this, SLOT(sViewAllocations()));
     if (item->rawValue("allocated").toDouble() == 0.0)
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
     
-    menuItem = pMenu->insertItem("View Orders...", this, SLOT(sViewOrders()), 0);
+    menuItem = pMenu->addAction("View Orders...", this, SLOT(sViewOrders()));
     if (item->rawValue("ordered").toDouble() == 0.0)
-     pMenu->setItemEnabled(menuItem, FALSE);
+     menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);
-    menuItem = pMenu->insertItem("Substitute Availability...", this, SLOT(sViewSubstituteAvailability()), 0);
+    menuItem = pMenu->addAction("Running Availability...", this, SLOT(sRunningAvailability()));
+    menuItem = pMenu->addAction("Substitute Availability...", this, SLOT(sViewSubstituteAvailability()));
 
     q.prepare ("SELECT item_type "
              "FROM itemsite,item "
@@ -162,40 +162,39 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
     {
       if (q.value("item_type") == "P")
       {
-        pMenu->insertSeparator();
-        menuItem = pMenu->insertItem("Issue Purchase Order...", this, SLOT(sIssuePO()), 0);
+        pMenu->addSeparator();
+        menuItem = pMenu->addAction("Issue Purchase Order...", this, SLOT(sIssuePO()));
         if (!_privileges->check("MaintainPurchaseOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       else if (q.value("item_type") == "M")
       {
-        pMenu->insertSeparator();
-        menuItem = pMenu->insertItem("Issue Work Order...", this, SLOT(sIssueWO()), 0);
+        pMenu->addSeparator();
+        menuItem = pMenu->addAction("Issue Work Order...", this, SLOT(sIssueWO()));
         if (!_privileges->check("MaintainWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
     }
 
     if(_metrics->boolean("EnableSOReservations"))
     {
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-      pMenu->insertItem(tr("Show Reservations..."), this, SLOT(sShowReservations()));
-      pMenu->insertSeparator();
+      pMenu->addAction(tr("Show Reservations..."), this, SLOT(sShowReservations()));
+      pMenu->addSeparator();
 
-      int menuid;
-      menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
-      menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
-      menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Reserve Stock..."), this, SLOT(sReserveStock()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
     }
 
-    pMenu->insertSeparator();
-    menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction("Issue Count Tag...", this, SLOT(sIssueCountTag()));
     if (!_privileges->check("IssueCountTags"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

@@ -10,6 +10,10 @@
 
 #include "dspCostedBOMBase.h"
 
+#include <QAction>
+#include <QAction>
+#include <QAction>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
@@ -113,10 +117,10 @@ bool dspCostedBOMBase::setParams(ParameterList &params)
 void dspCostedBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
-    pMenu->insertItem(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()), 0);
+    pMenu->addAction(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()));
 
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
-    pMenu->insertItem(tr("View Item Costing..."), this, SLOT(sViewItemCosting()), 0);
+    pMenu->addAction(tr("View Item Costing..."), this, SLOT(sViewItemCosting()));
 }
 
 void dspCostedBOMBase::sMaintainItemCosts()

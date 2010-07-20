@@ -10,6 +10,7 @@
 
 #include "dspPendingBOMChanges.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 
@@ -61,15 +62,15 @@ void dspPendingBOMChanges::languageChange()
 
 void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit BOM Item..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit BOM Item..."), this, SLOT(sEdit()));;
   if (!_privileges->check("MaintainBOMs"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View BOM Item..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View BOM Item..."), this, SLOT(sView()));;
   if ( (!_privileges->check("MaintainBOMs")) && (!_privileges->check("ViewBOMs")) )
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspPendingBOMChanges::sEdit()

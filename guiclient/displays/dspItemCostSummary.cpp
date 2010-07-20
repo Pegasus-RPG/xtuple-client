@@ -10,10 +10,11 @@
 
 #include "dspItemCostSummary.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 
 #include <metasql.h>
@@ -72,8 +73,8 @@ void dspItemCostSummary::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if (pSelected->text(1) == "Yes")
   {
-    pMenu->insertItem(tr("View Costing Detail..."), this, SLOT(sViewDetail()), 0);
-    pMenu->insertSeparator();
+    pMenu->addAction(tr("View Costing Detail..."), this, SLOT(sViewDetail()));
+    pMenu->addSeparator();
   }
 }
 

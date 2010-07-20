@@ -11,6 +11,7 @@
 #include "dspQOHByItem.h"
 #include "guiclient.h"
 
+#include <QAction>
 #include <QMenu>
 
 #include <metasql.h>
@@ -71,39 +72,39 @@ void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
-    int menuItem;
+    QAction *menuItem;
 
     if (((XTreeWidgetItem *)pSelected)->altId())
     {
-      pMenu->insertItem(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewDetail()), 0);
-      pMenu->insertSeparator();
+      pMenu->addAction(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewDetail()));
+      pMenu->addSeparator();
     }
   
     if (_metrics->boolean("MultiWhs"))
     {
-      menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
+      menuItem = pMenu->addAction(tr("Transfer to another Site..."), this, SLOT(sTransfer()));
       if (!_privileges->check("CreateInterWarehouseTrans"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
 
-    menuItem = pMenu->insertItem(tr("Adjust this QOH..."), this, SLOT(sAdjust()), 0);
+    menuItem = pMenu->addAction(tr("Adjust this QOH..."), this, SLOT(sAdjust()));
     if (!_privileges->check("CreateAdjustmentTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Reset this QOH to 0..."), this, SLOT(sReset()), 0);
+    menuItem = pMenu->addAction(tr("Reset this QOH to 0..."), this, SLOT(sReset()));
     if (!_privileges->check("CreateAdjustmentTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("Enter Misc. Count..."), this, SLOT(sMiscCount()), 0);
+    menuItem = pMenu->addAction(tr("Enter Misc. Count..."), this, SLOT(sMiscCount()));
     if (!_privileges->check("EnterMiscCounts"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
-    menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
     if (!_privileges->check("IssueCountTags"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

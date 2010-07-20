@@ -10,6 +10,7 @@
 
 #include "dspItemsWithoutItemSources.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QVariant>
 
@@ -33,15 +34,15 @@ dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const ch
 
 void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Create Item Source..."), this, SLOT(sCreateItemSource()), 0);
+  menuItem = pMenu->addAction(tr("Create Item Source..."), this, SLOT(sCreateItemSource()));;
   if (!_privileges->check("MaintainItemSources"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
+  menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));;
   if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspItemsWithoutItemSources::sCreateItemSource()

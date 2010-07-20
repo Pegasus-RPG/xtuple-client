@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QWorkspace>
+#include <QAction>
 #include <QMenu>
 
 #include "createCountTagsByItem.h"
@@ -210,27 +211,27 @@ void dspItemSitesByParameterList::sIssueCountTag()
 
 void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Item Site..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View Item Site..."), this, SLOT(sView()));;
   if ((!_privileges->check("MaintainItemSites")) && (!_privileges->check("ViewItemSites")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Edit Item Site..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit Item Site..."), this, SLOT(sEdit()));;
   if (!_privileges->check("MaintainItemSites"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("View Inventory Availability..."), this, SLOT(sInventoryAvailability()), 0);
+  menuItem = pMenu->addAction(tr("View Inventory Availability..."), this, SLOT(sInventoryAvailability()));;
   if (!_privileges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
+  menuItem = pMenu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));;
   if (!_privileges->check("IssueCountTags"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 }
 
 bool dspItemSitesByParameterList::setParams(ParameterList &params)

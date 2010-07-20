@@ -10,6 +10,7 @@
 
 #include "dspIndentedWhereUsed.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
@@ -110,11 +111,10 @@ void dspIndentedWhereUsed::sViewInventoryHistory()
 
 void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = menu->insertItem(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()), 0);
-  if (!_privileges->check("ViewInventoryHistory"))
-    menu->setItemEnabled(menuItem, FALSE);
+  menuItem = menu->addAction(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
 }
 
 void dspIndentedWhereUsed::sPrint()

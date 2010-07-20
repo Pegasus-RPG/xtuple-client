@@ -10,9 +10,10 @@
 
 #include "dspQOHByLocation.h"
 
+#include <QAction>
 #include <QMenu>
-#include <QVariant>
 #include <QSqlError>
+#include <QVariant>
 
 #include "inputManager.h"
 #include "relocateInventory.h"
@@ -124,13 +125,12 @@ void dspQOHByLocation::sRelocate()
 
 void dspQOHByLocation::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (list()->id() != -1)
   {
-    menuItem = menu->insertItem(tr("Relocate..."), this, SLOT(sRelocate()), 0);
-    if (!_privileges->check("RelocateInventory"))
-      menu->setItemEnabled(menuItem, FALSE);
+    menuItem = menu->addAction(tr("Relocate..."), this, SLOT(sRelocate()));
+    menuItem->setEnabled(_privileges->check("RelocateInventory"));
   }
 }
 
